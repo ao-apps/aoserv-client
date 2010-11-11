@@ -441,12 +441,6 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    public static List<PasswordChecker.Result> checkPassword(MySQLUserId username, String password) throws IOException {
-        return PasswordChecker.checkPassword(username.getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public boolean canDisable() throws IOException, SQLException {

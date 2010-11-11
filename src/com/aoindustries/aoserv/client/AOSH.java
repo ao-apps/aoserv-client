@@ -420,6 +420,10 @@ final public class AOSH extends ShellInterpreter {
         if(parameterType==BusinessAdministrator.class) return (T)parseParameterBusinessAdministrator(paramName, nullable, arg);
         if(parameterType==DomainName.class) return (T)parseParameterDomainName(paramName, nullable, arg);
         if(parameterType==LinuxAccount.class) return (T)parseParameterLinuxAccount(paramName, nullable, arg);
+        if(parameterType==MySQLServer.class) return (T)parseParameterMySQLServer(paramName, nullable, arg);
+        if(parameterType==MySQLServerName.class) return (T)parseParameterMySQLServerName(paramName, nullable, arg);
+        if(parameterType==MySQLUser.class) return (T)parseParameterMySQLUser(paramName, nullable, arg);
+        if(parameterType==MySQLUserId.class) return (T)parseParameterMySQLUserId(paramName, nullable, arg);
         if(parameterType==String.class) return (T)parseParameterString(paramName, nullable, arg);
         if(parameterType==UserId.class) return (T)parseParameterUserId(paramName, nullable, arg);
         throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
@@ -478,12 +482,72 @@ final public class AOSH extends ShellInterpreter {
         try {
             int atPos = arg.lastIndexOf('@');
             if(atPos==-1) {
-                return connector.getLinuxAccounts().get(Integer.parseInt(arg));
+                return connector.getLinuxAccounts().get(Integer.valueOf(arg));
             } else {
                 return parseParameterAoServer(paramName, false, arg.substring(atPos+1)).getLinuxAccount(parseParameterUserId(paramName, false, arg.substring(0, atPos)));
             }
         } catch(NoSuchElementException exc) {
             throw new ParameterException(paramName, exc);
+        }
+    }
+
+    /**
+     * Parses a MySQL server as either an integer pkey or as server/name
+     */
+    public MySQLServer parseParameterMySQLServer(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        try {
+            int slashPos = arg.lastIndexOf('/');
+            if(slashPos==-1) {
+                return connector.getMysqlServers().get(Integer.valueOf(arg));
+            } else {
+                return parseParameterAoServer(paramName, false, arg.substring(0, slashPos)).getMysqlServer(parseParameterMySQLServerName(paramName, false, arg.substring(slashPos+1)));
+            }
+        } catch(NoSuchElementException exc) {
+            throw new ParameterException(paramName, exc);
+        }
+    }
+
+    public static MySQLServerName parseParameterMySQLServerName(String paramName, boolean nullable, String arg) throws ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        else {
+            try {
+                return MySQLServerName.valueOf(arg);
+            } catch(ValidationException validationException) {
+                throw new ParameterException(paramName, validationException);
+            }
+        }
+    }
+
+    /**
+     * Parses a MySQL user as either an integer pkey or as username@mysqlServer
+     */
+    public MySQLUser parseParameterMySQLUser(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        try {
+            int atPos = arg.lastIndexOf('@');
+            if(atPos==-1) {
+                return connector.getMysqlUsers().get(Integer.valueOf(arg));
+            } else {
+                return parseParameterMySQLServer(paramName, false, arg.substring(atPos+1)).getMysqlUser(parseParameterMySQLUserId(paramName, false, arg.substring(0, atPos)));
+            }
+        } catch(NoSuchElementException exc) {
+            throw new ParameterException(paramName, exc);
+        }
+    }
+
+    public static MySQLUserId parseParameterMySQLUserId(String paramName, boolean nullable, String arg) throws ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        else {
+            try {
+                return MySQLUserId.valueOf(arg);
+            } catch(ValidationException validationException) {
+                throw new ParameterException(paramName, validationException);
+            }
         }
     }
 

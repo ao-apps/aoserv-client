@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client.command;
 
 import com.aoindustries.aoserv.client.*;
-import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -16,30 +16,27 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand<Void> {
-
-    private static final long serialVersionUID = 1L;
+final public class CheckBusinessAdministratorPasswordCommand extends AOServCommand<List<PasswordChecker.Result>> {
 
     public static final String PARAM_BUSINESS_ADMINISTRATOR = "businessAdministrator";
-    public static final String PARAM_PLAINTEXT = "plaintext";
 
     final private UserId username;
-    final private String plaintext;
+    private final String password;
 
-    public SetBusinessAdministratorPasswordCommand(
+    public CheckBusinessAdministratorPasswordCommand(
         @Param(name=PARAM_BUSINESS_ADMINISTRATOR) BusinessAdministrator businessAdministrator,
-        @Param(name=PARAM_PLAINTEXT) String plaintext
+        @Param(name="password") String password
     ) {
         this.username = businessAdministrator.getUserId();
-        this.plaintext = plaintext;
+        this.password = password;
     }
 
     public UserId getUsername() {
         return username;
     }
 
-    public String getPlaintext() {
-        return plaintext;
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -49,18 +46,16 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
         BusinessAdministrator other = connectedUser.getService().get(username);
         if(!connectedUser.canAccessBusinessAdministrator(other)) {
             errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "Common.validate.accessDenied");
-        } else {
-            // Make sure not disabled
-            if(other.getDisableLog()!=null) errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "SetBusinessAdministratorPasswordCommand.validate.disabled");
-            else {
-                // Check password strength
-                try {
-                    if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, PasswordChecker.checkPassword(username, plaintext, PasswordChecker.PasswordStrength.STRICT));
-                } catch(IOException err) {
-                    throw new RemoteException(err.getMessage(), err);
-                }
-            }
         }
         return errors;
+    }
+
+    @Override
+    public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+        try {
+            return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
+        } catch(IOException err) {
+            throw new RemoteException(err.getMessage(), err);
+        }
     }
 }

@@ -45,15 +45,15 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        if(!connectedUser.canAccessLinuxAccount(linuxAccount)) {
-            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "Common.validate.accessDenied");
+        LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
+        if(!connectedUser.canAccessLinuxAccount(la)) {
+            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
-            LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
             // Enforce can't set password type
             LinuxAccountType lat = la.getLinuxAccountType();
-            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
+            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
             // Make sure not disabled
-            if(la.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.disabled");
+            if(la.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "SetLinuxAccountPasswordCommand.validate.disabled");
             else {
                 // Check password strength
                 try {

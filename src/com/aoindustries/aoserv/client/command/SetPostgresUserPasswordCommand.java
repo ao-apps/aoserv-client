@@ -46,18 +46,18 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        if(!connectedUser.canAccessPostgresUser(postgresUser)) {
-            errors = addValidationError(errors, PARAM_POSTGRES_USER, "Common.validate.accessDenied");
+        PostgresUser pu = connectedUser.getService().getConnector().getPostgresUsers().get(postgresUser);
+        if(!connectedUser.canAccessPostgresUser(pu)) {
+            errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // No setting root password
-            PostgresUser pu = connectedUser.getService().getConnector().getPostgresUsers().get(postgresUser);
             PostgresUserId username = pu.getUserId();
             if(
                 username==PostgresUser.POSTGRES // OK - interned
-            ) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
+            ) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
             else {
                 // Make sure not disabled
-                if(pu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.disabled");
+                if(pu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.disabled");
                 else {
                     // Check password strength
                     try {

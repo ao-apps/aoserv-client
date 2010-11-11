@@ -42,13 +42,13 @@ final public class CheckLinuxAccountPasswordCommand extends AOServCommand<List<P
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        if(!connectedUser.canAccessLinuxAccount(linuxAccount)) {
-            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "Common.validate.accessDenied");
+        LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
+        if(!connectedUser.canAccessLinuxAccount(la)) {
+            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
-            LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
             // Enforce can't set password type
             LinuxAccountType lat = la.getLinuxAccountType();
-            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "CheckLinuxAccountPasswordCommand.validate.typeNotAllowed");
+            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "CheckLinuxAccountPasswordCommand.validate.typeNotAllowed");
         }
         return errors;
     }

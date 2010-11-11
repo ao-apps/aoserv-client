@@ -45,13 +45,13 @@ final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        if(!connectedUser.canAccessUsername(username)) {
-            errors = addValidationError(errors, PARAM_USERNAME, "Common.validate.accessDenied");
+        Username un = connectedUser.getService().getConnector().getUsernames().get(username);
+        if(!connectedUser.canAccessUsername(un)) {
+            errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // Check LinuxAccountType.Constant for no password set allowed
-            Username un = connectedUser.getService().getConnector().getUsernames().get(username);
             // Make sure not disabled
-            if(un.getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, "SetUsernamePasswordCommand.validate.disabled");
+            if(un.getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "SetUsernamePasswordCommand.validate.disabled");
             else {
                 // Make sure passes other command validations
                 BusinessAdministrator ba = un.getBusinessAdministrator();

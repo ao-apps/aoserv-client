@@ -8,12 +8,10 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -356,16 +354,6 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Commands">
-    /**
-     * Validates a password and returns a description of the problem.  If the
-     * password is valid, then <code>null</code> is returned.
-     */
-    public static List<PasswordChecker.Result> checkPassword(UserId username, String password) throws IOException {
-        return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Permissions">
     /**
      * A ticket administrator is part of a business that is also a reseller
@@ -424,14 +412,22 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     // <editor-fold defaultstate="collapsed" desc="Access Control">
     public boolean canAccessAoServer(AOServer server) throws RemoteException {
+        if(server==null) return false;
+        // Check access using own connector
+        if(server.getService().getConnector()!=getService().getConnector()) {
+            server = getService().getConnector().getAoServers().get(server.getKey());
+            if(server==null) return false;
+        }
         return canAccessServer(server.getServer());
     }
 
     public boolean canAccessBusiness(Business business) throws RemoteException {
-        return canAccessBusiness(business.getAccounting());
-    }
-
-    public boolean canAccessBusiness(AccountingCode accounting) throws RemoteException {
+        if(business==null) return false;
+        // Check access using own connector
+        if(business.getService().getConnector()!=getService().getConnector()) {
+            business = getService().getConnector().getBusinesses().get(business.getKey());
+            if(business==null) return false;
+        }
         MasterUser mu = getMasterUser();
         if(mu!=null) {
             IndexedSet<MasterServer> mss = mu.getMasterServers();
@@ -440,26 +436,34 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
                 return true;
             } else {
                 // Restricted by server
-                Business business = getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
-                if(business!=null) {
-                    IndexedSet<Server> businessServers = business.getServers();
-                    // There is usually only one MasterServer - iterate by it first
-                    for(MasterServer ms : mss) if(businessServers.contains(ms.getServer())) return true;
-                }
+                IndexedSet<Server> businessServers = business.getServers();
+                // There is usually only one MasterServer - iterate by it first
+                for(MasterServer ms : mss) if(businessServers.contains(ms.getServer())) return true;
                 return false;
             }
         } else {
             // Regular user
-            Business business = getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
-            return business!=null && getUsername().getBusiness().isBusinessOrParentOf(business);
+            return getUsername().getBusiness().isBusinessOrParentOf(business);
         }
     }
 
-    public boolean canAccessLinuxAccount(LinuxAccount linuxAccount) throws RemoteException {
-        return canAccessLinuxAccount(linuxAccount.getAoServerResource().getResource().getPkey());
+    public boolean canAccessBusinessAdministrator(BusinessAdministrator ba) throws RemoteException {
+        if(ba==null) return false;
+        // Check access using own connector
+        if(ba.getService().getConnector()!=getService().getConnector()) {
+            ba = getService().getConnector().getBusinessAdministrators().get(ba.getKey());
+            if(ba==null) return false;
+        }
+        return canAccessUsername(ba.getUsername());
     }
 
-    public boolean canAccessLinuxAccount(int aoServerResource) throws RemoteException {
+    public boolean canAccessLinuxAccount(LinuxAccount linuxAccount) throws RemoteException {
+        if(linuxAccount==null) return false;
+        // Check access using own connector
+        if(linuxAccount.getService().getConnector()!=getService().getConnector()) {
+            linuxAccount = getService().getConnector().getLinuxAccounts().get(linuxAccount.getKey());
+            if(linuxAccount==null) return false;
+        }
         MasterUser mu = getMasterUser();
         if(mu!=null) {
             IndexedSet<MasterServer> mss = mu.getMasterServers();
@@ -468,21 +472,21 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
                 return true;
             } else {
                 // Restricted by server
-                LinuxAccount la = getService().getConnector().getLinuxAccounts().filterUnique(LinuxAccount.COLUMN_AO_SERVER_RESOURCE, aoServerResource);
-                return la!=null && canAccessAoServer(la.getAoServerResource().getAoServer());
+                return canAccessAoServer(linuxAccount.getAoServerResource().getAoServer());
             }
         } else {
             // Regular user
-            LinuxAccount la = getService().getConnector().getLinuxAccounts().filterUnique(LinuxAccount.COLUMN_AO_SERVER_RESOURCE, aoServerResource);
-            return la!=null && canAccessUsername(la.getUserId());
+            return canAccessUsername(linuxAccount.getUsername());
         }
     }
 
     public boolean canAccessMySQLUser(MySQLUser mysqlUser) throws RemoteException {
-        return canAccessMySQLUser(mysqlUser.getAoServerResource().getResource().getPkey());
-    }
-
-    public boolean canAccessMySQLUser(int mysqlUser) throws RemoteException {
+        if(mysqlUser==null) return false;
+        // Check access using own connector
+        if(mysqlUser.getService().getConnector()!=getService().getConnector()) {
+            mysqlUser = getService().getConnector().getMysqlUsers().get(mysqlUser.getKey());
+            if(mysqlUser==null) return false;
+        }
         MasterUser mu = getMasterUser();
         if(mu!=null) {
             IndexedSet<MasterServer> mss = mu.getMasterServers();
@@ -491,21 +495,21 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
                 return true;
             } else {
                 // Restricted by server
-                MySQLUser mysqlUserObj = getService().getConnector().getMysqlUsers().filterUnique(MySQLUser.COLUMN_AO_SERVER_RESOURCE, mysqlUser);
-                return mysqlUserObj!=null && canAccessAoServer(mysqlUserObj.getAoServerResource().getAoServer());
+                return canAccessAoServer(mysqlUser.getAoServerResource().getAoServer());
             }
         } else {
             // Regular user
-            MySQLUser mysqlUserObj = getService().getConnector().getMysqlUsers().filterUnique(MySQLUser.COLUMN_AO_SERVER_RESOURCE, mysqlUser);
-            return mysqlUserObj!=null && canAccessUsername(mysqlUserObj.getUsername().getUsername());
+            return canAccessUsername(mysqlUser.getUsername());
         }
     }
 
     public boolean canAccessPostgresUser(PostgresUser postgresUser) throws RemoteException {
-        return canAccessPostgresUser(postgresUser.getAoServerResource().getResource().getPkey());
-    }
-
-    public boolean canAccessPostgresUser(int postgresUser) throws RemoteException {
+        if(postgresUser==null) return false;
+        // Check access using own connector
+        if(postgresUser.getService().getConnector()!=getService().getConnector()) {
+            postgresUser = getService().getConnector().getPostgresUsers().get(postgresUser.getKey());
+            if(postgresUser==null) return false;
+        }
         MasterUser mu = getMasterUser();
         if(mu!=null) {
             IndexedSet<MasterServer> mss = mu.getMasterServers();
@@ -514,21 +518,21 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
                 return true;
             } else {
                 // Restricted by server
-                PostgresUser postgresUserObj = getService().getConnector().getPostgresUsers().filterUnique(PostgresUser.COLUMN_AO_SERVER_RESOURCE, postgresUser);
-                return postgresUserObj!=null && canAccessAoServer(postgresUserObj.getAoServerResource().getAoServer());
+                return canAccessAoServer(postgresUser.getAoServerResource().getAoServer());
             }
         } else {
             // Regular user
-            PostgresUser postgresUserObj = getService().getConnector().getPostgresUsers().filterUnique(PostgresUser.COLUMN_AO_SERVER_RESOURCE, postgresUser);
-            return postgresUserObj!=null && canAccessUsername(postgresUserObj.getUsername().getUsername());
+            return canAccessUsername(postgresUser.getUsername());
         }
     }
 
     public boolean canAccessServer(Server server) throws RemoteException {
-        return canAccessServer(server.getPkey());
-    }
-
-    public boolean canAccessServer(int server) throws RemoteException {
+        if(server==null) return false;
+        // Check access using own connector
+        if(server.getService().getConnector()!=getService().getConnector()) {
+            server = getService().getConnector().getServers().get(server.getKey());
+            if(server==null) return false;
+        }
         MasterUser mu = getMasterUser();
         if(mu!=null) {
             IndexedSet<MasterServer> mss = mu.getMasterServers();
@@ -537,23 +541,23 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
                 return true;
             } else {
                 // Restricted by server
-                for(MasterServer ms : mss) if(ms.getServer().key==server) return true;
+                for(MasterServer ms : mss) if(ms.getServer().equals(server)) return true;
                 return false;
             }
         } else {
             // Regular user
-            Server serverObj = getService().getConnector().getServers().filterUnique(Server.COLUMN_PKEY, server);
-            return serverObj!=null && getUsername().getBusiness().getServers().contains(serverObj);
+            return getUsername().getBusiness().getServers().contains(server);
         }
     }
 
     public boolean canAccessUsername(Username username) throws RemoteException {
-        return canAccessUsername(username.getUsername());
-    }
-
-    public boolean canAccessUsername(UserId username) throws RemoteException {
-        Username un = getService().getConnector().getUsernames().filterUnique(Username.COLUMN_USERNAME, username);
-        return un!=null && canAccessBusiness(un.getBusiness());
+        if(username==null) return false;
+        // Check access using own connector
+        if(username.getService().getConnector()!=getService().getConnector()) {
+            username = getService().getConnector().getUsernames().get(username.getKey());
+            if(username==null) return false;
+        }
+        return canAccessBusiness(username.getBusiness());
     }
     // </editor-fold>
 

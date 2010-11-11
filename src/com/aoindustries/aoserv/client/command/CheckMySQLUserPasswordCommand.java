@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client.command;
 
 import com.aoindustries.aoserv.client.*;
-import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -16,30 +16,27 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
-
-    private static final long serialVersionUID = 1L;
+final public class CheckMySQLUserPasswordCommand extends AOServCommand<List<PasswordChecker.Result>> {
 
     public static final String PARAM_MYSQL_USER = "mysqlUser";
-    public static final String PARAM_PLAINTEXT = "plaintext";
 
     final private int mysqlUser;
-    final private String plaintext;
+    private final String password;
 
-    public SetMySQLUserPasswordCommand(
+    public CheckMySQLUserPasswordCommand(
         @Param(name=PARAM_MYSQL_USER) MySQLUser mysqlUser,
-        @Param(name=PARAM_PLAINTEXT) String plaintext
+        @Param(name="password") String password
     ) {
         this.mysqlUser = mysqlUser.getKey();
-        this.plaintext = plaintext;
+        this.password = password;
     }
 
     public int getMysqlUser() {
         return mysqlUser;
     }
 
-    public String getPlaintext() {
-        return plaintext;
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -55,19 +52,17 @@ final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
             if(
                 username==MySQLUser.ROOT // OK - interned
             ) errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "SetMySQLUserPasswordCommand.validate.noSetRoot");
-            else {
-                // Make sure not disabled
-                if(mu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "SetMySQLUserPasswordCommand.validate.disabled");
-                else {
-                    // Check password strength
-                    try {
-                        if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, PasswordChecker.checkPassword(username.getUserId(), plaintext, PasswordChecker.PasswordStrength.STRICT));
-                    } catch(IOException err) {
-                        throw new RemoteException(err.getMessage(), err);
-                    }
-                }
-            }
         }
         return errors;
+    }
+
+    @Override
+    public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+        try {
+            MySQLUser mu = connector.getMysqlUsers().get(mysqlUser);
+            return PasswordChecker.checkPassword(mu.getUserId().getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
+        } catch(IOException err) {
+            throw new RemoteException(err.getMessage(), err);
+        }
     }
 }

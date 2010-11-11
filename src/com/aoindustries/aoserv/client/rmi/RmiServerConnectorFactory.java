@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.rmi.*;
 import com.aoindustries.security.LoginException;
-import java.rmi.AlreadyBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
@@ -75,12 +74,12 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
 
         Registry registry = RegistryManager.createRegistry(port.getPort(), csf, ssf);
         Remote stub = UnicastRemoteObject.exportObject(this, port.getPort(), csf, ssf);
-        try {
-            registry.bind(AOServConnectorFactory.class.getName()+"_Stub", stub);
-        } catch(AlreadyBoundException err) {
+        //try {
+        //    registry.bind(AOServConnectorFactory.class.getName()+"_Stub", stub);
+        //} catch(AlreadyBoundException err) {
             //throw new RemoteException(err.getMessage(), err);
             registry.rebind(AOServConnectorFactory.class.getName()+"_Stub", stub);
-        }
+        //}
         this.port = port;
         this.wrapped = wrapped;
     }

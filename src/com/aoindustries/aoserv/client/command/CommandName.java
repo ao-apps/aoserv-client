@@ -30,6 +30,7 @@ public enum CommandName {
     // businesses
     cancel_business(CancelBusinessCommand.class, ServiceName.businesses, AOServPermission.Permission.cancel_business),
     // business_administrators
+    check_business_administrator_password(CheckBusinessAdministratorPasswordCommand.class, ServiceName.business_administrators),
     crypt(CryptCommand.class, ServiceName.business_administrators),
     hash_password(HashPasswordCommand.class, ServiceName.business_administrators),
     set_business_administrator_password(SetBusinessAdministratorPasswordCommand.class, ServiceName.business_administrators, AOServPermission.Permission.set_business_administrator_password),
@@ -52,6 +53,7 @@ public enum CommandName {
     // mysql_servers
     get_mysql_master_status(GetMySQLMasterStatusCommand.class, ServiceName.mysql_servers, AOServPermission.Permission.get_mysql_master_status),
     // mysql_users
+    check_mysql_user_password(CheckMySQLUserPasswordCommand.class, ServiceName.mysql_users),
     set_mysql_user_password(SetMySQLUserPasswordCommand.class, ServiceName.mysql_users, AOServPermission.Permission.set_mysql_user_password),
     set_mysql_user_predisable_password(SetMySQLUserPredisablePasswordCommand.class, ServiceName.mysql_users, AOServPermission.Permission.set_mysql_user_predisable_password),
     // postgres_users
@@ -144,7 +146,6 @@ public enum CommandName {
     // TODO: change_ticket_technology(TODO.class, TODO),
     // TODO: change_ticket_type(TODO.class, TODO),
     // TODO: check_accounting(TODO.class, TODO),
-    // TODO: check_business_administrator_password(TODO.class, TODO),
     // TODO: check_business_administrator_username(TODO.class, TODO),
     // TODO: check_dns_zone(TODO.class, TODO),
     // TODO: check_email_address(TODO.class, TODO),
@@ -157,7 +158,6 @@ public enum CommandName {
     // TODO: check_linux_group_name(TODO.class, TODO),
     // TODO: check_majordomo_list_name(TODO.class, TODO),
     // TODO: check_mysql_database_name(TODO.class, TODO),
-    // TODO: check_mysql_user_password(TODO.class, TODO),
     // TODO: check_mysql_server_name(TODO.class, TODO),
     // TODO: check_mysql_username(TODO.class, TODO),
     // TODO: check_postgres_database_name(TODO.class, TODO),

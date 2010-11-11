@@ -260,10 +260,6 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
         else return dl.canEnable() && getLinuxAccount().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) throws SQLException, IOException {
-        return getLinuxAccount().checkPassword(password);
-    }
-
     public void copyPassword(LinuxServerAccount other) throws IOException, SQLException {
         getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.pkey);
     }
