@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageCategory extends AOServObjectStringKey<PackageCategory> implements BeanFactory<com.aoindustries.aoserv.client.beans.PackageCategory> {
+final public class PackageCategory extends AOServObjectStringKey<PackageCategory> implements DtoFactory<com.aoindustries.aoserv.client.dto.PackageCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -52,10 +52,10 @@ final public class PackageCategory extends AOServObjectStringKey<PackageCategory
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PackageCategory getBean() {
-        return new com.aoindustries.aoserv.client.beans.PackageCategory(getKey());
+    public com.aoindustries.aoserv.client.dto.PackageCategory getDto() {
+        return new com.aoindustries.aoserv.client.dto.PackageCategory(getKey());
     }
     // </editor-fold>
 

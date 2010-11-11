@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresVersion> {
+final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -118,10 +118,10 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PostgresVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresVersion(key, minorVersion, postgisVersion);
+    public com.aoindustries.aoserv.client.dto.PostgresVersion getDto() {
+        return new com.aoindustries.aoserv.client.dto.PostgresVersion(key, minorVersion, postgisVersion);
     }
     // </editor-fold>
 

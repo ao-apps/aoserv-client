@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.aoserv.client.PostgresServer;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUserId implements Comparable<PostgresUserId>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.PostgresUserId>, Internable<PostgresUserId> {
+final public class PostgresUserId implements Comparable<PostgresUserId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUserId>, Internable<PostgresUserId> {
 
     private static final long serialVersionUID = 1L;
 
@@ -166,8 +166,8 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.PostgresUserId getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresUserId(id);
+    public com.aoindustries.aoserv.client.dto.PostgresUserId getDto() {
+        return new com.aoindustries.aoserv.client.dto.PostgresUserId(id);
     }
 
     /**

@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.math.LongLong;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.persistent.PersistentCollections;
@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class InetAddress implements Comparable<InetAddress>, Serializable, BeanFactory<com.aoindustries.aoserv.client.beans.InetAddress>, Internable<InetAddress> {
+final public class InetAddress implements Comparable<InetAddress>, Serializable, DtoFactory<com.aoindustries.aoserv.client.dto.InetAddress>, Internable<InetAddress> {
 
     private static final long serialVersionUID = 1L;
 
@@ -393,8 +393,8 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.InetAddress getBean() {
-        return new com.aoindustries.aoserv.client.beans.InetAddress(toString());
+    public com.aoindustries.aoserv.client.dto.InetAddress getDto() {
+        return new com.aoindustries.aoserv.client.dto.InetAddress(toString());
     }
 
     public boolean isUnspecified() {

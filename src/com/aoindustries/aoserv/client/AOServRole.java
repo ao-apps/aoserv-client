@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServRole extends AOServObjectIntegerKey<AOServRole> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServRole> {
+final public class AOServRole extends AOServObjectIntegerKey<AOServRole> implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServRole> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -73,10 +73,10 @@ final public class AOServRole extends AOServObjectIntegerKey<AOServRole> impleme
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.AOServRole getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServRole(key, getBean(accounting), name);
+    public com.aoindustries.aoserv.client.dto.AOServRole getDto() {
+        return new com.aoindustries.aoserv.client.dto.AOServRole(key, getDto(accounting), name);
     }
     // </editor-fold>
 

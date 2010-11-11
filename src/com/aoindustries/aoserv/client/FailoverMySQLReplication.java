@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverMySQLReplication extends AOServObjectIntegerKey<FailoverMySQLReplication> implements BeanFactory<com.aoindustries.aoserv.client.beans.FailoverMySQLReplication> {
+final public class FailoverMySQLReplication extends AOServObjectIntegerKey<FailoverMySQLReplication> implements DtoFactory<com.aoindustries.aoserv.client.dto.FailoverMySQLReplication> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -109,10 +109,10 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.FailoverMySQLReplication getBean() {
-        return new com.aoindustries.aoserv.client.beans.FailoverMySQLReplication(key, aoServer, replication, mysqlServer, monitoringSecondsBehindLow, monitoringSecondsBehindMedium, monitoringSecondsBehindHigh, monitoringSecondsBehindCritical);
+    public com.aoindustries.aoserv.client.dto.FailoverMySQLReplication getDto() {
+        return new com.aoindustries.aoserv.client.dto.FailoverMySQLReplication(key, aoServer, replication, mysqlServer, monitoringSecondsBehindLow, monitoringSecondsBehindMedium, monitoringSecondsBehindHigh, monitoringSecondsBehindCritical);
     }
     // </editor-fold>
 

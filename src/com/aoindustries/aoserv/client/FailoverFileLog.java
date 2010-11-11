@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLog> implements BeanFactory<com.aoindustries.aoserv.client.beans.FailoverFileLog> {
+final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLog> implements DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 2L;
@@ -105,10 +105,10 @@ final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLo
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.FailoverFileLog getBean() {
-        return new com.aoindustries.aoserv.client.beans.FailoverFileLog(
+    public com.aoindustries.aoserv.client.dto.FailoverFileLog getDto() {
+        return new com.aoindustries.aoserv.client.dto.FailoverFileLog(
             key,
             replication,
             getStartTime(),

@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterHost extends AOServObjectIntegerKey<MasterHost> implements BeanFactory<com.aoindustries.aoserv.client.beans.MasterHost> {
+final public class MasterHost extends AOServObjectIntegerKey<MasterHost> implements DtoFactory<com.aoindustries.aoserv.client.dto.MasterHost> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -80,10 +80,10 @@ final public class MasterHost extends AOServObjectIntegerKey<MasterHost> impleme
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.MasterHost getBean() {
-        return new com.aoindustries.aoserv.client.beans.MasterHost(key, getBean(username), getBean(host));
+    public com.aoindustries.aoserv.client.dto.MasterHost getDto() {
+        return new com.aoindustries.aoserv.client.dto.MasterHost(key, getDto(username), getDto(host));
     }
     // </editor-fold>
 

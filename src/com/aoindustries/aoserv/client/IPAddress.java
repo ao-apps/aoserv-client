@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implements BeanFactory<com.aoindustries.aoserv.client.beans.IPAddress> {
+final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implements DtoFactory<com.aoindustries.aoserv.client.dto.IPAddress> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -152,20 +152,20 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.IPAddress getBean() {
-        return new com.aoindustries.aoserv.client.beans.IPAddress(
+    public com.aoindustries.aoserv.client.dto.IPAddress getDto() {
+        return new com.aoindustries.aoserv.client.dto.IPAddress(
             key,
-            getBean(ipAddress),
+            getDto(ipAddress),
             netDevice,
             isAlias,
-            getBean(hostname),
+            getDto(hostname),
             available,
             isOverflow,
             isDhcp,
             pingMonitorEnabled,
-            getBean(externalIpAddress),
+            getDto(externalIpAddress),
             netmask
         );
     }

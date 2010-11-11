@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.aoserv.client.MySQLServer;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.MySQLUserId>, Internable<MySQLUserId> {
+final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUserId>, Internable<MySQLUserId> {
 
     private static final long serialVersionUID = 1L;
 
@@ -161,8 +161,8 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.MySQLUserId getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLUserId(id);
+    public com.aoindustries.aoserv.client.dto.MySQLUserId getDto() {
+        return new com.aoindustries.aoserv.client.dto.MySQLUserId(id);
     }
 
     /**

@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinitionLimit extends AOServObjectIntegerKey<PackageDefinitionLimit> implements BeanFactory<com.aoindustries.aoserv.client.beans.PackageDefinitionLimit> {
+final public class PackageDefinitionLimit extends AOServObjectIntegerKey<PackageDefinitionLimit> implements DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionLimit> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -117,16 +117,16 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey<Package
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PackageDefinitionLimit getBean() {
-        return new com.aoindustries.aoserv.client.beans.PackageDefinitionLimit(
+    public com.aoindustries.aoserv.client.dto.PackageDefinitionLimit getDto() {
+        return new com.aoindustries.aoserv.client.dto.PackageDefinitionLimit(
             key,
             packageDefinition,
             resourceType,
             softLimit,
             hardLimit,
-            getBean(additionalRate),
+            getDto(additionalRate),
             additionalTransactionType
         );
     }

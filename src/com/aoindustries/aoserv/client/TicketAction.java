@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketAction extends AOServObjectIntegerKey<TicketAction> implements BeanFactory<com.aoindustries.aoserv.client.beans.TicketAction> {
+final public class TicketAction extends AOServObjectIntegerKey<TicketAction> implements DtoFactory<com.aoindustries.aoserv.client.dto.TicketAction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -400,28 +400,28 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
      */
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.TicketAction getBean() {
-        return new com.aoindustries.aoserv.client.beans.TicketAction(
+    public com.aoindustries.aoserv.client.dto.TicketAction getDto() {
+        return new com.aoindustries.aoserv.client.dto.TicketAction(
             key,
             ticket,
-            getBean(administrator),
+            getDto(administrator),
             getTime(),
             actionType,
-            getBean(oldAccounting),
-            getBean(newAccounting),
+            getDto(oldAccounting),
+            getDto(newAccounting),
             oldPriority,
             newPriority,
             oldType,
             newType,
             oldStatus,
             newStatus,
-            getBean(oldAssignedTo),
-            getBean(newAssignedTo),
+            getDto(oldAssignedTo),
+            getDto(newAssignedTo),
             oldCategory,
             newCategory,
-            getBean(fromAddress),
+            getDto(fromAddress),
             summary
         );
     }

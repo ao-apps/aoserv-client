@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdJBossVersion> {
+final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJBossVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -82,10 +82,10 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVe
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.HttpdJBossVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdJBossVersion(key, tomcatVersion, getBean(templateDir));
+    public com.aoindustries.aoserv.client.dto.HttpdJBossVersion getDto() {
+        return new com.aoindustries.aoserv.client.dto.HttpdJBossVersion(key, tomcatVersion, getDto(templateDir));
     }
     // </editor-fold>
 

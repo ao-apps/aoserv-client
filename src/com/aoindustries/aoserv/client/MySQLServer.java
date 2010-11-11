@@ -31,7 +31,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.MySQLServer> {
+final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -399,10 +399,10 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.MySQLServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLServer(key, getBean(name), version, maxConnections, netBind);
+    public com.aoindustries.aoserv.client.dto.MySQLServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.MySQLServer(key, getDto(name), version, maxConnections, netBind);
     }
     // </editor-fold>
 

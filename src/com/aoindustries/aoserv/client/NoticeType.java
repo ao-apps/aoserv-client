@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NoticeType extends AOServObjectStringKey<NoticeType> implements BeanFactory<com.aoindustries.aoserv.client.beans.NoticeType> {
+final public class NoticeType extends AOServObjectStringKey<NoticeType> implements DtoFactory<com.aoindustries.aoserv.client.dto.NoticeType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -42,10 +42,10 @@ final public class NoticeType extends AOServObjectStringKey<NoticeType> implemen
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.NoticeType getBean() {
-        return new com.aoindustries.aoserv.client.beans.NoticeType(getKey());
+    public com.aoindustries.aoserv.client.dto.NoticeType getDto() {
+        return new com.aoindustries.aoserv.client.dto.NoticeType(getKey());
     }
     // </editor-fold>
 

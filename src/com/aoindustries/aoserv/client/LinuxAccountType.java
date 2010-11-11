@@ -28,7 +28,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountType> implements BeanFactory<com.aoindustries.aoserv.client.beans.LinuxAccountType> {
+final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountType> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -167,10 +167,10 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.LinuxAccountType getBean() {
-        return new com.aoindustries.aoserv.client.beans.LinuxAccountType(getKey());
+    public com.aoindustries.aoserv.client.dto.LinuxAccountType getDto() {
+        return new com.aoindustries.aoserv.client.dto.LinuxAccountType(getKey());
     }
     // </editor-fold>
 

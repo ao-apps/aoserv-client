@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> implements BeanFactory<com.aoindustries.aoserv.client.beans.ServerFarm> {
+final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> implements DtoFactory<com.aoindustries.aoserv.client.dto.ServerFarm> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -73,10 +73,10 @@ final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> imp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.ServerFarm getBean() {
-        return new com.aoindustries.aoserv.client.beans.ServerFarm(getBean(getKey()), description, getBean(owner), useRestrictedSmtpPort);
+    public com.aoindustries.aoserv.client.dto.ServerFarm getDto() {
+        return new com.aoindustries.aoserv.client.dto.ServerFarm(getDto(getKey()), description, getDto(owner), useRestrictedSmtpPort);
     }
     // </editor-fold>
 

@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BankTransactionType extends AOServObjectStringKey<BankTransactionType> implements BeanFactory<com.aoindustries.aoserv.client.beans.BankTransactionType> {
+final public class BankTransactionType extends AOServObjectStringKey<BankTransactionType> implements DtoFactory<com.aoindustries.aoserv.client.dto.BankTransactionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -41,10 +41,10 @@ final public class BankTransactionType extends AOServObjectStringKey<BankTransac
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.BankTransactionType getBean() {
-        return new com.aoindustries.aoserv.client.beans.BankTransactionType(getKey(), isNegative);
+    public com.aoindustries.aoserv.client.dto.BankTransactionType getDto() {
+        return new com.aoindustries.aoserv.client.dto.BankTransactionType(getKey(), isNegative);
     }
     // </editor-fold>
 

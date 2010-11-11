@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystemVersion extends AOServObjectIntegerKey<OperatingSystemVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.OperatingSystemVersion> {
+final public class OperatingSystemVersion extends AOServObjectIntegerKey<OperatingSystemVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystemVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -130,10 +130,10 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.OperatingSystemVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.OperatingSystemVersion(key, operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);
+    public com.aoindustries.aoserv.client.dto.OperatingSystemVersion getDto() {
+        return new com.aoindustries.aoserv.client.dto.OperatingSystemVersion(key, operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);
     }
     // </editor-fold>
 

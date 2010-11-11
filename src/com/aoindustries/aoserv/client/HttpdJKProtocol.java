@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdJKProtocol> {
+final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKProtocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -52,10 +52,10 @@ final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.HttpdJKProtocol getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdJKProtocol(getKey());
+    public com.aoindustries.aoserv.client.dto.HttpdJKProtocol getDto() {
+        return new com.aoindustries.aoserv.client.dto.HttpdJKProtocol(getKey());
     }
     // </editor-fold>
 

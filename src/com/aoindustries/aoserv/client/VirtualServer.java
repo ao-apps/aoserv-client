@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.VirtualServer> {
+final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.VirtualServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -229,10 +229,10 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.VirtualServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.VirtualServer(key, primaryRam, primaryRamTarget, secondaryRam, secondaryRamTarget, minimumProcessorType, minimumProcessorArchitecture, minimumProcessorSpeed, minimumProcessorSpeedTarget, processorCores, processorCoresTarget, processorWeight, processorWeightTarget, primaryPhysicalServerLocked, secondaryPhysicalServerLocked, requiresHvm, vncPassword);
+    public com.aoindustries.aoserv.client.dto.VirtualServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.VirtualServer(key, primaryRam, primaryRamTarget, secondaryRam, secondaryRamTarget, minimumProcessorType, minimumProcessorArchitecture, minimumProcessorSpeed, minimumProcessorSpeedTarget, processorCores, processorCoresTarget, processorWeight, processorWeightTarget, primaryPhysicalServerLocked, secondaryPhysicalServerLocked, requiresHvm, vncPassword);
     }
     // </editor-fold>
 

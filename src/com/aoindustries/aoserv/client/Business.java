@@ -34,7 +34,7 @@ import java.util.TreeMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class Business extends AOServObjectAccountingCodeKey<Business> implements BeanFactory<com.aoindustries.aoserv.client.beans.Business>, Group /* TODO: implements Disablable*/ {
+final public class Business extends AOServObjectAccountingCodeKey<Business> implements DtoFactory<com.aoindustries.aoserv.client.dto.Business>, Group /* TODO: implements Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -317,10 +317,10 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Business getBean() {
-        return new com.aoindustries.aoserv.client.beans.Business(getBean(getKey()), contractVersion, getCreated(), getCanceled(), cancelReason, getBean(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getBean(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
+    public com.aoindustries.aoserv.client.dto.Business getDto() {
+        return new com.aoindustries.aoserv.client.dto.Business(getDto(getKey()), contractVersion, getCreated(), getCanceled(), cancelReason, getDto(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getDto(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
     // </editor-fold>
 

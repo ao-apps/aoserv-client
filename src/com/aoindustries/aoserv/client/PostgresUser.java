@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresUser> /* PasswordProtected, Removable, Disablable*/ {
+final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser> /* PasswordProtected, Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -150,10 +150,10 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PostgresUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresUser(key, getBean(username), postgresServer, createdb, trace, superPriv, catupd, predisablePassword);
+    public com.aoindustries.aoserv.client.dto.PostgresUser getDto() {
+        return new com.aoindustries.aoserv.client.dto.PostgresUser(key, getDto(username), postgresServer, createdb, trace, superPriv, catupd, predisablePassword);
     }
     // </editor-fold>
 

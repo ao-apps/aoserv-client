@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> implements BeanFactory<com.aoindustries.aoserv.client.beans.CvsRepository> /*, Removable, Disablable */ {
+final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> implements DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -106,10 +106,10 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.CvsRepository getBean() {
-        return new com.aoindustries.aoserv.client.beans.CvsRepository(key, getBean(path), linuxAccountGroup, mode);
+    public com.aoindustries.aoserv.client.dto.CvsRepository getDto() {
+        return new com.aoindustries.aoserv.client.dto.CvsRepository(key, getDto(path), linuxAccountGroup, mode);
     }
     // </editor-fold>
 

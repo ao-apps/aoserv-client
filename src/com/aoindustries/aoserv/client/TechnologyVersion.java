@@ -19,7 +19,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.TechnologyVersion> {
+final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -107,10 +107,10 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.TechnologyVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.TechnologyVersion(key, name, version, getUpdated(), getBean(owner), operatingSystemVersion);
+    public com.aoindustries.aoserv.client.dto.TechnologyVersion getDto() {
+        return new com.aoindustries.aoserv.client.dto.TechnologyVersion(key, name, version, getUpdated(), getDto(owner), operatingSystemVersion);
     }
     // </editor-fold>
 

@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class MacAddress implements Comparable<MacAddress>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.MacAddress>, Internable<MacAddress> {
+final public class MacAddress implements Comparable<MacAddress>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MacAddress>, Internable<MacAddress> {
 
     private static final long serialVersionUID = 1L;
 
@@ -156,8 +156,8 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.MacAddress getBean() {
-        return new com.aoindustries.aoserv.client.beans.MacAddress(address);
+    public com.aoindustries.aoserv.client.dto.MacAddress getDto() {
+        return new com.aoindustries.aoserv.client.dto.MacAddress(address);
     }
 
     public boolean isBroadcast() {

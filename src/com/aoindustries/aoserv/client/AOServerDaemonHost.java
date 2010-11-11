@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDaemonHost> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServerDaemonHost> {
+final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDaemonHost> implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServerDaemonHost> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -77,10 +77,10 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDae
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.AOServerDaemonHost getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServerDaemonHost(key, aoServer, getBean(host));
+    public com.aoindustries.aoserv.client.dto.AOServerDaemonHost getDto() {
+        return new com.aoindustries.aoserv.client.dto.AOServerDaemonHost(key, aoServer, getDto(host));
     }
     // </editor-fold>
 

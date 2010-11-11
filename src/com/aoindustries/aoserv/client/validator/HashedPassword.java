@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Base64Coder;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HashedPassword implements Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.HashedPassword> {
+final public class HashedPassword implements Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.HashedPassword> {
 
     private static final long serialVersionUID = 1L;
 
@@ -125,8 +125,8 @@ final public class HashedPassword implements Serializable, ObjectInputValidation
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.HashedPassword getBean() {
-        return new com.aoindustries.aoserv.client.beans.HashedPassword(hashedPassword);
+    public com.aoindustries.aoserv.client.dto.HashedPassword getDto() {
+        return new com.aoindustries.aoserv.client.dto.HashedPassword(hashedPassword);
     }
 
     @SuppressWarnings("deprecation")

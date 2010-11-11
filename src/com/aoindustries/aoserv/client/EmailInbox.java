@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> implements BeanFactory<com.aoindustries.aoserv.client.beans.EmailInbox> /* TODO , Removable, Disablable */ {
+final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> implements DtoFactory<com.aoindustries.aoserv.client.dto.EmailInbox> /* TODO , Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -166,10 +166,10 @@ final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> impleme
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.EmailInbox getBean() {
-        return new com.aoindustries.aoserv.client.beans.EmailInbox(key, autoresponderFrom, autoresponderSubject, getBean(autoresponderPath), isAutoresponderEnabled, useInbox, trashEmailRetention, junkEmailRetention, saIntegrationMode, saRequiredScore, saDiscardScore);
+    public com.aoindustries.aoserv.client.dto.EmailInbox getDto() {
+        return new com.aoindustries.aoserv.client.dto.EmailInbox(key, autoresponderFrom, autoresponderSubject, getDto(autoresponderPath), isAutoresponderEnabled, useInbox, trashEmailRetention, junkEmailRetention, saIntegrationMode, saRequiredScore, saDiscardScore);
     }
     // </editor-fold>
 

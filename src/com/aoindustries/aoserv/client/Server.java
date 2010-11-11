@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Server extends AOServObjectIntegerKey<Server> implements BeanFactory<com.aoindustries.aoserv.client.beans.Server> {
+final public class Server extends AOServObjectIntegerKey<Server> implements DtoFactory<com.aoindustries.aoserv.client.dto.Server> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -124,10 +124,10 @@ final public class Server extends AOServObjectIntegerKey<Server> implements Bean
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Server getBean() {
-        return new com.aoindustries.aoserv.client.beans.Server(key, getBean(farm), description, operatingSystemVersion, getBean(accounting), name, monitoringEnabled);
+    public com.aoindustries.aoserv.client.dto.Server getDto() {
+        return new com.aoindustries.aoserv.client.dto.Server(key, getDto(farm), description, operatingSystemVersion, getDto(accounting), name, monitoringEnabled);
     }
     // </editor-fold>
 

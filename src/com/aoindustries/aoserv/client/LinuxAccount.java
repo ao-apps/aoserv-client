@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> implements BeanFactory<com.aoindustries.aoserv.client.beans.LinuxAccount> /* PasswordProtected, Removable, Disablable*/ {
+final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount> /* PasswordProtected, Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -204,20 +204,20 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.LinuxAccount getBean() {
-        return new com.aoindustries.aoserv.client.beans.LinuxAccount(
+    public com.aoindustries.aoserv.client.dto.LinuxAccount getDto() {
+        return new com.aoindustries.aoserv.client.dto.LinuxAccount(
             key,
             linuxAccountType,
-            getBean(username),
-            getBean(uid),
-            getBean(home),
-            getBean(name),
-            getBean(officeLocation),
-            getBean(officePhone),
-            getBean(homePhone),
-            getBean(shell),
+            getDto(username),
+            getDto(uid),
+            getDto(home),
+            getDto(name),
+            getDto(officeLocation),
+            getDto(officePhone),
+            getDto(homePhone),
+            getDto(shell),
             predisablePassword
         );
     }

@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ProcessorType extends AOServObjectStringKey<ProcessorType> implements BeanFactory<com.aoindustries.aoserv.client.beans.ProcessorType> {
+final public class ProcessorType extends AOServObjectStringKey<ProcessorType> implements DtoFactory<com.aoindustries.aoserv.client.dto.ProcessorType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -48,10 +48,10 @@ final public class ProcessorType extends AOServObjectStringKey<ProcessorType> im
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.ProcessorType getBean() {
-        return new com.aoindustries.aoserv.client.beans.ProcessorType(getKey(), sortOrder);
+    public com.aoindustries.aoserv.client.dto.ProcessorType getDto() {
+        return new com.aoindustries.aoserv.client.dto.ProcessorType(getKey(), sortOrder);
     }
     // </editor-fold>
 

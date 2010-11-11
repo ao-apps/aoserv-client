@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements BeanFactory<com.aoindustries.aoserv.client.beans.DnsZone> /*, TODO: Removable, Dumpable */ {
+final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements DtoFactory<com.aoindustries.aoserv.client.dto.DnsZone> /*, TODO: Removable, Dumpable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -119,10 +119,10 @@ final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Be
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.DnsZone getBean() {
-        return new com.aoindustries.aoserv.client.beans.DnsZone(key, getBean(zone), file, getBean(hostmaster), serial, ttl);
+    public com.aoindustries.aoserv.client.dto.DnsZone getDto() {
+        return new com.aoindustries.aoserv.client.dto.DnsZone(key, getDto(zone), file, getDto(hostmaster), serial, ttl);
     }
     // </editor-fold>
 

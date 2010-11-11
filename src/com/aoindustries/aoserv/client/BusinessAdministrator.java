@@ -28,7 +28,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessAdministrator> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessAdministrator>, Principal /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
+final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessAdministrator> implements DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministrator>, Principal /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -252,10 +252,10 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.BusinessAdministrator getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessAdministrator(getBean(getKey()), getBean(password), fullName, title, birthday, isPreferred, isPrivate, getCreated(), workPhone, homePhone, cellPhone, fax, getBean(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
+    public com.aoindustries.aoserv.client.dto.BusinessAdministrator getDto() {
+        return new com.aoindustries.aoserv.client.dto.BusinessAdministrator(getDto(getKey()), getDto(password), fullName, title, birthday, isPreferred, isPrivate, getCreated(), workPhone, homePhone, cellPhone, fax, getDto(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
     // </editor-fold>
 

@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implements BeanFactory<com.aoindustries.aoserv.client.beans.NetDeviceID> {
+final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implements DtoFactory<com.aoindustries.aoserv.client.dto.NetDeviceID> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -56,10 +56,10 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.NetDeviceID getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetDeviceID(getKey(), isLoopback);
+    public com.aoindustries.aoserv.client.dto.NetDeviceID getDto() {
+        return new com.aoindustries.aoserv.client.dto.NetDeviceID(getKey(), isLoopback);
     }
     // </editor-fold>
 

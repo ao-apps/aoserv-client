@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Username extends AOServObjectUserIdKey<Username> implements BeanFactory<com.aoindustries.aoserv.client.beans.Username> /* TODO: implements PasswordProtected, Removable, Disablable*/ {
+final public class Username extends AOServObjectUserIdKey<Username> implements DtoFactory<com.aoindustries.aoserv.client.dto.Username> /* TODO: implements PasswordProtected, Removable, Disablable*/ {
 	
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -71,10 +71,10 @@ final public class Username extends AOServObjectUserIdKey<Username> implements B
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Username getBean() {
-        return new com.aoindustries.aoserv.client.beans.Username(getBean(getKey()), getBean(accounting), disableLog);
+    public com.aoindustries.aoserv.client.dto.Username getDto() {
+        return new com.aoindustries.aoserv.client.dto.Username(getDto(getKey()), getDto(accounting), disableLog);
     }
     // </editor-fold>
 

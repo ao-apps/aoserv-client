@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.AOServObjectUtils;
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * @author  AO Industries, Inc.
  */
-final public class DomainLabel implements Comparable<DomainLabel>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.DomainLabel>, Internable<DomainLabel> {
+final public class DomainLabel implements Comparable<DomainLabel>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.DomainLabel>, Internable<DomainLabel> {
 
     private static final long serialVersionUID = 1L;
 
@@ -151,7 +151,7 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.DomainLabel getBean() {
-        return new com.aoindustries.aoserv.client.beans.DomainLabel(label);
+    public com.aoindustries.aoserv.client.dto.DomainLabel getDto() {
+        return new com.aoindustries.aoserv.client.dto.DomainLabel(label);
     }
 }

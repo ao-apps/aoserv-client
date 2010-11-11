@@ -31,7 +31,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdSite> /*, Disablable, Removable */ {
+final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdSite> /*, Disablable, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -144,10 +144,10 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.HttpdSite getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdSite(key, getBean(siteName), listFirst, linuxAccountGroup, getBean(serverAdmin), isManualConfig, awstatsSkipFiles);
+    public com.aoindustries.aoserv.client.dto.HttpdSite getDto() {
+        return new com.aoindustries.aoserv.client.dto.HttpdSite(key, getDto(siteName), listFirst, linuxAccountGroup, getDto(serverAdmin), isManualConfig, awstatsSkipFiles);
     }
     // </editor-fold>
 

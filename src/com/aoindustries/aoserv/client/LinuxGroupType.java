@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> implements BeanFactory<com.aoindustries.aoserv.client.beans.LinuxGroupType> {
+final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -60,10 +60,10 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.LinuxGroupType getBean() {
-        return new com.aoindustries.aoserv.client.beans.LinuxGroupType (getKey());
+    public com.aoindustries.aoserv.client.dto.LinuxGroupType getDto() {
+        return new com.aoindustries.aoserv.client.dto.LinuxGroupType (getKey());
     }
     // </editor-fold>
 

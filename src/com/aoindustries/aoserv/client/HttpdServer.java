@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdServer> {
+final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -134,10 +134,10 @@ final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> imple
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.HttpdServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdServer(key, number, maxBinds, linuxAccountGroup, modPhpVersion, useSuexec, isShared, useModPerl, timeout);
+    public com.aoindustries.aoserv.client.dto.HttpdServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.HttpdServer(key, number, maxBinds, linuxAccountGroup, modPhpVersion, useSuexec, isShared, useModPerl, timeout);
     }
     // </editor-fold>
 

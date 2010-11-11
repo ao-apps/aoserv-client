@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverFileSchedule> implements BeanFactory<com.aoindustries.aoserv.client.beans.FailoverFileSchedule> {
+final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverFileSchedule> implements DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileSchedule> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -81,9 +81,9 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverF
     }
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
-    public com.aoindustries.aoserv.client.beans.FailoverFileSchedule getBean() {
-        return new com.aoindustries.aoserv.client.beans.FailoverFileSchedule(key, replication, hour, minute, enabled);
+    // <editor-fold defaultstate="collapsed" desc="DTO">
+    public com.aoindustries.aoserv.client.dto.FailoverFileSchedule getDto() {
+        return new com.aoindustries.aoserv.client.dto.FailoverFileSchedule(key, replication, hour, minute, enabled);
     }
     // </editor-fold>
 

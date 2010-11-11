@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetTcpRedirect extends AOServObjectIntegerKey<NetTcpRedirect> implements BeanFactory<com.aoindustries.aoserv.client.beans.NetTcpRedirect> {
+final public class NetTcpRedirect extends AOServObjectIntegerKey<NetTcpRedirect> implements DtoFactory<com.aoindustries.aoserv.client.dto.NetTcpRedirect> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -89,10 +89,10 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey<NetTcpRedirect>
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.NetTcpRedirect getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetTcpRedirect(key, cps, cpsOverloadSleepTime, getBean(destinationHost), getBean(destinationPort));
+    public com.aoindustries.aoserv.client.dto.NetTcpRedirect getDto() {
+        return new com.aoindustries.aoserv.client.dto.NetTcpRedirect(key, cps, cpsOverloadSleepTime, getDto(destinationHost), getDto(destinationPort));
     }
     // </editor-fold>
 

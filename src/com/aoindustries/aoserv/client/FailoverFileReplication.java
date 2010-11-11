@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileReplication extends AOServObjectIntegerKey<FailoverFileReplication> implements BeanFactory<com.aoindustries.aoserv.client.beans.FailoverFileReplication>, BitRateProvider {
+final public class FailoverFileReplication extends AOServObjectIntegerKey<FailoverFileReplication> implements DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileReplication>, BitRateProvider {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -164,10 +164,10 @@ final public class FailoverFileReplication extends AOServObjectIntegerKey<Failov
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.FailoverFileReplication getBean() {
-        return new com.aoindustries.aoserv.client.beans.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, getBean(connectAddress), getBean(connectFrom), enabled, getBean(quotaGid));
+    public com.aoindustries.aoserv.client.dto.FailoverFileReplication getDto() {
+        return new com.aoindustries.aoserv.client.dto.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, getDto(connectAddress), getDto(connectFrom), enabled, getDto(quotaGid));
     }
     // </editor-fold>
 

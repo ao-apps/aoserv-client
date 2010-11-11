@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardProcessor> implements BeanFactory<com.aoindustries.aoserv.client.beans.CreditCardProcessor> {
+final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardProcessor> implements DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardProcessor> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -161,10 +161,10 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
      */
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.CreditCardProcessor getBean() {
-        return new com.aoindustries.aoserv.client.beans.CreditCardProcessor(getKey(), getBean(accounting), className, param1, param2, param3, param4, enabled, weight, description, encryptionFrom, encryptionRecipient);
+    public com.aoindustries.aoserv.client.dto.CreditCardProcessor getDto() {
+        return new com.aoindustries.aoserv.client.dto.CreditCardProcessor(getKey(), getDto(accounting), className, param1, param2, param3, param4, enabled, weight, description, encryptionFrom, encryptionRecipient);
     }
     // </editor-fold>
 

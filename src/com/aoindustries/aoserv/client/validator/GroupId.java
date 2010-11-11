@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupId implements Comparable<GroupId>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.GroupId>, Internable<GroupId> {
+final public class GroupId implements Comparable<GroupId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.GroupId>, Internable<GroupId> {
 
     private static final long serialVersionUID = 1L;
 
@@ -165,7 +165,7 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.GroupId getBean() {
-        return new com.aoindustries.aoserv.client.beans.GroupId(id);
+    public com.aoindustries.aoserv.client.dto.GroupId getDto() {
+        return new com.aoindustries.aoserv.client.dto.GroupId(id);
     }
 }

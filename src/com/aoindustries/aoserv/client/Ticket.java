@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Ticket extends AOServObjectIntegerKey<Ticket> implements BeanFactory<com.aoindustries.aoserv.client.beans.Ticket> {
+final public class Ticket extends AOServObjectIntegerKey<Ticket> implements DtoFactory<com.aoindustries.aoserv.client.dto.Ticket> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -262,19 +262,19 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Bean
     }*/
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Ticket getBean() {
-        return new com.aoindustries.aoserv.client.beans.Ticket(
+    public com.aoindustries.aoserv.client.dto.Ticket getDto() {
+        return new com.aoindustries.aoserv.client.dto.Ticket(
             key,
-            getBean(brand),
-            getBean(reseller),
-            getBean(accounting),
+            getDto(brand),
+            getDto(reseller),
+            getDto(accounting),
             language,
-            getBean(createdBy),
+            getDto(createdBy),
             category,
             ticketType,
-            getBean(fromAddress),
+            getDto(fromAddress),
             summary,
             getOpenDate(),
             clientPriority,

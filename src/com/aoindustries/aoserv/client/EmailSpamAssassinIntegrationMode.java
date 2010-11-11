@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKey<EmailSpamAssassinIntegrationMode> implements BeanFactory<com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode> {
+final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKey<EmailSpamAssassinIntegrationMode> implements DtoFactory<com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -59,10 +59,10 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode getBean() {
-        return new com.aoindustries.aoserv.client.beans.EmailSpamAssassinIntegrationMode(getKey(), sortOrder);
+    public com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode getDto() {
+        return new com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode(getKey(), sortOrder);
     }
     // </editor-fold>
 

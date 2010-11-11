@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements BeanFactory<com.aoindustries.aoserv.client.beans.Brand> {
+final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements DtoFactory<com.aoindustries.aoserv.client.dto.Brand> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -448,20 +448,20 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Brand getBean() {
-        return new com.aoindustries.aoserv.client.beans.Brand(
-            getBean(getKey()),
-            getBean(nameserver1),
-            getBean(nameserver2),
-            getBean(nameserver3),
-            getBean(nameserver4),
+    public com.aoindustries.aoserv.client.dto.Brand getDto() {
+        return new com.aoindustries.aoserv.client.dto.Brand(
+            getDto(getKey()),
+            getDto(nameserver1),
+            getDto(nameserver2),
+            getDto(nameserver3),
+            getDto(nameserver4),
             smtpEmailInbox,
-            getBean(smtpHost),
+            getDto(smtpHost),
             smtpPassword,
             imapEmailInbox,
-            getBean(imapHost),
+            getDto(imapHost),
             imapPassword,
             supportEmailAddress,
             supportEmailDisplay,
@@ -487,7 +487,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
             aowebStrutsGoogleVerifyContent,
             aowebStrutsNoindex,
             aowebStrutsGoogleAnalyticsNewTrackingCode,
-            getBean(aowebStrutsSignupAdminAddress),
+            getDto(aowebStrutsSignupAdminAddress),
             aowebStrutsVncBind,
             aowebStrutsKeystoreType,
             aowebStrutsKeystorePassword

@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.AOServObjectUtils;
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class UnixPath implements Comparable<UnixPath>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.UnixPath>, Internable<UnixPath> {
+final public class UnixPath implements Comparable<UnixPath>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.UnixPath>, Internable<UnixPath> {
 
     private static final long serialVersionUID = 1L;
 
@@ -149,7 +149,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.UnixPath getBean() {
-        return new com.aoindustries.aoserv.client.beans.UnixPath(path);
+    public com.aoindustries.aoserv.client.dto.UnixPath getDto() {
+        return new com.aoindustries.aoserv.client.dto.UnixPath(path);
     }
 }

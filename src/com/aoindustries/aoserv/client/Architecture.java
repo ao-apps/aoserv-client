@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Architecture extends AOServObjectStringKey<Architecture> implements BeanFactory<com.aoindustries.aoserv.client.beans.Architecture> {
+final public class Architecture extends AOServObjectStringKey<Architecture> implements DtoFactory<com.aoindustries.aoserv.client.dto.Architecture> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -61,10 +61,10 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Architecture getBean() {
-        return new com.aoindustries.aoserv.client.beans.Architecture(getKey(), bits);
+    public com.aoindustries.aoserv.client.dto.Architecture getDto() {
+        return new com.aoindustries.aoserv.client.dto.Architecture(getKey(), bits);
     }
     // </editor-fold>
 

@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> implements BeanFactory<com.aoindustries.aoserv.client.beans.Reseller> {
+final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> implements DtoFactory<com.aoindustries.aoserv.client.dto.Reseller> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -62,10 +62,10 @@ final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> impl
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Reseller getBean() {
-        return new com.aoindustries.aoserv.client.beans.Reseller(getBean(getKey()), ticketAutoEscalate);
+    public com.aoindustries.aoserv.client.dto.Reseller getDto() {
+        return new com.aoindustries.aoserv.client.dto.Reseller(getDto(getKey()), ticketAutoEscalate);
     }
     // </editor-fold>
 

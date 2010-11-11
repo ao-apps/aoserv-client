@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.AOServObjectUtils;
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * @author  AO Industries, Inc.
  */
-final public class Email implements Comparable<Email>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.Email>, Internable<Email> {
+final public class Email implements Comparable<Email>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.Email>, Internable<Email> {
 
     private static final long serialVersionUID = 1L;
 
@@ -242,7 +242,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.Email getBean() {
-        return new com.aoindustries.aoserv.client.beans.Email(localPart, domain.getBean());
+    public com.aoindustries.aoserv.client.dto.Email getDto() {
+        return new com.aoindustries.aoserv.client.dto.Email(localPart, domain.getDto());
     }
 }

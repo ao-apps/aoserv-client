@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanFactory<com.aoindustries.aoserv.client.beans.Shell> {
+final public class Shell extends AOServObjectUnixPathKey<Shell> implements DtoFactory<com.aoindustries.aoserv.client.dto.Shell> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -68,9 +68,9 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements BeanF
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
-    public com.aoindustries.aoserv.client.beans.Shell getBean() {
-        return new com.aoindustries.aoserv.client.beans.Shell(getBean(getKey()));
+    // <editor-fold defaultstate="collapsed" desc="DTO">
+    public com.aoindustries.aoserv.client.dto.Shell getDto() {
+        return new com.aoindustries.aoserv.client.dto.Shell(getDto(getKey()));
     }
     // </editor-fold>
 

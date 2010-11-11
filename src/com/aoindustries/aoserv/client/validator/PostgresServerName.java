@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresServerName implements Comparable<PostgresServerName>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.PostgresServerName>, Internable<PostgresServerName> {
+final public class PostgresServerName implements Comparable<PostgresServerName>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServerName>, Internable<PostgresServerName> {
 
     private static final long serialVersionUID = 1L;
 
@@ -153,7 +153,7 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.PostgresServerName getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresServerName(name);
+    public com.aoindustries.aoserv.client.dto.PostgresServerName getDto() {
+        return new com.aoindustries.aoserv.client.dto.PostgresServerName(name);
     }
 }

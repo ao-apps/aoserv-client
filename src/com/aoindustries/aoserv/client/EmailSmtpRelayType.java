@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRelayType> implements BeanFactory<com.aoindustries.aoserv.client.beans.EmailSmtpRelayType> {
+final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRelayType> implements DtoFactory<com.aoindustries.aoserv.client.dto.EmailSmtpRelayType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -65,10 +65,10 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
 
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.EmailSmtpRelayType getBean() {
-        return new com.aoindustries.aoserv.client.beans.EmailSmtpRelayType(getKey(), sendmailConfig);
+    public com.aoindustries.aoserv.client.dto.EmailSmtpRelayType getDto() {
+        return new com.aoindustries.aoserv.client.dto.EmailSmtpRelayType(getKey(), sendmailConfig);
     }
     // </editor-fold>
 

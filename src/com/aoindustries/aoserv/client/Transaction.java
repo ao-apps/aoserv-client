@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Transaction extends AOServObjectIntegerKey<Transaction> implements BeanFactory<com.aoindustries.aoserv.client.beans.Transaction> {
+final public class Transaction extends AOServObjectIntegerKey<Transaction> implements DtoFactory<com.aoindustries.aoserv.client.dto.Transaction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -212,18 +212,18 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Transaction getBean() {
-        return new com.aoindustries.aoserv.client.beans.Transaction(
+    public com.aoindustries.aoserv.client.dto.Transaction getDto() {
+        return new com.aoindustries.aoserv.client.dto.Transaction(
             key,
             getTime(),
-            getBean(accounting),
-            getBean(sourceAccounting),
-            getBean(username),
+            getDto(accounting),
+            getDto(sourceAccounting),
+            getDto(username),
             type,
             quantity,
-            getBean(rate),
+            getDto(rate),
             paymentType,
             paymentInfo,
             processor,

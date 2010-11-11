@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implements BeanFactory<com.aoindustries.aoserv.client.beans.MasterUser> {
+final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.MasterUser> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -94,10 +94,10 @@ final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implemen
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.MasterUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.MasterUser(getBean(getKey()), isActive, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, isDnsAdmin);
+    public com.aoindustries.aoserv.client.dto.MasterUser getDto() {
+        return new com.aoindustries.aoserv.client.dto.MasterUser(getDto(getKey()), isActive, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, isDnsAdmin);
     }
     // </editor-fold>
 

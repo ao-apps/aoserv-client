@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLTableName implements Comparable<MySQLTableName>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.MySQLTableName> {
+final public class MySQLTableName implements Comparable<MySQLTableName>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName> {
 
     private static final long serialVersionUID = 1L;
 
@@ -123,7 +123,7 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.MySQLTableName getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLTableName(name);
+    public com.aoindustries.aoserv.client.dto.MySQLTableName getDto() {
+        return new com.aoindustries.aoserv.client.dto.MySQLTableName(name);
     }
 }

@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implements BeanFactory<com.aoindustries.aoserv.client.beans.MySQLUser> /* PasswordProtected, Removable, Disablable*/ {
+final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUser> /* PasswordProtected, Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -407,10 +407,10 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.MySQLUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLUser(key, getBean(username), mysqlServer, getBean(host), selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, reloadPriv, shutdownPriv, processPriv, filePriv, grantPriv, referencesPriv, indexPriv, alterPriv, showDbPriv, superPriv, createTmpTablePriv, lockTablesPriv, executePriv, replSlavePriv, replClientPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, createUserPriv, eventPriv, triggerPriv, predisablePassword, maxQuestions, maxUpdates, maxConnections, maxUserConnections);
+    public com.aoindustries.aoserv.client.dto.MySQLUser getDto() {
+        return new com.aoindustries.aoserv.client.dto.MySQLUser(key, getDto(username), mysqlServer, getDto(host), selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, reloadPriv, shutdownPriv, processPriv, filePriv, grantPriv, referencesPriv, indexPriv, alterPriv, showDbPriv, superPriv, createTmpTablePriv, lockTablesPriv, executePriv, replSlavePriv, replClientPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, createUserPriv, eventPriv, triggerPriv, predisablePassword, maxQuestions, maxUpdates, maxConnections, maxUserConnections);
     }
     // </editor-fold>
 

@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatabase> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresDatabase> /* TODO: , Dumpable, Removable*/, JdbcProvider {
+final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatabase> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabase> /* TODO: , Dumpable, Removable*/, JdbcProvider {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -154,10 +154,10 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PostgresDatabase getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresDatabase(key, getBean(name), postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
+    public com.aoindustries.aoserv.client.dto.PostgresDatabase getDto() {
+        return new com.aoindustries.aoserv.client.dto.PostgresDatabase(key, getDto(name), postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
     }
     // </editor-fold>
 

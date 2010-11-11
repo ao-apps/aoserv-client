@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcatVersion> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdTomcatVersion> {
+final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcatVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdTomcatVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -84,10 +84,10 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey<HttpdTomcat
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.HttpdTomcatVersion getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdTomcatVersion(key, getBean(installDir), requiresModJk);
+    public com.aoindustries.aoserv.client.dto.HttpdTomcatVersion getDto() {
+        return new com.aoindustries.aoserv.client.dto.HttpdTomcatVersion(key, getDto(installDir), requiresModJk);
     }
     // </editor-fold>
 

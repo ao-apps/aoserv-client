@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implements BeanFactory<com.aoindustries.aoserv.client.beans.NetDevice> {
+final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implements DtoFactory<com.aoindustries.aoserv.client.dto.NetDevice> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -163,18 +163,18 @@ final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implement
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.NetDevice getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetDevice(
+    public com.aoindustries.aoserv.client.dto.NetDevice getDto() {
+        return new com.aoindustries.aoserv.client.dto.NetDevice(
             key,
             server,
             deviceId,
             description,
-            getBean(gateway),
-            getBean(network),
-            getBean(broadcast),
-            getBean(macAddress),
+            getDto(gateway),
+            getDto(network),
+            getDto(broadcast),
+            getDto(macAddress),
             maxBitRate,
             monitoringBitRateLow,
             monitoringBitRateMedium,

@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServer extends AOServObjectIntegerKey<AOServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServer> {
+final public class AOServer extends AOServObjectIntegerKey<AOServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -258,10 +258,10 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.AOServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServer(key, getBean(hostname), daemonBind, getBean(daemonKey), poolSize, distroHour, getLastDistroTime(), failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getBean(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
+    public com.aoindustries.aoserv.client.dto.AOServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.AOServer(key, getDto(hostname), daemonBind, getDto(daemonKey), poolSize, distroHour, getLastDistroTime(), failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getDto(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 
@@ -519,7 +519,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Daemon Access">
-    public static class DaemonAccess implements Serializable, BeanFactory<com.aoindustries.aoserv.client.beans.DaemonAccess> {
+    public static class DaemonAccess implements Serializable, DtoFactory<com.aoindustries.aoserv.client.dto.DaemonAccess> {
 
         private static final long serialVersionUID = 1L;
 
@@ -552,8 +552,8 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
         }
 
         @Override
-        public com.aoindustries.aoserv.client.beans.DaemonAccess getBean() {
-            return new com.aoindustries.aoserv.client.beans.DaemonAccess(protocol, AOServObject.getBean(host), AOServObject.getBean(port), key);
+        public com.aoindustries.aoserv.client.dto.DaemonAccess getDto() {
+            return new com.aoindustries.aoserv.client.dto.DaemonAccess(protocol, AOServObject.getDto(host), AOServObject.getDto(port), key);
         }
     }
     // </editor-fold>

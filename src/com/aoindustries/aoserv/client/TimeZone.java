@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class TimeZone extends AOServObjectStringKey<TimeZone> implements BeanFactory<com.aoindustries.aoserv.client.beans.TimeZone> {
+final public class TimeZone extends AOServObjectStringKey<TimeZone> implements DtoFactory<com.aoindustries.aoserv.client.dto.TimeZone> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -35,10 +35,10 @@ final public class TimeZone extends AOServObjectStringKey<TimeZone> implements B
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.TimeZone getBean() {
-        return new com.aoindustries.aoserv.client.beans.TimeZone(getKey());
+    public com.aoindustries.aoserv.client.dto.TimeZone getDto() {
+        return new com.aoindustries.aoserv.client.dto.TimeZone(getKey());
     }
     // </editor-fold>
 

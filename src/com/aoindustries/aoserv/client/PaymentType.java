@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PaymentType extends AOServObjectStringKey<PaymentType> implements BeanFactory<com.aoindustries.aoserv.client.beans.PaymentType> {
+final public class PaymentType extends AOServObjectStringKey<PaymentType> implements DtoFactory<com.aoindustries.aoserv.client.dto.PaymentType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -65,10 +65,10 @@ final public class PaymentType extends AOServObjectStringKey<PaymentType> implem
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PaymentType getBean() {
-        return new com.aoindustries.aoserv.client.beans.PaymentType(getKey(), isActive, allowWeb);
+    public com.aoindustries.aoserv.client.dto.PaymentType getDto() {
+        return new com.aoindustries.aoserv.client.dto.PaymentType(getKey(), isActive, allowWeb);
     }
     // </editor-fold>
 

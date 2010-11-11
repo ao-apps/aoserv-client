@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignment> implements BeanFactory<com.aoindustries.aoserv.client.beans.TicketAssignment> {
+final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignment> implements DtoFactory<com.aoindustries.aoserv.client.dto.TicketAssignment> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -86,10 +86,10 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.TicketAssignment getBean() {
-        return new com.aoindustries.aoserv.client.beans.TicketAssignment(key, ticket, getBean(reseller), getBean(administrator));
+    public com.aoindustries.aoserv.client.dto.TicketAssignment getDto() {
+        return new com.aoindustries.aoserv.client.dto.TicketAssignment(key, ticket, getDto(reseller), getDto(administrator));
     }
     // </editor-fold>
 

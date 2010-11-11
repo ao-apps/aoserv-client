@@ -21,7 +21,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCardTransaction> implements BeanFactory<com.aoindustries.aoserv.client.beans.CreditCardTransaction> {
+final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCardTransaction> implements DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardTransaction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -829,22 +829,22 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.CreditCardTransaction getBean() {
-        return new com.aoindustries.aoserv.client.beans.CreditCardTransaction(
+    public com.aoindustries.aoserv.client.dto.CreditCardTransaction getDto() {
+        return new com.aoindustries.aoserv.client.dto.CreditCardTransaction(
             key,
             processorId,
-            getBean(accounting),
+            getDto(accounting),
             groupName,
             testMode,
             duplicateWindow,
             orderNumber,
-            getBean(amount),
-            getBean(taxAmount),
+            getDto(amount),
+            getDto(taxAmount),
             taxExempt,
-            getBean(shippingAmount),
-            getBean(dutyAmount),
+            getDto(shippingAmount),
+            getDto(dutyAmount),
             shippingFirstName,
             shippingLastName,
             shippingCompanyName,
@@ -855,20 +855,20 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
             shippingPostalCode,
             shippingCountryCode,
             emailCustomer,
-            getBean(merchantEmail),
+            getDto(merchantEmail),
             invoiceNumber,
             purchaseOrderNumber,
             description,
-            getBean(creditCardCreatedBy),
+            getDto(creditCardCreatedBy),
             creditCardPrincipalName,
-            getBean(creditCardAccounting),
+            getDto(creditCardAccounting),
             creditCardGroupName,
             creditCardProviderUniqueId,
             creditCardMaskedCardNumber,
             creditCardFirstName,
             creditCardLastName,
             creditCardCompanyName,
-            getBean(creditCardEmail),
+            getDto(creditCardEmail),
             creditCardPhone,
             creditCardFax,
             creditCardCustomerTaxId,
@@ -880,7 +880,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
             creditCardCountryCode,
             creditCardComments,
             getAuthorizationTime(),
-            getBean(authorizationUsername),
+            getDto(authorizationUsername),
             authorizationPrincipalName,
             authorizationCommunicationResult,
             authorizationProviderErrorCode,
@@ -899,7 +899,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
             authorizationAvsResult,
             authorizationApprovalCode,
             getCaptureTime(),
-            getBean(captureUsername),
+            getDto(captureUsername),
             capturePrincipalName,
             captureCommunicationResult,
             captureProviderErrorCode,
@@ -907,7 +907,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
             captureProviderErrorMessage,
             captureProviderUniqueId,
             getVoidTime(),
-            getBean(voidUsername),
+            getDto(voidUsername),
             voidPrincipalName,
             voidCommunicationResult,
             voidProviderErrorCode,

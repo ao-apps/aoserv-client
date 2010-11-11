@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServPermission extends AOServObjectStringKey<AOServPermission> implements BeanFactory<com.aoindustries.aoserv.client.beans.AOServPermission>, java.security.acl.Permission {
+final public class AOServPermission extends AOServObjectStringKey<AOServPermission> implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServPermission>, java.security.acl.Permission {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -108,10 +108,10 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.AOServPermission getBean() {
-        return new com.aoindustries.aoserv.client.beans.AOServPermission(getKey(), sortOrder);
+    public com.aoindustries.aoserv.client.dto.AOServPermission getDto() {
+        return new com.aoindustries.aoserv.client.dto.AOServPermission(getKey(), sortOrder);
     }
     // </editor-fold>
 

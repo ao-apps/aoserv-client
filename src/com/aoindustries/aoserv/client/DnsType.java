@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsType extends AOServObjectStringKey<DnsType> implements BeanFactory<com.aoindustries.aoserv.client.beans.DnsType> {
+final public class DnsType extends AOServObjectStringKey<DnsType> implements DtoFactory<com.aoindustries.aoserv.client.dto.DnsType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -51,10 +51,10 @@ final public class DnsType extends AOServObjectStringKey<DnsType> implements Bea
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.DnsType getBean() {
-        return new com.aoindustries.aoserv.client.beans.DnsType(getKey());
+    public com.aoindustries.aoserv.client.dto.DnsType getDto() {
+        return new com.aoindustries.aoserv.client.dto.DnsType(getKey());
     }
     // </editor-fold>
 

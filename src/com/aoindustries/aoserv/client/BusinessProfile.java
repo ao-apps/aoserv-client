@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfile> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessProfile> {
+final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfile> implements DtoFactory<com.aoindustries.aoserv.client.dto.BusinessProfile> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -224,10 +224,10 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.BusinessProfile getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessProfile(key, getBean(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, getCreated(), billingContact, billingEmail, technicalContact, technicalEmail);
+    public com.aoindustries.aoserv.client.dto.BusinessProfile getDto() {
+        return new com.aoindustries.aoserv.client.dto.BusinessProfile(key, getDto(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, getCreated(), billingContact, billingEmail, technicalContact, technicalEmail);
     }
     // </editor-fold>
 

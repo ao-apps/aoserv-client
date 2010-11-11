@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> implements BeanFactory<com.aoindustries.aoserv.client.beans.FtpGuestUser> /*, TODO: Removable */ {
+final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.FtpGuestUser> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -46,10 +46,10 @@ final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> imp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.FtpGuestUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.FtpGuestUser(key);
+    public com.aoindustries.aoserv.client.dto.FtpGuestUser getDto() {
+        return new com.aoindustries.aoserv.client.dto.FtpGuestUser(key);
     }
     // </editor-fold>
 

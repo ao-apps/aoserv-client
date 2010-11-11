@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ResourceType extends AOServObjectStringKey<ResourceType> implements BeanFactory<com.aoindustries.aoserv.client.beans.ResourceType> {
+final public class ResourceType extends AOServObjectStringKey<ResourceType> implements DtoFactory<com.aoindustries.aoserv.client.dto.ResourceType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -70,10 +70,10 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.ResourceType getBean() {
-        return new com.aoindustries.aoserv.client.beans.ResourceType(getKey());
+    public com.aoindustries.aoserv.client.dto.ResourceType getDto() {
+        return new com.aoindustries.aoserv.client.dto.ResourceType(getKey());
     }
     // </editor-fold>
 

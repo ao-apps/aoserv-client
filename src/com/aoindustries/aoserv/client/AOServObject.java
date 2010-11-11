@@ -51,17 +51,17 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
     }
 
     /**
-     * null-safe getBean.
+     * null-safe getDto.
      */
-    protected static <B> B getBean(BeanFactory<B> beanFactory) {
-        return beanFactory==null ? null : beanFactory.getBean();
+    protected static <B> B getDto(DtoFactory<B> dtoFactory) {
+        return dtoFactory==null ? null : dtoFactory.getDto();
     }
 
     /**
-     * null-safe getBean for Money.
+     * null-safe getDto for Money.
      */
-    protected static com.aoindustries.aoserv.client.beans.Money getBean(Money money) {
-        return money==null ? null : new com.aoindustries.aoserv.client.beans.Money(money.getCurrency().getCurrencyCode(), money.getValue());
+    protected static com.aoindustries.aoserv.client.dto.Money getDto(Money money) {
+        return money==null ? null : new com.aoindustries.aoserv.client.dto.Money(money.getCurrency().getCurrencyCode(), money.getValue());
     }
 
     private volatile transient AOServService<?,?,K,T> service;

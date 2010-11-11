@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory> implements BeanFactory<com.aoindustries.aoserv.client.beans.TicketCategory> {
+final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory> implements DtoFactory<com.aoindustries.aoserv.client.dto.TicketCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -92,10 +92,10 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.TicketCategory getBean() {
-        return new com.aoindustries.aoserv.client.beans.TicketCategory(key, parent, name);
+    public com.aoindustries.aoserv.client.dto.TicketCategory getDto() {
+        return new com.aoindustries.aoserv.client.dto.TicketCategory(key, parent, name);
     }
     // </editor-fold>
 

@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionType extends AOServObjectStringKey<TransactionType> implements BeanFactory<com.aoindustries.aoserv.client.beans.TransactionType> {
+final public class TransactionType extends AOServObjectStringKey<TransactionType> implements DtoFactory<com.aoindustries.aoserv.client.dto.TransactionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -58,10 +58,10 @@ final public class TransactionType extends AOServObjectStringKey<TransactionType
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.TransactionType getBean() {
-        return new com.aoindustries.aoserv.client.beans.TransactionType(getKey(), isCredit);
+    public com.aoindustries.aoserv.client.dto.TransactionType getDto() {
+        return new com.aoindustries.aoserv.client.dto.TransactionType(getKey(), isCredit);
     }
     // </editor-fold>
 

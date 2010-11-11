@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetBind extends AOServObjectIntegerKey<NetBind> implements BeanFactory<com.aoindustries.aoserv.client.beans.NetBind> /*implements Removable*/ {
+final public class NetBind extends AOServObjectIntegerKey<NetBind> implements DtoFactory<com.aoindustries.aoserv.client.dto.NetBind> /*implements Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -161,10 +161,10 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Be
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.NetBind getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetBind(key, businessServer, ipAddress, getBean(port), netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
+    public com.aoindustries.aoserv.client.dto.NetBind getDto() {
+        return new com.aoindustries.aoserv.client.dto.NetBind(key, businessServer, ipAddress, getDto(port), netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
     }
     // </editor-fold>
 

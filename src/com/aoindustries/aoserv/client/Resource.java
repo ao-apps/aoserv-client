@@ -25,7 +25,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Resource extends AOServObjectIntegerKey<Resource> implements BeanFactory<com.aoindustries.aoserv.client.beans.Resource> {
+final public class Resource extends AOServObjectIntegerKey<Resource> implements DtoFactory<com.aoindustries.aoserv.client.dto.Resource> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -143,10 +143,10 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.Resource getBean() {
-        return new com.aoindustries.aoserv.client.beans.Resource(key, resourceType, getBean(accounting), getCreated(), getBean(createdBy), disableLog, getLastEnabled());
+    public com.aoindustries.aoserv.client.dto.Resource getDto() {
+        return new com.aoindustries.aoserv.client.dto.Resource(key, resourceType, getDto(accounting), getCreated(), getDto(createdBy), disableLog, getLastEnabled());
     }
     // </editor-fold>
 

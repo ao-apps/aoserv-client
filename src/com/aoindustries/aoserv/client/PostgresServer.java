@@ -29,7 +29,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.PostgresServer> {
+final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -282,10 +282,10 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PostgresServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.PostgresServer(key, getBean(name), version, maxConnections, netBind, sortMem, sharedBuffers, fsync);
+    public com.aoindustries.aoserv.client.dto.PostgresServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.PostgresServer(key, getDto(name), version, maxConnections, netBind, sortMem, sharedBuffers, fsync);
     }
     // </editor-fold>
 

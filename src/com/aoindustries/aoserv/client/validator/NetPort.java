@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.AOServObjectUtils;
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetPort implements Comparable<NetPort>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.NetPort> {
+final public class NetPort implements Comparable<NetPort>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.NetPort> {
 
     private static final long serialVersionUID = 1L;
 
@@ -115,7 +115,7 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.NetPort getBean() {
-        return new com.aoindustries.aoserv.client.beans.NetPort(port);
+    public com.aoindustries.aoserv.client.dto.NetPort getDto() {
+        return new com.aoindustries.aoserv.client.dto.NetPort(port);
     }
 }

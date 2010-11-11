@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupName extends AOServObjectGroupIdKey<GroupName> implements BeanFactory<com.aoindustries.aoserv.client.beans.GroupName> {
+final public class GroupName extends AOServObjectGroupIdKey<GroupName> implements DtoFactory<com.aoindustries.aoserv.client.dto.GroupName> {
 	
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -70,10 +70,10 @@ final public class GroupName extends AOServObjectGroupIdKey<GroupName> implement
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.GroupName getBean() {
-        return new com.aoindustries.aoserv.client.beans.GroupName(getBean(getKey()), getBean(accounting), disableLog);
+    public com.aoindustries.aoserv.client.dto.GroupName getDto() {
+        return new com.aoindustries.aoserv.client.dto.GroupName(getDto(getKey()), getDto(accounting), disableLog);
     }
     // </editor-fold>
 

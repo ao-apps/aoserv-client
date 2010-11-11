@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.AOServObjectUtils;
-import com.aoindustries.aoserv.client.BeanFactory;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInputValidation, BeanFactory<com.aoindustries.aoserv.client.beans.Gecos>, Internable<Gecos> {
+final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.Gecos>, Internable<Gecos> {
 
     private static final long serialVersionUID = 1L;
 
@@ -166,7 +166,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
     }
 
     @Override
-    public com.aoindustries.aoserv.client.beans.Gecos getBean() {
-        return new com.aoindustries.aoserv.client.beans.Gecos(value);
+    public com.aoindustries.aoserv.client.dto.Gecos getDto() {
+        return new com.aoindustries.aoserv.client.dto.Gecos(value);
     }
 }

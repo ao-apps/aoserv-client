@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSetting> implements BeanFactory<com.aoindustries.aoserv.client.beans.FileBackupSetting> /*, Removable */ {
+final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSetting> implements DtoFactory<com.aoindustries.aoserv.client.dto.FileBackupSetting> /*, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -80,9 +80,9 @@ final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSe
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
-    public com.aoindustries.aoserv.client.beans.FileBackupSetting getBean() {
-        return new com.aoindustries.aoserv.client.beans.FileBackupSetting(key, replication, path, backupEnabled);
+    // <editor-fold defaultstate="collapsed" desc="DTO">
+    public com.aoindustries.aoserv.client.dto.FileBackupSetting getDto() {
+        return new com.aoindustries.aoserv.client.dto.FileBackupSetting(key, replication, path, backupEnabled);
     }
     // </editor-fold>
 

@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefinition> implements BeanFactory<com.aoindustries.aoserv.client.beans.PackageDefinition> /*TODO:, Removable */ {
+final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefinition> implements DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinition> /*TODO:, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -138,17 +138,17 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PackageDefinition getBean() {
-        return new com.aoindustries.aoserv.client.beans.PackageDefinition(
+    public com.aoindustries.aoserv.client.dto.PackageDefinition getDto() {
+        return new com.aoindustries.aoserv.client.dto.PackageDefinition(
             key,
             category,
             name,
             version,
-            getBean(setupFee),
+            getDto(setupFee),
             setupFeeTransactionType,
-            getBean(monthlyRate),
+            getDto(monthlyRate),
             monthlyRateTransactionType,
             approved
         );

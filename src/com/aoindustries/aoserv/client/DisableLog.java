@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DisableLog extends AOServObjectIntegerKey<DisableLog> implements BeanFactory<com.aoindustries.aoserv.client.beans.DisableLog> {
+final public class DisableLog extends AOServObjectIntegerKey<DisableLog> implements DtoFactory<com.aoindustries.aoserv.client.dto.DisableLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -106,10 +106,10 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.DisableLog getBean() {
-        return new com.aoindustries.aoserv.client.beans.DisableLog(key, getTime(), getBean(accounting), getBean(disabledBy), disableReason);
+    public com.aoindustries.aoserv.client.dto.DisableLog getDto() {
+        return new com.aoindustries.aoserv.client.dto.DisableLog(key, getTime(), getDto(accounting), getDto(disabledBy), disableReason);
     }
     // </editor-fold>
 

@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterServer extends AOServObjectIntegerKey<MasterServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.MasterServer> {
+final public class MasterServer extends AOServObjectIntegerKey<MasterServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.MasterServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -83,10 +83,10 @@ final public class MasterServer extends AOServObjectIntegerKey<MasterServer> imp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.MasterServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.MasterServer(key, getBean(username), server);
+    public com.aoindustries.aoserv.client.dto.MasterServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.MasterServer(key, getDto(username), server);
     }
     // </editor-fold>
 

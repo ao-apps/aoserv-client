@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCard extends AOServObjectIntegerKey<CreditCard> implements BeanFactory<com.aoindustries.aoserv.client.beans.CreditCard> /*, TODO: Removable */ {
+final public class CreditCard extends AOServObjectIntegerKey<CreditCard> implements DtoFactory<com.aoindustries.aoserv.client.dto.CreditCard> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -344,20 +344,20 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
     }*/
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.CreditCard getBean() {
-        return new com.aoindustries.aoserv.client.beans.CreditCard(
+    public com.aoindustries.aoserv.client.dto.CreditCard getDto() {
+        return new com.aoindustries.aoserv.client.dto.CreditCard(
             key,
             processorId,
-            getBean(accounting),
+            getDto(accounting),
             groupName,
             cardInfo,
             providerUniqueId,
             firstName,
             lastName,
             companyName,
-            getBean(email),
+            getDto(email),
             phone,
             fax,
             customerTaxId,
@@ -368,7 +368,7 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
             postalCode,
             countryCode,
             getCreated(),
-            getBean(createdBy),
+            getDto(createdBy),
             principalName,
             useMonthly,
             active,

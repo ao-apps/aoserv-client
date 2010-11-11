@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.PrivateFtpServer> {
+final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.PrivateFtpServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -113,10 +113,10 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PrivateFtpServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.PrivateFtpServer(key, netBind, getBean(logfile), getBean(hostname), getBean(email), linuxAccountGroup, allowAnonymous);
+    public com.aoindustries.aoserv.client.dto.PrivateFtpServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.PrivateFtpServer(key, netBind, getDto(logfile), getDto(hostname), getDto(email), linuxAccountGroup, allowAnonymous);
     }
     // </editor-fold>
 

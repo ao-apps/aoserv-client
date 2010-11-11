@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinitionBusiness extends AOServObjectIntegerKey<PackageDefinitionBusiness> implements BeanFactory<com.aoindustries.aoserv.client.beans.PackageDefinitionBusiness> {
+final public class PackageDefinitionBusiness extends AOServObjectIntegerKey<PackageDefinitionBusiness> implements DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -103,13 +103,13 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey<Pack
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.PackageDefinitionBusiness getBean() {
-        return new com.aoindustries.aoserv.client.beans.PackageDefinitionBusiness(
+    public com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness getDto() {
+        return new com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness(
             key,
             packageDefinition,
-            getBean(accounting),
+            getDto(accounting),
             display,
             description,
             active

@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer> implements BeanFactory<com.aoindustries.aoserv.client.beans.BusinessServer> /*, Removable*/ {
+final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.BusinessServer> /*, Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -99,10 +99,10 @@ final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer>
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.BusinessServer getBean() {
-        return new com.aoindustries.aoserv.client.beans.BusinessServer(key, getBean(accounting), server, isDefault, canVncConsole);
+    public com.aoindustries.aoserv.client.dto.BusinessServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.BusinessServer(key, getDto(accounting), server, isDefault, canVncConsole);
     }
     // </editor-fold>
 

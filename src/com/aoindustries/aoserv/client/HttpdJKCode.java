@@ -16,7 +16,7 @@ import com.aoindustries.table.IndexType;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implements BeanFactory<com.aoindustries.aoserv.client.beans.HttpdJKCode> {
+final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKCode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -35,9 +35,9 @@ final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implem
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
-    public com.aoindustries.aoserv.client.beans.HttpdJKCode getBean() {
-        return new com.aoindustries.aoserv.client.beans.HttpdJKCode(getKey());
+    // <editor-fold defaultstate="collapsed" desc="DTO">
+    public com.aoindustries.aoserv.client.dto.HttpdJKCode getDto() {
+        return new com.aoindustries.aoserv.client.dto.HttpdJKCode(getKey());
     }
     // </editor-fold>
 }

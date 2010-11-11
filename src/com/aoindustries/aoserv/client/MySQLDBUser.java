@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> implements BeanFactory<com.aoindustries.aoserv.client.beans.MySQLDBUser> /*, Removable*/ {
+final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDBUser> /*, Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -221,10 +221,10 @@ final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> imple
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.MySQLDBUser getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLDBUser(key, mysqlDatabase, mysqlUser, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, grantPriv, referencesPriv, indexPriv, alterPriv, createTmpTablePriv, lockTablesPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, executePriv, eventPriv, triggerPriv);
+    public com.aoindustries.aoserv.client.dto.MySQLDBUser getDto() {
+        return new com.aoindustries.aoserv.client.dto.MySQLDBUser(key, mysqlDatabase, mysqlUser, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, grantPriv, referencesPriv, indexPriv, alterPriv, createTmpTablePriv, lockTablesPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, executePriv, eventPriv, triggerPriv);
     }
     // </editor-fold>
 

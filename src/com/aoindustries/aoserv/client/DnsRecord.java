@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implements BeanFactory<com.aoindustries.aoserv.client.beans.DnsRecord> /*, TODO: Removable */ {
+final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implements DtoFactory<com.aoindustries.aoserv.client.dto.DnsRecord> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -150,10 +150,10 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.DnsRecord getBean() {
-        return new com.aoindustries.aoserv.client.beans.DnsRecord(key, zone, domain, type, mxPriority, getBean(dataIpAddress), getBean(dataDomainName), dataText, dhcpAddress, ttl);
+    public com.aoindustries.aoserv.client.dto.DnsRecord getDto() {
+        return new com.aoindustries.aoserv.client.dto.DnsRecord(key, zone, domain, type, mxPriority, getDto(dataIpAddress), getDto(dataDomainName), dataText, dhcpAddress, ttl);
     }
     // </editor-fold>
 

@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> implements BeanFactory<com.aoindustries.aoserv.client.beans.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
+final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -118,10 +118,10 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="JavaBeans">
+    // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
-    public com.aoindustries.aoserv.client.beans.MySQLDatabase getBean() {
-        return new com.aoindustries.aoserv.client.beans.MySQLDatabase(key, getBean(name), mysqlServer);
+    public com.aoindustries.aoserv.client.dto.MySQLDatabase getDto() {
+        return new com.aoindustries.aoserv.client.dto.MySQLDatabase(key, getDto(name), mysqlServer);
     }
     // </editor-fold>
 
