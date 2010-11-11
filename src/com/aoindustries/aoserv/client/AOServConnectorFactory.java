@@ -5,8 +5,7 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.validator.DomainName;
-import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.security.LoginException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.command;
 
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.*;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 

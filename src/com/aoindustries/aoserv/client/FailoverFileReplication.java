@@ -5,8 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.InetAddress;
-import com.aoindustries.aoserv.client.validator.LinuxID;
+import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;

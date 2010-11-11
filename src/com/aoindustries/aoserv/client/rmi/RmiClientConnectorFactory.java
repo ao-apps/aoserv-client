@@ -1,18 +1,14 @@
-package com.aoindustries.aoserv.client.rmi;
-
 /*
  * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServConnectorFactory;
-import com.aoindustries.aoserv.client.AOServConnectorFactoryCache;
-import com.aoindustries.aoserv.client.validator.DomainName;
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.aoserv.client.wrapped.WrappedConnectorFactory;
-import com.aoindustries.rmi.RMIClientSocketFactorySSL;
-import com.aoindustries.rmi.RMIClientSocketFactoryTCP;
+package com.aoindustries.aoserv.client.rmi;
+
+import com.aoindustries.aoserv.client.*;
+import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.aoserv.client.wrapped.*;
+import com.aoindustries.rmi.*;
 import com.aoindustries.security.LoginException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

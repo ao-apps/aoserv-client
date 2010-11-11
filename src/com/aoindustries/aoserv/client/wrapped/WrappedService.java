@@ -1,16 +1,11 @@
-package com.aoindustries.aoserv.client.wrapped;
-
 /*
  * Copyright 2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServService;
-import com.aoindustries.aoserv.client.AOServServiceUtils;
-import com.aoindustries.aoserv.client.IndexedSet;
-import com.aoindustries.aoserv.client.MethodColumn;
-import com.aoindustries.aoserv.client.ServiceName;
+package com.aoindustries.aoserv.client.wrapped;
+
+import com.aoindustries.aoserv.client.*;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.table.Table;
 import java.rmi.RemoteException;
@@ -59,17 +54,21 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
         }
     }
 
+    @Override
     final public C getConnector() {
         return connector;
     }
 
+    @Override
     final public boolean isAoServObjectServiceSettable() throws RemoteException {
         return connector.isAoServObjectServiceSettable();
     }
 
+    @Override
     final public IndexedSet<V> getSet() throws RemoteException {
         return connector.call(
             new Callable<IndexedSet<V>>() {
+                @Override
                 public IndexedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().getSet(), WrappedService.this);
                 }
@@ -77,21 +76,26 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
         );
     }
 
+    @Override
     final public ServiceName getServiceName() {
         return serviceName;
     }
 
+    @Override
     final public Table<MethodColumn,V> getTable() {
         return table;
     }
 
+    @Override
     final public Map<K,V> getMap() {
         return map;
     }
 
+    @Override
     final public boolean isEmpty() throws RemoteException {
         return connector.call(
             new Callable<Boolean>() {
+                @Override
                 public Boolean call() throws RemoteException {
                     return getWrapped().isEmpty();
                 }
@@ -99,9 +103,11 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
         );
     }
 
+    @Override
     final public int getSize() throws RemoteException {
         return connector.call(
             new Callable<Integer>() {
+                @Override
                 public Integer call() throws RemoteException {
                     return getWrapped().getSize();
                 }
@@ -109,9 +115,11 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
         );
     }
 
+    @Override
     final public V get(final K key) throws RemoteException, NoSuchElementException {
         return connector.call(
             new Callable<V>() {
+                @Override
                 public V call() throws RemoteException, NoSuchElementException {
                     return AOServServiceUtils.setService(getWrapped().get(key), WrappedService.this);
                 }
@@ -119,9 +127,11 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
         );
     }
 
+    @Override
     final public V filterUnique(final String columnName, final Object value) throws RemoteException {
         return connector.call(
             new Callable<V>() {
+                @Override
                 public V call() throws RemoteException {
                     return AOServServiceUtils.setService(getWrapped().filterUnique(columnName, value), WrappedService.this);
                 }
@@ -129,9 +139,11 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
         );
     }
 
+    @Override
     final public IndexedSet<V> filterUniqueSet(final String columnName, final Set<?> values) throws RemoteException {
         return connector.call(
             new Callable<IndexedSet<V>>() {
+                @Override
                 public IndexedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().filterUniqueSet(columnName, values), WrappedService.this);
                 }
@@ -139,9 +151,11 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
         );
     }
 
+    @Override
     final public IndexedSet<V> filterIndexed(final String columnName, final Object value) throws RemoteException {
         return connector.call(
             new Callable<IndexedSet<V>>() {
+                @Override
                 public IndexedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().filterIndexed(columnName, value), WrappedService.this);
                 }
@@ -149,9 +163,11 @@ abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends 
         );
     }
 
+    @Override
     final public IndexedSet<V> filterIndexedSet(final String columnName, final Set<?> values) throws RemoteException {
         return connector.call(
             new Callable<IndexedSet<V>>() {
+                @Override
                 public IndexedSet<V> call() throws RemoteException {
                     return AOServServiceUtils.setServices(getWrapped().filterIndexedSet(columnName, values), WrappedService.this);
                 }

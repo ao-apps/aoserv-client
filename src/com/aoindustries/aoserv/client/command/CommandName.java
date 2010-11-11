@@ -5,8 +5,7 @@
  */
 package com.aoindustries.aoserv.client.command;
 
-import com.aoindustries.aoserv.client.AOServPermission;
-import com.aoindustries.aoserv.client.ServiceName;
+import com.aoindustries.aoserv.client.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;

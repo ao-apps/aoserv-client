@@ -5,14 +5,8 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.command.AOServCommand;
-import com.aoindustries.aoserv.client.command.AOServPermissionException;
-import com.aoindustries.aoserv.client.command.CommandName;
-import com.aoindustries.aoserv.client.command.Param;
-import com.aoindustries.aoserv.client.command.CommandValidationException;
-import com.aoindustries.aoserv.client.validator.DomainName;
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.aoserv.client.command.*;
+import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.security.LoginException;
 import com.aoindustries.sql.SQLUtility;
