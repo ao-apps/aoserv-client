@@ -5,10 +5,14 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.command.CheckMySQLUserPasswordCommand;
+import com.aoindustries.aoserv.client.command.SetMySQLUserPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * A <code>MySQLUser</code> stores the details of a MySQL account
@@ -18,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUser> /* PasswordProtected, Removable, Disablable*/ {
+final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUser>, PasswordProtected /* TODO, Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -436,6 +440,18 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<MySQLDBUser> getMysqlDBUsers() throws RemoteException {
         return getService().getConnector().getMysqlDBUsers().filterIndexed(MySQLDBUser.COLUMN_MYSQL_USER, this);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Password Protected">
+    @Override
+    public AOServCommand<List<PasswordChecker.Result>> getCheckPasswordCommand(String password) {
+        return new CheckMySQLUserPasswordCommand(this, password);
+    }
+
+    @Override
+    public AOServCommand<Void> getSetPasswordCommand(String plaintext) {
+        return new SetMySQLUserPasswordCommand(this, plaintext);
     }
     // </editor-fold>
 

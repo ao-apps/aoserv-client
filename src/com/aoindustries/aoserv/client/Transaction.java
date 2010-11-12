@@ -216,7 +216,7 @@ final public class Transaction extends AOServObjectIntegerKey<Transaction> imple
     public com.aoindustries.aoserv.client.dto.Transaction getDto() {
         return new com.aoindustries.aoserv.client.dto.Transaction(
             key,
-            getTime(),
+            time,
             getDto(accounting),
             getDto(sourceAccounting),
             getDto(username),

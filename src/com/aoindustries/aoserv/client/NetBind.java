@@ -164,7 +164,17 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Dt
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.NetBind getDto() {
-        return new com.aoindustries.aoserv.client.dto.NetBind(key, businessServer, ipAddress, getDto(port), netProtocol, appProtocol, openFirewall, monitoringEnabled, monitoringParameters);
+        return new com.aoindustries.aoserv.client.dto.NetBind(
+            key,
+            businessServer,
+            ipAddress,
+            getDto(port),
+            netProtocol,
+            appProtocol,
+            openFirewall,
+            monitoringEnabled,
+            monitoringParameters
+        );
     }
     // </editor-fold>
 

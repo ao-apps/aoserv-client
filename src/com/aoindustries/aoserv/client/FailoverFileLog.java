@@ -111,8 +111,8 @@ final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLo
         return new com.aoindustries.aoserv.client.dto.FailoverFileLog(
             key,
             replication,
-            getStartTime(),
-            getEndTime(),
+            startTime,
+            endTime,
             scanned,
             updated,
             bytes,

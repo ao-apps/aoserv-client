@@ -53,11 +53,14 @@ final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
             if(un.getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "SetUsernamePasswordCommand.validate.disabled");
             else {
                 // Make sure passes other command validations
-                BusinessAdministrator ba = un.getBusinessAdministrator();
-                if(ba!=null) errors = addValidationErrors(errors, new SetBusinessAdministratorPasswordCommand(ba, plaintext).validate(connectedUser));
-                for(LinuxAccount la : un.getLinuxAccounts()) errors = addValidationErrors(errors, new SetLinuxAccountPasswordCommand(la, plaintext).validate(connectedUser));
-                for(MySQLUser mu : un.getMysqlUsers()) errors = addValidationErrors(errors, new SetMySQLUserPasswordCommand(mu, plaintext).validate(connectedUser));
-                for(PostgresUser pu : un.getPostgresUsers()) errors = addValidationErrors(errors, new SetPostgresUserPasswordCommand(pu, plaintext).validate(connectedUser));
+                for(AOServObject<?,?> dependent : un.getDependentObjects()) {
+                    if(dependent instanceof PasswordProtected) {
+                        errors = addValidationErrors(
+                            errors,
+                            ((PasswordProtected)dependent).getSetPasswordCommand(plaintext).validate(connectedUser)
+                        );
+                    }
+                }
             }
         }
         return errors;

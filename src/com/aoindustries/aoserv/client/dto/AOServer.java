@@ -18,7 +18,7 @@ public class AOServer {
     private HashedPassword daemonKey;
     private int poolSize;
     private int distroHour;
-    private Date lastDistroTime;
+    private Long lastDistroTime;
     private Integer failoverServer;
     private String daemonDeviceId;
     private Integer daemonConnectBind;
@@ -42,7 +42,7 @@ public class AOServer {
         HashedPassword daemonKey,
         int poolSize,
         int distroHour,
-        Date lastDistroTime,
+        Long lastDistroTime,
         Integer failoverServer,
         String daemonDeviceId,
         Integer daemonConnectBind,
@@ -126,11 +126,11 @@ public class AOServer {
     }
 
     public Date getLastDistroTime() {
-        return lastDistroTime;
+        return lastDistroTime==null ? null : new Date(lastDistroTime);
     }
 
     public void setLastDistroTime(Date lastDistroTime) {
-        this.lastDistroTime = lastDistroTime;
+        this.lastDistroTime = lastDistroTime==null ? null : lastDistroTime.getTime();
     }
 
     public Integer getFailoverServer() {

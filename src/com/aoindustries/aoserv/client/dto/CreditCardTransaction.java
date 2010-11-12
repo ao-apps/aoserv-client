@@ -58,7 +58,7 @@ public class CreditCardTransaction {
     private String creditCardPostalCode;
     private String creditCardCountryCode;
     private String creditCardComments;
-    private Date authorizationTime;
+    private long authorizationTime;
     private UserId authorizationUsername;
     private String authorizationPrincipalName;
     private String authorizationCommunicationResult;
@@ -77,7 +77,7 @@ public class CreditCardTransaction {
     private String authorizationProviderAvsResult;
     private String authorizationAvsResult;
     private String authorizationApprovalCode;
-    private Date captureTime;
+    private Long captureTime;
     private UserId captureUsername;
     private String capturePrincipalName;
     private String captureCommunicationResult;
@@ -85,7 +85,7 @@ public class CreditCardTransaction {
     private String captureErrorCode;
     private String captureProviderErrorMessage;
     private String captureProviderUniqueId;
-    private Date voidTime;
+    private Long voidTime;
     private UserId voidUsername;
     private String voidPrincipalName;
     private String voidCommunicationResult;
@@ -98,7 +98,7 @@ public class CreditCardTransaction {
     public CreditCardTransaction() {
     }
 
-    public CreditCardTransaction(int pkey, String processorId, AccountingCode accounting, String groupName, boolean testMode, int duplicateWindow, String orderNumber, Money amount, Money taxAmount, boolean taxExempt, Money shippingAmount, Money dutyAmount, String shippingFirstName, String shippingLastName, String shippingCompanyName, String shippingStreetAddress1, String shippingStreetAddress2, String shippingCity, String shippingState, String shippingPostalCode, String shippingCountryCode, boolean emailCustomer, Email merchantEmail, String invoiceNumber, String purchaseOrderNumber, String description, UserId creditCardCreatedBy, String creditCardPrincipalName, AccountingCode creditCardAccounting, String creditCardGroupName, String creditCardProviderUniqueId, String creditCardMaskedCardNumber, String creditCardFirstName, String creditCardLastName, String creditCardCompanyName, Email creditCardEmail, String creditCardPhone, String creditCardFax, String creditCardCustomerTaxId, String creditCardStreetAddress1, String creditCardStreetAddress2, String creditCardCity, String creditCardState, String creditCardPostalCode, String creditCardCountryCode, String creditCardComments, Date authorizationTime, UserId authorizationUsername, String authorizationPrincipalName, String authorizationCommunicationResult, String authorizationProviderErrorCode, String authorizationErrorCode, String authorizationProviderErrorMessage, String authorizationProviderUniqueId, String authorizationProviderApprovalResult, String authorizationApprovalResult, String authorizationProviderDeclineReason, String authorizationDeclineReason, String authorizationProviderReviewReason, String authorizationReviewReason, String authorizationProviderCvvResult, String authorizationCvvResult, String authorizationProviderAvsResult, String authorizationAvsResult, String authorizationApprovalCode, Date captureTime, UserId captureUsername, String capturePrincipalName, String captureCommunicationResult, String captureProviderErrorCode, String captureErrorCode, String captureProviderErrorMessage, String captureProviderUniqueId, Date voidTime, UserId voidUsername, String voidPrincipalName, String voidCommunicationResult, String voidProviderErrorCode, String voidErrorCode, String voidProviderErrorMessage, String voidProviderUniqueId, String status) {
+    public CreditCardTransaction(int pkey, String processorId, AccountingCode accounting, String groupName, boolean testMode, int duplicateWindow, String orderNumber, Money amount, Money taxAmount, boolean taxExempt, Money shippingAmount, Money dutyAmount, String shippingFirstName, String shippingLastName, String shippingCompanyName, String shippingStreetAddress1, String shippingStreetAddress2, String shippingCity, String shippingState, String shippingPostalCode, String shippingCountryCode, boolean emailCustomer, Email merchantEmail, String invoiceNumber, String purchaseOrderNumber, String description, UserId creditCardCreatedBy, String creditCardPrincipalName, AccountingCode creditCardAccounting, String creditCardGroupName, String creditCardProviderUniqueId, String creditCardMaskedCardNumber, String creditCardFirstName, String creditCardLastName, String creditCardCompanyName, Email creditCardEmail, String creditCardPhone, String creditCardFax, String creditCardCustomerTaxId, String creditCardStreetAddress1, String creditCardStreetAddress2, String creditCardCity, String creditCardState, String creditCardPostalCode, String creditCardCountryCode, String creditCardComments, long authorizationTime, UserId authorizationUsername, String authorizationPrincipalName, String authorizationCommunicationResult, String authorizationProviderErrorCode, String authorizationErrorCode, String authorizationProviderErrorMessage, String authorizationProviderUniqueId, String authorizationProviderApprovalResult, String authorizationApprovalResult, String authorizationProviderDeclineReason, String authorizationDeclineReason, String authorizationProviderReviewReason, String authorizationReviewReason, String authorizationProviderCvvResult, String authorizationCvvResult, String authorizationProviderAvsResult, String authorizationAvsResult, String authorizationApprovalCode, Long captureTime, UserId captureUsername, String capturePrincipalName, String captureCommunicationResult, String captureProviderErrorCode, String captureErrorCode, String captureProviderErrorMessage, String captureProviderUniqueId, Long voidTime, UserId voidUsername, String voidPrincipalName, String voidCommunicationResult, String voidProviderErrorCode, String voidErrorCode, String voidProviderErrorMessage, String voidProviderUniqueId, String status) {
         this.pkey = pkey;
         this.processorId = processorId;
         this.accounting = accounting;
@@ -552,11 +552,11 @@ public class CreditCardTransaction {
     }
 
     public Date getAuthorizationTime() {
-        return authorizationTime;
+        return new Date(authorizationTime);
     }
 
     public void setAuthorizationTime(Date authorizationTime) {
-        this.authorizationTime = authorizationTime;
+        this.authorizationTime = authorizationTime.getTime();
     }
 
     public UserId getAuthorizationUsername() {
@@ -704,11 +704,11 @@ public class CreditCardTransaction {
     }
 
     public Date getCaptureTime() {
-        return captureTime;
+        return captureTime==null ? null : new Date(captureTime);
     }
 
     public void setCaptureTime(Date captureTime) {
-        this.captureTime = captureTime;
+        this.captureTime = captureTime==null ? null : captureTime.getTime();
     }
 
     public UserId getCaptureUsername() {
@@ -768,11 +768,11 @@ public class CreditCardTransaction {
     }
 
     public Date getVoidTime() {
-        return voidTime;
+        return voidTime==null ? null : new Date(voidTime);
     }
 
     public void setVoidTime(Date voidTime) {
-        this.voidTime = voidTime;
+        this.voidTime = voidTime==null ? null : voidTime.getTime();
     }
 
     public UserId getVoidUsername() {

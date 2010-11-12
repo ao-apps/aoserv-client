@@ -22,11 +22,11 @@ public class Ticket {
     private String ticketType;
     private Email fromAddress;
     private String summary;
-    private Date openDate;
+    private long openDate;
     private String clientPriority;
     private String adminPriority;
     private String status;
-    private Date statusTimeout;
+    private Long statusTimeout;
     private String contactEmails;
     private String contactPhoneNumbers;
 
@@ -44,11 +44,11 @@ public class Ticket {
         String ticketType,
         Email fromAddress,
         String summary,
-        Date openDate,
+        long openDate,
         String clientPriority,
         String adminPriority,
         String status,
-        Date statusTimeout,
+        Long statusTimeout,
         String contactEmails,
         String contactPhoneNumbers
     ) {
@@ -152,11 +152,11 @@ public class Ticket {
     }
 
     public Date getOpenDate() {
-        return openDate;
+        return new Date(openDate);
     }
 
     public void setOpenDate(Date openDate) {
-        this.openDate = openDate;
+        this.openDate = openDate.getTime();
     }
 
     public String getClientPriority() {
@@ -184,11 +184,11 @@ public class Ticket {
     }
 
     public Date getStatusTimeout() {
-        return statusTimeout;
+        return statusTimeout==null ? null : new Date(statusTimeout);
     }
 
     public void setStatusTimeout(Date statusTimeout) {
-        this.statusTimeout = statusTimeout;
+        this.statusTimeout = statusTimeout==null ? null : statusTimeout.getTime();
     }
 
     public String getContactEmails() {

@@ -31,12 +31,12 @@ public class CreditCard {
     private String state;
     private String postalCode;
     private String countryCode;
-    private Date created;
+    private long created;
     private UserId createdBy;
     private String principalName;
     private boolean useMonthly;
     private boolean active;
-    private Date deactivatedOn;
+    private Long deactivatedOn;
     private String deactivateReason;
     private String description;
     private String encryptedCardNumber;
@@ -69,12 +69,12 @@ public class CreditCard {
         String state,
         String postalCode,
         String countryCode,
-        Date created,
+        long created,
         UserId createdBy,
         String principalName,
         boolean useMonthly,
         boolean active,
-        Date deactivatedOn,
+        Long deactivatedOn,
         String deactivateReason,
         String description,
         String encrypted_card_number,
@@ -272,11 +272,11 @@ public class CreditCard {
     }
 
     public Date getCreated() {
-        return created;
+        return new Date(created);
     }
 
     public void setCreated(Date created) {
-        this.created = created;
+        this.created = created.getTime();
     }
 
     public UserId getCreatedBy() {
@@ -312,11 +312,11 @@ public class CreditCard {
     }
 
     public Date getDeactivatedOn() {
-        return deactivatedOn;
+        return deactivatedOn==null ? null : new Date(deactivatedOn);
     }
 
     public void setDeactivatedOn(Date deactivatedOn) {
-        this.deactivatedOn = deactivatedOn;
+        this.deactivatedOn = deactivatedOn==null ? null : deactivatedOn.getTime();
     }
 
     public String getDeactivateReason() {

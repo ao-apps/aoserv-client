@@ -12,7 +12,7 @@ public class NetBind {
 
     private int pkey;
     private int businessServer;
-    private int ipAddress;
+    private Integer ipAddress;
     private NetPort port;
     private String netProtocol;
     private String appProtocol;
@@ -26,7 +26,7 @@ public class NetBind {
     public NetBind(
         int pkey,
         int businessServer,
-        int ipAddress,
+        Integer ipAddress,
         NetPort port,
         String netProtocol,
         String appProtocol,
@@ -61,11 +61,11 @@ public class NetBind {
         this.businessServer = businessServer;
     }
 
-    public int getIpAddress() {
+    public Integer getIpAddress() {
         return ipAddress;
     }
 
-    public void setIpAddress(int ipAddress) {
+    public void setIpAddress(Integer ipAddress) {
         this.ipAddress = ipAddress;
     }
 

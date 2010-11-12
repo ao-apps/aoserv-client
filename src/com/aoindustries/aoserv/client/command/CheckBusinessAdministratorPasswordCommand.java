@@ -50,10 +50,14 @@ final public class CheckBusinessAdministratorPasswordCommand extends AOServComma
         return errors;
     }
 
+    static List<PasswordChecker.Result> checkPassword(UserId username, String password) throws IOException {
+        return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
+    }
+
     @Override
     public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         try {
-            return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
+            return checkPassword(username, password);
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         }

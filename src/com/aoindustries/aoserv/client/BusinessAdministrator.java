@@ -5,6 +5,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.command.CheckBusinessAdministratorPasswordCommand;
+import com.aoindustries.aoserv.client.command.SetBusinessAdministratorPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
@@ -12,6 +15,7 @@ import java.rmi.RemoteException;
 import java.security.Principal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,7 +27,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessAdministrator> implements DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministrator>, Principal /* TODO: implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> */ {
+final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessAdministrator> implements DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministrator>, Principal, PasswordProtected /* TODO , Removable, Disablable, Comparable<BusinessAdministrator> */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -33,7 +37,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     final private HashedPassword password;
     private String fullName;
     private String title;
-    final private Date birthday;
+    final private Long birthday;
     final private boolean isPreferred;
     final private boolean isPrivate;
     final private long created;
@@ -58,7 +62,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
         HashedPassword password,
         String fullName,
         String title,
-        Date birthday,
+        Long birthday,
         boolean isPreferred,
         boolean isPrivate,
         long created,
@@ -152,7 +156,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
 
     @SchemaColumn(order=4, name="birthday", description="the admins birthday")
     public Date getBirthday() {
-    	return birthday;
+    	return new Date(birthday);
     }
 
     @SchemaColumn(order=5, name="is_preferred", description="if true, customers is preferred")
@@ -250,7 +254,7 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessAdministrator getDto() {
-        return new com.aoindustries.aoserv.client.dto.BusinessAdministrator(getDto(getKey()), getDto(password), fullName, title, birthday, isPreferred, isPrivate, getCreated(), workPhone, homePhone, cellPhone, fax, getDto(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
+        return new com.aoindustries.aoserv.client.dto.BusinessAdministrator(getDto(getKey()), getDto(password), fullName, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, getDto(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
     // </editor-fold>
 
@@ -558,6 +562,18 @@ final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessA
             if(username==null) return false;
         }
         return canAccessBusiness(username.getBusiness());
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Password Protected">
+    @Override
+    public AOServCommand<List<PasswordChecker.Result>> getCheckPasswordCommand(String password) {
+        return new CheckBusinessAdministratorPasswordCommand(this, password);
+    }
+
+    @Override
+    public AOServCommand<Void> getSetPasswordCommand(String plaintext) {
+        return new SetBusinessAdministratorPasswordCommand(this, plaintext);
     }
     // </editor-fold>
 

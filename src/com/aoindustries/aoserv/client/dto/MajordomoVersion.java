@@ -13,12 +13,12 @@ import java.util.Date;
 public class MajordomoVersion {
 
     private String version;
-    private Date created;
+    private long created;
 
     public MajordomoVersion() {
     }
 
-    public MajordomoVersion(String version, Date created) {
+    public MajordomoVersion(String version, long created) {
         this.version = version;
         this.created = created;
     }
@@ -32,10 +32,10 @@ public class MajordomoVersion {
     }
 
     public Date getCreated() {
-        return created;
+        return new Date(created);
     }
 
     public void setCreated(Date created) {
-        this.created = created;
+        this.created = created.getTime();
     }
 }

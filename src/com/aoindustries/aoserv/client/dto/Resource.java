@@ -15,15 +15,15 @@ public class Resource {
     private int pkey;
     private String resourceType;
     private AccountingCode accounting;
-    private Date created;
+    private long created;
     private UserId createdBy;
     private Integer disableLog;
-    private Date lastEnabled;
+    private long lastEnabled;
 
     public Resource() {
     }
 
-    public Resource(int pkey, String resourceType, AccountingCode accounting, Date created, UserId createdBy, Integer disableLog, Date lastEnabled) {
+    public Resource(int pkey, String resourceType, AccountingCode accounting, long created, UserId createdBy, Integer disableLog, long lastEnabled) {
         this.pkey = pkey;
         this.resourceType = resourceType;
         this.accounting = accounting;
@@ -58,11 +58,11 @@ public class Resource {
     }
 
     public Date getCreated() {
-        return created;
+        return new Date(created);
     }
 
     public void setCreated(Date created) {
-        this.created = created;
+        this.created = created.getTime();
     }
 
     public UserId getCreatedBy() {
@@ -82,10 +82,10 @@ public class Resource {
     }
 
     public Date getLastEnabled() {
-        return lastEnabled;
+        return new Date(lastEnabled);
     }
 
     public void setLastEnabled(Date lastEnabled) {
-        this.lastEnabled = lastEnabled;
+        this.lastEnabled = lastEnabled.getTime();
     }
 }

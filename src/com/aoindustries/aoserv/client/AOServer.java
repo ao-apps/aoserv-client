@@ -253,7 +253,7 @@ final public class AOServer extends AOServObjectIntegerKey<AOServer> implements 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.AOServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.AOServer(key, getDto(hostname), daemonBind, getDto(daemonKey), poolSize, distroHour, getLastDistroTime(), failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getDto(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
+        return new com.aoindustries.aoserv.client.dto.AOServer(key, getDto(hostname), daemonBind, getDto(daemonKey), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getDto(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 

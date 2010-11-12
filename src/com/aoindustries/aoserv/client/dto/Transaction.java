@@ -14,7 +14,7 @@ import java.util.Date;
 public class Transaction {
 
     private int transid;
-    private Date time;
+    private long time;
     private AccountingCode accounting;
     private AccountingCode sourceAccounting;
     private UserId username;
@@ -32,7 +32,7 @@ public class Transaction {
 
     public Transaction(
         int transid,
-        Date time,
+        long time,
         AccountingCode accounting,
         AccountingCode sourceAccounting,
         UserId username,
@@ -69,11 +69,11 @@ public class Transaction {
     }
 
     public Date getTime() {
-        return time;
+        return new Date(time);
     }
 
     public void setTime(Date time) {
-        this.time = time;
+        this.time = time.getTime();
     }
 
     public AccountingCode getAccounting() {

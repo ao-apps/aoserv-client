@@ -55,7 +55,7 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
             else {
                 // Check password strength
                 try {
-                    if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, PasswordChecker.checkPassword(username, plaintext, PasswordChecker.PasswordStrength.STRICT));
+                    if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, CheckBusinessAdministratorPasswordCommand.checkPassword(username, plaintext));
                 } catch(IOException err) {
                     throw new RemoteException(err.getMessage(), err);
                 }

@@ -56,11 +56,14 @@ final public class CheckPostgresUserPasswordCommand extends AOServCommand<List<P
         return errors;
     }
 
+    static List<PasswordChecker.Result> checkPassword(PostgresUser pu, String password) throws IOException {
+        return PasswordChecker.checkPassword(pu.getUserId().getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
+    }
+
     @Override
     public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         try {
-            PostgresUser pu = connector.getPostgresUsers().get(postgresUser);
-            return PasswordChecker.checkPassword(pu.getUserId().getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
+            return checkPassword(connector.getPostgresUsers().get(postgresUser), password);
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         }

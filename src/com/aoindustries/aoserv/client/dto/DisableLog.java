@@ -13,7 +13,7 @@ import java.util.Date;
 public class DisableLog {
 
     private int pkey;
-    private Date time;
+    private long time;
     private AccountingCode accounting;
     private UserId disabledBy;
     private String disableReason;
@@ -23,7 +23,7 @@ public class DisableLog {
 
     public DisableLog(
         int pkey,
-        Date time,
+        long time,
         AccountingCode accounting,
         UserId disabledBy,
         String disableReason
@@ -44,11 +44,11 @@ public class DisableLog {
     }
 
     public Date getTime() {
-        return time;
+        return new Date(time);
     }
 
     public void setTime(Date time) {
-        this.time = time;
+        this.time = time.getTime();
     }
 
     public AccountingCode getAccounting() {

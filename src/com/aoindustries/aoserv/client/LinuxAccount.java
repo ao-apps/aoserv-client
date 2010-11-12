@@ -5,10 +5,14 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.command.CheckLinuxAccountPasswordCommand;
+import com.aoindustries.aoserv.client.command.SetLinuxAccountPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * One user may have shell, FTP, and/or email access to any number
@@ -18,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount> /* PasswordProtected, Removable, Disablable*/ {
+final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -261,6 +265,18 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     public LinuxGroup getPrimaryLinuxGroup() throws RemoteException {
         return getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_IS_PRIMARY, true).getLinuxGroup();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Password Protected">
+    @Override
+    public AOServCommand<List<PasswordChecker.Result>> getCheckPasswordCommand(String password) {
+        return new CheckLinuxAccountPasswordCommand(this, password);
+    }
+
+    @Override
+    public AOServCommand<Void> getSetPasswordCommand(String plaintext) {
+        return new SetLinuxAccountPasswordCommand(this, plaintext);
     }
     // </editor-fold>
 

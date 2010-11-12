@@ -110,7 +110,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVe
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.TechnologyVersion getDto() {
-        return new com.aoindustries.aoserv.client.dto.TechnologyVersion(key, name, version, getUpdated(), getDto(owner), operatingSystemVersion);
+        return new com.aoindustries.aoserv.client.dto.TechnologyVersion(key, name, version, updated, getDto(owner), operatingSystemVersion);
     }
     // </editor-fold>
 

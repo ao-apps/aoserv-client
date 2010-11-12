@@ -53,11 +53,14 @@ final public class CheckLinuxAccountPasswordCommand extends AOServCommand<List<P
         return errors;
     }
 
+    static List<PasswordChecker.Result> checkPassword(LinuxAccount la, String password) throws IOException {
+        return la.getLinuxAccountType().checkPassword(la.getUserId(), password);
+    }
+
     @Override
     public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         try {
-            LinuxAccount la = connector.getLinuxAccounts().get(linuxAccount);
-            return la.getLinuxAccountType().checkPassword(la.getUserId(), password);
+            return checkPassword(connector.getLinuxAccounts().get(linuxAccount), password);
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         }

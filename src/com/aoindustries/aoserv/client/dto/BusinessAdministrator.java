@@ -5,6 +5,8 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
+import java.util.Date;
+
 /**
  * @author  AO Industries, Inc.
  */
@@ -14,10 +16,10 @@ public class BusinessAdministrator {
     private HashedPassword password;
     private String fullName;
     private String title;
-    private java.util.Date birthday;
+    private Long birthday;
     private boolean isPreferred;
     private boolean isPrivate;
-    private java.util.Date created;
+    private long created;
     private String workPhone;
     private String homePhone;
     private String cellPhone;
@@ -41,10 +43,10 @@ public class BusinessAdministrator {
         HashedPassword password,
         String fullName,
         String title,
-        java.util.Date birthday,
+        Long birthday,
         boolean isPreferred,
         boolean isPrivate,
-        java.util.Date created,
+        long created,
         String workPhone,
         String homePhone,
         String cellPhone,
@@ -116,12 +118,12 @@ public class BusinessAdministrator {
         this.title = title;
     }
 
-    public java.util.Date getBirthday() {
-        return birthday;
+    public Date getBirthday() {
+        return birthday==null ? null : new Date(birthday);
     }
 
-    public void setBirthday(java.util.Date birthday) {
-        this.birthday = birthday;
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday==null ? null : birthday.getTime();
     }
 
     public boolean isIsPreferred() {
@@ -140,12 +142,12 @@ public class BusinessAdministrator {
         this.isPrivate = isPrivate;
     }
 
-    public java.util.Date getCreated() {
-        return created;
+    public Date getCreated() {
+        return new Date(created);
     }
 
-    public void setCreated(java.util.Date created) {
-        this.created = created;
+    public void setCreated(Date created) {
+        this.created = created.getTime();
     }
 
     public String getWorkPhone() {

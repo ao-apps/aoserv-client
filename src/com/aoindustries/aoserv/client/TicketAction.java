@@ -405,7 +405,7 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
             key,
             ticket,
             getDto(administrator),
-            getTime(),
+            time,
             actionType,
             getDto(oldAccounting),
             getDto(newAccounting),

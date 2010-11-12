@@ -61,7 +61,7 @@ final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
                 else {
                     // Check password strength
                     try {
-                        if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, PasswordChecker.checkPassword(username.getUserId(), plaintext, PasswordChecker.PasswordStrength.STRICT));
+                        if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, CheckMySQLUserPasswordCommand.checkPassword(mu, plaintext));
                     } catch(IOException err) {
                         throw new RemoteException(err.getMessage(), err);
                     }

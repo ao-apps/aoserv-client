@@ -14,8 +14,8 @@ public class Business {
 
     private AccountingCode accounting;
     private String contractVersion;
-    private Date created;
-    private Date canceled;
+    private long created;
+    private Long canceled;
     private String cancelReason;
     private AccountingCode parent;
     private boolean canAddBackupServer;
@@ -40,8 +40,8 @@ public class Business {
     public Business(
         AccountingCode accounting,
         String contractVersion,
-        Date created,
-        Date canceled,
+        long created,
+        Long canceled,
         String cancelReason,
         AccountingCode parent,
         boolean canAddBackupServer,
@@ -100,19 +100,19 @@ public class Business {
     }
 
     public Date getCreated() {
-        return created;
+        return new Date(created);
     }
 
     public void setCreated(Date created) {
-        this.created = created;
+        this.created = created.getTime();
     }
 
     public Date getCanceled() {
-        return canceled;
+        return canceled==null ? null : new Date(canceled);
     }
 
     public void setCanceled(Date canceled) {
-        this.canceled = canceled;
+        this.canceled = canceled==null ? null : canceled.getTime();
     }
 
     public String getCancelReason() {

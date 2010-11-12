@@ -15,7 +15,7 @@ public class TicketAction {
     private int pkey;
     private int ticket;
     private UserId administrator;
-    private Date time;
+    private long time;
     private String actionType;
     private AccountingCode oldAccounting;
     private AccountingCode newAccounting;
@@ -39,7 +39,7 @@ public class TicketAction {
         int pkey,
         int ticket,
         UserId administrator,
-        Date time,
+        long time,
         String actionType,
         AccountingCode oldAccounting,
         AccountingCode newAccounting,
@@ -102,11 +102,11 @@ public class TicketAction {
     }
 
     public Date getTime() {
-        return time;
+        return new Date(time);
     }
 
     public void setTime(Date time) {
-        this.time = time;
+        this.time = time.getTime();
     }
 
     public String getActionType() {

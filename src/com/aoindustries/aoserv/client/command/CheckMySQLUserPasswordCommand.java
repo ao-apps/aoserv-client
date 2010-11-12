@@ -56,11 +56,14 @@ final public class CheckMySQLUserPasswordCommand extends AOServCommand<List<Pass
         return errors;
     }
 
+    static List<PasswordChecker.Result> checkPassword(MySQLUser mu, String password) throws IOException {
+        return PasswordChecker.checkPassword(mu.getUserId().getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
+    }
+
     @Override
     public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         try {
-            MySQLUser mu = connector.getMysqlUsers().get(mysqlUser);
-            return PasswordChecker.checkPassword(mu.getUserId().getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
+            return checkPassword(connector.getMysqlUsers().get(mysqlUser), password);
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         }

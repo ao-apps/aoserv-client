@@ -145,7 +145,7 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.Resource getDto() {
-        return new com.aoindustries.aoserv.client.dto.Resource(key, resourceType, getDto(accounting), getCreated(), getDto(createdBy), disableLog, getLastEnabled());
+        return new com.aoindustries.aoserv.client.dto.Resource(key, resourceType, getDto(accounting), created, getDto(createdBy), disableLog, lastEnabled);
     }
     // </editor-fold>
 

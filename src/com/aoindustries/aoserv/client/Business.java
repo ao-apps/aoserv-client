@@ -319,7 +319,7 @@ final public class Business extends AOServObjectAccountingCodeKey<Business> impl
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.Business getDto() {
-        return new com.aoindustries.aoserv.client.dto.Business(getDto(getKey()), contractVersion, getCreated(), getCanceled(), cancelReason, getDto(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getDto(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
+        return new com.aoindustries.aoserv.client.dto.Business(getDto(getKey()), contractVersion, created, canceled, cancelReason, getDto(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getDto(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
     // </editor-fold>
 

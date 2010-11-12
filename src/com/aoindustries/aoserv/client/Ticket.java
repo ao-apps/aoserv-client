@@ -274,11 +274,11 @@ final public class Ticket extends AOServObjectIntegerKey<Ticket> implements DtoF
             ticketType,
             getDto(fromAddress),
             summary,
-            getOpenDate(),
+            openDate,
             clientPriority,
             adminPriority,
             status,
-            getStatusTimeout(),
+            statusTimeout,
             contactEmails,
             contactPhoneNumbers
         );

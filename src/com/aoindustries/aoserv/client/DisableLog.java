@@ -108,7 +108,7 @@ final public class DisableLog extends AOServObjectIntegerKey<DisableLog> impleme
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.DisableLog getDto() {
-        return new com.aoindustries.aoserv.client.dto.DisableLog(key, getTime(), getDto(accounting), getDto(disabledBy), disableReason);
+        return new com.aoindustries.aoserv.client.dto.DisableLog(key, time, getDto(accounting), getDto(disabledBy), disableReason);
     }
     // </editor-fold>
 

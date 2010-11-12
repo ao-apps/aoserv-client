@@ -26,7 +26,7 @@ public class BusinessProfile {
     private String country;
     private String zip;
     private boolean sendInvoice;
-    private Date created;
+    private long created;
     private String billingContact;
     private String billingEmail;
     private String technicalContact;
@@ -50,7 +50,7 @@ public class BusinessProfile {
         String country,
         String zip,
         boolean sendInvoice,
-        Date created,
+        long created,
         String billingContact,
         String billingEmail,
         String technicalContact,
@@ -190,11 +190,11 @@ public class BusinessProfile {
     }
 
     public Date getCreated() {
-        return created;
+        return new Date(created);
     }
 
     public void setCreated(Date created) {
-        this.created = created;
+        this.created = created.getTime();
     }
 
     public String getBillingContact() {

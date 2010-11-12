@@ -5,10 +5,14 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.command.AOServCommand;
+import com.aoindustries.aoserv.client.command.CheckUsernamePasswordCommand;
+import com.aoindustries.aoserv.client.command.SetUsernamePasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Each <code>Username</code> is unique across all systems and must
@@ -22,7 +26,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Username extends AOServObjectUserIdKey<Username> implements DtoFactory<com.aoindustries.aoserv.client.dto.Username> /* TODO: implements PasswordProtected, Removable, Disablable*/ {
+final public class Username extends AOServObjectUserIdKey<Username> implements DtoFactory<com.aoindustries.aoserv.client.dto.Username>, PasswordProtected /* TODO: Removable, Disablable*/ {
 	
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -110,6 +114,18 @@ final public class Username extends AOServObjectUserIdKey<Username> implements D
 
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
         return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_USERNAME, this);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Password Protected">
+    @Override
+    public AOServCommand<List<PasswordChecker.Result>> getCheckPasswordCommand(String password) {
+        return new CheckUsernamePasswordCommand(this, password);
+    }
+
+    @Override
+    public AOServCommand<Void> getSetPasswordCommand(String plaintext) {
+        return new SetUsernamePasswordCommand(this, plaintext);
     }
     // </editor-fold>
 

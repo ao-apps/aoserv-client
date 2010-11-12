@@ -14,8 +14,8 @@ public class FailoverFileLog {
 
     private int pkey;
     private int replication;
-    private Date startTime;
-    private Date endTime;
+    private long startTime;
+    private long endTime;
     private int scanned;
     private int updated;
     private long bytes;
@@ -27,8 +27,8 @@ public class FailoverFileLog {
     public FailoverFileLog(
         int pkey,
         int replication,
-        Date startTime,
-        Date endTime,
+        long startTime,
+        long endTime,
         int scanned,
         int updated,
         long bytes,
@@ -61,19 +61,19 @@ public class FailoverFileLog {
     }
 
     public Date getStartTime() {
-        return startTime;
+        return new Date(startTime);
     }
 
     public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+        this.startTime = startTime.getTime();
     }
 
     public Date getEndTime() {
-        return endTime;
+        return new Date(endTime);
     }
 
     public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+        this.endTime = endTime.getTime();
     }
 
     public int getScanned() {

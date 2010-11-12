@@ -57,7 +57,7 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
             else {
                 // Check password strength
                 try {
-                    if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, lat.checkPassword(la.getUserId(), plaintext));
+                    if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, CheckLinuxAccountPasswordCommand.checkPassword(la, plaintext));
                 } catch(IOException err) {
                     throw new RemoteException(err.getMessage(), err);
                 }

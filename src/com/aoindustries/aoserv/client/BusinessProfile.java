@@ -225,7 +225,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessProfile getDto() {
-        return new com.aoindustries.aoserv.client.dto.BusinessProfile(key, getDto(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, getCreated(), billingContact, billingEmail, technicalContact, technicalEmail);
+        return new com.aoindustries.aoserv.client.dto.BusinessProfile(key, getDto(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
     }
     // </editor-fold>
 

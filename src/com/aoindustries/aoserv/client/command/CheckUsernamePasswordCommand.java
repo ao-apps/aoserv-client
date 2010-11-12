@@ -48,37 +48,32 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
             errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // Make sure passes other command validations
-            BusinessAdministrator ba = un.getBusinessAdministrator();
-            if(ba!=null) errors = addValidationErrors(errors, new CheckBusinessAdministratorPasswordCommand(ba, password).validate(connectedUser));
-            for(LinuxAccount la : un.getLinuxAccounts()) errors = addValidationErrors(errors, new CheckLinuxAccountPasswordCommand(la, password).validate(connectedUser));
-            for(MySQLUser mu : un.getMysqlUsers()) errors = addValidationErrors(errors, new CheckMySQLUserPasswordCommand(mu, password).validate(connectedUser));
-            for(PostgresUser pu : un.getPostgresUsers()) errors = addValidationErrors(errors, new CheckPostgresUserPasswordCommand(pu, password).validate(connectedUser));
+            for(AOServObject<?,?> dependent : un.getDependentObjects()) {
+                if(dependent instanceof PasswordProtected) {
+                    errors = addValidationErrors(
+                        errors,
+                        ((PasswordProtected)dependent).getCheckPasswordCommand(password).validate(connectedUser)
+                    );
+                }
+            }
         }
         return errors;
+    }
+
+    static List<PasswordChecker.Result> checkPassword(AOServConnector<?,?> connector, boolean isInteractive, Username un, String password) throws IOException {
+        for(AOServObject<?,?> dependent : un.getDependentObjects()) {
+            if(dependent instanceof PasswordProtected) {
+                List<PasswordChecker.Result> results = ((PasswordProtected)dependent).getCheckPasswordCommand(password).execute(connector, isInteractive);
+                if(PasswordChecker.hasResults(results)) return results;
+            }
+        }
+        return PasswordChecker.getAllGoodResults();
     }
 
     @Override
     public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
         try {
-            Username un = connector.getUsernames().get(username);
-            BusinessAdministrator ba = un.getBusinessAdministrator();
-            if(ba!=null) {
-                List<PasswordChecker.Result> results = new CheckBusinessAdministratorPasswordCommand(ba, password).execute(connector, isInteractive);
-                if(PasswordChecker.hasResults(results)) return results;
-            }
-            for(LinuxAccount la : un.getLinuxAccounts()) {
-                List<PasswordChecker.Result> results = new CheckLinuxAccountPasswordCommand(la, password).execute(connector, isInteractive);
-                if(PasswordChecker.hasResults(results)) return results;
-            }
-            for(MySQLUser mu : un.getMysqlUsers()) {
-                List<PasswordChecker.Result> results = new CheckMySQLUserPasswordCommand(mu, password).execute(connector, isInteractive);
-                if(PasswordChecker.hasResults(results)) return results;
-            }
-            for(PostgresUser pu : un.getPostgresUsers()) {
-                List<PasswordChecker.Result> results = new CheckPostgresUserPasswordCommand(pu, password).execute(connector, isInteractive);
-                if(PasswordChecker.hasResults(results)) return results;
-            }
-            return PasswordChecker.getAllGoodResults();
+            return checkPassword(connector, isInteractive, connector.getUsernames().get(username), password);
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         }
