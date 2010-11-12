@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -271,12 +271,12 @@ public class CreditCard {
         this.countryCode = countryCode;
     }
 
-    public Date getCreated() {
-        return new Date(created);
+    public Calendar getCreated() {
+        return DtoUtils.getCalendar(created);
     }
 
-    public void setCreated(Date created) {
-        this.created = created.getTime();
+    public void setCreated(Calendar created) {
+        this.created = created.getTimeInMillis();
     }
 
     public UserId getCreatedBy() {
@@ -311,12 +311,12 @@ public class CreditCard {
         this.active = active;
     }
 
-    public Date getDeactivatedOn() {
-        return deactivatedOn==null ? null : new Date(deactivatedOn);
+    public Calendar getDeactivatedOn() {
+        return DtoUtils.getCalendar(deactivatedOn);
     }
 
-    public void setDeactivatedOn(Date deactivatedOn) {
-        this.deactivatedOn = deactivatedOn==null ? null : deactivatedOn.getTime();
+    public void setDeactivatedOn(Calendar deactivatedOn) {
+        this.deactivatedOn = deactivatedOn==null ? null : deactivatedOn.getTimeInMillis();
     }
 
     public String getDeactivateReason() {

@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -99,20 +99,20 @@ public class Business {
         this.contractVersion = contractVersion;
     }
 
-    public Date getCreated() {
-        return new Date(created);
+    public Calendar getCreated() {
+        return DtoUtils.getCalendar(created);
     }
 
-    public void setCreated(Date created) {
-        this.created = created.getTime();
+    public void setCreated(Calendar created) {
+        this.created = created.getTimeInMillis();
     }
 
-    public Date getCanceled() {
-        return canceled==null ? null : new Date(canceled);
+    public Calendar getCanceled() {
+        return DtoUtils.getCalendar(canceled);
     }
 
-    public void setCanceled(Date canceled) {
-        this.canceled = canceled==null ? null : canceled.getTime();
+    public void setCanceled(Calendar canceled) {
+        this.canceled = canceled==null ? null : canceled.getTimeInMillis();
     }
 
     public String getCancelReason() {

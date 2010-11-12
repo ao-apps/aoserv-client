@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -151,12 +151,12 @@ public class Ticket {
         this.summary = summary;
     }
 
-    public Date getOpenDate() {
-        return new Date(openDate);
+    public Calendar getOpenDate() {
+        return DtoUtils.getCalendar(openDate);
     }
 
-    public void setOpenDate(Date openDate) {
-        this.openDate = openDate.getTime();
+    public void setOpenDate(Calendar openDate) {
+        this.openDate = openDate.getTimeInMillis();
     }
 
     public String getClientPriority() {
@@ -183,12 +183,12 @@ public class Ticket {
         this.status = status;
     }
 
-    public Date getStatusTimeout() {
-        return statusTimeout==null ? null : new Date(statusTimeout);
+    public Calendar getStatusTimeout() {
+        return DtoUtils.getCalendar(statusTimeout);
     }
 
-    public void setStatusTimeout(Date statusTimeout) {
-        this.statusTimeout = statusTimeout==null ? null : statusTimeout.getTime();
+    public void setStatusTimeout(Calendar statusTimeout) {
+        this.statusTimeout = statusTimeout==null ? null : statusTimeout.getTimeInMillis();
     }
 
     public String getContactEmails() {

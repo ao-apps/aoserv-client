@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -68,12 +68,12 @@ public class Transaction {
         this.transid = transid;
     }
 
-    public Date getTime() {
-        return new Date(time);
+    public Calendar getTime() {
+        return DtoUtils.getCalendar(time);
     }
 
-    public void setTime(Date time) {
-        this.time = time.getTime();
+    public void setTime(Calendar time) {
+        this.time = time.getTimeInMillis();
     }
 
     public AccountingCode getAccounting() {

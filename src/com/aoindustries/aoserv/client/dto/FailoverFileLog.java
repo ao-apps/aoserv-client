@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -60,20 +60,20 @@ public class FailoverFileLog {
         this.replication = replication;
     }
 
-    public Date getStartTime() {
-        return new Date(startTime);
+    public Calendar getStartTime() {
+        return DtoUtils.getCalendar(startTime);
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime.getTime();
+    public void setStartTime(Calendar startTime) {
+        this.startTime = startTime.getTimeInMillis();
     }
 
-    public Date getEndTime() {
-        return new Date(endTime);
+    public Calendar getEndTime() {
+        return DtoUtils.getCalendar(endTime);
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime.getTime();
+    public void setEndTime(Calendar endTime) {
+        this.endTime = endTime.getTimeInMillis();
     }
 
     public int getScanned() {

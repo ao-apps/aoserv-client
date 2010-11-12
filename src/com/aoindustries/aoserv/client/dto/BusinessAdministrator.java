@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -142,12 +143,12 @@ public class BusinessAdministrator {
         this.isPrivate = isPrivate;
     }
 
-    public Date getCreated() {
-        return new Date(created);
+    public Calendar getCreated() {
+        return DtoUtils.getCalendar(created);
     }
 
-    public void setCreated(Date created) {
-        this.created = created.getTime();
+    public void setCreated(Calendar created) {
+        this.created = created.getTimeInMillis();
     }
 
     public String getWorkPhone() {

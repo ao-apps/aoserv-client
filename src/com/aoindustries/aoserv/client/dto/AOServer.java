@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -125,12 +125,12 @@ public class AOServer {
         this.distroHour = distroHour;
     }
 
-    public Date getLastDistroTime() {
-        return lastDistroTime==null ? null : new Date(lastDistroTime);
+    public Calendar getLastDistroTime() {
+        return DtoUtils.getCalendar(lastDistroTime);
     }
 
-    public void setLastDistroTime(Date lastDistroTime) {
-        this.lastDistroTime = lastDistroTime==null ? null : lastDistroTime.getTime();
+    public void setLastDistroTime(Calendar lastDistroTime) {
+        this.lastDistroTime = lastDistroTime==null ? null : lastDistroTime.getTimeInMillis();
     }
 
     public Integer getFailoverServer() {

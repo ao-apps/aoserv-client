@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -57,12 +57,12 @@ public class Resource {
         this.accounting = accounting;
     }
 
-    public Date getCreated() {
-        return new Date(created);
+    public Calendar getCreated() {
+        return DtoUtils.getCalendar(created);
     }
 
-    public void setCreated(Date created) {
-        this.created = created.getTime();
+    public void setCreated(Calendar created) {
+        this.created = created.getTimeInMillis();
     }
 
     public UserId getCreatedBy() {
@@ -81,11 +81,11 @@ public class Resource {
         this.disableLog = disableLog;
     }
 
-    public Date getLastEnabled() {
-        return new Date(lastEnabled);
+    public Calendar getLastEnabled() {
+        return DtoUtils.getCalendar(lastEnabled);
     }
 
-    public void setLastEnabled(Date lastEnabled) {
-        this.lastEnabled = lastEnabled.getTime();
+    public void setLastEnabled(Calendar lastEnabled) {
+        this.lastEnabled = lastEnabled.getTimeInMillis();
     }
 }

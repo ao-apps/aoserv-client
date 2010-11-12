@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -551,12 +551,12 @@ public class CreditCardTransaction {
         this.creditCardComments = creditCardComments;
     }
 
-    public Date getAuthorizationTime() {
-        return new Date(authorizationTime);
+    public Calendar getAuthorizationTime() {
+        return DtoUtils.getCalendar(authorizationTime);
     }
 
-    public void setAuthorizationTime(Date authorizationTime) {
-        this.authorizationTime = authorizationTime.getTime();
+    public void setAuthorizationTime(Calendar authorizationTime) {
+        this.authorizationTime = authorizationTime.getTimeInMillis();
     }
 
     public UserId getAuthorizationUsername() {
@@ -703,12 +703,12 @@ public class CreditCardTransaction {
         this.authorizationApprovalCode = authorizationApprovalCode;
     }
 
-    public Date getCaptureTime() {
-        return captureTime==null ? null : new Date(captureTime);
+    public Calendar getCaptureTime() {
+        return DtoUtils.getCalendar(captureTime);
     }
 
-    public void setCaptureTime(Date captureTime) {
-        this.captureTime = captureTime==null ? null : captureTime.getTime();
+    public void setCaptureTime(Calendar captureTime) {
+        this.captureTime = captureTime==null ? null : captureTime.getTimeInMillis();
     }
 
     public UserId getCaptureUsername() {
@@ -767,12 +767,12 @@ public class CreditCardTransaction {
         this.captureProviderUniqueId = captureProviderUniqueId;
     }
 
-    public Date getVoidTime() {
-        return voidTime==null ? null : new Date(voidTime);
+    public Calendar getVoidTime() {
+        return DtoUtils.getCalendar(voidTime);
     }
 
-    public void setVoidTime(Date voidTime) {
-        this.voidTime = voidTime==null ? null : voidTime.getTime();
+    public void setVoidTime(Calendar voidTime) {
+        this.voidTime = voidTime==null ? null : voidTime.getTimeInMillis();
     }
 
     public UserId getVoidUsername() {

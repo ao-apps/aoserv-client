@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -101,12 +101,12 @@ public class TicketAction {
         this.administrator = administrator;
     }
 
-    public Date getTime() {
-        return new Date(time);
+    public Calendar getTime() {
+        return DtoUtils.getCalendar(time);
     }
 
-    public void setTime(Date time) {
-        this.time = time.getTime();
+    public void setTime(Calendar time) {
+        this.time = time.getTimeInMillis();
     }
 
     public String getActionType() {

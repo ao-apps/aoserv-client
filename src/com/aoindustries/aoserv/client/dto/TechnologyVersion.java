@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author  AO Industries, Inc.
@@ -62,12 +62,12 @@ public class TechnologyVersion {
         this.version = version;
     }
 
-    public Date getUpdated() {
-        return new Date(updated);
+    public Calendar getUpdated() {
+        return DtoUtils.getCalendar(updated);
     }
 
-    public void setUpdated(Date updated) {
-        this.updated = updated.getTime();
+    public void setUpdated(Calendar updated) {
+        this.updated = updated.getTimeInMillis();
     }
 
     public UserId getOwner() {
