@@ -427,7 +427,9 @@ final public class AOSH extends ShellInterpreter {
 
     @SuppressWarnings("unchecked")
     public <T> T parseParameter(String paramName, Class<T> parameterType, boolean nullable, String arg) throws ParameterException, RemoteException {
+        if(parameterType==AccountingCode.class) return (T)parseParameterAccountingCode(paramName, nullable, arg);
         if(parameterType==AOServer.class) return (T)parseParameterAoServer(paramName, nullable, arg);
+        if(parameterType==Business.class) return (T)parseParameterBusiness(paramName, nullable, arg);
         if(parameterType==BusinessAdministrator.class) return (T)parseParameterBusinessAdministrator(paramName, nullable, arg);
         if(parameterType==DomainName.class) return (T)parseParameterDomainName(paramName, nullable, arg);
         if(parameterType==LinuxAccount.class) return (T)parseParameterLinuxAccount(paramName, nullable, arg);
@@ -443,6 +445,18 @@ final public class AOSH extends ShellInterpreter {
         if(parameterType==UserId.class) return (T)parseParameterUserId(paramName, nullable, arg);
         if(parameterType==Username.class) return (T)parseParameterUsername(paramName, nullable, arg);
         throw new AssertionError("Unexpected parameter type: "+parameterType.getName());
+    }
+
+    public static AccountingCode parseParameterAccountingCode(String paramName, boolean nullable, String arg) throws ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        else {
+            try {
+                return AccountingCode.valueOf(arg);
+            } catch(ValidationException validationException) {
+                throw new ParameterException(paramName, validationException);
+            }
+        }
     }
 
     /**
@@ -465,6 +479,16 @@ final public class AOSH extends ShellInterpreter {
         }
         if(aoServer==null) throw new ParameterException(paramName, ApplicationResources.accessor.getMessage("AOSH.parseParameterAoServer.aoServerNotFound", arg));
         return aoServer;
+    }
+
+    public Business parseParameterBusiness(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {
+        // If allows null, convert empty string to null
+        if(nullable && arg.length()==0) return null;
+        try {
+            return connector.getBusinesses().get(parseParameterAccountingCode(paramName, false, arg));
+        } catch(NoSuchElementException exc) {
+            throw new ParameterException(paramName, exc);
+        }
     }
 
     public BusinessAdministrator parseParameterBusinessAdministrator(String paramName, boolean nullable, String arg) throws RemoteException, ParameterException {

@@ -51,6 +51,19 @@ final public class CancelBusinessCommand extends RemoteCommand<Void> {
         // TODO: if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
 
         // TODO
+        // Check access to business
+        // checkAccessBusiness(conn, source, "cancelBusiness", accounting);
+
+        // if(accounting.equals(getRootBusiness())) throw new SQLException("Not allowed to cancel the root business: "+accounting);
+
+        // Business must be disabled
+        // if(!isBusinessDisabled(conn, accounting)) throw new SQLException("Unable to cancel Business, Business not disabled: "+accounting);
+
+        // Business must not already be canceled
+        // if(isBusinessCanceled(conn, accounting)) throw new SQLException("Unable to cancel Business, Business already canceled: "+accounting);
+
+        // All children must be canceled
+        
         return Collections.emptyMap();
     }
 }
