@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupRetention extends AOServObjectShortKey<BackupRetention> implements Comparable<BackupRetention>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupRetention> {
+final public class BackupRetention extends AOServObjectShortKey implements Comparable<BackupRetention>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupRetention> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -23,6 +23,13 @@ final public class BackupRetention extends AOServObjectShortKey<BackupRetention>
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public BackupRetention(BackupRetentionService<?,?> service, short days) {
         super(service, days);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(BackupRetention other) {
+        return AOServObjectUtils.compare(key, other.key);
     }
     // </editor-fold>
 

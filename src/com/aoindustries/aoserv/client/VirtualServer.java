@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> implements Comparable<VirtualServer>, DtoFactory<com.aoindustries.aoserv.client.dto.VirtualServer> {
+final public class VirtualServer extends AOServObjectIntegerKey implements Comparable<VirtualServer>, DtoFactory<com.aoindustries.aoserv.client.dto.VirtualServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implements Comparable<DnsRecord>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsRecord> /*, TODO: Removable */ {
+final public class DnsRecord extends AOServObjectIntegerKey implements Comparable<DnsRecord>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsRecord> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

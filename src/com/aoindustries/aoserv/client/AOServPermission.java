@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  * @author  AO Industries, Inc.
  */
 final public class AOServPermission
-extends AOServObjectStringKey<AOServPermission>
+extends AOServObjectStringKey
 implements
     Comparable<AOServPermission>,
     DtoFactory<com.aoindustries.aoserv.client.dto.AOServPermission>,

@@ -26,7 +26,7 @@ public interface AOServService<
     C extends AOServConnector<C,F>,
     F extends AOServConnectorFactory<C,F>,
     K extends Comparable<K>,
-    V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>
+    V extends AOServObject<K> & Comparable<V> & DtoFactory<?>
 > extends Indexed<V>, Remote {
 
     /**

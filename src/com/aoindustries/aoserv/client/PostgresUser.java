@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> implements Comparable<PostgresUser>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser>, PasswordProtected /* TODO: Removable, Disablable*/ {
+final public class PostgresUser extends AOServObjectIntegerKey implements Comparable<PostgresUser>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser>, PasswordProtected /* TODO: Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

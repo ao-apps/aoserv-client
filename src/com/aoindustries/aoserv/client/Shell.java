@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Shell extends AOServObjectUnixPathKey<Shell> implements Comparable<Shell>, DtoFactory<com.aoindustries.aoserv.client.dto.Shell> {
+final public class Shell extends AOServObjectUnixPathKey implements Comparable<Shell>, DtoFactory<com.aoindustries.aoserv.client.dto.Shell> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -57,6 +57,13 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements Compa
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public Shell(ShellService<?,?> service, UnixPath path) {
         super(service, path);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(Shell other) {
+        return getKey().compareTo(other.getKey());
     }
     // </editor-fold>
 

@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetDevice extends AOServObjectIntegerKey<NetDevice> implements Comparable<NetDevice>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDevice> {
+final public class NetDevice extends AOServObjectIntegerKey implements Comparable<NetDevice>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDevice> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

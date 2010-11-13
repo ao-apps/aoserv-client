@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  * @author  AO Industries, Inc.
  */
 final public class EmailSpamAssassinIntegrationMode
-extends AOServObjectStringKey<EmailSpamAssassinIntegrationMode>
+extends AOServObjectStringKey
 implements
     Comparable<EmailSpamAssassinIntegrationMode>,
     DtoFactory<com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode> {

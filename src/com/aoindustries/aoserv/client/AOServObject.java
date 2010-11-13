@@ -27,10 +27,13 @@ import java.util.Set;
  *
  * @see  AOServService
  */
-abstract public class AOServObject<
-    K extends Comparable<K>,
-    T extends AOServObject<K,T> & Comparable<T> & DtoFactory<?>
-> implements Row, Serializable, Cloneable {
+abstract public class AOServObject<K extends Comparable<K>>
+implements
+    Row,
+    Serializable,
+    Cloneable {
+    //Comparable<AOServObject<K>>, // This is enforced by AOServService
+    //DtoFactory<AOServObject> // This is enforced by AOServService
 
     private static final long serialVersionUID = 1L;
 
@@ -67,9 +70,9 @@ abstract public class AOServObject<
         return money==null ? null : new com.aoindustries.aoserv.client.dto.Money(money.getCurrency().getCurrencyCode(), money.getValue());
     }
 
-    private volatile transient AOServService<?,?,K,T> service;
+    private volatile transient AOServService<?,?,K,?> service;
 
-    protected AOServObject(AOServService<?,?,K,T> service) {
+    protected AOServObject(AOServService<?,?,K,?> service) {
         this.service = service;
     }
 
@@ -78,9 +81,9 @@ abstract public class AOServObject<
      */
     @Override
     @SuppressWarnings("unchecked")
-    final public T clone() {
+    final public AOServObject<K> clone() {
         try {
-            return (T)super.clone();
+            return (AOServObject<K>)super.clone();
         } catch(CloneNotSupportedException err) {
             throw new WrappedException(err);
         }
@@ -89,7 +92,7 @@ abstract public class AOServObject<
     /**
      * Gets the service that this object belongs to.
      */
-    final public AOServService<?,?,K,T> getService() {
+    final public AOServService<?,?,K,?> getService() {
         return service;
     }
 
@@ -115,17 +118,17 @@ abstract public class AOServObject<
      *          Otherwise, returns a clone with the service field updated.
      */
     @SuppressWarnings("unchecked")
-    final public T setService(AOServService<?,?,K,T> service) throws RemoteException {
+    final public <V extends AOServObject<K>> V setService(AOServService<?,?,K,?> service) throws RemoteException {
         if(this.service==null) {
             this.service = service;
-            return (T)this;
+            return (V)this;
         } else if(this.service==service) {
-            return (T)this;
+            return (V)this;
         } else if(this.service.isAoServObjectServiceSettable()) {
             this.service = service;
-            return (T)this;
+            return (V)this;
         } else {
-            T newObj = clone();
+            V newObj = (V)clone();
             ((AOServObject)newObj).service = service;
             return newObj;
         }
@@ -138,7 +141,7 @@ abstract public class AOServObject<
     @Override
     public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        @SuppressWarnings("unchecked") T other = (T)o;
+        AOServObject other = (AOServObject)o;
         return getKey().equals(other.getKey());
     }
 
@@ -146,13 +149,6 @@ abstract public class AOServObject<
      * Gets the key value for this object.
      */
     public abstract K getKey();
-
-    /**
-     * By default sorts by key value.
-     */
-    public int compareTo(T other) {
-        return getKey().compareTo(other.getKey());
-    }
 
     /**
      * The default hashcode value is the hash code of the key value.

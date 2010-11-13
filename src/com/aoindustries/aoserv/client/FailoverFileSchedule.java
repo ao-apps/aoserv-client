@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverFileSchedule> implements Comparable<FailoverFileSchedule>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileSchedule> {
+final public class FailoverFileSchedule extends AOServObjectIntegerKey implements Comparable<FailoverFileSchedule>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileSchedule> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

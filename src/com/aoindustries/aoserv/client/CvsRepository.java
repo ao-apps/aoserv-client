@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> implements Comparable<CvsRepository>, DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
+final public class CvsRepository extends AOServObjectIntegerKey implements Comparable<CvsRepository>, DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

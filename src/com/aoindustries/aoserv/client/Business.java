@@ -34,7 +34,7 @@ import java.util.TreeMap;
  * @author  AO Industries, Inc.
  */
 final public class Business
-extends AOServObjectAccountingCodeKey<Business>
+extends AOServObjectAccountingCodeKey
 implements
     Comparable<Business>,
     DtoFactory<com.aoindustries.aoserv.client.dto.Business>,
@@ -168,6 +168,13 @@ implements
     }
     // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(Business other) {
+        return getKey().compareTo(other.getKey());
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
@@ -202,7 +209,7 @@ implements
     @SchemaColumn(order=5, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the parent business to this one")
     public Business getParentBusiness() throws RemoteException {
         if(parent==null) return null;
-        return getService().filterUnique(COLUMN_ACCOUNTING, parent);
+        return getService().getConnector().getBusinesses().filterUnique(COLUMN_ACCOUNTING, parent);
     }
 
     @SchemaColumn(order=6, name="can_add_backup_server", description="the business may add servers to the backup system")

@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DisableLog extends AOServObjectIntegerKey<DisableLog> implements Comparable<DisableLog>, DtoFactory<com.aoindustries.aoserv.client.dto.DisableLog> {
+final public class DisableLog extends AOServObjectIntegerKey implements Comparable<DisableLog>, DtoFactory<com.aoindustries.aoserv.client.dto.DisableLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

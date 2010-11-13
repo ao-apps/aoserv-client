@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implements Comparable<MySQLUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUser>, PasswordProtected /* TODO, Removable, Disablable*/ {
+final public class MySQLUser extends AOServObjectIntegerKey implements Comparable<MySQLUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUser>, PasswordProtected /* TODO, Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

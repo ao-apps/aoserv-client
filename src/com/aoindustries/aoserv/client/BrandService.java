@@ -15,7 +15,7 @@ import com.aoindustries.aoserv.client.validator.*;
 @ServiceAnnotation(ServiceName.brands)
 public interface BrandService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,AccountingCode,Brand> {
 
-    /**
+    /** 
      * Gets the list of all brands that either have a null parent (the
      * actual root of the business tree) or where the parent is inaccessible.
      */

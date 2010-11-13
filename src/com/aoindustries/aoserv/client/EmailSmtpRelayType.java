@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRelayType> implements Comparable<EmailSmtpRelayType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailSmtpRelayType> {
+final public class EmailSmtpRelayType extends AOServObjectStringKey implements Comparable<EmailSmtpRelayType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailSmtpRelayType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -49,6 +49,13 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey<EmailSmtpRel
 
     private void intern() {
         sendmailConfig = intern(sendmailConfig);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(EmailSmtpRelayType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

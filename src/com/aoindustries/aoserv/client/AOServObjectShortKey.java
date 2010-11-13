@@ -14,13 +14,13 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<Short,T> {
+abstract public class AOServObjectShortKey extends AOServObject<Short> {
 
     private static final long serialVersionUID = 1L;
 
     final protected short key;
 
-    protected AOServObjectShortKey(AOServService<?,?,Short,T> service, short key) {
+    protected AOServObjectShortKey(AOServService<?,?,Short,? extends AOServObjectShortKey> service, short key) {
         super(service);
         this.key = key;
     }
@@ -36,7 +36,7 @@ abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T> & C
     @Override
     final public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        @SuppressWarnings("unchecked") T other = (T)o;
+        AOServObjectShortKey other = (AOServObjectShortKey)o;
         return key==other.key;
     }
 

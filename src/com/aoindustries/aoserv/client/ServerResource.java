@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerResource extends AOServObjectIntegerKey<ServerResource> implements Comparable<ServerResource>, DtoFactory<com.aoindustries.aoserv.client.dto.ServerResource> {
+final public class ServerResource extends AOServObjectIntegerKey implements Comparable<ServerResource>, DtoFactory<com.aoindustries.aoserv.client.dto.ServerResource> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

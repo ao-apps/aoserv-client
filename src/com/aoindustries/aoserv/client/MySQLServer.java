@@ -29,7 +29,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> implements Comparable<MySQLServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
+final public class MySQLServer extends AOServObjectIntegerKey implements Comparable<MySQLServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

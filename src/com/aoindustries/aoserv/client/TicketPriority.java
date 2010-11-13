@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketPriority extends AOServObjectStringKey<TicketPriority> implements Comparable<TicketPriority>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketPriority> {
+final public class TicketPriority extends AOServObjectStringKey implements Comparable<TicketPriority>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketPriority> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -36,6 +36,13 @@ final public class TicketPriority extends AOServObjectStringKey<TicketPriority> 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public TicketPriority(TicketPriorityService<?,?> table, String priority) {
         super(table, priority);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(TicketPriority other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

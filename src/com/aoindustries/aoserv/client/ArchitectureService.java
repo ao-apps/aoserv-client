@@ -12,5 +12,8 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.architectures)
-public interface ArchitectureService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,Architecture> {
+public interface ArchitectureService<
+    C extends AOServConnector<C,F>,
+    F extends AOServConnectorFactory<C,F>
+> extends AOServService<C,F,String,Architecture> {
 }

@@ -53,7 +53,7 @@ final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
             if(un.getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "SetUsernamePasswordCommand.validate.disabled");
             else {
                 // Make sure passes other command validations
-                for(AOServObject<?,?> dependent : un.getDependentObjects()) {
+                for(AOServObject<?> dependent : un.getDependentObjects()) {
                     if(dependent instanceof PasswordProtected) {
                         errors = addValidationErrors(
                             errors,

@@ -28,7 +28,7 @@ import java.util.Set;
  * @author  AO Industries, Inc.
  */
 final public class BusinessAdministrator
-extends AOServObjectUserIdKey<BusinessAdministrator>
+extends AOServObjectUserIdKey
 implements
     Comparable<BusinessAdministrator>,
     DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministrator>,
@@ -132,6 +132,13 @@ implements
         country = intern(country);
         zip = intern(zip);
         supportCode = intern(supportCode);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(BusinessAdministrator other) {
+        return getKey().compareTo(other.getKey());
     }
     // </editor-fold>
 

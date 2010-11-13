@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> implements Comparable<Reseller>, DtoFactory<com.aoindustries.aoserv.client.dto.Reseller> {
+final public class Reseller extends AOServObjectAccountingCodeKey implements Comparable<Reseller>, DtoFactory<com.aoindustries.aoserv.client.dto.Reseller> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -30,6 +30,13 @@ final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> impl
     public Reseller(ResellerService<?,?> service, AccountingCode accounting, boolean ticketAutoEscalate) {
         super(service, accounting);
         this.ticketAutoEscalate = ticketAutoEscalate;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(Reseller other) {
+        return getKey().compareTo(other.getKey());
     }
     // </editor-fold>
 
@@ -94,7 +101,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> impl
      * business (that is a reseller) equal to this one.
      */
     public IndexedSet<Reseller> getChildResellers() throws RemoteException {
-        return getService().filterIndexed(COLUMN_PARENT, this);
+        return getService().getConnector().getResellers().filterIndexed(COLUMN_PARENT, this);
     }
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {

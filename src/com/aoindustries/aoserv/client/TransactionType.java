@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionType extends AOServObjectStringKey<TransactionType> implements Comparable<TransactionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TransactionType> {
+final public class TransactionType extends AOServObjectStringKey implements Comparable<TransactionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TransactionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -43,6 +43,13 @@ final public class TransactionType extends AOServObjectStringKey<TransactionType
     public TransactionType(TransactionTypeService<?,?> service, String name, boolean isCredit) {
         super(service, name);
         this.isCredit = isCredit;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(TransactionType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

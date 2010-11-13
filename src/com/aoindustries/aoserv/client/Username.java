@@ -26,8 +26,10 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Username extends AOServObjectUserIdKey<Username> implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.Username>, PasswordProtected /* TODO: Removable, Disablable*/ {
-	
+final public class Username
+extends AOServObjectUserIdKey
+implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.Username>, PasswordProtected /* TODO: Removable, Disablable*/ {
+
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
     // </editor-fold>
@@ -50,6 +52,13 @@ final public class Username extends AOServObjectUserIdKey<Username> implements C
 
     private void intern() {
         accounting = intern(accounting);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(Username other) {
+        return getKey().compareTo(other.getKey());
     }
     // </editor-fold>
 

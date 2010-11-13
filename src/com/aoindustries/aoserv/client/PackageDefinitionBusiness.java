@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  * @author  AO Industries, Inc.
  */
 final public class PackageDefinitionBusiness
-extends AOServObjectIntegerKey<PackageDefinitionBusiness>
+extends AOServObjectIntegerKey
 implements
     Comparable<PackageDefinitionBusiness>,
     DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness> {

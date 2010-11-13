@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncoding> implements Comparable<PostgresEncoding>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresEncoding> {
+final public class PostgresEncoding extends AOServObjectIntegerKey implements Comparable<PostgresEncoding>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresEncoding> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

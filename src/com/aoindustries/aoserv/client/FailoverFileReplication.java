@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * @author  AO Industries, Inc.
  */
 final public class FailoverFileReplication
-extends AOServObjectIntegerKey<FailoverFileReplication>
+extends AOServObjectIntegerKey
 implements
     Comparable<FailoverFileReplication>,
     DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileReplication>,

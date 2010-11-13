@@ -16,7 +16,7 @@ import com.aoindustries.table.IndexType;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implements Comparable<HttpdJKCode>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKCode> {
+final public class HttpdJKCode extends AOServObjectStringKey implements Comparable<HttpdJKCode>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKCode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -28,6 +28,13 @@ final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implem
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(HttpdJKCode other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="code", index=IndexType.PRIMARY_KEY, description="the unique, two-character code")
     public String getCode() {
@@ -36,6 +43,7 @@ final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implem
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    @Override
     public com.aoindustries.aoserv.client.dto.HttpdJKCode getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdJKCode(getKey());
     }

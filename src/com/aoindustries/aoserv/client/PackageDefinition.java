@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefinition> implements Comparable<PackageDefinition>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinition> /*TODO:, Removable */ {
+final public class PackageDefinition extends AOServObjectIntegerKey implements Comparable<PackageDefinition>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinition> /*TODO:, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

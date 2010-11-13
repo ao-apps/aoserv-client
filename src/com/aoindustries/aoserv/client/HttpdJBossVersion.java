@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVersion> implements Comparable<HttpdJBossVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJBossVersion> {
+final public class HttpdJBossVersion extends AOServObjectIntegerKey implements Comparable<HttpdJBossVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJBossVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

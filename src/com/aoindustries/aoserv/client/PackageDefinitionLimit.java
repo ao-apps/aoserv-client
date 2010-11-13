@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinitionLimit extends AOServObjectIntegerKey<PackageDefinitionLimit> implements Comparable<PackageDefinitionLimit>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionLimit> {
+final public class PackageDefinitionLimit extends AOServObjectIntegerKey implements Comparable<PackageDefinitionLimit>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionLimit> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

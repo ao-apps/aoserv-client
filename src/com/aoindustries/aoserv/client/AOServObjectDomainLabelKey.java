@@ -13,13 +13,13 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectDomainLabelKey<T extends AOServObjectDomainLabelKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<DomainLabel,T> {
+abstract public class AOServObjectDomainLabelKey extends AOServObject<DomainLabel> {
 
     private static final long serialVersionUID = 1L;
 
     private DomainLabel key;
 
-    protected AOServObjectDomainLabelKey(AOServService<?,?,DomainLabel,T> service, DomainLabel key) {
+    protected AOServObjectDomainLabelKey(AOServService<?,?,DomainLabel,? extends AOServObjectDomainLabelKey> service, DomainLabel key) {
         super(service);
         this.key = key;
         intern();

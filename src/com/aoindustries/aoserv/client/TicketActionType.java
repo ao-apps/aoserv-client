@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketActionType extends AOServObjectStringKey<TicketActionType> implements Comparable<TicketActionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketActionType> {
+final public class TicketActionType extends AOServObjectStringKey implements Comparable<TicketActionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketActionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -45,6 +45,13 @@ final public class TicketActionType extends AOServObjectStringKey<TicketActionTy
     public TicketActionType(TicketActionTypeService<?,?> service, String type, boolean visibleAdminOnly) {
         super(service, type);
         this.visibleAdminOnly = visibleAdminOnly;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(TicketActionType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

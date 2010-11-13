@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfile> implements Comparable<BusinessProfile>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessProfile> {
+final public class BusinessProfile extends AOServObjectIntegerKey implements Comparable<BusinessProfile>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessProfile> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol> implements Comparable<HttpdJKProtocol>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKProtocol> {
+final public class HttpdJKProtocol extends AOServObjectStringKey implements Comparable<HttpdJKProtocol>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKProtocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

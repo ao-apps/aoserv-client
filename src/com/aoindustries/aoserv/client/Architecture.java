@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Architecture extends AOServObjectStringKey<Architecture> implements Comparable<Architecture>, DtoFactory<com.aoindustries.aoserv.client.dto.Architecture> {
+final public class Architecture extends AOServObjectStringKey implements Comparable<Architecture>, DtoFactory<com.aoindustries.aoserv.client.dto.Architecture> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -46,6 +46,13 @@ final public class Architecture extends AOServObjectStringKey<Architecture> impl
     public Architecture(ArchitectureService<?,?> service, String name, int bits) {
         super(service, name);
         this.bits = bits;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(Architecture other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

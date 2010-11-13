@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ResourceType extends AOServObjectStringKey<ResourceType> implements Comparable<ResourceType>, DtoFactory<com.aoindustries.aoserv.client.dto.ResourceType> {
+final public class ResourceType extends AOServObjectStringKey implements Comparable<ResourceType>, DtoFactory<com.aoindustries.aoserv.client.dto.ResourceType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -60,6 +60,13 @@ final public class ResourceType extends AOServObjectStringKey<ResourceType> impl
     }
     // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(ResourceType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Columns">
     /**
      * Gets the unique name of this resource type.

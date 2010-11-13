@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements Comparable<Brand>, DtoFactory<com.aoindustries.aoserv.client.dto.Brand> {
+final public class Brand extends AOServObjectAccountingCodeKey implements Comparable<Brand>, DtoFactory<com.aoindustries.aoserv.client.dto.Brand> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -183,6 +183,13 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
         aowebStrutsSignupAdminAddress = intern(aowebStrutsSignupAdminAddress);
         aowebStrutsKeystoreType = intern(aowebStrutsKeystoreType);
         aowebStrutsKeystorePassword = intern(aowebStrutsKeystorePassword);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(Brand other) {
+        return getKey().compareTo(other.getKey());
     }
     // </editor-fold>
 
@@ -536,7 +543,7 @@ final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements
      * business (that is a brand) equal to this one.
      */
     public IndexedSet<Brand> getChildBrands() throws RemoteException {
-        return getService().filterIndexed(COLUMN_PARENT, this);
+        return getService().getConnector().getBrands().filterIndexed(COLUMN_PARENT, this);
     }
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {

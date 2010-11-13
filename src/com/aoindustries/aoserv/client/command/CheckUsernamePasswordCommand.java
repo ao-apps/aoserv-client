@@ -48,7 +48,7 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
             errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // Make sure passes other command validations
-            for(AOServObject<?,?> dependent : un.getDependentObjects()) {
+            for(AOServObject<?> dependent : un.getDependentObjects()) {
                 if(dependent instanceof PasswordProtected) {
                     errors = addValidationErrors(
                         errors,
@@ -61,7 +61,7 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
     }
 
     static List<PasswordChecker.Result> checkPassword(AOServConnector<?,?> connector, boolean isInteractive, Username un, String password) throws IOException {
-        for(AOServObject<?,?> dependent : un.getDependentObjects()) {
+        for(AOServObject<?> dependent : un.getDependentObjects()) {
             if(dependent instanceof PasswordProtected) {
                 List<PasswordChecker.Result> results = ((PasswordProtected)dependent).getCheckPasswordCommand(password).execute(connector, isInteractive);
                 if(PasswordChecker.hasResults(results)) return results;

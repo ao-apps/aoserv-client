@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardProcessor> implements Comparable<CreditCardProcessor>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardProcessor> {
+final public class CreditCardProcessor extends AOServObjectStringKey implements Comparable<CreditCardProcessor>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardProcessor> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

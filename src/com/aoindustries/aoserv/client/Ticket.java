@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Ticket extends AOServObjectIntegerKey<Ticket> implements Comparable<Ticket>, DtoFactory<com.aoindustries.aoserv.client.dto.Ticket> {
+final public class Ticket extends AOServObjectIntegerKey implements Comparable<Ticket>, DtoFactory<com.aoindustries.aoserv.client.dto.Ticket> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EmailAttachmentType extends AOServObjectStringKey<EmailAttachmentType> implements Comparable<EmailAttachmentType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailAttachmentType> {
+final public class EmailAttachmentType extends AOServObjectStringKey implements Comparable<EmailAttachmentType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailAttachmentType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -29,6 +29,13 @@ final public class EmailAttachmentType extends AOServObjectStringKey<EmailAttach
     public EmailAttachmentType(EmailAttachmentTypeService<?,?> service, String extension, boolean isDefaultBlock) {
         super(service, extension);
         this.isDefaultBlock = isDefaultBlock;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(EmailAttachmentType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

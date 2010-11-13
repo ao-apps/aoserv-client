@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  * @author  AO Industries, Inc.
  */
 final public class BankTransactionType
-extends AOServObjectStringKey<BankTransactionType>
+extends AOServObjectStringKey
 implements
     Comparable<BankTransactionType>,
     DtoFactory<com.aoindustries.aoserv.client.dto.BankTransactionType> {
@@ -30,6 +30,13 @@ implements
     public BankTransactionType(BankTransactionTypeService<?,?> service, String name, boolean isNegative) {
         super(service, name);
         this.isNegative = isNegative;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(BankTransactionType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

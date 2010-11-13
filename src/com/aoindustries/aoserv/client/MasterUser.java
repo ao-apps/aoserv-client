@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implements Comparable<MasterUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterUser> {
+final public class MasterUser extends AOServObjectUserIdKey implements Comparable<MasterUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterUser> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -53,6 +53,13 @@ final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implemen
         this.canInvalidateTables = canInvalidateTables;
         this.canAccessAdminWeb = canAccessAdminWeb;
         this.isDnsAdmin = isDnsAdmin;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(MasterUser other) {
+        return getKey().compareTo(other.getKey());
     }
     // </editor-fold>
 

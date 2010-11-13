@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author  AO Industries, Inc.
  */
 final public class NetBind
-extends AOServObjectIntegerKey<NetBind>
+extends AOServObjectIntegerKey
 implements
     Comparable<NetBind>,
     DtoFactory<com.aoindustries.aoserv.client.dto.NetBind> /*implements Removable*/ {

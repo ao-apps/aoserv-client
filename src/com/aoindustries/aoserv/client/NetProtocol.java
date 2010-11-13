@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implements Comparable<NetProtocol>, DtoFactory<com.aoindustries.aoserv.client.dto.NetProtocol> {
+final public class NetProtocol extends AOServObjectStringKey implements Comparable<NetProtocol>, DtoFactory<com.aoindustries.aoserv.client.dto.NetProtocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -32,6 +32,13 @@ final public class NetProtocol extends AOServObjectStringKey<NetProtocol> implem
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public NetProtocol(NetProtocolService<?,?> service, String protocol) {
         super(service, protocol);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(NetProtocol other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

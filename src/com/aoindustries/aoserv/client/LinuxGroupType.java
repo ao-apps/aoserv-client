@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> implements Comparable<LinuxGroupType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupType> {
+final public class LinuxGroupType extends AOServObjectStringKey implements Comparable<LinuxGroupType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -50,6 +50,13 @@ final public class LinuxGroupType extends AOServObjectStringKey<LinuxGroupType> 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public LinuxGroupType(LinuxGroupTypeService<?,?> service, String resourceType) {
         super(service, resourceType);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(LinuxGroupType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

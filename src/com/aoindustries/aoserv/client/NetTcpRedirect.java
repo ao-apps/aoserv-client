@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetTcpRedirect extends AOServObjectIntegerKey<NetTcpRedirect> implements Comparable<NetTcpRedirect>, DtoFactory<com.aoindustries.aoserv.client.dto.NetTcpRedirect> {
+final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comparable<NetTcpRedirect>, DtoFactory<com.aoindustries.aoserv.client.dto.NetTcpRedirect> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

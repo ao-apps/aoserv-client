@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
 /**
  * @author  AO Industries, Inc.
  */
-final public class Language extends AOServObjectStringKey<Language> implements Comparable<Language>, DtoFactory<com.aoindustries.aoserv.client.dto.Language> {
+final public class Language extends AOServObjectStringKey implements Comparable<Language>, DtoFactory<com.aoindustries.aoserv.client.dto.Language> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -26,6 +26,13 @@ final public class Language extends AOServObjectStringKey<Language> implements C
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public Language(LanguageService<?,?> table, String code) {
         super(table, code);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(Language other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

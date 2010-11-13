@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EmailInbox extends AOServObjectIntegerKey<EmailInbox> implements Comparable<EmailInbox>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailInbox> /* TODO , Removable, Disablable */ {
+final public class EmailInbox extends AOServObjectIntegerKey implements Comparable<EmailInbox>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailInbox> /* TODO , Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

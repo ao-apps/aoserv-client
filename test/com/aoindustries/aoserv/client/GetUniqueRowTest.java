@@ -60,7 +60,7 @@ public class GetUniqueRowTest extends TestCase {
                 // TODO: master_processes
                 AOServService<?,?,?,?> service=conn.getServices().get(serviceName);
                 System.out.print("        "+serviceName+": ");
-                List<AOServObject<?,?>> rows=new ArrayList<AOServObject<?,?>>(service.getSet());
+                List<AOServObject<?>> rows=new ArrayList<AOServObject<?>>(service.getSet());
                 System.out.println(rows.size()+" rows");
                 System.out.println("            Shuffling rows");
                 Collections.shuffle(rows);

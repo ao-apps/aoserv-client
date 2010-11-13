@@ -25,7 +25,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Resource extends AOServObjectIntegerKey<Resource> implements Comparable<Resource>, DtoFactory<com.aoindustries.aoserv.client.dto.Resource> {
+final public class Resource extends AOServObjectIntegerKey implements Comparable<Resource>, DtoFactory<com.aoindustries.aoserv.client.dto.Resource> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

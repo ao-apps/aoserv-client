@@ -28,7 +28,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer> implements Comparable<PostgresServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
+final public class PostgresServer extends AOServObjectIntegerKey implements Comparable<PostgresServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

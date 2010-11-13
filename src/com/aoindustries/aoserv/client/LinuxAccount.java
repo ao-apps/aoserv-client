@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> implements Comparable<LinuxAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
+final public class LinuxAccount extends AOServObjectIntegerKey implements Comparable<LinuxAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

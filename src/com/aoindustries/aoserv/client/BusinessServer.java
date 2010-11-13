@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessServer extends AOServObjectIntegerKey<BusinessServer> implements Comparable<BusinessServer>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessServer> /*, Removable*/ {
+final public class BusinessServer extends AOServObjectIntegerKey implements Comparable<BusinessServer>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessServer> /*, Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsType extends AOServObjectStringKey<DnsType> implements Comparable<DnsType>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsType> {
+final public class DnsType extends AOServObjectStringKey implements Comparable<DnsType>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -41,6 +41,13 @@ final public class DnsType extends AOServObjectStringKey<DnsType> implements Com
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public DnsType(DnsTypeService<?,?> service, String type) {
         super(service, type);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(DnsType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

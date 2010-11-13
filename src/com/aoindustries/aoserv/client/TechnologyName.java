@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyName extends AOServObjectStringKey<TechnologyName> implements Comparable<TechnologyName>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyName> {
+final public class TechnologyName extends AOServObjectStringKey implements Comparable<TechnologyName>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyName> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -27,6 +27,13 @@ final public class TechnologyName extends AOServObjectStringKey<TechnologyName> 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public TechnologyName(TechnologyNameService<?,?> service, String name) {
         super(service, name);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(TechnologyName other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

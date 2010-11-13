@@ -19,7 +19,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyVersion extends AOServObjectIntegerKey<TechnologyVersion> implements Comparable<TechnologyVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyVersion> {
+final public class TechnologyVersion extends AOServObjectIntegerKey implements Comparable<TechnologyVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

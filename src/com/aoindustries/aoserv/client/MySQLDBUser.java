@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> implements Comparable<MySQLDBUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDBUser> /*, Removable*/ {
+final public class MySQLDBUser extends AOServObjectIntegerKey implements Comparable<MySQLDBUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDBUser> /*, Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

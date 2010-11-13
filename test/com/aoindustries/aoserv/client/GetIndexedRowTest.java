@@ -54,11 +54,11 @@ public class GetIndexedRowTest extends TestCase {
             for(ServiceName serviceName : ServiceName.values) {
                 AOServService<?,?,?,?> service=conn.getServices().get(serviceName);
                 System.out.print("        "+serviceName.name()+": ");
-                IndexedSet<? extends AOServObject<?,?>> set = service.getSet();
+                IndexedSet<? extends AOServObject<?>> set = service.getSet();
                 if(set.isEmpty()) System.out.println("Empty table, cannot test");
                 else {
                     List<? extends MethodColumn> columns = service.getTable().getColumns();
-                    Map<Object,Set<AOServObject<?,?>>> expectedSets=new HashMap<Object,Set<AOServObject<?,?>>>();
+                    Map<Object,Set<AOServObject<?>>> expectedSets=new HashMap<Object,Set<AOServObject<?>>>();
                     int numColumns = columns.size();
                     for(int col=0; col<numColumns; col++) {
                         MethodColumn column = columns.get(col);
@@ -68,19 +68,19 @@ public class GetIndexedRowTest extends TestCase {
                             try {
                                 // Build our set of the expected objects by iterating through the entire list
                                 expectedSets.clear();
-                                for(AOServObject<?,?> row : set) {
+                                for(AOServObject<?> row : set) {
                                     Object value=row.getColumn(col);
                                     // null values are not indexed
                                     if(value!=null) {
-                                        Set<AOServObject<?,?>> expectedSet = expectedSets.get(value);
-                                        if(expectedSet==null) expectedSets.put(value, expectedSet=new HashSet<AOServObject<?,?>>());
+                                        Set<AOServObject<?>> expectedSet = expectedSets.get(value);
+                                        if(expectedSet==null) expectedSets.put(value, expectedSet=new HashSet<AOServObject<?>>());
                                         expectedSet.add(row);
                                     }
                                 }
                                 // Compare to the lists using the index routines
                                 for(Object value : expectedSets.keySet()) {
-                                    Set<AOServObject<?,?>> expectedSet=expectedSets.get(value);
-                                    Set<? extends AOServObject<?,?>> indexedSet=service.filterIndexed(columnName, value);
+                                    Set<AOServObject<?>> expectedSet=expectedSets.get(value);
+                                    Set<? extends AOServObject<?>> indexedSet=service.filterIndexed(columnName, value);
                                     assertEquals(serviceName.name()+"."+columnName+"="+value+": Mismatch in list size: ", expectedSet.size(), indexedSet.size());
                                     if(!expectedSet.containsAll(indexedSet)) fail(serviceName.name()+"."+columnName+"="+value+": expectedSet does not contain all the rows of indexedSet");
                                     if(!indexedSet.containsAll(expectedSet)) fail(serviceName.name()+"."+columnName+"="+value+": indexedSet does not contain all the rows of expectedSet");

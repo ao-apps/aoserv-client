@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> implements Comparable<MySQLDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
+final public class MySQLDatabase extends AOServObjectIntegerKey implements Comparable<MySQLDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

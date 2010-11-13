@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSetting> implements Comparable<FileBackupSetting>, DtoFactory<com.aoindustries.aoserv.client.dto.FileBackupSetting> /*, Removable */ {
+final public class FileBackupSetting extends AOServObjectIntegerKey implements Comparable<FileBackupSetting>, DtoFactory<com.aoindustries.aoserv.client.dto.FileBackupSetting> /*, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

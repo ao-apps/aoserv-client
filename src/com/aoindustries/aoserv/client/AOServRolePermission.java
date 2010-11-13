@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  * @author  AO Industries, Inc.
  */
 final public class AOServRolePermission
-extends AOServObjectIntegerKey<AOServRolePermission>
+extends AOServObjectIntegerKey
 implements
     Comparable<AOServRolePermission>,
     DtoFactory<com.aoindustries.aoserv.client.dto.AOServRolePermission> {

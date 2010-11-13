@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountType> implements Comparable<LinuxAccountType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountType> {
+final public class LinuxAccountType extends AOServObjectStringKey implements Comparable<LinuxAccountType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -156,6 +156,13 @@ final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountTy
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public LinuxAccountType(LinuxAccountTypeService<?,?> service, String resourceType) {
         super(service, resourceType);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(LinuxAccountType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

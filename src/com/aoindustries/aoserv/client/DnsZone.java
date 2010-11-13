@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsZone extends AOServObjectIntegerKey<DnsZone> implements Comparable<DnsZone>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsZone> /*, TODO: Removable, Dumpable */ {
+final public class DnsZone extends AOServObjectIntegerKey implements Comparable<DnsZone>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsZone> /*, TODO: Removable, Dumpable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

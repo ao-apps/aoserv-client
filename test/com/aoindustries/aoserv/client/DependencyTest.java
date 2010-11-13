@@ -46,19 +46,19 @@ public class DependencyTest extends TestCase {
     }
 
     abstract class ChildGetter {
-        abstract Set<? extends AOServObject> getChildren(AOServObject<?,?> obj) throws IOException, SQLException;
+        abstract Set<? extends AOServObject> getChildren(AOServObject<?> obj) throws IOException, SQLException;
     }
 
     class DependenciesGetter extends ChildGetter {
         @Override
-        Set<? extends AOServObject> getChildren(AOServObject<?,?> obj) throws IOException, SQLException {
+        Set<? extends AOServObject> getChildren(AOServObject<?> obj) throws IOException, SQLException {
             return obj.getDependencies();
         }
     }
 
     class DependentObjectsGetter extends ChildGetter {
         @Override
-        Set<? extends AOServObject> getChildren(AOServObject<?,?> obj) throws IOException, SQLException {
+        Set<? extends AOServObject> getChildren(AOServObject<?> obj) throws IOException, SQLException {
             return obj.getDependentObjects();
         }
     }
@@ -119,11 +119,11 @@ public class DependencyTest extends TestCase {
             Sequence time = new UnsynchronizedSequence();
             for(ServiceName serviceName : ServiceName.values) {
                 AOServService<?,?,?,?> service = conn.getServices().get(serviceName);
-                Set<? extends AOServObject<?,? extends AOServObject>> set = service.getSet();
+                Set<? extends AOServObject<?>> set = service.getSet();
                 int numRows = set.size();
                 if(numRows==0) System.out.print("E");
                 else {
-                    for(AOServObject<?,?> v : set) {
+                    for(AOServObject<?> v : set) {
                         if(!colors.containsKey(v)) doTestGetDependenciesDfsVisit(colors, predecessors, time, childGetter, backGetter, v);
                     }
                     System.out.print('.');

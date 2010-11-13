@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverMySQLReplication extends AOServObjectIntegerKey<FailoverMySQLReplication> implements Comparable<FailoverMySQLReplication>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverMySQLReplication> {
+final public class FailoverMySQLReplication extends AOServObjectIntegerKey implements Comparable<FailoverMySQLReplication>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverMySQLReplication> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

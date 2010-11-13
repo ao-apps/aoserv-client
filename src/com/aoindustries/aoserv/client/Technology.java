@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Technology extends AOServObjectIntegerKey<Technology> implements Comparable<Technology>, DtoFactory<com.aoindustries.aoserv.client.dto.Technology> {
+final public class Technology extends AOServObjectIntegerKey implements Comparable<Technology>, DtoFactory<com.aoindustries.aoserv.client.dto.Technology> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

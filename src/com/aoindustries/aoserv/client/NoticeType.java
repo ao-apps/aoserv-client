@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NoticeType extends AOServObjectStringKey<NoticeType> implements Comparable<NoticeType>, DtoFactory<com.aoindustries.aoserv.client.dto.NoticeType> {
+final public class NoticeType extends AOServObjectStringKey implements Comparable<NoticeType>, DtoFactory<com.aoindustries.aoserv.client.dto.NoticeType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -32,6 +32,13 @@ final public class NoticeType extends AOServObjectStringKey<NoticeType> implemen
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public NoticeType(NoticeTypeService<?,?> service, String type) {
         super(service, type);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(NoticeType other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

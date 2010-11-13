@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ExpenseCategory extends AOServObjectStringKey<ExpenseCategory> implements Comparable<ExpenseCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.ExpenseCategory> {
+final public class ExpenseCategory extends AOServObjectStringKey implements Comparable<ExpenseCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.ExpenseCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -23,6 +23,13 @@ final public class ExpenseCategory extends AOServObjectStringKey<ExpenseCategory
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public ExpenseCategory(ExpenseCategoryService<?,?> service, String expenseCode) {
         super(service, expenseCode);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(ExpenseCategory other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

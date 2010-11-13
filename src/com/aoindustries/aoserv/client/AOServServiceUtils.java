@@ -52,14 +52,15 @@ final public class AOServServiceUtils {
     /**
      * Sets the service on the provided object, possibly cloning it in the process.
      */
-    public static <K extends Comparable<K>,V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>> V setService(V obj, AOServService<?,?,K,V> service) throws RemoteException {
-        return obj==null ? null : obj.setService(service);
+    @SuppressWarnings("unchecked")
+    public static <K extends Comparable<K>,V extends AOServObject<K>> V setService(V obj, AOServService<?,?,K,?> service) throws RemoteException {
+        return obj==null ? null : (V)obj.setService(service);
     }
 
     /**
      * Sets the service on an entire collection, and returns an unmodifiable set.
      */
-    public static <K extends Comparable<K>,V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>> IndexedSet<V> setServices(IndexedSet<V> objs, AOServService<?,?,K,V> service) throws RemoteException {
+    public static <K extends Comparable<K>,V extends AOServObject<K>> IndexedSet<V> setServices(IndexedSet<V> objs, AOServService<?,?,K,?> service) throws RemoteException {
         int size = objs.size();
         if(size==0) return IndexedSet.emptyIndexedSet();
         if(size==1) {
@@ -98,7 +99,10 @@ final public class AOServServiceUtils {
      *
      * @see AOServService#getTable()
      */
-    final public static class AnnotationTable<K extends Comparable<K>,V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>> implements Table<MethodColumn,V> {
+    final public static class AnnotationTable<
+        K extends Comparable<K>,
+        V extends AOServObject<K> & Comparable<V> & DtoFactory<?>
+    > implements Table<MethodColumn,V> {
 
         final private AOServService<?,?,K,V> service;
         final private List<? extends MethodColumn> columns;
@@ -174,7 +178,7 @@ final public class AOServServiceUtils {
     /**
      * Used by ServiceMap.
      */
-    final static class EntrySet<K extends Comparable<K>,V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>> extends AbstractSet<Map.Entry<K,V>> {
+    final static class EntrySet<K extends Comparable<K>,V extends AOServObject<K>> extends AbstractSet<Map.Entry<K,V>> {
 
         private Set<V> objs;
 
@@ -229,7 +233,7 @@ final public class AOServServiceUtils {
     /**
      * Used by ServiceMap.
      */
-    final static class KeySet<K extends Comparable<K>,V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>> extends AbstractSet<K> {
+    final static class KeySet<K extends Comparable<K>,V extends AOServObject<K>> extends AbstractSet<K> {
 
         private Set<V> objs;
 
@@ -271,7 +275,10 @@ final public class AOServServiceUtils {
      *
      * @see AOServService#getMap()
      */
-    final public static class ServiceMap<K extends Comparable<K>,V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>> implements Map<K,V> {
+    final public static class ServiceMap<
+        K extends Comparable<K>,
+        V extends AOServObject<K> & Comparable<V> & DtoFactory<?>
+    > implements Map<K,V> {
 
         private final AOServService<?,?,K,V> service;
         private final Class<K> keyClass;

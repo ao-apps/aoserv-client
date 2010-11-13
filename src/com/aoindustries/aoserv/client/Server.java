@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Server extends AOServObjectIntegerKey<Server> implements Comparable<Server>, DtoFactory<com.aoindustries.aoserv.client.dto.Server> {
+final public class Server extends AOServObjectIntegerKey implements Comparable<Server>, DtoFactory<com.aoindustries.aoserv.client.dto.Server> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

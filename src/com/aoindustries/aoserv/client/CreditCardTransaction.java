@@ -19,7 +19,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCardTransaction> implements Comparable<CreditCardTransaction>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardTransaction> {
+final public class CreditCardTransaction extends AOServObjectIntegerKey implements Comparable<CreditCardTransaction>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardTransaction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

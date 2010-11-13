@@ -26,7 +26,7 @@ import java.util.Set;
  */
 abstract class CachedService<
     K extends Comparable<K>,
-    V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>
+    V extends AOServObject<K> & Comparable<V> & DtoFactory<?>
 > implements AOServService<CachedConnector,CachedConnectorFactory,K,V> {
 
     final CachedConnector connector;

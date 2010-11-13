@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  * @author  AO Industries, Inc.
  */
 final public class BusinessAdministratorRole
-extends AOServObjectIntegerKey<BusinessAdministratorRole>
+extends AOServObjectIntegerKey
 implements
     Comparable<BusinessAdministratorRole>,
     DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministratorRole> {

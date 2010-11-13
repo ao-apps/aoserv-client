@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupPartition extends AOServObjectIntegerKey<BackupPartition> implements Comparable<BackupPartition>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupPartition> {
+final public class BackupPartition extends AOServObjectIntegerKey implements Comparable<BackupPartition>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupPartition> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

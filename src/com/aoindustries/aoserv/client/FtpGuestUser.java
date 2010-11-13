@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> implements Comparable<FtpGuestUser>, DtoFactory<com.aoindustries.aoserv.client.dto.FtpGuestUser> /*, TODO: Removable */ {
+final public class FtpGuestUser extends AOServObjectIntegerKey implements Comparable<FtpGuestUser>, DtoFactory<com.aoindustries.aoserv.client.dto.FtpGuestUser> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implements Comparable<NetDeviceID>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDeviceID> {
+final public class NetDeviceID extends AOServObjectStringKey implements Comparable<NetDeviceID>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDeviceID> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -41,6 +41,13 @@ final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implem
     public NetDeviceID(NetDeviceIDService<?,?> service, String name, boolean isLoopback) {
         super(service, name);
         this.isLoopback = isLoopback;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(NetDeviceID other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 

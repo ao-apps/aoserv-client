@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersion> implements Comparable<PostgresVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresVersion> {
+final public class PostgresVersion extends AOServObjectIntegerKey implements Comparable<PostgresVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterHost extends AOServObjectIntegerKey<MasterHost> implements Comparable<MasterHost>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterHost> {
+final public class MasterHost extends AOServObjectIntegerKey implements Comparable<MasterHost>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterHost> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

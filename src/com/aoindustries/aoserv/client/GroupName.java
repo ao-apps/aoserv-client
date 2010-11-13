@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupName extends AOServObjectGroupIdKey<GroupName> implements Comparable<GroupName>, DtoFactory<com.aoindustries.aoserv.client.dto.GroupName> {
+final public class GroupName extends AOServObjectGroupIdKey implements Comparable<GroupName>, DtoFactory<com.aoindustries.aoserv.client.dto.GroupName> {
 	
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -43,6 +43,13 @@ final public class GroupName extends AOServObjectGroupIdKey<GroupName> implement
 
     private void intern() {
         accounting = intern(accounting);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(GroupName other) {
+        return getKey().compareTo(other.getKey());
     }
     // </editor-fold>
 

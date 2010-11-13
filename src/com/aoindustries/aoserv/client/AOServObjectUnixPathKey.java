@@ -13,13 +13,13 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectUnixPathKey<T extends AOServObjectUnixPathKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<UnixPath,T> {
+abstract public class AOServObjectUnixPathKey extends AOServObject<UnixPath> {
 
     private static final long serialVersionUID = 1L;
 
     private UnixPath key;
 
-    protected AOServObjectUnixPathKey(AOServService<?,?,UnixPath,T> service, UnixPath key) {
+    protected AOServObjectUnixPathKey(AOServService<?,?,UnixPath,? extends AOServObjectUnixPathKey> service, UnixPath key) {
         super(service);
         this.key = key;
         intern();

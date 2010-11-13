@@ -13,13 +13,13 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectAccountingCodeKey<T extends AOServObjectAccountingCodeKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<AccountingCode,T> {
+abstract public class AOServObjectAccountingCodeKey extends AOServObject<AccountingCode> {
 
     private static final long serialVersionUID = 1L;
 
     private AccountingCode key;
 
-    protected AOServObjectAccountingCodeKey(AOServService<?,?,AccountingCode,T> service, AccountingCode key) {
+    protected AOServObjectAccountingCodeKey(AOServService<?,?,AccountingCode,? extends AOServObjectAccountingCodeKey> service, AccountingCode key) {
         super(service);
         this.key = key;
         intern();

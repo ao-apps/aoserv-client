@@ -23,7 +23,7 @@ import com.aoindustries.table.IndexType;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsTld extends AOServObjectDomainNameKey<DnsTld> implements Comparable<DnsTld>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsTld> {
+final public class DnsTld extends AOServObjectDomainNameKey implements Comparable<DnsTld>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsTld> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -32,6 +32,13 @@ final public class DnsTld extends AOServObjectDomainNameKey<DnsTld> implements C
     // <editor-fold defaultstate="collapsed" desc="Fields">
     public DnsTld(DnsTldService<?,?> service, DomainName domain) {
         super(service, domain);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    @Override
+    public int compareTo(DnsTld other) {
+        return getKey().compareTo(other.getKey());
     }
     // </editor-fold>
 
