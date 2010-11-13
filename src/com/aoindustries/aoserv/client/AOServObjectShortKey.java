@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T>> extends AOServObject<Short,T> {
+abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<Short,T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,14 +38,6 @@ abstract public class AOServObjectShortKey<T extends AOServObjectShortKey<T>> ex
         if(o==null || getClass()!=o.getClass()) return false;
         @SuppressWarnings("unchecked") T other = (T)o;
         return key==other.key;
-    }
-
-    /**
-     * Compares keys in numerical order.
-     */
-    @Override
-    protected int compareToImpl(T other) throws RemoteException {
-        return AOServObjectUtils.compare(key, other.key);
     }
 
     @Override

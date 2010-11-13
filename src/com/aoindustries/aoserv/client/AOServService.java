@@ -22,7 +22,12 @@ import java.util.Set;
  *
  * @see  AOServObject
  */
-public interface AOServService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>, K extends Comparable<K>,V extends AOServObject<K,V>> extends Indexed<V>, Remote {
+public interface AOServService<
+    C extends AOServConnector<C,F>,
+    F extends AOServConnectorFactory<C,F>,
+    K extends Comparable<K>,
+    V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>
+> extends Indexed<V>, Remote {
 
     /**
      * The toString should be the service name.

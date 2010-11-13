@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -14,7 +15,11 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServRolePermission extends AOServObjectIntegerKey<AOServRolePermission> implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServRolePermission> {
+final public class AOServRolePermission
+extends AOServObjectIntegerKey<AOServRolePermission>
+implements
+    Comparable<AOServRolePermission>,
+    DtoFactory<com.aoindustries.aoserv.client.dto.AOServRolePermission> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -43,10 +48,14 @@ final public class AOServRolePermission extends AOServObjectIntegerKey<AOServRol
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(AOServRolePermission other) throws RemoteException {
-        int diff = role==other.role ? 0 : getRole().compareToImpl(other.getRole());
-        if(diff!=0) return diff;
-        return permission==other.permission ? 0 : getPermission().compareToImpl(other.getPermission());
+    public int compareTo(AOServRolePermission other) {
+        try {
+            int diff = role==other.role ? 0 : getRole().compareTo(other.getRole());
+            if(diff!=0) return diff;
+            return permission==other.permission ? 0 : getPermission().compareTo(other.getPermission());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

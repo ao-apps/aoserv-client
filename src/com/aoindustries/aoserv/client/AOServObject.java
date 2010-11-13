@@ -27,7 +27,10 @@ import java.util.Set;
  *
  * @see  AOServService
  */
-abstract public class AOServObject<K extends Comparable<K>,T extends AOServObject<K,T>> implements Row, Serializable, Comparable<T>, Cloneable {
+abstract public class AOServObject<
+    K extends Comparable<K>,
+    T extends AOServObject<K,T> & Comparable<T> & DtoFactory<?>
+> implements Row, Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -123,7 +126,7 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
             return (T)this;
         } else {
             T newObj = clone();
-            newObj.service = service;
+            ((AOServObject)newObj).service = service;
             return newObj;
         }
     }
@@ -144,22 +147,10 @@ abstract public class AOServObject<K extends Comparable<K>,T extends AOServObjec
      */
     public abstract K getKey();
 
-    @Override
-    final public int compareTo(T other) {
-        try {
-            return compareToImpl(other);
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     /**
-     * By default sortes by key value, if the key is <code>Comparable</code>,
-     * otherwise throws exception.
-     *
-     * @throws  ClassCastException if either key is not comparable.
+     * By default sorts by key value.
      */
-    protected int compareToImpl(T other) throws RemoteException {
+    public int compareTo(T other) {
         return getKey().compareTo(other.getKey());
     }
 

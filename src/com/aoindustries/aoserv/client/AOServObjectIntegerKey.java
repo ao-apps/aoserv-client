@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectIntegerKey<T extends AOServObjectIntegerKey<T>> extends AOServObject<Integer,T> {
+abstract public class AOServObjectIntegerKey<T extends AOServObjectIntegerKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<Integer,T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,14 +38,6 @@ abstract public class AOServObjectIntegerKey<T extends AOServObjectIntegerKey<T>
         if(o==null || getClass()!=o.getClass()) return false;
         @SuppressWarnings("unchecked") T other = (T)o;
         return key==other.key;
-    }
-
-    /**
-     * Compares keys in numerical order.
-     */
-    @Override
-    protected int compareToImpl(T other) throws RemoteException {
-        return AOServObjectUtils.compare(key, other.key);
     }
 
     @Override

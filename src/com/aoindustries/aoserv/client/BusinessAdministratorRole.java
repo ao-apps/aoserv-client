@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -15,7 +16,11 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministratorRole extends AOServObjectIntegerKey<BusinessAdministratorRole> implements DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministratorRole> {
+final public class BusinessAdministratorRole
+extends AOServObjectIntegerKey<BusinessAdministratorRole>
+implements
+    Comparable<BusinessAdministratorRole>,
+    DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministratorRole> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -44,11 +49,15 @@ final public class BusinessAdministratorRole extends AOServObjectIntegerKey<Busi
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(BusinessAdministratorRole other) throws RemoteException {
-        if(key==other.key) return 0;
-        int diff = username==other.username ? 0 : getBusinessAdministrator().compareToImpl(other.getBusinessAdministrator());
-        if(diff!=0) return diff;
-        return role==other.role ? 0 : getRole().compareToImpl(other.getRole());
+    public int compareTo(BusinessAdministratorRole other) {
+        try {
+            if(key==other.key) return 0;
+            int diff = username==other.username ? 0 : getBusinessAdministrator().compareTo(other.getBusinessAdministrator());
+            if(diff!=0) return diff;
+            return role==other.role ? 0 : getRole().compareTo(other.getRole());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

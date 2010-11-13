@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -19,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDBUser> /*, Removable*/ {
+final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> implements Comparable<MySQLDBUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDBUser> /*, Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -100,10 +101,14 @@ final public class MySQLDBUser extends AOServObjectIntegerKey<MySQLDBUser> imple
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(MySQLDBUser other) throws RemoteException {
-        int diff = mysqlDatabase==other.mysqlDatabase ? 0 : getMysqlDatabase().compareToImpl(other.getMysqlDatabase());
-        if(diff!=0) return diff;
-        return mysqlUser==other.mysqlUser ? 0 : getMysqlUser().compareToImpl(other.getMysqlUser());
+    public int compareTo(MySQLDBUser other) {
+        try {
+            int diff = mysqlDatabase==other.mysqlDatabase ? 0 : getMysqlDatabase().compareTo(other.getMysqlDatabase());
+            if(diff!=0) return diff;
+            return mysqlUser==other.mysqlUser ? 0 : getMysqlUser().compareTo(other.getMysqlUser());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

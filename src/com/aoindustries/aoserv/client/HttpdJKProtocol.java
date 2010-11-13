@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -20,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKProtocol> {
+final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol> implements Comparable<HttpdJKProtocol>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKProtocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -39,8 +40,12 @@ final public class HttpdJKProtocol extends AOServObjectStringKey<HttpdJKProtocol
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(HttpdJKProtocol other) throws RemoteException {
-        return getKey()==other.getKey() ? 0 : getProtocol().compareToImpl(other.getProtocol());
+    public int compareTo(HttpdJKProtocol other) {
+        try {
+            return getKey()==other.getKey() ? 0 : getProtocol().compareTo(other.getProtocol());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

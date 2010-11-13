@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements DtoFactory<com.aoindustries.aoserv.client.dto.Brand> {
+final public class Brand extends AOServObjectAccountingCodeKey<Brand> implements Comparable<Brand>, DtoFactory<com.aoindustries.aoserv.client.dto.Brand> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

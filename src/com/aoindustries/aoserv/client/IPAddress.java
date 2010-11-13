@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -23,7 +24,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implements DtoFactory<com.aoindustries.aoserv.client.dto.IPAddress> {
+final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implements Comparable<IPAddress>, DtoFactory<com.aoindustries.aoserv.client.dto.IPAddress> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -83,11 +84,15 @@ final public class IPAddress extends AOServObjectIntegerKey<IPAddress> implement
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(IPAddress other) throws RemoteException {
-        if(key==other.key) return 0;
-        int diff = ipAddress.compareTo(other.ipAddress);
-        if(diff!=0) return diff;
-        return StringUtility.equals(netDevice, other.netDevice) ? 0 : AOServObjectUtils.compare(getNetDevice(), other.getNetDevice());
+    public int compareTo(IPAddress other) {
+        try {
+            if(key==other.key) return 0;
+            int diff = ipAddress.compareTo(other.ipAddress);
+            if(diff!=0) return diff;
+            return StringUtility.equals(netDevice, other.netDevice) ? 0 : AOServObjectUtils.compare(getNetDevice(), other.getNetDevice());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

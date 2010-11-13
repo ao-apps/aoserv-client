@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionType extends AOServObjectStringKey<TransactionType> implements DtoFactory<com.aoindustries.aoserv.client.dto.TransactionType> {
+final public class TransactionType extends AOServObjectStringKey<TransactionType> implements Comparable<TransactionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TransactionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -30,7 +31,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdSite> /*, Disablable, Removable */ {
+final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implements Comparable<HttpdSite>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdSite> /*, Disablable, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -94,13 +95,17 @@ final public class HttpdSite extends AOServObjectIntegerKey<HttpdSite> implement
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(HttpdSite other) throws RemoteException {
-        if(this==other) return 0;
-        int diff = siteName.compareTo(other.siteName);
-        if(diff!=0) return diff;
-        AOServerResource aor1 = getAoServerResource();
-        AOServerResource aor2 = other.getAoServerResource();
-        return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareToImpl(aor2.getAoServer());
+    public int compareTo(HttpdSite other) {
+        try {
+            if(this==other) return 0;
+            int diff = siteName.compareTo(other.siteName);
+            if(diff!=0) return diff;
+            AOServerResource aor1 = getAoServerResource();
+            AOServerResource aor2 = other.getAoServerResource();
+            return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareTo(aor2.getAoServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

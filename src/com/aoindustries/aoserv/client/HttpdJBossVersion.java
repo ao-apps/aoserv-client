@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -21,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJBossVersion> {
+final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVersion> implements Comparable<HttpdJBossVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJBossVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -58,8 +59,12 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey<HttpdJBossVe
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(HttpdJBossVersion other) throws RemoteException {
-        return key==other.key ? 0 : getTechnologyVersion().compareToImpl(other.getTechnologyVersion());
+    public int compareTo(HttpdJBossVersion other) {
+        try {
+            return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

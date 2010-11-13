@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
@@ -21,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
+final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> implements Comparable<MySQLDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -90,10 +91,14 @@ final public class MySQLDatabase extends AOServObjectIntegerKey<MySQLDatabase> i
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(MySQLDatabase other) throws RemoteException {
-        int diff = name.compareTo(other.name);
-        if(diff!=0) return diff;
-        return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareToImpl(other.getMysqlServer());
+    public int compareTo(MySQLDatabase other) {
+        try {
+            int diff = name.compareTo(other.name);
+            if(diff!=0) return diff;
+            return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareTo(other.getMysqlServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

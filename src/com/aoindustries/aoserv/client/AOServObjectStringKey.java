@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T>> extends AOServObject<String,T> {
+abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<String,T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,7 +46,7 @@ abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T>> 
     @Override
     final public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        @SuppressWarnings("unchecked") T other = (T)o;
+        AOServObjectStringKey other = (AOServObjectStringKey)o;
         return key==other.key; // OK because interned
     }
 
@@ -54,8 +54,8 @@ abstract public class AOServObjectStringKey<T extends AOServObjectStringKey<T>> 
      * Compares keys in a case-insensitive manner using the English locale.
      */
     @Override
-    protected int compareToImpl(T other) throws RemoteException {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(key, other.key);
+    public int compareTo(T other) {
+        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(key, other.getKey());
     }
 
     /**

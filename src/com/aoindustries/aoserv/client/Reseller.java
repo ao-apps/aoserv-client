@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> implements DtoFactory<com.aoindustries.aoserv.client.dto.Reseller> {
+final public class Reseller extends AOServObjectAccountingCodeKey<Reseller> implements Comparable<Reseller>, DtoFactory<com.aoindustries.aoserv.client.dto.Reseller> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

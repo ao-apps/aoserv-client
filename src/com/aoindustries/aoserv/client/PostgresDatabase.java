@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -21,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatabase> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabase> /* TODO: , Dumpable, Removable*/, JdbcProvider {
+final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatabase> implements Comparable<PostgresDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabase> /* TODO: , Dumpable, Removable*/, JdbcProvider {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -92,10 +93,14 @@ final public class PostgresDatabase extends AOServObjectIntegerKey<PostgresDatab
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PostgresDatabase other) throws RemoteException {
-        int diff = name.compareTo(other.name);
-        if(diff!=0) return diff;
-        return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareToImpl(other.getPostgresServer());
+    public int compareTo(PostgresDatabase other) {
+        try {
+            int diff = name.compareTo(other.name);
+            if(diff!=0) return diff;
+            return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareTo(other.getPostgresServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

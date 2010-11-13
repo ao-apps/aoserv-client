@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectAccountingCodeKey<T extends AOServObjectAccountingCodeKey<T>> extends AOServObject<AccountingCode,T> {
+abstract public class AOServObjectAccountingCodeKey<T extends AOServObjectAccountingCodeKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<AccountingCode,T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,16 +45,8 @@ abstract public class AOServObjectAccountingCodeKey<T extends AOServObjectAccoun
     @Override
     final public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        @SuppressWarnings("unchecked") T other = (T)o;
+        AOServObjectAccountingCodeKey other = (AOServObjectAccountingCodeKey)o;
         return key==other.key; // OK because interned
-    }
-
-    /**
-     * Compares keys.
-     */
-    @Override
-    protected int compareToImpl(T other) throws RemoteException {
-        return key.compareTo(other.key);
     }
 
     /**

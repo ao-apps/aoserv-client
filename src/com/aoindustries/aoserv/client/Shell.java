@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Shell extends AOServObjectUnixPathKey<Shell> implements DtoFactory<com.aoindustries.aoserv.client.dto.Shell> {
+final public class Shell extends AOServObjectUnixPathKey<Shell> implements Comparable<Shell>, DtoFactory<com.aoindustries.aoserv.client.dto.Shell> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -68,6 +68,7 @@ final public class Shell extends AOServObjectUnixPathKey<Shell> implements DtoFa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    @Override
     public com.aoindustries.aoserv.client.dto.Shell getDto() {
         return new com.aoindustries.aoserv.client.dto.Shell(getDto(getKey()));
     }

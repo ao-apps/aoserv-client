@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
@@ -18,7 +19,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCard extends AOServObjectIntegerKey<CreditCard> implements DtoFactory<com.aoindustries.aoserv.client.dto.CreditCard> /*, TODO: Removable */ {
+final public class CreditCard extends AOServObjectIntegerKey<CreditCard> implements Comparable<CreditCard>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCard> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -146,10 +147,14 @@ final public class CreditCard extends AOServObjectIntegerKey<CreditCard> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(CreditCard other) {
-        int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(accounting, other.accounting);
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compare(created, other.created);
+    public int compareTo(CreditCard other) {
+        try {
+            int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness());
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compare(created, other.created);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

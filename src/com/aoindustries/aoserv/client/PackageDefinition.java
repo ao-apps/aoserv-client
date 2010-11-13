@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefinition> implements DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinition> /*TODO:, Removable */ {
+final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefinition> implements Comparable<PackageDefinition>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinition> /*TODO:, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -71,14 +72,18 @@ final public class PackageDefinition extends AOServObjectIntegerKey<PackageDefin
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PackageDefinition other) throws RemoteException {
-        int diff = category==other.category ? 0 : getCategory().compareToImpl(other.getCategory());
-        if(diff!=0) return diff;
-        diff = monthlyRate.compareTo(other.monthlyRate);
-        if(diff!=0) return diff;
-        diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(version, other.version);
+    public int compareTo(PackageDefinition other) {
+        try {
+            int diff = category==other.category ? 0 : getCategory().compareTo(other.getCategory());
+            if(diff!=0) return diff;
+            diff = monthlyRate.compareTo(other.monthlyRate);
+            if(diff!=0) return diff;
+            diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(version, other.version);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

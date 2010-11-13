@@ -19,7 +19,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCardTransaction> implements DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardTransaction> {
+final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCardTransaction> implements Comparable<CreditCardTransaction>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardTransaction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -310,7 +310,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey<CreditCa
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(CreditCardTransaction other) {
+    public int compareTo(CreditCardTransaction other) {
         int diff = accounting.compareTo(other.accounting);
         if(diff!=0) return diff;
         diff = AOServObjectUtils.compare(authorizationTime, other.authorizationTime);

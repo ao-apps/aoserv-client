@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfile> implements DtoFactory<com.aoindustries.aoserv.client.dto.BusinessProfile> {
+final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfile> implements Comparable<BusinessProfile>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessProfile> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -103,7 +103,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey<BusinessProfil
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(BusinessProfile other) {
+    public int compareTo(BusinessProfile other) {
         int diff = accounting.compareTo(other.accounting);
         if(diff!=0) return diff;
         return -AOServObjectUtils.compare(priority, other.priority);

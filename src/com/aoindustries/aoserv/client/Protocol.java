@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -19,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Protocol extends AOServObjectStringKey<Protocol> implements DtoFactory<com.aoindustries.aoserv.client.dto.Protocol> {
+final public class Protocol extends AOServObjectStringKey<Protocol> implements Comparable<Protocol>, DtoFactory<com.aoindustries.aoserv.client.dto.Protocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -95,10 +96,14 @@ final public class Protocol extends AOServObjectStringKey<Protocol> implements D
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(Protocol other) throws RemoteException {
-        int diff = port.compareTo(other.port);
-        if(diff!=0) return diff;
-        return netProtocol==other.netProtocol ? 0 : getNetProtocol().compareToImpl(other.getNetProtocol()); // OK - interned
+    public int compareTo(Protocol other) {
+        try {
+            int diff = port.compareTo(other.port);
+            if(diff!=0) return diff;
+            return netProtocol==other.netProtocol ? 0 : getNetProtocol().compareTo(other.getNetProtocol()); // OK - interned
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

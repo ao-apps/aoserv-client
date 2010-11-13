@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory> implements DtoFactory<com.aoindustries.aoserv.client.dto.TicketCategory> {
+final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory> implements Comparable<TicketCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -50,7 +50,7 @@ final public class TicketCategory extends AOServObjectIntegerKey<TicketCategory>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(TicketCategory other) {
+    public int compareTo(TicketCategory other) {
         int diff = AOServObjectUtils.compare(parent, other.parent);
         if(diff!=0) return diff;
         return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);

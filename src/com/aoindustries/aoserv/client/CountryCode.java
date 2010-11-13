@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class CountryCode extends AOServObjectStringKey<CountryCode> implements DtoFactory<com.aoindustries.aoserv.client.dto.CountryCode> {
+final public class CountryCode extends AOServObjectStringKey<CountryCode> implements Comparable<CountryCode>, DtoFactory<com.aoindustries.aoserv.client.dto.CountryCode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -61,7 +61,7 @@ final public class CountryCode extends AOServObjectStringKey<CountryCode> implem
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(CountryCode other) {
+    public int compareTo(CountryCode other) {
         return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
     }
     // </editor-fold>

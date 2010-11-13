@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -24,7 +25,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Resource extends AOServObjectIntegerKey<Resource> implements DtoFactory<com.aoindustries.aoserv.client.dto.Resource> {
+final public class Resource extends AOServObjectIntegerKey<Resource> implements Comparable<Resource>, DtoFactory<com.aoindustries.aoserv.client.dto.Resource> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -72,12 +73,16 @@ final public class Resource extends AOServObjectIntegerKey<Resource> implements 
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(Resource other) throws RemoteException {
-        int diff = accounting==other.accounting ? 0 : getBusiness().compareToImpl(other.getBusiness()); // OK - interned
-        if(diff!=0) return diff;
-        diff = resourceType==other.resourceType ? 0 : getResourceType().compareToImpl(other.getResourceType()); // OK - interned
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compare(key, other.key);
+    public int compareTo(Resource other) {
+        try {
+            int diff = accounting==other.accounting ? 0 : getBusiness().compareTo(other.getBusiness()); // OK - interned
+            if(diff!=0) return diff;
+            diff = resourceType==other.resourceType ? 0 : getResourceType().compareTo(other.getResourceType()); // OK - interned
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compare(key, other.key);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

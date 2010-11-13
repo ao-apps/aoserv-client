@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -18,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncoding> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresEncoding> {
+final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncoding> implements Comparable<PostgresEncoding>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresEncoding> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -92,10 +93,14 @@ final public class PostgresEncoding extends AOServObjectIntegerKey<PostgresEncod
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PostgresEncoding other) throws RemoteException {
-        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(encoding, other.encoding);
-        if(diff!=0) return diff;
-        return postgresVersion==other.postgresVersion ? 0 : getPostgresVersion().compareToImpl(other.getPostgresVersion());
+    public int compareTo(PostgresEncoding other) {
+        try {
+            int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(encoding, other.encoding);
+            if(diff!=0) return diff;
+            return postgresVersion==other.postgresVersion ? 0 : getPostgresVersion().compareTo(other.getPostgresVersion());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

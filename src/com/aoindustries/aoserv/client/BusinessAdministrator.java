@@ -27,7 +27,13 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator extends AOServObjectUserIdKey<BusinessAdministrator> implements DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministrator>, Principal, PasswordProtected /* TODO , Removable, Disablable, Comparable<BusinessAdministrator> */ {
+final public class BusinessAdministrator
+extends AOServObjectUserIdKey<BusinessAdministrator>
+implements
+    Comparable<BusinessAdministrator>,
+    DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministrator>,
+    Principal,
+    PasswordProtected /* TODO , Removable, Disablable, Comparable<BusinessAdministrator> */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
@@ -19,7 +20,11 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinitionBusiness extends AOServObjectIntegerKey<PackageDefinitionBusiness> implements DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness> {
+final public class PackageDefinitionBusiness
+extends AOServObjectIntegerKey<PackageDefinitionBusiness>
+implements
+    Comparable<PackageDefinitionBusiness>,
+    DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -62,10 +67,14 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey<Pack
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PackageDefinitionBusiness other) throws RemoteException {
-        int diff = packageDefinition==other.packageDefinition ? 0 : getPackageDefinition().compareToImpl(other.getPackageDefinition());
-        if(diff!=0) return diff;
-        return accounting==other.accounting ? 0 : getBusiness().compareToImpl(other.getBusiness());
+    public int compareTo(PackageDefinitionBusiness other) {
+        try {
+            int diff = packageDefinition==other.packageDefinition ? 0 : getPackageDefinition().compareTo(other.getPackageDefinition());
+            if(diff!=0) return diff;
+            return accounting==other.accounting ? 0 : getBusiness().compareTo(other.getBusiness());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

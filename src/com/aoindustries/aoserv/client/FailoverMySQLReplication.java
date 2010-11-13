@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -14,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverMySQLReplication extends AOServObjectIntegerKey<FailoverMySQLReplication> implements DtoFactory<com.aoindustries.aoserv.client.dto.FailoverMySQLReplication> {
+final public class FailoverMySQLReplication extends AOServObjectIntegerKey<FailoverMySQLReplication> implements Comparable<FailoverMySQLReplication>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverMySQLReplication> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -53,12 +54,16 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey<Failo
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(FailoverMySQLReplication other) throws RemoteException {
-        int diff = mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareToImpl(other.getMySQLServer());
-        if(diff!=0) return diff;
-        diff = aoServer==other.aoServer ? 0 : getAOServer().compareToImpl(other.getAOServer());
-        if(diff!=0) return diff;
-        return replication==other.replication ? 0 : getFailoverFileReplication().compareToImpl(other.getFailoverFileReplication());
+    public int compareTo(FailoverMySQLReplication other) {
+        try {
+            int diff = mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
+            if(diff!=0) return diff;
+            diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
+            if(diff!=0) return diff;
+            return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

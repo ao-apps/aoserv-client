@@ -11,6 +11,7 @@ import com.aoindustries.aoserv.client.command.SetPostgresUserPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser>, PasswordProtected /* TODO: Removable, Disablable*/ {
+final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> implements Comparable<PostgresUser>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser>, PasswordProtected /* TODO: Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -96,10 +97,14 @@ final public class PostgresUser extends AOServObjectIntegerKey<PostgresUser> imp
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PostgresUser other) throws RemoteException {
-        int diff = username==other.username ? 0 : getUsername().compareToImpl(other.getUsername());
-        if(diff!=0) return diff;
-        return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareToImpl(other.getPostgresServer());
+    public int compareTo(PostgresUser other) {
+        try {
+            int diff = username==other.username ? 0 : getUsername().compareTo(other.getUsername());
+            if(diff!=0) return diff;
+            return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareTo(other.getPostgresServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

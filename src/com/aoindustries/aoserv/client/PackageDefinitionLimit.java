@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinitionLimit extends AOServObjectIntegerKey<PackageDefinitionLimit> implements DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionLimit> {
+final public class PackageDefinitionLimit extends AOServObjectIntegerKey<PackageDefinitionLimit> implements Comparable<PackageDefinitionLimit>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionLimit> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -66,10 +67,14 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey<Package
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PackageDefinitionLimit other) throws RemoteException {
-        int diff = packageDefinition==other.packageDefinition ? 0 : getPackageDefinition().compareToImpl(other.getPackageDefinition());
-        if(diff!=0) return diff;
-        return resourceType==other.resourceType ? 0 : getResourceType().compareToImpl(other.getResourceType()); // OK - interned
+    public int compareTo(PackageDefinitionLimit other) {
+        try {
+            int diff = packageDefinition==other.packageDefinition ? 0 : getPackageDefinition().compareTo(other.getPackageDefinition());
+            if(diff!=0) return diff;
+            return resourceType==other.resourceType ? 0 : getResourceType().compareTo(other.getResourceType()); // OK - interned
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -18,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroup> /* Removable*/ {
+final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> implements Comparable<LinuxGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroup> /* Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -103,13 +104,17 @@ final public class LinuxGroup extends AOServObjectIntegerKey<LinuxGroup> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(LinuxGroup other) throws RemoteException {
-        if(key==other.key) return 0;
-        int diff = groupName==other.groupName ? 0 : getGroupName().compareToImpl(other.getGroupName());
-        if(diff!=0) return diff;
-        AOServerResource aor1 = getAoServerResource();
-        AOServerResource aor2 = other.getAoServerResource();
-        return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareToImpl(aor2.getAoServer());
+    public int compareTo(LinuxGroup other) {
+        try {
+            if(key==other.key) return 0;
+            int diff = groupName==other.groupName ? 0 : getGroupName().compareTo(other.getGroupName());
+            if(diff!=0) return diff;
+            AOServerResource aor1 = getAoServerResource();
+            AOServerResource aor2 = other.getAoServerResource();
+            return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareTo(aor2.getAoServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

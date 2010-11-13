@@ -6,6 +6,7 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 
@@ -16,7 +17,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLog> implements DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileLog> {
+final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLog> implements Comparable<FailoverFileLog>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 2L;
@@ -55,10 +56,14 @@ final public class FailoverFileLog extends AOServObjectIntegerKey<FailoverFileLo
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(FailoverFileLog other) throws RemoteException {
-        int diff = AOServObjectUtils.compare(other.endTime, endTime); // Descending
-        if(diff!=0) return diff;
-        return replication==other.replication ? 0 : getFailoverFileReplication().compareToImpl(other.getFailoverFileReplication());
+    public int compareTo(FailoverFileLog other) {
+        try {
+            int diff = AOServObjectUtils.compare(other.endTime, endTime); // Descending
+            if(diff!=0) return diff;
+            return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

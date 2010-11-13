@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -19,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.FtpGuestUser> /*, TODO: Removable */ {
+final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> implements Comparable<FtpGuestUser>, DtoFactory<com.aoindustries.aoserv.client.dto.FtpGuestUser> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -33,8 +34,12 @@ final public class FtpGuestUser extends AOServObjectIntegerKey<FtpGuestUser> imp
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(FtpGuestUser other) throws RemoteException {
-        return key==other.key ? 0 : getLinuxAccount().compareToImpl(other.getLinuxAccount());
+    public int compareTo(FtpGuestUser other) {
+        try {
+            return key==other.key ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

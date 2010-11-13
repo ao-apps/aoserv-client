@@ -33,7 +33,12 @@ import java.util.TreeMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class Business extends AOServObjectAccountingCodeKey<Business> implements DtoFactory<com.aoindustries.aoserv.client.dto.Business>, Group /* TODO: implements Disablable*/ {
+final public class Business
+extends AOServObjectAccountingCodeKey<Business>
+implements
+    Comparable<Business>,
+    DtoFactory<com.aoindustries.aoserv.client.dto.Business>,
+    Group /* TODO: implements Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

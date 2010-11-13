@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -15,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignment> implements DtoFactory<com.aoindustries.aoserv.client.dto.TicketAssignment> {
+final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignment> implements Comparable<TicketAssignment>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAssignment> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -53,10 +54,14 @@ final public class TicketAssignment extends AOServObjectIntegerKey<TicketAssignm
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(TicketAssignment other) throws RemoteException {
-        int diff = ticket==other.ticket ? 0 : getTicket().compareToImpl(other.getTicket());
-        if(diff!=0) return diff;
-        return reseller==other.reseller ? 0 : getReseller().compareToImpl(other.getReseller());
+    public int compareTo(TicketAssignment other) {
+        try {
+            int diff = ticket==other.ticket ? 0 : getTicket().compareTo(other.getTicket());
+            if(diff!=0) return diff;
+            return reseller==other.reseller ? 0 : getReseller().compareTo(other.getReseller());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

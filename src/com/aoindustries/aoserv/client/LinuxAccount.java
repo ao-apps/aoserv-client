@@ -11,6 +11,7 @@ import com.aoindustries.aoserv.client.command.SetLinuxAccountPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
+final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> implements Comparable<LinuxAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -129,13 +130,17 @@ final public class LinuxAccount extends AOServObjectIntegerKey<LinuxAccount> imp
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(LinuxAccount other) throws RemoteException {
-        if(key==other.key) return 0;
-        int diff = username==other.username ? 0 : getUsername().compareToImpl(other.getUsername()); // OK - interned
-        if(diff!=0) return diff;
-        AOServerResource aor1 = getAoServerResource();
-        AOServerResource aor2 = other.getAoServerResource();
-        return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareToImpl(aor2.getAoServer());
+    public int compareTo(LinuxAccount other) {
+        try {
+            if(key==other.key) return 0;
+            int diff = username==other.username ? 0 : getUsername().compareTo(other.getUsername()); // OK - interned
+            if(diff!=0) return diff;
+            AOServerResource aor1 = getAoServerResource();
+            AOServerResource aor2 = other.getAoServerResource();
+            return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareTo(aor2.getAoServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -14,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverFileSchedule> implements DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileSchedule> {
+final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverFileSchedule> implements Comparable<FailoverFileSchedule>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileSchedule> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -44,12 +45,16 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverF
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(FailoverFileSchedule other) throws RemoteException {
-        int diff = replication==other.replication ? 0 : getFailoverFileReplication().compareToImpl(other.getFailoverFileReplication());
-        if(diff!=0) return diff;
-        diff = AOServObjectUtils.compare(hour, other.hour);
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compare(minute, other.minute);
+    public int compareTo(FailoverFileSchedule other) {
+        try {
+            int diff = replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+            if(diff!=0) return diff;
+            diff = AOServObjectUtils.compare(hour, other.hour);
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compare(minute, other.minute);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 
@@ -82,6 +87,7 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey<FailoverF
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    @Override
     public com.aoindustries.aoserv.client.dto.FailoverFileSchedule getDto() {
         return new com.aoindustries.aoserv.client.dto.FailoverFileSchedule(key, replication, hour, minute, enabled);
     }

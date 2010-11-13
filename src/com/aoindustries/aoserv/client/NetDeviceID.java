@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implements DtoFactory<com.aoindustries.aoserv.client.dto.NetDeviceID> {
+final public class NetDeviceID extends AOServObjectStringKey<NetDeviceID> implements Comparable<NetDeviceID>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDeviceID> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

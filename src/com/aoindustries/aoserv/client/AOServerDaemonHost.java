@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -18,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDaemonHost> implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServerDaemonHost> {
+final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDaemonHost> implements Comparable<AOServerDaemonHost>, DtoFactory<com.aoindustries.aoserv.client.dto.AOServerDaemonHost> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -52,10 +53,14 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey<AOServerDae
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(AOServerDaemonHost other) throws RemoteException {
-        int diff = aoServer==other.aoServer ? 0 : getAoServer().compareToImpl(other.getAoServer());
-        if(diff!=0) return diff;
-        return host.compareTo(other.host);
+    public int compareTo(AOServerDaemonHost other) {
+        try {
+            int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
+            if(diff!=0) return diff;
+            return host.compareTo(other.host);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

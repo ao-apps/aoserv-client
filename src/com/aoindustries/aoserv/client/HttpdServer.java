@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -21,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdServer> {
+final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> implements Comparable<HttpdServer>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -68,13 +69,17 @@ final public class HttpdServer extends AOServObjectIntegerKey<HttpdServer> imple
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(HttpdServer other) throws RemoteException {
-        if(key==other.key) return 0;
-        AOServerResource aoResource1 = getAoServerResource();
-        AOServerResource aoResource2 = other.getAoServerResource();
-        int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareToImpl(aoResource2.getAoServer());
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compare(number, other.number);
+    public int compareTo(HttpdServer other) {
+        try {
+            if(key==other.key) return 0;
+            AOServerResource aoResource1 = getAoServerResource();
+            AOServerResource aoResource2 = other.getAoServerResource();
+            int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compare(number, other.number);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountType> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountType> {
+final public class LinuxAccountType extends AOServObjectStringKey<LinuxAccountType> implements Comparable<LinuxAccountType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EmailAttachmentType extends AOServObjectStringKey<EmailAttachmentType> implements DtoFactory<com.aoindustries.aoserv.client.dto.EmailAttachmentType> {
+final public class EmailAttachmentType extends AOServObjectStringKey<EmailAttachmentType> implements Comparable<EmailAttachmentType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailAttachmentType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

@@ -17,7 +17,12 @@ import java.util.concurrent.Callable;
 /**
  * @author  AO Industries, Inc.
  */
-abstract public class WrappedService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>, K extends Comparable<K>,V extends AOServObject<K,V>> implements AOServService<C,F,K,V> {
+abstract public class WrappedService<
+    C extends WrappedConnector<C,F>,
+    F extends WrappedConnectorFactory<C,F>,
+    K extends Comparable<K>,
+    V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>
+> implements AOServService<C,F,K,V> {
 
     final C connector;
     final ServiceName serviceName;

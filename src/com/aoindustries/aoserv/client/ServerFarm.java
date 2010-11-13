@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> implements DtoFactory<com.aoindustries.aoserv.client.dto.ServerFarm> {
+final public class ServerFarm extends AOServObjectDomainLabelKey<ServerFarm> implements Comparable<ServerFarm>, DtoFactory<com.aoindustries.aoserv.client.dto.ServerFarm> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

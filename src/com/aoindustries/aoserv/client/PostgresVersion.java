@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,7 +22,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresVersion> {
+final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersion> implements Comparable<PostgresVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -83,8 +84,12 @@ final public class PostgresVersion extends AOServObjectIntegerKey<PostgresVersio
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PostgresVersion other) throws RemoteException {
-        return key==other.key ? 0 : getTechnologyVersion().compareToImpl(other.getTechnologyVersion());
+    public int compareTo(PostgresVersion other) {
+        try {
+            return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

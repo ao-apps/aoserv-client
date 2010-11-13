@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -18,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implements DtoFactory<com.aoindustries.aoserv.client.dto.DnsRecord> /*, TODO: Removable */ {
+final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implements Comparable<DnsRecord>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsRecord> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -77,20 +78,24 @@ final public class DnsRecord extends AOServObjectIntegerKey<DnsRecord> implement
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(DnsRecord other) throws RemoteException {
-        int diff = zone==other.zone ? 0 : getZone().compareToImpl(other.getZone());
-        if(diff!=0) return diff;
-        diff = domain.compareTo(other.getDomain());
-        if(diff!=0) return diff;
-        diff = type==other.type ? 0 : getType().compareToImpl(other.getType()); // OK - interned
-        if(diff!=0) return diff;
-        diff = AOServObjectUtils.compare(mxPriority, other.mxPriority);
-        if(diff!=0) return diff;
-        diff = AOServObjectUtils.compare(dataIpAddress, other.dataIpAddress);
-        if(diff!=0) return diff;
-        diff = AOServObjectUtils.compare(dataDomainName, other.dataDomainName);
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compare(dataText, other.dataText);
+    public int compareTo(DnsRecord other) {
+        try {
+            int diff = zone==other.zone ? 0 : getZone().compareTo(other.getZone());
+            if(diff!=0) return diff;
+            diff = domain.compareTo(other.getDomain());
+            if(diff!=0) return diff;
+            diff = type==other.type ? 0 : getType().compareTo(other.getType()); // OK - interned
+            if(diff!=0) return diff;
+            diff = AOServObjectUtils.compare(mxPriority, other.mxPriority);
+            if(diff!=0) return diff;
+            diff = AOServObjectUtils.compare(dataIpAddress, other.dataIpAddress);
+            if(diff!=0) return diff;
+            diff = AOServObjectUtils.compare(dataDomainName, other.dataDomainName);
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compare(dataText, other.dataText);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

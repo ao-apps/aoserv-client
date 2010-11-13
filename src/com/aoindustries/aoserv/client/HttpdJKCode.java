@@ -16,7 +16,7 @@ import com.aoindustries.table.IndexType;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implements DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKCode> {
+final public class HttpdJKCode extends AOServObjectStringKey<HttpdJKCode> implements Comparable<HttpdJKCode>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKCode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

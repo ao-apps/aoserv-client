@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
@@ -21,7 +22,7 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketAction extends AOServObjectIntegerKey<TicketAction> implements DtoFactory<com.aoindustries.aoserv.client.dto.TicketAction> {
+final public class TicketAction extends AOServObjectIntegerKey<TicketAction> implements Comparable<TicketAction>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -122,12 +123,16 @@ final public class TicketAction extends AOServObjectIntegerKey<TicketAction> imp
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(TicketAction other) throws RemoteException {
-        int diff = ticket==other.ticket ? 0 : getTicket().compareToImpl(other.getTicket());
-        if(diff!=0) return diff;
-        diff = AOServObjectUtils.compare(time, other.time);
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compare(key, other.key);
+    public int compareTo(TicketAction other) {
+        try {
+            int diff = ticket==other.ticket ? 0 : getTicket().compareTo(other.getTicket());
+            if(diff!=0) return diff;
+            diff = AOServObjectUtils.compare(time, other.time);
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compare(key, other.key);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Locale;
@@ -27,7 +28,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
+final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer> implements Comparable<PostgresServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -217,13 +218,17 @@ final public class PostgresServer extends AOServObjectIntegerKey<PostgresServer>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PostgresServer other) throws RemoteException {
-        if(key==other.key) return 0;
-        int diff = name.compareTo(other.name);
-        if(diff!=0) return diff;
-        AOServerResource aoResource1 = getAoServerResource();
-        AOServerResource aoResource2 = other.getAoServerResource();
-        return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareToImpl(aoResource2.getAoServer());
+    public int compareTo(PostgresServer other) {
+        try {
+            if(key==other.key) return 0;
+            int diff = name.compareTo(other.name);
+            if(diff!=0) return diff;
+            AOServerResource aoResource1 = getAoServerResource();
+            AOServerResource aoResource2 = other.getAoServerResource();
+            return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.MasterUser> {
+final public class MasterUser extends AOServObjectUserIdKey<MasterUser> implements Comparable<MasterUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterUser> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

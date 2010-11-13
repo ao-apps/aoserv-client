@@ -18,7 +18,7 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class MajordomoVersion extends AOServObjectStringKey<MajordomoVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.MajordomoVersion> {
+final public class MajordomoVersion extends AOServObjectStringKey<MajordomoVersion> implements Comparable<MajordomoVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.MajordomoVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

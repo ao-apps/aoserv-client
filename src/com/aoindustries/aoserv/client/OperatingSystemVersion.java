@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystemVersion extends AOServObjectIntegerKey<OperatingSystemVersion> implements DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystemVersion> {
+final public class OperatingSystemVersion extends AOServObjectIntegerKey<OperatingSystemVersion> implements Comparable<OperatingSystemVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystemVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -81,7 +81,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey<Operati
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(OperatingSystemVersion other) {
+    public int compareTo(OperatingSystemVersion other) {
         return AOServObjectUtils.compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>

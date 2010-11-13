@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectUnixPathKey<T extends AOServObjectUnixPathKey<T>> extends AOServObject<UnixPath,T> {
+abstract public class AOServObjectUnixPathKey<T extends AOServObjectUnixPathKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<UnixPath,T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,16 +45,8 @@ abstract public class AOServObjectUnixPathKey<T extends AOServObjectUnixPathKey<
     @Override
     final public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        @SuppressWarnings("unchecked") T other = (T)o;
+        AOServObjectUnixPathKey other = (AOServObjectUnixPathKey)o;
         return key==other.key; // OK because interned
-    }
-
-    /**
-     * Compares keys.
-     */
-    @Override
-    protected int compareToImpl(T other) throws RemoteException {
-        return key.compareTo(other.key);
     }
 
     /**

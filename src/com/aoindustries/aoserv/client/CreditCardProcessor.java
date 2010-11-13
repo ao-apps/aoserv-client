@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -15,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardProcessor> implements DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardProcessor> {
+final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardProcessor> implements Comparable<CreditCardProcessor>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardProcessor> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -77,10 +78,14 @@ final public class CreditCardProcessor extends AOServObjectStringKey<CreditCardP
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(CreditCardProcessor other) throws RemoteException {
-        int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness()); // OK - interned
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+    public int compareTo(CreditCardProcessor other) {
+        try {
+            int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness()); // OK - interned
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

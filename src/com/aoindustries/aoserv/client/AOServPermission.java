@@ -14,7 +14,12 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServPermission extends AOServObjectStringKey<AOServPermission> implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServPermission>, java.security.acl.Permission {
+final public class AOServPermission
+extends AOServObjectStringKey<AOServPermission>
+implements
+    Comparable<AOServPermission>,
+    DtoFactory<com.aoindustries.aoserv.client.dto.AOServPermission>,
+    java.security.acl.Permission {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -91,7 +96,7 @@ final public class AOServPermission extends AOServObjectStringKey<AOServPermissi
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(AOServPermission other) {
+    public int compareTo(AOServPermission other) {
         return AOServObjectUtils.compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>

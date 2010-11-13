@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServObjectDomainNameKey<T extends AOServObjectDomainNameKey<T>> extends AOServObject<DomainName,T> {
+abstract public class AOServObjectDomainNameKey<T extends AOServObjectDomainNameKey<T> & Comparable<T> & DtoFactory<?>> extends AOServObject<DomainName,T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,16 +45,8 @@ abstract public class AOServObjectDomainNameKey<T extends AOServObjectDomainName
     @Override
     final public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        @SuppressWarnings("unchecked") T other = (T)o;
+        AOServObjectDomainNameKey other = (AOServObjectDomainNameKey)o;
         return key==other.key; // OK because interned
-    }
-
-    /**
-     * Compares keys.
-     */
-    @Override
-    protected int compareToImpl(T other) throws RemoteException {
-        return key.compareTo(other.key);
     }
 
     /**

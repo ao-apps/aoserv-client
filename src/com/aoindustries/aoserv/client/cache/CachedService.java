@@ -24,7 +24,10 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-abstract class CachedService<K extends Comparable<K>,V extends AOServObject<K,V>> implements AOServService<CachedConnector,CachedConnectorFactory,K,V> {
+abstract class CachedService<
+    K extends Comparable<K>,
+    V extends AOServObject<K,V> & Comparable<V> & DtoFactory<?>
+> implements AOServService<CachedConnector,CachedConnectorFactory,K,V> {
 
     final CachedConnector connector;
     //final Class<K> keyClass;

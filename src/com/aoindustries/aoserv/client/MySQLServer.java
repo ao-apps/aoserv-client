@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,7 +29,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
+final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> implements Comparable<MySQLServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -348,13 +349,17 @@ final public class MySQLServer extends AOServObjectIntegerKey<MySQLServer> imple
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(MySQLServer other) throws RemoteException {
-        if(key==other.key) return 0;
-        int diff = name.compareTo(other.name);
-        if(diff!=0) return diff;
-        AOServerResource aoResource1 = getAoServerResource();
-        AOServerResource aoResource2 = other.getAoServerResource();
-        return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareToImpl(aoResource2.getAoServer());
+    public int compareTo(MySQLServer other) {
+        try {
+            if(key==other.key) return 0;
+            int diff = name.compareTo(other.name);
+            if(diff!=0) return diff;
+            AOServerResource aoResource1 = getAoServerResource();
+            AOServerResource aoResource2 = other.getAoServerResource();
+            return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

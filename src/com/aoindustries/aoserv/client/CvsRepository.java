@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> implements DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
+final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> implements Comparable<CvsRepository>, DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -72,13 +73,17 @@ final public class CvsRepository extends AOServObjectIntegerKey<CvsRepository> i
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(CvsRepository other) throws RemoteException {
-        if(key==other.key) return 0;
-        AOServerResource aoResource1 = getAoServerResource();
-        AOServerResource aoResource2 = other.getAoServerResource();
-        int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareToImpl(aoResource2.getAoServer());
-        if(diff!=0) return 0;
-        return path.compareTo(other.path);
+    public int compareTo(CvsRepository other) {
+        try {
+            if(key==other.key) return 0;
+            AOServerResource aoResource1 = getAoServerResource();
+            AOServerResource aoResource2 = other.getAoServerResource();
+            int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+            if(diff!=0) return 0;
+            return path.compareTo(other.path);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

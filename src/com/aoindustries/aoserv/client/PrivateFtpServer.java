@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -19,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.PrivateFtpServer> {
+final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpServer> implements Comparable<PrivateFtpServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PrivateFtpServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -67,8 +68,12 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey<PrivateFtpSer
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(PrivateFtpServer other) throws RemoteException {
-        return netBind==other.netBind ? 0 : getNetBind().compareToImpl(other.getNetBind());
+    public int compareTo(PrivateFtpServer other) {
+        try {
+            return netBind==other.netBind ? 0 : getNetBind().compareTo(other.getNetBind());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

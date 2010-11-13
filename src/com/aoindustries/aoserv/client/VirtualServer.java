@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
@@ -17,7 +18,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> implements DtoFactory<com.aoindustries.aoserv.client.dto.VirtualServer> {
+final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> implements Comparable<VirtualServer>, DtoFactory<com.aoindustries.aoserv.client.dto.VirtualServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -94,8 +95,12 @@ final public class VirtualServer extends AOServObjectIntegerKey<VirtualServer> i
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(VirtualServer other) throws RemoteException {
-        return key==other.key? 0 : AOServObjectUtils.compare(getServer(), other.getServer());
+    public int compareTo(VirtualServer other) {
+        try {
+            return key==other.key? 0 : AOServObjectUtils.compare(getServer(), other.getServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -13,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSetting> implements DtoFactory<com.aoindustries.aoserv.client.dto.FileBackupSetting> /*, Removable */ {
+final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSetting> implements Comparable<FileBackupSetting>, DtoFactory<com.aoindustries.aoserv.client.dto.FileBackupSetting> /*, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -50,10 +51,14 @@ final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSe
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(FileBackupSetting other) throws RemoteException {
-        int diff = replication==other.replication ? 0 : getReplication().compareToImpl(other.getReplication());
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
+    public int compareTo(FileBackupSetting other) {
+        try {
+            int diff = replication==other.replication ? 0 : getReplication().compareTo(other.getReplication());
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 
@@ -81,6 +86,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey<FileBackupSe
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    @Override
     public com.aoindustries.aoserv.client.dto.FileBackupSetting getDto() {
         return new com.aoindustries.aoserv.client.dto.FileBackupSetting(key, replication, path, backupEnabled);
     }

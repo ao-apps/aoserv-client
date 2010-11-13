@@ -11,6 +11,7 @@ import com.aoindustries.aoserv.client.command.SetMySQLUserPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implements DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUser>, PasswordProtected /* TODO, Removable, Disablable*/ {
+final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implements Comparable<MySQLUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUser>, PasswordProtected /* TODO, Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -208,10 +209,14 @@ final public class MySQLUser extends AOServObjectIntegerKey<MySQLUser> implement
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(MySQLUser other) throws RemoteException {
-        int diff = username==other.username ? 0 : getUsername().compareToImpl(other.getUsername()); // OK - interned
-        if(diff!=0) return diff;
-        return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareToImpl(other.getMysqlServer());
+    public int compareTo(MySQLUser other) {
+        try {
+            int diff = username==other.username ? 0 : getUsername().compareTo(other.getUsername()); // OK - interned
+            if(diff!=0) return diff;
+            return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareTo(other.getMysqlServer());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

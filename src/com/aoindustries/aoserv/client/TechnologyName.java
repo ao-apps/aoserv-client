@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyName extends AOServObjectStringKey<TechnologyName> implements DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyName> {
+final public class TechnologyName extends AOServObjectStringKey<TechnologyName> implements Comparable<TechnologyName>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyName> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

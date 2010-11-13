@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PaymentType extends AOServObjectStringKey<PaymentType> implements DtoFactory<com.aoindustries.aoserv.client.dto.PaymentType> {
+final public class PaymentType extends AOServObjectStringKey<PaymentType> implements Comparable<PaymentType>, DtoFactory<com.aoindustries.aoserv.client.dto.PaymentType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

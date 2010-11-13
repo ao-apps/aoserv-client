@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -22,7 +23,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccountGroup> implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountGroup> /*, Removable */ {
+final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccountGroup> implements Comparable<LinuxAccountGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountGroup> /*, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -48,10 +49,14 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey<LinuxAccount
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(LinuxAccountGroup other) throws RemoteException {
-        int diff = linuxAccount==other.linuxAccount ? 0 : getLinuxAccount().compareToImpl(other.getLinuxAccount());
-        if(diff!=0) return diff;
-        return linuxGroup==other.linuxGroup ? 0 : getLinuxGroup().compareToImpl(other.getLinuxGroup());
+    public int compareTo(LinuxAccountGroup other) {
+        try {
+            int diff = linuxAccount==other.linuxAccount ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
+            if(diff!=0) return diff;
+            return linuxGroup==other.linuxGroup ? 0 : getLinuxGroup().compareTo(other.getLinuxGroup());
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

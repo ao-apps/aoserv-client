@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -15,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class BackupPartition extends AOServObjectIntegerKey<BackupPartition> implements DtoFactory<com.aoindustries.aoserv.client.dto.BackupPartition> {
+final public class BackupPartition extends AOServObjectIntegerKey<BackupPartition> implements Comparable<BackupPartition>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupPartition> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -52,10 +53,14 @@ final public class BackupPartition extends AOServObjectIntegerKey<BackupPartitio
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(BackupPartition other) throws RemoteException {
-        int diff = aoServer==other.aoServer ? 0 : getAOServer().compareToImpl(other.getAOServer());
-        if(diff!=0) return diff;
-        return path.compareTo(other.path);
+    public int compareTo(BackupPartition other) {
+        try {
+            int diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
+            if(diff!=0) return diff;
+            return path.compareTo(other.path);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

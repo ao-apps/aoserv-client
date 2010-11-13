@@ -29,7 +29,11 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class NetBind extends AOServObjectIntegerKey<NetBind> implements DtoFactory<com.aoindustries.aoserv.client.dto.NetBind> /*implements Removable*/ {
+final public class NetBind
+extends AOServObjectIntegerKey<NetBind>
+implements
+    Comparable<NetBind>,
+    DtoFactory<com.aoindustries.aoserv.client.dto.NetBind> /*implements Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -83,14 +87,18 @@ final public class NetBind extends AOServObjectIntegerKey<NetBind> implements Dt
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(NetBind other) throws RemoteException {
-        int diff = businessServer==other.businessServer ? 0 : getBusinessServer().compareToImpl(other.getBusinessServer());
-        if(diff!=0) return diff;
-        diff = StringUtility.equals(ipAddress, other.ipAddress) ? 0 : AOServObjectUtils.compare(getIpAddress(), other.getIpAddress());
-        if(diff!=0) return diff;
-        diff = port.compareTo(other.port);
-        if(diff!=0) return diff;
-        return netProtocol==other.netProtocol ? 0 : getNetProtocol().compareToImpl(other.getNetProtocol()); // OK - interned
+    public int compareTo(NetBind other) {
+        try {
+            int diff = businessServer==other.businessServer ? 0 : getBusinessServer().compareTo(other.getBusinessServer());
+            if(diff!=0) return diff;
+            diff = StringUtility.equals(ipAddress, other.ipAddress) ? 0 : AOServObjectUtils.compare(getIpAddress(), other.getIpAddress());
+            if(diff!=0) return diff;
+            diff = port.compareTo(other.port);
+            if(diff!=0) return diff;
+            return netProtocol==other.netProtocol ? 0 : getNetProtocol().compareTo(other.getNetProtocol()); // OK - interned
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

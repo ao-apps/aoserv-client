@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
 /**
@@ -15,7 +16,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AOServRole extends AOServObjectIntegerKey<AOServRole> implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServRole> {
+final public class AOServRole extends AOServObjectIntegerKey<AOServRole> implements Comparable<AOServRole>, DtoFactory<com.aoindustries.aoserv.client.dto.AOServRole> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -45,10 +46,14 @@ final public class AOServRole extends AOServObjectIntegerKey<AOServRole> impleme
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(AOServRole other) throws RemoteException {
-        int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness());
-        if(diff!=0) return diff;
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+    public int compareTo(AOServRole other) {
+        try {
+            int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness());
+            if(diff!=0) return diff;
+            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+        } catch(RemoteException err) {
+            throw new WrappedException(err);
+        }
     }
     // </editor-fold>
 

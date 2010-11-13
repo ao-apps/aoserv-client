@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ExpenseCategory extends AOServObjectStringKey<ExpenseCategory> implements DtoFactory<com.aoindustries.aoserv.client.dto.ExpenseCategory> {
+final public class ExpenseCategory extends AOServObjectStringKey<ExpenseCategory> implements Comparable<ExpenseCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.ExpenseCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;

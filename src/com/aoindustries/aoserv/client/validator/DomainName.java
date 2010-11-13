@@ -32,7 +32,13 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * @author  AO Industries, Inc.
  */
-final public class DomainName implements Comparable<DomainName>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.DomainName>, Internable<DomainName> {
+final public class DomainName
+implements
+    Comparable<DomainName>,
+    Serializable,
+    ObjectInputValidation,
+    DtoFactory<com.aoindustries.aoserv.client.dto.DomainName>,
+    Internable<DomainName> {
 
     private static final long serialVersionUID = 1L;
 

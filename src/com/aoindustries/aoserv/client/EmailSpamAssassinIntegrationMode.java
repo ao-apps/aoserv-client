@@ -17,7 +17,11 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKey<EmailSpamAssassinIntegrationMode> implements DtoFactory<com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode> {
+final public class EmailSpamAssassinIntegrationMode
+extends AOServObjectStringKey<EmailSpamAssassinIntegrationMode>
+implements
+    Comparable<EmailSpamAssassinIntegrationMode>,
+    DtoFactory<com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -42,7 +46,7 @@ final public class EmailSpamAssassinIntegrationMode extends AOServObjectStringKe
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    protected int compareToImpl(EmailSpamAssassinIntegrationMode other) {
+    public int compareTo(EmailSpamAssassinIntegrationMode other) {
         return AOServObjectUtils.compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
