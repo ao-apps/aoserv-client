@@ -38,7 +38,7 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
     private String display;
     final private boolean isUnix;
 
-    public OperatingSystem(AOServConnector<?,?> connector, String name, String display, boolean is_unix) {
+    public OperatingSystem(AOServConnector connector, String name, String display, boolean is_unix) {
         super(connector, name);
         this.display = display;
         this.isUnix = is_unix;
@@ -110,7 +110,7 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector<?,?> conn, String version, Architecture architecture) throws IOException, SQLException {
+    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
         return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
     }*/
     // </editor-fold>

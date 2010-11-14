@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
  */
 public class DependencyTest extends TestCase {
     
-    private List<AOServConnector<?,?>> conns;
+    private List<AOServConnector> conns;
 
     public DependencyTest(String testName) {
         super(testName);
@@ -108,7 +108,7 @@ public class DependencyTest extends TestCase {
      *     http://www.eecs.berkeley.edu/~kamil/teaching/sp03/041403.pdf
      */
     private void doTestGetDependencies(ChildGetter childGetter, ChildGetter backGetter) throws Exception {
-        for(AOServConnector<?,?> conn : conns) {
+        for(AOServConnector conn : conns) {
             System.out.println("    "+conn.getConnectAs()+":");
             System.out.print("        ");
             for(ServiceName serviceName : ServiceName.values) System.out.print(serviceName.name().charAt(0));
@@ -118,7 +118,7 @@ public class DependencyTest extends TestCase {
             Map<AOServObject,AOServObject> predecessors = new HashMap<AOServObject,AOServObject>();
             Sequence time = new UnsynchronizedSequence();
             for(ServiceName serviceName : ServiceName.values) {
-                AOServService<?,?,?,?> service = conn.getServices().get(serviceName);
+                AOServService<?,?> service = conn.getServices().get(serviceName);
                 Set<? extends AOServObject<?>> set = service.getSet();
                 int numRows = set.size();
                 if(numRows==0) System.out.print("E");

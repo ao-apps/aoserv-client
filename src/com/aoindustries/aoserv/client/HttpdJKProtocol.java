@@ -33,7 +33,7 @@ final public class HttpdJKProtocol extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public HttpdJKProtocol(AOServConnector<?,?> connector, String protocol) {
+    public HttpdJKProtocol(AOServConnector connector, String protocol) {
         super(connector, protocol);
     }
     // </editor-fold>

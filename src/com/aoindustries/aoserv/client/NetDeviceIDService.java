@@ -12,5 +12,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.net_device_ids)
-public interface NetDeviceIDService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,NetDeviceID> {
+public interface NetDeviceIDService extends AOServService<String,NetDeviceID> {
 }

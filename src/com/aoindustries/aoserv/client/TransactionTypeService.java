@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.transaction_types)
-public interface TransactionTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,TransactionType> {
+public interface TransactionTypeService extends AOServService<String,TransactionType> {
 }

@@ -24,7 +24,7 @@ final public class Language extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public Language(AOServConnector<?,?> connector, String code) {
+    public Language(AOServConnector connector, String code) {
         super(connector, code);
     }
     // </editor-fold>

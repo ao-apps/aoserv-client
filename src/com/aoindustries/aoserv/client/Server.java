@@ -38,7 +38,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     final private boolean monitoringEnabled;
 
     public Server(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         DomainLabel farm,
         String description,

@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.net_binds)
-public interface NetBindService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,NetBind> {
+public interface NetBindService extends AOServService<Integer,NetBind> {
 
     /* TODO
     int addNetBind(

@@ -26,7 +26,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
     final private boolean backupEnabled;
 
     public FileBackupSetting(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int replication,
         String path,

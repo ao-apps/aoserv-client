@@ -40,7 +40,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     final private int tomcatVersion;
     private UnixPath templateDir;
 
-    public HttpdJBossVersion(AOServConnector<?,?> connector, int version, int tomcatVersion, UnixPath templateDir) {
+    public HttpdJBossVersion(AOServConnector connector, int version, int tomcatVersion, UnixPath templateDir) {
         super(connector, version);
         this.tomcatVersion = tomcatVersion;
         this.templateDir = templateDir;

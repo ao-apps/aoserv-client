@@ -37,7 +37,7 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public PackageCategory(AOServConnector<?,?> connector, String name) {
+    public PackageCategory(AOServConnector connector, String name) {
         super(connector, name);
     }
     // </editor-fold>

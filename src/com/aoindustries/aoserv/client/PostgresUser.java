@@ -63,7 +63,7 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
     private String predisablePassword;
 
     public PostgresUser(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

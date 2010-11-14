@@ -66,9 +66,9 @@ final public class DescribeCommand extends AOServCommand<String> {
     }
 
     @Override
-    public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public String execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         // Find the table given its name
-        AOServService<?,?,?,?> service = connector.getServices().get(ServiceName.valueOf(tableName));
+        AOServService<?,?> service = connector.getServices().get(ServiceName.valueOf(tableName));
         StringBuilder SB = new StringBuilder();
         SB.append("<b>").append(ApplicationResources.accessor.getMessage("DescribeCommand.header.tableName")).append("</b>").append(eol);
         SB.append("       ").append(tableName).append(eol);

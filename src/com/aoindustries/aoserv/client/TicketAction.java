@@ -57,7 +57,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     transient private String rawEmail;
 
     public TicketAction(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int ticket,
         UserId administrator,

@@ -15,18 +15,15 @@ import java.util.List;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.resources)
-public class ResourceService<
-    C extends AOServConnector<C,F>,
-    F extends AOServConnectorFactory<C,F>
-> extends UnionService<C,F,Integer,Resource> {
+public class ResourceService extends UnionService<Integer,Resource> {
 
-    public ResourceService(AOServConnector<C,F> connector) {
+    public ResourceService(AOServConnector connector) {
         super(connector, Integer.class, Resource.class);
     }
 
     @Override
-    protected List<AOServService<C, F, Integer, ? extends Resource>> getSubServices() throws RemoteException {
-        List<AOServService<C, F, Integer, ? extends Resource>> subservices = new ArrayList<AOServService<C, F, Integer, ? extends Resource>>(4);
+    protected List<AOServService<Integer, ? extends Resource>> getSubServices() throws RemoteException {
+        List<AOServService<Integer, ? extends Resource>> subservices = new ArrayList<AOServService<Integer, ? extends Resource>>(4);
         subservices.add(connector.getAoServerResources());
         subservices.add(connector.getDnsRecords());
         subservices.add(connector.getDnsZones());

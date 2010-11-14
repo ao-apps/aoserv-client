@@ -106,7 +106,7 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
      * Serializes the command to the server for execution.
      */
     @Override
-    public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public R execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         return connector.executeCommand(this, isInteractive).getResult();
     }
 }

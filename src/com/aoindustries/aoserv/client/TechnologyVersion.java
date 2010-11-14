@@ -33,7 +33,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     final int operatingSystemVersion;
 
     public TechnologyVersion(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String name,
         String version,

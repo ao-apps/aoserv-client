@@ -29,7 +29,7 @@ final public class NoSwingConnectorFactory extends WrappedConnectorFactory<NoSwi
         if(SwingUtilities.isEventDispatchThread()) throw new RemoteException("Refusing to place AOServ call from Swing event dispatch thread");
     }
 
-    public NoSwingConnectorFactory(AOServConnectorFactory<?,?> wrapped) {
+    public NoSwingConnectorFactory(AOServConnectorFactory wrapped) {
         super(wrapped);
     }
 

@@ -19,7 +19,7 @@ abstract public class AOServObjectUserIdKey extends AOServObject<UserId> {
 
     private UserId key;
 
-    protected AOServObjectUserIdKey(AOServConnector<?,?> connector, UserId key) {
+    protected AOServObjectUserIdKey(AOServConnector connector, UserId key) {
         super(connector);
         this.key = key;
         intern();

@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.httpd_jk_protocols)
-public interface HttpdJKProtocolService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,HttpdJKProtocol> {
+public interface HttpdJKProtocolService extends AOServService<String,HttpdJKProtocol> {
 }

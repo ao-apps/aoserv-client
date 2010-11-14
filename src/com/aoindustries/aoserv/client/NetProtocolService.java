@@ -12,5 +12,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.net_protocols)
-public interface NetProtocolService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,NetProtocol> {
+public interface NetProtocolService extends AOServService<String,NetProtocol> {
 }

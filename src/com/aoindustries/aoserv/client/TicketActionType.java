@@ -42,7 +42,7 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean visibleAdminOnly;
 
-    public TicketActionType(AOServConnector<?,?> connector, String type, boolean visibleAdminOnly) {
+    public TicketActionType(AOServConnector connector, String type, boolean visibleAdminOnly) {
         super(connector, type);
         this.visibleAdminOnly = visibleAdminOnly;
     }
@@ -92,7 +92,7 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
     /**
      * Generates a locale-specific summary.
      */
-    String generateSummary(AOServConnector<?,?> connector, String oldValue, String newValue) {
+    String generateSummary(AOServConnector connector, String oldValue, String newValue) {
         if(oldValue==null) {
             if(newValue==null) return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.null.null");
             return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.null.notNull", newValue);

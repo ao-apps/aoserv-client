@@ -24,19 +24,19 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> implements AOServConnectorFactory<C,F> {
+final public class RmiServerConnectorFactory implements AOServConnectorFactory {
 
     private final NetPort port;
     private final RMIClientSocketFactory csf;
     private final RMIServerSocketFactory ssf;
-    private final AOServConnectorFactory<C,F> wrapped;
+    private final AOServConnectorFactory wrapped;
 
     public RmiServerConnectorFactory(
         Hostname publicAddress,
         InetAddress listenAddress,
         NetPort port,
         boolean useSsl,
-        AOServConnectorFactory<C,F> wrapped
+        AOServConnectorFactory wrapped
     ) throws RemoteException {
         // Setup the RMI system properties
         if(publicAddress!=null) {
@@ -84,12 +84,12 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
         this.wrapped = wrapped;
     }
 
-    private final AOServConnectorFactoryCache<C,F> connectors = new AOServConnectorFactoryCache<C,F>();
+    private final AOServConnectorFactoryCache<AOServConnector> connectors = new AOServConnectorFactoryCache<AOServConnector>();
 
     @Override
-    public C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    public AOServConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
-            C connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+            AOServConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
             if(connector!=null) {
                 connector.setLocale(locale);
             } else {
@@ -109,11 +109,11 @@ final public class RmiServerConnectorFactory<C extends AOServConnector<C,F>, F e
      * Connectors are exported as they are created.
      */
     @Override
-    public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    public AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
-            C connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+            AOServConnector connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
             UnicastRemoteObject.exportObject(connector, port.getPort(), csf, ssf);
-            for(AOServService<C,F,?,?> service : connector.getServices().values()) {
+            for(AOServService<?,?> service : connector.getServices().values()) {
                 UnicastRemoteObject.exportObject(service, port.getPort(), csf, ssf);
             }
             connectors.put(

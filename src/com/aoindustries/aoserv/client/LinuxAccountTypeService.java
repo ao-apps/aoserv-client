@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.linux_account_types)
-public interface LinuxAccountTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,LinuxAccountType> {
+public interface LinuxAccountTypeService extends AOServService<String,LinuxAccountType> {
 }

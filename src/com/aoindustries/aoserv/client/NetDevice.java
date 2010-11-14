@@ -39,7 +39,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     final private Long monitoringBitRateCritical;
 
     public NetDevice(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int server,
         String deviceId,

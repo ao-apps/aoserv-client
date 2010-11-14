@@ -34,7 +34,7 @@ final public class TicketType extends AOServObjectStringKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TicketType(AOServConnector<?,?> connector, String type) {
+    public TicketType(AOServConnector connector, String type) {
         super(connector, type);
     }
     // </editor-fold>

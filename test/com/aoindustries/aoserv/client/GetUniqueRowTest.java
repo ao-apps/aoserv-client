@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
  */
 public class GetUniqueRowTest extends TestCase {
     
-    private List<AOServConnector<?,?>> conns;
+    private List<AOServConnector> conns;
 
     public GetUniqueRowTest(String testName) {
         super(testName);
@@ -50,7 +50,7 @@ public class GetUniqueRowTest extends TestCase {
      */
     public void testGetUniqueRows() throws Exception {
         System.out.println("Testing all unique rows:");
-        for(AOServConnector<?,?> conn : conns) {
+        for(AOServConnector conn : conns) {
             System.out.println("    "+conn.getConnectAs());
             Map<Object,AOServObject> uniqueMap=new HashMap<Object,AOServObject>();
             for(ServiceName serviceName : ServiceName.values) {
@@ -58,7 +58,7 @@ public class GetUniqueRowTest extends TestCase {
                 // TODO: if(serviceName==ServiceName.distro_files) continue;
                 // Exclude because reads are not repeatable
                 // TODO: master_processes
-                AOServService<?,?,?,?> service=conn.getServices().get(serviceName);
+                AOServService<?,?> service=conn.getServices().get(serviceName);
                 System.out.print("        "+serviceName+": ");
                 List<AOServObject<?>> rows=new ArrayList<AOServObject<?>>(service.getSet());
                 System.out.println(rows.size()+" rows");
@@ -94,7 +94,7 @@ public class GetUniqueRowTest extends TestCase {
 
     public void testGetLinuxAccounts() throws RemoteException {
         System.out.println("Testing AOServer.getLinuxAccounts:");
-        for(AOServConnector<?,?> conn : conns) {
+        for(AOServConnector conn : conns) {
             System.out.println("    "+conn.getConnectAs());
             for(AOServer ao : conn.getAoServers().getSet()) {
                 System.out.println("        "+ao);

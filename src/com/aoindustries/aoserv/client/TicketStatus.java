@@ -38,7 +38,7 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private short sortOrder;
 
-    public TicketStatus(AOServConnector<?,?> connector, String status, short sortOrder) {
+    public TicketStatus(AOServConnector connector, String status, short sortOrder) {
         super(connector, status);
         this.sortOrder = sortOrder;
     }

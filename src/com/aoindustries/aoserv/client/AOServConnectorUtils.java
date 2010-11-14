@@ -27,7 +27,7 @@ final public class AOServConnectorUtils {
     private AOServConnectorUtils() {
     }
 
-    private static <C2 extends AOServConnector<C2,F2>, F2 extends AOServConnectorFactory<C2,F2>> void addTable(Map<ServiceName,AOServService<C2,F2,?,?>> ts, AOServService<C2,F2,?,?> table) throws RemoteException {
+    private static void addTable(Map<ServiceName,AOServService<?,?>> ts, AOServService<?,?> table) throws RemoteException {
         ServiceName tableName = table.getServiceName();
         if(ts.put(tableName, table)!=null) throw new AssertionError("Table found more than once: "+tableName);
     }
@@ -35,10 +35,9 @@ final public class AOServConnectorUtils {
     /**
      * @see AOServConnector#getServices()
      */
-    @SuppressWarnings("unchecked")
-    public static <C2 extends AOServConnector<C2,F2>, F2 extends AOServConnectorFactory<C2,F2>> Map<ServiceName,AOServService<C2,F2,?,?>> createServiceMap(AOServConnector<C2,F2> connector) throws RemoteException {
+    public static Map<ServiceName,AOServService<?,?>> createServiceMap(AOServConnector connector) throws RemoteException {
         try {
-            Map<ServiceName,AOServService<C2,F2,?,?>> serviceMap = new EnumMap<ServiceName,AOServService<C2,F2,?,?>>(ServiceName.class);
+            Map<ServiceName,AOServService<?,?>> serviceMap = new EnumMap<ServiceName,AOServService<?,?>>(ServiceName.class);
             // Use reflection
             for(Method method : connector.getClass().getMethods()) {
                 if(
@@ -65,14 +64,14 @@ final public class AOServConnectorUtils {
      * Sets the connector on the provided object, possibly cloning it in the process.
      */
     @SuppressWarnings("unchecked")
-    public static <V extends AOServObject<?>> V setConnector(V obj, AOServConnector<?,?> connector) throws RemoteException {
+    public static <V extends AOServObject<?>> V setConnector(V obj, AOServConnector connector) throws RemoteException {
         return obj==null ? null : (V)obj.setConnector(connector);
     }
 
     /**
      * Sets the connector on an entire collection, and returns an unmodifiable set.
      */
-    public static <V extends AOServObject<?>> IndexedSet<V> setConnector(IndexedSet<V> objs, AOServConnector<?,?> connector) throws RemoteException {
+    public static <V extends AOServObject<?>> IndexedSet<V> setConnector(IndexedSet<V> objs, AOServConnector connector) throws RemoteException {
         int size = objs.size();
         if(size==0) return objs;
         if(size==1) {

@@ -47,7 +47,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     final private String technicalEmail;
 
     public BusinessProfile(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         AccountingCode accounting,
         int priority,

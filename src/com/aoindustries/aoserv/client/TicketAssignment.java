@@ -28,7 +28,7 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     private UserId administrator;
 
     public TicketAssignment(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int ticket,
         AccountingCode reseller,

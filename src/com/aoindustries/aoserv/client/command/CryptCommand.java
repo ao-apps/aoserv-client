@@ -43,7 +43,7 @@ final public class CryptCommand extends AOServCommand<String> {
 
     @Override
     @SuppressWarnings("deprecation")
-    public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public String execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         if(salt==null) return com.aoindustries.util.UnixCrypt.crypt(password);
         return com.aoindustries.util.UnixCrypt.crypt(password, salt);
     }

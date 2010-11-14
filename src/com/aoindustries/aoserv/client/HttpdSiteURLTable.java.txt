@@ -17,7 +17,7 @@ import java.util.*;
  */
 final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL> {
 
-    HttpdSiteURLTable(AOServConnector<?,?> connector) {
+    HttpdSiteURLTable(AOServConnector connector) {
 	super(connector, HttpdSiteURL.class);
     }
 

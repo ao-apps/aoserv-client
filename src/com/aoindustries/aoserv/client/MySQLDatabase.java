@@ -68,7 +68,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     final private int mysqlServer;
 
     public MySQLDatabase(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

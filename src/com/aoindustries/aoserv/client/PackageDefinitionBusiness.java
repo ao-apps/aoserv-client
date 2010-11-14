@@ -38,7 +38,7 @@ implements
     final private boolean active;
 
     public PackageDefinitionBusiness(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int packageDefinition,
         AccountingCode accounting,

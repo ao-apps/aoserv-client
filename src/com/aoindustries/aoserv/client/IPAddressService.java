@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.ip_addresses)
-public interface IPAddressService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,IPAddress> {
+public interface IPAddressService extends AOServService<Integer,IPAddress> {
 
     /* TODO
     IPAddress getIPAddress(NetDevice device, String ipAddress) throws IOException, SQLException {

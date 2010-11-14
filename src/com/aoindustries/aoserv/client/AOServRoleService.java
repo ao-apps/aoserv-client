@@ -13,5 +13,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.aoserv_roles)
-public interface AOServRoleService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,AOServRole> {
+public interface AOServRoleService extends AOServService<Integer,AOServRole> {
 }

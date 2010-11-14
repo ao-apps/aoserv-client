@@ -109,7 +109,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     private String status;
 
     public CreditCardTransaction(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String processorId,
         AccountingCode accounting,

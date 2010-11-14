@@ -31,7 +31,7 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     private InetAddress host;
 
     public MasterHost(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         UserId username,
         InetAddress host

@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.email_sa_integration_modes)
-public interface EmailSpamAssassinIntegrationModeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,EmailSpamAssassinIntegrationMode> {
+public interface EmailSpamAssassinIntegrationModeService extends AOServService<String,EmailSpamAssassinIntegrationMode> {
 }

@@ -37,7 +37,7 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
     final private Integer ttl;
 
     public DnsRecord(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

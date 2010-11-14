@@ -13,5 +13,5 @@ import com.aoindustries.aoserv.client.validator.*;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.shells)
-public interface ShellService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,UnixPath,Shell> {
+public interface ShellService extends AOServService<UnixPath,Shell> {
 }

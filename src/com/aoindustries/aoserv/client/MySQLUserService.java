@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.mysql_users)
-public interface MySQLUserService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,MySQLUser> {
+public interface MySQLUserService extends AOServService<Integer,MySQLUser> {
 
     /* TODO
     int addMySQLUser(final String username, final MySQLServer mysqlServer, final String host) throws IOException, SQLException {

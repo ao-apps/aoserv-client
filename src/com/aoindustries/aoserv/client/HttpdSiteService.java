@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.httpd_sites)
-public interface HttpdSiteService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,HttpdSite> {
+public interface HttpdSiteService extends AOServService<Integer,HttpdSite> {
 
     /* TODO
     public String generateSiteName(String template) throws IOException, SQLException {

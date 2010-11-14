@@ -44,7 +44,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     final private short sortOrder;
 
     public OperatingSystemVersion(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String operatingSystem,
         String versionNumber,

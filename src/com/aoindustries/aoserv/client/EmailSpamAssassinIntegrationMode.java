@@ -38,7 +38,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private short sortOrder;
 
-    public EmailSpamAssassinIntegrationMode(AOServConnector<?,?> connector, String name, short sortOrder) {
+    public EmailSpamAssassinIntegrationMode(AOServConnector connector, String name, short sortOrder) {
         super(connector, name);
         this.sortOrder = sortOrder;
     }

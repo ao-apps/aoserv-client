@@ -23,7 +23,7 @@ final public class ProcessorType extends AOServObjectStringKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private short sortOrder;
 
-    public ProcessorType(AOServConnector<?,?> connector, String type, short sortOrder) {
+    public ProcessorType(AOServConnector connector, String type, short sortOrder) {
         super(connector, type);
         this.sortOrder = sortOrder;
     }

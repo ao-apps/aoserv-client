@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.servers)
-public interface ServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,Server> {
+public interface ServerService extends AOServService<Integer,Server> {
 
     /* TODO
     public int addBackupServer(

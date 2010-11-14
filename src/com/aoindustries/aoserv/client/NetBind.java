@@ -50,7 +50,7 @@ implements
     private String monitoringParameters;
 
     public NetBind(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int businessServer,
         Integer ipAddress,
@@ -487,7 +487,7 @@ implements
     public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServConnector<?,?> conn=getConnector();
+        AOServConnector conn=getConnector();
 
         // Must be able to access business
         BusinessServer bs = getBusinessServer();

@@ -13,5 +13,5 @@ import com.aoindustries.aoserv.client.validator.*;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.dns_tlds)
-public interface DnsTldService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,DomainName,DnsTld> {
+public interface DnsTldService extends AOServService<DomainName,DnsTld> {
 }

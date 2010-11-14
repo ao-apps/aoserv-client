@@ -40,7 +40,7 @@ final public class TransactionType extends AOServObjectStringKey implements Comp
      */
     final private boolean isCredit;
 
-    public TransactionType(AOServConnector<?,?> connector, String name, boolean isCredit) {
+    public TransactionType(AOServConnector connector, String name, boolean isCredit) {
         super(connector, name);
         this.isCredit = isCredit;
     }

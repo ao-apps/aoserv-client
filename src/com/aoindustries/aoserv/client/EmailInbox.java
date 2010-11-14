@@ -57,7 +57,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     final private Integer saDiscardScore;
 
     public EmailInbox(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int linuxAccount,
         Integer autoresponderFrom,
         String autoresponderSubject,
@@ -439,7 +439,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     public void setPassword(String password) throws IOException, SQLException {
-        AOServConnector<?,?> connector=getConnector();
+        AOServConnector connector=getConnector();
         if(!connector.isSecure()) throw new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
         connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
     }

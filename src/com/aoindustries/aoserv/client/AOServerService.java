@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.ao_servers)
-public interface AOServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,AOServer> {
+public interface AOServerService extends AOServService<Integer,AOServer> {
 
     /**
      * Supports both Integer (server) and String (hostname) keys.

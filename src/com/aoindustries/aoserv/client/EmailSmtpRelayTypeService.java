@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.email_smtp_relay_types)
-public interface EmailSmtpRelayTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,EmailSmtpRelayType> {
+public interface EmailSmtpRelayTypeService extends AOServService<String,EmailSmtpRelayType> {
 }

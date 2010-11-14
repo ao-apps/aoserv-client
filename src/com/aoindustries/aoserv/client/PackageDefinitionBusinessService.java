@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.package_definition_businesses)
-public interface PackageDefinitionBusinessService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,PackageDefinitionBusiness> {
+public interface PackageDefinitionBusinessService extends AOServService<Integer,PackageDefinitionBusiness> {
 }

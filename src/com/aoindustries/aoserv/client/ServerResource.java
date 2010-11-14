@@ -30,7 +30,7 @@ public abstract class ServerResource extends Resource {
     final int businessServer;
 
     protected ServerResource(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

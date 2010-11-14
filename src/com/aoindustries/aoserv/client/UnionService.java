@@ -24,14 +24,9 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class UnionService<
-    C extends AOServConnector<C,F>,
-    F extends AOServConnectorFactory<C,F>,
-    K extends Comparable<K>,
-    V extends AOServObject<K>
-> implements AOServService<C,F,K,V> {
+abstract public class UnionService<K extends Comparable<K>, V extends AOServObject<K>> implements AOServService<K,V> {
 
-    protected final AOServConnector<C,F> connector;
+    protected final AOServConnector connector;
     private final ServiceName serviceName;
     private final AOServServiceUtils.AnnotationTable<K,V> table;
     private final Map<K,V> map;
@@ -44,7 +39,7 @@ abstract public class UnionService<
     private List<IndexedSet<? extends V>> cachedSets;
     private IndexedSet<V> cachedSet;
 
-    protected UnionService(AOServConnector<C,F> connector, Class<K> keyClass, Class<V> valueClass) {
+    protected UnionService(AOServConnector connector, Class<K> keyClass, Class<V> valueClass) {
         this.connector = connector;
         serviceName = AOServServiceUtils.findServiceNameByAnnotation(getClass());
         table = new AOServServiceUtils.AnnotationTable<K,V>(this, valueClass);
@@ -57,7 +52,7 @@ abstract public class UnionService<
     }
 
     @Override
-    final public AOServConnector<C,F> getConnector() {
+    final public AOServConnector getConnector() {
         return connector;
     }
 
@@ -66,13 +61,13 @@ abstract public class UnionService<
      * They must be returned in the same order every time so the cached
      * union may be reused when no underlying set has changed.
      */
-    protected abstract List<AOServService<C,F,K,? extends V>> getSubServices() throws RemoteException;
+    protected abstract List<AOServService<K,? extends V>> getSubServices() throws RemoteException;
 
     @Override
     final public IndexedSet<V> getSet() throws RemoteException {
-        List<AOServService<C,F,K,? extends V>> subservices = getSubServices();
+        List<AOServService<K,? extends V>> subservices = getSubServices();
         List<IndexedSet<? extends V>> sets = new ArrayList<IndexedSet<? extends V>>(subservices.size());
-        for(AOServService<C,F,K,? extends V> subservice : subservices) sets.add(subservice.getSet());
+        for(AOServService<K,? extends V> subservice : subservices) sets.add(subservice.getSet());
         synchronized(cachedSetLock) {
             // Reuse cache if no underlying set has changed
             if(cachedSet!=null) {
@@ -115,21 +110,21 @@ abstract public class UnionService<
 
     @Override
     final public boolean isEmpty() throws RemoteException {
-        for(AOServService<C,F,K,? extends V> subservice : getSubServices()) if(!subservice.isEmpty()) return false;
+        for(AOServService<K,? extends V> subservice : getSubServices()) if(!subservice.isEmpty()) return false;
         return true;
     }
 
     @Override
     final public int getSize() throws RemoteException {
         int totalSize = 0;
-        for(AOServService<C,F,K,? extends V> subservice : getSubServices()) totalSize += subservice.getSize();
+        for(AOServService<K,? extends V> subservice : getSubServices()) totalSize += subservice.getSize();
         return totalSize;
     }
 
     @Override
     final public V get(K key) throws RemoteException, NoSuchElementException {
         if(key==null) return null;
-        for(AOServService<C,F,K,? extends V> subservice : getSubServices()) {
+        for(AOServService<K,? extends V> subservice : getSubServices()) {
             try {
                 return subservice.get(key);
             } catch(NoSuchElementException err) {

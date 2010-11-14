@@ -26,7 +26,7 @@ final public class EmailAttachmentType extends AOServObjectStringKey implements 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean isDefaultBlock;
 
-    public EmailAttachmentType(AOServConnector<?,?> connector, String extension, boolean isDefaultBlock) {
+    public EmailAttachmentType(AOServConnector connector, String extension, boolean isDefaultBlock) {
         super(connector, extension);
         this.isDefaultBlock = isDefaultBlock;
     }

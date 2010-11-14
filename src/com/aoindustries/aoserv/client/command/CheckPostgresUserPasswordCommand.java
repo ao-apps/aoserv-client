@@ -61,7 +61,7 @@ final public class CheckPostgresUserPasswordCommand extends AOServCommand<List<P
     }
 
     @Override
-    public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public List<PasswordChecker.Result> execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         try {
             return checkPassword(connector.getPostgresUsers().get(postgresUser), password);
         } catch(IOException err) {

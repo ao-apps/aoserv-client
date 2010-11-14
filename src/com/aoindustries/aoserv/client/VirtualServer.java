@@ -43,7 +43,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     final private String vncPassword;
 
     public VirtualServer(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int server,
         int primaryRam,
         int primaryRamTarget,

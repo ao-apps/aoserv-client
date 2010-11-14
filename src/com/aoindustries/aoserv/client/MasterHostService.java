@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.master_hosts)
-public interface MasterHostService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,MasterHost> {
+public interface MasterHostService extends AOServService<Integer,MasterHost> {
 }

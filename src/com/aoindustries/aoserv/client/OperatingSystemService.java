@@ -14,5 +14,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.operating_systems)
-public interface OperatingSystemService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,OperatingSystem> {
+public interface OperatingSystemService extends AOServService<String,OperatingSystem> {
 }

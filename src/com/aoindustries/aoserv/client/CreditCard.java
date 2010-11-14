@@ -60,7 +60,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     final private Integer encryptionExpirationRecipient;
 
     public CreditCard(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String processorId,
         AccountingCode accounting,

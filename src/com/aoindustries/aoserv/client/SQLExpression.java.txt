@@ -18,13 +18,13 @@ abstract public class SQLExpression {
 
     abstract public String getColumnName();
 
-    abstract public Object getValue(AOServConnector<?,?> conn, AOServObject obj) throws IOException, SQLException;
+    abstract public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException;
     
     abstract public SchemaType getType();
 
     /**
      * Gets all of the tables referenced by this expression.
      */
-    public void getReferencedTables(AOServConnector<?,?> conn, List<SchemaTable> tables) throws IOException, SQLException {
+    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
     }
 }

@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.dns_zones)
-public interface DnsZoneService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,DnsZone> {
+public interface DnsZoneService extends AOServService<Integer,DnsZone> {
 
     /* TODO
     private List<String> getDnsTlds() throws IOException, SQLException {

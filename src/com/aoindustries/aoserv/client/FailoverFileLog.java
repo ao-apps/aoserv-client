@@ -33,7 +33,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     final private boolean isSuccessful;
 
     public FailoverFileLog(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int replication,
         long startTime,

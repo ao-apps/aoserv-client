@@ -27,7 +27,7 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
     private AccountingCode owner;
     final private boolean useRestrictedSmtpPort;
 
-    public ServerFarm(AOServConnector<?,?> connector, DomainLabel name, String description, AccountingCode owner, boolean useRestrictedSmtpPort) {
+    public ServerFarm(AOServConnector connector, DomainLabel name, String description, AccountingCode owner, boolean useRestrictedSmtpPort) {
         super(connector, name);
         this.description = description;
         this.owner = owner;

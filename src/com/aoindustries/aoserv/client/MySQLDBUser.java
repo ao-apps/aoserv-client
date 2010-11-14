@@ -50,7 +50,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     final private boolean triggerPriv;
 
     public MySQLDBUser(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int mysqlDatabase,
         int mysqlUser,

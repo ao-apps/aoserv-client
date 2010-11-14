@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.dns_records)
-public interface DnsRecordService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,DnsRecord> {
+public interface DnsRecordService extends AOServService<Integer,DnsRecord> {
 
     /* TODO
     int addDnsRecord(

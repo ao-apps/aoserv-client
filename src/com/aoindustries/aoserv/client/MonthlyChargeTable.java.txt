@@ -21,7 +21,7 @@ import java.util.Map;
  */
 final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharge> {
 
-    MonthlyChargeTable(AOServConnector<?,?> connector) {
+    MonthlyChargeTable(AOServConnector connector) {
         super(connector, MonthlyCharge.class);
     }
 

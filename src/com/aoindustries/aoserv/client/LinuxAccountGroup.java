@@ -39,7 +39,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     private final int linuxGroup;
     private final boolean isPrimary;
 
-    public LinuxAccountGroup(AOServConnector<?,?> connector, int pkey, int linuxAccount, int linuxGroup, boolean isPrimary) {
+    public LinuxAccountGroup(AOServConnector connector, int pkey, int linuxAccount, int linuxGroup, boolean isPrimary) {
         super(connector, pkey);
         this.linuxAccount = linuxAccount;
         this.linuxGroup = linuxGroup;

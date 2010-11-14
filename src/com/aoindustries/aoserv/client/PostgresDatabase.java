@@ -60,7 +60,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
     final private boolean enablePostgis;
 
     public PostgresDatabase(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

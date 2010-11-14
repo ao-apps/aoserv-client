@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.Table;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -23,21 +23,21 @@ import java.util.Set;
  * @see  AOServObject
  */
 public interface AOServService<
-    C extends AOServConnector<C,F>,
-    F extends AOServConnectorFactory<C,F>,
     K extends Comparable<K>,
     V extends AOServObject<K>
 > extends Indexed<V>, Remote {
 
     /**
      * The toString should be the service name.
+     * Can't enforce here due to remote interface
      */
+    //@Override
     //String toString();
 
     /**
      * Gets the connector that this service is part of.
      */
-    AOServConnector<C,F> getConnector() throws RemoteException;
+    AOServConnector getConnector() throws RemoteException;
 
     /**
      * Gets the set of all accessible objects.  These objects may or

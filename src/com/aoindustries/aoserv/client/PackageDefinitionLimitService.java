@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.package_definition_limits)
-public interface PackageDefinitionLimitService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,PackageDefinitionLimit> {
+public interface PackageDefinitionLimitService extends AOServService<Integer,PackageDefinitionLimit> {
 }

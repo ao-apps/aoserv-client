@@ -29,7 +29,7 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     private String name;
     private String technologyClass;
 
-    public Technology(AOServConnector<?,?> connector, int pkey, String name, String technologyClass) {
+    public Technology(AOServConnector connector, int pkey, String name, String technologyClass) {
         super(connector, pkey);
         this.name = name;
         this.technologyClass = technologyClass;

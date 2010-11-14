@@ -29,7 +29,7 @@ implements
     final private int role;
     private String permission;
 
-    public AOServRolePermission(AOServConnector<?,?> connector, int pkey, int role, String permission) {
+    public AOServRolePermission(AOServConnector connector, int pkey, int role, String permission) {
         super(connector, pkey);
         this.role = role;
         this.permission = permission;

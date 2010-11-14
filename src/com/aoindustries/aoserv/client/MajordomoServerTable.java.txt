@@ -17,7 +17,7 @@ import java.util.*;
  */
 final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoServer> {
 
-    MajordomoServerTable(AOServConnector<?,?> connector) {
+    MajordomoServerTable(AOServConnector connector) {
 	super(connector, MajordomoServer.class);
     }
 

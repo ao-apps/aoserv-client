@@ -35,7 +35,7 @@ final public class CountryCode extends AOServObjectStringKey implements Comparab
     private String chargeComName;
 
     public CountryCode(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         String code,
         String name,
         boolean chargeComSupported,

@@ -20,7 +20,7 @@ import java.util.Locale;
  */
 final public class RetryConnectorFactory extends WrappedConnectorFactory<RetryConnector,RetryConnectorFactory> {
 
-    public RetryConnectorFactory(AOServConnectorFactory<?,?> wrapped) {
+    public RetryConnectorFactory(AOServConnectorFactory wrapped) {
         super(wrapped);
     }
 

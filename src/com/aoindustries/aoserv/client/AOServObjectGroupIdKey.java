@@ -19,7 +19,7 @@ abstract public class AOServObjectGroupIdKey extends AOServObject<GroupId> {
 
     private GroupId key;
 
-    protected AOServObjectGroupIdKey(AOServConnector<?,?> connector, GroupId key) {
+    protected AOServObjectGroupIdKey(AOServConnector connector, GroupId key) {
         super(connector);
         this.key = key;
         intern();

@@ -36,7 +36,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     final private Integer encryptionRecipient;
 
     public CreditCardProcessor(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         String providerId,
         AccountingCode accounting,
         String className,

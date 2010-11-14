@@ -55,7 +55,7 @@ final public class Shell extends AOServObjectUnixPathKey implements Comparable<S
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public Shell(AOServConnector<?,?> connector, UnixPath path) {
+    public Shell(AOServConnector connector, UnixPath path) {
         super(connector, path);
     }
     // </editor-fold>

@@ -45,7 +45,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     final private Float monitoringLoadCritical;
 
     public AOServer(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int server,
         DomainName hostname,
         Integer daemonBind,

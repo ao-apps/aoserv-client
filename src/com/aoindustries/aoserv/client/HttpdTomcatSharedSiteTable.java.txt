@@ -21,7 +21,7 @@ import java.util.List;
  */
 final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<HttpdTomcatSharedSite> {
 
-    HttpdTomcatSharedSiteTable(AOServConnector<?,?> connector) {
+    HttpdTomcatSharedSiteTable(AOServConnector connector) {
         super(connector, HttpdTomcatSharedSite.class);
     }
 

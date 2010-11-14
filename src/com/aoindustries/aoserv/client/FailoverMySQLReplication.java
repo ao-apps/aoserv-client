@@ -31,7 +31,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     final private Integer monitoringSecondsBehindCritical;
 
     public FailoverMySQLReplication(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         Integer aoServer,
         Integer replication,

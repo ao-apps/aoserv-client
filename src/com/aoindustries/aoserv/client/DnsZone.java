@@ -50,7 +50,7 @@ final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoF
     final private int ttl;
 
     public DnsZone(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

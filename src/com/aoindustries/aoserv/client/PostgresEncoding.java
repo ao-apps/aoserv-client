@@ -74,7 +74,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     private String encoding;
     final private int postgresVersion;
 
-    public PostgresEncoding(AOServConnector<?,?> connector, int pkey, String encoding, int postgresVersion) {
+    public PostgresEncoding(AOServConnector connector, int pkey, String encoding, int postgresVersion) {
         super(connector, pkey);
         this.encoding = encoding;
         this.postgresVersion = postgresVersion;

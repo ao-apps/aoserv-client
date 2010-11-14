@@ -160,7 +160,7 @@ abstract public class AOServCommand<R> {
     /**
      * Validates the command using the provided connector.
      */
-    final public Map<String,List<String>> validate(AOServConnector<?,?> conn) throws RemoteException {
+    final public Map<String,List<String>> validate(AOServConnector conn) throws RemoteException {
         return validate(conn.getThisBusinessAdministrator());
     }
 
@@ -177,7 +177,7 @@ abstract public class AOServCommand<R> {
     /**
      * Executes this command in non-interactive mode.
      */
-    final public R execute(AOServConnector<?,?> connector) throws RemoteException {
+    final public R execute(AOServConnector connector) throws RemoteException {
         return execute(connector, false);
     }
 
@@ -185,5 +185,5 @@ abstract public class AOServCommand<R> {
      * Executes the command and retrieves the result.
      * If the command return value is void, returns <code>null</code>.
      */
-    abstract public R execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException;
+    abstract public R execute(AOServConnector connector, boolean isInteractive) throws RemoteException;
 }

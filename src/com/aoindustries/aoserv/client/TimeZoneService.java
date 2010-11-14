@@ -14,5 +14,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.time_zones)
-public interface TimeZoneService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,TimeZone> {
+public interface TimeZoneService extends AOServService<String,TimeZone> {
 }

@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.private_ftp_servers)
-public interface PrivateFtpServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,PrivateFtpServer> {
+public interface PrivateFtpServerService extends AOServService<Integer,PrivateFtpServer> {
 
     /* TODO
     List<PrivateFtpServer> getPrivateFtpServers(AOServer ao) throws IOException, SQLException {

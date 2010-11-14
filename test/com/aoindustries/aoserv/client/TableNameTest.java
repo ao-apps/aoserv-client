@@ -1,9 +1,10 @@
-package com.aoindustries.aoserv.client;
 /*
  * Copyright 2006-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.Column;
 import com.aoindustries.table.Table;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ import junit.framework.TestSuite;
  */
 public class TableNameTest extends TestCase {
     
-    private List<AOServConnector<?,?>> conns;
+    private List<AOServConnector> conns;
 
     public TableNameTest(String testName) {
         super(testName);
@@ -46,11 +47,11 @@ public class TableNameTest extends TestCase {
     public void testTableNames() throws Exception {
         System.out.println("Testing table and column names for uniqueness");
         Set<String> tableNames = new HashSet<String>();
-        for(AOServConnector<?,?> conn : conns) {
+        for(AOServConnector conn : conns) {
             System.out.println("    "+conn.getThisBusinessAdministrator());
             tableNames.clear();
             for(ServiceName schemaTableName : ServiceName.values) {
-                AOServService<?,?,?,?> aoTable=conn.getServices().get(schemaTableName);
+                AOServService<?,?> aoTable=conn.getServices().get(schemaTableName);
                 Table<MethodColumn,?> table = aoTable.getTable();
                 String tableName = table.getTableName();
                 System.out.println("        "+tableName);

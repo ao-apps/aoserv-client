@@ -35,7 +35,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     final private boolean approved;
 
     public PackageDefinition(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String category,
         String name,

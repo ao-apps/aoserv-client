@@ -89,11 +89,11 @@ final public class AOServServiceUtils {
         V extends AOServObject<K>
     > implements Table<MethodColumn,V> {
 
-        final private AOServService<?,?,K,V> service;
+        final private AOServService<K,V> service;
         final private List<? extends MethodColumn> columns;
         final private Map<String,? extends MethodColumn> columnMap;
 
-        public AnnotationTable(AOServService<?,?,K,V> service, Class<V> valueClass) {
+        public AnnotationTable(AOServService<K,V> service, Class<V> valueClass) {
             this.service = service;
             columns = AOServObjectUtils.getMethodColumns(valueClass);
             columnMap = AOServObjectUtils.getMethodColumnMap(valueClass);
@@ -265,11 +265,11 @@ final public class AOServServiceUtils {
         V extends AOServObject<K>
     > implements Map<K,V> {
 
-        private final AOServService<?,?,K,V> service;
+        private final AOServService<K,V> service;
         private final Class<K> keyClass;
         private final Class<V> valueClass;
 
-        public ServiceMap(AOServService<?,?,K,V> service, Class<K> keyClass, Class<V> valueClass) {
+        public ServiceMap(AOServService<K,V> service, Class<K> keyClass, Class<V> valueClass) {
             this.service = service;
             this.keyClass = keyClass;
             this.valueClass = valueClass;

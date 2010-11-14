@@ -30,7 +30,7 @@ final public class NoticeType extends AOServObjectStringKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public NoticeType(AOServConnector<?,?> connector, String type) {
+    public NoticeType(AOServConnector connector, String type) {
         super(connector, type);
     }
     // </editor-fold>

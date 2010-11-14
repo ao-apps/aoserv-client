@@ -27,7 +27,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean isNegative;
 
-    public BankTransactionType(AOServConnector<?,?> connector, String name, boolean isNegative) {
+    public BankTransactionType(AOServConnector connector, String name, boolean isNegative) {
         super(connector, name);
         this.isNegative = isNegative;
     }

@@ -17,7 +17,7 @@ import java.util.*;
  */
 final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBind> {
 
-    HttpdSiteBindTable(AOServConnector<?,?> connector) {
+    HttpdSiteBindTable(AOServConnector connector) {
 	super(connector, HttpdSiteBind.class);
     }
 

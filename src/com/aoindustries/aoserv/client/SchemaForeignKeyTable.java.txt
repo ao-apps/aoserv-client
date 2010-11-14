@@ -24,7 +24,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
     private static final Map<Integer,List<SchemaForeignKey>> referencesHash=new HashMap<Integer,List<SchemaForeignKey>>();
     private static final Map<Integer,List<SchemaForeignKey>> referencedByHash=new HashMap<Integer,List<SchemaForeignKey>>();
 
-    SchemaForeignKeyTable(AOServConnector<?,?> connector) {
+    SchemaForeignKeyTable(AOServConnector connector) {
         super(connector, SchemaForeignKey.class);
     }
 

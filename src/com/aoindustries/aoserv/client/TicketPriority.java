@@ -34,7 +34,7 @@ final public class TicketPriority extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TicketPriority(AOServConnector<?,?> connector, String priority) {
+    public TicketPriority(AOServConnector connector, String priority) {
         super(connector, priority);
     }
     // </editor-fold>

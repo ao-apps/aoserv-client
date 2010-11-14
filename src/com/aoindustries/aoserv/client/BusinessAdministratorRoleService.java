@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.business_administrator_roles)
-public interface BusinessAdministratorRoleService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,BusinessAdministratorRole> {
+public interface BusinessAdministratorRoleService extends AOServService<Integer,BusinessAdministratorRole> {
 }

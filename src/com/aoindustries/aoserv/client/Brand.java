@@ -68,7 +68,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     private String aowebStrutsKeystorePassword;
 
     public Brand(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         AccountingCode accounting,
         DomainName nameserver1,
         DomainName nameserver2,

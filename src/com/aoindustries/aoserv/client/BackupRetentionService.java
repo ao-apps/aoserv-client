@@ -12,5 +12,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.backup_retentions)
-public interface BackupRetentionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Short,BackupRetention> {
+public interface BackupRetentionService extends AOServService<Short,BackupRetention> {
 }

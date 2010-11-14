@@ -23,7 +23,7 @@ final public class TimeZone extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TimeZone(AOServConnector<?,?> connector, String name) {
+    public TimeZone(AOServConnector connector, String name) {
         super(connector, name);
     }
     // </editor-fold>

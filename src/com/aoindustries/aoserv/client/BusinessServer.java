@@ -34,7 +34,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     final private boolean canVncConsole;
 
     public BusinessServer(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         AccountingCode accounting,
         int server,

@@ -78,7 +78,7 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
     final private LinuxID gid;
 
     public LinuxGroup(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

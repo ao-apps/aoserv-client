@@ -185,7 +185,7 @@ final public class PostgresServer extends AOServerResource implements Comparable
     final private boolean fsync;
 
     public PostgresServer(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

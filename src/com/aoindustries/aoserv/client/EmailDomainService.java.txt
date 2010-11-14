@@ -18,7 +18,7 @@ import java.util.List;
  */
 public final class EmailDomainService extends CachedTableIntegerKey<EmailDomain> {
 
-    EmailDomainService(AOServConnector<?,?> connector) {
+    EmailDomainService(AOServConnector connector) {
         super(connector, EmailDomain.class);
     }
 

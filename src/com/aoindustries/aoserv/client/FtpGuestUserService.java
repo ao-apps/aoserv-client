@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.ftp_guest_users)
-public interface FtpGuestUserService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,FtpGuestUser> {
+public interface FtpGuestUserService extends AOServService<Integer,FtpGuestUser> {
 
     /* TODO
     void addFtpGuestUser(String username) throws IOException, SQLException {

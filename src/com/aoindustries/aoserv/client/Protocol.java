@@ -68,7 +68,7 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     private String netProtocol;
 
     public Protocol(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         String protocol,
         NetPort port,
         String name,
@@ -169,7 +169,7 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     }
 
     /* TODO
-    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector<?,?> connector) throws IOException, SQLException {
+    public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
         return connector.getHttpdJKProtocols().get(pkey);
     }*/
     // </editor-fold>

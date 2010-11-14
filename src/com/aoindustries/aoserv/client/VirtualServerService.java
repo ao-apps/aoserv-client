@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.virtual_servers)
-public interface VirtualServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,VirtualServer> {
+public interface VirtualServerService extends AOServService<Integer,VirtualServer> {
 }

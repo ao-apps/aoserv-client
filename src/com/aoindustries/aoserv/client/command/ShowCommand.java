@@ -55,7 +55,7 @@ final public class ShowCommand extends AOServCommand<String> {
     }
 
     @Override
-    public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public String execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         // Build the Object[] of values
         Object[] values=new Object[ServiceName.values.size()*2];
         int pos=0;

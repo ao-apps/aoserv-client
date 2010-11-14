@@ -12,5 +12,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.resource_types)
-public interface ResourceTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,ResourceType> {
+public interface ResourceTypeService extends AOServService<String,ResourceType> {
 }

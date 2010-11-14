@@ -48,7 +48,7 @@ final public class CvsRepository extends AOServerResource implements Comparable<
     final private long mode;
 
     public CvsRepository(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

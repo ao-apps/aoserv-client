@@ -43,7 +43,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     final private short netmask;
 
     public IPAddress(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.business_profiles)
-public interface BusinessProfileService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,BusinessProfile> {
+public interface BusinessProfileService extends AOServService<Integer,BusinessProfile> {
 
     /* TODO
     int addBusinessProfile(

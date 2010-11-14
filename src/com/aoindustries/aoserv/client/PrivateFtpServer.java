@@ -35,7 +35,7 @@ final public class PrivateFtpServer extends AOServerResource implements Comparab
     final private boolean allowAnonymous;
 
     public PrivateFtpServer(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

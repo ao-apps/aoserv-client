@@ -27,7 +27,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public FtpGuestUser(AOServConnector<?,?> connector, int linuxAccount) {
+    public FtpGuestUser(AOServConnector connector, int linuxAccount) {
         super(connector, linuxAccount);
     }
     // </editor-fold>

@@ -42,7 +42,7 @@ implements
     final private LinuxID quotaGid;
 
     public FailoverFileReplication(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int server,
         int backupPartition,

@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.email_attachment_types)
-public interface EmailAttachmentTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,EmailAttachmentType> {
+public interface EmailAttachmentTypeService extends AOServService<String,EmailAttachmentType> {
 }

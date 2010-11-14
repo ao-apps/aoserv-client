@@ -38,7 +38,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
     final protected long lastEnabled;
 
     protected Resource(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

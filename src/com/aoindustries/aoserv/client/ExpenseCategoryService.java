@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.expense_categories)
-public interface ExpenseCategoryService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,ExpenseCategory> {
+public interface ExpenseCategoryService extends AOServService<String,ExpenseCategory> {
 }

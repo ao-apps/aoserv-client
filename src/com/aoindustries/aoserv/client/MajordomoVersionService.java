@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.majordomo_versions)
-public interface MajordomoVersionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,MajordomoVersion> {
+public interface MajordomoVersionService extends AOServService<String,MajordomoVersion> {
 }

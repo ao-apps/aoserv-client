@@ -41,7 +41,7 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
     final private boolean isActive;
     final private boolean allowWeb;
 
-    public PaymentType(AOServConnector<?,?> connector, String name, boolean isActive, boolean allowWeb) {
+    public PaymentType(AOServConnector connector, String name, boolean isActive, boolean allowWeb) {
         super(connector, name);
         this.isActive = isActive;
         this.allowWeb = allowWeb;

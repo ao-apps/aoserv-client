@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.payment_types)
-public interface PaymentTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,PaymentType> {
+public interface PaymentTypeService extends AOServService<String,PaymentType> {
 
     /* TODO
     public PaymentType getCreditCardType(String card_number) throws SQLException, IOException {

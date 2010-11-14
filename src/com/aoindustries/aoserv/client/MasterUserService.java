@@ -13,5 +13,5 @@ import com.aoindustries.aoserv.client.validator.*;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.master_users)
-public interface MasterUserService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,UserId,MasterUser> {
+public interface MasterUserService extends AOServService<UserId,MasterUser> {
 }

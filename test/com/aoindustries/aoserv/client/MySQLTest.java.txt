@@ -33,7 +33,7 @@ public class MySQLTest extends TestCase {
 
     private static final Logger logger = Logger.getLogger(MySQLTest.class.getName());
 
-    private AOServConnector<?,?> conn;
+    private AOServConnector conn;
     private Business bu;
     private Username username;
     private List<MySQLUser> mysqlUsers=new ArrayList<MySQLUser>();

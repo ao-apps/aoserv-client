@@ -83,7 +83,7 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     private String predisablePassword;
 
     public LinuxAccount(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

@@ -9,7 +9,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.email_inboxes)
-public interface EmailInboxService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,EmailInbox> {
+public interface EmailInboxService extends AOServService<Integer,EmailInbox> {
 
     /* TODO
     int addLinuxServerAccount(LinuxAccount linuxAccount, AOServer aoServer, String home) throws IOException, SQLException {

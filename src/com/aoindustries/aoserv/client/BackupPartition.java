@@ -28,7 +28,7 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     final private boolean quotaEnabled;
 
     public BackupPartition(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int aoServer,
         UnixPath path,

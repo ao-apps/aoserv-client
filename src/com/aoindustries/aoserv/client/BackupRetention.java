@@ -21,7 +21,7 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public BackupRetention(AOServConnector<?,?> connector, short days) {
+    public BackupRetention(AOServConnector connector, short days) {
         super(connector, days);
     }
     // </editor-fold>

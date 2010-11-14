@@ -154,7 +154,7 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public LinuxAccountType(AOServConnector<?,?> connector, String resourceType) {
+    public LinuxAccountType(AOServConnector connector, String resourceType) {
         super(connector, resourceType);
     }
     // </editor-fold>
@@ -221,7 +221,7 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public List<Shell> getAllowedShells(AOServConnector<?,?> connector) throws SQLException, IOException {
+    public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
         String[] paths=getShellList(pkey);
 
         ShellService shellTable=connector.getShells();

@@ -43,7 +43,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     private UnixPath installDir;
     final private boolean requiresModJk;
 
-    public HttpdTomcatVersion(AOServConnector<?,?> connector, int version, UnixPath installDir, boolean requiresModJk) {
+    public HttpdTomcatVersion(AOServConnector connector, int version, UnixPath installDir, boolean requiresModJk) {
         super(connector, version);
         this.installDir = installDir;
         this.requiresModJk = requiresModJk;

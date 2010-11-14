@@ -17,12 +17,12 @@ import java.util.Comparator;
  */
 final public class SQLComparator<T> implements Comparator<T> {
 
-    private final AOServConnector<?,?> connector;
+    private final AOServConnector connector;
     private final SQLExpression[] exprs;
     private final boolean[] sortOrders;
 
     public SQLComparator(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         SQLExpression[] exprs,
         boolean[] sortOrders
     ) {

@@ -13,7 +13,7 @@ import com.aoindustries.aoserv.client.validator.*;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.usernames)
-public interface UsernameService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,UserId,Username> {
+public interface UsernameService extends AOServService<UserId,Username> {
 
     /* TODO
     void addUsername(Business business, String username) throws IOException, SQLException {

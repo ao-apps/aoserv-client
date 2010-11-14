@@ -39,7 +39,7 @@ final public class DnsType extends AOServObjectStringKey implements Comparable<D
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public DnsType(AOServConnector<?,?> connector, String type) {
+    public DnsType(AOServConnector connector, String type) {
         super(connector, type);
     }
     // </editor-fold>

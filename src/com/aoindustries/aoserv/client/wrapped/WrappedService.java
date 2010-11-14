@@ -22,13 +22,13 @@ abstract public class WrappedService<
     F extends WrappedConnectorFactory<C,F>,
     K extends Comparable<K>,
     V extends AOServObject<K>
-> implements AOServService<C,F,K,V> {
+> implements AOServService<K,V> {
 
     final WrappedConnector<C,F> connector;
     final ServiceName serviceName;
     final Table<MethodColumn,V> table;
     final Map<K,V> map;
-    AOServService<?,?,K,V> wrapped;
+    AOServService<K,V> wrapped;
 
     protected WrappedService(WrappedConnector<C,F> connector, Class<K> keyClass, Class<V> valueClass) {
         this.connector = connector;
@@ -46,11 +46,11 @@ abstract public class WrappedService<
      * Gets the wrapped service, reconnecting if necessary.
      */
     @SuppressWarnings("unchecked")
-    protected AOServService<?,?,K,V> getWrapped() throws RemoteException {
+    protected AOServService<K,V> getWrapped() throws RemoteException {
         synchronized(connector.connectionLock) {
             if(wrapped==null) {
                 try {
-                    wrapped = (AOServService<?,?,K,V>)connector.getWrapped().getServices().get(serviceName);
+                    wrapped = (AOServService<K,V>)connector.getWrapped().getServices().get(serviceName);
                 } catch(LoginException err) {
                     throw new RemoteException(err.getMessage(), err);
                 }

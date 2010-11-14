@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.httpd_jk_codes)
-public interface HttpdJKCodeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,HttpdJKCode> {
+public interface HttpdJKCodeService extends AOServService<String,HttpdJKCode> {
 }

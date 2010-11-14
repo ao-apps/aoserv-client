@@ -17,15 +17,15 @@ import java.util.Locale;
  *
  * @author  AO Industries, Inc.
  */
-final public class CachedConnectorFactory implements AOServConnectorFactory<CachedConnector,CachedConnectorFactory> {
+final public class CachedConnectorFactory implements AOServConnectorFactory {
 
-    final AOServConnectorFactory<?,?> wrapped;
+    final AOServConnectorFactory wrapped;
 
-    public CachedConnectorFactory(AOServConnectorFactory<?,?> wrapped) {
+    public CachedConnectorFactory(AOServConnectorFactory wrapped) {
         this.wrapped = wrapped;
     }
 
-    private final AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory> connectors = new AOServConnectorFactoryCache<CachedConnector,CachedConnectorFactory>();
+    private final AOServConnectorFactoryCache<CachedConnector> connectors = new AOServConnectorFactoryCache<CachedConnector>();
 
     @Override
     public CachedConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {

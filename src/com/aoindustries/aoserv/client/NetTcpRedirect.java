@@ -29,7 +29,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     final private NetPort destinationPort;
 
     public NetTcpRedirect(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int netBind,
         int cps,
         int cpsOverloadSleepTime,

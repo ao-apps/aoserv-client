@@ -61,7 +61,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     final private Integer postgisVersion;
 
     public PostgresVersion(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int version,
         String minorVersion,
         Integer postgisVersion
@@ -157,7 +157,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
         return getConnector().getPostgresEncodings().filterIndexed(PostgresEncoding.COLUMN_POSTGRES_VERSION, this);
     }
     /* TODO
-    public PostgresEncoding getPostgresEncoding(AOServConnector<?,?> connector, String encoding) throws IOException, SQLException {
+    public PostgresEncoding getPostgresEncoding(AOServConnector connector, String encoding) throws IOException, SQLException {
         return connector.getPostgresEncodings().getPostgresEncoding(this, encoding);
     }
      */

@@ -116,7 +116,7 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
     final private int maxUserConnections;
 
     public MySQLUser(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

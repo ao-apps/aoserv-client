@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.ao_server_daemon_hosts)
-public interface AOServerDaemonHostService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,AOServerDaemonHost> {
+public interface AOServerDaemonHostService extends AOServService<Integer,AOServerDaemonHost> {
 }

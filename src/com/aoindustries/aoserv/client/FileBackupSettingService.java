@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.file_backup_settings)
-public interface FileBackupSettingService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,FileBackupSetting> {
+public interface FileBackupSettingService extends AOServService<Integer,FileBackupSetting> {
 
     /* TODO
     int addFileBackupSetting(FailoverFileReplication replication, String path, boolean backupEnabled) throws IOException, SQLException {

@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.postgres_servers)
-public interface PostgresServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,PostgresServer> {
+public interface PostgresServerService extends AOServService<Integer,PostgresServer> {
 
     /* TODO
     int addPostgresServer(

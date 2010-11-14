@@ -88,7 +88,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private short sortOrder;
 
-    public AOServPermission(AOServConnector<?,?> connector, String name, short sortOrder) {
+    public AOServPermission(AOServConnector connector, String name, short sortOrder) {
         super(connector, name);
         this.sortOrder = sortOrder;
     }

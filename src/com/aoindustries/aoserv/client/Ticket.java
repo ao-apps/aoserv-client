@@ -54,7 +54,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     transient private String internalNotes;
 
     public Ticket(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int ticketId,
         AccountingCode brand,
         AccountingCode reseller,

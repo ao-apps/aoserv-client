@@ -21,7 +21,7 @@ import java.util.Locale;
  */
 final public class TraceConnectorFactory extends WrappedConnectorFactory<TraceConnector,TraceConnectorFactory> {
 
-    public TraceConnectorFactory(AOServConnectorFactory<?,?> wrapped) {
+    public TraceConnectorFactory(AOServConnectorFactory wrapped) {
         super(wrapped);
     }
 

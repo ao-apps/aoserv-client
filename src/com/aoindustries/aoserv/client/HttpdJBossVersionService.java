@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.httpd_jboss_versions)
-public interface HttpdJBossVersionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,HttpdJBossVersion> {
+public interface HttpdJBossVersionService extends AOServService<Integer,HttpdJBossVersion> {
 
     /* TODO
     public HttpdJBossVersion getHttpdJBossVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {

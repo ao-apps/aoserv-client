@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.httpd_servers)
-public interface HttpdServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,HttpdServer> {
+public interface HttpdServerService extends AOServService<Integer,HttpdServer> {
 }

@@ -6,5 +6,5 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 @ServiceAnnotation(ServiceName.ticket_types)
-public interface TicketTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,TicketType> {
+public interface TicketTypeService extends AOServService<String,TicketType> {
 }

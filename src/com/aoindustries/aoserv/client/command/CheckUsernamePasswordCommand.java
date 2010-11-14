@@ -60,7 +60,7 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
         return errors;
     }
 
-    static List<PasswordChecker.Result> checkPassword(AOServConnector<?,?> connector, boolean isInteractive, Username un, String password) throws IOException {
+    static List<PasswordChecker.Result> checkPassword(AOServConnector connector, boolean isInteractive, Username un, String password) throws IOException {
         for(AOServObject<?> dependent : un.getDependentObjects()) {
             if(dependent instanceof PasswordProtected) {
                 List<PasswordChecker.Result> results = ((PasswordProtected)dependent).getCheckPasswordCommand(password).execute(connector, isInteractive);
@@ -71,7 +71,7 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
     }
 
     @Override
-    public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public List<PasswordChecker.Result> execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         try {
             return checkPassword(connector, isInteractive, connector.getUsernames().get(username), password);
         } catch(IOException err) {

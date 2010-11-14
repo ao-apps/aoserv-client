@@ -13,5 +13,5 @@ import com.aoindustries.aoserv.client.validator.*;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.group_names)
-public interface GroupNameService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,GroupId,GroupName> {
+public interface GroupNameService extends AOServService<GroupId,GroupName> {
 }

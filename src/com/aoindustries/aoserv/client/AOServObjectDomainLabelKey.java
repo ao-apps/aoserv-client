@@ -19,7 +19,7 @@ abstract public class AOServObjectDomainLabelKey extends AOServObject<DomainLabe
 
     private DomainLabel key;
 
-    protected AOServObjectDomainLabelKey(AOServConnector<?,?> connector, DomainLabel key) {
+    protected AOServObjectDomainLabelKey(AOServConnector connector, DomainLabel key) {
         super(connector);
         this.key = key;
         intern();

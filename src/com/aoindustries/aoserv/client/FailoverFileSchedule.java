@@ -28,7 +28,7 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     final private boolean enabled;
 
     public FailoverFileSchedule(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int replication,
         short hour,

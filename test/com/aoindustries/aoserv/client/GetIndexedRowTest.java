@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
  */
 public class GetIndexedRowTest extends TestCase {
     
-    private List<AOServConnector<?,?>> conns;
+    private List<AOServConnector> conns;
 
     public GetIndexedRowTest(String testName) {
         super(testName);
@@ -49,10 +49,10 @@ public class GetIndexedRowTest extends TestCase {
         System.out.println("Testing all indexed rows:");
         System.out.println("+ means supported");
         System.out.println("- means unsupported");
-        for(AOServConnector<?,?> conn : conns) {
+        for(AOServConnector conn : conns) {
             System.out.println("    "+conn.getConnectAs());
             for(ServiceName serviceName : ServiceName.values) {
-                AOServService<?,?,?,?> service=conn.getServices().get(serviceName);
+                AOServService<?,?> service=conn.getServices().get(serviceName);
                 System.out.print("        "+serviceName.name()+": ");
                 IndexedSet<? extends AOServObject<?>> set = service.getSet();
                 if(set.isEmpty()) System.out.println("Empty table, cannot test");

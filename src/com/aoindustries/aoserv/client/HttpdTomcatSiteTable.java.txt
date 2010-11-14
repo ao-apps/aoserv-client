@@ -16,7 +16,7 @@ import java.sql.*;
  */
 final public class HttpdTomcatSiteTable extends CachedTableIntegerKey<HttpdTomcatSite> {
 
-    HttpdTomcatSiteTable(AOServConnector<?,?> connector) {
+    HttpdTomcatSiteTable(AOServConnector connector) {
 	super(connector, HttpdTomcatSite.class);
     }
 

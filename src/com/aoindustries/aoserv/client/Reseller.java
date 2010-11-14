@@ -27,7 +27,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean ticketAutoEscalate;
 
-    public Reseller(AOServConnector<?,?> connector, AccountingCode accounting, boolean ticketAutoEscalate) {
+    public Reseller(AOServConnector connector, AccountingCode accounting, boolean ticketAutoEscalate) {
         super(connector, accounting);
         this.ticketAutoEscalate = ticketAutoEscalate;
     }

@@ -62,7 +62,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     private String awstatsSkipFiles;
 
     public HttpdSite(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

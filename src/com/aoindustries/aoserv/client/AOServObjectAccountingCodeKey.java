@@ -19,7 +19,7 @@ abstract public class AOServObjectAccountingCodeKey extends AOServObject<Account
 
     private AccountingCode key;
 
-    protected AOServObjectAccountingCodeKey(AOServConnector<?,?> connector, AccountingCode key) {
+    protected AOServObjectAccountingCodeKey(AOServConnector connector, AccountingCode key) {
         super(connector);
         this.key = key;
         intern();

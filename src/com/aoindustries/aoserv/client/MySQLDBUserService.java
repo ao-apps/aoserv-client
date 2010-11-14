@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.mysql_db_users)
-public interface MySQLDBUserService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,MySQLDBUser> {
+public interface MySQLDBUserService extends AOServService<Integer,MySQLDBUser> {
 
     /* TODO
     int addMySQLDBUser(

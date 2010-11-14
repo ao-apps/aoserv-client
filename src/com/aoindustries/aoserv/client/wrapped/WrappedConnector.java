@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> implements AOServConnector<C,F> {
+abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> implements AOServConnector {
 
     protected final F factory;
     Locale locale;
@@ -31,7 +31,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     private final DomainName daemonServer;
 
     final Object connectionLock = new Object();
-    private AOServConnector<?,?> wrapped;
+    private AOServConnector wrapped;
 
     protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
         this.factory = factory;
@@ -41,7 +41,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         this.password = password;
         this.daemonServer = daemonServer;
         aoserverDaemonHosts = new WrappedAOServerDaemonHostService<C,F>(this);
-        aoserverResources = new AOServerResourceService<C,F>(this);
+        aoserverResources = new AOServerResourceService(this);
         aoservers = new WrappedAOServerService<C,F>(this);
         aoservPermissions = new WrappedAOServPermissionService<C,F>(this);
         aoservRoles = new WrappedAOServRoleService<C,F>(this);
@@ -170,9 +170,9 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         // TODO: racks = new WrappedRackService<C,F>(this);
         resellers = new WrappedResellerService<C,F>(this);
         resourceTypes = new WrappedResourceTypeService<C,F>(this);
-        resources = new ResourceService<C,F>(this);
+        resources = new ResourceService(this);
         serverFarms = new WrappedServerFarmService<C,F>(this);
-        serverResources = new ServerResourceService<C,F>(this);
+        serverResources = new ServerResourceService(this);
         servers = new WrappedServerService<C,F>(this);
         shells = new WrappedShellService<C,F>(this);
         /* TODO
@@ -213,8 +213,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     final protected void disconnect() throws RemoteException {
         synchronized(connectionLock) {
             wrapped = null;
-            for(AOServService<C,F,?,?> service : getServices().values()) {
-                ((WrappedService<C,F,?,?>)service).wrapped = null;
+            for(AOServService<?,?> service : getServices().values()) {
+                ((WrappedService<?,?,?,?>)service).wrapped = null;
             }
         }
     }
@@ -222,7 +222,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     /**
      * Gets the wrapped connector, reconnecting if needed.
      */
-    final protected AOServConnector<?,?> getWrapped() throws RemoteException, LoginException {
+    final protected AOServConnector getWrapped() throws RemoteException, LoginException {
         synchronized(connectionLock) {
             // (Re)connects to the wrapped factory
             if(wrapped==null) wrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
@@ -328,10 +328,10 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         );
     }
 
-    private final AtomicReference<Map<ServiceName,AOServService<C,F,?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<C,F,?,?>>>();
+    private final AtomicReference<Map<ServiceName,AOServService<?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<?,?>>>();
     @Override
-    final public Map<ServiceName,AOServService<C,F,?,?>> getServices() throws RemoteException {
-        Map<ServiceName,AOServService<C,F,?,?>> ts = tables.get();
+    final public Map<ServiceName,AOServService<?,?>> getServices() throws RemoteException {
+        Map<ServiceName,AOServService<?,?>> ts = tables.get();
         if(ts==null) {
             ts = AOServConnectorUtils.createServiceMap(this);
             if(!tables.compareAndSet(null, ts)) ts = tables.get();
@@ -340,1416 +340,1416 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
 
     // <editor-fold defaultstate="collapsed" desc="AOServerDaemonHostService">
-    static class WrappedAOServerDaemonHostService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServerDaemonHost> implements AOServerDaemonHostService<C,F> {
+    static class WrappedAOServerDaemonHostService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServerDaemonHost> implements AOServerDaemonHostService {
         WrappedAOServerDaemonHostService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, AOServerDaemonHost.class);
         }
     }
     final WrappedAOServerDaemonHostService<C,F> aoserverDaemonHosts;
     @Override
-    final public AOServerDaemonHostService<C,F> getAoServerDaemonHosts() {
+    final public AOServerDaemonHostService getAoServerDaemonHosts() {
         return aoserverDaemonHosts;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServerResourceService">
-    final AOServerResourceService<C,F> aoserverResources;
+    final AOServerResourceService aoserverResources;
     @Override
-    final public AOServerResourceService<C,F> getAoServerResources() {
+    final public AOServerResourceService getAoServerResources() {
         return aoserverResources;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServerService">
-    static class WrappedAOServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServer> implements AOServerService<C,F> {
+    static class WrappedAOServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServer> implements AOServerService {
         WrappedAOServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, AOServer.class);
         }
     }
     final WrappedAOServerService<C,F> aoservers;
     @Override
-    final public AOServerService<C,F> getAoServers() {
+    final public AOServerService getAoServers() {
         return aoservers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServPermissionService">
-    static class WrappedAOServPermissionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,AOServPermission> implements AOServPermissionService<C,F> {
+    static class WrappedAOServPermissionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,AOServPermission> implements AOServPermissionService {
         WrappedAOServPermissionService(WrappedConnector<C,F> connector) {
             super(connector, String.class, AOServPermission.class);
         }
     }
     final WrappedAOServPermissionService<C,F> aoservPermissions;
     @Override
-    final public AOServPermissionService<C,F> getAoservPermissions() {
+    final public AOServPermissionService getAoservPermissions() {
         return aoservPermissions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServRoleService">
-    static class WrappedAOServRoleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServRole> implements AOServRoleService<C,F> {
+    static class WrappedAOServRoleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServRole> implements AOServRoleService {
         WrappedAOServRoleService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, AOServRole.class);
         }
     }
     final WrappedAOServRoleService<C,F> aoservRoles;
     @Override
-    final public AOServRoleService<C,F> getAoservRoles() {
+    final public AOServRoleService getAoservRoles() {
         return aoservRoles;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServRolePermissionService">
-    static class WrappedAOServRolePermissionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServRolePermission> implements AOServRolePermissionService<C,F> {
+    static class WrappedAOServRolePermissionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServRolePermission> implements AOServRolePermissionService {
         WrappedAOServRolePermissionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, AOServRolePermission.class);
         }
     }
     final WrappedAOServRolePermissionService<C,F> aoservRolePermissions;
     @Override
-    final public AOServRolePermissionService<C,F> getAoservRolePermissions() {
+    final public AOServRolePermissionService getAoservRolePermissions() {
         return aoservRolePermissions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ArchitectureService">
-    static class WrappedArchitectureService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Architecture> implements ArchitectureService<C,F> {
+    static class WrappedArchitectureService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Architecture> implements ArchitectureService {
         WrappedArchitectureService(WrappedConnector<C,F> connector) {
             super(connector, String.class, Architecture.class);
         }
     }
     final WrappedArchitectureService<C,F> architectures;
     @Override
-    final public ArchitectureService<C,F> getArchitectures() {
+    final public ArchitectureService getArchitectures() {
         return architectures;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BackupPartitionService">
-    static class WrappedBackupPartitionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BackupPartition> implements BackupPartitionService<C,F> {
+    static class WrappedBackupPartitionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BackupPartition> implements BackupPartitionService {
         WrappedBackupPartitionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, BackupPartition.class);
         }
     }
     final WrappedBackupPartitionService<C,F> backupPartitions;
     @Override
-    final public BackupPartitionService<C,F> getBackupPartitions() {
+    final public BackupPartitionService getBackupPartitions() {
         return backupPartitions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BackupRetentionService">
-    static class WrappedBackupRetentionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Short,BackupRetention> implements BackupRetentionService<C,F> {
+    static class WrappedBackupRetentionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Short,BackupRetention> implements BackupRetentionService {
         WrappedBackupRetentionService(WrappedConnector<C,F> connector) {
             super(connector, Short.class, BackupRetention.class);
         }
     }
     final WrappedBackupRetentionService<C,F> backupRetentions;
     @Override
-    final public BackupRetentionService<C,F> getBackupRetentions() {
+    final public BackupRetentionService getBackupRetentions() {
         return backupRetentions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankAccountService">
     // TODO: final WrappedBankAccountService<C,F> bankAccounts;
-    // TODO: final public BankAccountService<C,F> getBankAccounts();
+    // TODO: final public BankAccountService getBankAccounts();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionTypeService">
-    static class WrappedBankTransactionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,BankTransactionType> implements BankTransactionTypeService<C,F> {
+    static class WrappedBankTransactionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,BankTransactionType> implements BankTransactionTypeService {
         WrappedBankTransactionTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, BankTransactionType.class);
         }
     }
     final WrappedBankTransactionTypeService<C,F> bankTransactionTypes;
     @Override
-    final public BankTransactionTypeService<C,F> getBankTransactionTypes() {
+    final public BankTransactionTypeService getBankTransactionTypes() {
         return bankTransactionTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionService">
     // TODO: final WrappedBankTransactionService<C,F> bankTransactions;
-    // TODO: final public BankTransactionService<C,F> getBankTransactions();
+    // TODO: final public BankTransactionService getBankTransactions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankService">
     // TODO: final WrappedBankService<C,F> banks;
-    // TODO: final public BankService<C,F> getBanks();
+    // TODO: final public BankService getBanks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BrandService">
-    static class WrappedBrandService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Brand> implements BrandService<C,F> {
+    static class WrappedBrandService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Brand> implements BrandService {
         WrappedBrandService(WrappedConnector<C,F> connector) {
             super(connector, AccountingCode.class, Brand.class);
         }
     }
     final WrappedBrandService<C,F> brands;
     @Override
-    final public BrandService<C,F> getBrands() {
+    final public BrandService getBrands() {
         return brands;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorService">
-    static class WrappedBusinessAdministratorService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,BusinessAdministrator> implements BusinessAdministratorService<C,F> {
+    static class WrappedBusinessAdministratorService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,BusinessAdministrator> implements BusinessAdministratorService {
         WrappedBusinessAdministratorService(WrappedConnector<C,F> connector) {
             super(connector, UserId.class, BusinessAdministrator.class);
         }
     }
     final WrappedBusinessAdministratorService<C,F> businessAdministrators;
     @Override
-    final public BusinessAdministratorService<C,F> getBusinessAdministrators() {
+    final public BusinessAdministratorService getBusinessAdministrators() {
         return businessAdministrators;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorRoleService">
-    static class WrappedBusinessAdministratorRoleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessAdministratorRole> implements BusinessAdministratorRoleService<C,F> {
+    static class WrappedBusinessAdministratorRoleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessAdministratorRole> implements BusinessAdministratorRoleService {
         WrappedBusinessAdministratorRoleService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, BusinessAdministratorRole.class);
         }
     }
     final WrappedBusinessAdministratorRoleService<C,F> businessAdministratorRoles;
     @Override
-    final public BusinessAdministratorRoleService<C,F> getBusinessAdministratorRoles() {
+    final public BusinessAdministratorRoleService getBusinessAdministratorRoles() {
         return businessAdministratorRoles;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessProfileService">
-    static class WrappedBusinessProfileService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessProfile> implements BusinessProfileService<C,F> {
+    static class WrappedBusinessProfileService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessProfile> implements BusinessProfileService {
         WrappedBusinessProfileService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, BusinessProfile.class);
         }
     }
     final WrappedBusinessProfileService<C,F> businessProfiles;
     @Override
-    final public BusinessProfileService<C,F> getBusinessProfiles() {
+    final public BusinessProfileService getBusinessProfiles() {
         return businessProfiles;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessService">
-    static class WrappedBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Business> implements BusinessService<C,F> {
+    static class WrappedBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Business> implements BusinessService {
         WrappedBusinessService(WrappedConnector<C,F> connector) {
             super(connector, AccountingCode.class, Business.class);
         }
     }
     final WrappedBusinessService<C,F> businesses;
     @Override
-    final public BusinessService<C,F> getBusinesses() {
+    final public BusinessService getBusinesses() {
         return businesses;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessServerService">
-    static class WrappedBusinessServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessServer> implements BusinessServerService<C,F> {
+    static class WrappedBusinessServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessServer> implements BusinessServerService {
         WrappedBusinessServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, BusinessServer.class);
         }
     }
     final WrappedBusinessServerService<C,F> businessServers;
     @Override
-    final public BusinessServerService<C,F> getBusinessServers() {
+    final public BusinessServerService getBusinessServers() {
         return businessServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CountryCodeService">
-    static class WrappedCountryCodeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,CountryCode> implements CountryCodeService<C,F> {
+    static class WrappedCountryCodeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,CountryCode> implements CountryCodeService {
         WrappedCountryCodeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, CountryCode.class);
         }
     }
     final WrappedCountryCodeService<C,F> countryCodes;
     @Override
-    final public CountryCodeService<C,F> getCountryCodes() {
+    final public CountryCodeService getCountryCodes() {
         return countryCodes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardProcessorService">
-    static class WrappedCreditCardProcessorService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,CreditCardProcessor> implements CreditCardProcessorService<C,F> {
+    static class WrappedCreditCardProcessorService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,CreditCardProcessor> implements CreditCardProcessorService {
         WrappedCreditCardProcessorService(WrappedConnector<C,F> connector) {
             super(connector, String.class, CreditCardProcessor.class);
         }
     }
     final WrappedCreditCardProcessorService<C,F> creditCardProcessors;
     @Override
-    final public CreditCardProcessorService<C,F> getCreditCardProcessors() {
+    final public CreditCardProcessorService getCreditCardProcessors() {
         return creditCardProcessors;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardTransactionService">
-    static class WrappedCreditCardTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCardTransaction> implements CreditCardTransactionService<C,F> {
+    static class WrappedCreditCardTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCardTransaction> implements CreditCardTransactionService {
         WrappedCreditCardTransactionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, CreditCardTransaction.class);
         }
     }
     final WrappedCreditCardTransactionService<C,F> creditCardTransactions;
     @Override
-    final public CreditCardTransactionService<C,F> getCreditCardTransactions() {
+    final public CreditCardTransactionService getCreditCardTransactions() {
         return creditCardTransactions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardService">
-    static class WrappedCreditCardService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCard> implements CreditCardService<C,F> {
+    static class WrappedCreditCardService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCard> implements CreditCardService {
         WrappedCreditCardService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, CreditCard.class);
         }
     }
     final WrappedCreditCardService<C,F> creditCards;
     @Override
-    final public CreditCardService<C,F> getCreditCards() {
+    final public CreditCardService getCreditCards() {
         return creditCards;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CvsRepositoryService">
-    static class WrappedCvsRepositoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CvsRepository> implements CvsRepositoryService<C,F> {
+    static class WrappedCvsRepositoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CvsRepository> implements CvsRepositoryService {
         WrappedCvsRepositoryService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, CvsRepository.class);
         }
     }
     final WrappedCvsRepositoryService<C,F> cvsRepositories;
     @Override
-    final public CvsRepositoryService<C,F> getCvsRepositories() {
+    final public CvsRepositoryService getCvsRepositories() {
         return cvsRepositories;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DisableLogService">
-    static class WrappedDisableLogService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DisableLog> implements DisableLogService<C,F> {
+    static class WrappedDisableLogService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DisableLog> implements DisableLogService {
         WrappedDisableLogService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, DisableLog.class);
         }
     }
     final WrappedDisableLogService<C,F> disableLogs;
     @Override
-    final public DisableLogService<C,F> getDisableLogs() {
+    final public DisableLogService getDisableLogs() {
         return disableLogs;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DistroFileTypeService">
     // TODO: final WrappedDistroFileTypeService<C,F> distroFileTypes;
-    // TODO: final public DistroFileTypeService<C,F> getDistroFileTypes();
+    // TODO: final public DistroFileTypeService getDistroFileTypes();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DistroFileService">
     // TODO: final WrappedDistroFileService<C,F> distroFiles;
-    // TODO: final public DistroFileService<C,F> getDistroFiles();
+    // TODO: final public DistroFileService getDistroFiles();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsRecordService">
-    static class WrappedDnsRecordService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DnsRecord> implements DnsRecordService<C,F> {
+    static class WrappedDnsRecordService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DnsRecord> implements DnsRecordService {
         WrappedDnsRecordService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, DnsRecord.class);
         }
     }
     final WrappedDnsRecordService<C,F> dnsRecords;
     @Override
-    final public DnsRecordService<C,F> getDnsRecords() {
+    final public DnsRecordService getDnsRecords() {
         return dnsRecords;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsTldService">
-    static class WrappedDnsTldService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,DomainName,DnsTld> implements DnsTldService<C,F> {
+    static class WrappedDnsTldService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,DomainName,DnsTld> implements DnsTldService {
         WrappedDnsTldService(WrappedConnector<C,F> connector) {
             super(connector, DomainName.class, DnsTld.class);
         }
     }
     final WrappedDnsTldService<C,F> dnsTlds;
     @Override
-    final public DnsTldService<C,F> getDnsTlds() {
+    final public DnsTldService getDnsTlds() {
         return dnsTlds;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsTypeService">
-    static class WrappedDnsTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,DnsType> implements DnsTypeService<C,F> {
+    static class WrappedDnsTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,DnsType> implements DnsTypeService {
         WrappedDnsTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, DnsType.class);
         }
     }
     final WrappedDnsTypeService<C,F> dnsTypes;
     @Override
-    final public DnsTypeService<C,F> getDnsTypes() {
+    final public DnsTypeService getDnsTypes() {
         return dnsTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsZoneService">
-    static class WrappedDnsZoneService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DnsZone> implements DnsZoneService<C,F> {
+    static class WrappedDnsZoneService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DnsZone> implements DnsZoneService {
         WrappedDnsZoneService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, DnsZone.class);
         }
     }
     final WrappedDnsZoneService<C,F> dnsZones;
     @Override
-    final public DnsZoneService<C,F> getDnsZones() {
+    final public DnsZoneService getDnsZones() {
         return dnsZones;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAddressService">
     // TODO: final WrappedEmailAddressService<C,F> emailAddresss;
-    // TODO: final public EmailAddressService<C,F> getEmailAddresses();
+    // TODO: final public EmailAddressService getEmailAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAttachmentBlockService">
     // TODO: final WrappedEmailAttachmentBlockService<C,F> emailAttachmentBlocks;
-    // TODO: final public EmailAttachmentBlockService<C,F> getEmailAttachmentBlocks();
+    // TODO: final public EmailAttachmentBlockService getEmailAttachmentBlocks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAttachmentTypeService">
-    static class WrappedEmailAttachmentTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailAttachmentType> implements EmailAttachmentTypeService<C,F> {
+    static class WrappedEmailAttachmentTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailAttachmentType> implements EmailAttachmentTypeService {
         WrappedEmailAttachmentTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, EmailAttachmentType.class);
         }
     }
     final WrappedEmailAttachmentTypeService<C,F> emailAttachmentTypes;
     @Override
-    final public EmailAttachmentTypeService<C,F> getEmailAttachmentTypes() {
+    final public EmailAttachmentTypeService getEmailAttachmentTypes() {
         return emailAttachmentTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailDomainService">
     // TODO: final WrappedEmailDomainService<C,F> emailDomains;
-    // TODO: final public EmailDomainService<C,F> getEmailDomains();
+    // TODO: final public EmailDomainService getEmailDomains();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailForwardingService">
     // TODO: final WrappedEmailForwardingService<C,F> emailForwardings;
-    // TODO: final public EmailForwardingService<C,F> getEmailForwardings();
+    // TODO: final public EmailForwardingService getEmailForwardings();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailInboxService">
-    static class WrappedEmailInboxService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,EmailInbox> implements EmailInboxService<C,F> {
+    static class WrappedEmailInboxService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,EmailInbox> implements EmailInboxService {
         WrappedEmailInboxService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, EmailInbox.class);
         }
     }
     final WrappedEmailInboxService<C,F> emailInboxes;
     @Override
-    final public EmailInboxService<C,F> getEmailInboxes() {
+    final public EmailInboxService getEmailInboxes() {
         return emailInboxes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailListAddressService">
     // TODO: final WrappedEmailListAddressService<C,F> emailListAddresss;
-    // TODO: final public EmailListAddressService<C,F> getEmailListAddresses();
+    // TODO: final public EmailListAddressService getEmailListAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailListService">
     // TODO: final WrappedEmailListService<C,F> emailLists;
-    // TODO: final public EmailListService<C,F> getEmailLists();
+    // TODO: final public EmailListService getEmailLists();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailPipeAddressService">
     // TODO: final WrappedEmailPipeAddressService<C,F> emailPipeAddresss;
-    // TODO: final public EmailPipeAddressService<C,F> getEmailPipeAddresses();
+    // TODO: final public EmailPipeAddressService getEmailPipeAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailPipeService">
     // TODO: final WrappedEmailPipeService<C,F> emailPipes;
-    // TODO: final public EmailPipeService<C,F> getEmailPipes();
+    // TODO: final public EmailPipeService getEmailPipes();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayTypeService">
-    static class WrappedEmailSmtpRelayTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailSmtpRelayType> implements EmailSmtpRelayTypeService<C,F> {
+    static class WrappedEmailSmtpRelayTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailSmtpRelayType> implements EmailSmtpRelayTypeService {
         WrappedEmailSmtpRelayTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, EmailSmtpRelayType.class);
         }
     }
     final WrappedEmailSmtpRelayTypeService<C,F> emailSmtpRelayTypes;
     @Override
-    final public EmailSmtpRelayTypeService<C,F> getEmailSmtpRelayTypes() {
+    final public EmailSmtpRelayTypeService getEmailSmtpRelayTypes() {
         return emailSmtpRelayTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayService">
     // TODO: final WrappedEmailSmtpRelayService<C,F> emailSmtpRelays;
-    // TODO: final public EmailSmtpRelayService<C,F> getEmailSmtpRelays();
+    // TODO: final public EmailSmtpRelayService getEmailSmtpRelays();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpSmartHostDomainService">
     // TODO: final WrappedEmailSmtpSmartHostDomainService<C,F> emailSmtpSmartHostDomains;
-    // TODO: final public EmailSmtpSmartHostDomainService<C,F> getEmailSmtpSmartHostDomains();
+    // TODO: final public EmailSmtpSmartHostDomainService getEmailSmtpSmartHostDomains();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpSmartHostService">
     // TODO: final WrappedEmailSmtpSmartHostService<C,F> emailSmtpSmartHosts;
-    // TODO: final public EmailSmtpSmartHostService<C,F> getEmailSmtpSmartHosts();
+    // TODO: final public EmailSmtpSmartHostService getEmailSmtpSmartHosts();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSpamAssassinIntegrationModeService">
-    static class WrappedEmailSpamAssassinIntegrationModeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailSpamAssassinIntegrationMode> implements EmailSpamAssassinIntegrationModeService<C,F> {
+    static class WrappedEmailSpamAssassinIntegrationModeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailSpamAssassinIntegrationMode> implements EmailSpamAssassinIntegrationModeService {
         WrappedEmailSpamAssassinIntegrationModeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, EmailSpamAssassinIntegrationMode.class);
         }
     }
     final WrappedEmailSpamAssassinIntegrationModeService<C,F> emailSpamAssassinIntegrationModes;
     @Override
-    final public EmailSpamAssassinIntegrationModeService<C,F> getEmailSpamAssassinIntegrationModes() {
+    final public EmailSpamAssassinIntegrationModeService getEmailSpamAssassinIntegrationModes() {
         return emailSpamAssassinIntegrationModes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EncryptionKeyService">
     // TODO: final WrappedEncryptionKeyService<C,F> encryptionKeys;
-    // TODO: final public EncryptionKeyService<C,F> getEncryptionKeys();
+    // TODO: final public EncryptionKeyService getEncryptionKeys();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ExpenseCategoryService">
-    static class WrappedExpenseCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ExpenseCategory> implements ExpenseCategoryService<C,F> {
+    static class WrappedExpenseCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ExpenseCategory> implements ExpenseCategoryService {
         WrappedExpenseCategoryService(WrappedConnector<C,F> connector) {
             super(connector, String.class, ExpenseCategory.class);
         }
     }
     final WrappedExpenseCategoryService<C,F> expenseCategories;
     @Override
-    final public ExpenseCategoryService<C,F> getExpenseCategories() {
+    final public ExpenseCategoryService getExpenseCategories() {
         return expenseCategories;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverFileLogService">
-    static class WrappedFailoverFileLogService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileLog> implements FailoverFileLogService<C,F> {
+    static class WrappedFailoverFileLogService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileLog> implements FailoverFileLogService {
         WrappedFailoverFileLogService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FailoverFileLog.class);
         }
     }
     final WrappedFailoverFileLogService<C,F> failoverFileLogs;
     @Override
-    final public FailoverFileLogService<C,F> getFailoverFileLogs() {
+    final public FailoverFileLogService getFailoverFileLogs() {
         return failoverFileLogs;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverFileReplicationService">
-    static class WrappedFailoverFileReplicationService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileReplication> implements FailoverFileReplicationService<C,F> {
+    static class WrappedFailoverFileReplicationService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileReplication> implements FailoverFileReplicationService {
         WrappedFailoverFileReplicationService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FailoverFileReplication.class);
         }
     }
     final WrappedFailoverFileReplicationService<C,F> failoverFileReplications;
     @Override
-    final public FailoverFileReplicationService<C,F> getFailoverFileReplications() {
+    final public FailoverFileReplicationService getFailoverFileReplications() {
         return failoverFileReplications;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverFileScheduleService">
-    static class WrappedFailoverFileScheduleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileSchedule> implements FailoverFileScheduleService<C,F> {
+    static class WrappedFailoverFileScheduleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileSchedule> implements FailoverFileScheduleService {
         WrappedFailoverFileScheduleService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FailoverFileSchedule.class);
         }
     }
     final WrappedFailoverFileScheduleService<C,F> failoverFileSchedules;
     @Override
-    final public FailoverFileScheduleService<C,F> getFailoverFileSchedules() {
+    final public FailoverFileScheduleService getFailoverFileSchedules() {
         return failoverFileSchedules;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverMySQLReplicationService">
-    static class WrappedFailoverMySQLReplicationService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverMySQLReplication> implements FailoverMySQLReplicationService<C,F> {
+    static class WrappedFailoverMySQLReplicationService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverMySQLReplication> implements FailoverMySQLReplicationService {
         WrappedFailoverMySQLReplicationService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FailoverMySQLReplication.class);
         }
     }
     final WrappedFailoverMySQLReplicationService<C,F> failoverMySQLReplications;
     @Override
-    final public FailoverMySQLReplicationService<C,F> getFailoverMySQLReplications() {
+    final public FailoverMySQLReplicationService getFailoverMySQLReplications() {
         return failoverMySQLReplications;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FileBackupSettingService">
-    static class WrappedFileBackupSettingService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FileBackupSetting> implements FileBackupSettingService<C,F> {
+    static class WrappedFileBackupSettingService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FileBackupSetting> implements FileBackupSettingService {
         WrappedFileBackupSettingService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FileBackupSetting.class);
         }
     }
     final WrappedFileBackupSettingService<C,F> fileBackupSettings;
     @Override
-    final public FileBackupSettingService<C,F> getFileBackupSettings() {
+    final public FileBackupSettingService getFileBackupSettings() {
         return fileBackupSettings;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FtpGuestUserService">
-    static class WrappedFtpGuestUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FtpGuestUser> implements FtpGuestUserService<C,F> {
+    static class WrappedFtpGuestUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FtpGuestUser> implements FtpGuestUserService {
         WrappedFtpGuestUserService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FtpGuestUser.class);
         }
     }
     final WrappedFtpGuestUserService<C,F> ftpGuestUsers;
     @Override
-    final public FtpGuestUserService<C,F> getFtpGuestUsers() {
+    final public FtpGuestUserService getFtpGuestUsers() {
         return ftpGuestUsers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="GroupNameService">
-    static class WrappedGroupNameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,GroupId,GroupName> implements GroupNameService<C,F> {
+    static class WrappedGroupNameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,GroupId,GroupName> implements GroupNameService {
         WrappedGroupNameService(WrappedConnector<C,F> connector) {
             super(connector, GroupId.class, GroupName.class);
         }
     }
     final WrappedGroupNameService<C,F> groupNames;
     @Override
-    final public GroupNameService<C,F> getGroupNames() {
+    final public GroupNameService getGroupNames() {
         return groupNames;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdBindService">
     // TODO: final WrappedHttpdBindService<C,F> httpdBinds;
-    // TODO: final public HttpdBindService<C,F> getHttpdBinds();
+    // TODO: final public HttpdBindService getHttpdBinds();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJBossSiteService">
     // TODO: final WrappedHttpdJBossSiteService<C,F> httpdJBossSites;
-    // TODO: final public HttpdJBossSiteService<C,F> getHttpdJBossSites();
+    // TODO: final public HttpdJBossSiteService getHttpdJBossSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJBossVersionService">
-    static class WrappedHttpdJBossVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdJBossVersion> implements HttpdJBossVersionService<C,F> {
+    static class WrappedHttpdJBossVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdJBossVersion> implements HttpdJBossVersionService {
         WrappedHttpdJBossVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, HttpdJBossVersion.class);
         }
     }
     final WrappedHttpdJBossVersionService<C,F> httpdJBossVersions;
     @Override
-    final public HttpdJBossVersionService<C,F> getHttpdJBossVersions() {
+    final public HttpdJBossVersionService getHttpdJBossVersions() {
         return httpdJBossVersions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJKCodeService">
-    static class WrappedHttpdJKCodeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,HttpdJKCode> implements HttpdJKCodeService<C,F> {
+    static class WrappedHttpdJKCodeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,HttpdJKCode> implements HttpdJKCodeService {
         WrappedHttpdJKCodeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, HttpdJKCode.class);
         }
     }
     final WrappedHttpdJKCodeService<C,F> httpdJKCodes;
     @Override
-    final public HttpdJKCodeService<C,F> getHttpdJKCodes() {
+    final public HttpdJKCodeService getHttpdJKCodes() {
         return httpdJKCodes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJKProtocolService">
-    static class WrappedHttpdJKProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,HttpdJKProtocol> implements HttpdJKProtocolService<C,F> {
+    static class WrappedHttpdJKProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,HttpdJKProtocol> implements HttpdJKProtocolService {
         WrappedHttpdJKProtocolService(WrappedConnector<C,F> connector) {
             super(connector, String.class, HttpdJKProtocol.class);
         }
     }
     final WrappedHttpdJKProtocolService<C,F> httpdJKProtocols;
     @Override
-    final public HttpdJKProtocolService<C,F> getHttpdJKProtocols() {
+    final public HttpdJKProtocolService getHttpdJKProtocols() {
         return httpdJKProtocols;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdServerService">
-    static class WrappedHttpdServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdServer> implements HttpdServerService<C,F> {
+    static class WrappedHttpdServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdServer> implements HttpdServerService {
         WrappedHttpdServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, HttpdServer.class);
         }
     }
     final WrappedHttpdServerService<C,F> httpdServers;
     @Override
-    final public HttpdServerService<C,F> getHttpdServers() {
+    final public HttpdServerService getHttpdServers() {
         return httpdServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSharedTomcatService">
     // TODO: final WrappedHttpdSharedTomcatService<C,F> httpdSharedTomcats;
-    // TODO: final public HttpdSharedTomcatService<C,F> getHttpdSharedTomcats();
+    // TODO: final public HttpdSharedTomcatService getHttpdSharedTomcats();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteAuthenticatedLocationService">
     // TODO: final WrappedHttpdSiteAuthenticatedLocationService<C,F> httpdSiteAuthenticatedLocations;
-    // TODO: final public HttpdSiteAuthenticatedLocationService<C,F> getHttpdSiteAuthenticatedLocations();
+    // TODO: final public HttpdSiteAuthenticatedLocationService getHttpdSiteAuthenticatedLocations();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteBindService">
     // TODO: final WrappedHttpdSiteBindService<C,F> httpdSiteBinds;
-    // TODO: final public HttpdSiteBindService<C,F> getHttpdSiteBinds();
+    // TODO: final public HttpdSiteBindService getHttpdSiteBinds();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteURLService">
     // TODO: final WrappedHttpdSiteURLService<C,F> httpdSiteURLs;
-    // TODO: final public HttpdSiteURLService<C,F> getHttpdSiteURLs();
+    // TODO: final public HttpdSiteURLService getHttpdSiteURLs();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteService">
-    static class WrappedHttpdSiteService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdSite> implements HttpdSiteService<C,F> {
+    static class WrappedHttpdSiteService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdSite> implements HttpdSiteService {
         WrappedHttpdSiteService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, HttpdSite.class);
         }
     }
     final WrappedHttpdSiteService<C,F> httpdSites;
     @Override
-    final public HttpdSiteService<C,F> getHttpdSites() {
+    final public HttpdSiteService getHttpdSites() {
         return httpdSites;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdStaticSiteService">
     // TODO: final WrappedHttpdStaticSiteService<C,F> httpdStaticSites;
-    // TODO: final public HttpdStaticSiteService<C,F> getHttpdStaticSites();
+    // TODO: final public HttpdStaticSiteService getHttpdStaticSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatContextService">
     // TODO: final WrappedHttpdTomcatContextService<C,F> httpdTomcatContexts;
-    // TODO: final public HttpdTomcatContextService<C,F> getHttpdTomcatContexts();
+    // TODO: final public HttpdTomcatContextService getHttpdTomcatContexts();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatDataSourceService">
     // TODO: final WrappedHttpdTomcatDataSourceService<C,F> httpdTomcatDataSources;
-    // TODO: final public HttpdTomcatDataSourceService<C,F> getHttpdTomcatDataSources();
+    // TODO: final public HttpdTomcatDataSourceService getHttpdTomcatDataSources();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatParameterService">
     // TODO: final WrappedHttpdTomcatParameterService<C,F> httpdTomcatParameters;
-    // TODO: final public HttpdTomcatParameterService<C,F> getHttpdTomcatParameters();
+    // TODO: final public HttpdTomcatParameterService getHttpdTomcatParameters();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatSiteService">
     // TODO: final WrappedHttpdTomcatSiteService<C,F> httpdTomcatSites;
-    // TODO: final public HttpdTomcatSiteService<C,F> getHttpdTomcatSites();
+    // TODO: final public HttpdTomcatSiteService getHttpdTomcatSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatSharedSiteService">
     // TODO: final WrappedHttpdTomcatSharedSiteService<C,F> httpdTomcatSharedSites;
-    // TODO: final public HttpdTomcatSharedSiteService<C,F> getHttpdTomcatSharedSites();
+    // TODO: final public HttpdTomcatSharedSiteService getHttpdTomcatSharedSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatStdSiteService">
     // TODO: final WrappedHttpdTomcatStdSiteService<C,F> httpdTomcatStdSites;
-    // TODO: final public HttpdTomcatStdSiteService<C,F> getHttpdTomcatStdSites();
+    // TODO: final public HttpdTomcatStdSiteService getHttpdTomcatStdSites();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatVersionService">
-    static class WrappedHttpdTomcatVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdTomcatVersion> implements HttpdTomcatVersionService<C,F> {
+    static class WrappedHttpdTomcatVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdTomcatVersion> implements HttpdTomcatVersionService {
         WrappedHttpdTomcatVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, HttpdTomcatVersion.class);
         }
     }
     final WrappedHttpdTomcatVersionService<C,F> httpdTomcatVersions;
     @Override
-    final public HttpdTomcatVersionService<C,F> getHttpdTomcatVersions() {
+    final public HttpdTomcatVersionService getHttpdTomcatVersions() {
         return httpdTomcatVersions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdWorkerService">
     // TODO: final WrappedHttpdWorkerService<C,F> httpdWorkers;
-    // TODO: final public HttpdWorkerService<C,F> getHttpdWorkers();
+    // TODO: final public HttpdWorkerService getHttpdWorkers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="IPAddressService">
-    static class WrappedIPAddressService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,IPAddress> implements IPAddressService<C,F> {
+    static class WrappedIPAddressService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,IPAddress> implements IPAddressService {
         WrappedIPAddressService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, IPAddress.class);
         }
     }
     final WrappedIPAddressService<C,F> ipAddresses;
     @Override
-    final public IPAddressService<C,F> getIpAddresses() {
+    final public IPAddressService getIpAddresses() {
         return ipAddresses;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LanguageService">
-    static class WrappedLanguageService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Language> implements LanguageService<C,F> {
+    static class WrappedLanguageService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Language> implements LanguageService {
         WrappedLanguageService(WrappedConnector<C,F> connector) {
             super(connector, String.class, Language.class);
         }
     }
     final WrappedLanguageService<C,F> languages;
     @Override
-    final public LanguageService<C,F> getLanguages() {
+    final public LanguageService getLanguages() {
         return languages;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccAddressService">
     // TODO: final WrappedLinuxAccAddressService<C,F> linuxAccAddresss;
-    // TODO: final public LinuxAccAddressService<C,F> getLinuxAccAddresses();
+    // TODO: final public LinuxAccAddressService getLinuxAccAddresses();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccountGroupService">
-    static class WrappedLinuxAccountGroupService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxAccountGroup> implements LinuxAccountGroupService<C,F> {
+    static class WrappedLinuxAccountGroupService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxAccountGroup> implements LinuxAccountGroupService {
         WrappedLinuxAccountGroupService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, LinuxAccountGroup.class);
         }
     }
     final WrappedLinuxAccountGroupService<C,F> linuxAccountGroups;
     @Override
-    final public LinuxAccountGroupService<C,F> getLinuxAccountGroups() {
+    final public LinuxAccountGroupService getLinuxAccountGroups() {
         return linuxAccountGroups;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccountTypeService">
-    static class WrappedLinuxAccountTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,LinuxAccountType> implements LinuxAccountTypeService<C,F> {
+    static class WrappedLinuxAccountTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,LinuxAccountType> implements LinuxAccountTypeService {
         WrappedLinuxAccountTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, LinuxAccountType.class);
         }
     }
     final WrappedLinuxAccountTypeService<C,F> linuxAccountTypes;
     @Override
-    final public LinuxAccountTypeService<C,F> getLinuxAccountTypes() {
+    final public LinuxAccountTypeService getLinuxAccountTypes() {
         return linuxAccountTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccountService">
-    static class WrappedLinuxAccountService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxAccount> implements LinuxAccountService<C,F> {
+    static class WrappedLinuxAccountService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxAccount> implements LinuxAccountService {
         WrappedLinuxAccountService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, LinuxAccount.class);
         }
     }
     final WrappedLinuxAccountService<C,F> linuxAccounts;
     @Override
-    final public LinuxAccountService<C,F> getLinuxAccounts() {
+    final public LinuxAccountService getLinuxAccounts() {
         return linuxAccounts;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxGroupTypeService">
-    static class WrappedLinuxGroupTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,LinuxGroupType> implements LinuxGroupTypeService<C,F> {
+    static class WrappedLinuxGroupTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,LinuxGroupType> implements LinuxGroupTypeService {
         WrappedLinuxGroupTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, LinuxGroupType.class);
         }
     }
     final WrappedLinuxGroupTypeService<C,F> linuxGroupTypes;
     @Override
-    final public LinuxGroupTypeService<C,F> getLinuxGroupTypes() {
+    final public LinuxGroupTypeService getLinuxGroupTypes() {
         return linuxGroupTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxGroupService">
-    static class WrappedLinuxGroupService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxGroup> implements LinuxGroupService<C,F> {
+    static class WrappedLinuxGroupService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxGroup> implements LinuxGroupService {
         WrappedLinuxGroupService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, LinuxGroup.class);
         }
     }
     final WrappedLinuxGroupService<C,F> linuxGroups;
     @Override
-    final public LinuxGroupService<C,F> getLinuxGroups() {
+    final public LinuxGroupService getLinuxGroups() {
         return linuxGroups;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MajordomoListService">
     // TODO: final WrappedMajordomoListService<C,F> majordomoLists;
-    // TODO: final public MajordomoListService<C,F> getMajordomoLists();
+    // TODO: final public MajordomoListService getMajordomoLists();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MajordomoServerService">
     // TODO: final WrappedMajordomoServerService<C,F> majordomoServers;
-    // TODO: final public MajordomoServerService<C,F> getMajordomoServers();
+    // TODO: final public MajordomoServerService getMajordomoServers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MajordomoVersionService">
-    static class WrappedMajordomoVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,MajordomoVersion> implements MajordomoVersionService<C,F> {
+    static class WrappedMajordomoVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,MajordomoVersion> implements MajordomoVersionService {
         WrappedMajordomoVersionService(WrappedConnector<C,F> connector) {
             super(connector, String.class, MajordomoVersion.class);
         }
     }
     final WrappedMajordomoVersionService<C,F> majordomoVersions;
     @Override
-    final public MajordomoVersionService<C,F> getMajordomoVersions() {
+    final public MajordomoVersionService getMajordomoVersions() {
         return majordomoVersions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterHostService">
-    static class WrappedMasterHostService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MasterHost> implements MasterHostService<C,F> {
+    static class WrappedMasterHostService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MasterHost> implements MasterHostService {
         WrappedMasterHostService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MasterHost.class);
         }
     }
     final WrappedMasterHostService<C,F> masterHosts;
     @Override
-    final public MasterHostService<C,F> getMasterHosts() {
+    final public MasterHostService getMasterHosts() {
         return masterHosts;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterServerService">
-    static class WrappedMasterServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MasterServer> implements MasterServerService<C,F> {
+    static class WrappedMasterServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MasterServer> implements MasterServerService {
         WrappedMasterServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MasterServer.class);
         }
     }
     final WrappedMasterServerService<C,F> masterServers;
     @Override
-    final public MasterServerService<C,F> getMasterServers() {
+    final public MasterServerService getMasterServers() {
         return masterServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterUserService">
-    static class WrappedMasterUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,MasterUser> implements MasterUserService<C,F> {
+    static class WrappedMasterUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,MasterUser> implements MasterUserService {
         WrappedMasterUserService(WrappedConnector<C,F> connector) {
             super(connector, UserId.class, MasterUser.class);
         }
     }
     final WrappedMasterUserService<C,F> masterUsers;
     @Override
-    final public MasterUserService<C,F> getMasterUsers() {
+    final public MasterUserService getMasterUsers() {
         return masterUsers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MonthlyChargeService">
     // TODO: final WrappedMonthlyChargeService<C,F> monthlyCharges;
-    // TODO: final public MonthlyChargeService<C,F> getMonthlyCharges();
+    // TODO: final public MonthlyChargeService getMonthlyCharges();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLDatabaseService">
-    static class WrappedMySQLDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLDatabase> implements MySQLDatabaseService<C,F> {
+    static class WrappedMySQLDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLDatabase> implements MySQLDatabaseService {
         WrappedMySQLDatabaseService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MySQLDatabase.class);
         }
     }
     final WrappedMySQLDatabaseService<C,F> mysqlDatabases;
     @Override
-    final public MySQLDatabaseService<C,F> getMysqlDatabases() {
+    final public MySQLDatabaseService getMysqlDatabases() {
         return mysqlDatabases;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLDBUserService">
-    static class WrappedMySQLDBUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLDBUser> implements MySQLDBUserService<C,F> {
+    static class WrappedMySQLDBUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLDBUser> implements MySQLDBUserService {
         WrappedMySQLDBUserService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MySQLDBUser.class);
         }
     }
     final WrappedMySQLDBUserService<C,F> mysqlDBUsers;
     @Override
-    final public MySQLDBUserService<C,F> getMysqlDBUsers() {
+    final public MySQLDBUserService getMysqlDBUsers() {
         return mysqlDBUsers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLServerService">
-    static class WrappedMySQLServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLServer> implements MySQLServerService<C,F> {
+    static class WrappedMySQLServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLServer> implements MySQLServerService {
         WrappedMySQLServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MySQLServer.class);
         }
     }
     final WrappedMySQLServerService<C,F> mysqlServers;
     @Override
-    final public MySQLServerService<C,F> getMysqlServers() {
+    final public MySQLServerService getMysqlServers() {
         return mysqlServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLUserService">
-    static class WrappedMySQLUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLUser> implements MySQLUserService<C,F> {
+    static class WrappedMySQLUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLUser> implements MySQLUserService {
         WrappedMySQLUserService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MySQLUser.class);
         }
     }
     final WrappedMySQLUserService<C,F> mysqlUsers;
     @Override
-    final public MySQLUserService<C,F> getMysqlUsers() {
+    final public MySQLUserService getMysqlUsers() {
         return mysqlUsers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetBindService">
-    static class WrappedNetBindService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetBind> implements NetBindService<C,F> {
+    static class WrappedNetBindService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetBind> implements NetBindService {
         WrappedNetBindService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, NetBind.class);
         }
     }
     final WrappedNetBindService<C,F> netBinds;
     @Override
-    final public NetBindService<C,F> getNetBinds() {
+    final public NetBindService getNetBinds() {
         return netBinds;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetDeviceIDService">
-    static class WrappedNetDeviceIDService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NetDeviceID> implements NetDeviceIDService<C,F> {
+    static class WrappedNetDeviceIDService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NetDeviceID> implements NetDeviceIDService {
         WrappedNetDeviceIDService(WrappedConnector<C,F> connector) {
             super(connector, String.class, NetDeviceID.class);
         }
     }
     final WrappedNetDeviceIDService<C,F> netDeviceIDs;
     @Override
-    final public NetDeviceIDService<C,F> getNetDeviceIDs() {
+    final public NetDeviceIDService getNetDeviceIDs() {
         return netDeviceIDs;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetDeviceService">
-    static class WrappedNetDeviceService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetDevice> implements NetDeviceService<C,F> {
+    static class WrappedNetDeviceService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetDevice> implements NetDeviceService {
         WrappedNetDeviceService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, NetDevice.class);
         }
     }
     final WrappedNetDeviceService<C,F> netDevices;
     @Override
-    final public NetDeviceService<C,F> getNetDevices() {
+    final public NetDeviceService getNetDevices() {
         return netDevices;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetProtocolService">
-    static class WrappedNetProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NetProtocol> implements NetProtocolService<C,F> {
+    static class WrappedNetProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NetProtocol> implements NetProtocolService {
         WrappedNetProtocolService(WrappedConnector<C,F> connector) {
             super(connector, String.class, NetProtocol.class);
         }
     }
     final WrappedNetProtocolService<C,F> netProtocols;
     @Override
-    final public NetProtocolService<C,F> getNetProtocols() {
+    final public NetProtocolService getNetProtocols() {
         return netProtocols;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetTcpRedirectService">
-    static class WrappedNetTcpRedirectService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetTcpRedirect> implements NetTcpRedirectService<C,F> {
+    static class WrappedNetTcpRedirectService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetTcpRedirect> implements NetTcpRedirectService {
         WrappedNetTcpRedirectService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, NetTcpRedirect.class);
         }
     }
     final WrappedNetTcpRedirectService<C,F> netTcpRedirects;
     @Override
-    final public NetTcpRedirectService<C,F> getNetTcpRedirects() {
+    final public NetTcpRedirectService getNetTcpRedirects() {
         return netTcpRedirects;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NoticeLogService">
     // TODO: final WrappedNoticeLogService<C,F> noticeLogs;
-    // TODO: final public NoticeLogService<C,F> getNoticeLogs();
+    // TODO: final public NoticeLogService getNoticeLogs();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NoticeTypeService">
-    static class WrappedNoticeTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NoticeType> implements NoticeTypeService<C,F> {
+    static class WrappedNoticeTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NoticeType> implements NoticeTypeService {
         WrappedNoticeTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, NoticeType.class);
         }
     }
     final WrappedNoticeTypeService<C,F> noticeTypes;
     @Override
-    final public NoticeTypeService<C,F> getNoticeTypes() {
+    final public NoticeTypeService getNoticeTypes() {
         return noticeTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="OperatingSystemVersionService">
-    static class WrappedOperatingSystemVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,OperatingSystemVersion> implements OperatingSystemVersionService<C,F> {
+    static class WrappedOperatingSystemVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,OperatingSystemVersion> implements OperatingSystemVersionService {
         WrappedOperatingSystemVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, OperatingSystemVersion.class);
         }
     }
     final WrappedOperatingSystemVersionService<C,F> operatingSystemVersions;
     @Override
-    final public OperatingSystemVersionService<C,F> getOperatingSystemVersions() {
+    final public OperatingSystemVersionService getOperatingSystemVersions() {
         return operatingSystemVersions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="OperatingSystemService">
-    static class WrappedOperatingSystemService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,OperatingSystem> implements OperatingSystemService<C,F> {
+    static class WrappedOperatingSystemService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,OperatingSystem> implements OperatingSystemService {
         WrappedOperatingSystemService(WrappedConnector<C,F> connector) {
             super(connector, String.class, OperatingSystem.class);
         }
     }
     final WrappedOperatingSystemService<C,F> operatingSystems;
     @Override
-    final public OperatingSystemService<C,F> getOperatingSystems() {
+    final public OperatingSystemService getOperatingSystems() {
         return operatingSystems;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageCategoryService">
-    static class WrappedPackageCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,PackageCategory> implements PackageCategoryService<C,F> {
+    static class WrappedPackageCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,PackageCategory> implements PackageCategoryService {
         WrappedPackageCategoryService(WrappedConnector<C,F> connector) {
             super(connector, String.class, PackageCategory.class);
         }
     }
     final WrappedPackageCategoryService<C,F> packageCategories;
     @Override
-    final public PackageCategoryService<C,F> getPackageCategories() {
+    final public PackageCategoryService getPackageCategories() {
         return packageCategories;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionBusinessService">
-    static class WrappedPackageDefinitionBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinitionBusiness> implements PackageDefinitionBusinessService<C,F> {
+    static class WrappedPackageDefinitionBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinitionBusiness> implements PackageDefinitionBusinessService {
         WrappedPackageDefinitionBusinessService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PackageDefinitionBusiness.class);
         }
     }
     final WrappedPackageDefinitionBusinessService<C,F> packageDefinitionBusinesses;
     @Override
-    final public PackageDefinitionBusinessService<C,F> getPackageDefinitionBusinesses() {
+    final public PackageDefinitionBusinessService getPackageDefinitionBusinesses() {
         return packageDefinitionBusinesses;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionLimitService">
-    static class WrappedPackageDefinitionLimitService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinitionLimit> implements PackageDefinitionLimitService<C,F> {
+    static class WrappedPackageDefinitionLimitService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinitionLimit> implements PackageDefinitionLimitService {
         WrappedPackageDefinitionLimitService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PackageDefinitionLimit.class);
         }
     }
     final WrappedPackageDefinitionLimitService<C,F> packageDefinitionLimits;
     @Override
-    final public PackageDefinitionLimitService<C,F> getPackageDefinitionLimits() {
+    final public PackageDefinitionLimitService getPackageDefinitionLimits() {
         return packageDefinitionLimits;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionService">
-    static class WrappedPackageDefinitionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinition> implements PackageDefinitionService<C,F> {
+    static class WrappedPackageDefinitionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinition> implements PackageDefinitionService {
         WrappedPackageDefinitionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PackageDefinition.class);
         }
     }
     final WrappedPackageDefinitionService<C,F> packageDefinitions;
     @Override
-    final public PackageDefinitionService<C,F> getPackageDefinitions() {
+    final public PackageDefinitionService getPackageDefinitions() {
         return packageDefinitions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PaymentTypeService">
-    static class WrappedPaymentTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,PaymentType> implements PaymentTypeService<C,F> {
+    static class WrappedPaymentTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,PaymentType> implements PaymentTypeService {
         WrappedPaymentTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, PaymentType.class);
         }
     }
     final WrappedPaymentTypeService<C,F> paymentTypes;
     @Override
-    final public PaymentTypeService<C,F> getPaymentTypes() {
+    final public PaymentTypeService getPaymentTypes() {
         return paymentTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PhysicalServerService">
     // TODO: final WrappedPhysicalServerService<C,F> physicalServers;
-    // TODO: final public PhysicalServerService<C,F> getPhysicalServers();
+    // TODO: final public PhysicalServerService getPhysicalServers();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresDatabaseService">
-    static class WrappedPostgresDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresDatabase> implements PostgresDatabaseService<C,F> {
+    static class WrappedPostgresDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresDatabase> implements PostgresDatabaseService {
         WrappedPostgresDatabaseService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresDatabase.class);
         }
     }
     final WrappedPostgresDatabaseService<C,F> postgresDatabases;
     @Override
-    final public PostgresDatabaseService<C,F> getPostgresDatabases() {
+    final public PostgresDatabaseService getPostgresDatabases() {
         return postgresDatabases;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresEncodingService">
-    static class WrappedPostgresEncodingService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresEncoding> implements PostgresEncodingService<C,F> {
+    static class WrappedPostgresEncodingService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresEncoding> implements PostgresEncodingService {
         WrappedPostgresEncodingService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresEncoding.class);
         }
     }
     final WrappedPostgresEncodingService<C,F> postgresEncodings;
     @Override
-    final public PostgresEncodingService<C,F> getPostgresEncodings() {
+    final public PostgresEncodingService getPostgresEncodings() {
         return postgresEncodings;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresServerService">
-    static class WrappedPostgresServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresServer> implements PostgresServerService<C,F> {
+    static class WrappedPostgresServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresServer> implements PostgresServerService {
         WrappedPostgresServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresServer.class);
         }
     }
     final WrappedPostgresServerService<C,F> postgresServers;
     @Override
-    final public PostgresServerService<C,F> getPostgresServers() {
+    final public PostgresServerService getPostgresServers() {
         return postgresServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresUserService">
-    static class WrappedPostgresUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresUser> implements PostgresUserService<C,F> {
+    static class WrappedPostgresUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresUser> implements PostgresUserService {
         WrappedPostgresUserService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresUser.class);
         }
     }
     final WrappedPostgresUserService<C,F> postgresUsers;
     @Override
-    final public PostgresUserService<C,F> getPostgresUsers() {
+    final public PostgresUserService getPostgresUsers() {
         return postgresUsers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresVersionService">
-    static class WrappedPostgresVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresVersion> implements PostgresVersionService<C,F> {
+    static class WrappedPostgresVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresVersion> implements PostgresVersionService {
         WrappedPostgresVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresVersion.class);
         }
     }
     final WrappedPostgresVersionService<C,F> postgresVersions;
     @Override
-    final public PostgresVersionService<C,F> getPostgresVersions() {
+    final public PostgresVersionService getPostgresVersions() {
         return postgresVersions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PrivateFtpServerService">
-    static class WrappedPrivateFtpServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PrivateFtpServer> implements PrivateFtpServerService<C,F> {
+    static class WrappedPrivateFtpServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PrivateFtpServer> implements PrivateFtpServerService {
         WrappedPrivateFtpServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PrivateFtpServer.class);
         }
     }
     final WrappedPrivateFtpServerService<C,F> privateFtpServers;
     @Override
-    final public PrivateFtpServerService<C,F> getPrivateFtpServers() {
+    final public PrivateFtpServerService getPrivateFtpServers() {
         return privateFtpServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ProcessorTypeService">
-    static class WrappedProcessorTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ProcessorType> implements ProcessorTypeService<C,F> {
+    static class WrappedProcessorTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ProcessorType> implements ProcessorTypeService {
         WrappedProcessorTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, ProcessorType.class);
         }
     }
     final WrappedProcessorTypeService<C,F> processorTypes;
     @Override
-    final public ProcessorTypeService<C,F> getProcessorTypes() {
+    final public ProcessorTypeService getProcessorTypes() {
         return processorTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ProtocolService">
-    static class WrappedProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Protocol> implements ProtocolService<C,F> {
+    static class WrappedProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Protocol> implements ProtocolService {
         WrappedProtocolService(WrappedConnector<C,F> connector) {
             super(connector, String.class, Protocol.class);
         }
     }
     final WrappedProtocolService<C,F> protocols;
     @Override
-    final public ProtocolService<C,F> getProtocols() {
+    final public ProtocolService getProtocols() {
         return protocols;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="RackService">
     // TODO: final WrappedRackService<C,F> racks;
-    // TODO: final public RackService<C,F> getRacks();
+    // TODO: final public RackService getRacks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResellerService">
-    static class WrappedResellerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Reseller> implements ResellerService<C,F> {
+    static class WrappedResellerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Reseller> implements ResellerService {
         WrappedResellerService(WrappedConnector<C,F> connector) {
             super(connector, AccountingCode.class, Reseller.class);
         }
     }
     final WrappedResellerService<C,F> resellers;
     @Override
-    final public ResellerService<C,F> getResellers() {
+    final public ResellerService getResellers() {
         return resellers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResourceTypeService">
-    static class WrappedResourceTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ResourceType> implements ResourceTypeService<C,F> {
+    static class WrappedResourceTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ResourceType> implements ResourceTypeService {
         WrappedResourceTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, ResourceType.class);
         }
     }
     final WrappedResourceTypeService<C,F> resourceTypes;
     @Override
-    final public ResourceTypeService<C,F> getResourceTypes() {
+    final public ResourceTypeService getResourceTypes() {
         return resourceTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResourceService">
-    final ResourceService<C,F> resources;
+    final ResourceService resources;
     @Override
-    final public ResourceService<C,F> getResources() {
+    final public ResourceService getResources() {
         return resources;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerFarmService">
-    static class WrappedServerFarmService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,DomainLabel,ServerFarm> implements ServerFarmService<C,F> {
+    static class WrappedServerFarmService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,DomainLabel,ServerFarm> implements ServerFarmService {
         WrappedServerFarmService(WrappedConnector<C,F> connector) {
             super(connector, DomainLabel.class, ServerFarm.class);
         }
     }
     final WrappedServerFarmService<C,F> serverFarms;
     @Override
-    final public ServerFarmService<C,F> getServerFarms() {
+    final public ServerFarmService getServerFarms() {
         return serverFarms;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerResourceService">
-    final ServerResourceService<C,F> serverResources;
+    final ServerResourceService serverResources;
     @Override
-    final public ServerResourceService<C,F> getServerResources() {
+    final public ServerResourceService getServerResources() {
         return serverResources;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerService">
-    static class WrappedServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Server> implements ServerService<C,F> {
+    static class WrappedServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Server> implements ServerService {
         WrappedServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, Server.class);
         }
     }
     final WrappedServerService<C,F> servers;
     @Override
-    final public ServerService<C,F> getServers() {
+    final public ServerService getServers() {
         return servers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ShellService">
-    static class WrappedShellService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UnixPath,Shell> implements ShellService<C,F> {
+    static class WrappedShellService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UnixPath,Shell> implements ShellService {
         WrappedShellService(WrappedConnector<C,F> connector) {
             super(connector, UnixPath.class, Shell.class);
         }
     }
     final WrappedShellService<C,F> shells;
     @Override
-    final public ShellService<C,F> getShells() {
+    final public ShellService getShells() {
         return shells;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SignupRequestOptionService">
     // TODO: final WrappedSignupRequestOptionService<C,F> signupRequestOptions;
-    // TODO: final public SignupRequestOptionService<C,F> getSignupRequestOptions();
+    // TODO: final public SignupRequestOptionService getSignupRequestOptions();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SignupRequestService">
     // TODO: final WrappedSignupRequestService<C,F> signupRequests;
-    // TODO: final public SignupRequestService<C,F> getSignupRequests();
+    // TODO: final public SignupRequestService getSignupRequests();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SpamEmailMessageService">
     // TODO: final WrappedSpamEmailMessageService<C,F> spamEmailMessages;
-    // TODO: final public SpamEmailMessageService<C,F> getSpamEmailMessages();
+    // TODO: final public SpamEmailMessageService getSpamEmailMessages();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="SystemEmailAliasService">
     // TODO: final WrappedSystemEmailAliasService<C,F> systemEmailAliass;
-    // TODO: final public SystemEmailAliasService<C,F> getSystemEmailAliases();
+    // TODO: final public SystemEmailAliasService getSystemEmailAliases();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyService">
-    final class WrappedTechnologyService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Technology> implements TechnologyService<C,F> {
+    final class WrappedTechnologyService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Technology> implements TechnologyService {
         WrappedTechnologyService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, Technology.class);
         }
     }
     final WrappedTechnologyService<C,F> technologies;
     @Override
-    final public TechnologyService<C,F> getTechnologies() {
+    final public TechnologyService getTechnologies() {
         return technologies;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyClassService">
-    static class WrappedTechnologyClassService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TechnologyClass> implements TechnologyClassService<C,F> {
+    static class WrappedTechnologyClassService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TechnologyClass> implements TechnologyClassService {
         WrappedTechnologyClassService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TechnologyClass.class);
         }
     }
     final WrappedTechnologyClassService<C,F> technologyClasses;
     @Override
-    final public TechnologyClassService<C,F> getTechnologyClasses() {
+    final public TechnologyClassService getTechnologyClasses() {
         return technologyClasses;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyNameService">
-    static class WrappedTechnologyNameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TechnologyName> implements TechnologyNameService<C,F> {
+    static class WrappedTechnologyNameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TechnologyName> implements TechnologyNameService {
         WrappedTechnologyNameService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TechnologyName.class);
         }
     }
     final WrappedTechnologyNameService<C,F> technologyNames;
     @Override
-    final public TechnologyNameService<C,F> getTechnologyNames() {
+    final public TechnologyNameService getTechnologyNames() {
         return technologyNames;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyVersionService">
-    static class WrappedTechnologyVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TechnologyVersion> implements TechnologyVersionService<C,F> {
+    static class WrappedTechnologyVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TechnologyVersion> implements TechnologyVersionService {
         WrappedTechnologyVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, TechnologyVersion.class);
         }
     }
     final WrappedTechnologyVersionService<C,F> technologyVersions;
     @Override
-    final public TechnologyVersionService<C,F> getTechnologyVersions() {
+    final public TechnologyVersionService getTechnologyVersions() {
         return technologyVersions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionTypeService">
-    static class WrappedTicketActionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketActionType> implements TicketActionTypeService<C,F> {
+    static class WrappedTicketActionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketActionType> implements TicketActionTypeService {
         WrappedTicketActionTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TicketActionType.class);
         }
     }
     final WrappedTicketActionTypeService<C,F> ticketActionTypes;
     @Override
-    final public TicketActionTypeService<C,F> getTicketActionTypes() {
+    final public TicketActionTypeService getTicketActionTypes() {
         return ticketActionTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionService">
-    static class WrappedTicketActionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAction> implements TicketActionService<C,F> {
+    static class WrappedTicketActionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAction> implements TicketActionService {
         WrappedTicketActionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, TicketAction.class);
         }
     }
     final WrappedTicketActionService<C,F> ticketActions;
     @Override
-    final public TicketActionService<C,F> getTicketActions() {
+    final public TicketActionService getTicketActions() {
         return ticketActions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketAssignmentService">
-    static class WrappedTicketAssignmentService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAssignment> implements TicketAssignmentService<C,F> {
+    static class WrappedTicketAssignmentService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAssignment> implements TicketAssignmentService {
         WrappedTicketAssignmentService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, TicketAssignment.class);
         }
     }
     final WrappedTicketAssignmentService<C,F> ticketAssignments;
     @Override
-    final public TicketAssignmentService<C,F> getTicketAssignments() {
+    final public TicketAssignmentService getTicketAssignments() {
         return ticketAssignments;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketBrandCategoryService">
     // TODO: final WrappedTicketBrandCategoryService<C,F> ticketBrandCategories;
-    // TODO: final public TicketBrandCategoryService<C,F> getTicketBrandCategories();
+    // TODO: final public TicketBrandCategoryService getTicketBrandCategories();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketCategoryService">
-    static class WrappedTicketCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketCategory> implements TicketCategoryService<C,F> {
+    static class WrappedTicketCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketCategory> implements TicketCategoryService {
         WrappedTicketCategoryService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, TicketCategory.class);
         }
     }
     final WrappedTicketCategoryService<C,F> ticketCategories;
     @Override
-    final public TicketCategoryService<C,F> getTicketCategories() {
+    final public TicketCategoryService getTicketCategories() {
         return ticketCategories;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketPriorityService">
-    static class WrappedTicketPriorityService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketPriority> implements TicketPriorityService<C,F> {
+    static class WrappedTicketPriorityService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketPriority> implements TicketPriorityService {
         WrappedTicketPriorityService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TicketPriority.class);
         }
     }
     final WrappedTicketPriorityService<C,F> ticketPriorities;
     @Override
-    final public TicketPriorityService<C,F> getTicketPriorities() {
+    final public TicketPriorityService getTicketPriorities() {
         return ticketPriorities;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketStatusService">
-    static class WrappedTicketStatusService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketStatus> implements TicketStatusService<C,F> {
+    static class WrappedTicketStatusService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketStatus> implements TicketStatusService {
         WrappedTicketStatusService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TicketStatus.class);
         }
     }
     final WrappedTicketStatusService<C,F> ticketStatuses;
     @Override
-    final public TicketStatusService<C,F> getTicketStatuses() {
+    final public TicketStatusService getTicketStatuses() {
         return ticketStatuses;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketTypeService">
-    static class WrappedTicketTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketType> implements TicketTypeService<C,F> {
+    static class WrappedTicketTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketType> implements TicketTypeService {
         WrappedTicketTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TicketType.class);
         }
     }
     final WrappedTicketTypeService<C,F> ticketTypes;
     @Override
-    final public TicketTypeService<C,F> getTicketTypes() {
+    final public TicketTypeService getTicketTypes() {
         return ticketTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketService">
-    static class WrappedTicketService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Ticket> implements TicketService<C,F> {
+    static class WrappedTicketService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Ticket> implements TicketService {
         WrappedTicketService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, Ticket.class);
         }
     }
     final WrappedTicketService<C,F> tickets;
     @Override
-    final public TicketService<C,F> getTickets() {
+    final public TicketService getTickets() {
         return tickets;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TimeZoneService">
-    static class WrappedTimeZoneService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TimeZone> implements TimeZoneService<C,F> {
+    static class WrappedTimeZoneService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TimeZone> implements TimeZoneService {
         WrappedTimeZoneService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TimeZone.class);
         }
     }
     final WrappedTimeZoneService<C,F> timeZones;
     @Override
-    final public TimeZoneService<C,F> getTimeZones() {
+    final public TimeZoneService getTimeZones() {
         return timeZones;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionTypeService">
-    static class WrappedTransactionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TransactionType> implements TransactionTypeService<C,F> {
+    static class WrappedTransactionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TransactionType> implements TransactionTypeService {
         WrappedTransactionTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TransactionType.class);
         }
     }
     final WrappedTransactionTypeService<C,F> transactionTypes;
     @Override
-    final public TransactionTypeService<C,F> getTransactionTypes() {
+    final public TransactionTypeService getTransactionTypes() {
         return transactionTypes;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionService">
-    static class WrappedTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Transaction> implements TransactionService<C,F> {
+    static class WrappedTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Transaction> implements TransactionService {
         WrappedTransactionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, Transaction.class);
         }
     }
     final WrappedTransactionService<C,F> transactions;
     @Override
-    final public TransactionService<C,F> getTransactions() {
+    final public TransactionService getTransactions() {
         return transactions;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="UsernameService">
-    static class WrappedUsernameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,Username> implements UsernameService<C,F> {
+    static class WrappedUsernameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,Username> implements UsernameService {
         WrappedUsernameService(WrappedConnector<C,F> connector) {
             super(connector, UserId.class, Username.class);
         }
     }
     final WrappedUsernameService<C,F> usernames;
     @Override
-    final public UsernameService<C,F> getUsernames() {
+    final public UsernameService getUsernames() {
         return usernames;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="VirtualDiskService">
     // TODO: final WrappedVirtualDiskService<C,F> virtualDisks;
-    // TODO: final public VirtualDiskService<C,F> getVirtualDisks();
+    // TODO: final public VirtualDiskService getVirtualDisks();
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="VirtualServerService">
-    static class WrappedVirtualServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,VirtualServer> implements VirtualServerService<C,F> {
+    static class WrappedVirtualServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,VirtualServer> implements VirtualServerService {
         WrappedVirtualServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, VirtualServer.class);
         }
     }
     final WrappedVirtualServerService<C,F> virtualServers;
     @Override
-    final public VirtualServerService<C,F> getVirtualServers() {
+    final public VirtualServerService getVirtualServers() {
         return virtualServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="WhoisHistoryService">
     // TODO: final WrappedWhoisHistoryService<C,F> whoisHistories;
-    // TODO: final public WhoisHistoryService<C,F> getWhoisHistory();
+    // TODO: final public WhoisHistoryService getWhoisHistory();
     // </editor-fold>
 }

@@ -48,7 +48,7 @@ final public class LinuxGroupType extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public LinuxGroupType(AOServConnector<?,?> connector, String resourceType) {
+    public LinuxGroupType(AOServConnector connector, String resourceType) {
         super(connector, resourceType);
     }
     // </editor-fold>

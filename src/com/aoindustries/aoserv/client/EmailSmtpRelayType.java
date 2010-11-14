@@ -36,7 +36,7 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey implements C
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private String sendmailConfig;
 
-    public EmailSmtpRelayType(AOServConnector<?,?> connector, String name, String sendmailConfig) {
+    public EmailSmtpRelayType(AOServConnector connector, String name, String sendmailConfig) {
         super(connector, name);
         this.sendmailConfig = sendmailConfig;
         intern();

@@ -15,5 +15,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.ticket_action_types)
-public interface TicketActionTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,TicketActionType> {
+public interface TicketActionTypeService extends AOServService<String,TicketActionType> {
 }

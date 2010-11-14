@@ -21,7 +21,7 @@ final public class ExpenseCategory extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public ExpenseCategory(AOServConnector<?,?> connector, String expenseCode) {
+    public ExpenseCategory(AOServConnector connector, String expenseCode) {
         super(connector, expenseCode);
     }
     // </editor-fold>

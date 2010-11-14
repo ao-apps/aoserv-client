@@ -44,11 +44,11 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
         }
     }
 
-    public SchemaColumn getForeignColumn(AOServConnector<?,?> connector) throws SQLException, IOException {
+    public SchemaColumn getForeignColumn(AOServConnector connector) throws SQLException, IOException {
         return connector.getSchemaColumns().get(foreign_column);
     }
 
-    public SchemaColumn getKeyColumn(AOServConnector<?,?> connector) throws SQLException, IOException {
+    public SchemaColumn getKeyColumn(AOServConnector connector) throws SQLException, IOException {
         return connector.getSchemaColumns().get(key_column);
     }
 

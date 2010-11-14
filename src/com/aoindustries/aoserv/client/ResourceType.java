@@ -55,7 +55,7 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public ResourceType(AOServConnector<?,?> connector, String name) {
+    public ResourceType(AOServConnector connector, String name) {
         super(connector, name);
     }
     // </editor-fold>
@@ -146,7 +146,7 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public List<Resource> getResources(AOServConnector<?,?> connector) throws IOException, SQLException {
+    public List<Resource> getResources(AOServConnector connector) throws IOException, SQLException {
         return connector.getResources().getIndexedRows(Resource.COLUMN_RESOURCE_TYPE, pkey);
     }
      */

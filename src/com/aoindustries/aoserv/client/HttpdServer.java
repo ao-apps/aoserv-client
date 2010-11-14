@@ -46,7 +46,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     final private int timeout;
 
     public HttpdServer(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

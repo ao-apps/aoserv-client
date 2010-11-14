@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.credit_card_transactions)
-public interface CreditCardTransactionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,CreditCardTransaction> {
+public interface CreditCardTransactionService extends AOServService<Integer,CreditCardTransaction> {
 
     /* TODO
     int addCreditCardTransaction(

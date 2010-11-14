@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
  */
 public class GetTableSizesTest extends TestCase {
     
-    private List<AOServConnector<?,?>> conns;
+    private List<AOServConnector> conns;
 
     public GetTableSizesTest(String testName) {
         super(testName);
@@ -43,14 +43,14 @@ public class GetTableSizesTest extends TestCase {
     public void testTableSizes() throws Exception {
         final int PASSES=10;
         System.out.println("Testing getTable(tableID).size()");
-        for(AOServConnector<?,?> conn : conns) {
+        for(AOServConnector conn : conns) {
             System.out.println("    "+conn.getThisBusinessAdministrator());
             int numTables = ServiceName.values.size();
             int[][] counts=new int[PASSES][numTables];
             for(int d=0;d<PASSES;d++) {
                 System.out.print("        Pass"+(d<9?"  ":" ")+(d+1)+" of "+PASSES+": ");
                 for(int c=0;c<numTables;c++) {
-                    AOServService<?,?,?,?> service = conn.getServices().get(ServiceName.values.get(c));
+                    AOServService<?,?> service = conn.getServices().get(ServiceName.values.get(c));
                     // Excluded for testing speed
                     /* TODOif(
                         (table instanceof DistroFileTable...c==SchemaTable.TableID.DISTRO_FILES.ordinal()
@@ -80,7 +80,7 @@ public class GetTableSizesTest extends TestCase {
                         && d!=SchemaTable.TableID.MASTER_SERVER_PROFILE.ordinal()
                         && d!=SchemaTable.TableID.MASTER_PROCESSES.ordinal()
                     ) {*/
-                        AOServService<?,?,?,?> table=conn.getServices().get(ServiceName.values.get(d));
+                        AOServService<?,?> table=conn.getServices().get(ServiceName.values.get(d));
                         /*if(c==1) {
                             for(AOServObject<?,?> row : table.getSortedSet()) {
                                 System.err.println(row);

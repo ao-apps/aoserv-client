@@ -18,7 +18,7 @@ import java.util.List;
  */
 final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 
-    EmailPipeTable(AOServConnector<?,?> connector) {
+    EmailPipeTable(AOServConnector connector) {
         super(connector, EmailPipe.class);
     }
 

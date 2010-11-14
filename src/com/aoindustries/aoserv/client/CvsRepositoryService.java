@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.cvs_repositories)
-public interface CvsRepositoryService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,CvsRepository> {
+public interface CvsRepositoryService extends AOServService<Integer,CvsRepository> {
 
     /* TODO
     int addCvsRepository(

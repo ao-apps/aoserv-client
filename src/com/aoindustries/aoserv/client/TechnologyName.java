@@ -25,7 +25,7 @@ final public class TechnologyName extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TechnologyName(AOServConnector<?,?> connector, String name) {
+    public TechnologyName(AOServConnector connector, String name) {
         super(connector, name);
     }
     // </editor-fold>
@@ -78,7 +78,7 @@ final public class TechnologyName extends AOServObjectStringKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
-    public TechnologyVersion getTechnologyVersion(AOServConnector<?,?> connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
+    public TechnologyVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
         return connector.getTechnologyVersions().getTechnologyVersion(this, version, osv);
     } */
     // </editor-fold>

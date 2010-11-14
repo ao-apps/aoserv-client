@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.failover_file_replications)
-public interface FailoverFileReplicationService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,FailoverFileReplication> {
+public interface FailoverFileReplicationService extends AOServService<Integer,FailoverFileReplication> {
 }

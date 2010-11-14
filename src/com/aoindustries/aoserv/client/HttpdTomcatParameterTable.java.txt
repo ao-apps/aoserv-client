@@ -18,7 +18,7 @@ import java.util.List;
  */
 final public class HttpdTomcatParameterTable extends CachedTableIntegerKey<HttpdTomcatParameter> {
 
-    HttpdTomcatParameterTable(AOServConnector<?,?> connector) {
+    HttpdTomcatParameterTable(AOServConnector connector) {
 	super(connector, HttpdTomcatParameter.class);
     }
 

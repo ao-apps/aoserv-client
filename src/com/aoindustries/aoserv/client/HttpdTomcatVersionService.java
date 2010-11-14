@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.httpd_tomcat_versions)
-public interface HttpdTomcatVersionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,HttpdTomcatVersion> {
+public interface HttpdTomcatVersionService extends AOServService<Integer,HttpdTomcatVersion> {
 
     /* TODO
     public HttpdTomcatVersion getHttpdTomcatVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {

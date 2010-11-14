@@ -93,7 +93,7 @@ final public class AOSH extends ShellInterpreter {
         }
     }
 
-    static CommandResult executeCommand(AOServConnector<?,?> connector, String[] args) throws IOException {
+    static CommandResult executeCommand(AOServConnector connector, String[] args) throws IOException {
         CharArrayWriter outChars=new CharArrayWriter();
         TerminalWriter out = new TerminalWriter(outChars);
         out.setEnabled(false);
@@ -161,14 +161,14 @@ final public class AOSH extends ShellInterpreter {
         if(pos<len) out.print(s.substring(pos, len));
     }
 
-    final private AOServConnector<?,?> connector;
+    final private AOServConnector connector;
 
-    public AOSH(AOServConnector<?,?> connector, Reader in, TerminalWriter out, TerminalWriter err) {
+    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err) {
     	super(in, out, err);
         this.connector=connector;
     }
 
-    public AOSH(AOServConnector<?,?> connector, Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
+    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
     	super(in, out, err, args);
         this.connector=connector;
     }
@@ -710,7 +710,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             UserId username = getConfigUsername(in, err);
             String password = getConfigPassword(in, err);
-            AOServConnector<?,?> connector = AOServClientConfiguration.getConnector(username, password);
+            AOServConnector connector = AOServClientConfiguration.getConnector(username, password);
             AOSH aosh = new AOSH(connector, in, out, err, args);
             aosh.run();
             if(aosh.isInteractive()) {

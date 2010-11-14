@@ -31,7 +31,7 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     final private Integer parent;
     private String name;
 
-    public TicketCategory(AOServConnector<?,?> connector, int pkey, Integer parent, String name) {
+    public TicketCategory(AOServConnector connector, int pkey, Integer parent, String name) {
         super(connector, pkey);
         this.parent = parent;
         this.name = name;

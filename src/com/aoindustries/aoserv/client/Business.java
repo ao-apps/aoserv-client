@@ -107,7 +107,7 @@ implements
     final private Float emailRelayRate;
 
     public Business(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         AccountingCode accounting,
         String contractVersion,
         long created,

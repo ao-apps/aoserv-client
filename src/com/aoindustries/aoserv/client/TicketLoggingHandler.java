@@ -43,7 +43,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
      * Only one TicketLoggingHandler will be created per unique summaryPrefix,
      * AOServConnector, and category.
      */
-    public static Handler getHandler(String summaryPrefix, AOServConnector<?,?> connector, TicketCategory category) throws IOException, SQLException {
+    public static Handler getHandler(String summaryPrefix, AOServConnector connector, TicketCategory category) throws IOException, SQLException {
         synchronized(handlers) {
             for(TicketLoggingHandler handler : handlers) {
                 if(
@@ -59,14 +59,14 @@ final public class TicketLoggingHandler extends QueuedHandler {
     }
 
     private final String summaryPrefix;
-    private final AOServConnector<?,?> connector;
+    private final AOServConnector connector;
     private final TicketCategory category;
     private final Business business;
     private final Brand brand;
     private final Language language;
     private final TicketType ticketType;
 
-    private TicketLoggingHandler(String summaryPrefix, final AOServConnector<?,?> connector, TicketCategory category) throws IOException, SQLException {
+    private TicketLoggingHandler(String summaryPrefix, final AOServConnector connector, TicketCategory category) throws IOException, SQLException {
         super(
             "Console logger for "+connector.toString(),
             "Ticket logger for "+connector.toString()

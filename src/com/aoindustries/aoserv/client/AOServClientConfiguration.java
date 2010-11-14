@@ -200,18 +200,18 @@ final public class AOServClientConfiguration {
     }
 
     private static final Object factoryLock = new Object();
-    private static AOServConnectorFactory<?,?> factory;
+    private static AOServConnectorFactory factory;
 
     /**
      * Gets the AOServConnectorFactory that is configured in the aoserv-client.properties file.
      * Also initializes the truststore path and password if provided in the properties file.
      */
-    public static AOServConnectorFactory<?,?> getAOServConnectorFactory() throws RemoteException {
+    public static AOServConnectorFactory getAOServConnectorFactory() throws RemoteException {
         synchronized(factoryLock) {
             if(factory==null) {
                 try {
                     String protocol = getProtocol();
-                    AOServConnectorFactory<?,?> newFactory;
+                    AOServConnectorFactory newFactory;
                     if(protocol.equalsIgnoreCase(Protocol.RMI)) {
                         String trustStorePath = getTrustStorePath();
                         if(trustStorePath!=null) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
@@ -277,7 +277,7 @@ final public class AOServClientConfiguration {
      * resource, in the thread locale.  Only one instance will
      * be created and its locale will be reset back to the thread locale.
      */
-    public static AOServConnector<?,?> getConnector() throws RemoteException, LoginException {
+    public static AOServConnector getConnector() throws RemoteException, LoginException {
         try {
             UserId username = getUsername();
             String password = getPassword();
@@ -302,7 +302,7 @@ final public class AOServClientConfiguration {
      * @param  username  the username to connect as
      * @param  password  the password to connect with
      */
-    public static AOServConnector<?,?> getConnector(UserId username, String password) throws RemoteException, LoginException {
+    public static AOServConnector getConnector(UserId username, String password) throws RemoteException, LoginException {
         return getConnector(ThreadLocale.get(), username, password, username, null);
     }
 
@@ -315,7 +315,7 @@ final public class AOServClientConfiguration {
      * @param  username  the username to connect as
      * @param  password  the password to connect with
      */
-    public static AOServConnector<?,?> getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer) throws RemoteException, LoginException {
+    public static AOServConnector getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer) throws RemoteException, LoginException {
         return getAOServConnectorFactory().getConnector(
             locale,
             switchUser,

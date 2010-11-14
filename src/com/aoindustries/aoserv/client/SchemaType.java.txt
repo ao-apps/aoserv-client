@@ -152,7 +152,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
      * BIG_DECIMAL     X  X           X  X  X        X     X  X     X  X  X              X     X                 X
      * </pre>
      */
-    public Object cast(AOServConnector<?,?> conn, Object value, SchemaType castToType) throws IOException, SQLException {
+    public Object cast(AOServConnector conn, Object value, SchemaType castToType) throws IOException, SQLException {
         switch(pkey) {
             case ACCOUNTING:
                 switch(castToType.getNum()) {
@@ -625,7 +625,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
         return InetAddress.getByName(ipAddress).getCanonicalHostName();
     }
 
-    private static String getZoneForHostname(AOServConnector<?,?> conn, String hostname) throws IOException, IllegalArgumentException, SQLException {
+    private static String getZoneForHostname(AOServConnector conn, String hostname) throws IOException, IllegalArgumentException, SQLException {
         return conn.getDnsZones().getHostTLD(hostname);
     }
 

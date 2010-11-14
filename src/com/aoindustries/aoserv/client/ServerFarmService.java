@@ -13,5 +13,5 @@ import com.aoindustries.aoserv.client.validator.*;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.server_farms)
-public interface ServerFarmService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,DomainLabel,ServerFarm> {
+public interface ServerFarmService extends AOServService<DomainLabel,ServerFarm> {
 }

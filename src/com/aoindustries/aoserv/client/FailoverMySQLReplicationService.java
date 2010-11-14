@@ -12,7 +12,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.failover_mysql_replications)
-public interface FailoverMySQLReplicationService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,FailoverMySQLReplication> {
+public interface FailoverMySQLReplicationService extends AOServService<Integer,FailoverMySQLReplication> {
 
     /* TODO
     List<FailoverMySQLReplication> getFailoverMySQLReplications(Business bu) throws IOException, SQLException {

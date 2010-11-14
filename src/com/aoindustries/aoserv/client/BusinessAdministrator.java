@@ -63,7 +63,7 @@ implements
     private String supportCode;
 
     public BusinessAdministrator(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         UserId username,
         HashedPassword password,
         String fullName,
@@ -679,7 +679,7 @@ implements
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServConnector<?,?> conn=getConnector();
+        AOServConnector conn=getConnector();
 
         if(equals(conn.getThisBusinessAdministrator())) reasons.add(new CannotRemoveReason<BusinessAdministrator>("Not allowed to remove self", this));
 

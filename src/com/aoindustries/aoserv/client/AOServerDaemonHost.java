@@ -30,7 +30,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     private Hostname host;
 
     public AOServerDaemonHost(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int aoServer,
         Hostname host

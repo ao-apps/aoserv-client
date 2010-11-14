@@ -13,5 +13,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.aoserv_role_permissions)
-public interface AOServRolePermissionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,AOServRolePermission> {
+public interface AOServRolePermissionService extends AOServService<Integer,AOServRolePermission> {
 }

@@ -55,7 +55,7 @@ final public class CheckBusinessAdministratorPasswordCommand extends AOServComma
     }
 
     @Override
-    public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public List<PasswordChecker.Result> execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         try {
             return checkPassword(username, password);
         } catch(IOException err) {

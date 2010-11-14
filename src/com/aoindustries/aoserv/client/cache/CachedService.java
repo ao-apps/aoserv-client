@@ -24,17 +24,14 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-abstract class CachedService<
-    K extends Comparable<K>,
-    V extends AOServObject<K>
-> implements AOServService<CachedConnector,CachedConnectorFactory,K,V> {
+abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>> implements AOServService<K,V> {
 
     final CachedConnector connector;
     //final Class<K> keyClass;
     final ServiceName serviceName;
     final AOServServiceUtils.AnnotationTable<K,V> table;
     final Map<K,V> map;
-    final AOServService<?,?,K,V> wrapped;
+    final AOServService<K,V> wrapped;
 
     /**
      * The internal objects are stored in an unmodifiable set
@@ -49,7 +46,7 @@ abstract class CachedService<
     private final Map<K,V> cachedHash = new HashMap<K,V>();
     private boolean cachedHashValid = false;
 
-    CachedService(CachedConnector connector, Class<K> keyClass, Class<V> valueClass, AOServService<?,?,K,V> wrapped) {
+    CachedService(CachedConnector connector, Class<K> keyClass, Class<V> valueClass, AOServService<K,V> wrapped) {
         this.connector = connector;
         //this.keyClass = keyClass;
         this.wrapped = wrapped;

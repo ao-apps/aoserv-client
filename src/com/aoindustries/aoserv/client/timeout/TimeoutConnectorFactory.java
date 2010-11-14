@@ -40,7 +40,7 @@ final public class TimeoutConnectorFactory extends WrappedConnectorFactory<Timeo
     final long timeout;
     final TimeUnit unit;
 
-    public TimeoutConnectorFactory(AOServConnectorFactory<?,?> wrapped, long timeout, TimeUnit unit) {
+    public TimeoutConnectorFactory(AOServConnectorFactory wrapped, long timeout, TimeUnit unit) {
         super(wrapped);
         this.timeout = timeout;
         this.unit = unit;

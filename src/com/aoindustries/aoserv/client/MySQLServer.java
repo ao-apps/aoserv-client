@@ -322,7 +322,7 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     final private int netBind;
 
     public MySQLServer(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,

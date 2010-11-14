@@ -42,7 +42,7 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TechnologyClass(AOServConnector<?,?> connector, String name) {
+    public TechnologyClass(AOServConnector connector, String name) {
         super(connector, name);
     }
     // </editor-fold>

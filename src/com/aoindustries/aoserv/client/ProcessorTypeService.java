@@ -11,5 +11,5 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.processor_types)
-public interface ProcessorTypeService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,String,ProcessorType> {
+public interface ProcessorTypeService extends AOServService<String,ProcessorType> {
 }

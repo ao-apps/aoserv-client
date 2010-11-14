@@ -13,7 +13,7 @@ import com.aoindustries.aoserv.client.validator.*;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.businesses)
-public interface BusinessService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,AccountingCode,Business> {
+public interface BusinessService extends AOServService<AccountingCode,Business> {
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /*
     private String rootAccounting;

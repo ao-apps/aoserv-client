@@ -20,7 +20,7 @@ abstract public class AOServObjectShortKey extends AOServObject<Short> {
 
     final protected short key;
 
-    protected AOServObjectShortKey(AOServConnector<?,?> connector, short key) {
+    protected AOServObjectShortKey(AOServConnector connector, short key) {
         super(connector);
         this.key = key;
     }

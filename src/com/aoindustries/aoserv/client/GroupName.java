@@ -29,7 +29,7 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
     private AccountingCode accounting;
     final Integer disableLog;
 
-    public GroupName(AOServConnector<?,?> connector, GroupId groupName, AccountingCode accounting, Integer disableLog) {
+    public GroupName(AOServConnector connector, GroupId groupName, AccountingCode accounting, Integer disableLog) {
         super(connector, groupName);
         this.accounting = accounting;
         this.disableLog = disableLog;

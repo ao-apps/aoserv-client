@@ -30,7 +30,7 @@ final public class NetProtocol extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public NetProtocol(AOServConnector<?,?> connector, String protocol) {
+    public NetProtocol(AOServConnector connector, String protocol) {
         super(connector, protocol);
     }
     // </editor-fold>

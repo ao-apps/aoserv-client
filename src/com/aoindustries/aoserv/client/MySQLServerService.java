@@ -11,7 +11,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.mysql_servers)
-public interface MySQLServerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,MySQLServer> {
+public interface MySQLServerService extends AOServService<Integer,MySQLServer> {
 
     /* TODO
     int addMySQLServer(

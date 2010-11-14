@@ -35,7 +35,7 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     final private int server;
 
     public MasterServer(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         UserId username,
         int server

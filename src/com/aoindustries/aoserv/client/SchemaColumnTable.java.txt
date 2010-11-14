@@ -38,7 +38,7 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
         for(int c=0;c<numTables;c++) nameToColumns.add(null);
     }
 
-    SchemaColumnTable(AOServConnector<?,?> connector) {
+    SchemaColumnTable(AOServConnector connector) {
         super(connector, SchemaColumn.class);
     }
 

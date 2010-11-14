@@ -63,7 +63,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     final private Status status;
 
     public Transaction(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int transid,
         long time,
         AccountingCode accounting,

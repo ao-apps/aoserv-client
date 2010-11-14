@@ -9,7 +9,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.backup_partitions)
-public interface BackupPartitionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,BackupPartition> {
+public interface BackupPartitionService extends AOServService<Integer,BackupPartition> {
 
     /* TODO
     List<BackupPartition> getBackupPartitions(AOServer ao) throws IOException, SQLException {

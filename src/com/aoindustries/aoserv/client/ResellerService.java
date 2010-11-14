@@ -13,7 +13,7 @@ import com.aoindustries.aoserv.client.validator.*;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.resellers)
-public interface ResellerService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,AccountingCode,Reseller> {
+public interface ResellerService extends AOServService<AccountingCode,Reseller> {
 
     /**
      * Gets the list of all resellers that either have a null parent (the

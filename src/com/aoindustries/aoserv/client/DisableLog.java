@@ -31,7 +31,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     private String disableReason;
 
     public DisableLog(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         long time,
         AccountingCode accounting,

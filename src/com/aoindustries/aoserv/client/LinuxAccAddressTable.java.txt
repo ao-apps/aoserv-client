@@ -17,7 +17,7 @@ import java.util.*;
  */
 final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAddress> {
 
-    LinuxAccAddressTable(AOServConnector<?,?> connector) {
+    LinuxAccAddressTable(AOServConnector connector) {
 	super(connector, LinuxAccAddress.class);
     }
 

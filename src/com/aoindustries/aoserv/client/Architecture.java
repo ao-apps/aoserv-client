@@ -43,7 +43,7 @@ final public class Architecture extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int bits;
 
-    public Architecture(AOServConnector<?,?> connector, String name, int bits) {
+    public Architecture(AOServConnector connector, String name, int bits) {
         super(connector, name);
         this.bits = bits;
     }

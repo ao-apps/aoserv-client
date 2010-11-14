@@ -32,7 +32,7 @@ final public class MajordomoVersion extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private long created;
 
-    public MajordomoVersion(AOServConnector<?,?> connector, String version, long created) {
+    public MajordomoVersion(AOServConnector connector, String version, long created) {
         super(connector, version);
         this.created = created;
     }

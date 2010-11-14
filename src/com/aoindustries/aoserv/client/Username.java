@@ -38,7 +38,7 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     private AccountingCode accounting;
     final private Integer disableLog;
 
-    public Username(AOServConnector<?,?> connector, UserId username, AccountingCode accounting, Integer disableLog) {
+    public Username(AOServConnector connector, UserId username, AccountingCode accounting, Integer disableLog) {
         super(connector, username);
         this.accounting = accounting;
         this.disableLog = disableLog;

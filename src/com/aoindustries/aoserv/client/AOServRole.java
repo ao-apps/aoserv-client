@@ -26,7 +26,7 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
     private AccountingCode accounting;
     private String name;
 
-    public AOServRole(AOServConnector<?,?> connector, int pkey, AccountingCode accounting, String name) {
+    public AOServRole(AOServConnector connector, int pkey, AccountingCode accounting, String name) {
         super(connector, pkey);
         this.accounting = accounting;
         this.name = name;

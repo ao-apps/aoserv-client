@@ -14,7 +14,7 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.operating_system_versions)
-public interface OperatingSystemVersionService<C extends AOServConnector<C,F>, F extends AOServConnectorFactory<C,F>> extends AOServService<C,F,Integer,OperatingSystemVersion> {
+public interface OperatingSystemVersionService extends AOServService<Integer,OperatingSystemVersion> {
 
     /* TODO
     OperatingSystemVersion getOperatingSystemVersion(OperatingSystem os, String version, Architecture architecture) throws IOException, SQLException {

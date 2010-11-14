@@ -36,7 +36,7 @@ final public class HashPasswordCommand extends AOServCommand<String> {
     }
 
     @Override
-    public String execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public String execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         return HashedPassword.hash(password);
     }
 }

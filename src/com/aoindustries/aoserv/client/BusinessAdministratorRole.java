@@ -30,7 +30,7 @@ implements
     private UserId username;
     final private int role;
 
-    public BusinessAdministratorRole(AOServConnector<?,?> connector, int pkey, UserId username, int role) {
+    public BusinessAdministratorRole(AOServConnector connector, int pkey, UserId username, int role) {
         super(connector, pkey);
         this.username = username;
         this.role = role;

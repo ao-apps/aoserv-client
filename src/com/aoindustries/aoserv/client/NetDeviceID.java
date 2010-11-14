@@ -38,7 +38,7 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean isLoopback;
 
-    public NetDeviceID(AOServConnector<?,?> connector, String name, boolean isLoopback) {
+    public NetDeviceID(AOServConnector connector, String name, boolean isLoopback) {
         super(connector, name);
         this.isLoopback = isLoopback;
     }

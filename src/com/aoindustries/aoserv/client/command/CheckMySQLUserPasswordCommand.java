@@ -61,7 +61,7 @@ final public class CheckMySQLUserPasswordCommand extends AOServCommand<List<Pass
     }
 
     @Override
-    public List<PasswordChecker.Result> execute(AOServConnector<?,?> connector, boolean isInteractive) throws RemoteException {
+    public List<PasswordChecker.Result> execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
         try {
             return checkPassword(connector.getMysqlUsers().get(mysqlUser), password);
         } catch(IOException err) {

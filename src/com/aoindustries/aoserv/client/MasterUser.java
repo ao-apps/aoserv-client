@@ -37,7 +37,7 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     final private boolean isDnsAdmin;
 
     public MasterUser(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         UserId username,
         boolean isActive,
         boolean canAccessAccounting,

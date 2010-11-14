@@ -34,7 +34,7 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
         private final int serverPort;
         private final RMIClientSocketFactory csf;
 
-        private final AOServConnectorFactoryCache connectors = new AOServConnectorFactoryCache();
+        private final AOServConnectorFactoryCache<AOServConnector> connectors = new AOServConnectorFactoryCache<AOServConnector>();
 
         DirectRmiClientConnectorFactory(
             String serverAddress,
@@ -70,9 +70,9 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
         }
 
         @Override
-        public AOServConnector<?,?> getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+        public AOServConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
             synchronized(connectors) {
-                AOServConnector<?,?> connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
+                AOServConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
                 if(connector!=null) {
                     connector.setLocale(locale);
                 } else {
@@ -88,15 +88,14 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
             }
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public AOServConnector<?,?> newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+        public AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
             try {
                 // Connect to the remote registry and get each of the stubs
                 Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
-                AOServConnectorFactory<?,?> serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
+                AOServConnectorFactory serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
                 synchronized(connectors) {
-                    AOServConnector<?,?> connector = serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+                    AOServConnector connector = serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
                     connectors.put(
                         connectAs,
                         authenticateAs,

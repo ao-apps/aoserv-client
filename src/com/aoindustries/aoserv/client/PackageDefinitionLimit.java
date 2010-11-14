@@ -35,7 +35,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     private String additionalTransactionType;
 
     public PackageDefinitionLimit(
-        AOServConnector<?,?> connector,
+        AOServConnector connector,
         int pkey,
         int packageDefinition,
         String resourceType,
