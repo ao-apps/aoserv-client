@@ -47,7 +47,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     final private String technicalEmail;
 
     public BusinessProfile(
-        BusinessProfileService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         AccountingCode accounting,
         int priority,
@@ -68,7 +68,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
         String technicalContact,
         String technicalEmail
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.accounting = accounting;
         this.priority = priority;
         this.name = name;
@@ -119,7 +119,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     @SchemaColumn(order=2, name="priority", description="the highest priority profile is used")
@@ -170,7 +170,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     static final String COLUMN_COUNTRY = "country";
     @SchemaColumn(order=11, name=COLUMN_COUNTRY, index=IndexType.INDEXED, description="the two-character country code")
     public CountryCode getCountry() throws RemoteException {
-        return getService().getConnector().getCountryCodes().get(country);
+        return getConnector().getCountryCodes().get(country);
     }
 
     @SchemaColumn(order=12, name="zip", description="the zip code")
@@ -232,6 +232,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountry());
         return unionSet;

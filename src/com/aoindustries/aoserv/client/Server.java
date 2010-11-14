@@ -38,7 +38,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     final private boolean monitoringEnabled;
 
     public Server(
-        ServerService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         DomainLabel farm,
         String description,
@@ -47,7 +47,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
         String name,
         boolean monitoringEnabled
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.farm = farm;
         this.description = description;
         this.operatingSystemVersion = operatingSystemVersion;
@@ -93,7 +93,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     static final String COLUMN_FARM = "farm";
     @SchemaColumn(order=1, name=COLUMN_FARM, index=IndexType.INDEXED, description="the name of the farm the server is located in")
     public ServerFarm getServerFarm() throws RemoteException {
-        return getService().getConnector().getServerFarms().get(farm);
+        return getConnector().getServerFarms().get(farm);
     }
 
     @SchemaColumn(order=2, name="description", description="a description of the servers purpose")
@@ -105,7 +105,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     @SchemaColumn(order=3, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of operating system running on the server, if known")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         if(operatingSystemVersion==null) return null;
-        return getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
+        return getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
     }
 
     /**
@@ -114,7 +114,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=4, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business accountable for resources used by the server")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
+        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     @SchemaColumn(order=5, name="name", description="the per-package unique name of the server (no special formatting required)")
@@ -138,6 +138,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerFarm());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
@@ -146,6 +147,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServer());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getPhysicalServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServer());
@@ -160,35 +162,35 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public AOServer getAoServer() throws RemoteException {
-        return getService().getConnector().getAoServers().filterUnique(AOServer.COLUMN_SERVER, this);
+        return getConnector().getAoServers().filterUnique(AOServer.COLUMN_SERVER, this);
     }
 
     /* TODO
     public PhysicalServer getPhysicalServer() throws IOException, SQLException {
-        return getService().getConnector().getPhysicalServers().get(pkey);
+        return getConnector().getPhysicalServers().get(pkey);
     }
      */
     public VirtualServer getVirtualServer() throws RemoteException {
-        return getService().getConnector().getVirtualServers().filterUnique(VirtualServer.COLUMN_SERVER, this);
+        return getConnector().getVirtualServers().filterUnique(VirtualServer.COLUMN_SERVER, this);
     }
 
     public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
-        return getService().getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_SERVER, this);
+        return getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_SERVER, this);
     }
 
     /**
      * Gets the list of all replications coming from this server.
      */
     public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
-        return getService().getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_SERVER, this);
+        return getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_SERVER, this);
     }
 
     public IndexedSet<IPAddress> getIpAddresses() throws RemoteException {
-        return getService().getConnector().getIpAddresses().filterIndexedSet(IPAddress.COLUMN_NET_DEVICE, getNetDevices());
+        return getConnector().getIpAddresses().filterIndexedSet(IPAddress.COLUMN_NET_DEVICE, getNetDevices());
     }
 
     public IndexedSet<NetDevice> getNetDevices() throws RemoteException {
-    	return getService().getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_SERVER, this);
+    	return getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_SERVER, this);
     }
 
     /**
@@ -203,15 +205,15 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     }
 
     public IndexedSet<ServerResource> getServerResources() throws RemoteException {
-        return getService().getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_SERVER, this);
+        return getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_SERVER, this);
     }
 
     public IndexedSet<MasterServer> getMasterServers() throws RemoteException {
-        return getService().getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_SERVER, this);
+        return getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_SERVER, this);
     }
 
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
-        return getService().getConnector().getNetBinds().filterIndexedSet(NetBind.COLUMN_BUSINESS_SERVER, getBusinessServers());
+        return getConnector().getNetBinds().filterIndexedSet(NetBind.COLUMN_BUSINESS_SERVER, getBusinessServers());
     }
 
     public IndexedSet<NetBind> getNetBinds(Protocol protocol) throws RemoteException {
@@ -220,7 +222,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
 
     /* TODO
     public List<Business> getBusinesses() throws IOException, SQLException {
-        return getService().getConnector().getBusinessServers().getBusinesses(this);
+        return getConnector().getBusinessServers().getBusinesses(this);
     }
 
     public NetBind getNetBind(
@@ -228,12 +230,12 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
         NetPort port,
         NetProtocol netProtocol
     ) throws IOException, SQLException {
-        return getService().getConnector().getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
+        return getConnector().getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
     }
 
     public List<NetBind> getNetBinds(IPAddress ipAddress) throws IOException, SQLException {
         // Use the index first
-        List<NetBind> cached = getService().getConnector().getNetBinds().getIndexedRows(NetBind.COLUMN_IP_ADDRESS, ipAddress.pkey);
+        List<NetBind> cached = getConnector().getNetBinds().getIndexedRows(NetBind.COLUMN_IP_ADDRESS, ipAddress.pkey);
         int size=cached.size();
         List<NetBind> matches=new ArrayList<NetBind>(size);
         for(NetBind nb : cached) {
@@ -276,7 +278,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
         boolean billParent,
         PackageDefinition packageDefinition
     ) throws IOException, SQLException {
-	    getService().getConnector().getBusinesses().addBusiness(
+	    getConnector().getBusinesses().addBusiness(
             accounting,
             contractVersion,
             this,
@@ -298,7 +300,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
         boolean openFirewall,
         boolean monitoringEnabled
     ) throws IOException, SQLException {
-        return getService().getConnector().getNetBinds().addNetBind(
+        return getConnector().getNetBinds().addNetBind(
             this,
             bu,
             ia,

@@ -27,8 +27,8 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
     private AccountingCode owner;
     final private boolean useRestrictedSmtpPort;
 
-    public ServerFarm(ServerFarmService<?,?> service, DomainLabel name, String description, AccountingCode owner, boolean useRestrictedSmtpPort) {
-        super(service, name);
+    public ServerFarm(AOServConnector<?,?> connector, DomainLabel name, String description, AccountingCode owner, boolean useRestrictedSmtpPort) {
+        super(connector, name);
         this.description = description;
         this.owner = owner;
         this.useRestrictedSmtpPort = useRestrictedSmtpPort;
@@ -70,7 +70,7 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
     static final String COLUMN_OWNER = "owner";
     @SchemaColumn(order=2, name=COLUMN_OWNER, index=IndexType.INDEXED, description="the business that owns of the farm")
     public Business getOwner() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, owner);
+        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, owner);
     }
 
     @SchemaColumn(order=3, name="use_restricted_smtp_port", description="outgoing servers should use restricted source ports (affects firewall rules)")
@@ -89,12 +89,14 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOwner());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getRacks());
         return unionSet;
@@ -111,11 +113,11 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public List<Rack> getRacks() throws IOException, SQLException {
-        return getService().getConnector().getRacks().getIndexedRows(Rack.COLUMN_FARM, pkey);
+        return getConnector().getRacks().getIndexedRows(Rack.COLUMN_FARM, pkey);
     }*/
 
     public IndexedSet<Server> getServers() throws RemoteException {
-        return getService().getConnector().getServers().filterIndexed(Server.COLUMN_FARM, this);
+        return getConnector().getServers().filterIndexed(Server.COLUMN_FARM, this);
     }
     // </editor-fold>
 }

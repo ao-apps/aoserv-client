@@ -33,7 +33,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     final int operatingSystemVersion;
 
     public TechnologyVersion(
-        TechnologyVersionService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         String name,
         String version,
@@ -41,7 +41,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
         UserId owner,
         int operatingSystemVersion
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.name = name;
         this.version = version;
         this.updated = updated;
@@ -80,7 +80,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     static final String COLUMN_NAME = "name";
     @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the software package")
     public TechnologyName getTechnologyName() throws RemoteException {
-        return getService().getConnector().getTechnologyNames().get(name);
+        return getConnector().getTechnologyNames().get(name);
     }
 
     @SchemaColumn(order=2, name="version", description="the version number of the package in #.##.##-## format")
@@ -97,13 +97,13 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     @SchemaColumn(order=4, name=COLUMN_OWNER, index=IndexType.INDEXED, description="the business_administrator who is responsible for maintaining this package")
     public MasterUser getOwner() throws RemoteException {
         if(owner==null) return null;
-        return getService().getConnector().getMasterUsers().get(owner);
+        return getConnector().getMasterUsers().get(owner);
     }
 
     static final String COLUMN_OPERATING_SYSTEM_VERSION = "operating_system_version";
     @SchemaColumn(order=5, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of the OS that this packages is installed")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
-        return getService().getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
+        return getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
     }
     // </editor-fold>
 
@@ -117,6 +117,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyName());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOwner());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersion());
@@ -125,6 +126,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
@@ -137,27 +139,27 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<HttpdServer> getHttpdServers() throws RemoteException {
-        return getService().getConnector().getHttpdServers().filterIndexed(HttpdServer.COLUMN_MOD_PHP_VERSION, this);
+        return getConnector().getHttpdServers().filterIndexed(HttpdServer.COLUMN_MOD_PHP_VERSION, this);
     }
 
     public IndexedSet<MySQLServer> getMySQLServers() throws RemoteException {
-        return getService().getConnector().getMysqlServers().filterIndexed(MySQLServer.COLUMN_VERSION, this);
+        return getConnector().getMysqlServers().filterIndexed(MySQLServer.COLUMN_VERSION, this);
     }
 
     public HttpdJBossVersion getHttpdJBossVersion() throws RemoteException {
-        return getService().getConnector().getHttpdJBossVersions().filterUnique(HttpdJBossVersion.COLUMN_VERSION, this);
+        return getConnector().getHttpdJBossVersions().filterUnique(HttpdJBossVersion.COLUMN_VERSION, this);
     }
 
     public HttpdTomcatVersion getHttpdTomcatVersion() throws RemoteException {
-        return getService().getConnector().getHttpdTomcatVersions().filterUnique(HttpdTomcatVersion.COLUMN_VERSION, this);
+        return getConnector().getHttpdTomcatVersions().filterUnique(HttpdTomcatVersion.COLUMN_VERSION, this);
     }
 
     public PostgresVersion getPostgresVersion() throws RemoteException {
-        return getService().getConnector().getPostgresVersions().filterUnique(PostgresVersion.COLUMN_VERSION, this);
+        return getConnector().getPostgresVersions().filterUnique(PostgresVersion.COLUMN_VERSION, this);
     }
 
     public IndexedSet<PostgresVersion> getPostgresVersionsByPostgisVersion() throws RemoteException {
-        return getService().getConnector().getPostgresVersions().filterIndexed(PostgresVersion.COLUMN_POSTGIS_VERSION, this);
+        return getConnector().getPostgresVersions().filterIndexed(PostgresVersion.COLUMN_POSTGIS_VERSION, this);
     }
 
     /* TODO

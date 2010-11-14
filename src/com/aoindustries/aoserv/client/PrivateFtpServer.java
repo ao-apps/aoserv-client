@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PrivateFtpServer extends AOServObjectIntegerKey implements Comparable<PrivateFtpServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PrivateFtpServer> {
+final public class PrivateFtpServer extends AOServerResource implements Comparable<PrivateFtpServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PrivateFtpServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -35,8 +35,16 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey implements Co
     final private boolean allowAnonymous;
 
     public PrivateFtpServer(
-        PrivateFtpServerService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         int netBind,
         UnixPath logfile,
         DomainName hostname,
@@ -44,7 +52,7 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey implements Co
         int linuxAccountGroup,
         boolean allowAnonymous
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.netBind = netBind;
         this.logfile = logfile;
         this.hostname = hostname;
@@ -78,39 +86,34 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey implements Co
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
     static final String COLUMN_NET_BIND = "net_bind";
-    @SchemaColumn(order=1, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the pkey of the net_bind that the FTP server is on")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the pkey of the net_bind that the FTP server is on")
     public NetBind getNetBind() throws RemoteException {
-        return getService().getConnector().getNetBinds().get(netBind);
+        return getConnector().getNetBinds().get(netBind);
     }
 
-    @SchemaColumn(order=2, name="logfile", description="the file transfers are logged to")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name="logfile", description="the file transfers are logged to")
     public UnixPath getLogfile() {
         return logfile;
     }
 
-    @SchemaColumn(order=3, name="hostname", description="the hostname the server reports")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="hostname", description="the hostname the server reports")
     public DomainName getHostname() {
         return hostname;
     }
 
-    @SchemaColumn(order=4, name="email", description="the email address the server reports")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="email", description="the email address the server reports")
     public Email getEmail() {
         return email;
     }
 
     static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
-    @SchemaColumn(order=5, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the Linux account and group this FTP server runs as")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the Linux account and group this FTP server runs as")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
+        return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
 
-    @SchemaColumn(order=6, name="allow_anonymous", description="enabled or disabled anonymous access to the server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="allow_anonymous", description="enabled or disabled anonymous access to the server")
     public boolean allowAnonymous() {
         return allowAnonymous;
     }
@@ -119,16 +122,32 @@ final public class PrivateFtpServer extends AOServObjectIntegerKey implements Co
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.PrivateFtpServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.PrivateFtpServer(key, netBind, getDto(logfile), getDto(hostname), getDto(email), linuxAccountGroup, allowAnonymous);
+        return new com.aoindustries.aoserv.client.dto.PrivateFtpServer(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            netBind,
+            getDto(logfile),
+            getDto(hostname),
+            getDto(email),
+            linuxAccountGroup,
+            allowAnonymous
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
         return unionSet;
     }
     // </editor-fold>

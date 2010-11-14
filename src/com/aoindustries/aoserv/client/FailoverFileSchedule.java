@@ -28,14 +28,14 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     final private boolean enabled;
 
     public FailoverFileSchedule(
-        FailoverFileScheduleService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int replication,
         short hour,
         short minute,
         boolean enabled
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.replication = replication;
         this.hour = hour;
         this.minute = minute;
@@ -67,7 +67,7 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     static final String COLUMN_REPLICATION = "replication";
     @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the replication that will be started")
     public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
-        return getService().getConnector().getFailoverFileReplications().get(replication);
+        return getConnector().getFailoverFileReplications().get(replication);
     }
 
     @SchemaColumn(order=2, name="hour", description="the hour of day (in server timezone)")

@@ -37,8 +37,8 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public PackageCategory(PackageCategoryService<?,?> table, String name) {
-        super(table, name);
+    public PackageCategory(AOServConnector<?,?> connector, String name) {
+        super(connector, name);
     }
     // </editor-fold>
 
@@ -69,6 +69,7 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitions());
         return unionSet;
     }
@@ -83,7 +84,7 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<PackageDefinition> getPackageDefinitions() throws RemoteException {
-        return getService().getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_CATEGORY, this);
+        return getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_CATEGORY, this);
     }
     // </editor-fold>
 }

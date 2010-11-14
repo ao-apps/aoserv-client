@@ -34,8 +34,8 @@ final public class TicketType extends AOServObjectStringKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TicketType(TicketTypeService<?,?> table, String type) {
-        super(table, type);
+    public TicketType(AOServConnector<?,?> connector, String type) {
+        super(connector, type);
     }
     // </editor-fold>
 
@@ -63,6 +63,7 @@ final public class TicketType extends AOServObjectStringKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
@@ -79,15 +80,15 @@ final public class TicketType extends AOServObjectStringKey implements Comparabl
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<TicketAction> getTicketActionsByOldType() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_TYPE, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_TYPE, this);
     }
 
     public IndexedSet<TicketAction> getTicketActionsByNewType() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_TYPE, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_TYPE, this);
     }
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_TICKET_TYPE, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_TICKET_TYPE, this);
     }
     // </editor-fold>
 }

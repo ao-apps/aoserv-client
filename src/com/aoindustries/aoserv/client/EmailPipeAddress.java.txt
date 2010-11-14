@@ -42,11 +42,11 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
     }
 
     public EmailAddress getEmailAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().get(email_address);
+        return getConnector().getEmailAddresses().get(email_address);
     }
 
     public EmailPipe getEmailPipe() throws SQLException, IOException {
-        return getService().getConnector().getEmailPipes().get(email_pipe);
+        return getConnector().getEmailPipes().get(email_pipe);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -85,7 +85,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be used as any part of a majordomo list
-        for(MajordomoList ml : getService().getConnector().getMajordomoLists().getRows()) {
+        for(MajordomoList ml : getConnector().getMajordomoLists().getRows()) {
             if(
                 ml.getListPipeAddress().pkey==pkey
                 || ml.getListRequestPipeAddress().pkey==pkey
@@ -96,7 +96,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
         }
 
         // Cannot be used as any part of a majordomo server
-        for(MajordomoServer ms : getService().getConnector().getMajordomoServers().getRows()) {
+        for(MajordomoServer ms : getConnector().getMajordomoServers().getRows()) {
             if(ms.getMajordomoPipeAddress().pkey==pkey) {
                 EmailDomain ed=ms.getDomain();
                 reasons.add(new CannotRemoveReason("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname()));
@@ -107,7 +107,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_PIPE_ADDRESSES,
@@ -127,14 +127,14 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
     }
 
     public List<MajordomoList> getMajordomoListsByListPipeAddress() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_PIPE_ADD, pkey);
+        return getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_PIPE_ADD, pkey);
     }
 
     public List<MajordomoList> getMajordomoListsByListRequestPipeAddress() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_REQUEST_PIPE_ADD, pkey);
+        return getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_REQUEST_PIPE_ADD, pkey);
     }
 
     public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_MAJORDOMO_PIPE_ADDRESS, pkey);
+        return getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_MAJORDOMO_PIPE_ADDRESS, pkey);
     }
 }

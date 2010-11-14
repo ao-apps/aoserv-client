@@ -27,8 +27,8 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean isNegative;
 
-    public BankTransactionType(BankTransactionTypeService<?,?> service, String name, boolean isNegative) {
-        super(service, name);
+    public BankTransactionType(AOServConnector<?,?> connector, String name, boolean isNegative) {
+        super(connector, name);
         this.isNegative = isNegative;
     }
     // </editor-fold>
@@ -62,6 +62,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
         return unionSet;
     }
@@ -85,7 +86,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
      */
     // </editor-fold>

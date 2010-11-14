@@ -30,8 +30,8 @@ implements
     private UserId username;
     final private int role;
 
-    public BusinessAdministratorRole(BusinessAdministratorRoleService<?,?> service, int pkey, UserId username, int role) {
-        super(service, pkey);
+    public BusinessAdministratorRole(AOServConnector<?,?> connector, int pkey, UserId username, int role) {
+        super(connector, pkey);
         this.username = username;
         this.role = role;
         intern();
@@ -70,13 +70,13 @@ implements
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the business administrator who has the role")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(username);
+        return getConnector().getBusinessAdministrators().get(username);
     }
     
     static final String COLUMN_ROLE = "role";
     @SchemaColumn(order=2, name=COLUMN_ROLE, index=IndexType.INDEXED, description="the role the business administrator has")
     public AOServRole getRole() throws RemoteException {
-        return getService().getConnector().getAoservRoles().get(role);
+        return getConnector().getAoservRoles().get(role);
     }
     // </editor-fold>
 
@@ -90,6 +90,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getRole());
         return unionSet;

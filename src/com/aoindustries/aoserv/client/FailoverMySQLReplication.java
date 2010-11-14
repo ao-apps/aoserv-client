@@ -31,7 +31,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     final private Integer monitoringSecondsBehindCritical;
 
     public FailoverMySQLReplication(
-        FailoverMySQLReplicationService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         Integer aoServer,
         Integer replication,
@@ -41,7 +41,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
         Integer monitoringSecondsBehindHigh,
         Integer monitoringSecondsBehindCritical
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.aoServer = aoServer;
         this.replication = replication;
         this.mysqlServer = mysqlServer;
@@ -77,20 +77,20 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the ao_server that receives the replication")
     public AOServer getAOServer() throws RemoteException {
         if(aoServer==null) return null;
-        return getService().getConnector().getAoServers().get(aoServer);
+        return getConnector().getAoServers().get(aoServer);
     }
 
     static final String COLUMN_REPLICATION = "replication";
     @SchemaColumn(order=2, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the failover server that receives the replication")
     public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
         if(replication==null) return null;
-        return getService().getConnector().getFailoverFileReplications().get(replication);
+        return getConnector().getFailoverFileReplications().get(replication);
     }
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";
     @SchemaColumn(order=3, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the MySQL Server that is being replicated")
     public MySQLServer getMySQLServer() throws RemoteException {
-        return getService().getConnector().getMysqlServers().get(mysqlServer);
+        return getConnector().getMysqlServers().get(mysqlServer);
     }
 
     @SchemaColumn(order=4, name="monitoring_seconds_behind_low", description="the seconds behind where will trigger low alert level")
@@ -124,6 +124,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplication());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServer());

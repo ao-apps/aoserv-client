@@ -30,8 +30,8 @@ final public class NoticeType extends AOServObjectStringKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public NoticeType(NoticeTypeService<?,?> service, String type) {
-        super(service, type);
+    public NoticeType(AOServConnector<?,?> connector, String type) {
+        super(connector, type);
     }
     // </editor-fold>
 
@@ -59,6 +59,7 @@ final public class NoticeType extends AOServObjectStringKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
         return unionSet;
     }

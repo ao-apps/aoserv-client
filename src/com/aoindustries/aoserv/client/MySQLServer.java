@@ -29,7 +29,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLServer extends AOServObjectIntegerKey implements Comparable<MySQLServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
+final public class MySQLServer extends AOServerResource implements Comparable<MySQLServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -322,14 +322,22 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
     final private int netBind;
 
     public MySQLServer(
-        MySQLServerService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         MySQLServerName name,
         int version,
         int maxConnections,
         int netBind
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.name = name;
         this.version = version;
         this.maxConnections = maxConnections;
@@ -354,9 +362,7 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
             if(key==other.key) return 0;
             int diff = name.compareTo(other.name);
             if(diff!=0) return diff;
-            AOServerResource aoResource1 = getAoServerResource();
-            AOServerResource aoResource2 = other.getAoServerResource();
-            return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -364,54 +370,62 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
-    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
     static final String COLUMN_NAME = "name";
-    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
     public MySQLServerName getName() {
     	return name;
     }
 
     static final String COLUMN_VERSION = "version";
-    @SchemaColumn(order=2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the MySQL version")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the MySQL version")
     public TechnologyVersion getVersion() throws RemoteException {
-        TechnologyVersion obj=getService().getConnector().getTechnologyVersions().get(version);
+        TechnologyVersion obj=getConnector().getTechnologyVersions().get(version);
         if(
             obj.getOperatingSystemVersion().getPkey()
-            != getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey()
+            != getAoServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
             throw new RemoteException("resource/operating system version mismatch on MySQLServer: #"+key);
         }
     	return obj;
     }
 
-    @SchemaColumn(order=3, name="max_connections", description="the maximum number of connections for the db")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="max_connections", description="the maximum number of connections for the db")
     public int getMaxConnections() {
         return maxConnections;
     }
 
     static final String COLUMN_NET_BIND = "net_bind";
-    @SchemaColumn(order=4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
-        return getService().getConnector().getNetBinds().get(netBind);
+        return getConnector().getNetBinds().get(netBind);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.MySQLServer(key, getDto(name), version, maxConnections, netBind);
+        return new com.aoindustries.aoserv.client.dto.MySQLServer(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            getDto(name),
+            version,
+            maxConnections,
+            netBind
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
         return unionSet;
@@ -419,6 +433,7 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabases());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUsers());
@@ -429,17 +444,17 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return getAoServerResource().getAoServer().toStringImpl()+"/"+name;
+        return getAoServer().toStringImpl()+"/"+name;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
-        return getService().getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, this);
+        return getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, this);
     }
 
     public IndexedSet<MySQLDatabase> getMysqlDatabases() throws RemoteException {
-        return getService().getConnector().getMysqlDatabases().filterIndexed(MySQLDatabase.COLUMN_MYSQL_SERVER, this);
+        return getConnector().getMysqlDatabases().filterIndexed(MySQLDatabase.COLUMN_MYSQL_SERVER, this);
     }
 
     public MySQLDatabase getMysqlDatabase(MySQLDatabaseName name) throws RemoteException {
@@ -449,11 +464,11 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
     }
 
     public IndexedSet<MySQLDBUser> getMySQLDBUsers() throws RemoteException {
-        return getService().getConnector().getMysqlDBUsers().filterIndexedSet(MySQLDBUser.COLUMN_MYSQL_DATABASE, getMysqlDatabases());
+        return getConnector().getMysqlDBUsers().filterIndexedSet(MySQLDBUser.COLUMN_MYSQL_DATABASE, getMysqlDatabases());
     }
 
     public IndexedSet<MySQLUser> getMysqlUsers() throws RemoteException {
-    	return getService().getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
+    	return getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
     }
 
     /**
@@ -462,7 +477,7 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
      * @throws NoSuchElementException if group not found.
      */
     public MySQLUser getMysqlUser(MySQLUserId username) throws RemoteException {
-        MySQLUser mu = getMysqlUsers().filterUnique(MySQLUser.COLUMN_USERNAME, getService().getConnector().getUsernames().get(username.getUserId()));
+        MySQLUser mu = getMysqlUsers().filterUnique(MySQLUser.COLUMN_USERNAME, getConnector().getUsernames().get(username.getUserId()));
         if(mu==null) throw new NoSuchElementException("this="+this+", username="+username);
         return mu;
     }
@@ -489,7 +504,7 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
         String name,
         Business bu
     ) throws IOException, SQLException {
-    	return getService().getConnector().getMysqlDatabases().addMySQLDatabase(
+    	return getConnector().getMysqlDatabases().addMySQLDatabase(
             name,
             this,
             bu
@@ -503,19 +518,19 @@ final public class MySQLServer extends AOServObjectIntegerKey implements Compara
 
     /* TODO
     public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
-    	return getService().getConnector().getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
+    	return getConnector().getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
     }
 
     public void restartMySQL() throws IOException, SQLException {
-        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_MYSQL, pkey);
+        getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_MYSQL, pkey);
     }
 
     public void startMySQL() throws IOException, SQLException {
-        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.START_MYSQL, pkey);
+        getConnector().requestUpdate(false, AOServProtocol.CommandID.START_MYSQL, pkey);
     }
 
     public void stopMySQL() throws IOException, SQLException {
-        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_MYSQL, pkey);
+        getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_MYSQL, pkey);
     }
     */
     // </editor-fold>

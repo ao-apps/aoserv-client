@@ -36,7 +36,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     final private Integer encryptionRecipient;
 
     public CreditCardProcessor(
-        CreditCardProcessorService<?,?> service,
+        AOServConnector<?,?> connector,
         String providerId,
         AccountingCode accounting,
         String className,
@@ -50,7 +50,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
         Integer encryptionFrom,
         Integer encryptionRecipient
     ) {
-        super(service, providerId);
+        super(connector, providerId);
         this.accounting = accounting;
         this.className = className;
         this.param1 = param1;
@@ -98,7 +98,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business owning the merchant account")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     @SchemaColumn(order=2, name="class_name", description="the classname of the Java code that connects to the merchant services provider")
@@ -149,7 +149,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     @SchemaColumn(order=10, name="encryption_from", description="the from that will be used for encryption")
     public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
         if(encryptionFrom==-1) return null;
-        return getService().getConnector().getEncryptionKeys().get(encryptionFrom);
+        return getConnector().getEncryptionKeys().get(encryptionFrom);
     }
      */
 
@@ -161,7 +161,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     @SchemaColumn(order=11, name="encryption_recipient", description="the recipient that will be used for encryption")
     public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
         if(encryptionRecipient==-1) return null;
-        return getService().getConnector().getEncryptionKeys().get(encryptionRecipient);
+        return getConnector().getEncryptionKeys().get(encryptionRecipient);
     }
      */
     // </editor-fold>
@@ -176,12 +176,14 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCards());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactions());
@@ -192,19 +194,19 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-        return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_PROCESSOR_ID, this);
+        return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_PROCESSOR_ID, this);
     }
 
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PROCESSOR, this);
+        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PROCESSOR, this);
     }
     /* TODO
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getService().getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_PROCESSOR, pkey);
+        return getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_PROCESSOR, pkey);
     }
     */
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
-        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_PROCESSOR_ID, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_PROCESSOR_ID, this);
     }
     // </editor-fold>
 }

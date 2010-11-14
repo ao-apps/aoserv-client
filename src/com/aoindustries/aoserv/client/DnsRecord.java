@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsRecord extends AOServObjectIntegerKey implements Comparable<DnsRecord>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsRecord> /*, TODO: Removable */ {
+final public class DnsRecord extends Resource implements Comparable<DnsRecord>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsRecord> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -37,8 +37,14 @@ final public class DnsRecord extends AOServObjectIntegerKey implements Comparabl
     final private Integer ttl;
 
     public DnsRecord(
-        DnsRecordService<?,?> service,
-        int resource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
         int zone,
         String domain,
         String type,
@@ -49,7 +55,7 @@ final public class DnsRecord extends AOServObjectIntegerKey implements Comparabl
         Integer dhcpAddress,
         Integer ttl
     ) {
-        super(service, resource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
         this.zone = zone;
         this.domain = domain;
         this.type = type;
@@ -100,55 +106,50 @@ final public class DnsRecord extends AOServObjectIntegerKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="resource", index=IndexType.PRIMARY_KEY, description="the resource id")
-    public Resource getResource() throws RemoteException {
-        return getService().getConnector().getResources().get(key);
-    }
-
     static final String COLUMN_ZONE = "zone";
-    @SchemaColumn(order=1, name=COLUMN_ZONE, index=IndexType.INDEXED, description="the zone as found in dns_zones")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, name=COLUMN_ZONE, index=IndexType.INDEXED, description="the zone as found in dns_zones")
     public DnsZone getZone() throws RemoteException {
-        return getService().getConnector().getDnsZones().get(zone);
+        return getConnector().getDnsZones().get(zone);
     }
 
-    @SchemaColumn(order=2, name="domain", description="the first column in the zone files")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, name="domain", description="the first column in the zone files")
     public String getDomain() {
         return domain;
     }
 
     static final String COLUMN_TYPE = "type";
-    @SchemaColumn(order=3, name=COLUMN_TYPE, index=IndexType.INDEXED, description="the type as found in dns_types")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, name=COLUMN_TYPE, index=IndexType.INDEXED, description="the type as found in dns_types")
     public DnsType getType() throws RemoteException {
-        return getService().getConnector().getDnsTypes().get(type);
+        return getConnector().getDnsTypes().get(type);
     }
 
-    @SchemaColumn(order=4, name="mx_priority", description="the priority for the MX records")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+4, name="mx_priority", description="the priority for the MX records")
     public Integer getMxPriority() {
         return mxPriority;
     }
 
-    @SchemaColumn(order=5, name="data_ip_address", description="the destination IP address for A and AAAA records")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+5, name="data_ip_address", description="the destination IP address for A and AAAA records")
     public InetAddress getDataIpAddress() {
         return dataIpAddress;
     }
 
-    @SchemaColumn(order=6, name="data_domain_name", description="the fully-qualitied domain name for CNAME, MX, NS, and PTR records")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+6, name="data_domain_name", description="the fully-qualitied domain name for CNAME, MX, NS, and PTR records")
     public DomainName getDataDomainName() {
         return dataDomainName;
     }
 
-    @SchemaColumn(order=7, name="data_text", description="the text data for SPF and TXT records")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+7, name="data_text", description="the text data for SPF and TXT records")
     public String getDataText() {
         return dataText;
     }
 
-    @SchemaColumn(order=8, name="dhcp_address", description="the pkey of the IP address that will update this DNS record")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+8, name="dhcp_address", description="the pkey of the IP address that will update this DNS record")
     public IPAddress getDhcpAddress() throws RemoteException {
         if(dhcpAddress==null) return null;
-        return getService().getConnector().getIpAddresses().get(dhcpAddress);
+        return getConnector().getIpAddresses().get(dhcpAddress);
     }
 
-    @SchemaColumn(order=9, name="ttl", description="the record-specific TTL, if not provided will use the TTL of the zone")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+9, name="ttl", description="the record-specific TTL, if not provided will use the TTL of the zone")
     public Integer getTtl() {
         return ttl;
     }
@@ -157,14 +158,31 @@ final public class DnsRecord extends AOServObjectIntegerKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.DnsRecord getDto() {
-        return new com.aoindustries.aoserv.client.dto.DnsRecord(key, zone, domain, type, mxPriority, getDto(dataIpAddress), getDto(dataDomainName), dataText, dhcpAddress, ttl);
+        return new com.aoindustries.aoserv.client.dto.DnsRecord(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            zone,
+            domain,
+            type,
+            mxPriority,
+            getDto(dataIpAddress),
+            getDto(dataDomainName),
+            dataText,
+            dhcpAddress,
+            ttl
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getZone());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDhcpAddress());
@@ -252,7 +270,7 @@ final public class DnsRecord extends AOServObjectIntegerKey implements Comparabl
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_RECORDS, pkey);
+    	getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_RECORDS, pkey);
     }
      */
     // </editor-fold>

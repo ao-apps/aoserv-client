@@ -154,8 +154,8 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public LinuxAccountType(LinuxAccountTypeService<?,?> service, String resourceType) {
-        super(service, resourceType);
+    public LinuxAccountType(AOServConnector<?,?> connector, String resourceType) {
+        super(connector, resourceType);
     }
     // </editor-fold>
 
@@ -169,7 +169,7 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="resource_type", index=IndexType.PRIMARY_KEY, description="the resource type this represents")
     public ResourceType getResourceType() throws RemoteException {
-        return getService().getConnector().getResourceTypes().get(getKey());
+        return getConnector().getResourceTypes().get(getKey());
     }
     // </editor-fold>
 
@@ -183,12 +183,14 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccounts());
         return unionSet;
     }
@@ -203,7 +205,7 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_LINUX_ACCOUNT_TYPE, this);
+        return getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_LINUX_ACCOUNT_TYPE, this);
     }
     // </editor-fold>
 

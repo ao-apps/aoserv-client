@@ -63,7 +63,7 @@ implements
     private String supportCode;
 
     public BusinessAdministrator(
-        BusinessAdministratorService<?,?> service,
+        AOServConnector<?,?> connector,
         UserId username,
         HashedPassword password,
         String fullName,
@@ -87,7 +87,7 @@ implements
         boolean canSwitchUsers,
         String supportCode
     ) {
-        super(service, username);
+        super(connector, username);
         this.password = password;
         this.fullName = fullName;
         this.title = title;
@@ -146,7 +146,7 @@ implements
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
     public Username getUsername() throws RemoteException {
-        return getService().getConnector().getUsernames().get(getKey());
+        return getConnector().getUsernames().get(getKey());
     }
     public UserId getUserId() {
         return getKey();
@@ -236,7 +236,7 @@ implements
     @SchemaColumn(order=17, name=COLUMN_COUNTRY, index=IndexType.INDEXED, description="the country (if different than business)")
     public CountryCode getCountry() throws RemoteException {
         if(country == null) return null;
-        CountryCode countryCode=getService().getConnector().getCountryCodes().get(country);
+        CountryCode countryCode=getConnector().getCountryCodes().get(country);
         if(countryCode == null) throw new RemoteException("CountryCode not found: " + country);
         return countryCode;
     }
@@ -250,7 +250,7 @@ implements
     @SchemaColumn(order=19, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that this account is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
-        return getService().getConnector().getDisableLogs().get(disableLog);
+        return getConnector().getDisableLogs().get(disableLog);
     }
 
     @SchemaColumn(order=20, name="can_switch_users", description="allows this person to switch users to any subaccounts")
@@ -274,6 +274,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountry());
         // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
@@ -282,6 +283,7 @@ implements
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministratorRoles());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardsByCreatedBy());
@@ -307,67 +309,67 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<Business> getBusinessesByCreatedBy() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterIndexed(Business.COLUMN_CREATED_BY, this);
+        return getConnector().getBusinesses().filterIndexed(Business.COLUMN_CREATED_BY, this);
     }
 
     public IndexedSet<BusinessAdministratorRole> getBusinessAdministratorRoles() throws RemoteException {
-        return getService().getConnector().getBusinessAdministratorRoles().filterIndexed(BusinessAdministratorRole.COLUMN_USERNAME, this);
+        return getConnector().getBusinessAdministratorRoles().filterIndexed(BusinessAdministratorRole.COLUMN_USERNAME, this);
     }
 
     public IndexedSet<CreditCard> getCreditCardsByCreatedBy() throws RemoteException {
-        return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_CREATED_BY, this);
+        return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_CREATED_BY, this);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardCreatedBy() throws RemoteException {
-        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_CREATED_BY, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_CREATED_BY, this);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByAuthorizationUsername() throws RemoteException {
-        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_AUTHORIZATION_USERNAME, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_AUTHORIZATION_USERNAME, this);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCaptureUsername() throws RemoteException {
-        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CAPTURE_USERNAME, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CAPTURE_USERNAME, this);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByVoidUsername() throws RemoteException {
-        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_VOID_USERNAME, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_VOID_USERNAME, this);
     }
 
     public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
-        return getService().getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_DISABLED_BY, this);
+        return getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_DISABLED_BY, this);
     }
 
     public MasterUser getMasterUser() throws RemoteException {
-    	return getService().getConnector().getMasterUsers().filterUnique(MasterUser.COLUMN_USERNAME, this);
+    	return getConnector().getMasterUsers().filterUnique(MasterUser.COLUMN_USERNAME, this);
     }
 
     public IndexedSet<Resource> getResources() throws RemoteException {
-        return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_CREATED_BY, this);
+        return getConnector().getResources().filterIndexed(Resource.COLUMN_CREATED_BY, this);
     }
 
     public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_ADMINISTRATOR, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_ADMINISTRATOR, this);
     }
 
     public IndexedSet<TicketAction> getTicketActionsByOldAssignedTo() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ASSIGNED_TO, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ASSIGNED_TO, this);
     }
 
     public IndexedSet<TicketAction> getTicketActionsByNewAssignedTo() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ASSIGNED_TO, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ASSIGNED_TO, this);
     }
 
     public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
-        return getService().getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_ADMINISTRATOR, this);
+        return getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_ADMINISTRATOR, this);
     }
 
     public IndexedSet<Ticket> getTicketsByCreatedBy() throws RemoteException {
-        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_CREATED_BY, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_CREATED_BY, this);
     }
 
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_USERNAME, this);
+        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_USERNAME, this);
     }
     // </editor-fold>
 
@@ -399,7 +401,7 @@ implements
      * Checks if this business administrator has the provided permission.
      */
     public boolean hasPermission(AOServPermission.Permission permission) throws RemoteException {
-        return hasPermission(getService().getConnector().getAoservPermissions().get(permission.name()));
+        return hasPermission(getConnector().getAoservPermissions().get(permission.name()));
     }
 
     /**
@@ -431,8 +433,8 @@ implements
     public boolean canAccessAoServer(AOServer server) throws RemoteException {
         if(server==null) return false;
         // Check access using own connector
-        if(server.getService().getConnector()!=getService().getConnector()) {
-            server = getService().getConnector().getAoServers().get(server.getKey());
+        if(server.getConnector()!=getConnector()) {
+            server = getConnector().getAoServers().get(server.getKey());
             if(server==null) return false;
         }
         return canAccessServer(server.getServer());
@@ -441,8 +443,8 @@ implements
     public boolean canAccessBusiness(Business business) throws RemoteException {
         if(business==null) return false;
         // Check access using own connector
-        if(business.getService().getConnector()!=getService().getConnector()) {
-            business = getService().getConnector().getBusinesses().get(business.getKey());
+        if(business.getConnector()!=getConnector()) {
+            business = getConnector().getBusinesses().get(business.getKey());
             if(business==null) return false;
         }
         MasterUser mu = getMasterUser();
@@ -467,8 +469,8 @@ implements
     public boolean canAccessBusinessAdministrator(BusinessAdministrator ba) throws RemoteException {
         if(ba==null) return false;
         // Check access using own connector
-        if(ba.getService().getConnector()!=getService().getConnector()) {
-            ba = getService().getConnector().getBusinessAdministrators().get(ba.getKey());
+        if(ba.getConnector()!=getConnector()) {
+            ba = getConnector().getBusinessAdministrators().get(ba.getKey());
             if(ba==null) return false;
         }
         return canAccessUsername(ba.getUsername());
@@ -477,8 +479,8 @@ implements
     public boolean canAccessLinuxAccount(LinuxAccount linuxAccount) throws RemoteException {
         if(linuxAccount==null) return false;
         // Check access using own connector
-        if(linuxAccount.getService().getConnector()!=getService().getConnector()) {
-            linuxAccount = getService().getConnector().getLinuxAccounts().get(linuxAccount.getKey());
+        if(linuxAccount.getConnector()!=getConnector()) {
+            linuxAccount = getConnector().getLinuxAccounts().get(linuxAccount.getKey());
             if(linuxAccount==null) return false;
         }
         MasterUser mu = getMasterUser();
@@ -489,7 +491,7 @@ implements
                 return true;
             } else {
                 // Restricted by server
-                return canAccessAoServer(linuxAccount.getAoServerResource().getAoServer());
+                return canAccessAoServer(linuxAccount.getAoServer());
             }
         } else {
             // Regular user
@@ -500,8 +502,8 @@ implements
     public boolean canAccessMySQLUser(MySQLUser mysqlUser) throws RemoteException {
         if(mysqlUser==null) return false;
         // Check access using own connector
-        if(mysqlUser.getService().getConnector()!=getService().getConnector()) {
-            mysqlUser = getService().getConnector().getMysqlUsers().get(mysqlUser.getKey());
+        if(mysqlUser.getConnector()!=getConnector()) {
+            mysqlUser = getConnector().getMysqlUsers().get(mysqlUser.getKey());
             if(mysqlUser==null) return false;
         }
         MasterUser mu = getMasterUser();
@@ -512,7 +514,7 @@ implements
                 return true;
             } else {
                 // Restricted by server
-                return canAccessAoServer(mysqlUser.getAoServerResource().getAoServer());
+                return canAccessAoServer(mysqlUser.getAoServer());
             }
         } else {
             // Regular user
@@ -523,8 +525,8 @@ implements
     public boolean canAccessPostgresUser(PostgresUser postgresUser) throws RemoteException {
         if(postgresUser==null) return false;
         // Check access using own connector
-        if(postgresUser.getService().getConnector()!=getService().getConnector()) {
-            postgresUser = getService().getConnector().getPostgresUsers().get(postgresUser.getKey());
+        if(postgresUser.getConnector()!=getConnector()) {
+            postgresUser = getConnector().getPostgresUsers().get(postgresUser.getKey());
             if(postgresUser==null) return false;
         }
         MasterUser mu = getMasterUser();
@@ -535,7 +537,7 @@ implements
                 return true;
             } else {
                 // Restricted by server
-                return canAccessAoServer(postgresUser.getAoServerResource().getAoServer());
+                return canAccessAoServer(postgresUser.getAoServer());
             }
         } else {
             // Regular user
@@ -546,8 +548,8 @@ implements
     public boolean canAccessServer(Server server) throws RemoteException {
         if(server==null) return false;
         // Check access using own connector
-        if(server.getService().getConnector()!=getService().getConnector()) {
-            server = getService().getConnector().getServers().get(server.getKey());
+        if(server.getConnector()!=getConnector()) {
+            server = getConnector().getServers().get(server.getKey());
             if(server==null) return false;
         }
         MasterUser mu = getMasterUser();
@@ -570,8 +572,8 @@ implements
     public boolean canAccessUsername(Username username) throws RemoteException {
         if(username==null) return false;
         // Check access using own connector
-        if(username.getService().getConnector()!=getService().getConnector()) {
-            username = getService().getConnector().getUsernames().get(username.getKey());
+        if(username.getConnector()!=getConnector()) {
+            username = getConnector().getUsernames().get(username.getKey());
             if(username==null) return false;
         }
         return canAccessBusiness(username.getBusiness());
@@ -597,7 +599,7 @@ implements
     }
 
     public boolean canDisable() throws SQLException, IOException {
-        return disableLog==null && !equals(getService().getConnector().getThisBusinessAdministrator());
+        return disableLog==null && !equals(getConnector().getThisBusinessAdministrator());
     }
 
     public boolean canSwitchUser(BusinessAdministrator other) throws SQLException, IOException {
@@ -626,7 +628,7 @@ implements
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
-    	return getService().getConnector().getMonthlyCharges().getMonthlyCharges(this);
+    	return getConnector().getMonthlyCharges().getMonthlyCharges(this);
     }
 
     public boolean isActiveAccounting() throws IOException, SQLException {
@@ -677,7 +679,7 @@ implements
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServConnector<?,?> conn=getService().getConnector();
+        AOServConnector<?,?> conn=getConnector();
 
         if(equals(conn.getThisBusinessAdministrator())) reasons.add(new CannotRemoveReason<BusinessAdministrator>("Not allowed to remove self", this));
 
@@ -694,7 +696,7 @@ implements
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.BUSINESS_ADMINISTRATORS,
@@ -739,7 +741,7 @@ implements
         final String finalCountry = country;
         if(zip!=null && zip.length()==0) zip=null;
         final String finalZip = zip;
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -774,7 +776,7 @@ implements
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
@@ -797,15 +799,15 @@ implements
      */
     /* TODO
     public boolean hasPermission(String permission) throws IOException, SQLException {
-        return getService().getConnector().getBusinessAdministratorPermissions().hasPermission(this, permission);
+        return getConnector().getBusinessAdministratorPermissions().hasPermission(this, permission);
     }
 
     public List<MonthlyCharge> getMonthlyChargesByCreatedBy() throws IOException, SQLException {
-        return getService().getConnector().getMonthlyCharges().getMonthlyChargesByCreatedBy(this);
+        return getConnector().getMonthlyCharges().getMonthlyChargesByCreatedBy(this);
     }
 
     public List<SignupRequest> getCompletedSignupRequests() throws IOException, SQLException {
-        return getService().getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_COMPLETED_BY, pkey);
+        return getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_COMPLETED_BY, pkey);
     }*/
     // </editor-fold>
 }

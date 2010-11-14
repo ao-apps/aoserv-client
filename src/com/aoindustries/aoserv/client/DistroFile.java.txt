@@ -86,7 +86,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
     }
 
     public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
-        return getService().getConnector().getOperatingSystemVersions().get(operating_system_version);
+        return getConnector().getOperatingSystemVersions().get(operating_system_version);
     }
 
     public String getPath() {
@@ -98,7 +98,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
     }
     
     public DistroFileType getType() throws SQLException, IOException {
-        return getService().getConnector().getDistroFileTypes().get(type);
+        return getConnector().getDistroFileTypes().get(type);
     }
     
     public long getMode() {
@@ -107,12 +107,12 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
     
     public LinuxAccount getLinuxAccount() throws SQLException, IOException {
         if(table==null) throw new NullPointerException("table is null");
-        if(getService().getConnector()==null) throw new NullPointerException("getService().getConnector() is null");
-        return getService().getConnector().getLinuxAccounts().get(linux_account);
+        if(getConnector()==null) throw new NullPointerException("getConnector() is null");
+        return getConnector().getLinuxAccounts().get(linux_account);
     }
 
     public LinuxGroup getLinuxGroup() throws SQLException, IOException {
-        return getService().getConnector().getLinuxGroups().get(linux_group);
+        return getConnector().getLinuxGroups().get(linux_group);
     }
 
     public long getSize() {

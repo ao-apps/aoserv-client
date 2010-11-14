@@ -43,7 +43,7 @@ final public class CheckPostgresUserPasswordCommand extends AOServCommand<List<P
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        PostgresUser pu = connectedUser.getService().getConnector().getPostgresUsers().get(postgresUser);
+        PostgresUser pu = connectedUser.getConnector().getPostgresUsers().get(postgresUser);
         if(!connectedUser.canAccessPostgresUser(pu)) {
             errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {

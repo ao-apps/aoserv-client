@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccount extends AOServObjectIntegerKey implements Comparable<LinuxAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
+final public class LinuxAccount extends AOServerResource implements Comparable<LinuxAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -83,8 +83,16 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     private String predisablePassword;
 
     public LinuxAccount(
-        LinuxAccountService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         String linuxAccountType,
         UserId username,
         LinuxID uid,
@@ -96,7 +104,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
         UnixPath shell,
         String predisablePassword
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.linuxAccountType = linuxAccountType;
         this.username = username;
         this.uid = uid;
@@ -135,9 +143,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
             if(key==other.key) return 0;
             int diff = username==other.username ? 0 : getUsername().compareTo(other.getUsername()); // OK - interned
             if(diff!=0) return diff;
-            AOServerResource aor1 = getAoServerResource();
-            AOServerResource aor2 = other.getAoServerResource();
-            return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareTo(aor2.getAoServer());
+            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -145,65 +151,59 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
-    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
     static final String COLUMN_LINUX_ACCOUNT_TYPE = "linux_account_type";
-    @SchemaColumn(order=1, name=COLUMN_LINUX_ACCOUNT_TYPE, index=IndexType.INDEXED, description="the type of account")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_LINUX_ACCOUNT_TYPE, index=IndexType.INDEXED, description="the type of account")
     public LinuxAccountType getLinuxAccountType() throws RemoteException {
-        return getService().getConnector().getLinuxAccountTypes().get(linuxAccountType);
+        return getConnector().getLinuxAccountTypes().get(linuxAccountType);
     }
 
     static final String COLUMN_USERNAME = "username";
-    @SchemaColumn(order=2, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the user")
     public Username getUsername() throws RemoteException {
-        return getService().getConnector().getUsernames().get(username);
+        return getConnector().getUsernames().get(username);
     }
     public UserId getUserId() {
         return username;
     }
 
     static final String COLUMN_UID = "uid";
-    @SchemaColumn(order=3, name=COLUMN_UID, index=IndexType.INDEXED, description="the uid of the user on the machine")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_UID, index=IndexType.INDEXED, description="the uid of the user on the machine")
     public LinuxID getUid() {
         return uid;
     }
 
-    @SchemaColumn(order=4, name="home", description="the home directory of the user on this machine")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="home", description="the home directory of the user on this machine")
     public UnixPath getHome() {
         return home;
     }
 
-    @SchemaColumn(order=5, name="name", description="the full name of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="name", description="the full name of the user")
     public Gecos getName() {
         return name;
     }
 
-    @SchemaColumn(order=6, name="office_location", description="the location of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="office_location", description="the location of the user")
     public Gecos getOfficeLocation() {
         return officeLocation;
     }
 
-    @SchemaColumn(order=7, name="office_phone", description="the work phone number of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="office_phone", description="the work phone number of the user")
     public Gecos getOfficePhone() {
         return officePhone;
     }
 
-    @SchemaColumn(order=8, name="home_phone", description="the home phone number of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, name="home_phone", description="the home phone number of the user")
     public Gecos getHomePhone() {
         return homePhone;
     }
 
     static final String COLUMN_SHELL = "shell";
-    @SchemaColumn(order=9, name=COLUMN_SHELL, index=IndexType.INDEXED, description="the users shell preference")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+9, name=COLUMN_SHELL, index=IndexType.INDEXED, description="the users shell preference")
     public Shell getShell() throws RemoteException {
-        return getService().getConnector().getShells().get(shell);
+        return getConnector().getShells().get(shell);
     }
 
-    @SchemaColumn(order=10, name="predisable_password", description="stores the password that was used before the account was disabled")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+10, name="predisable_password", description="stores the password that was used before the account was disabled")
     public String getPredisablePassword() {
         return predisablePassword;
     }
@@ -214,6 +214,14 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     public com.aoindustries.aoserv.client.dto.LinuxAccount getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxAccount(
             key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
             linuxAccountType,
             getDto(username),
             getDto(uid),
@@ -231,7 +239,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getShell());
@@ -240,6 +248,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFtpGuestUser());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInbox());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroups());
@@ -250,22 +259,22 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return username+"@"+getAoServerResource().getAoServer().toStringImpl();
+        return username+"@"+getAoServer().toStringImpl();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public EmailInbox getEmailInbox() throws RemoteException {
         if(linuxAccountType!=ResourceType.EMAIL_INBOX && linuxAccountType!=ResourceType.SHELL_ACCOUNT) return null; // OK - interned
-        return getService().getConnector().getEmailInboxes().get(key);
+        return getConnector().getEmailInboxes().get(key);
     }
 
     public FtpGuestUser getFtpGuestUser() throws RemoteException {
-        return getService().getConnector().getFtpGuestUsers().filterUnique(FtpGuestUser.COLUMN_LINUX_ACCOUNT, this);
+        return getConnector().getFtpGuestUsers().filterUnique(FtpGuestUser.COLUMN_LINUX_ACCOUNT, this);
     }
 
     public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_ACCOUNT, this);
+        return getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_ACCOUNT, this);
     }
 
     public LinuxGroup getPrimaryLinuxGroup() throws RemoteException {
@@ -288,15 +297,15 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public void addFtpGuestUser() throws IOException, SQLException {
-        getService().getConnector().getFtpGuestUsers().addFtpGuestUser(pkey);
+        getConnector().getFtpGuestUsers().addFtpGuestUser(pkey);
     }
 
     public void addLinuxGroup(LinuxGroup group) throws IOException, SQLException {
-        getService().getConnector().getLinuxGroupAccounts().addLinuxGroupAccount(group, this);
+        getConnector().getLinuxGroupAccounts().addLinuxGroupAccount(group, this);
     }
 
     public int addLinuxServerAccount(AOServer aoServer, String home) throws IOException, SQLException {
-        return getService().getConnector().getLinuxServerAccounts().addLinuxServerAccount(this, aoServer, home);
+        return getConnector().getLinuxServerAccounts().addLinuxServerAccount(this, aoServer, home);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
@@ -320,19 +329,19 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
     }
 
     public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
-        return getService().getConnector().getLinuxGroupAccounts().getLinuxGroups(this);
+        return getConnector().getLinuxGroupAccounts().getLinuxGroups(this);
     }
 
     public LinuxGroup getPrimaryGroup() throws IOException, SQLException {
-        return getService().getConnector().getLinuxGroupAccounts().getPrimaryGroup(this);
+        return getConnector().getLinuxGroupAccounts().getPrimaryGroup(this);
     }
 
     /* TODO
@@ -374,7 +383,7 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_ACCOUNTS,
@@ -383,23 +392,23 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     }
 
     public void removeLinuxGroup(LinuxGroup group) throws IOException, SQLException {
-        getService().getConnector().getLinuxGroupAccounts().getLinuxGroupAccount(group.pkey, pkey).remove();
+        getConnector().getLinuxGroupAccounts().getLinuxGroupAccount(group.pkey, pkey).remove();
     }
 
     public void setHomePhone(String phone) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
     }
 
     public void setName(String name) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
     }
 
     public void setOfficeLocation(String location) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
     }
 
     public void setOfficePhone(String phone) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
     }
 
     public void setPassword(String password) throws SQLException, IOException {
@@ -409,11 +418,11 @@ final public class LinuxAccount extends AOServObjectIntegerKey implements Compar
     }
 
     public void setShell(Shell shell) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
     }
 
     public void setPrimaryLinuxGroup(LinuxGroup group) throws SQLException, IOException {
-        getService().getConnector().getLinuxGroupAccounts().getLinuxGroupAccount(group.getName(), pkey).setAsPrimary();
+        getConnector().getLinuxGroupAccounts().getLinuxGroupAccount(group.getName(), pkey).setAsPrimary();
     }
     */
     // </editor-fold>

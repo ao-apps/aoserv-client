@@ -31,14 +31,14 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     private String disableReason;
 
     public DisableLog(
-        DisableLogService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         long time,
         AccountingCode accounting,
         UserId disabledBy,
         String disableReason
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.time = time;
         this.accounting = accounting;
         this.disabledBy = disabledBy;
@@ -87,7 +87,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business whos resources are being disabled")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     /**
@@ -97,7 +97,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     @SchemaColumn(order=3, name=COLUMN_DISABLED_BY, index=IndexType.INDEXED, description="the person who disabled the accounts")
     public BusinessAdministrator getDisabledBy() throws RemoteException {
         try {
-            return getService().getConnector().getBusinessAdministrators().get(disabledBy);
+            return getConnector().getBusinessAdministrators().get(disabledBy);
         } catch(NoSuchElementException err) {
             // Filtered
             return null;
@@ -120,6 +120,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisabledBy());
         return unionSet;
@@ -127,6 +128,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getBusinesses());
         // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrators());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupNames());
@@ -138,23 +140,23 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<Business> getBusinesses() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterIndexed(Business.COLUMN_DISABLE_LOG, this);
+        return getConnector().getBusinesses().filterIndexed(Business.COLUMN_DISABLE_LOG, this);
     }
 
     public IndexedSet<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_DISABLE_LOG, this);
+        return getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_DISABLE_LOG, this);
     }
 
     public IndexedSet<GroupName> getGroupNames() throws RemoteException {
-        return getService().getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_DISABLE_LOG, this);
+        return getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_DISABLE_LOG, this);
     }
 
     public IndexedSet<Username> getUsernames() throws RemoteException {
-        return getService().getConnector().getUsernames().filterIndexed(Username.COLUMN_DISABLE_LOG, this);
+        return getConnector().getUsernames().filterIndexed(Username.COLUMN_DISABLE_LOG, this);
     }
 
     public IndexedSet<Resource> getResources() throws RemoteException {
-        return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_DISABLE_LOG, this);
+        return getConnector().getResources().filterIndexed(Resource.COLUMN_DISABLE_LOG, this);
     }
     // </editor-fold>
 
@@ -185,43 +187,43 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     }
 
     public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
-        return getService().getConnector().getLinuxServerAccounts().getIndexedRows(LinuxServerAccount.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getLinuxServerAccounts().getIndexedRows(LinuxServerAccount.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<Username> getUsernames() throws IOException, SQLException {
-        return getService().getConnector().getUsernames().getIndexedRows(Username.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getUsernames().getIndexedRows(Username.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-        return getService().getConnector().getEmailLists().getIndexedRows(EmailList.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getEmailLists().getIndexedRows(EmailList.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-        return getService().getConnector().getEmailPipes().getIndexedRows(EmailPipe.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getEmailPipes().getIndexedRows(EmailPipe.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-        return getService().getConnector().getEmailSmtpRelays().getIndexedRows(EmailSmtpRelay.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getEmailSmtpRelays().getIndexedRows(EmailSmtpRelay.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSites().getIndexedRows(HttpdSite.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getHttpdSites().getIndexedRows(HttpdSite.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSiteBinds().getIndexedRows(HttpdSiteBind.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getHttpdSiteBinds().getIndexedRows(HttpdSiteBind.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
-        return getService().getConnector().getPostgresServerUsers().getIndexedRows(PostgresServerUser.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getPostgresServerUsers().getIndexedRows(PostgresServerUser.COLUMN_DISABLE_LOG, pkey);
     }
 
     public List<PostgresUser> getPostgresUsers() throws IOException, SQLException {
-        return getService().getConnector().getPostgresUsers().getIndexedRows(PostgresUser.COLUMN_DISABLE_LOG, pkey);
+        return getConnector().getPostgresUsers().getIndexedRows(PostgresUser.COLUMN_DISABLE_LOG, pkey);
     }
      */
     // </editor-fold>

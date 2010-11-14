@@ -57,7 +57,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     transient private String rawEmail;
 
     public TicketAction(
-        TicketActionService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int ticket,
         UserId administrator,
@@ -78,7 +78,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
         Email fromAddress,
         String summary
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.ticket = ticket;
         this.administrator = administrator;
         this.time = time;
@@ -145,14 +145,14 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     static final String COLUMN_TICKET = "ticket";
     @SchemaColumn(order=1, name=COLUMN_TICKET, index=IndexType.INDEXED, description="the ticket this action is part of")
     public Ticket getTicket() throws RemoteException {
-        return getService().getConnector().getTickets().get(ticket);
+        return getConnector().getTickets().get(ticket);
     }
 
     static final String COLUMN_ADMINISTRATOR = "administrator";
     @SchemaColumn(order=2, name=COLUMN_ADMINISTRATOR, index=IndexType.INDEXED, description="the administrator who performed this action")
     public BusinessAdministrator getAdministrator() throws RemoteException {
         if(administrator==null) return null;
-        return getService().getConnector().getBusinessAdministrators().get(administrator);
+        return getConnector().getBusinessAdministrators().get(administrator);
     }
 
     @SchemaColumn(order=3, name="time", description="the time this action was performed")
@@ -163,7 +163,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     static final String COLUMN_ACTION_TYPE = "action_type";
     @SchemaColumn(order=4, name=COLUMN_ACTION_TYPE, index=IndexType.INDEXED, description="the type of action performed")
     public TicketActionType getActionType() throws RemoteException {
-        return getService().getConnector().getTicketActionTypes().get(actionType);
+        return getConnector().getTicketActionTypes().get(actionType);
     }
 
     static final String COLUMN_OLD_ACCOUNTING = "old_accounting";
@@ -173,7 +173,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     @SchemaColumn(order=5, name=COLUMN_OLD_ACCOUNTING, index=IndexType.INDEXED, description="if changed, contains the old accounting code")
     public Business getOldBusiness() throws RemoteException {
         if(oldAccounting==null) return null;
-        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, oldAccounting);
+        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, oldAccounting);
     }
 
     static final String COLUMN_NEW_ACCOUNTING = "new_accounting";
@@ -183,49 +183,49 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     @SchemaColumn(order=6, name=COLUMN_NEW_ACCOUNTING, index=IndexType.INDEXED, description="if changed, contains the new accounting code")
     public Business getNewBusiness() throws RemoteException {
         if(oldAccounting==null) return null;
-        return getService().getConnector().getBusinesses().get(oldAccounting);
+        return getConnector().getBusinesses().get(oldAccounting);
     }
 
     static final String COLUMN_OLD_PRIORITY = "old_priority";
     @SchemaColumn(order=7, name=COLUMN_OLD_PRIORITY, index=IndexType.INDEXED, description="if changed, contains the old priority")
     public TicketPriority getOldPriority() throws RemoteException {
         if(oldPriority==null) return null;
-        return getService().getConnector().getTicketPriorities().get(oldPriority);
+        return getConnector().getTicketPriorities().get(oldPriority);
     }
 
     static final String COLUMN_NEW_PRIORITY = "new_priority";
     @SchemaColumn(order=8, name=COLUMN_NEW_PRIORITY, index=IndexType.INDEXED, description="if changed, contains the new priority")
     public TicketPriority getNewPriority() throws RemoteException {
         if(newPriority==null) return null;
-        return getService().getConnector().getTicketPriorities().get(newPriority);
+        return getConnector().getTicketPriorities().get(newPriority);
     }
 
     static final String COLUMN_OLD_TYPE = "old_type";
     @SchemaColumn(order=9, name=COLUMN_OLD_TYPE, index=IndexType.INDEXED, description="if changed, contains the old ticket type")
     public TicketType getOldType() throws RemoteException {
         if(oldType==null) return null;
-        return getService().getConnector().getTicketTypes().get(oldType);
+        return getConnector().getTicketTypes().get(oldType);
     }
 
     static final String COLUMN_NEW_TYPE = "new_type";
     @SchemaColumn(order=10, name=COLUMN_NEW_TYPE, index=IndexType.INDEXED, description="if changed, contains the new ticket type")
     public TicketType getNewType() throws RemoteException {
         if(newType==null) return null;
-        return getService().getConnector().getTicketTypes().get(newType);
+        return getConnector().getTicketTypes().get(newType);
     }
 
     static final String COLUMN_OLD_STATUS = "old_status";
     @SchemaColumn(order=11, name=COLUMN_OLD_STATUS, index=IndexType.INDEXED, description="if changed, contains the old ticket status")
     public TicketStatus getOldStatus() throws RemoteException {
         if(oldStatus==null) return null;
-        return getService().getConnector().getTicketStatuses().get(oldStatus);
+        return getConnector().getTicketStatuses().get(oldStatus);
     }
 
     static final String COLUMN_NEW_STATUS = "new_status";
     @SchemaColumn(order=12, name=COLUMN_NEW_STATUS, index=IndexType.INDEXED, description="if changed, contains the new ticket status")
     public TicketStatus getNewStatus() throws RemoteException {
         if(newStatus==null) return null;
-        return getService().getConnector().getTicketStatuses().get(newStatus);
+        return getConnector().getTicketStatuses().get(newStatus);
     }
 
     static final String COLUMN_OLD_ASSIGNED_TO = "old_assigned_to";
@@ -236,7 +236,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     public BusinessAdministrator getOldAssignedTo() throws RemoteException {
         if(oldAssignedTo==null) return null;
         try {
-            return getService().getConnector().getBusinessAdministrators().get(oldAssignedTo);
+            return getConnector().getBusinessAdministrators().get(oldAssignedTo);
         } catch(NoSuchElementException err) {
             return null;
         }
@@ -250,7 +250,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     public BusinessAdministrator getNewAssignedTo() throws RemoteException {
         if(newAssignedTo==null) return null;
         try {
-            return getService().getConnector().getBusinessAdministrators().get(newAssignedTo);
+            return getConnector().getBusinessAdministrators().get(newAssignedTo);
         } catch(NoSuchElementException err) {
             return null;
         }
@@ -260,14 +260,14 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     @SchemaColumn(order=15, name=COLUMN_OLD_CATEGORY, index=IndexType.INDEXED, description="if changed, contains the old category")
     public TicketCategory getOldCategory() throws RemoteException {
         if(oldCategory==null) return null;
-        return getService().getConnector().getTicketCategories().get(oldCategory);
+        return getConnector().getTicketCategories().get(oldCategory);
     }
 
     static final String COLUMN_NEW_CATEGORY = "new_category";
     @SchemaColumn(order=16, name=COLUMN_NEW_CATEGORY, index=IndexType.INDEXED, description="if changed, contains the new category")
     public TicketCategory getNewCategory() throws RemoteException {
         if(newCategory==null) return null;
-        return getService().getConnector().getTicketCategories().get(newCategory);
+        return getConnector().getTicketCategories().get(newCategory);
     }
 
     /* TODO
@@ -281,7 +281,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
                 || actionType==TicketActionType.SET_SUMMARY // OK - interned
                 || actionType==TicketActionType.SET_INTERNAL_NOTES // OK - interned
             ) {
-                oldValue = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
+                oldValue = getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_OLD_VALUE, pkey);
             } else {
                 oldValue = null;
             }
@@ -302,7 +302,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
                 || actionType==TicketActionType.SET_SUMMARY // OK - interned
                 || actionType==TicketActionType.SET_INTERNAL_NOTES // OK - interned
             ) {
-                newValue = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_NEW_VALUE, pkey);
+                newValue = getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_NEW_VALUE, pkey);
             } else {
                 newValue = null;
             }
@@ -367,7 +367,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
         } else {
             throw new AssertionError("Unexpected value for action_type: "+actionType);
         }
-        return getActionType().generateSummary(getService().getConnector(), myOldValue, myNewValue);
+        return getActionType().generateSummary(getConnector(), myOldValue, myNewValue);
     }
 
     /* TODO
@@ -376,7 +376,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
         if(!detailsLoaded) {
             // Only perform the query for action types that have details
             if(actionType==TicketActionType.ADD_ANNOTATION) { // OK - interned
-                details = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_DETAILS, pkey);
+                details = getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_DETAILS, pkey);
             } else {
                 details = null;
             }
@@ -392,7 +392,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
         if(!rawEmailLoaded) {
             // Only perform the query for action types that may have raw email
             if(actionType==TicketActionType.ADD_ANNOTATION) { // OK - interned
-                rawEmail = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_RAW_EMAIL, pkey);
+                rawEmail = getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_ACTION_RAW_EMAIL, pkey);
             } else {
                 rawEmail = null;
             }
@@ -433,6 +433,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicket());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAdministrator());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getActionType());

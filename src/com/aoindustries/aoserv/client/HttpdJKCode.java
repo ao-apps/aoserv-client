@@ -23,8 +23,8 @@ final public class HttpdJKCode extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public HttpdJKCode(HttpdJKCodeService<?,?> service, String code) {
-        super(service, code);
+    public HttpdJKCode(AOServConnector<?,?> connector, String code) {
+        super(connector, code);
     }
     // </editor-fold>
 

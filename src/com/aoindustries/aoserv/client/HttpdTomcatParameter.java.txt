@@ -52,7 +52,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
     }
 
     public HttpdTomcatContext getHttpdTomcatContext() throws SQLException, IOException {
-        return getService().getConnector().getHttpdTomcatContexts().get(tomcat_context);
+        return getConnector().getHttpdTomcatContexts().get(tomcat_context);
     }
 
     public String getName() {
@@ -105,7 +105,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_PARAMETERS, pkey);
     }
 
     public void update(
@@ -114,7 +114,7 @@ final public class HttpdTomcatParameter extends CachedObjectIntegerKey<HttpdTomc
         boolean override,
         String description
     ) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.UPDATE_HTTPD_TOMCAT_PARAMETER,
             pkey,

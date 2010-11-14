@@ -25,6 +25,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  *
+ * @see  AOServConnector
  * @see  AOServService
  */
 abstract public class AOServObject<K extends Comparable<K>>
@@ -32,8 +33,6 @@ implements
     Row,
     Serializable,
     Cloneable {
-    //Comparable<AOServObject<K>>, // This is enforced by AOServService
-    //DtoFactory<AOServObject> // This is enforced by AOServService
 
     private static final long serialVersionUID = 1L;
 
@@ -70,10 +69,10 @@ implements
         return money==null ? null : new com.aoindustries.aoserv.client.dto.Money(money.getCurrency().getCurrencyCode(), money.getValue());
     }
 
-    private volatile transient AOServService<?,?,K,?> service;
+    private volatile transient AOServConnector<?,?> connector;
 
-    protected AOServObject(AOServService<?,?,K,?> service) {
-        this.service = service;
+    protected AOServObject(AOServConnector<?,?> connector) {
+        this.connector = connector;
     }
 
     /**
@@ -90,46 +89,45 @@ implements
     }
 
     /**
-     * Gets the service that this object belongs to.
+     * Gets the connector that this object belongs to.
      */
-    final public AOServService<?,?,K,?> getService() {
-        return service;
+    final public AOServConnector<?,?> getConnector() {
+        return connector;
     }
 
     /**
-     * Returns a (possibly new) instance of this object set to a different service.
+     * Returns a (possibly new) instance of this object set to a different connector.
      * <p>
-     * The <code>service</code> field is marked <code>transient</code>, and thus
-     * deserialized objects will initially have a <code>null</code> service
+     * The <code>connector</code> field is marked <code>transient</code>, and thus
+     * deserialized objects will initially have a <code>null</code> connector
      * reference.  The code that deserializes the objects should call this
-     * setService method on all objects received.
+     * setConnector method on all objects received.
      * </p>
      * <p>
-     * Also, caching layers should call setService on all objects in order to make
+     * Also, caching layers should call setConnector on all objects in order to make
      * subsequent method invocations use the caches.  This will cause additional
      * copying within the cache layers, but the reduction of round-trips to the
      * server should payoff.
      * </p>
      *
-     * @return  if the service field is currently <code>null</code>, sets the field and
-     *          returns this object.  Next, if the service is equal to the provided service
-     *          returns this object.  Next, if the current service returns <code>true</code> for
-     *          <code>isAoServObjectServiceSettable</code>, updates and returns this object.
-     *          Otherwise, returns a clone with the service field updated.
+     * @return  if the connector field is currently <code>null</code>, sets the field and
+     *          returns this object.  Next, if the connector is equal to the provided connector
+     *          returns this object.  Next, if the current connector returns <code>true</code> for
+     *          <code>isAoServObjectConnectorSettable</code>, updates and returns this object.
+     *          Otherwise, returns a clone with the connector field updated.
      */
-    @SuppressWarnings("unchecked")
-    final public <V extends AOServObject<K>> V setService(AOServService<?,?,K,?> service) throws RemoteException {
-        if(this.service==null) {
-            this.service = service;
-            return (V)this;
-        } else if(this.service==service) {
-            return (V)this;
-        } else if(this.service.isAoServObjectServiceSettable()) {
-            this.service = service;
-            return (V)this;
+    final public AOServObject<K> setConnector(AOServConnector<?,?> connector) throws RemoteException {
+        if(this.connector==null) {
+            this.connector = connector;
+            return this;
+        } else if(this.connector==connector) {
+            return this;
+        } else if(this.connector.isAoServObjectConnectorSettable()) {
+            this.connector = connector;
+            return this;
         } else {
-            V newObj = (V)clone();
-            ((AOServObject)newObj).service = service;
+            AOServObject<K> newObj = clone();
+            newObj.connector = connector;
             return newObj;
         }
     }

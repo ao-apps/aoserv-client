@@ -47,7 +47,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     int disable_log;
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
-        return getService().getConnector().getEmailListAddresses().addEmailListAddress(address, this);
+        return getConnector().getEmailListAddresses().addEmailListAddress(address, this);
     }
 
     public boolean canDisable() {
@@ -65,11 +65,11 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_LISTS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_LISTS, pkey);
     }
 
     /**
@@ -77,7 +77,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
      * The list is obtained from a file on the server that hosts the list.
      */
     public String getAddressList() throws IOException, SQLException {
-        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
+        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_EMAIL_LIST_ADDRESS_LIST, pkey);
     }
 
     /**
@@ -111,23 +111,23 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        return getService().getConnector().getDisableLogs().get(disable_log);
+        return getConnector().getDisableLogs().get(disable_log);
     }
 
     public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
-        return getService().getConnector().getEmailListAddresses().getEmailAddresses(this);
+        return getConnector().getEmailListAddresses().getEmailAddresses(this);
     }
 
     public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
-        return getService().getConnector().getEmailListAddresses().getEmailListAddresses(this);
+        return getConnector().getEmailListAddresses().getEmailListAddresses(this);
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        return getService().getConnector().getLinuxServerAccounts().get(linux_server_account);
+        return getConnector().getLinuxServerAccounts().get(linux_server_account);
     }
 
     public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        return getService().getConnector().getLinuxServerGroups().get(linux_server_group);
+        return getConnector().getLinuxServerGroups().get(linux_server_group);
     }
 
     /**
@@ -142,7 +142,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     public MajordomoList getMajordomoList() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoLists().get(pkey);
+        return getConnector().getMajordomoLists().get(pkey);
     }
 
     public String getPath() {
@@ -221,7 +221,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_LISTS,
@@ -230,7 +230,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
     }
 
     public void setAddressList(String addresses) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
+        getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_EMAIL_LIST_ADDRESS_LIST, pkey, addresses);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

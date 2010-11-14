@@ -35,7 +35,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     final private boolean approved;
 
     public PackageDefinition(
-        PackageDefinitionService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         String category,
         String name,
@@ -46,7 +46,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
         String monthlyRateTransactionType,
         boolean approved
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.category = category;
         this.name = name;
         this.version = version;
@@ -97,7 +97,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     static final String COLUMN_CATEGORY = "category";
     @SchemaColumn(order=1, name=COLUMN_CATEGORY, index=IndexType.INDEXED, description="the package category")
     public PackageCategory getCategory() throws RemoteException {
-        return getService().getConnector().getPackageCategories().get(category);
+        return getConnector().getPackageCategories().get(category);
     }
 
     @SchemaColumn(order=2, name="name", description="the name of the package")
@@ -122,7 +122,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     @SchemaColumn(order=5, name=COLUMN_SETUP_FEE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction of the setup fee")
     public TransactionType getSetupFeeTransactionType() throws RemoteException {
         if(setupFeeTransactionType==null) return null;
-        return getService().getConnector().getTransactionTypes().get(setupFeeTransactionType);
+        return getConnector().getTransactionTypes().get(setupFeeTransactionType);
     }
 
     @SchemaColumn(order=6, name="monthly_rate", description="the default monthly charge for this package")
@@ -134,7 +134,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     @SchemaColumn(order=7, name=COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction for the monthly fee")
     public TransactionType getMonthlyRateTransactionType() throws RemoteException {
         if(monthlyRateTransactionType==null) return null;
-        return getService().getConnector().getTransactionTypes().get(monthlyRateTransactionType);
+        return getConnector().getTransactionTypes().get(monthlyRateTransactionType);
     }
 
     @SchemaColumn(order=8, name="approved", description="once approved a definition may be used for businesses, but may not be modified")
@@ -163,6 +163,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCategory());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getSetupFeeTransactionType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyRateTransactionType());
@@ -171,6 +172,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinesses());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLimits());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionBusinesses());
@@ -191,25 +193,25 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
      * Gets the list of businesses using this definition.
      */
     public IndexedSet<Business> getBusinesses() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterIndexed(Business.COLUMN_PACKAGE_DEFINITION, this);
+        return getConnector().getBusinesses().filterIndexed(Business.COLUMN_PACKAGE_DEFINITION, this);
     }
 
     public IndexedSet<PackageDefinitionLimit> getLimits() throws RemoteException {
-        return getService().getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION, this);
+        return getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION, this);
     }
 
     public IndexedSet<PackageDefinitionBusiness> getPackageDefinitionBusinesses() throws RemoteException {
-        return getService().getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_PACKAGE_DEFINITION, this);
+        return getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_PACKAGE_DEFINITION, this);
     }
 
     /* TODO
     public PackageDefinitionLimit getLimit(ResourceType resourceType) throws RemoteException {
         if(resourceType==null) throw new AssertionError("resourceType is null");
-        return getService().getConnector().getPackageDefinitionLimits().getPackageDefinitionLimit(this, resourceType);
+        return getConnector().getPackageDefinitionLimits().getPackageDefinitionLimit(this, resourceType);
     }
 
     public List<SignupRequest> getSignupRequests() throws RemoteException {
-        return getService().getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_PACKAGE_DEFINITION, pkey);
+        return getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_PACKAGE_DEFINITION, pkey);
     }
     */
     // </editor-fold>
@@ -217,7 +219,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public void setLimits(final PackageDefinitionLimit[] limits) throws RemoteException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -248,18 +250,18 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
     }
 
     public int copy() throws RemoteException {
-        return getService().getConnector().requestIntQueryIL(true, AOServProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
+        return getConnector().requestIntQueryIL(true, AOServProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
     }
 
     public void setActive(boolean active) throws RemoteException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws RemoteException {
@@ -270,7 +272,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     }
 
     public void remove() throws RemoteException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.PACKAGE_DEFINITIONS,
@@ -290,7 +292,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
         final int monthlyRate,
         final TransactionType monthlyRateTransactionType
     ) throws RemoteException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -322,7 +324,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );

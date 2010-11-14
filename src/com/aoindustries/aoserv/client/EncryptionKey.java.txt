@@ -161,7 +161,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
     private String id;
 
     public Business getBusiness() throws SQLException, IOException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     Object getColumnImpl(int i) {
@@ -239,26 +239,26 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
     }
     
     public List<Brand> getBrandsFromTicketEncryptionFrom() throws IOException, SQLException {
-        return getService().getConnector().getBrands().getIndexedRows(Brand.COLUMN_TICKET_ENCRYPTION_FROM, pkey);
+        return getConnector().getBrands().getIndexedRows(Brand.COLUMN_TICKET_ENCRYPTION_FROM, pkey);
     }
 
     public List<Brand> getBrandsFromTicketEncryptionRecipient() throws IOException, SQLException {
-        return getService().getConnector().getBrands().getIndexedRows(Brand.COLUMN_TICKET_ENCRYPTION_RECIPIENT, pkey);
+        return getConnector().getBrands().getIndexedRows(Brand.COLUMN_TICKET_ENCRYPTION_RECIPIENT, pkey);
     }
 
     public List<Brand> getBrandsFromSignupEncryptionFrom() throws IOException, SQLException {
-        return getService().getConnector().getBrands().getIndexedRows(Brand.COLUMN_SIGNUP_ENCRYPTION_FROM, pkey);
+        return getConnector().getBrands().getIndexedRows(Brand.COLUMN_SIGNUP_ENCRYPTION_FROM, pkey);
     }
 
     public List<Brand> getBrandsFromSignupEncryptionRecipient() throws IOException, SQLException {
-        return getService().getConnector().getBrands().getIndexedRows(Brand.COLUMN_SIGNUP_ENCRYPTION_RECIPIENT, pkey);
+        return getConnector().getBrands().getIndexedRows(Brand.COLUMN_SIGNUP_ENCRYPTION_RECIPIENT, pkey);
     }
 
     public List<SignupRequest> getSignupRequestsFromEncryptionFrom() throws IOException, SQLException {
-        return getService().getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_ENCRYPTION_FROM, pkey);
+        return getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_ENCRYPTION_FROM, pkey);
     }
 
     public List<SignupRequest> getSignupRequestsFromEncryptionRecipient() throws IOException, SQLException {
-        return getService().getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_ENCRYPTION_RECIPIENT, pkey);
+        return getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_ENCRYPTION_RECIPIENT, pkey);
     }
 }

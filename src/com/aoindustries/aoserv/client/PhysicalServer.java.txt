@@ -53,7 +53,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     }
 
     public Server getServer() throws SQLException, IOException {
-        return getService().getConnector().getServers().get(pkey);
+        return getConnector().getServers().get(pkey);
     }
 
     /**
@@ -61,7 +61,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
      */
     public Rack getRack() throws SQLException, IOException {
         if(rack==-1) return null;
-        return getService().getConnector().getRacks().get(rack);
+        return getConnector().getRacks().get(rack);
     }
 
     /**
@@ -84,7 +84,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
      */
     public ProcessorType getProcessorType() throws SQLException, IOException {
         if(processorType==null) return null;
-        return getService().getConnector().getProcessorTypes().get(processorType);
+        return getConnector().getProcessorTypes().get(processorType);
     }
 
     /**

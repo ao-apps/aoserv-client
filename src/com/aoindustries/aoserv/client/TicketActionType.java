@@ -42,8 +42,8 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean visibleAdminOnly;
 
-    public TicketActionType(TicketActionTypeService<?,?> service, String type, boolean visibleAdminOnly) {
-        super(service, type);
+    public TicketActionType(AOServConnector<?,?> connector, String type, boolean visibleAdminOnly) {
+        super(connector, type);
         this.visibleAdminOnly = visibleAdminOnly;
     }
     // </editor-fold>
@@ -77,6 +77,7 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
         return unionSet;
     }
@@ -104,7 +105,7 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_ACTION_TYPE, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_ACTION_TYPE, this);
     }
     // </editor-fold>
 }

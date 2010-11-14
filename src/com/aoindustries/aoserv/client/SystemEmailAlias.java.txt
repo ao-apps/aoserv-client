@@ -50,7 +50,7 @@ final public class SystemEmailAlias extends CachedObjectIntegerKey<SystemEmailAl
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        return getService().getConnector().getAoServers().get(ao_server);
+        return getConnector().getAoServers().get(ao_server);
     }
 
     public SchemaTable.TableID getTableID() {

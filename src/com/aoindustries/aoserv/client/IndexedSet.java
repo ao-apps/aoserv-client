@@ -16,8 +16,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -33,11 +33,19 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
 
     private static final long serialVersionUID = 1L;
 
-    public static final IndexedSet EMPTY_INDEXED_SET = new IndexedSet();
+    public static final Map<ServiceName,IndexedSet> EMPTY_INDEXED_SETS;
+    static {
+        Map<ServiceName,IndexedSet> emptyIndexedSets = new EnumMap<ServiceName,IndexedSet>(ServiceName.class);
+        for(ServiceName serviceName : ServiceName.values) {
+            Set<AOServObject> emptySet = Collections.emptySet();
+            emptyIndexedSets.put(serviceName, new IndexedSet<AOServObject>(serviceName, emptySet));
+        }
+        EMPTY_INDEXED_SETS = Collections.unmodifiableMap(emptyIndexedSets);
+    }
 
     @SuppressWarnings("unchecked")
-    public static final <T extends AOServObject> IndexedSet<T> emptyIndexedSet() {
-        return (IndexedSet<T>) EMPTY_INDEXED_SET;
+    public static final <T extends AOServObject> IndexedSet<T> emptyIndexedSet(ServiceName serviceName) {
+        return (IndexedSet<T>) EMPTY_INDEXED_SETS.get(serviceName);
     }
 
     /**
@@ -53,30 +61,78 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
     }*/
 
     /**
-     * Chooses the best constructor, preferring the most heap-efficient storage.
+     * Wraps a single object.
      */
-    public static <T extends AOServObject> IndexedSet<T> wrap(Set<T> wrapped) {
+    public static <T extends AOServObject> IndexedSet<T> wrap(ServiceName serviceName, T singleton) {
+        return new IndexedSet<T>(serviceName, singleton);
+    }
+
+    /**
+     * Wraps the provided ArraySet.
+     */
+    public static <T extends AOServObject> IndexedSet<T> wrap(ServiceName serviceName, ArraySet<T> wrapped) {
         int size = wrapped.size();
         // Empty
-        if(size==0) return emptyIndexedSet();
+        if(size==0) return emptyIndexedSet(serviceName);
+        // Singleton
+        if(size==1) return wrap(serviceName, wrapped.iterator().next());
+        wrapped.trimToSize();
+        return new IndexedSet<T>(serviceName, wrapped);
+    }
+
+    /**
+     * Wraps the provided ArraySortedSet.
+     */
+    public static <T extends AOServObject> IndexedSet<T> wrap(ServiceName serviceName, ArraySortedSet<T> wrapped) {
+        int size = wrapped.size();
+        // Empty
+        if(size==0) return emptyIndexedSet(serviceName);
+        // Singleton
+        if(size==1) return wrap(serviceName, wrapped.iterator().next());
+        wrapped.trimToSize();
+        return new IndexedSet<T>(serviceName, wrapped);
+    }
+
+    /**
+     * Chooses the best constructor, preferring the most heap-efficient storage.
+     * If possible and at no cost to the existing implementation, provide instances
+     * of of ArraySet or ArraySortedSet to avoid creation of them here.
+     */
+    /*
+    public static <T extends AOServObject> IndexedSet<T> wrap(ServiceName serviceName, Set<T> wrapped) {
+        int size = wrapped.size();
+        // Empty
+        if(size==0) return emptyIndexedSet(serviceName);
         // Already IndexedSet
-        if(wrapped instanceof IndexedSet) return (IndexedSet<T>)wrapped;
-        if(size==1) return new IndexedSet<T>(wrapped.iterator().next());
+        if(wrapped instanceof IndexedSet) {
+            IndexedSet<T> indexedSet = (IndexedSet<T>)wrapped;
+            if(indexedSet.serviceName==serviceName) return indexedSet;
+            return new IndexedSet<T>(serviceName, indexedSet.wrapped);
+        }
+        // Singleton
+        if(size==1) return wrap(serviceName, wrapped.iterator().next());
         // These are already compact
         if(wrapped instanceof ArraySet) {
             ((ArraySet)wrapped).trimToSize();
-            return new IndexedSet<T>(wrapped);
+            return new IndexedSet<T>(serviceName, wrapped);
         }
         if(wrapped instanceof ArraySortedSet) {
             ((ArraySortedSet)wrapped).trimToSize();
-            return new IndexedSet<T>(wrapped);
+            return new IndexedSet<T>(serviceName, wrapped);
         }
-        // Make it be an ArraySet
-        ArrayList<T> elements = new ArrayList<T>(wrapped);
-        Collections.sort(elements, HashCodeComparator.getInstance());
-        return new IndexedSet<T>(new ArraySet<T>(elements));
-    }
+        // Create more compact representation
+        if(wrapped instanceof SortedSet) {
+            // Make it be a compact ArraySortedSet
+            return new IndexedSet<T>(serviceName, new ArraySortedSet<T>((SortedSet<T>)wrapped));
+        } else {
+            // Make it be a compact ArraySet
+            ArrayList<T> elements = new ArrayList<T>(wrapped);
+            Collections.sort(elements, HashCodeComparator.getInstance());
+            return new IndexedSet<T>(serviceName, new ArraySet<T>(elements));
+        }
+    }*/
 
+    private final ServiceName serviceName;
     private final Set<E> wrapped;
 
     /**
@@ -89,20 +145,34 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
      */
     private transient Map<String,Map<Object,IndexedSet<E>>> indexedHashes;
 
-    public IndexedSet() {
+    private IndexedSet(ServiceName serviceName) {
+        this.serviceName = serviceName;
         this.wrapped = Collections.emptySet();
     }
 
-    public IndexedSet(E value) {
+    private IndexedSet(ServiceName serviceName, E value) {
+        this.serviceName = serviceName;
         this.wrapped = Collections.singleton(value);
     }
 
     /**
      * The wrapped set should not change underneath this set.
      */
-    public IndexedSet(Set<E> wrapped) {
+    private IndexedSet(ServiceName serviceName, Set<E> wrapped) {
         if(wrapped==null) throw new IllegalArgumentException("wrapped==null");
+        this.serviceName = serviceName;
         this.wrapped = wrapped;
+    }
+
+    /**
+     * Use the singletons for any empty set.
+     */
+    private Object readResolve() {
+        return wrapped.isEmpty() ? EMPTY_INDEXED_SETS.get(serviceName) : this;
+    }
+
+    public ServiceName getServiceName() {
+        return serviceName;
     }
 
     @Override
@@ -203,13 +273,6 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         return wrapped.toString();
     }
 
-    /**
-     * Use the singleton for any empty set.
-     */
-    private Object readResolve() {
-        return wrapped.isEmpty() ? EMPTY_INDEXED_SET : this;
-    }
-
     private Map<Object,E> getUniqueHash(String columnName, Class<?> valueClass) throws RemoteException {
         assert Thread.holdsLock(wrapped);
         if(uniqueHashes==null) uniqueHashes = new HashMap<String,Map<Object,E>>();
@@ -231,7 +294,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
                             lastClass = objClass;
                         }
                         Object columnValue = method.invoke(obj);
-                        if(columnValue!=null && uniqueHash.put(columnValue, obj)!=null) throw new AssertionError("Duplicate value in unique column "+obj.getService().getServiceName()+"."+columnName+": "+columnValue);
+                        if(columnValue!=null && uniqueHash.put(columnValue, obj)!=null) throw new AssertionError("Duplicate value in unique column "+serviceName+"."+columnName+": "+columnValue);
                     }
                 }
             } catch(IllegalAccessException err) {
@@ -254,27 +317,29 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
 
     @Override
     public IndexedSet<E> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
-        if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet();
+        if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet(serviceName);
         synchronized(wrapped) {
-            Set<E> results = new HashSet<E>();
+            ArrayList<E> results;
             Map<Object,E> uniqueHash = getUniqueHash(columnName, null);
             if(values.size()<uniqueHash.size()) {
+                results = new ArrayList<E>(values.size());
                 for(Object value : values) {
                     if(value!=null) {
                         E obj = uniqueHash.get(value);
-                        if(obj!=null && !results.add(obj)) throw new AssertionError("Already in set: "+obj);
+                        if(obj!=null) results.add(obj);
                     }
                 }
             } else {
+                results = new ArrayList<E>(uniqueHash.size());
                 for(Map.Entry<Object,E> entry : uniqueHash.entrySet()) {
                     Object value = entry.getKey();
                     if(values.contains(value)) {
-                        E obj = entry.getValue();
-                        if(!results.add(obj)) throw new AssertionError("Already in set: "+obj);
+                        results.add(entry.getValue());
                     }
                 }
             }
-            return wrap(results);
+            Collections.sort(results, HashCodeComparator.getInstance());
+            return wrap(serviceName, new ArraySet<E>(results));
         }
     }
 
@@ -283,7 +348,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         if(indexedHashes==null) indexedHashes = new HashMap<String,Map<Object,IndexedSet<E>>>();
         Map<Object,IndexedSet<E>> indexedHash = indexedHashes.get(columnName);
         if(indexedHash==null) {
-            Map<Object,Set<E>> setByValue = new HashMap<Object,Set<E>>(wrapped.size()*4/3+1); // Error on the side of avoiding rehash
+            Map<Object,ArrayList<E>> listByValue = new HashMap<Object,ArrayList<E>>(wrapped.size()*4/3+1); // Error on the side of avoiding rehash
             try {
                 Method method = null;
                 Class<?> lastClass = null;
@@ -299,8 +364,8 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
                         }
                         Object columnValue = method.invoke(obj);
                         if(columnValue!=null) {
-                            Set<E> results = setByValue.get(columnValue);
-                            if(results==null) setByValue.put(columnValue, results = new HashSet<E>());
+                            ArrayList<E> results = listByValue.get(columnValue);
+                            if(results==null) listByValue.put(columnValue, results = new ArrayList<E>());
                             results.add(obj);
                         }
                     }
@@ -311,9 +376,13 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
                 // ErrorPrinter.printStackTraces(err);
                 throw new RemoteException(err.getMessage(), err);
             }
-            // Make each set indexed
-            indexedHash = new HashMap<Object,IndexedSet<E>>(setByValue.size()*4/3+1);
-            for(Map.Entry<Object,Set<E>> entry : setByValue.entrySet()) indexedHash.put(entry.getKey(), wrap(entry.getValue()));
+            // Make each list indexed
+            indexedHash = new HashMap<Object,IndexedSet<E>>(listByValue.size()*4/3+1);
+            for(Map.Entry<Object,ArrayList<E>> entry : listByValue.entrySet()) {
+                ArrayList<E> list = entry.getValue();
+                Collections.sort(list, HashCodeComparator.getInstance());
+                indexedHash.put(entry.getKey(), wrap(serviceName, new ArraySet<E>(list)));
+            }
             indexedHashes.put(columnName, indexedHash);
         }
         return indexedHash;
@@ -321,36 +390,37 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
 
     @Override
     public IndexedSet<E> filterIndexed(String columnName, Object value) throws RemoteException {
-        if(value==null || wrapped.isEmpty()) return emptyIndexedSet();
+        if(value==null || wrapped.isEmpty()) return emptyIndexedSet(serviceName);
         synchronized(wrapped) {
             IndexedSet<E> results = getIndexHash(columnName, value.getClass()).get(value);
-            if(results==null) return emptyIndexedSet();
+            if(results==null) return emptyIndexedSet(serviceName);
             return results;
         }
     }
 
     @Override
     public IndexedSet<E> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
-        if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet();
+        if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet(serviceName);
         synchronized(wrapped) {
-            Set<E> results = new HashSet<E>();
+            ArrayList<E> results;
             Map<Object,IndexedSet<E>> indexHash = getIndexHash(columnName, null);
             if(values.size()<indexHash.size()) {
+                results = new ArrayList<E>(values.size());
                 for(Object value : values) {
                     if(value!=null) {
                         IndexedSet<E> objs = indexHash.get(value);
-                        if(objs!=null) for(E obj : objs) if(!results.add(obj)) throw new AssertionError("Already in set: "+obj);
+                        if(objs!=null) results.addAll(objs);
                     }
                 }
             } else {
+                results = new ArrayList<E>(indexHash.size());
                 for(Map.Entry<Object,IndexedSet<E>> entry : indexHash.entrySet()) {
                     Object value = entry.getKey();
-                    if(values.contains(value)) {
-                        for(E obj : entry.getValue()) if(!results.add(obj)) throw new AssertionError("Already in set: "+obj);
-                    }
+                    if(values.contains(value)) results.addAll(entry.getValue());
                 }
             }
-            return wrap(results);
+            Collections.sort(results, HashCodeComparator.getInstance());
+            return wrap(serviceName, new ArraySet<E>());
         }
     }
 }

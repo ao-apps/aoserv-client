@@ -38,8 +38,8 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean isLoopback;
 
-    public NetDeviceID(NetDeviceIDService<?,?> service, String name, boolean isLoopback) {
-        super(service, name);
+    public NetDeviceID(AOServConnector<?,?> connector, String name, boolean isLoopback) {
+        super(connector, name);
         this.isLoopback = isLoopback;
     }
     // </editor-fold>
@@ -73,6 +73,7 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevices());
         return unionSet;
@@ -81,11 +82,11 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<AOServer> getAoServers() throws RemoteException {
-        return getService().getConnector().getAoServers().filterIndexed(AOServer.COLUMN_DAEMON_DEVICE_ID, this);
+        return getConnector().getAoServers().filterIndexed(AOServer.COLUMN_DAEMON_DEVICE_ID, this);
     }
 
     public IndexedSet<NetDevice> getNetDevices() throws RemoteException {
-    	return getService().getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_DEVICE_ID, this);
+    	return getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_DEVICE_ID, this);
     }
     // </editor-fold>
 }

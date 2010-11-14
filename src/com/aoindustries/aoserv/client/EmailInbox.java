@@ -57,7 +57,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     final private Integer saDiscardScore;
 
     public EmailInbox(
-        EmailInboxService<?,?> service,
+        AOServConnector<?,?> connector,
         int linuxAccount,
         Integer autoresponderFrom,
         String autoresponderSubject,
@@ -70,7 +70,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
         float saRequiredScore,
         Integer saDiscardScore
     ) {
-        super(service, linuxAccount);
+        super(connector, linuxAccount);
         this.autoresponderFrom = autoresponderFrom;
         this.autoresponderSubject = autoresponderSubject;
         this.autoresponderPath = autoresponderPath;
@@ -110,14 +110,14 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="linux_account", index=IndexType.PRIMARY_KEY, description="the Linux account that supports this inbox")
     public LinuxAccount getLinuxAccount() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().get(key);
+        return getConnector().getLinuxAccounts().get(key);
     }
 
     /* TODO
     @SchemaColumn(order=1, name="autoresponder_from", description="the pkey of the email address used for the autoresponder")
     public EmailInboxAddress getAutoresponderFrom() throws RemoteException {
         if(autoresponderFrom==null) return null;
-        return getService().getConnector().getEmailInboxAddresses().get(autoresponderFrom);
+        return getConnector().getEmailInboxAddresses().get(autoresponderFrom);
     } */
 
     @SchemaColumn(order=1, name="autoresponder_subject", description="the subject of autoresponder messages")
@@ -144,20 +144,20 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     @SchemaColumn(order=5, name=COLUMN_TRASH_EMAIL_RETENTION, index=IndexType.INDEXED, description="the number of days before messages in the Trash folder are automatically removed.")
     public BackupRetention getTrashEmailRetention() throws RemoteException {
         if(trashEmailRetention==null) return null;
-        return getService().getConnector().getBackupRetentions().get(trashEmailRetention);
+        return getConnector().getBackupRetentions().get(trashEmailRetention);
     }
 
     static final String COLUMN_JUNK_EMAIL_RETENTION = "junk_email_retention";
     @SchemaColumn(order=6, name=COLUMN_JUNK_EMAIL_RETENTION, index=IndexType.INDEXED, description="the number of days before messages in the Junk folder are automatically removed.")
     public BackupRetention getJunkEmailRetention() throws RemoteException {
         if(junkEmailRetention==null) return null;
-        return getService().getConnector().getBackupRetentions().get(junkEmailRetention);
+        return getConnector().getBackupRetentions().get(junkEmailRetention);
     }
 
     static final String COLUMN_SA_INTEGRATION_MODE = "sa_integration_mode";
     @SchemaColumn(order=7, name=COLUMN_SA_INTEGRATION_MODE, index=IndexType.INDEXED, description="the integration mode for SpamAssassin")
     public EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode() throws RemoteException {
-        return getService().getConnector().getEmailSpamAssassinIntegrationModes().get(saIntegrationMode);
+        return getConnector().getEmailSpamAssassinIntegrationModes().get(saIntegrationMode);
     }
 
     @SchemaColumn(order=8, name="sa_required_score", description="the minimum SpamAssassin score considered Junk")
@@ -181,6 +181,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
         // Caused cycle: AOServObjectUtils.addDependencySet(unionSet, getAutoresponderFrom());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTrashEmailRetention());
@@ -191,6 +192,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandFromSmtpEmailInbox());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandFromImapEmailInbox());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailAttachmentBlocks());
@@ -203,30 +205,30 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     @Override
     String toStringImpl() throws RemoteException {
         LinuxAccount la = getLinuxAccount();
-        return ApplicationResources.accessor.getMessage("EmailInbox.toString", la.getUserId(), la.getAoServerResource().getAoServer().getHostname());
+        return ApplicationResources.accessor.getMessage("EmailInbox.toString", la.getUserId(), la.getAoServer().getHostname());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public Brand getBrandFromSmtpEmailInbox() throws RemoteException {
-        return getService().getConnector().getBrands().filterUnique(Brand.COLUMN_SMTP_EMAIL_INBOX, this);
+        return getConnector().getBrands().filterUnique(Brand.COLUMN_SMTP_EMAIL_INBOX, this);
     }
 
     public Brand getBrandFromImapEmailInbox() throws RemoteException {
-        return getService().getConnector().getBrands().filterUnique(Brand.COLUMN_IMAP_EMAIL_INBOX, this);
+        return getConnector().getBrands().filterUnique(Brand.COLUMN_IMAP_EMAIL_INBOX, this);
     }
 
     /* TODO
     public IndexedSet<EmailAttachmentBlock> getEmailAttachmentBlocks() throws IOException, SQLException {
-        return getService().getConnector().getEmailAttachmentBlocks().getEmailAttachmentBlocks(this);
+        return getConnector().getEmailAttachmentBlocks().getEmailAttachmentBlocks(this);
     }
 
     public List<EmailAddress> getEmailAddresses() throws SQLException, IOException {
-        return getService().getConnector().getLinuxAccAddresses().getEmailAddresses(this);
+        return getConnector().getLinuxAccAddresses().getEmailAddresses(this);
     }
 
     public List<EmailInboxAddress> getEmailInboxAddresses() throws IOException, SQLException {
-        return getService().getConnector().getLinuxAccAddresses().getLinuxAccAddresses(this);
+        return getConnector().getLinuxAccAddresses().getLinuxAccAddresses(this);
     }
      */
     // </editor-fold>
@@ -266,29 +268,29 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     public void copyPassword(LinuxServerAccount other) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.pkey);
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey);
     }
 
     public String getAutoresponderContent() throws IOException, SQLException {
-        String content=getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AUTORESPONDER_CONTENT, pkey);
+        String content=getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AUTORESPONDER_CONTENT, pkey);
         if(content.length()==0) return null;
         return content;
     }
 
     public String getCronTable() throws IOException, SQLException {
-        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_CRON_TABLE, pkey);
+        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_CRON_TABLE, pkey);
     }
 
     public InboxAttributes getInboxAttributes() throws IOException, SQLException {
-        return getService().getConnector().requestResult(
+        return getConnector().requestResult(
             true,
             new AOServConnector.ResultRequest<InboxAttributes>() {
 
@@ -304,7 +306,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
                     if(code==AOServProtocol.DONE) {
                         InboxAttributes attr;
                         if(in.readBoolean()) {
-                            attr=new InboxAttributes(getService().getConnector(), LinuxServerAccount.this);
+                            attr=new InboxAttributes(getConnector(), LinuxServerAccount.this);
                             attr.read(in);
                         } else attr=null;
                         result = attr;
@@ -324,7 +326,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     public long[] getImapFolderSizes(final String[] folderNames) throws IOException, SQLException {
         final long[] sizes=new long[folderNames.length];
         if(sizes.length>0) {
-            getService().getConnector().requestUpdate(
+            getConnector().requestUpdate(
                 true,
                 new AOServConnector.UpdateRequest() {
                     public void writeRequest(CompressedDataOutputStream out) throws IOException {
@@ -361,11 +363,11 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     public int isProcmailManual() throws IOException, SQLException {
-        return getService().getConnector().requestIntQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
+        return getConnector().requestIntQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
-        return getService().getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+        return getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -420,7 +422,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_SERVER_ACCOUNTS,
@@ -429,15 +431,15 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     public void setImapFolderSubscribed(String folder, boolean subscribed) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_IMAP_FOLDER_SUBSCRIBED, pkey, folder, subscribed);
+        getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_IMAP_FOLDER_SUBSCRIBED, pkey, folder, subscribed);
     }
 
     public void setCronTable(String cronTable) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_CRON_TABLE, pkey, cronTable);
+        getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_CRON_TABLE, pkey, cronTable);
     }
 
     public void setPassword(String password) throws IOException, SQLException {
-        AOServConnector<?,?> connector=getService().getConnector();
+        AOServConnector<?,?> connector=getConnector();
         if(!connector.isSecure()) throw new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
         connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
     }
@@ -448,7 +450,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
         final String content,
         final boolean enabled
     ) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -474,38 +476,38 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
     }
 
     public void setTrashEmailRetention(int days) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, pkey, days);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, pkey, days);
     }
 
     public void setJunkEmailRetention(int days) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, pkey, days);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, pkey, days);
     }
 
     public void setEmailSpamAssassinIntegrationMode(EmailSpamAssassinIntegrationMode mode) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE, pkey, mode.pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE, pkey, mode.pkey);
     }
 
     public void setSpamAssassinRequiredScore(float required_score) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, required_score);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, pkey, required_score);
     }
 
     public void setSpamAssassinDiscardScore(int discard_score) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE, pkey, discard_score);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_DISCARD_SCORE, pkey, discard_score);
     }
 
     public void setUseInbox(boolean useInbox) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, pkey, useInbox);
     }
 
     public void setPredisablePassword(final String password) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -526,7 +528,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
@@ -537,11 +539,11 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     public boolean passwordMatches(String password) throws IOException, SQLException {
-        return getService().getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
+        return getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, password);
     }
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
-        return getService().getConnector().getLinuxAccAddresses().addLinuxAccAddress(address, this);
+        return getConnector().getLinuxAccAddresses().addLinuxAccAddress(address, this);
     }
     */
     // </editor-fold>

@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUser extends AOServObjectIntegerKey implements Comparable<PostgresUser>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser>, PasswordProtected /* TODO: Removable, Disablable*/ {
+final public class PostgresUser extends AOServerResource implements Comparable<PostgresUser>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser>, PasswordProtected /* TODO: Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -63,8 +63,16 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
     private String predisablePassword;
 
     public PostgresUser(
-        PostgresUserService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         PostgresUserId username,
         int postgresServer,
         boolean createdb,
@@ -73,7 +81,7 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
         boolean catupd,
         String predisablePassword
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.username = username;
         this.postgresServer = postgresServer;
         this.createdb = createdb;
@@ -109,48 +117,42 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
-    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
     static final String COLUMN_USERNAME = "username";
-    @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the PostgreSQL user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the PostgreSQL user")
     public Username getUsername() throws RemoteException {
-        return getService().getConnector().getUsernames().get(username.getUserId());
+        return getConnector().getUsernames().get(username.getUserId());
     }
     public PostgresUserId getUserId() {
         return username;
     }
 
     static final String COLUMN_POSTGRES_SERVER = "postgres_server";
-    @SchemaColumn(order=2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
     public PostgresServer getPostgresServer() throws RemoteException {
-        return getService().getConnector().getPostgresServers().get(postgresServer);
+        return getConnector().getPostgresServers().get(postgresServer);
     }
 
-    @SchemaColumn(order=3, name="createdb", description="usecreatedb flag")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="createdb", description="usecreatedb flag")
     public boolean canCreateDB() {
         return createdb;
     }
 
-    @SchemaColumn(order=4, name="trace", description="usetrace flag")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="trace", description="usetrace flag")
     public boolean canTrace() {
         return trace;
     }
 
-    @SchemaColumn(order=5, name="super", description="usesuper flag")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="super", description="usesuper flag")
     public boolean isDatabaseAdmin() {
         return superPriv;
     }
 
-    @SchemaColumn(order=6, name="catupd", description="usecatupd flag")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="catupd", description="usecatupd flag")
     public boolean canCatUPD() {
         return catupd;
     }
 
-    @SchemaColumn(order=7, name="predisable_password", description="the password that was on the account before it was disabled")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="predisable_password", description="the password that was on the account before it was disabled")
     public String getPredisablePassword() {
         return predisablePassword;
     }
@@ -159,14 +161,31 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresUser getDto() {
-        return new com.aoindustries.aoserv.client.dto.PostgresUser(key, getDto(username), postgresServer, createdb, trace, superPriv, catupd, predisablePassword);
+        return new com.aoindustries.aoserv.client.dto.PostgresUser(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            getDto(username),
+            postgresServer,
+            createdb,
+            trace,
+            superPriv,
+            catupd,
+            predisablePassword
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServer());
         return unionSet;
@@ -174,6 +193,7 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
         return unionSet;
     }
@@ -188,7 +208,7 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
-        return getService().getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_DATDBA, this);
+        return getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_DATDBA, this);
     }
     // </editor-fold>
 
@@ -207,7 +227,7 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public int arePasswordsSet() throws IOException, SQLException {
-        return getService().getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+        return getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
     public boolean canDisable() throws IOException, SQLException {
@@ -221,11 +241,11 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_USERS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_USERS, pkey);
     }
 
     public boolean isDisabled() {
@@ -248,7 +268,7 @@ final public class PostgresUser extends AOServObjectIntegerKey implements Compar
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_USERS,

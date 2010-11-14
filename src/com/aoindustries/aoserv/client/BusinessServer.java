@@ -34,14 +34,14 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     final private boolean canVncConsole;
 
     public BusinessServer(
-        BusinessServerService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         AccountingCode accounting,
         int server,
         boolean isDefault,
         boolean canVncConsole
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.accounting = accounting;
         this.server = server;
         this.isDefault = isDefault;
@@ -84,13 +84,13 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
+        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     static final String COLUMN_SERVER = "server";
     @SchemaColumn(order=2, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the server")
     public Server getServer() throws RemoteException {
-        return getService().getConnector().getServers().get(server);
+        return getConnector().getServers().get(server);
     }
 
     @SchemaColumn(order=3, name="is_default", description="if <code>true</code>, this is the default server.")
@@ -114,6 +114,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
         return unionSet;
@@ -121,6 +122,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResources());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerResources());
@@ -138,15 +140,15 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<AOServerResource> getAoServerResources() throws RemoteException {
-        return getService().getConnector().getAoServerResources().filterIndexed(AOServerResource.COLUMN_BUSINESS_SERVER, this);
+        return getConnector().getAoServerResources().filterIndexed(AOServerResource.COLUMN_BUSINESS_SERVER, this);
     }
 
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
-        return getService().getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_BUSINESS_SERVER, this);
+        return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_BUSINESS_SERVER, this);
     }
 
     public IndexedSet<ServerResource> getServerResources() throws RemoteException {
-        return getService().getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_BUSINESS_SERVER, this);
+        return getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_BUSINESS_SERVER, this);
     }
     // </editor-fold>
 
@@ -167,7 +169,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
         AOServer ao=se.getAOServer();
 
         // No children should be able to access the server
-        List<Business> bus=getService().getConnector().getBusinesses().getRows();
+        List<Business> bus=getConnector().getBusinesses().getRows();
         for(int c=0;c<bus.size();c++) {
             if(bu.isBusinessOrParentOf(bus.get(c))) {
                 Business bu2=bus.get(c);
@@ -216,7 +218,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
                         // mysql_users
                         for(MySQLUser mu : un.getMySQLUsers()) {
                             MySQLServer ms = mu.getMySQLServer();
-                            if(ms.getAoServerResource().getAoServer().equals(ao)) {
+                            if(ms.getAoServer().equals(ao)) {
                                 reasons.add(new CannotRemoveReason<MySQLUser>("Used by MySQL user "+mu.username+" on "+ms.getName()+" on "+ao.getHostname(), mu));
                             }
                         }
@@ -240,7 +242,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
                     // mysql_databases
                     for(MySQLDatabase md : bu2.getMysqlDatabases()) {
                         MySQLServer ms=md.getMySQLServer();
-                        if(ms.getAoServerResource().getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
+                        if(ms.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
                     }
 
                     // postgres_databases
@@ -265,11 +267,11 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
+    	getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
     }
 
     public void setAsDefault() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
+    	getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
     }
     */
     // </editor-fold>

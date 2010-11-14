@@ -122,7 +122,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
                     existingTicket,
                     generateActionSummary(formatter, record),
                     fullReport
-                ).execute(existingTicket.getService().getConnector());
+                ).execute(existingTicket.getConnector());
             } else {
                 // The priority depends on the log level
                 String priorityName;

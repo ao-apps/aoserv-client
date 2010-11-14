@@ -33,8 +33,8 @@ final public class HttpdJKProtocol extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public HttpdJKProtocol(HttpdJKProtocolService<?,?> service, String protocol) {
-        super(service, protocol);
+    public HttpdJKProtocol(AOServConnector<?,?> connector, String protocol) {
+        super(connector, protocol);
     }
     // </editor-fold>
 
@@ -53,7 +53,7 @@ final public class HttpdJKProtocol extends AOServObjectStringKey implements Comp
     static final String COLUMN_PROTOCOL = "protocol";
     @SchemaColumn(order=0, name=COLUMN_PROTOCOL, index=IndexType.PRIMARY_KEY, description="the protocol used, as found in protocols.protocol")
     public Protocol getProtocol() throws RemoteException {
-        return getService().getConnector().getProtocols().get(getKey());
+        return getConnector().getProtocols().get(getKey());
     }
     // </editor-fold>
 
@@ -67,6 +67,7 @@ final public class HttpdJKProtocol extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getProtocol());
         return unionSet;
     }

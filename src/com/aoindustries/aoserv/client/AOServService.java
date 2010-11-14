@@ -26,7 +26,7 @@ public interface AOServService<
     C extends AOServConnector<C,F>,
     F extends AOServConnectorFactory<C,F>,
     K extends Comparable<K>,
-    V extends AOServObject<K> & Comparable<V> & DtoFactory<?>
+    V extends AOServObject<K>
 > extends Indexed<V>, Remote {
 
     /**
@@ -37,18 +37,12 @@ public interface AOServService<
     /**
      * Gets the connector that this service is part of.
      */
-    C getConnector() throws RemoteException;
-
-    /**
-     * Checks if this service returns objects that may safely have their service reset without copying.
-     * This implies that this service performs no caching of the objects.
-     */
-    boolean isAoServObjectServiceSettable() throws RemoteException;
+    AOServConnector<C,F> getConnector() throws RemoteException;
 
     /**
      * Gets the set of all accessible objects.  These objects may or
      * may not be sorted.  Unless otherwise necessary, the set view of the data
-     * should be preferred due to being the fastetst.  This set represents an
+     * should be preferred due to being the fastest.  This set represents an
      * unmodifiable snapshot of all objects in the service and will not change
      * even when the underlying data has changed.
      *

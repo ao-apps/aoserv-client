@@ -42,8 +42,8 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TechnologyClass(TechnologyClassService<?,?> service, String name) {
-        super(service, name);
+    public TechnologyClass(AOServConnector<?,?> connector, String name) {
+        super(connector, name);
     }
     // </editor-fold>
 
@@ -71,6 +71,7 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologies());
         return unionSet;
     }
@@ -89,7 +90,7 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<Technology> getTechnologies() throws RemoteException {
-        return getService().getConnector().getTechnologies().filterIndexed(Technology.COLUMN_CLASS, this);
+        return getConnector().getTechnologies().filterIndexed(Technology.COLUMN_CLASS, this);
     }
     // </editor-fold>
 }

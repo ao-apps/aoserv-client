@@ -19,8 +19,8 @@ abstract public class AOServObjectDomainNameKey extends AOServObject<DomainName>
 
     private DomainName key;
 
-    protected AOServObjectDomainNameKey(AOServService<?,?,DomainName,? extends AOServObjectDomainNameKey> service, DomainName key) {
-        super(service);
+    protected AOServObjectDomainNameKey(AOServConnector<?,?> connector, DomainName key) {
+        super(connector);
         this.key = key;
         intern();
     }

@@ -62,7 +62,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
     }
 
     public HttpdTomcatContext getHttpdTomcatContext() throws SQLException, IOException {
-        return getService().getConnector().getHttpdTomcatContexts().get(tomcat_context);
+        return getConnector().getHttpdTomcatContexts().get(tomcat_context);
     }
 
     public String getName() {
@@ -145,7 +145,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_DATA_SOURCES, pkey);
     }
 
     public void update(
@@ -159,7 +159,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
         int maxWait,
         String validationQuery
     ) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
             pkey,

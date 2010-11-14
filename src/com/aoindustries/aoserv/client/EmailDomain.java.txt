@@ -43,7 +43,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     String accounting;
 
     public int addEmailAddress(String address) throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().addEmailAddress(address, this);
+        return getConnector().getEmailAddresses().addEmailAddress(address, this);
     }
 
     public void addMajordomoServer(
@@ -51,7 +51,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
         LinuxServerGroup linuxServerGroup,
         MajordomoVersion majordomoVersion
     ) throws IOException, SQLException {
-        getService().getConnector().getMajordomoServers().addMajordomoServer(
+        getConnector().getMajordomoServers().addMajordomoServer(
             this,
             linuxServerAccount,
             linuxServerGroup,
@@ -74,23 +74,23 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     }
 
     public EmailAddress getEmailAddress(String address) throws IOException, SQLException {
-	return getService().getConnector().getEmailAddresses().getEmailAddress(address, this);
+	return getConnector().getEmailAddresses().getEmailAddress(address, this);
     }
 
     public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
-	return getService().getConnector().getEmailAddresses().getEmailAddresses(this);
+	return getConnector().getEmailAddresses().getEmailAddresses(this);
     }
 
     public MajordomoServer getMajordomoServer() throws IOException, SQLException {
-	return getService().getConnector().getMajordomoServers().get(pkey);
+	return getConnector().getMajordomoServers().get(pkey);
     }
 
     public Business getBusiness() throws SQLException, IOException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        return getService().getConnector().getAoServers().get(ao_server);
+        return getConnector().getAoServers().get(ao_server);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -172,7 +172,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_DOMAINS,

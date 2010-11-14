@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class PrivateFtpServer {
+public class PrivateFtpServer extends AOServerResource {
 
-    private int aoServerResource;
     private int netBind;
     private UnixPath logfile;
     private DomainName hostname;
@@ -22,7 +21,15 @@ public class PrivateFtpServer {
     }
 
     public PrivateFtpServer(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         int netBind,
         UnixPath logfile,
         DomainName hostname,
@@ -30,21 +37,13 @@ public class PrivateFtpServer {
         int linuxAccountGroup,
         boolean allowAnonymous
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.netBind = netBind;
         this.logfile = logfile;
         this.hostname = hostname;
         this.email = email;
         this.linuxAccountGroup = linuxAccountGroup;
         this.allowAnonymous = allowAnonymous;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public int getNetBind() {

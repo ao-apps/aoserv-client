@@ -40,8 +40,8 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     final private int tomcatVersion;
     private UnixPath templateDir;
 
-    public HttpdJBossVersion(HttpdJBossVersionService<?,?> service, int version, int tomcatVersion, UnixPath templateDir) {
-        super(service, version);
+    public HttpdJBossVersion(AOServConnector<?,?> connector, int version, int tomcatVersion, UnixPath templateDir) {
+        super(connector, version);
         this.tomcatVersion = tomcatVersion;
         this.templateDir = templateDir;
         intern();
@@ -72,13 +72,13 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     static final String COLUMN_VERSION = "version";
     @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="jboss version designator")
     public TechnologyVersion getTechnologyVersion() throws RemoteException {
-        return getService().getConnector().getTechnologyVersions().get(key);
+        return getConnector().getTechnologyVersions().get(key);
     }
 
     static final String COLUMN_TOMCAT_VERSION = "tomcat_version";
     @SchemaColumn(order=1, name=COLUMN_TOMCAT_VERSION, index=IndexType.INDEXED, description="version of tomcat associated with this jboss version")
     public HttpdTomcatVersion getHttpdTomcatVersion() throws RemoteException {
-        return getService().getConnector().getHttpdTomcatVersions().get(tomcatVersion);
+        return getConnector().getHttpdTomcatVersions().get(tomcatVersion);
     }
 
     @SchemaColumn(order=2, name="template_dir", description="directory containing the install template")
@@ -97,6 +97,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatVersion());
         return unionSet;
@@ -104,6 +105,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSites());
         return unionSet;
     }
@@ -112,7 +114,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public IndexedSet<HttpdJBossSite> getHttpdJBossSites() throws RemoteException {
-        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
      */
     // </editor-fold>

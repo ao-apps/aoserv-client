@@ -36,7 +36,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     int domain;
 
     public int addEmailForwarding(String destination) throws IOException, SQLException {
-        return getService().getConnector().getEmailForwardings().addEmailForwarding(this, destination);
+        return getConnector().getEmailForwardings().addEmailForwarding(this, destination);
     }
 
     public String getAddress() {
@@ -53,63 +53,63 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     }
 
     public EmailDomain getDomain() throws SQLException, IOException {
-    	return getService().getConnector().getEmailDomains().get(domain);
+    	return getConnector().getEmailDomains().get(domain);
     }
 
     public List<EmailForwarding> getEmailForwardings() throws IOException, SQLException {
-	return getService().getConnector().getEmailForwardings().getEmailForwardings(this);
+	return getConnector().getEmailForwardings().getEmailForwardings(this);
     }
 
     public List<EmailForwarding> getEnabledEmailForwardings() throws SQLException, IOException {
-	return getService().getConnector().getEmailForwardings().getEnabledEmailForwardings(this);
+	return getConnector().getEmailForwardings().getEnabledEmailForwardings(this);
     }
 
     public EmailForwarding getEmailForwarding(String destination) throws IOException, SQLException {
-	return getService().getConnector().getEmailForwardings().getEmailForwarding(this, destination);
+	return getConnector().getEmailForwardings().getEmailForwarding(this, destination);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-	return getService().getConnector().getEmailListAddresses().getEmailLists(this);
+	return getConnector().getEmailListAddresses().getEmailLists(this);
     }
 
     public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
-	return getService().getConnector().getEmailListAddresses().getEmailListAddresses(this);
+	return getConnector().getEmailListAddresses().getEmailListAddresses(this);
     }
 
     public List<EmailListAddress> getEnabledEmailListAddresses() throws IOException, SQLException {
-	return getService().getConnector().getEmailListAddresses().getEnabledEmailListAddresses(this);
+	return getConnector().getEmailListAddresses().getEnabledEmailListAddresses(this);
     }
 
     public EmailListAddress getEmailListAddress(EmailList list) throws IOException, SQLException {
-        return getService().getConnector().getEmailListAddresses().getEmailListAddress(this, list);
+        return getConnector().getEmailListAddresses().getEmailListAddress(this, list);
     }
 
     public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-	return getService().getConnector().getEmailPipeAddresses().getEmailPipes(this);
+	return getConnector().getEmailPipeAddresses().getEmailPipes(this);
     }
 
     public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
-	return getService().getConnector().getEmailPipeAddresses().getEmailPipeAddresses(this);
+	return getConnector().getEmailPipeAddresses().getEmailPipeAddresses(this);
     }
 
     public List<EmailPipeAddress> getEnabledEmailPipeAddresses() throws IOException, SQLException {
-	return getService().getConnector().getEmailPipeAddresses().getEnabledEmailPipeAddresses(this);
+	return getConnector().getEmailPipeAddresses().getEnabledEmailPipeAddresses(this);
     }
 
     public EmailPipeAddress getEmailPipeAddress(EmailPipe pipe) throws IOException, SQLException {
-        return getService().getConnector().getEmailPipeAddresses().getEmailPipeAddress(this, pipe);
+        return getConnector().getEmailPipeAddresses().getEmailPipeAddress(this, pipe);
     }
 
     public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
-	return getService().getConnector().getLinuxAccAddresses().getLinuxServerAccounts(this);
+	return getConnector().getLinuxAccAddresses().getLinuxServerAccounts(this);
     }
 
     public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
-	return getService().getConnector().getLinuxAccAddresses().getLinuxAccAddresses(this);
+	return getConnector().getLinuxAccAddresses().getLinuxAccAddresses(this);
     }
 
     public LinuxAccAddress getLinuxAccAddress(LinuxServerAccount lsa) throws IOException, SQLException {
-        return getService().getConnector().getLinuxAccAddresses().getLinuxAccAddress(this, lsa);
+        return getConnector().getLinuxAccAddresses().getLinuxAccAddress(this, lsa);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -200,14 +200,14 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         // Everything using this address must be removable
         for(EmailForwarding ef : getEmailForwardings()) reasons.addAll(ef.getCannotRemoveReasons());
 
-        for(EmailListAddress ela : getService().getConnector().getEmailListAddresses().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons());
+        for(EmailListAddress ela : getConnector().getEmailListAddresses().getEmailListAddresses(this)) reasons.addAll(ela.getCannotRemoveReasons());
 
         for(EmailPipeAddress epa : getEmailPipeAddresses()) reasons.addAll(epa.getCannotRemoveReasons());
 
         for(LinuxAccAddress laa : getLinuxAccAddresses()) reasons.addAll(laa.getCannotRemoveReasons());
 
         // Cannot be used as any part of a majordomo list
-        for(MajordomoList ml : getService().getConnector().getMajordomoLists().getRows()) {
+        for(MajordomoList ml : getConnector().getMajordomoLists().getRows()) {
             if(
                 ml.owner_listname_add==pkey
                 || ml.listname_owner_add==pkey
@@ -219,7 +219,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
         }
         
         // Cannot be used as any part of a majordomo server
-        for(MajordomoServer ms : getService().getConnector().getMajordomoServers().getRows()) {
+        for(MajordomoServer ms : getConnector().getMajordomoServers().getRows()) {
             if(
                 ms.owner_majordomo_add==pkey
                 || ms.majordomo_owner_add==pkey
@@ -239,7 +239,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
      * database transaction.
      */
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_ADDRESSES,
@@ -259,30 +259,30 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
     }
 
     public Brand getBrandBySupportEmailAddress() throws IOException, SQLException {
-        return getService().getConnector().getBrands().getUniqueRow(Brand.COLUMN_SUPPORT_EMAIL_ADDRESS, pkey);
+        return getConnector().getBrands().getUniqueRow(Brand.COLUMN_SUPPORT_EMAIL_ADDRESS, pkey);
     }
 
     public Brand getBrandBySignupEmailAddress() throws IOException, SQLException {
-        return getService().getConnector().getBrands().getUniqueRow(Brand.COLUMN_SIGNUP_EMAIL_ADDRESS, pkey);
+        return getConnector().getBrands().getUniqueRow(Brand.COLUMN_SIGNUP_EMAIL_ADDRESS, pkey);
     }
 
     public List<MajordomoList> getMajordomoListsByOwnerListAddress() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_OWNER_LISTNAME_ADD, pkey);
+        return getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_OWNER_LISTNAME_ADD, pkey);
     }
 
     public List<MajordomoList> getMajordomoListsByListOwnerAddress() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_OWNER_ADD, pkey);
+        return getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_OWNER_ADD, pkey);
     }
 
     public List<MajordomoList> getMajordomoListsByListApprovalAddress() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_APPROVAL_ADD, pkey);
+        return getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_APPROVAL_ADD, pkey);
     }
 
     public List<MajordomoServer> getMajordomoServersByOwnerMajordomoAddress() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_OWNER_MAJORDOMO_ADD, pkey);
+        return getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_OWNER_MAJORDOMO_ADD, pkey);
     }
 
     public List<MajordomoServer> getMajordomoServersByMajordomoOwnerAddress() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_MAJORDOMO_OWNER_ADD, pkey);
+        return getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_MAJORDOMO_OWNER_ADD, pkey);
     }
 }

@@ -20,8 +20,8 @@ abstract public class AOServObjectIntegerKey extends AOServObject<Integer> {
 
     final protected int key;
 
-    protected AOServObjectIntegerKey(AOServService<?,?,Integer,? extends AOServObjectIntegerKey> service, int key) {
-        super(service);
+    protected AOServObjectIntegerKey(AOServConnector<?,?> connector, int key) {
+        super(connector);
         this.key = key;
     }
 

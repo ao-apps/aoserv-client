@@ -28,7 +28,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresServer extends AOServObjectIntegerKey implements Comparable<PostgresServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
+final public class PostgresServer extends AOServerResource implements Comparable<PostgresServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -185,8 +185,16 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
     final private boolean fsync;
 
     public PostgresServer(
-        PostgresServerService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         PostgresServerName name,
         int version,
         int maxConnections,
@@ -195,7 +203,7 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
         int sharedBuffers,
         boolean fsync
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.name = name;
         this.version = version;
         this.maxConnections = maxConnections;
@@ -223,9 +231,7 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
             if(key==other.key) return 0;
             int diff = name.compareTo(other.name);
             if(diff!=0) return diff;
-            AOServerResource aoResource1 = getAoServerResource();
-            AOServerResource aoResource2 = other.getAoServerResource();
-            return aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -233,53 +239,44 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
-    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
     static final String COLUMN_NAME = "name";
-    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
     public PostgresServerName getName() {
         return name;
     }
 
     static final String COLUMN_VERSION = "version";
-    @SchemaColumn(order=2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the PostgreSQL version")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the PostgreSQL version")
     public PostgresVersion getPostgresVersion() throws RemoteException {
-        PostgresVersion obj=getService().getConnector().getPostgresVersions().get(version);
-        AOServerResource aoServerResource = getAoServerResource();
-        if(aoServerResource!=null) {
-            if(!StringUtility.equals(obj.getTechnologyVersion().operatingSystemVersion, aoServerResource.getAoServer().getServer().operatingSystemVersion)) {
-                throw new RemoteException("resource/operating system version mismatch on PostgresServer: #"+key);
-            }
+        PostgresVersion obj=getConnector().getPostgresVersions().get(version);
+        if(!StringUtility.equals(obj.getTechnologyVersion().operatingSystemVersion, getAoServer().getServer().operatingSystemVersion)) {
+            throw new RemoteException("resource/operating system version mismatch on PostgresServer: #"+key);
         }
     	return obj;
     }
 
-    @SchemaColumn(order=3, name="max_connections", description="the maximum number of connections for the db")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="max_connections", description="the maximum number of connections for the db")
     public int getMaxConnections() {
         return maxConnections;
     }
 
     static final String COLUMN_NET_BIND = "net_bind";
-    @SchemaColumn(order=4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
-        return getService().getConnector().getNetBinds().get(netBind);
+        return getConnector().getNetBinds().get(netBind);
     }
 
-    @SchemaColumn(order=5, name="sort_mem", description="the amount of shared memory used for sorting")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="sort_mem", description="the amount of shared memory used for sorting")
     public int getSortMem() {
         return sortMem;
     }
 
-    @SchemaColumn(order=6, name="shared_buffers", description="the number of shared buffers")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="shared_buffers", description="the number of shared buffers")
     public int getSharedBuffers() {
         return sharedBuffers;
     }
 
-    @SchemaColumn(order=7, name="fsync", description="indicates that writes are synchronous")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="fsync", description="indicates that writes are synchronous")
     public boolean getFsync() {
         return fsync;
     }
@@ -288,14 +285,31 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.PostgresServer(key, getDto(name), version, maxConnections, netBind, sortMem, sharedBuffers, fsync);
+        return new com.aoindustries.aoserv.client.dto.PostgresServer(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            getDto(name),
+            version,
+            maxConnections,
+            netBind,
+            sortMem,
+            sharedBuffers,
+            fsync
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
         return unionSet;
@@ -303,6 +317,7 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresUsers());
         return unionSet;
@@ -312,13 +327,13 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return getAoServerResource().getAoServer().toStringImpl()+"/"+name;
+        return getAoServer().toStringImpl()+"/"+name;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
-    	return getService().getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_POSTGRES_SERVER, this);
+    	return getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_POSTGRES_SERVER, this);
     }
 
     /**
@@ -333,7 +348,7 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
     }
 
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
-        return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
+        return getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
     }
 
     /**
@@ -342,7 +357,7 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
      * @throws java.util.NoSuchElementException if not found
      */
     public PostgresUser getPostgresUser(PostgresUserId username) throws RemoteException, NoSuchElementException {
-        PostgresUser pu = getPostgresUsers().filterUnique(PostgresUser.COLUMN_USERNAME, getService().getConnector().getUsernames().get(username.getUserId()));
+        PostgresUser pu = getPostgresUsers().filterUnique(PostgresUser.COLUMN_USERNAME, getConnector().getUsernames().get(username.getUserId()));
         if(pu==null) throw new NoSuchElementException("Unable to find PostgresUser: "+username+"@"+this);
         return pu;
     }
@@ -356,7 +371,7 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
         PostgresEncoding encoding,
         boolean enablePostgis
     ) throws IOException, SQLException {
-	return getService().getConnector().getPostgresDatabases().addPostgresDatabase(
+	return getConnector().getPostgresDatabases().addPostgresDatabase(
             name,
             this,
             datdba,
@@ -370,23 +385,23 @@ final public class PostgresServer extends AOServObjectIntegerKey implements Comp
     }
 
     public PostgresServerUser getPostgresServerUser(String username) throws IOException, SQLException {
-	return getService().getConnector().getPostgresServerUsers().getPostgresServerUser(username, this);
+	return getConnector().getPostgresServerUsers().getPostgresServerUser(username, this);
     }
 
     public boolean isPostgresDatabaseNameAvailable(String name) throws IOException, SQLException {
-    	return getService().getConnector().getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
+    	return getConnector().getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
     }
 
     public void restartPostgreSQL() throws IOException, SQLException {
-        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_POSTGRESQL, pkey);
+        getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_POSTGRESQL, pkey);
     }
 
     public void startPostgreSQL() throws IOException, SQLException {
-        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.START_POSTGRESQL, pkey);
+        getConnector().requestUpdate(false, AOServProtocol.CommandID.START_POSTGRESQL, pkey);
     }
 
     public void stopPostgreSQL() throws IOException, SQLException {
-        getService().getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
+        getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
     }
      */
     // </editor-fold>

@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MySQLUser {
+public class MySQLUser extends AOServerResource {
 
-    private int aoServerResource;
     private MySQLUserId username;
     private int mysqlServer;
     private InetAddress host;
@@ -52,7 +51,15 @@ public class MySQLUser {
     }
 
     public MySQLUser(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         MySQLUserId username,
         int mysqlServer,
         InetAddress host,
@@ -90,7 +97,7 @@ public class MySQLUser {
         int maxConnections,
         int maxUserConnections
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.username = username;
         this.mysqlServer = mysqlServer;
         this.host = host;
@@ -127,14 +134,6 @@ public class MySQLUser {
         this.maxUpdates = maxUpdates;
         this.maxConnections = maxConnections;
         this.maxUserConnections = maxUserConnections;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public MySQLUserId getUsername() {

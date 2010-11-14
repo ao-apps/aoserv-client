@@ -37,7 +37,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         authenticateAs = wrapped.getAuthenticateAs();
         password = wrapped.getPassword();
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAoServerDaemonHosts());
-        aoserverResources = new CachedAOServerResourceService(this, wrapped.getAoServerResources());
+        aoserverResources = new AOServerResourceService<CachedConnector,CachedConnectorFactory>(this);
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAoservPermissions());
         aoservRoles = new CachedAOServRoleService(this, wrapped.getAoservRoles());
@@ -166,9 +166,9 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
         // TODO: racks = new CachedRackService(this, wrapped.getRacks());
         resellers = new CachedResellerService(this, wrapped.getResellers());
         resourceTypes = new CachedResourceTypeService(this, wrapped.getResourceTypes());
-        resources = new CachedResourceService(this, wrapped.getResources());
+        resources = new ResourceService<CachedConnector,CachedConnectorFactory>(this);
         serverFarms = new CachedServerFarmService(this, wrapped.getServerFarms());
-        serverResources = new CachedServerResourceService(this, wrapped.getServerResources());
+        serverResources = new ServerResourceService<CachedConnector,CachedConnectorFactory>(this);
         servers = new CachedServerService(this, wrapped.getServers());
         shells = new CachedShellService(this, wrapped.getShells());
         /* TODO
@@ -202,6 +202,11 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     @Override
     public CachedConnectorFactory getFactory() {
         return factory;
+    }
+
+    @Override
+    public boolean isAoServObjectConnectorSettable() {
+        return false;
     }
 
     @Override
@@ -269,12 +274,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServerResourceService">
-    static class CachedAOServerResourceService extends CachedService<Integer,AOServerResource> implements AOServerResourceService<CachedConnector,CachedConnectorFactory> {
-        CachedAOServerResourceService(CachedConnector connector, AOServerResourceService<?,?> wrapped) {
-            super(connector, Integer.class, AOServerResource.class, wrapped);
-        }
-    }
-    final CachedAOServerResourceService aoserverResources;
+    final AOServerResourceService<CachedConnector,CachedConnectorFactory> aoserverResources;
     @Override
     public AOServerResourceService<CachedConnector,CachedConnectorFactory> getAoServerResources() {
         return aoserverResources;
@@ -1393,12 +1393,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResourceService">
-    static class CachedResourceService extends CachedService<Integer,Resource> implements ResourceService<CachedConnector,CachedConnectorFactory> {
-        CachedResourceService(CachedConnector connector, ResourceService<?,?> wrapped) {
-            super(connector, Integer.class, Resource.class, wrapped);
-        }
-    }
-    final CachedResourceService resources;
+    final ResourceService<CachedConnector,CachedConnectorFactory> resources;
     @Override
     public ResourceService<CachedConnector,CachedConnectorFactory> getResources() {
         return resources;
@@ -1417,12 +1412,7 @@ final public class CachedConnector implements AOServConnector<CachedConnector,Ca
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerResourceService">
-    static class CachedServerResourceService extends CachedService<Integer,ServerResource> implements ServerResourceService<CachedConnector,CachedConnectorFactory> {
-        CachedServerResourceService(CachedConnector connector, ServerResourceService<?,?> wrapped) {
-            super(connector, Integer.class, ServerResource.class, wrapped);
-        }
-    }
-    final CachedServerResourceService serverResources;
+    final ServerResourceService<CachedConnector,CachedConnectorFactory> serverResources;
     @Override
     public ServerResourceService<CachedConnector,CachedConnectorFactory> getServerResources() {
         return serverResources;

@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class PostgresUser {
+public class PostgresUser extends AOServerResource {
 
-    private int aoServerResource;
     private PostgresUserId username;
     private int postgresServer;
     private boolean createdb;
@@ -23,7 +22,15 @@ public class PostgresUser {
     }
 
     public PostgresUser(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         PostgresUserId username,
         int postgresServer,
         boolean createdb,
@@ -32,7 +39,7 @@ public class PostgresUser {
         boolean catupd,
         String predisablePassword
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.username = username;
         this.postgresServer = postgresServer;
         this.createdb = createdb;
@@ -40,14 +47,6 @@ public class PostgresUser {
         this.superPriv = superPriv;
         this.catupd = catupd;
         this.predisablePassword = predisablePassword;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public PostgresUserId getUsername() {

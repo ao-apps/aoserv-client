@@ -26,13 +26,13 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
     final private boolean backupEnabled;
 
     public FileBackupSetting(
-        FileBackupSettingService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int replication,
         String path,
         boolean backupEnabled
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.replication = replication;
         this.path = path;
         this.backupEnabled = backupEnabled;
@@ -71,7 +71,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
     static final String COLUMN_REPLICATION = "replication";
     @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the pkey of the failover_file_replication configured")
     public FailoverFileReplication getReplication() throws RemoteException {
-        return getService().getConnector().getFailoverFileReplications().get(replication);
+        return getConnector().getFailoverFileReplications().get(replication);
     }
 
     @SchemaColumn(order=2, name="path", description="the path to control")
@@ -99,7 +99,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FILE_BACKUP_SETTINGS,
@@ -111,7 +111,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
         String path,
         boolean backupEnabled
     ) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS,
             pkey,

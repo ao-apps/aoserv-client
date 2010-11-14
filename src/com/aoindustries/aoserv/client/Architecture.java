@@ -43,8 +43,8 @@ final public class Architecture extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private int bits;
 
-    public Architecture(ArchitectureService<?,?> service, String name, int bits) {
-        super(service, name);
+    public Architecture(AOServConnector<?,?> connector, String name, int bits) {
+        super(connector, name);
         this.bits = bits;
     }
     // </editor-fold>
@@ -78,6 +78,7 @@ final public class Architecture extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServersByMinimumProcessorArchitecture());
         return unionSet;
@@ -86,11 +87,11 @@ final public class Architecture extends AOServObjectStringKey implements Compara
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
-        return getService().getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_ARCHITECTURE, this);
+        return getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_ARCHITECTURE, this);
     }
 
     public IndexedSet<VirtualServer> getVirtualServersByMinimumProcessorArchitecture() throws RemoteException {
-        return getService().getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, this);
+        return getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, this);
     }
     // </editor-fold>
 }

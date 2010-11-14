@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class IPAddress extends AOServObjectIntegerKey implements Comparable<IPAddress>, DtoFactory<com.aoindustries.aoserv.client.dto.IPAddress> {
+final public class IPAddress extends ServerResource implements Comparable<IPAddress>, DtoFactory<com.aoindustries.aoserv.client.dto.IPAddress> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -43,8 +43,16 @@ final public class IPAddress extends AOServObjectIntegerKey implements Comparabl
     final private short netmask;
 
     public IPAddress(
-        IPAddressService<?,?> service,
-        int serverResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int server,
+        int businessServer,
         InetAddress ipAddress,
         Integer netDevice,
         boolean isAlias,
@@ -56,7 +64,7 @@ final public class IPAddress extends AOServObjectIntegerKey implements Comparabl
         InetAddress externalIpAddress,
         short netmask
     ) {
-        super(service, serverResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, server, businessServer);
         this.ipAddress = ipAddress;
         this.netDevice = netDevice;
         this.isAlias = isAlias;
@@ -97,60 +105,55 @@ final public class IPAddress extends AOServObjectIntegerKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public ServerResource getServerResource() throws RemoteException {
-        return getService().getConnector().getServerResources().get(key);
-    }
-
-    @SchemaColumn(order=1, name="ip_address", description="the IP address")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+1, name="ip_address", description="the IP address")
     public InetAddress getIpAddress() {
         return ipAddress;
     }
 
     static final String COLUMN_NET_DEVICE = "net_device";
-    @SchemaColumn(order=2, name=COLUMN_NET_DEVICE, index=IndexType.INDEXED, description="the network_device that this IP address is routed through, is null when unassigned")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_NET_DEVICE, index=IndexType.INDEXED, description="the network_device that this IP address is routed through, is null when unassigned")
     public NetDevice getNetDevice() throws RemoteException {
         if(netDevice==null) return null;
-        return getService().getConnector().getNetDevices().get(netDevice);
+        return getConnector().getNetDevices().get(netDevice);
     }
 
     static final String COLUMN_IS_ALIAS = "is_alias";
-    @SchemaColumn(order=3, name=COLUMN_IS_ALIAS, index=IndexType.INDEXED, description="indicates that the IP address is using IP aliasing on the network device")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_IS_ALIAS, index=IndexType.INDEXED, description="indicates that the IP address is using IP aliasing on the network device")
     public boolean isAlias() {
         return isAlias;
     }
 
-    @SchemaColumn(order=4, name="hostname", description="the reverse mapping for the hostname")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+4, name="hostname", description="the reverse mapping for the hostname")
     public DomainName getHostname() {
         return hostname;
     }
 
-    @SchemaColumn(order=5, name="available", description="a flag if the IP address is available")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+5, name="available", description="a flag if the IP address is available")
     public boolean isAvailable() {
         return available;
     }
 
-    @SchemaColumn(order=6, name="is_overflow", description="indicates that the IP address is shared by different accounts")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+6, name="is_overflow", description="indicates that the IP address is shared by different accounts")
     public boolean isOverflow() {
         return isOverflow;
     }
 
-    @SchemaColumn(order=7, name="is_dhcp", description="the IP address is obtained via DHCP")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+7, name="is_dhcp", description="the IP address is obtained via DHCP")
     public boolean isDhcp() {
         return isDhcp;
     }
 
-    @SchemaColumn(order=8, name="ping_monitor_enabled", description="indicates that ping (ICMP ECHO) is monitored")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+8, name="ping_monitor_enabled", description="indicates that ping (ICMP ECHO) is monitored")
     public boolean isPingMonitorEnabled() {
         return pingMonitorEnabled;
     }
 
-    @SchemaColumn(order=9, name="external_ip_address", description="the external IP address, if different than ip_address")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+9, name="external_ip_address", description="the external IP address, if different than ip_address")
     public InetAddress getExternalIpAddress() {
         return externalIpAddress;
     }
 
-    @SchemaColumn(order=10, name="netmask", description="the netmask of the local network")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+10, name="netmask", description="the netmask of the local network")
     public short getNetMask() {
         return netmask;
     }
@@ -161,6 +164,14 @@ final public class IPAddress extends AOServObjectIntegerKey implements Comparabl
     public com.aoindustries.aoserv.client.dto.IPAddress getDto() {
         return new com.aoindustries.aoserv.client.dto.IPAddress(
             key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            server,
+            businessServer,
             getDto(ipAddress),
             netDevice,
             isAlias,
@@ -178,13 +189,14 @@ final public class IPAddress extends AOServObjectIntegerKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevice());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getDhcpDnsRecords());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
         return unionSet;
@@ -200,12 +212,12 @@ final public class IPAddress extends AOServObjectIntegerKey implements Comparabl
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
-        return getService().getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_IP_ADDRESS, this);
+        return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_IP_ADDRESS, this);
     }
 
     /* TODO
     public IndexedSet<DnsRecord> getDhcpDnsRecords() throws IOException, SQLException {
-        return getService().getConnector().getDnsRecords().getIndexedRows(DnsRecord.COLUMN_DHCP_ADDRESS, pkey);
+        return getConnector().getDnsRecords().getIndexedRows(DnsRecord.COLUMN_DHCP_ADDRESS, pkey);
     }*/
     // </editor-fold>
 
@@ -218,7 +230,7 @@ final public class IPAddress extends AOServObjectIntegerKey implements Comparabl
 //     * Sets the hostname for this <code>IPAddress</code>.
 //     */
 //    public void setHostname(String hostname) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
 //    }
 //
 //    /**
@@ -231,7 +243,7 @@ final public class IPAddress extends AOServObjectIntegerKey implements Comparabl
 //     */
 //    public void setBusiness(Business bu) throws IOException, SQLException {
 //        if(isUsed()) throw new SQLException("Unable to set Business, IPAddress in use: #"+pkey);
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_BUSINESS, pkey, bu.pkey);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_BUSINESS, pkey, bu.pkey);
 //    }
 //
 

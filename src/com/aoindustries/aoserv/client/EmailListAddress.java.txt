@@ -43,11 +43,11 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     }
 
     public EmailAddress getEmailAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().get(email_address);
+        return getConnector().getEmailAddresses().get(email_address);
     }
 
     public EmailList getEmailList() throws SQLException, IOException {
-        return getService().getConnector().getEmailLists().get(email_list);
+        return getConnector().getEmailLists().get(email_list);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -83,7 +83,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be used as the list for a majordomo list
-        for(MajordomoList ml : getService().getConnector().getMajordomoLists().getRows()) {
+        for(MajordomoList ml : getConnector().getMajordomoLists().getRows()) {
             if(ml.getListListAddress().pkey==pkey) {
                 EmailDomain ed=ml.getMajordomoServer().getDomain();
                 reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
@@ -94,7 +94,7 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     }
     
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_LIST_ADDRESSES,
@@ -114,6 +114,6 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
     }
 
     public List<MajordomoList> getMajordomoListsByListListAddress() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_LIST_ADD, pkey);
+        return getConnector().getMajordomoLists().getIndexedRows(MajordomoList.COLUMN_LISTNAME_LIST_ADD, pkey);
     }
 }

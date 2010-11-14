@@ -41,8 +41,8 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
     final private boolean isActive;
     final private boolean allowWeb;
 
-    public PaymentType(PaymentTypeService<?,?> service, String name, boolean isActive, boolean allowWeb) {
-        super(service, name);
+    public PaymentType(AOServConnector<?,?> connector, String name, boolean isActive, boolean allowWeb) {
+        super(connector, name);
         this.isActive = isActive;
         this.allowWeb = allowWeb;
     }
@@ -82,6 +82,7 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
         return unionSet;
     }
@@ -100,7 +101,7 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PAYMENT_TYPE, this);
+        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PAYMENT_TYPE, this);
     }
     // </editor-fold>
 }

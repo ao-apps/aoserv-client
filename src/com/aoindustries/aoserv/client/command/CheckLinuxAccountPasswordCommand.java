@@ -42,7 +42,7 @@ final public class CheckLinuxAccountPasswordCommand extends AOServCommand<List<P
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        LinuxAccount la = connectedUser.getService().getConnector().getLinuxAccounts().get(linuxAccount);
+        LinuxAccount la = connectedUser.getConnector().getLinuxAccounts().get(linuxAccount);
         if(!connectedUser.canAccessLinuxAccount(la)) {
             errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {

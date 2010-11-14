@@ -46,7 +46,7 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        BusinessAdministrator other = connectedUser.getService().getConnector().getBusinessAdministrators().get(username);
+        BusinessAdministrator other = connectedUser.getConnector().getBusinessAdministrators().get(username);
         if(!connectedUser.canAccessBusinessAdministrator(other)) {
             errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {

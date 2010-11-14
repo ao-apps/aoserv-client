@@ -39,7 +39,7 @@ public final class EmailSmtpSmartHost extends CachedObjectIntegerKey<EmailSmtpSm
     }
 
     public NetBind getNetBind() throws IOException, SQLException {
-        return getService().getConnector().getNetBinds().get(pkey);
+        return getConnector().getNetBinds().get(pkey);
     }
 
     /**
@@ -120,6 +120,6 @@ public final class EmailSmtpSmartHost extends CachedObjectIntegerKey<EmailSmtpSm
     }
 
     public List<EmailSmtpSmartHostDomain> getEmailSmtpSmartHostDomains() throws IOException, SQLException {
-        return getService().getConnector().getEmailSmtpSmartHostDomains().getIndexedRows(EmailSmtpSmartHostDomain.COLUMN_SMART_HOST, pkey);
+        return getConnector().getEmailSmtpSmartHostDomains().getIndexedRows(EmailSmtpSmartHostDomain.COLUMN_SMART_HOST, pkey);
     }
 }

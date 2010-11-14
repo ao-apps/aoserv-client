@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class CvsRepository {
+public class CvsRepository extends AOServerResource {
 
-    private int aoServerResource;
     private UnixPath path;
     private int linuxAccountGroup;
     private long mode;
@@ -19,23 +18,23 @@ public class CvsRepository {
     }
 
     public CvsRepository(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         UnixPath path,
         int linuxAccountGroup,
         long mode
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.path = path;
         this.linuxAccountGroup = linuxAccountGroup;
         this.mode = mode;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public UnixPath getPath() {

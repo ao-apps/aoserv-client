@@ -25,8 +25,8 @@ final public class TechnologyName extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TechnologyName(TechnologyNameService<?,?> service, String name) {
-        super(service, name);
+    public TechnologyName(AOServConnector<?,?> connector, String name) {
+        super(connector, name);
     }
     // </editor-fold>
 
@@ -54,6 +54,7 @@ final public class TechnologyName extends AOServObjectStringKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologies());
         return unionSet;
@@ -62,11 +63,11 @@ final public class TechnologyName extends AOServObjectStringKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
-        return getService().getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_NAME, this);
+        return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_NAME, this);
     }
 
     public IndexedSet<Technology> getTechnologies() throws RemoteException {
-        return getService().getConnector().getTechnologies().filterIndexed(Technology.COLUMN_NAME, this);
+        return getConnector().getTechnologies().filterIndexed(Technology.COLUMN_NAME, this);
     }
 
     /* TODO

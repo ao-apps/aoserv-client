@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class CvsRepository extends AOServObjectIntegerKey implements Comparable<CvsRepository>, DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
+final public class CvsRepository extends AOServerResource implements Comparable<CvsRepository>, DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -48,13 +48,21 @@ final public class CvsRepository extends AOServObjectIntegerKey implements Compa
     final private long mode;
 
     public CvsRepository(
-        CvsRepositoryService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         UnixPath path,
         int linuxAccountGroup,
         long mode
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.path = path;
         this.linuxAccountGroup = linuxAccountGroup;
         this.mode = mode;
@@ -76,9 +84,7 @@ final public class CvsRepository extends AOServObjectIntegerKey implements Compa
     public int compareTo(CvsRepository other) {
         try {
             if(key==other.key) return 0;
-            AOServerResource aoResource1 = getAoServerResource();
-            AOServerResource aoResource2 = other.getAoServerResource();
-            int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+            int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
             if(diff!=0) return 0;
             return path.compareTo(other.path);
         } catch(RemoteException err) {
@@ -88,24 +94,18 @@ final public class CvsRepository extends AOServObjectIntegerKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
-    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
-    @SchemaColumn(order=1, name="path", description="the full path to the repository")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name="path", description="the full path to the repository")
     public UnixPath getPath() {
         return path;
     }
 
     static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
-    @SchemaColumn(order=2, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the directory owner")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the directory owner")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
+        return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
 
-    @SchemaColumn(order=3, name="mode", description="the directory permissions")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="mode", description="the directory permissions")
     public long getMode() {
         return mode;
     }
@@ -114,14 +114,27 @@ final public class CvsRepository extends AOServObjectIntegerKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.CvsRepository getDto() {
-        return new com.aoindustries.aoserv.client.dto.CvsRepository(key, getDto(path), linuxAccountGroup, mode);
+        return new com.aoindustries.aoserv.client.dto.CvsRepository(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            getDto(path),
+            linuxAccountGroup,
+            mode
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
         return unionSet;
     }
@@ -130,7 +143,7 @@ final public class CvsRepository extends AOServObjectIntegerKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return getAoServerResource().getAoServer().getHostname()+":"+path.toString();
+        return getAoServer().getHostname()+":"+path.toString();
     }
     // </editor-fold>
 
@@ -147,11 +160,11 @@ final public class CvsRepository extends AOServObjectIntegerKey implements Compa
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -159,11 +172,11 @@ final public class CvsRepository extends AOServObjectIntegerKey implements Compa
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
     public void setMode(long mode) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
     }
      */
     // </editor-fold>

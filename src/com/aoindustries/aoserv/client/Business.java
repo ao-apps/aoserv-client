@@ -107,7 +107,7 @@ implements
     final private Float emailRelayRate;
 
     public Business(
-        BusinessService<?,?> service,
+        AOServConnector<?,?> connector,
         AccountingCode accounting,
         String contractVersion,
         long created,
@@ -130,7 +130,7 @@ implements
         Integer emailRelayBurst,
         Float emailRelayRate
     ) {
-        super(service, accounting);
+        super(connector, accounting);
         this.contractVersion = contractVersion;
         this.created = created;
         this.canceled = canceled;
@@ -209,7 +209,7 @@ implements
     @SchemaColumn(order=5, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the parent business to this one")
     public Business getParentBusiness() throws RemoteException {
         if(parent==null) return null;
-        return getService().getConnector().getBusinesses().filterUnique(COLUMN_ACCOUNTING, parent);
+        return getConnector().getBusinesses().filterUnique(COLUMN_ACCOUNTING, parent);
     }
 
     @SchemaColumn(order=6, name="can_add_backup_server", description="the business may add servers to the backup system")
@@ -231,7 +231,7 @@ implements
     @SchemaColumn(order=9, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the business is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
-        return getService().getConnector().getDisableLogs().get(disableLog);
+        return getConnector().getDisableLogs().get(disableLog);
     }
 
     @SchemaColumn(order=10, name="do_not_disable_reason", description="a reason why we should not disable the account")
@@ -255,7 +255,7 @@ implements
     static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
     @SchemaColumn(order=13, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the definition of the package")
     public PackageDefinition getPackageDefinition() throws RemoteException {
-        return getService().getConnector().getPackageDefinitions().filterUnique(PackageDefinition.COLUMN_PKEY, packageDefinition);
+        return getConnector().getPackageDefinitions().filterUnique(PackageDefinition.COLUMN_PKEY, packageDefinition);
     }
 
     /**
@@ -266,7 +266,7 @@ implements
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
         try {
-            return getService().getConnector().getBusinessAdministrators().get(createdBy);
+            return getConnector().getBusinessAdministrators().get(createdBy);
         } catch(NoSuchElementException err) {
             // Filtered
             return null;
@@ -338,6 +338,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getParentBusiness());
         // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
@@ -347,6 +348,7 @@ implements
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoservRoles());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getChildBusinesses());
@@ -390,83 +392,83 @@ implements
      * Gets the Brand for this business or <code>null</code> if not a brand.
      */
     public IndexedSet<AOServRole> getAoservRoles() throws RemoteException {
-        return getService().getConnector().getAoservRoles().filterIndexed(AOServRole.COLUMN_ACCOUNTING, this);
+        return getConnector().getAoservRoles().filterIndexed(AOServRole.COLUMN_ACCOUNTING, this);
     }
 
     public Brand getBrand() throws RemoteException {
-        return getService().getConnector().getBrands().filterUnique(Brand.COLUMN_ACCOUNTING, this);
+        return getConnector().getBrands().filterUnique(Brand.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<Business> getChildBusinesses() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getBusinesses().filterIndexed(COLUMN_PARENT, this);
     }
 
     public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
-        return getService().getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_ACCOUNTING, this);
+        return getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
-        return getService().getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_ACCOUNTING, this);
+        return getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<GroupName> getGroupNames() throws RemoteException {
-        return getService().getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_ACCOUNTING, this);
+        return getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<Resource> getResources() throws RemoteException {
-        return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_ACCOUNTING, this);
+        return getConnector().getResources().filterIndexed(Resource.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<PackageDefinitionBusiness> getPackageDefinitionBusinesses() throws RemoteException {
-        return getService().getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_ACCOUNTING, this);
+        return getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<Server> getServers() throws RemoteException {
-        return getService().getConnector().getServers().filterIndexed(Server.COLUMN_ACCOUNTING, this);
+        return getConnector().getServers().filterIndexed(Server.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<ServerFarm> getServerFarms() throws RemoteException {
-        return getService().getConnector().getServerFarms().filterIndexed(ServerFarm.COLUMN_OWNER, this);
+        return getConnector().getServerFarms().filterIndexed(ServerFarm.COLUMN_OWNER, this);
     }
 
     public IndexedSet<Username> getUsernames() throws RemoteException {
-        return getService().getConnector().getUsernames().filterIndexed(Username.COLUMN_ACCOUNTING, this);
+        return getConnector().getUsernames().filterIndexed(Username.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<CreditCardProcessor> getCreditCardProcessors() throws RemoteException {
-    	return getService().getConnector().getCreditCardProcessors().filterIndexed(CreditCardProcessor.COLUMN_ACCOUNTING, this);
+    	return getConnector().getCreditCardProcessors().filterIndexed(CreditCardProcessor.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-    	return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_ACCOUNTING, this);
+    	return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
-    	return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_ACCOUNTING, this);
+    	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws RemoteException {
-    	return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, this);
+    	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, this);
     }
 
     public IndexedSet<TicketAction> getTicketActionsByOldBusiness() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ACCOUNTING, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ACCOUNTING, this);
     }
 
     public IndexedSet<TicketAction> getTicketActionsByNewBusiness() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ACCOUNTING, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ACCOUNTING, this);
     }
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_ACCOUNTING, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_ACCOUNTING, this);
+        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_ACCOUNTING, this);
     }
 
     public IndexedSet<Transaction> getTransactionsBySourceAccounting() throws RemoteException {
-        return getService().getConnector().getTransactions().filterIndexed(Transaction.COLUMN_SOURCE_ACCOUNTING, this);
+        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_SOURCE_ACCOUNTING, this);
     }
 
     /**
@@ -486,7 +488,7 @@ implements
      * Gets all of the <code>BusinessProfile</code>s for this <code>Business</code>.
      */
     public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
-        return getService().getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_ACCOUNTING, this);
+        return getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_ACCOUNTING, this);
     }
 
     /**
@@ -503,7 +505,7 @@ implements
     /* TODO
     public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
         // Determine the active packages per category
-        List<PackageCategory> allCategories = getService().getConnector().getPackageCategories().getRows();
+        List<PackageCategory> allCategories = getConnector().getPackageCategories().getRows();
         Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<PackageCategory,List<PackageDefinition>>(allCategories.size()*4/3+1);
         for(PackageCategory category : allCategories) {
             List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
@@ -670,7 +672,7 @@ implements
         String technicalContact,
         String technicalEmail
     ) throws IOException, SQLException {
-        return getService().getConnector().getBusinessProfiles().addBusinessProfile(
+        return getConnector().getBusinessProfiles().addBusinessProfile(
             this,
             name,
             isPrivate,
@@ -693,7 +695,7 @@ implements
     public int addBusinessServer(
         Server server
     ) throws IOException, SQLException {
-        return getService().getConnector().getBusinessServers().addBusinessServer(this, server);
+        return getConnector().getBusinessServers().addBusinessServer(this, server);
     }
     */
 
@@ -750,7 +752,7 @@ implements
         long authorizationTime,
         String authorizationPrincipalName
     ) throws IOException, SQLException {
-        return getService().getConnector().getCreditCardTransactions().addCreditCardTransaction(
+        return getConnector().getCreditCardTransactions().addCreditCardTransaction(
             processor,
             this,
             groupName,
@@ -806,7 +808,7 @@ implements
     public int addDisableLog(
         String disableReason
     ) throws IOException, SQLException {
-        return getService().getConnector().getDisableLogs().addDisableLog(this, disableReason);
+        return getConnector().getDisableLogs().addDisableLog(this, disableReason);
     }*/
 
     /* TODO
@@ -817,7 +819,7 @@ implements
         String type,
         int transid
     ) throws IOException, SQLException {
-	    getService().getConnector().getNoticeLogs().addNoticeLog(
+	    getConnector().getNoticeLogs().addNoticeLog(
             pkey,
             billingContact,
             emailAddress,
@@ -828,7 +830,7 @@ implements
     }
 
     public boolean isRootBusiness() throws IOException, SQLException {
-        return pkey.equals(getService().getConnector().getBusinesses().getRootAccounting());
+        return pkey.equals(getConnector().getBusinesses().getRootAccounting());
     }
 
     public boolean canDisable() throws IOException, SQLException {
@@ -868,7 +870,7 @@ implements
     }
 
     public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
-        return getService().getConnector().getTransactions().getAccountBalance(pkey, before);
+        return getConnector().getTransactions().getAccountBalance(pkey, before);
     }*/
 
     /**
@@ -894,7 +896,7 @@ implements
      */
     /* TODO
     public Business getTopLevelBusiness() throws IOException, SQLException {
-        String rootAccounting=getService().getConnector().getBusinesses().getRootAccounting();
+        String rootAccounting=getConnector().getBusinesses().getRootAccounting();
         Business bu=this;
         Business tempParent;
         while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting()==rootAccounting) bu=tempParent; // OK - interned
@@ -915,20 +917,20 @@ implements
     }
 
     public BusinessServer getBusinessServer(Server server) throws IOException, SQLException {
-        return getService().getConnector().getBusinessServers().getBusinessServer(pkey, server.pkey);
+        return getConnector().getBusinessServers().getBusinessServer(pkey, server.pkey);
     }
 
     public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
-    	return getService().getConnector().getTransactions().getConfirmedAccountBalance(pkey);
+    	return getConnector().getTransactions().getConfirmedAccountBalance(pkey);
     }
 
     public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
-    	return getService().getConnector().getTransactions().getConfirmedAccountBalance(pkey, before);
+    	return getConnector().getTransactions().getConfirmedAccountBalance(pkey, before);
     }
 
     public Server getDefaultServer() throws IOException, SQLException {
         // May be null when the account is canceled or not using servers
-	return getService().getConnector().getBusinessServers().getDefaultServer(this);
+	return getConnector().getBusinessServers().getDefaultServer(this);
     }
 
     public boolean isDisabled() {
@@ -936,31 +938,31 @@ implements
     }
 
     public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
-    	return getService().getConnector().getEmailForwardings().getEmailForwarding(this);
+    	return getConnector().getEmailForwardings().getEmailForwarding(this);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-    	return getService().getConnector().getEmailLists().getEmailLists(this);
+    	return getConnector().getEmailLists().getEmailLists(this);
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-    	return getService().getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
+    	return getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
     }
 
     public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
-	return getService().getConnector().getLinuxAccounts().getMailAccounts(this);
+	return getConnector().getLinuxAccounts().getMailAccounts(this);
     }
 
     public CreditCard getMonthlyCreditCard() throws IOException, SQLException {
-        return getService().getConnector().getCreditCards().getMonthlyCreditCard(this);
+        return getConnector().getCreditCards().getMonthlyCreditCard(this);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
-        return getService().getConnector().getMonthlyCharges().getMonthlyCharges(this);
+        return getConnector().getMonthlyCharges().getMonthlyCharges(this);
     }
 
     public List<MonthlyCharge> getMonthlyChargesBySourceBusiness() throws SQLException, IOException {
-        return getService().getConnector().getMonthlyCharges().getMonthlyChargesBySourceBusiness(this);
+        return getConnector().getMonthlyCharges().getMonthlyChargesBySourceBusiness(this);
     }*/
 
     /**
@@ -983,11 +985,11 @@ implements
     }
 
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
-        return getService().getConnector().getNoticeLogs().getNoticeLogs(this);
+        return getConnector().getNoticeLogs().getNoticeLogs(this);
     }
 
     public List<EmailDomain> getEmailDomains() throws SQLException, IOException {
-        return getService().getConnector().getEmailDomains().getEmailDomains(this);
+        return getConnector().getEmailDomains().getEmailDomains(this);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -1007,7 +1009,7 @@ implements
     }
 
     public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
-        return getService().getConnector().getWhoisHistory().getWhoisHistory(this);
+        return getConnector().getWhoisHistory().getWhoisHistory(this);
     }
     */
     /**
@@ -1037,7 +1039,7 @@ implements
 
     public void setAccounting(String accounting) throws SQLException, IOException {
         if(!isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
     }
     */
     /**
@@ -1045,7 +1047,7 @@ implements
      */
     /* TODO
     public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
-        return getService().getConnector().getEncryptionKeys().getEncryptionKeys(this);
+        return getConnector().getEncryptionKeys().getEncryptionKeys(this);
     }
 
     public int addPackageDefinition(
@@ -1059,7 +1061,7 @@ implements
         int monthlyRate,
         TransactionType monthlyRateTransactionType
     ) throws IOException, SQLException {
-        return getService().getConnector().getPackageDefinitions().addPackageDefinition(
+        return getConnector().getPackageDefinitions().addPackageDefinition(
             this,
             category,
             name,
@@ -1074,19 +1076,19 @@ implements
     }
 
     public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
-        return getService().getConnector().getPackageDefinitions().getPackageDefinition(this, category, name, version);
+        return getConnector().getPackageDefinitions().getPackageDefinition(this, category, name, version);
     }
 
     public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
-        return getService().getConnector().getPackageDefinitions().getPackageDefinitions(this, category);
+        return getConnector().getPackageDefinitions().getPackageDefinitions(this, category);
     }
 
     public void addDnsZone(String zone, String ip, int ttl) throws IOException, SQLException {
-	    getService().getConnector().getDnsZones().addDnsZone(this, zone, ip, ttl);
+	    getConnector().getDnsZones().addDnsZone(this, zone, ip, ttl);
     }
 
     public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
-        return getService().getConnector().getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
+        return getConnector().getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
     }
 
     public void addLinuxGroup(String name, LinuxGroupType type) throws IOException, SQLException {
@@ -1094,82 +1096,82 @@ implements
     }
 
     public void addLinuxGroup(String name, String type) throws IOException, SQLException {
-	    getService().getConnector().getLinuxGroups().addLinuxGroup(name, this, type);
+	    getConnector().getLinuxGroups().addLinuxGroup(name, this, type);
     }
 
     public void addUsername(String username) throws IOException, SQLException {
-	    getService().getConnector().getUsernames().addUsername(this, username);
+	    getConnector().getUsernames().addUsername(this, username);
     }
 
     public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-        return getService().getConnector().getCvsRepositories().getCvsRepositories(this);
+        return getConnector().getCvsRepositories().getCvsRepositories(this);
     }
 
     public List<DnsZone> getDnsZones() throws IOException, SQLException {
-        return getService().getConnector().getDnsZones().getDnsZones(this);
+        return getConnector().getDnsZones().getDnsZones(this);
     }
 
     public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-        return getService().getConnector().getEmailPipes().getEmailPipes(this);
+        return getConnector().getEmailPipes().getEmailPipes(this);
     }
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
+        return getConnector().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
     }
 
     public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
-        return getService().getConnector().getHttpdServers().getHttpdServers(this);
+        return getConnector().getHttpdServers().getHttpdServers(this);
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSites().getHttpdSites(this);
+        return getConnector().getHttpdSites().getHttpdSites(this);
     }
 
     public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-        return getService().getConnector().getIpAddresses().getIPAddresses(this);
+        return getConnector().getIpAddresses().getIPAddresses(this);
     }
 
     public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
-        return getService().getConnector().getLinuxGroups().getLinuxGroups(this);
+        return getConnector().getLinuxGroups().getLinuxGroups(this);
     }
 
     public List<MySQLDatabase> getMysqlDatabases() throws IOException, SQLException {
-        return getService().getConnector().getMysqlDatabases().getMySQLDatabases(this);
+        return getConnector().getMysqlDatabases().getMySQLDatabases(this);
     }
     */
 
     /*
     public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return getService().getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+        return getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
     }
 
     public List<MySQLServer> getMysqlServers() throws IOException, SQLException {
-        return getService().getConnector().getMysqlServers().getMySQLServers(this);
+        return getConnector().getMysqlServers().getMySQLServers(this);
     }
      */
 
     /*
     public List<MySQLUser> getMysqlUsers() throws IOException, SQLException {
-        return getService().getConnector().getMysqlUsers().getMySQLUsers(this);
+        return getConnector().getMysqlUsers().getMySQLUsers(this);
     }*/
 
     /*
     public List<NetBind> getNetBinds() throws IOException, SQLException {
-        return getService().getConnector().getNetBinds().getNetBinds(this);
+        return getConnector().getNetBinds().getNetBinds(this);
     }
 
     public List<NetBind> getNetBinds(IPAddress ip) throws IOException, SQLException {
-        return getService().getConnector().getNetBinds().getNetBinds(this, ip);
+        return getConnector().getNetBinds().getNetBinds(this, ip);
     }
      */
 
     /*
     public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
-        return getService().getConnector().getPostgresDatabases().getPostgresDatabases(this);
+        return getConnector().getPostgresDatabases().getPostgresDatabases(this);
     }
 
     public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
-        return getService().getConnector().getPostgresUsers().getPostgresUsers(this);
+        return getConnector().getPostgresUsers().getPostgresUsers(this);
     }
 
     public Server getServer(String name) throws IOException, SQLException {
@@ -1179,7 +1181,7 @@ implements
     }
 
     public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-        return getService().getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
+        return getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
     }
      */
     // </editor-fold>

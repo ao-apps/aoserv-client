@@ -29,8 +29,8 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
     private AccountingCode accounting;
     final Integer disableLog;
 
-    public GroupName(GroupNameService<?,?> table, GroupId groupName, AccountingCode accounting, Integer disableLog) {
-        super(table, groupName);
+    public GroupName(AOServConnector<?,?> connector, GroupId groupName, AccountingCode accounting, Integer disableLog) {
+        super(connector, groupName);
         this.accounting = accounting;
         this.disableLog = disableLog;
         intern();
@@ -65,14 +65,14 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that this group is part of")
     public Business getBusiness() throws RemoteException {
-    	return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
+    	return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     static final String COLUMN_DISABLE_LOG = "disable_log";
     @SchemaColumn(order=2, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that the group name is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
-        return getService().getConnector().getDisableLogs().get(disableLog);
+        return getConnector().getDisableLogs().get(disableLog);
     }
     // </editor-fold>
 
@@ -86,6 +86,7 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
         return unionSet;
@@ -93,6 +94,7 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroups());
         return unionSet;
     }
@@ -100,7 +102,7 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<LinuxGroup> getLinuxGroups() throws RemoteException {
-        return getService().getConnector().getLinuxGroups().filterIndexed(LinuxGroup.COLUMN_GROUP_NAME, this);
+        return getConnector().getLinuxGroups().filterIndexed(LinuxGroup.COLUMN_GROUP_NAME, this);
     }
     // </editor-fold>
 }

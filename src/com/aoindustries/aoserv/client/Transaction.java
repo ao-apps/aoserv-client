@@ -63,7 +63,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     final private Status status;
 
     public Transaction(
-        TransactionService<?,?> service,
+        AOServConnector<?,?> connector,
         int transid,
         long time,
         AccountingCode accounting,
@@ -78,7 +78,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
         Integer creditCardTransaction,
         Status status
     ) {
-        super(service, transid);
+        super(connector, transid);
         this.time = time;
         this.accounting = accounting;
         this.sourceAccounting = sourceAccounting;
@@ -132,13 +132,13 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the identifier for the business")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     static final String COLUMN_SOURCE_ACCOUNTING = "source_accounting";
     @SchemaColumn(order=3, name=COLUMN_SOURCE_ACCOUNTING, index=IndexType.INDEXED, description="the source of the charge to this account")
     public Business getSourceBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(sourceAccounting);
+        return getConnector().getBusinesses().get(sourceAccounting);
     }
 
     static final String COLUMN_USERNAME = "username";
@@ -148,7 +148,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     @SchemaColumn(order=4, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the admin involved in the transaction")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         try {
-            return getService().getConnector().getBusinessAdministrators().get(username);
+            return getConnector().getBusinessAdministrators().get(username);
         } catch(NoSuchElementException err) {
             return null;
         }
@@ -157,12 +157,12 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     static final String COLUMN_TYPE = "type";
     @SchemaColumn(order=5, name=COLUMN_TYPE, index=IndexType.INDEXED, description="the type of transaction")
     public TransactionType getType() throws RemoteException {
-        return getService().getConnector().getTransactionTypes().get(type);
+        return getConnector().getTransactionTypes().get(type);
     }
 
     @SchemaColumn(order=6, name="description", description="description of the transaction")
     synchronized public String getDescription() throws RemoteException {
-        if(description==null) description = new GetTransactionDescriptionCommand(this).execute(getService().getConnector());
+        if(description==null) description = new GetTransactionDescriptionCommand(this).execute(getConnector());
         return description;
     }
 
@@ -180,7 +180,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     @SchemaColumn(order=9, name=COLUMN_PAYMENT_TYPE, index=IndexType.INDEXED, description="the type of payment made")
     public PaymentType getPaymentType() throws RemoteException {
         if (paymentType == null) return null;
-        return getService().getConnector().getPaymentTypes().get(paymentType);
+        return getConnector().getPaymentTypes().get(paymentType);
     }
 
     @SchemaColumn(order=10, name="payment_info", description="the payment info, such as last four of a credit card number or a check number")
@@ -192,7 +192,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     @SchemaColumn(order=11, name=COLUMN_PROCESSOR, index=IndexType.INDEXED, description="the credit card processor that handled the payment")
     public CreditCardProcessor getProcessor() throws RemoteException {
         if(processor==null) return null;
-        return getService().getConnector().getCreditCardProcessors().get(processor);
+        return getConnector().getCreditCardProcessors().get(processor);
     }
 
     static final String COLUMN_CREDIT_CARD_TRANSACTION = "credit_card_transaction";
@@ -202,7 +202,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     @SchemaColumn(order=12, name=COLUMN_CREDIT_CARD_TRANSACTION, index=IndexType.UNIQUE, description="the credit card transaction for this transaction")
     public CreditCardTransaction getCreditCardTransaction() throws RemoteException {
         if(creditCardTransaction==null) return null;
-        return getService().getConnector().getCreditCardTransactions().filterUnique(CreditCardTransaction.COLUMN_PKEY, creditCardTransaction);
+        return getConnector().getCreditCardTransactions().filterUnique(CreditCardTransaction.COLUMN_PKEY, creditCardTransaction);
     }
 
     @SchemaColumn(order=13, name="status", description="the status of the transaction")
@@ -235,6 +235,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getSourceBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
@@ -247,6 +248,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
         return unionSet;
     }
@@ -276,7 +278,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
-        return getService().getConnector().getNoticeLogs().getIndexedRows(NoticeLog.COLUMN_TRANSID, pkey);
+        return getConnector().getNoticeLogs().getIndexedRows(NoticeLog.COLUMN_TRANSID, pkey);
     } */
     // </editor-fold>
 

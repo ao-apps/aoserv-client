@@ -8,27 +8,28 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class ServerResource {
+abstract public class ServerResource extends Resource {
 
-    private int resource;
     private int server;
     private int businessServer;
 
     public ServerResource() {
     }
 
-    public ServerResource(int resource, int server, int businessServer) {
-        this.resource = resource;
+    public ServerResource(
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int server,
+        int businessServer
+    ) {
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
         this.server = server;
         this.businessServer = businessServer;
-    }
-
-    public int getResource() {
-        return resource;
-    }
-
-    public void setResource(int resource) {
-        this.resource = resource;
     }
 
     public int getServer() {

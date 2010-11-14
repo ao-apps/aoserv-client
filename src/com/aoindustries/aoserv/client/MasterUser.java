@@ -37,7 +37,7 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     final private boolean isDnsAdmin;
 
     public MasterUser(
-        MasterUserService<?,?> service,
+        AOServConnector<?,?> connector,
         UserId username,
         boolean isActive,
         boolean canAccessAccounting,
@@ -46,7 +46,7 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
         boolean canAccessAdminWeb,
         boolean isDnsAdmin
     ) {
-        super(service, username);
+        super(connector, username);
         this.isActive = isActive;
         this.canAccessAccounting = canAccessAccounting;
         this.canAccessBankAccount = canAccessBankAccount;
@@ -67,7 +67,7 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique username of this master user")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(getKey());
+        return getConnector().getBusinessAdministrators().get(getKey());
     }
 
     @SchemaColumn(order=1, name="is_active", description="this level of access may be disabled")
@@ -111,12 +111,14 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterHosts());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterServers());
@@ -128,19 +130,19 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
-        return getService().getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_ADMINISTRATOR, pkey);
+        return getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_ADMINISTRATOR, pkey);
     }
      */
     public IndexedSet<MasterHost> getMasterHosts() throws RemoteException {
-        return getService().getConnector().getMasterHosts().filterIndexed(MasterHost.COLUMN_USERNAME, this);
+        return getConnector().getMasterHosts().filterIndexed(MasterHost.COLUMN_USERNAME, this);
     }
 
     public IndexedSet<MasterServer> getMasterServers() throws RemoteException {
-        return getService().getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_USERNAME, this);
+        return getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_USERNAME, this);
     }
 
     public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
-        return getService().getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OWNER, this);
+        return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OWNER, this);
     }
     // </editor-fold>
 }

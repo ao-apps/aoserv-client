@@ -98,7 +98,6 @@ public interface BusinessAdministratorService<C extends AOServConnector<C,F>, F 
     }*/
 
     /* TODO
-    @SuppressWarnings("deprecation")
     @Override
     boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
         String command=args[0];

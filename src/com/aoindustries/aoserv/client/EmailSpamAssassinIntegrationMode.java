@@ -38,8 +38,8 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private short sortOrder;
 
-    public EmailSpamAssassinIntegrationMode(EmailSpamAssassinIntegrationModeService<?,?> service, String name, short sortOrder) {
-        super(service, name);
+    public EmailSpamAssassinIntegrationMode(AOServConnector<?,?> connector, String name, short sortOrder) {
+        super(connector, name);
         this.sortOrder = sortOrder;
     }
     // </editor-fold>
@@ -73,6 +73,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxes());
         return unionSet;
     }
@@ -87,7 +88,7 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<EmailInbox> getEmailInboxes() throws RemoteException {
-        return getService().getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_SA_INTEGRATION_MODE, this);
+        return getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_SA_INTEGRATION_MODE, this);
     }
     // </editor-fold>
 }

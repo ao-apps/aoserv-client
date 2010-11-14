@@ -78,7 +78,7 @@ final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequ
     }
 
     public SignupRequest getSignupRequest() throws SQLException, IOException {
-        return getService().getConnector().getSignupRequests().get(request);
+        return getConnector().getSignupRequests().get(request);
     }
 
     public String getName() {

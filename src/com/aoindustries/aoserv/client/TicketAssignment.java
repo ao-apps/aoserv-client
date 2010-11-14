@@ -28,13 +28,13 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     private UserId administrator;
 
     public TicketAssignment(
-        TicketAssignmentService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int ticket,
         AccountingCode reseller,
         UserId administrator
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.ticket = ticket;
         this.reseller = reseller;
         this.administrator = administrator;
@@ -74,19 +74,19 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     static final String COLUMN_TICKET = "ticket";
     @SchemaColumn(order=1, name=COLUMN_TICKET, index=IndexType.INDEXED, description="the ticket id that is assigned")
     public Ticket getTicket() throws RemoteException {
-        return getService().getConnector().getTickets().get(ticket);
+        return getConnector().getTickets().get(ticket);
     }
 
     static final String COLUMN_RESELLER = "reseller";
     @SchemaColumn(order=2, name=COLUMN_RESELLER, index=IndexType.INDEXED, description="the reseller for the assignment")
     public Reseller getReseller() throws RemoteException {
-        return getService().getConnector().getResellers().get(reseller);
+        return getConnector().getResellers().get(reseller);
     }
 
     static final String COLUMN_ADMINISTRATOR = "administrator";
     @SchemaColumn(order=3, name=COLUMN_ADMINISTRATOR, index=IndexType.INDEXED, description="the individual that the ticket is assigned to within the reseller")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(administrator);
+        return getConnector().getBusinessAdministrators().get(administrator);
     }
     // </editor-fold>
 
@@ -100,6 +100,7 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicket());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());

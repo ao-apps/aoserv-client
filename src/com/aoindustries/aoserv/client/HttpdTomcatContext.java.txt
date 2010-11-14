@@ -72,11 +72,11 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         int maxWait,
         String validationQuery
     ) throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatDataSources().addHttpdTomcatDataSource(this, name, driverClassName, url, username, password, maxActive, maxIdle, maxWait, validationQuery);
+        return getConnector().getHttpdTomcatDataSources().addHttpdTomcatDataSource(this, name, driverClassName, url, username, password, maxActive, maxIdle, maxWait, validationQuery);
     }
 
     public int addHttpdTomcatParameter(String name, String value, boolean override, String description) throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatParameters().addHttpdTomcatParameter(this, name, value, override, description);
+        return getConnector().getHttpdTomcatParameters().addHttpdTomcatParameter(this, name, value, override, description);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -106,7 +106,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdTomcatSites().get(tomcat_site);
+        return getConnector().getHttpdTomcatSites().get(tomcat_site);
     }
 
     public String getClassName() {
@@ -162,19 +162,19 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public List<HttpdTomcatDataSource> getHttpdTomcatDataSources() throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatDataSources().getHttpdTomcatDataSources(this);
+        return getConnector().getHttpdTomcatDataSources().getHttpdTomcatDataSources(this);
     }
 
     public HttpdTomcatDataSource getHttpdTomcatDataSource(String name) throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatDataSources().getHttpdTomcatDataSource(this, name);
+        return getConnector().getHttpdTomcatDataSources().getHttpdTomcatDataSource(this, name);
     }
 
     public List<HttpdTomcatParameter> getHttpdTomcatParameters() throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatParameters().getHttpdTomcatParameters(this);
+        return getConnector().getHttpdTomcatParameters().getHttpdTomcatParameters(this);
     }
 
     public HttpdTomcatParameter getHttpdTomcatParameter(String name) throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatParameters().getHttpdTomcatParameter(this, name);
+        return getConnector().getHttpdTomcatParameters().getHttpdTomcatParameter(this, name);
     }
 
     public void init(ResultSet result) throws SQLException {
@@ -260,7 +260,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
         final int debug,
         final String workDir
     ) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -292,14 +292,14 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS, pkey);
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -88,8 +88,8 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private short sortOrder;
 
-    public AOServPermission(AOServPermissionService<?,?> service, String name, short sortOrder) {
-        super(service, name);
+    public AOServPermission(AOServConnector<?,?> connector, String name, short sortOrder) {
+        super(connector, name);
         this.sortOrder = sortOrder;
     }
     // </editor-fold>
@@ -123,6 +123,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoservRolePermissions());
         return unionSet;
     }
@@ -144,7 +145,7 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<AOServRolePermission> getAoservRolePermissions() throws RemoteException {
-        return getService().getConnector().getAoservRolePermissions().filterIndexed(AOServRolePermission.COLUMN_PERMISSION, this);
+        return getConnector().getAoservRolePermissions().filterIndexed(AOServRolePermission.COLUMN_PERMISSION, this);
     }
     // </editor-fold>
 }

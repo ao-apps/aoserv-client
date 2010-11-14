@@ -43,7 +43,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     final private String vncPassword;
 
     public VirtualServer(
-        VirtualServerService<?,?> service,
+        AOServConnector<?,?> connector,
         int server,
         int primaryRam,
         int primaryRamTarget,
@@ -62,7 +62,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
         boolean requiresHvm,
         String vncPassword
     ) {
-        super(service, server);
+        super(connector, server);
         this.primaryRam = primaryRam;
         this.primaryRamTarget = primaryRamTarget;
         this.secondaryRam = secondaryRam;
@@ -108,7 +108,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     static final String COLUMN_SERVER = "server";
     @SchemaColumn(order=0, name=COLUMN_SERVER, index=IndexType.PRIMARY_KEY, description="the server that is virtualized")
     public Server getServer() throws RemoteException {
-        return getService().getConnector().getServers().get(key);
+        return getConnector().getServers().get(key);
     }
 
     @SchemaColumn(order=1, name="primary_ram", description="the amount of RAM required in primary mode in megabytes")
@@ -145,7 +145,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     @SchemaColumn(order=5, name=COLUMN_MINIMUM_PROCESSOR_TYPE, index=IndexType.INDEXED, description="the minimum processor type")
     public ProcessorType getMinimumProcessorType() throws RemoteException {
         if(minimumProcessorType==null) return null;
-        return getService().getConnector().getProcessorTypes().get(minimumProcessorType);
+        return getConnector().getProcessorTypes().get(minimumProcessorType);
     }
 
     static final String COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE = "minimum_processor_architecture";
@@ -154,7 +154,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
      */
     @SchemaColumn(order=6, name=COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, index=IndexType.INDEXED, description="the minimum processor architecture, compatible architectures may be substituted")
     public Architecture getMinimumProcessorArchitecture() throws RemoteException {
-        return getService().getConnector().getArchitectures().get(minimumProcessorArchitecture);
+        return getConnector().getArchitectures().get(minimumProcessorArchitecture);
     }
 
     /**
@@ -244,6 +244,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMinimumProcessorType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMinimumProcessorArchitecture());
@@ -270,7 +271,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public List<VirtualDisk> getVirtualDisks() throws IOException, SQLException {
-        return getService().getConnector().getVirtualDisks().getVirtualDisks(this);
+        return getConnector().getVirtualDisks().getVirtualDisks(this);
     }
     */
     /**

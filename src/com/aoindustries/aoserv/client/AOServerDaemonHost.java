@@ -30,12 +30,12 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     private Hostname host;
 
     public AOServerDaemonHost(
-        AOServerDaemonHostService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int aoServer,
         Hostname host
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.aoServer = aoServer;
         this.host = host;
         intern();
@@ -73,7 +73,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     static final String COLUMN_AO_SERVER = "ao_server";
     @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the pkey of the ao_server")
     public AOServer getAoServer() throws RemoteException {
-        return getService().getConnector().getAoServers().get(aoServer);
+        return getConnector().getAoServers().get(aoServer);
     }
 
     @SchemaColumn(order=2, name="host", description="the hostname or IP address that is allowed to connect")
@@ -92,6 +92,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServer());
         return unionSet;
     }

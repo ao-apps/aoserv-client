@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresDatabase extends AOServObjectIntegerKey implements Comparable<PostgresDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabase> /* TODO: , Dumpable, Removable*/, JdbcProvider {
+final public class PostgresDatabase extends AOServerResource implements Comparable<PostgresDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabase> /* TODO: , Dumpable, Removable*/, JdbcProvider {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -60,8 +60,16 @@ final public class PostgresDatabase extends AOServObjectIntegerKey implements Co
     final private boolean enablePostgis;
 
     public PostgresDatabase(
-        PostgresDatabaseService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         PostgresDatabaseName name,
         int postgresServer,
         int datdba,
@@ -70,7 +78,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey implements Co
         boolean allowConn,
         boolean enablePostgis
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.name = name;
         this.postgresServer = postgresServer;
         this.datdba = datdba;
@@ -105,33 +113,28 @@ final public class PostgresDatabase extends AOServObjectIntegerKey implements Co
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
     static final String COLUMN_NAME = "name";
-    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
     public PostgresDatabaseName getName() {
         return name;
     }
 
     static final String COLUMN_POSTGRES_SERVER = "postgres_server";
-    @SchemaColumn(order=2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
     public PostgresServer getPostgresServer() throws RemoteException {
-        return getService().getConnector().getPostgresServers().get(postgresServer);
+        return getConnector().getPostgresServers().get(postgresServer);
     }
 
     static final String COLUMN_DATDBA = "datdba";
-    @SchemaColumn(order=3, name=COLUMN_DATDBA, index=IndexType.INDEXED, description="the datdba for the database")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_DATDBA, index=IndexType.INDEXED, description="the datdba for the database")
     public PostgresUser getDatDBA() throws RemoteException {
-        return getService().getConnector().getPostgresUsers().get(datdba);
+        return getConnector().getPostgresUsers().get(datdba);
     }
 
     static final String COLUMN_ENCODING = "encoding";
-    @SchemaColumn(order=4, name=COLUMN_ENCODING, index=IndexType.INDEXED, description="the pkey of the encoding system used for the database")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_ENCODING, index=IndexType.INDEXED, description="the pkey of the encoding system used for the database")
     public PostgresEncoding getPostgresEncoding() throws RemoteException {
-    	PostgresEncoding obj=getService().getConnector().getPostgresEncodings().get(encoding);
+    	PostgresEncoding obj=getConnector().getPostgresEncodings().get(encoding);
         // Make sure the postgres encoding postgresql version matches the server this database is part of
 //        if(
 //            obj.postgresVersion
@@ -142,17 +145,17 @@ final public class PostgresDatabase extends AOServObjectIntegerKey implements Co
     	return obj;
     }
 
-    @SchemaColumn(order=5, name="is_template", description="if true, this database is a template")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="is_template", description="if true, this database is a template")
     public boolean isTemplate() {
     	return isTemplate;
     }
 
-    @SchemaColumn(order=6, name="allow_conn", description="if true, this database is accepting connections")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="allow_conn", description="if true, this database is accepting connections")
     public boolean getAllowsConnections() {
         return allowConn;
     }
 
-    @SchemaColumn(order=7, name="enable_postgis", description="indicates PostGIS is enabled on this database")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="enable_postgis", description="indicates PostGIS is enabled on this database")
     public boolean getEnablePostgis() {
         return enablePostgis;
     }
@@ -161,14 +164,31 @@ final public class PostgresDatabase extends AOServObjectIntegerKey implements Co
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresDatabase getDto() {
-        return new com.aoindustries.aoserv.client.dto.PostgresDatabase(key, getDto(name), postgresServer, datdba, encoding, isTemplate, allowConn, enablePostgis);
+        return new com.aoindustries.aoserv.client.dto.PostgresDatabase(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            getDto(name),
+            postgresServer,
+            datdba,
+            encoding,
+            isTemplate,
+            allowConn,
+            enablePostgis
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDatDBA());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresEncoding());
@@ -196,7 +216,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey implements Co
 
     @Override
     public String getJdbcUrl(boolean ipOnly) throws RemoteException {
-        AOServer ao=getPostgresServer().getAoServerResource().getAoServer();
+        AOServer ao=getPostgresServer().getAoServer();
         return
             "jdbc:postgresql://"
             + (ipOnly
@@ -224,7 +244,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey implements Co
     }
 
     public void dump(final Writer out) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             false,
             new AOServConnector.UpdateRequest() {
 
@@ -279,7 +299,7 @@ final public class PostgresDatabase extends AOServObjectIntegerKey implements Co
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_DATABASES,

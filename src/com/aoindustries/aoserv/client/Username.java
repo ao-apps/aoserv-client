@@ -38,8 +38,8 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     private AccountingCode accounting;
     final private Integer disableLog;
 
-    public Username(UsernameService<?,?> table, UserId username, AccountingCode accounting, Integer disableLog) {
-        super(table, username);
+    public Username(AOServConnector<?,?> connector, UserId username, AccountingCode accounting, Integer disableLog) {
+        super(connector, username);
         this.accounting = accounting;
         this.disableLog = disableLog;
         intern();
@@ -72,14 +72,14 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that this user is part of")
     public Business getBusiness() throws RemoteException {
-    	return getService().getConnector().getBusinesses().get(accounting);
+    	return getConnector().getBusinesses().get(accounting);
     }
 
     static final String COLUMN_DISABLE_LOG = "disable_log";
     @SchemaColumn(order=2, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that the username is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
-        return getService().getConnector().getDisableLogs().get(disableLog);
+        return getConnector().getDisableLogs().get(disableLog);
     }
     // </editor-fold>
 
@@ -93,6 +93,7 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
         return unionSet;
@@ -100,6 +101,7 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccounts());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUsers());
@@ -110,19 +112,19 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
-    	return getService().getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, this);
+    	return getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, this);
     }
 
     public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_USERNAME, this);
+        return getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_USERNAME, this);
     }
 
     public IndexedSet<MySQLUser> getMysqlUsers() throws RemoteException {
-        return getService().getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_USERNAME, this);
+        return getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_USERNAME, this);
     }
 
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
-        return getService().getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_USERNAME, this);
+        return getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_USERNAME, this);
     }
     // </editor-fold>
 
@@ -158,7 +160,7 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
         String zip,
         boolean enableEmailSupport
     ) throws IOException, SQLException {
-	    getService().getConnector().getBusinessAdministrators().addBusinessAdministrator(
+	    getConnector().getBusinessAdministrators().addBusinessAdministrator(
             this,
             name,
             title,
@@ -200,7 +202,7 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
         String type,
         String shell
     ) throws IOException, SQLException {
-	    getService().getConnector().getLinuxAccounts().addLinuxAccount(
+	    getConnector().getLinuxAccounts().addLinuxAccount(
             this,
             primaryGroup,
             name,
@@ -213,11 +215,11 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     }
 
     public int addMySQLUser(MySQLServer mysqlServer, String host) throws IOException, SQLException {
-    	return getService().getConnector().getMysqlUsers().addMySQLUser(pkey, mysqlServer, host);
+    	return getConnector().getMysqlUsers().addMySQLUser(pkey, mysqlServer, host);
     }
 
     public void addPostgresUser() throws IOException, SQLException {
-        getService().getConnector().getPostgresUsers().addPostgresUser(pkey);
+        getConnector().getPostgresUsers().addPostgresUser(pkey);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
@@ -250,11 +252,11 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
     }
 
     public boolean isDisabled() {
@@ -296,7 +298,7 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.USERNAMES,

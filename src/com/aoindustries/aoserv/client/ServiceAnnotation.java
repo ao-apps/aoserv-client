@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates an interface represents a table.
+ * Indicates an interface or class represents a table.
  *
  * @author  AO Industries, Inc.
  */

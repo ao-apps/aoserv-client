@@ -68,14 +68,14 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     private String netProtocol;
 
     public Protocol(
-        ProtocolService<?,?> service,
+        AOServConnector<?,?> connector,
         String protocol,
         NetPort port,
         String name,
         boolean isUserService,
         String netProtocol
     ) {
-        super(service, protocol);
+        super(connector, protocol);
         this.port = port;
         this.name = name;
         this.isUserService = isUserService;
@@ -131,7 +131,7 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     static final String COLUMN_NET_PROTOCOL = "net_protocol";
     @SchemaColumn(order=4, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the default network protocol for this protocol")
     public NetProtocol getNetProtocol() throws RemoteException {
-        return getService().getConnector().getNetProtocols().get(netProtocol);
+        return getConnector().getNetProtocols().get(netProtocol);
     }
     // </editor-fold>
 
@@ -145,12 +145,14 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetProtocol());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJKProtocol());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
         return unionSet;
@@ -159,11 +161,11 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public HttpdJKProtocol getHttpdJKProtocol() throws RemoteException {
-        return getService().getConnector().getHttpdJKProtocols().filterUnique(HttpdJKProtocol.COLUMN_PROTOCOL, this);
+        return getConnector().getHttpdJKProtocols().filterUnique(HttpdJKProtocol.COLUMN_PROTOCOL, this);
     }
 
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
-        return getService().getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_APP_PROTOCOL, this);
+        return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_APP_PROTOCOL, this);
     }
 
     /* TODO

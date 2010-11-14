@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class DnsZone {
+public class DnsZone extends Resource {
 
-    private int resource;
     private DomainName zone;
     private String file;
     private DomainName hostmaster;
@@ -21,27 +20,25 @@ public class DnsZone {
     }
 
     public DnsZone(
-        int resource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
         DomainName zone,
         String file,
         DomainName hostmaster,
         long serial,
         int ttl
     ) {
-        this.resource = resource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
         this.zone = zone;
         this.file = file;
         this.hostmaster = hostmaster;
         this.serial = serial;
         this.ttl = ttl;
-    }
-
-    public int getResource() {
-        return resource;
-    }
-
-    public void setResource(int resource) {
-        this.resource = resource;
     }
 
     public DomainName getZone() {

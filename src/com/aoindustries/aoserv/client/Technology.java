@@ -29,8 +29,8 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     private String name;
     private String technologyClass;
 
-    public Technology(TechnologyService<?,?> service, int pkey, String name, String technologyClass) {
-        super(service, pkey);
+    public Technology(AOServConnector<?,?> connector, int pkey, String name, String technologyClass) {
+        super(connector, pkey);
         this.name = name;
         this.technologyClass = technologyClass;
         intern();
@@ -69,13 +69,13 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     static final String COLUMN_NAME = "name";
     @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the package")
     public TechnologyName getTechnologyName() throws RemoteException {
-        return getService().getConnector().getTechnologyNames().get(name);
+        return getConnector().getTechnologyNames().get(name);
     }
 
     static final String COLUMN_CLASS = "class";
     @SchemaColumn(order=2, name=COLUMN_CLASS, index=IndexType.INDEXED, description="the name of the group this package belongs to")
     public TechnologyClass getTechnologyClass() throws RemoteException {
-        return getService().getConnector().getTechnologyClasses().get(technologyClass);
+        return getConnector().getTechnologyClasses().get(technologyClass);
     }
     // </editor-fold>
 
@@ -89,6 +89,7 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyName());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyClass());
         return unionSet;

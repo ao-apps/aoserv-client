@@ -20,8 +20,8 @@ abstract public class AOServObjectStringKey extends AOServObject<String> {
 
     private String key;
 
-    protected AOServObjectStringKey(AOServService<?,?,String,? extends AOServObjectStringKey> service, String key) {
-        super(service);
+    protected AOServObjectStringKey(AOServConnector<?,?> connector, String key) {
+        super(connector);
         this.key = key;
         intern();
     }

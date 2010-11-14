@@ -44,7 +44,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     final private short sortOrder;
 
     public OperatingSystemVersion(
-        OperatingSystemVersionService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         String operatingSystem,
         String versionNumber,
@@ -54,7 +54,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
         boolean isAoservDaemonSupported,
         short sortOrder
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.operatingSystem = operatingSystem;
         this.versionNumber = versionNumber;
         this.versionName = versionName;
@@ -95,7 +95,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     static final String COLUMN_OPERATING_SYSTEM = "operating_system";
     @SchemaColumn(order=1, name=COLUMN_OPERATING_SYSTEM, index=IndexType.INDEXED, description="the name of the OS")
     public OperatingSystem getOperatingSystem() throws RemoteException {
-        return getService().getConnector().getOperatingSystems().get(operatingSystem);
+        return getConnector().getOperatingSystems().get(operatingSystem);
     }
 
     @SchemaColumn(order=2, name="version_number", description="the number of OS version")
@@ -111,7 +111,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     static final String COLUMN_ARCHITECTURE = "architecture";
     @SchemaColumn(order=4, name=COLUMN_ARCHITECTURE, index=IndexType.INDEXED, description="the name of the architecture")
     public Architecture getArchitecture() throws RemoteException {
-        return getService().getConnector().getArchitectures().get(architecture);
+        return getConnector().getArchitectures().get(architecture);
     }
 
     @SchemaColumn(order=5, name="display", index=IndexType.UNIQUE, description="the full display name for this version")
@@ -140,6 +140,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystem());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getArchitecture());
         return unionSet;
@@ -147,6 +148,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersions());
         return unionSet;
@@ -155,11 +157,11 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<Server> getServers() throws RemoteException {
-        return getService().getConnector().getServers().filterIndexed(Server.COLUMN_OPERATING_SYSTEM_VERSION, this);
+        return getConnector().getServers().filterIndexed(Server.COLUMN_OPERATING_SYSTEM_VERSION, this);
     }
 
     public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
-        return getService().getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OPERATING_SYSTEM_VERSION, this);
+        return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OPERATING_SYSTEM_VERSION, this);
     }
     // </editor-fold>
 

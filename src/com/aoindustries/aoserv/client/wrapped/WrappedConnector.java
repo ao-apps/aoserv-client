@@ -33,7 +33,6 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     final Object connectionLock = new Object();
     private AOServConnector<?,?> wrapped;
 
-    @SuppressWarnings("unchecked")
     protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
         this.factory = factory;
         this.locale = locale;
@@ -41,168 +40,168 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         this.authenticateAs = authenticateAs;
         this.password = password;
         this.daemonServer = daemonServer;
-        aoserverDaemonHosts = new WrappedAOServerDaemonHostService(this);
-        aoserverResources = new WrappedAOServerResourceService(this);
-        aoservers = new WrappedAOServerService(this);
-        aoservPermissions = new WrappedAOServPermissionService(this);
-        aoservRoles = new WrappedAOServRoleService(this);
-        aoservRolePermissions = new WrappedAOServRolePermissionService(this);
-        architectures = new WrappedArchitectureService(this);
-        backupPartitions = new WrappedBackupPartitionService(this);
-        backupRetentions = new WrappedBackupRetentionService(this);
-        // TODO: bankAccounts = new WrappedBankAccountService(this);
-        bankTransactionTypes = new WrappedBankTransactionTypeService(this);
-        // TODO: bankTransactions = new WrappedBankTransactionService(this);
-        // TODO: banks = new WrappedBankService(this);
-        brands = new WrappedBrandService(this);
-        businessAdministrators = new WrappedBusinessAdministratorService(this);
-        businessAdministratorRoles = new WrappedBusinessAdministratorRoleService(this);
-        businessProfiles = new WrappedBusinessProfileService(this);
-        businesses = new WrappedBusinessService(this);
-        businessServers = new WrappedBusinessServerService(this);
-        countryCodes = new WrappedCountryCodeService(this);
-        creditCardProcessors = new WrappedCreditCardProcessorService(this);
-        creditCardTransactions = new WrappedCreditCardTransactionService(this);
-        creditCards = new WrappedCreditCardService(this);
-        cvsRepositories = new WrappedCvsRepositoryService(this);
-        disableLogs = new WrappedDisableLogService(this);
+        aoserverDaemonHosts = new WrappedAOServerDaemonHostService<C,F>(this);
+        aoserverResources = new AOServerResourceService<C,F>(this);
+        aoservers = new WrappedAOServerService<C,F>(this);
+        aoservPermissions = new WrappedAOServPermissionService<C,F>(this);
+        aoservRoles = new WrappedAOServRoleService<C,F>(this);
+        aoservRolePermissions = new WrappedAOServRolePermissionService<C,F>(this);
+        architectures = new WrappedArchitectureService<C,F>(this);
+        backupPartitions = new WrappedBackupPartitionService<C,F>(this);
+        backupRetentions = new WrappedBackupRetentionService<C,F>(this);
+        // TODO: bankAccounts = new WrappedBankAccountService<C,F>(this);
+        bankTransactionTypes = new WrappedBankTransactionTypeService<C,F>(this);
+        // TODO: bankTransactions = new WrappedBankTransactionService<C,F>(this);
+        // TODO: banks = new WrappedBankService<C,F>(this);
+        brands = new WrappedBrandService<C,F>(this);
+        businessAdministrators = new WrappedBusinessAdministratorService<C,F>(this);
+        businessAdministratorRoles = new WrappedBusinessAdministratorRoleService<C,F>(this);
+        businessProfiles = new WrappedBusinessProfileService<C,F>(this);
+        businesses = new WrappedBusinessService<C,F>(this);
+        businessServers = new WrappedBusinessServerService<C,F>(this);
+        countryCodes = new WrappedCountryCodeService<C,F>(this);
+        creditCardProcessors = new WrappedCreditCardProcessorService<C,F>(this);
+        creditCardTransactions = new WrappedCreditCardTransactionService<C,F>(this);
+        creditCards = new WrappedCreditCardService<C,F>(this);
+        cvsRepositories = new WrappedCvsRepositoryService<C,F>(this);
+        disableLogs = new WrappedDisableLogService<C,F>(this);
         /* TODO
-        distroFileTypes = new WrappedDistroFileTypeService(this);
-        distroFiles = new WrappedDistroFileService(this);
+        distroFileTypes = new WrappedDistroFileTypeService<C,F>(this);
+        distroFiles = new WrappedDistroFileService<C,F>(this);
          */
-        dnsRecords = new WrappedDnsRecordService(this);
-        dnsTlds = new WrappedDnsTldService(this);
-        dnsTypes = new WrappedDnsTypeService(this);
-        dnsZones = new WrappedDnsZoneService(this);
-        // TODO: emailAddresss = new WrappedEmailAddressService(this);
-        // TODO: emailAttachmentBlocks = new WrappedEmailAttachmentBlockService(this);
-        emailAttachmentTypes = new WrappedEmailAttachmentTypeService(this);
-        // TODO: emailDomains = new WrappedEmailDomainService(this);
-        // TODO: emailForwardings = new WrappedEmailForwardingService(this);
-        emailInboxes = new WrappedEmailInboxService(this);
-        // TODO: emailListAddresss = new WrappedEmailListAddressService(this);
-        // TODO: emailLists = new WrappedEmailListService(this);
-        // TODO: emailPipeAddresss = new WrappedEmailPipeAddressService(this);
-        // TODO: emailPipes = new WrappedEmailPipeService(this);
-        emailSmtpRelayTypes = new WrappedEmailSmtpRelayTypeService(this);
-        // TODO: emailSmtpRelays = new WrappedEmailSmtpRelayService(this);
-        // TODO: emailSmtpSmartHostDomains = new WrappedEmailSmtpSmartHostDomainService(this);
-        // TODO: emailSmtpSmartHosts = new WrappedEmailSmtpSmartHostService(this);
-        emailSpamAssassinIntegrationModes = new WrappedEmailSpamAssassinIntegrationModeService(this);
-        // TODO: encryptionKeys = new WrappedEncryptionKeyService(this);
-        expenseCategories = new WrappedExpenseCategoryService(this);
-        failoverFileLogs = new WrappedFailoverFileLogService(this);
-        failoverFileReplications = new WrappedFailoverFileReplicationService(this);
-        failoverFileSchedules = new WrappedFailoverFileScheduleService(this);
-        failoverMySQLReplications = new WrappedFailoverMySQLReplicationService(this);
-        fileBackupSettings = new WrappedFileBackupSettingService(this);
-        groupNames = new WrappedGroupNameService(this);
-        ftpGuestUsers = new WrappedFtpGuestUserService(this);
+        dnsRecords = new WrappedDnsRecordService<C,F>(this);
+        dnsTlds = new WrappedDnsTldService<C,F>(this);
+        dnsTypes = new WrappedDnsTypeService<C,F>(this);
+        dnsZones = new WrappedDnsZoneService<C,F>(this);
+        // TODO: emailAddresss = new WrappedEmailAddressService<C,F>(this);
+        // TODO: emailAttachmentBlocks = new WrappedEmailAttachmentBlockService<C,F>(this);
+        emailAttachmentTypes = new WrappedEmailAttachmentTypeService<C,F>(this);
+        // TODO: emailDomains = new WrappedEmailDomainService<C,F>(this);
+        // TODO: emailForwardings = new WrappedEmailForwardingService<C,F>(this);
+        emailInboxes = new WrappedEmailInboxService<C,F>(this);
+        // TODO: emailListAddresss = new WrappedEmailListAddressService<C,F>(this);
+        // TODO: emailLists = new WrappedEmailListService<C,F>(this);
+        // TODO: emailPipeAddresss = new WrappedEmailPipeAddressService<C,F>(this);
+        // TODO: emailPipes = new WrappedEmailPipeService<C,F>(this);
+        emailSmtpRelayTypes = new WrappedEmailSmtpRelayTypeService<C,F>(this);
+        // TODO: emailSmtpRelays = new WrappedEmailSmtpRelayService<C,F>(this);
+        // TODO: emailSmtpSmartHostDomains = new WrappedEmailSmtpSmartHostDomainService<C,F>(this);
+        // TODO: emailSmtpSmartHosts = new WrappedEmailSmtpSmartHostService<C,F>(this);
+        emailSpamAssassinIntegrationModes = new WrappedEmailSpamAssassinIntegrationModeService<C,F>(this);
+        // TODO: encryptionKeys = new WrappedEncryptionKeyService<C,F>(this);
+        expenseCategories = new WrappedExpenseCategoryService<C,F>(this);
+        failoverFileLogs = new WrappedFailoverFileLogService<C,F>(this);
+        failoverFileReplications = new WrappedFailoverFileReplicationService<C,F>(this);
+        failoverFileSchedules = new WrappedFailoverFileScheduleService<C,F>(this);
+        failoverMySQLReplications = new WrappedFailoverMySQLReplicationService<C,F>(this);
+        fileBackupSettings = new WrappedFileBackupSettingService<C,F>(this);
+        groupNames = new WrappedGroupNameService<C,F>(this);
+        ftpGuestUsers = new WrappedFtpGuestUserService<C,F>(this);
         /* TODO
-        httpdBinds = new WrappedHttpdBindService(this);
-        httpdJBossSites = new WrappedHttpdJBossSiteService(this);
+        httpdBinds = new WrappedHttpdBindService<C,F>(this);
+        httpdJBossSites = new WrappedHttpdJBossSiteService<C,F>(this);
          */
-        httpdJBossVersions = new WrappedHttpdJBossVersionService(this);
-        httpdJKCodes = new WrappedHttpdJKCodeService(this);
-        httpdJKProtocols = new WrappedHttpdJKProtocolService(this);
-        httpdServers = new WrappedHttpdServerService(this);
+        httpdJBossVersions = new WrappedHttpdJBossVersionService<C,F>(this);
+        httpdJKCodes = new WrappedHttpdJKCodeService<C,F>(this);
+        httpdJKProtocols = new WrappedHttpdJKProtocolService<C,F>(this);
+        httpdServers = new WrappedHttpdServerService<C,F>(this);
         /* TODO
-        httpdSharedTomcats = new WrappedHttpdSharedTomcatService(this);
-        httpdSiteAuthenticatedLocations = new WrappedHttpdSiteAuthenticatedLocationService(this);
-        httpdSiteBinds = new WrappedHttpdSiteBindService(this);
-        httpdSiteURLs = new WrappedHttpdSiteURLService(this);
+        httpdSharedTomcats = new WrappedHttpdSharedTomcatService<C,F>(this);
+        httpdSiteAuthenticatedLocations = new WrappedHttpdSiteAuthenticatedLocationService<C,F>(this);
+        httpdSiteBinds = new WrappedHttpdSiteBindService<C,F>(this);
+        httpdSiteURLs = new WrappedHttpdSiteURLService<C,F>(this);
          */
-        httpdSites = new WrappedHttpdSiteService(this);
-        // TODO: httpdStaticSites = new WrappedHttpdStaticSiteService(this);
-        // TODO: httpdTomcatContexts = new WrappedHttpdTomcatContextService(this);
-        // TODO: httpdTomcatDataSources = new WrappedHttpdTomcatDataSourceService(this);
-        // TODO: httpdTomcatParameters = new WrappedHttpdTomcatParameterService(this);
-        // TODO: httpdTomcatSites = new WrappedHttpdTomcatSiteService(this);
-        // TODO: httpdTomcatSharedSites = new WrappedHttpdTomcatSharedSiteService(this);
-        // TODO: httpdTomcatStdSites = new WrappedHttpdTomcatStdSiteService(this);
-        httpdTomcatVersions = new WrappedHttpdTomcatVersionService(this);
-        // TODO: httpdWorkers = new WrappedHttpdWorkerService(this);
-        ipAddresses = new WrappedIPAddressService(this);
-        languages = new WrappedLanguageService(this);
+        httpdSites = new WrappedHttpdSiteService<C,F>(this);
+        // TODO: httpdStaticSites = new WrappedHttpdStaticSiteService<C,F>(this);
+        // TODO: httpdTomcatContexts = new WrappedHttpdTomcatContextService<C,F>(this);
+        // TODO: httpdTomcatDataSources = new WrappedHttpdTomcatDataSourceService<C,F>(this);
+        // TODO: httpdTomcatParameters = new WrappedHttpdTomcatParameterService<C,F>(this);
+        // TODO: httpdTomcatSites = new WrappedHttpdTomcatSiteService<C,F>(this);
+        // TODO: httpdTomcatSharedSites = new WrappedHttpdTomcatSharedSiteService<C,F>(this);
+        // TODO: httpdTomcatStdSites = new WrappedHttpdTomcatStdSiteService<C,F>(this);
+        httpdTomcatVersions = new WrappedHttpdTomcatVersionService<C,F>(this);
+        // TODO: httpdWorkers = new WrappedHttpdWorkerService<C,F>(this);
+        ipAddresses = new WrappedIPAddressService<C,F>(this);
+        languages = new WrappedLanguageService<C,F>(this);
         /* TODO
-        linuxAccAddresss = new WrappedLinuxAccAddressService(this);
+        linuxAccAddresss = new WrappedLinuxAccAddressService<C,F>(this);
          */
-        linuxAccountGroups = new WrappedLinuxAccountGroupService(this);
-        linuxAccountTypes = new WrappedLinuxAccountTypeService(this);
-        linuxAccounts = new WrappedLinuxAccountService(this);
-        linuxGroupTypes = new WrappedLinuxGroupTypeService(this);
-        linuxGroups = new WrappedLinuxGroupService(this);
+        linuxAccountGroups = new WrappedLinuxAccountGroupService<C,F>(this);
+        linuxAccountTypes = new WrappedLinuxAccountTypeService<C,F>(this);
+        linuxAccounts = new WrappedLinuxAccountService<C,F>(this);
+        linuxGroupTypes = new WrappedLinuxGroupTypeService<C,F>(this);
+        linuxGroups = new WrappedLinuxGroupService<C,F>(this);
         /* TODO
-        majordomoLists = new WrappedMajordomoListService(this);
-        majordomoServers = new WrappedMajordomoServerService(this);
+        majordomoLists = new WrappedMajordomoListService<C,F>(this);
+        majordomoServers = new WrappedMajordomoServerService<C,F>(this);
          */
-        majordomoVersions = new WrappedMajordomoVersionService(this);
-        masterHosts = new WrappedMasterHostService(this);
-        masterServers = new WrappedMasterServerService(this);
-        masterUsers = new WrappedMasterUserService(this);
-        // TODO: monthlyCharges = new WrappedMonthlyChargeService(this);
-        mysqlDatabases = new WrappedMySQLDatabaseService(this);
-        mysqlDBUsers = new WrappedMySQLDBUserService(this);
-        mysqlServers = new WrappedMySQLServerService(this);
-        mysqlUsers = new WrappedMySQLUserService(this);
-        netBinds = new WrappedNetBindService(this);
-        netDeviceIDs = new WrappedNetDeviceIDService(this);
-        netDevices = new WrappedNetDeviceService(this);
-        netProtocols = new WrappedNetProtocolService(this);
-        netTcpRedirects = new WrappedNetTcpRedirectService(this);
-        // TODO: noticeLogs = new WrappedNoticeLogService(this);
-        noticeTypes = new WrappedNoticeTypeService(this);
-        operatingSystemVersions = new WrappedOperatingSystemVersionService(this);
-        operatingSystems = new WrappedOperatingSystemService(this);
-        packageCategories = new WrappedPackageCategoryService(this);
-        packageDefinitionBusinesses = new WrappedPackageDefinitionBusinessService(this);
-        packageDefinitionLimits = new WrappedPackageDefinitionLimitService(this);
-        packageDefinitions = new WrappedPackageDefinitionService(this);
-        paymentTypes = new WrappedPaymentTypeService(this);
-        // TODO: physicalServers = new WrappedPhysicalServerService(this);
-        postgresDatabases = new WrappedPostgresDatabaseService(this);
-        postgresEncodings = new WrappedPostgresEncodingService(this);
-        postgresServers = new WrappedPostgresServerService(this);
-        postgresUsers = new WrappedPostgresUserService(this);
-        postgresVersions = new WrappedPostgresVersionService(this);
-        privateFtpServers = new WrappedPrivateFtpServerService(this);
-        processorTypes = new WrappedProcessorTypeService(this);
-        protocols = new WrappedProtocolService(this);
-        // TODO: racks = new WrappedRackService(this);
-        resellers = new WrappedResellerService(this);
-        resourceTypes = new WrappedResourceTypeService(this);
-        resources = new WrappedResourceService(this);
-        serverFarms = new WrappedServerFarmService(this);
-        serverResources = new WrappedServerResourceService(this);
-        servers = new WrappedServerService(this);
-        shells = new WrappedShellService(this);
+        majordomoVersions = new WrappedMajordomoVersionService<C,F>(this);
+        masterHosts = new WrappedMasterHostService<C,F>(this);
+        masterServers = new WrappedMasterServerService<C,F>(this);
+        masterUsers = new WrappedMasterUserService<C,F>(this);
+        // TODO: monthlyCharges = new WrappedMonthlyChargeService<C,F>(this);
+        mysqlDatabases = new WrappedMySQLDatabaseService<C,F>(this);
+        mysqlDBUsers = new WrappedMySQLDBUserService<C,F>(this);
+        mysqlServers = new WrappedMySQLServerService<C,F>(this);
+        mysqlUsers = new WrappedMySQLUserService<C,F>(this);
+        netBinds = new WrappedNetBindService<C,F>(this);
+        netDeviceIDs = new WrappedNetDeviceIDService<C,F>(this);
+        netDevices = new WrappedNetDeviceService<C,F>(this);
+        netProtocols = new WrappedNetProtocolService<C,F>(this);
+        netTcpRedirects = new WrappedNetTcpRedirectService<C,F>(this);
+        // TODO: noticeLogs = new WrappedNoticeLogService<C,F>(this);
+        noticeTypes = new WrappedNoticeTypeService<C,F>(this);
+        operatingSystemVersions = new WrappedOperatingSystemVersionService<C,F>(this);
+        operatingSystems = new WrappedOperatingSystemService<C,F>(this);
+        packageCategories = new WrappedPackageCategoryService<C,F>(this);
+        packageDefinitionBusinesses = new WrappedPackageDefinitionBusinessService<C,F>(this);
+        packageDefinitionLimits = new WrappedPackageDefinitionLimitService<C,F>(this);
+        packageDefinitions = new WrappedPackageDefinitionService<C,F>(this);
+        paymentTypes = new WrappedPaymentTypeService<C,F>(this);
+        // TODO: physicalServers = new WrappedPhysicalServerService<C,F>(this);
+        postgresDatabases = new WrappedPostgresDatabaseService<C,F>(this);
+        postgresEncodings = new WrappedPostgresEncodingService<C,F>(this);
+        postgresServers = new WrappedPostgresServerService<C,F>(this);
+        postgresUsers = new WrappedPostgresUserService<C,F>(this);
+        postgresVersions = new WrappedPostgresVersionService<C,F>(this);
+        privateFtpServers = new WrappedPrivateFtpServerService<C,F>(this);
+        processorTypes = new WrappedProcessorTypeService<C,F>(this);
+        protocols = new WrappedProtocolService<C,F>(this);
+        // TODO: racks = new WrappedRackService<C,F>(this);
+        resellers = new WrappedResellerService<C,F>(this);
+        resourceTypes = new WrappedResourceTypeService<C,F>(this);
+        resources = new ResourceService<C,F>(this);
+        serverFarms = new WrappedServerFarmService<C,F>(this);
+        serverResources = new ServerResourceService<C,F>(this);
+        servers = new WrappedServerService<C,F>(this);
+        shells = new WrappedShellService<C,F>(this);
         /* TODO
-        signupRequestOptions = new WrappedSignupRequestOptionService(this);
-        signupRequests = new WrappedSignupRequestService(this);
-        spamEmailMessages = new WrappedSpamEmailMessageService(this);
-        systemEmailAliass = new WrappedSystemEmailAliasService(this);
+        signupRequestOptions = new WrappedSignupRequestOptionService<C,F>(this);
+        signupRequests = new WrappedSignupRequestService<C,F>(this);
+        spamEmailMessages = new WrappedSpamEmailMessageService<C,F>(this);
+        systemEmailAliass = new WrappedSystemEmailAliasService<C,F>(this);
          */
-        technologies = new WrappedTechnologyService(this);
-        technologyClasses = new WrappedTechnologyClassService(this);
-        technologyNames = new WrappedTechnologyNameService(this);
-        technologyVersions = new WrappedTechnologyVersionService(this);
-        ticketActionTypes = new WrappedTicketActionTypeService(this);
-        ticketActions = new WrappedTicketActionService(this);
-        ticketAssignments = new WrappedTicketAssignmentService(this);
-        // TODO: ticketBrandCategories = new WrappedTicketBrandCategoryService(this);
-        ticketCategories = new WrappedTicketCategoryService(this);
-        ticketPriorities = new WrappedTicketPriorityService(this);
-        ticketStatuses = new WrappedTicketStatusService(this);
-        ticketTypes = new WrappedTicketTypeService(this);
-        tickets = new WrappedTicketService(this);
-        timeZones = new WrappedTimeZoneService(this);
-        transactionTypes = new WrappedTransactionTypeService(this);
-        transactions = new WrappedTransactionService(this);
-        // TODO: usStates = new WrappedUSStateService(this);
-        usernames = new WrappedUsernameService(this);
-        // TODO: virtualDisks = new WrappedVirtualDiskService(this);
-        virtualServers = new WrappedVirtualServerService(this);
-        // TODO: whoisHistories = new WrappedWhoisHistoryService(this);
+        technologies = new WrappedTechnologyService<C,F>(this);
+        technologyClasses = new WrappedTechnologyClassService<C,F>(this);
+        technologyNames = new WrappedTechnologyNameService<C,F>(this);
+        technologyVersions = new WrappedTechnologyVersionService<C,F>(this);
+        ticketActionTypes = new WrappedTicketActionTypeService<C,F>(this);
+        ticketActions = new WrappedTicketActionService<C,F>(this);
+        ticketAssignments = new WrappedTicketAssignmentService<C,F>(this);
+        // TODO: ticketBrandCategories = new WrappedTicketBrandCategoryService<C,F>(this);
+        ticketCategories = new WrappedTicketCategoryService<C,F>(this);
+        ticketPriorities = new WrappedTicketPriorityService<C,F>(this);
+        ticketStatuses = new WrappedTicketStatusService<C,F>(this);
+        ticketTypes = new WrappedTicketTypeService<C,F>(this);
+        tickets = new WrappedTicketService<C,F>(this);
+        timeZones = new WrappedTimeZoneService<C,F>(this);
+        transactionTypes = new WrappedTransactionTypeService<C,F>(this);
+        transactions = new WrappedTransactionService<C,F>(this);
+        // TODO: usStates = new WrappedUSStateService<C,F>(this);
+        usernames = new WrappedUsernameService<C,F>(this);
+        // TODO: virtualDisks = new WrappedVirtualDiskService<C,F>(this);
+        virtualServers = new WrappedVirtualServerService<C,F>(this);
+        // TODO: whoisHistories = new WrappedWhoisHistoryService<C,F>(this);
         // Connect immediately in order to have the chance to throw exceptions that will occur during connection
         getWrapped();
     }
@@ -232,14 +231,6 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
 
     /**
-     * All services call this to determine if the service is settable on objects returned by this connector.
-     * Defaults to <code>true</code>.
-     */
-    protected boolean isAoServObjectServiceSettable() {
-        return true;
-    }
-
-    /**
      * Performs the call on the wrapped object, allowing retry.
      */
     final protected <T> T call(Callable<T> callable) throws RemoteException, NoSuchElementException {
@@ -265,6 +256,14 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     @Override
     final public F getFactory() {
         return factory;
+    }
+
+    /**
+     * Defaults to <code>true</code>.
+     */
+    @Override
+    public boolean isAoServObjectConnectorSettable() throws RemoteException {
+        return true;
     }
 
     @Override
@@ -342,7 +341,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
 
     // <editor-fold defaultstate="collapsed" desc="AOServerDaemonHostService">
     static class WrappedAOServerDaemonHostService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServerDaemonHost> implements AOServerDaemonHostService<C,F> {
-        WrappedAOServerDaemonHostService(C connector) {
+        WrappedAOServerDaemonHostService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, AOServerDaemonHost.class);
         }
     }
@@ -353,12 +352,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServerResourceService">
-    static class WrappedAOServerResourceService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServerResource> implements AOServerResourceService<C,F> {
-        WrappedAOServerResourceService(C connector) {
-            super(connector, Integer.class, AOServerResource.class);
-        }
-    }
-    final WrappedAOServerResourceService<C,F> aoserverResources;
+    final AOServerResourceService<C,F> aoserverResources;
     @Override
     final public AOServerResourceService<C,F> getAoServerResources() {
         return aoserverResources;
@@ -366,7 +360,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServerService">
     static class WrappedAOServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServer> implements AOServerService<C,F> {
-        WrappedAOServerService(C connector) {
+        WrappedAOServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, AOServer.class);
         }
     }
@@ -378,7 +372,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServPermissionService">
     static class WrappedAOServPermissionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,AOServPermission> implements AOServPermissionService<C,F> {
-        WrappedAOServPermissionService(C connector) {
+        WrappedAOServPermissionService(WrappedConnector<C,F> connector) {
             super(connector, String.class, AOServPermission.class);
         }
     }
@@ -390,7 +384,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServRoleService">
     static class WrappedAOServRoleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServRole> implements AOServRoleService<C,F> {
-        WrappedAOServRoleService(C connector) {
+        WrappedAOServRoleService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, AOServRole.class);
         }
     }
@@ -402,7 +396,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServRolePermissionService">
     static class WrappedAOServRolePermissionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServRolePermission> implements AOServRolePermissionService<C,F> {
-        WrappedAOServRolePermissionService(C connector) {
+        WrappedAOServRolePermissionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, AOServRolePermission.class);
         }
     }
@@ -414,7 +408,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ArchitectureService">
     static class WrappedArchitectureService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Architecture> implements ArchitectureService<C,F> {
-        WrappedArchitectureService(C connector) {
+        WrappedArchitectureService(WrappedConnector<C,F> connector) {
             super(connector, String.class, Architecture.class);
         }
     }
@@ -426,7 +420,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BackupPartitionService">
     static class WrappedBackupPartitionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BackupPartition> implements BackupPartitionService<C,F> {
-        WrappedBackupPartitionService(C connector) {
+        WrappedBackupPartitionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, BackupPartition.class);
         }
     }
@@ -438,7 +432,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BackupRetentionService">
     static class WrappedBackupRetentionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Short,BackupRetention> implements BackupRetentionService<C,F> {
-        WrappedBackupRetentionService(C connector) {
+        WrappedBackupRetentionService(WrappedConnector<C,F> connector) {
             super(connector, Short.class, BackupRetention.class);
         }
     }
@@ -454,7 +448,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionTypeService">
     static class WrappedBankTransactionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,BankTransactionType> implements BankTransactionTypeService<C,F> {
-        WrappedBankTransactionTypeService(C connector) {
+        WrappedBankTransactionTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, BankTransactionType.class);
         }
     }
@@ -474,7 +468,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BrandService">
     static class WrappedBrandService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Brand> implements BrandService<C,F> {
-        WrappedBrandService(C connector) {
+        WrappedBrandService(WrappedConnector<C,F> connector) {
             super(connector, AccountingCode.class, Brand.class);
         }
     }
@@ -486,7 +480,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorService">
     static class WrappedBusinessAdministratorService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,BusinessAdministrator> implements BusinessAdministratorService<C,F> {
-        WrappedBusinessAdministratorService(C connector) {
+        WrappedBusinessAdministratorService(WrappedConnector<C,F> connector) {
             super(connector, UserId.class, BusinessAdministrator.class);
         }
     }
@@ -498,7 +492,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessAdministratorRoleService">
     static class WrappedBusinessAdministratorRoleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessAdministratorRole> implements BusinessAdministratorRoleService<C,F> {
-        WrappedBusinessAdministratorRoleService(C connector) {
+        WrappedBusinessAdministratorRoleService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, BusinessAdministratorRole.class);
         }
     }
@@ -510,7 +504,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessProfileService">
     static class WrappedBusinessProfileService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessProfile> implements BusinessProfileService<C,F> {
-        WrappedBusinessProfileService(C connector) {
+        WrappedBusinessProfileService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, BusinessProfile.class);
         }
     }
@@ -522,7 +516,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessService">
     static class WrappedBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Business> implements BusinessService<C,F> {
-        WrappedBusinessService(C connector) {
+        WrappedBusinessService(WrappedConnector<C,F> connector) {
             super(connector, AccountingCode.class, Business.class);
         }
     }
@@ -534,7 +528,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BusinessServerService">
     static class WrappedBusinessServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BusinessServer> implements BusinessServerService<C,F> {
-        WrappedBusinessServerService(C connector) {
+        WrappedBusinessServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, BusinessServer.class);
         }
     }
@@ -546,7 +540,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CountryCodeService">
     static class WrappedCountryCodeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,CountryCode> implements CountryCodeService<C,F> {
-        WrappedCountryCodeService(C connector) {
+        WrappedCountryCodeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, CountryCode.class);
         }
     }
@@ -558,7 +552,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardProcessorService">
     static class WrappedCreditCardProcessorService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,CreditCardProcessor> implements CreditCardProcessorService<C,F> {
-        WrappedCreditCardProcessorService(C connector) {
+        WrappedCreditCardProcessorService(WrappedConnector<C,F> connector) {
             super(connector, String.class, CreditCardProcessor.class);
         }
     }
@@ -570,7 +564,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardTransactionService">
     static class WrappedCreditCardTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCardTransaction> implements CreditCardTransactionService<C,F> {
-        WrappedCreditCardTransactionService(C connector) {
+        WrappedCreditCardTransactionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, CreditCardTransaction.class);
         }
     }
@@ -582,7 +576,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CreditCardService">
     static class WrappedCreditCardService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CreditCard> implements CreditCardService<C,F> {
-        WrappedCreditCardService(C connector) {
+        WrappedCreditCardService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, CreditCard.class);
         }
     }
@@ -594,7 +588,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="CvsRepositoryService">
     static class WrappedCvsRepositoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,CvsRepository> implements CvsRepositoryService<C,F> {
-        WrappedCvsRepositoryService(C connector) {
+        WrappedCvsRepositoryService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, CvsRepository.class);
         }
     }
@@ -606,7 +600,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DisableLogService">
     static class WrappedDisableLogService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DisableLog> implements DisableLogService<C,F> {
-        WrappedDisableLogService(C connector) {
+        WrappedDisableLogService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, DisableLog.class);
         }
     }
@@ -626,7 +620,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsRecordService">
     static class WrappedDnsRecordService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DnsRecord> implements DnsRecordService<C,F> {
-        WrappedDnsRecordService(C connector) {
+        WrappedDnsRecordService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, DnsRecord.class);
         }
     }
@@ -638,7 +632,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsTldService">
     static class WrappedDnsTldService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,DomainName,DnsTld> implements DnsTldService<C,F> {
-        WrappedDnsTldService(C connector) {
+        WrappedDnsTldService(WrappedConnector<C,F> connector) {
             super(connector, DomainName.class, DnsTld.class);
         }
     }
@@ -650,7 +644,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsTypeService">
     static class WrappedDnsTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,DnsType> implements DnsTypeService<C,F> {
-        WrappedDnsTypeService(C connector) {
+        WrappedDnsTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, DnsType.class);
         }
     }
@@ -662,7 +656,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="DnsZoneService">
     static class WrappedDnsZoneService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,DnsZone> implements DnsZoneService<C,F> {
-        WrappedDnsZoneService(C connector) {
+        WrappedDnsZoneService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, DnsZone.class);
         }
     }
@@ -682,7 +676,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailAttachmentTypeService">
     static class WrappedEmailAttachmentTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailAttachmentType> implements EmailAttachmentTypeService<C,F> {
-        WrappedEmailAttachmentTypeService(C connector) {
+        WrappedEmailAttachmentTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, EmailAttachmentType.class);
         }
     }
@@ -702,7 +696,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailInboxService">
     static class WrappedEmailInboxService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,EmailInbox> implements EmailInboxService<C,F> {
-        WrappedEmailInboxService(C connector) {
+        WrappedEmailInboxService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, EmailInbox.class);
         }
     }
@@ -730,7 +724,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSmtpRelayTypeService">
     static class WrappedEmailSmtpRelayTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailSmtpRelayType> implements EmailSmtpRelayTypeService<C,F> {
-        WrappedEmailSmtpRelayTypeService(C connector) {
+        WrappedEmailSmtpRelayTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, EmailSmtpRelayType.class);
         }
     }
@@ -754,7 +748,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="EmailSpamAssassinIntegrationModeService">
     static class WrappedEmailSpamAssassinIntegrationModeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,EmailSpamAssassinIntegrationMode> implements EmailSpamAssassinIntegrationModeService<C,F> {
-        WrappedEmailSpamAssassinIntegrationModeService(C connector) {
+        WrappedEmailSpamAssassinIntegrationModeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, EmailSpamAssassinIntegrationMode.class);
         }
     }
@@ -770,7 +764,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ExpenseCategoryService">
     static class WrappedExpenseCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ExpenseCategory> implements ExpenseCategoryService<C,F> {
-        WrappedExpenseCategoryService(C connector) {
+        WrappedExpenseCategoryService(WrappedConnector<C,F> connector) {
             super(connector, String.class, ExpenseCategory.class);
         }
     }
@@ -782,7 +776,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverFileLogService">
     static class WrappedFailoverFileLogService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileLog> implements FailoverFileLogService<C,F> {
-        WrappedFailoverFileLogService(C connector) {
+        WrappedFailoverFileLogService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FailoverFileLog.class);
         }
     }
@@ -794,7 +788,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverFileReplicationService">
     static class WrappedFailoverFileReplicationService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileReplication> implements FailoverFileReplicationService<C,F> {
-        WrappedFailoverFileReplicationService(C connector) {
+        WrappedFailoverFileReplicationService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FailoverFileReplication.class);
         }
     }
@@ -806,7 +800,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverFileScheduleService">
     static class WrappedFailoverFileScheduleService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverFileSchedule> implements FailoverFileScheduleService<C,F> {
-        WrappedFailoverFileScheduleService(C connector) {
+        WrappedFailoverFileScheduleService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FailoverFileSchedule.class);
         }
     }
@@ -818,7 +812,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FailoverMySQLReplicationService">
     static class WrappedFailoverMySQLReplicationService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FailoverMySQLReplication> implements FailoverMySQLReplicationService<C,F> {
-        WrappedFailoverMySQLReplicationService(C connector) {
+        WrappedFailoverMySQLReplicationService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FailoverMySQLReplication.class);
         }
     }
@@ -830,7 +824,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FileBackupSettingService">
     static class WrappedFileBackupSettingService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FileBackupSetting> implements FileBackupSettingService<C,F> {
-        WrappedFileBackupSettingService(C connector) {
+        WrappedFileBackupSettingService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FileBackupSetting.class);
         }
     }
@@ -842,7 +836,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="FtpGuestUserService">
     static class WrappedFtpGuestUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,FtpGuestUser> implements FtpGuestUserService<C,F> {
-        WrappedFtpGuestUserService(C connector) {
+        WrappedFtpGuestUserService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, FtpGuestUser.class);
         }
     }
@@ -854,7 +848,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="GroupNameService">
     static class WrappedGroupNameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,GroupId,GroupName> implements GroupNameService<C,F> {
-        WrappedGroupNameService(C connector) {
+        WrappedGroupNameService(WrappedConnector<C,F> connector) {
             super(connector, GroupId.class, GroupName.class);
         }
     }
@@ -874,7 +868,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJBossVersionService">
     static class WrappedHttpdJBossVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdJBossVersion> implements HttpdJBossVersionService<C,F> {
-        WrappedHttpdJBossVersionService(C connector) {
+        WrappedHttpdJBossVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, HttpdJBossVersion.class);
         }
     }
@@ -886,7 +880,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJKCodeService">
     static class WrappedHttpdJKCodeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,HttpdJKCode> implements HttpdJKCodeService<C,F> {
-        WrappedHttpdJKCodeService(C connector) {
+        WrappedHttpdJKCodeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, HttpdJKCode.class);
         }
     }
@@ -898,7 +892,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdJKProtocolService">
     static class WrappedHttpdJKProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,HttpdJKProtocol> implements HttpdJKProtocolService<C,F> {
-        WrappedHttpdJKProtocolService(C connector) {
+        WrappedHttpdJKProtocolService(WrappedConnector<C,F> connector) {
             super(connector, String.class, HttpdJKProtocol.class);
         }
     }
@@ -910,7 +904,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdServerService">
     static class WrappedHttpdServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdServer> implements HttpdServerService<C,F> {
-        WrappedHttpdServerService(C connector) {
+        WrappedHttpdServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, HttpdServer.class);
         }
     }
@@ -938,7 +932,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdSiteService">
     static class WrappedHttpdSiteService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdSite> implements HttpdSiteService<C,F> {
-        WrappedHttpdSiteService(C connector) {
+        WrappedHttpdSiteService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, HttpdSite.class);
         }
     }
@@ -978,7 +972,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="HttpdTomcatVersionService">
     static class WrappedHttpdTomcatVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,HttpdTomcatVersion> implements HttpdTomcatVersionService<C,F> {
-        WrappedHttpdTomcatVersionService(C connector) {
+        WrappedHttpdTomcatVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, HttpdTomcatVersion.class);
         }
     }
@@ -994,7 +988,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="IPAddressService">
     static class WrappedIPAddressService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,IPAddress> implements IPAddressService<C,F> {
-        WrappedIPAddressService(C connector) {
+        WrappedIPAddressService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, IPAddress.class);
         }
     }
@@ -1006,7 +1000,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LanguageService">
     static class WrappedLanguageService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Language> implements LanguageService<C,F> {
-        WrappedLanguageService(C connector) {
+        WrappedLanguageService(WrappedConnector<C,F> connector) {
             super(connector, String.class, Language.class);
         }
     }
@@ -1022,7 +1016,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccountGroupService">
     static class WrappedLinuxAccountGroupService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxAccountGroup> implements LinuxAccountGroupService<C,F> {
-        WrappedLinuxAccountGroupService(C connector) {
+        WrappedLinuxAccountGroupService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, LinuxAccountGroup.class);
         }
     }
@@ -1034,7 +1028,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccountTypeService">
     static class WrappedLinuxAccountTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,LinuxAccountType> implements LinuxAccountTypeService<C,F> {
-        WrappedLinuxAccountTypeService(C connector) {
+        WrappedLinuxAccountTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, LinuxAccountType.class);
         }
     }
@@ -1046,7 +1040,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxAccountService">
     static class WrappedLinuxAccountService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxAccount> implements LinuxAccountService<C,F> {
-        WrappedLinuxAccountService(C connector) {
+        WrappedLinuxAccountService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, LinuxAccount.class);
         }
     }
@@ -1058,7 +1052,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxGroupTypeService">
     static class WrappedLinuxGroupTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,LinuxGroupType> implements LinuxGroupTypeService<C,F> {
-        WrappedLinuxGroupTypeService(C connector) {
+        WrappedLinuxGroupTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, LinuxGroupType.class);
         }
     }
@@ -1070,7 +1064,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="LinuxGroupService">
     static class WrappedLinuxGroupService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,LinuxGroup> implements LinuxGroupService<C,F> {
-        WrappedLinuxGroupService(C connector) {
+        WrappedLinuxGroupService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, LinuxGroup.class);
         }
     }
@@ -1090,7 +1084,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MajordomoVersionService">
     static class WrappedMajordomoVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,MajordomoVersion> implements MajordomoVersionService<C,F> {
-        WrappedMajordomoVersionService(C connector) {
+        WrappedMajordomoVersionService(WrappedConnector<C,F> connector) {
             super(connector, String.class, MajordomoVersion.class);
         }
     }
@@ -1102,7 +1096,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterHostService">
     static class WrappedMasterHostService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MasterHost> implements MasterHostService<C,F> {
-        WrappedMasterHostService(C connector) {
+        WrappedMasterHostService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MasterHost.class);
         }
     }
@@ -1114,7 +1108,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterServerService">
     static class WrappedMasterServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MasterServer> implements MasterServerService<C,F> {
-        WrappedMasterServerService(C connector) {
+        WrappedMasterServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MasterServer.class);
         }
     }
@@ -1126,7 +1120,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MasterUserService">
     static class WrappedMasterUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,MasterUser> implements MasterUserService<C,F> {
-        WrappedMasterUserService(C connector) {
+        WrappedMasterUserService(WrappedConnector<C,F> connector) {
             super(connector, UserId.class, MasterUser.class);
         }
     }
@@ -1142,7 +1136,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLDatabaseService">
     static class WrappedMySQLDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLDatabase> implements MySQLDatabaseService<C,F> {
-        WrappedMySQLDatabaseService(C connector) {
+        WrappedMySQLDatabaseService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MySQLDatabase.class);
         }
     }
@@ -1154,7 +1148,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLDBUserService">
     static class WrappedMySQLDBUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLDBUser> implements MySQLDBUserService<C,F> {
-        WrappedMySQLDBUserService(C connector) {
+        WrappedMySQLDBUserService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MySQLDBUser.class);
         }
     }
@@ -1166,7 +1160,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLServerService">
     static class WrappedMySQLServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLServer> implements MySQLServerService<C,F> {
-        WrappedMySQLServerService(C connector) {
+        WrappedMySQLServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MySQLServer.class);
         }
     }
@@ -1178,7 +1172,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="MySQLUserService">
     static class WrappedMySQLUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,MySQLUser> implements MySQLUserService<C,F> {
-        WrappedMySQLUserService(C connector) {
+        WrappedMySQLUserService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, MySQLUser.class);
         }
     }
@@ -1190,7 +1184,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetBindService">
     static class WrappedNetBindService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetBind> implements NetBindService<C,F> {
-        WrappedNetBindService(C connector) {
+        WrappedNetBindService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, NetBind.class);
         }
     }
@@ -1202,7 +1196,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetDeviceIDService">
     static class WrappedNetDeviceIDService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NetDeviceID> implements NetDeviceIDService<C,F> {
-        WrappedNetDeviceIDService(C connector) {
+        WrappedNetDeviceIDService(WrappedConnector<C,F> connector) {
             super(connector, String.class, NetDeviceID.class);
         }
     }
@@ -1214,7 +1208,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetDeviceService">
     static class WrappedNetDeviceService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetDevice> implements NetDeviceService<C,F> {
-        WrappedNetDeviceService(C connector) {
+        WrappedNetDeviceService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, NetDevice.class);
         }
     }
@@ -1226,7 +1220,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetProtocolService">
     static class WrappedNetProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NetProtocol> implements NetProtocolService<C,F> {
-        WrappedNetProtocolService(C connector) {
+        WrappedNetProtocolService(WrappedConnector<C,F> connector) {
             super(connector, String.class, NetProtocol.class);
         }
     }
@@ -1238,7 +1232,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NetTcpRedirectService">
     static class WrappedNetTcpRedirectService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,NetTcpRedirect> implements NetTcpRedirectService<C,F> {
-        WrappedNetTcpRedirectService(C connector) {
+        WrappedNetTcpRedirectService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, NetTcpRedirect.class);
         }
     }
@@ -1254,7 +1248,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NoticeTypeService">
     static class WrappedNoticeTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,NoticeType> implements NoticeTypeService<C,F> {
-        WrappedNoticeTypeService(C connector) {
+        WrappedNoticeTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, NoticeType.class);
         }
     }
@@ -1266,7 +1260,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="OperatingSystemVersionService">
     static class WrappedOperatingSystemVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,OperatingSystemVersion> implements OperatingSystemVersionService<C,F> {
-        WrappedOperatingSystemVersionService(C connector) {
+        WrappedOperatingSystemVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, OperatingSystemVersion.class);
         }
     }
@@ -1278,7 +1272,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="OperatingSystemService">
     static class WrappedOperatingSystemService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,OperatingSystem> implements OperatingSystemService<C,F> {
-        WrappedOperatingSystemService(C connector) {
+        WrappedOperatingSystemService(WrappedConnector<C,F> connector) {
             super(connector, String.class, OperatingSystem.class);
         }
     }
@@ -1290,7 +1284,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageCategoryService">
     static class WrappedPackageCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,PackageCategory> implements PackageCategoryService<C,F> {
-        WrappedPackageCategoryService(C connector) {
+        WrappedPackageCategoryService(WrappedConnector<C,F> connector) {
             super(connector, String.class, PackageCategory.class);
         }
     }
@@ -1302,7 +1296,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionBusinessService">
     static class WrappedPackageDefinitionBusinessService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinitionBusiness> implements PackageDefinitionBusinessService<C,F> {
-        WrappedPackageDefinitionBusinessService(C connector) {
+        WrappedPackageDefinitionBusinessService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PackageDefinitionBusiness.class);
         }
     }
@@ -1314,7 +1308,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionLimitService">
     static class WrappedPackageDefinitionLimitService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinitionLimit> implements PackageDefinitionLimitService<C,F> {
-        WrappedPackageDefinitionLimitService(C connector) {
+        WrappedPackageDefinitionLimitService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PackageDefinitionLimit.class);
         }
     }
@@ -1326,7 +1320,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PackageDefinitionService">
     static class WrappedPackageDefinitionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PackageDefinition> implements PackageDefinitionService<C,F> {
-        WrappedPackageDefinitionService(C connector) {
+        WrappedPackageDefinitionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PackageDefinition.class);
         }
     }
@@ -1338,7 +1332,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PaymentTypeService">
     static class WrappedPaymentTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,PaymentType> implements PaymentTypeService<C,F> {
-        WrappedPaymentTypeService(C connector) {
+        WrappedPaymentTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, PaymentType.class);
         }
     }
@@ -1354,7 +1348,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresDatabaseService">
     static class WrappedPostgresDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresDatabase> implements PostgresDatabaseService<C,F> {
-        WrappedPostgresDatabaseService(C connector) {
+        WrappedPostgresDatabaseService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresDatabase.class);
         }
     }
@@ -1366,7 +1360,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresEncodingService">
     static class WrappedPostgresEncodingService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresEncoding> implements PostgresEncodingService<C,F> {
-        WrappedPostgresEncodingService(C connector) {
+        WrappedPostgresEncodingService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresEncoding.class);
         }
     }
@@ -1378,7 +1372,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresServerService">
     static class WrappedPostgresServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresServer> implements PostgresServerService<C,F> {
-        WrappedPostgresServerService(C connector) {
+        WrappedPostgresServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresServer.class);
         }
     }
@@ -1390,7 +1384,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresUserService">
     static class WrappedPostgresUserService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresUser> implements PostgresUserService<C,F> {
-        WrappedPostgresUserService(C connector) {
+        WrappedPostgresUserService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresUser.class);
         }
     }
@@ -1402,7 +1396,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresVersionService">
     static class WrappedPostgresVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresVersion> implements PostgresVersionService<C,F> {
-        WrappedPostgresVersionService(C connector) {
+        WrappedPostgresVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PostgresVersion.class);
         }
     }
@@ -1414,7 +1408,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PrivateFtpServerService">
     static class WrappedPrivateFtpServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PrivateFtpServer> implements PrivateFtpServerService<C,F> {
-        WrappedPrivateFtpServerService(C connector) {
+        WrappedPrivateFtpServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, PrivateFtpServer.class);
         }
     }
@@ -1426,7 +1420,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ProcessorTypeService">
     static class WrappedProcessorTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ProcessorType> implements ProcessorTypeService<C,F> {
-        WrappedProcessorTypeService(C connector) {
+        WrappedProcessorTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, ProcessorType.class);
         }
     }
@@ -1438,7 +1432,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ProtocolService">
     static class WrappedProtocolService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Protocol> implements ProtocolService<C,F> {
-        WrappedProtocolService(C connector) {
+        WrappedProtocolService(WrappedConnector<C,F> connector) {
             super(connector, String.class, Protocol.class);
         }
     }
@@ -1454,7 +1448,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResellerService">
     static class WrappedResellerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Reseller> implements ResellerService<C,F> {
-        WrappedResellerService(C connector) {
+        WrappedResellerService(WrappedConnector<C,F> connector) {
             super(connector, AccountingCode.class, Reseller.class);
         }
     }
@@ -1466,7 +1460,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResourceTypeService">
     static class WrappedResourceTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,ResourceType> implements ResourceTypeService<C,F> {
-        WrappedResourceTypeService(C connector) {
+        WrappedResourceTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, ResourceType.class);
         }
     }
@@ -1477,12 +1471,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResourceService">
-    static class WrappedResourceService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Resource> implements ResourceService<C,F> {
-        WrappedResourceService(C connector) {
-            super(connector, Integer.class, Resource.class);
-        }
-    }
-    final WrappedResourceService<C,F> resources;
+    final ResourceService<C,F> resources;
     @Override
     final public ResourceService<C,F> getResources() {
         return resources;
@@ -1490,7 +1479,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerFarmService">
     static class WrappedServerFarmService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,DomainLabel,ServerFarm> implements ServerFarmService<C,F> {
-        WrappedServerFarmService(C connector) {
+        WrappedServerFarmService(WrappedConnector<C,F> connector) {
             super(connector, DomainLabel.class, ServerFarm.class);
         }
     }
@@ -1501,12 +1490,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerResourceService">
-    static class WrappedServerResourceService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,ServerResource> implements ServerResourceService<C,F> {
-        WrappedServerResourceService(C connector) {
-            super(connector, Integer.class, ServerResource.class);
-        }
-    }
-    final WrappedServerResourceService<C,F> serverResources;
+    final ServerResourceService<C,F> serverResources;
     @Override
     final public ServerResourceService<C,F> getServerResources() {
         return serverResources;
@@ -1514,7 +1498,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerService">
     static class WrappedServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Server> implements ServerService<C,F> {
-        WrappedServerService(C connector) {
+        WrappedServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, Server.class);
         }
     }
@@ -1526,7 +1510,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ShellService">
     static class WrappedShellService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UnixPath,Shell> implements ShellService<C,F> {
-        WrappedShellService(C connector) {
+        WrappedShellService(WrappedConnector<C,F> connector) {
             super(connector, UnixPath.class, Shell.class);
         }
     }
@@ -1554,7 +1538,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyService">
     final class WrappedTechnologyService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Technology> implements TechnologyService<C,F> {
-        WrappedTechnologyService(C connector) {
+        WrappedTechnologyService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, Technology.class);
         }
     }
@@ -1566,7 +1550,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyClassService">
     static class WrappedTechnologyClassService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TechnologyClass> implements TechnologyClassService<C,F> {
-        WrappedTechnologyClassService(C connector) {
+        WrappedTechnologyClassService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TechnologyClass.class);
         }
     }
@@ -1578,7 +1562,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyNameService">
     static class WrappedTechnologyNameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TechnologyName> implements TechnologyNameService<C,F> {
-        WrappedTechnologyNameService(C connector) {
+        WrappedTechnologyNameService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TechnologyName.class);
         }
     }
@@ -1590,7 +1574,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TechnologyVersionService">
     static class WrappedTechnologyVersionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TechnologyVersion> implements TechnologyVersionService<C,F> {
-        WrappedTechnologyVersionService(C connector) {
+        WrappedTechnologyVersionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, TechnologyVersion.class);
         }
     }
@@ -1602,7 +1586,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionTypeService">
     static class WrappedTicketActionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketActionType> implements TicketActionTypeService<C,F> {
-        WrappedTicketActionTypeService(C connector) {
+        WrappedTicketActionTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TicketActionType.class);
         }
     }
@@ -1614,7 +1598,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketActionService">
     static class WrappedTicketActionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAction> implements TicketActionService<C,F> {
-        WrappedTicketActionService(C connector) {
+        WrappedTicketActionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, TicketAction.class);
         }
     }
@@ -1626,7 +1610,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketAssignmentService">
     static class WrappedTicketAssignmentService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketAssignment> implements TicketAssignmentService<C,F> {
-        WrappedTicketAssignmentService(C connector) {
+        WrappedTicketAssignmentService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, TicketAssignment.class);
         }
     }
@@ -1642,7 +1626,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketCategoryService">
     static class WrappedTicketCategoryService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,TicketCategory> implements TicketCategoryService<C,F> {
-        WrappedTicketCategoryService(C connector) {
+        WrappedTicketCategoryService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, TicketCategory.class);
         }
     }
@@ -1654,7 +1638,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketPriorityService">
     static class WrappedTicketPriorityService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketPriority> implements TicketPriorityService<C,F> {
-        WrappedTicketPriorityService(C connector) {
+        WrappedTicketPriorityService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TicketPriority.class);
         }
     }
@@ -1666,7 +1650,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketStatusService">
     static class WrappedTicketStatusService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketStatus> implements TicketStatusService<C,F> {
-        WrappedTicketStatusService(C connector) {
+        WrappedTicketStatusService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TicketStatus.class);
         }
     }
@@ -1678,7 +1662,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketTypeService">
     static class WrappedTicketTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TicketType> implements TicketTypeService<C,F> {
-        WrappedTicketTypeService(C connector) {
+        WrappedTicketTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TicketType.class);
         }
     }
@@ -1690,7 +1674,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TicketService">
     static class WrappedTicketService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Ticket> implements TicketService<C,F> {
-        WrappedTicketService(C connector) {
+        WrappedTicketService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, Ticket.class);
         }
     }
@@ -1702,7 +1686,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TimeZoneService">
     static class WrappedTimeZoneService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TimeZone> implements TimeZoneService<C,F> {
-        WrappedTimeZoneService(C connector) {
+        WrappedTimeZoneService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TimeZone.class);
         }
     }
@@ -1714,7 +1698,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionTypeService">
     static class WrappedTransactionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,TransactionType> implements TransactionTypeService<C,F> {
-        WrappedTransactionTypeService(C connector) {
+        WrappedTransactionTypeService(WrappedConnector<C,F> connector) {
             super(connector, String.class, TransactionType.class);
         }
     }
@@ -1726,7 +1710,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="TransactionService">
     static class WrappedTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Transaction> implements TransactionService<C,F> {
-        WrappedTransactionService(C connector) {
+        WrappedTransactionService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, Transaction.class);
         }
     }
@@ -1738,7 +1722,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="UsernameService">
     static class WrappedUsernameService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,UserId,Username> implements UsernameService<C,F> {
-        WrappedUsernameService(C connector) {
+        WrappedUsernameService(WrappedConnector<C,F> connector) {
             super(connector, UserId.class, Username.class);
         }
     }
@@ -1754,7 +1738,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="VirtualServerService">
     static class WrappedVirtualServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,VirtualServer> implements VirtualServerService<C,F> {
-        WrappedVirtualServerService(C connector) {
+        WrappedVirtualServerService(WrappedConnector<C,F> connector) {
             super(connector, Integer.class, VirtualServer.class);
         }
     }

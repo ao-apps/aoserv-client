@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class LinuxGroup {
+public class LinuxGroup extends AOServerResource {
 
-    private int aoServerResource;
     private String linuxGroupType;
     private GroupId groupName;
     private LinuxID gid;
@@ -19,23 +18,23 @@ public class LinuxGroup {
     }
 
     public LinuxGroup(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         String linuxGroupType,
         GroupId groupName,
         LinuxID gid
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.linuxGroupType = linuxGroupType;
         this.groupName = groupName;
         this.gid = gid;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public String getLinuxGroupType() {

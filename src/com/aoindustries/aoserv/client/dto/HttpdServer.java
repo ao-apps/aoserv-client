@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class HttpdServer {
+public class HttpdServer extends AOServerResource {
 
-    private int aoServerResource;
     private int number;
     private int maxBinds;
     private int linuxAccountGroup;
@@ -24,7 +23,15 @@ public class HttpdServer {
     }
 
     public HttpdServer(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         int number,
         int maxBinds,
         int linuxAccountGroup,
@@ -34,7 +41,7 @@ public class HttpdServer {
         boolean useModPerl,
         int timeout
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.number = number;
         this.maxBinds = maxBinds;
         this.linuxAccountGroup = linuxAccountGroup;
@@ -43,14 +50,6 @@ public class HttpdServer {
         this.isShared = isShared;
         this.useModPerl = useModPerl;
         this.timeout = timeout;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public int getNumber() {

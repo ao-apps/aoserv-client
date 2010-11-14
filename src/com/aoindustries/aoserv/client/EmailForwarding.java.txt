@@ -53,7 +53,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
      * Gets the <code>email_address</code>
      */
     public EmailAddress getEmailAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().get(email_address);
+        return getConnector().getEmailAddresses().get(email_address);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -88,7 +88,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
     }
     
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_FORWARDING,

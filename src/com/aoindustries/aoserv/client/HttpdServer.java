@@ -5,6 +5,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
@@ -22,7 +24,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdServer extends AOServObjectIntegerKey implements Comparable<HttpdServer>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdServer> {
+final public class HttpdServer extends AOServerResource implements Comparable<HttpdServer>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -44,8 +46,16 @@ final public class HttpdServer extends AOServObjectIntegerKey implements Compara
     final private int timeout;
 
     public HttpdServer(
-        HttpdServerService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         int number,
         int maxBinds,
         int linuxAccountGroup,
@@ -55,7 +65,7 @@ final public class HttpdServer extends AOServObjectIntegerKey implements Compara
         boolean useModPerl,
         int timeout
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.number = number;
         this.maxBinds = maxBinds;
         this.linuxAccountGroup = linuxAccountGroup;
@@ -72,9 +82,7 @@ final public class HttpdServer extends AOServObjectIntegerKey implements Compara
     public int compareTo(HttpdServer other) {
         try {
             if(key==other.key) return 0;
-            AOServerResource aoResource1 = getAoServerResource();
-            AOServerResource aoResource2 = other.getAoServerResource();
-            int diff = aoResource1.aoServer==aoResource2.aoServer ? 0 : aoResource1.getAoServer().compareTo(aoResource2.getAoServer());
+            int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
             if(diff!=0) return diff;
             return AOServObjectUtils.compare(number, other.number);
         } catch(RemoteException err) {
@@ -84,18 +92,12 @@ final public class HttpdServer extends AOServObjectIntegerKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
-    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
-    @SchemaColumn(order=1, name="number", description="the number of the instance on the server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name="number", description="the number of the instance on the server")
     public int getNumber() {
         return number;
     }
 
-    @SchemaColumn(order=2, name="max_binds", description="the maximum number of httpd_site_binds on this server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name="max_binds", description="the maximum number of httpd_site_binds on this server")
     public int getMaxBinds() {
         return maxBinds;
     }
@@ -104,36 +106,36 @@ final public class HttpdServer extends AOServObjectIntegerKey implements Compara
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the account and group the servers runs as")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the account and group the servers runs as")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_PKEY, linuxAccountGroup);
+        return getConnector().getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_PKEY, linuxAccountGroup);
     }
 
     static final String COLUMN_MOD_PHP_VERSION = "mod_php_version";
-    @SchemaColumn(order=4, name=COLUMN_MOD_PHP_VERSION, index=IndexType.INDEXED, description="the version of mod_php to run")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_MOD_PHP_VERSION, index=IndexType.INDEXED, description="the version of mod_php to run")
     public TechnologyVersion getModPhpVersion() throws RemoteException {
         if(modPhpVersion==null) return null;
-        TechnologyVersion tv=getService().getConnector().getTechnologyVersions().get(modPhpVersion);
-        if(tv.operatingSystemVersion!=getAoServerResource().getAoServer().getServer().operatingSystemVersion) throw new RemoteException("mod_php/operating system version mismatch on HttpdServer: #"+key);
+        TechnologyVersion tv=getConnector().getTechnologyVersions().get(modPhpVersion);
+        if(tv.operatingSystemVersion!=getAoServer().getServer().operatingSystemVersion) throw new RemoteException("mod_php/operating system version mismatch on HttpdServer: #"+key);
         return tv;
     }
 
-    @SchemaColumn(order=5, name="use_suexec", description="indicates that the suexec wrapper will be used for CGI")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="use_suexec", description="indicates that the suexec wrapper will be used for CGI")
     public boolean getUseSuexec() {
         return useSuexec;
     }
 
-    @SchemaColumn(order=6, name="is_shared", description="indicates that any user on the server may use this httpd instance")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="is_shared", description="indicates that any user on the server may use this httpd instance")
     public boolean isShared() {
         return isShared;
     }
 
-    @SchemaColumn(order=7, name="use_mod_perl", description="enables mod_perl")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="use_mod_perl", description="enables mod_perl")
     public boolean useModPerl() {
         return useModPerl;
     }
 
-    @SchemaColumn(order=8, name="timeout", description="the timeout setting in seconds")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, name="timeout", description="the timeout setting in seconds")
     public int getTimeOut() {
         return timeout;
     }
@@ -142,14 +144,32 @@ final public class HttpdServer extends AOServObjectIntegerKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.HttpdServer(key, number, maxBinds, linuxAccountGroup, modPhpVersion, useSuexec, isShared, useModPerl, timeout);
+        return new com.aoindustries.aoserv.client.dto.HttpdServer(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            number,
+            maxBinds,
+            linuxAccountGroup,
+            modPhpVersion,
+            useSuexec,
+            isShared,
+            useModPerl,
+            timeout
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getModPhpVersion());
         return unionSet;
@@ -157,6 +177,7 @@ final public class HttpdServer extends AOServObjectIntegerKey implements Compara
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdBinds());
         return unionSet;
     }
@@ -172,15 +193,15 @@ final public class HttpdServer extends AOServObjectIntegerKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public List<HttpdBind> getHttpdBinds() throws IOException, SQLException {
-        return getService().getConnector().getHttpdBinds().getHttpdBinds(this);
+        return getConnector().getHttpdBinds().getHttpdBinds(this);
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSites().getHttpdSites(this);
+        return getConnector().getHttpdSites().getHttpdSites(this);
     }
 
     public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
-        return getService().getConnector().getHttpdWorkers().getHttpdWorkers(this);
+        return getConnector().getHttpdWorkers().getHttpdWorkers(this);
     }
      */
     // </editor-fold>

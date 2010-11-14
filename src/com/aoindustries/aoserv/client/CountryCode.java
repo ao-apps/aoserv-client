@@ -35,13 +35,13 @@ final public class CountryCode extends AOServObjectStringKey implements Comparab
     private String chargeComName;
 
     public CountryCode(
-        CountryCodeService<?,?> table,
+        AOServConnector<?,?> connector,
         String code,
         String name,
         boolean chargeComSupported,
         String chargeComName
     ) {
-        super(table, code);
+        super(connector, code);
         this.name = name;
         this.chargeComSupported = chargeComSupported;
         this.chargeComName = chargeComName;
@@ -101,6 +101,7 @@ final public class CountryCode extends AOServObjectStringKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrators());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessProfiles());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCards());
@@ -112,23 +113,23 @@ final public class CountryCode extends AOServObjectStringKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_COUNTRY, this);
+        return getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_COUNTRY, this);
     }
 
     public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
-        return getService().getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_COUNTRY, this);
+        return getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_COUNTRY, this);
     }
 
     public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-        return getService().getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_COUNTRY_CODE, this);
+        return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_COUNTRY_CODE, this);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByShippingCountryCode() throws RemoteException {
-        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_SHIPPING_COUNTRY_CODE, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_SHIPPING_COUNTRY_CODE, this);
     }
 
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardCountryCode() throws RemoteException {
-        return getService().getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_COUNTRY_CODE, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_COUNTRY_CODE, this);
     }
     // </editor-fold>
 

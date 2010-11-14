@@ -38,8 +38,8 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
     private String display;
     final private boolean isUnix;
 
-    public OperatingSystem(OperatingSystemService<?,?> service, String name, String display, boolean is_unix) {
-        super(service, name);
+    public OperatingSystem(AOServConnector<?,?> connector, String name, String display, boolean is_unix) {
+        super(connector, name);
         this.display = display;
         this.isUnix = is_unix;
         intern();
@@ -89,6 +89,7 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersions());
         return unionSet;
     }
@@ -96,7 +97,7 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
-        return getService().getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_OPERATING_SYSTEM, this);
+        return getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_OPERATING_SYSTEM, this);
     }
     // </editor-fold>
 

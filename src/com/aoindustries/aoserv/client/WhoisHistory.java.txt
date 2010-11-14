@@ -60,7 +60,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     }
     
     public Business getBusiness() throws SQLException, IOException {
-    	return getService().getConnector().getBusinesses().get(accounting);
+    	return getConnector().getBusinesses().get(accounting);
     }
     
     /**
@@ -79,7 +79,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
      * values per instance.
      */
     public String getWhoisOutput() throws IOException, SQLException {
-        if(whois_output==null) whois_output = getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT, pkey);
+        if(whois_output==null) whois_output = getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT, pkey);
         return whois_output;
     }
 

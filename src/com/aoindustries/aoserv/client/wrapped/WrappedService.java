@@ -21,16 +21,16 @@ abstract public class WrappedService<
     C extends WrappedConnector<C,F>,
     F extends WrappedConnectorFactory<C,F>,
     K extends Comparable<K>,
-    V extends AOServObject<K> & Comparable<V> & DtoFactory<?>
+    V extends AOServObject<K>
 > implements AOServService<C,F,K,V> {
 
-    final C connector;
+    final WrappedConnector<C,F> connector;
     final ServiceName serviceName;
     final Table<MethodColumn,V> table;
     final Map<K,V> map;
     AOServService<?,?,K,V> wrapped;
 
-    protected WrappedService(C connector, Class<K> keyClass, Class<V> valueClass) {
+    protected WrappedService(WrappedConnector<C,F> connector, Class<K> keyClass, Class<V> valueClass) {
         this.connector = connector;
         serviceName = AOServServiceUtils.findServiceNameByAnnotation(getClass());
         table = new AOServServiceUtils.AnnotationTable<K,V>(this, valueClass);
@@ -39,7 +39,7 @@ abstract public class WrappedService<
 
     @Override
     final public String toString() {
-        return getServiceName().toString();
+        return serviceName.toString();
     }
 
     /**
@@ -60,13 +60,8 @@ abstract public class WrappedService<
     }
 
     @Override
-    final public C getConnector() {
+    final public WrappedConnector<C,F> getConnector() {
         return connector;
-    }
-
-    @Override
-    final public boolean isAoServObjectServiceSettable() throws RemoteException {
-        return connector.isAoServObjectServiceSettable();
     }
 
     @Override
@@ -75,7 +70,7 @@ abstract public class WrappedService<
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServServiceUtils.setServices(getWrapped().getSet(), WrappedService.this);
+                    return AOServConnectorUtils.setConnector(getWrapped().getSet(), connector);
                 }
             }
         );
@@ -126,7 +121,7 @@ abstract public class WrappedService<
             new Callable<V>() {
                 @Override
                 public V call() throws RemoteException, NoSuchElementException {
-                    return AOServServiceUtils.setService(getWrapped().get(key), WrappedService.this);
+                    return AOServConnectorUtils.setConnector(getWrapped().get(key), connector);
                 }
             }
         );
@@ -138,7 +133,7 @@ abstract public class WrappedService<
             new Callable<V>() {
                 @Override
                 public V call() throws RemoteException {
-                    return AOServServiceUtils.setService(getWrapped().filterUnique(columnName, value), WrappedService.this);
+                    return AOServConnectorUtils.setConnector(getWrapped().filterUnique(columnName, value), connector);
                 }
             }
         );
@@ -150,7 +145,7 @@ abstract public class WrappedService<
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServServiceUtils.setServices(getWrapped().filterUniqueSet(columnName, values), WrappedService.this);
+                    return AOServConnectorUtils.setConnector(getWrapped().filterUniqueSet(columnName, values), connector);
                 }
             }
         );
@@ -162,7 +157,7 @@ abstract public class WrappedService<
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServServiceUtils.setServices(getWrapped().filterIndexed(columnName, value), WrappedService.this);
+                    return AOServConnectorUtils.setConnector(getWrapped().filterIndexed(columnName, value), connector);
                 }
             }
         );
@@ -174,7 +169,7 @@ abstract public class WrappedService<
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServServiceUtils.setServices(getWrapped().filterIndexedSet(columnName, values), WrappedService.this);
+                    return AOServConnectorUtils.setConnector(getWrapped().filterIndexedSet(columnName, values), connector);
                 }
             }
         );

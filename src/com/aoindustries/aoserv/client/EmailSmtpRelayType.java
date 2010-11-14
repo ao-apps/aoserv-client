@@ -36,8 +36,8 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey implements C
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private String sendmailConfig;
 
-    public EmailSmtpRelayType(EmailSmtpRelayTypeService<?,?> service, String name, String sendmailConfig) {
-        super(service, name);
+    public EmailSmtpRelayType(AOServConnector<?,?> connector, String name, String sendmailConfig) {
+        super(connector, name);
         this.sendmailConfig = sendmailConfig;
         intern();
     }
@@ -82,6 +82,7 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey implements C
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmtpRelays());
         return unionSet;
     }
@@ -90,7 +91,7 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey implements C
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public IndexedSet<EmailSmtpRelay> getEmailSmtpRelays() throws RemoteException {
-        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
      */
     // </editor-fold>

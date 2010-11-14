@@ -43,7 +43,7 @@ final public class EmailSmtpSmartHostDomain extends CachedObjectIntegerKey<Email
     }
 
     public EmailSmtpSmartHost getEmailSmtpSmartHost() throws SQLException, IOException {
-        return getService().getConnector().getEmailSmtpSmartHosts().get(smart_host);
+        return getConnector().getEmailSmtpSmartHosts().get(smart_host);
     }
 
     public String getDomain() {

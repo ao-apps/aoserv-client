@@ -41,11 +41,11 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     }
 
     public HttpdServer getHttpdServer() throws SQLException, IOException {
-        return getService().getConnector().getHttpdServers().get(httpd_server);
+        return getConnector().getHttpdServers().get(httpd_server);
     }
 
     public NetBind getNetBind() throws SQLException, IOException {
-        return getService().getConnector().getNetBinds().get(pkey);
+        return getConnector().getNetBinds().get(pkey);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -88,6 +88,6 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
     }
 
     public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSiteBinds().getIndexedRows(HttpdSiteBind.COLUMN_HTTPD_BIND, pkey);
+        return getConnector().getHttpdSiteBinds().getIndexedRows(HttpdSiteBind.COLUMN_HTTPD_BIND, pkey);
     }
 }

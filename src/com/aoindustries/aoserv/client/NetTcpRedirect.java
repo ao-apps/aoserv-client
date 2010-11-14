@@ -29,14 +29,14 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     final private NetPort destinationPort;
 
     public NetTcpRedirect(
-        NetTcpRedirectService<?,?> service,
+        AOServConnector<?,?> connector,
         int netBind,
         int cps,
         int cpsOverloadSleepTime,
         Hostname destinationHost,
         NetPort destinationPort
     ) {
-        super(service, netBind);
+        super(connector, netBind);
         this.cps = cps;
         this.cpsOverloadSleepTime = cpsOverloadSleepTime;
         this.destinationHost = destinationHost;
@@ -69,7 +69,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     static final String COLUMN_NET_BIND = "net_bind";
     @SchemaColumn(order=0, name=COLUMN_NET_BIND, index=IndexType.PRIMARY_KEY, description="the pkey as found in net_binds")
     public NetBind getNetBind() throws RemoteException {
-        return getService().getConnector().getNetBinds().get(key);
+        return getConnector().getNetBinds().get(key);
     }
 
     @SchemaColumn(order=1, name="cps", description="the maximum number of connections per second before the redirect is temporarily disabled")
@@ -103,6 +103,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
         return unionSet;
     }

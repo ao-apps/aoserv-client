@@ -62,7 +62,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     public int addMajordomoList(
         String listName
     ) throws SQLException, IOException {
-        return getService().getConnector().getMajordomoLists().addMajordomoList(this, listName);
+        return getConnector().getMajordomoLists().addMajordomoList(this, listName);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -83,35 +83,35 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     }
 
     public EmailDomain getDomain() throws IOException, SQLException {
-        return getService().getConnector().getEmailDomains().get(pkey);
+        return getConnector().getEmailDomains().get(pkey);
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        return getService().getConnector().getLinuxServerAccounts().get(linux_server_account);
+        return getConnector().getLinuxServerAccounts().get(linux_server_account);
     }
 
     public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        return getService().getConnector().getLinuxServerGroups().get(linux_server_group);
+        return getConnector().getLinuxServerGroups().get(linux_server_group);
     }
 
     public EmailPipeAddress getMajordomoPipeAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailPipeAddresses().get(majordomo_pipe_address);
+        return getConnector().getEmailPipeAddresses().get(majordomo_pipe_address);
     }
 
     public MajordomoList getMajordomoList(String listName) throws IOException, SQLException {
-        return getService().getConnector().getMajordomoLists().getMajordomoList(this, listName);
+        return getConnector().getMajordomoLists().getMajordomoList(this, listName);
     }
 
     public List<MajordomoList> getMajordomoLists() throws IOException, SQLException {
-    	return getService().getConnector().getMajordomoLists().getMajordomoLists(this);
+    	return getConnector().getMajordomoLists().getMajordomoLists(this);
     }
 
     public EmailAddress getMajordomoOwnerAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().get(majordomo_owner_add);
+        return getConnector().getEmailAddresses().get(majordomo_owner_add);
     }
 
     public EmailAddress getOwnerMajordomoAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().get(owner_majordomo_add);
+        return getConnector().getEmailAddresses().get(owner_majordomo_add);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -119,7 +119,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     }
 
     public MajordomoVersion getVersion() throws SQLException, IOException {
-        return getService().getConnector().getMajordomoVersions().get(version);
+        return getConnector().getMajordomoVersions().get(version);
     }
 
     public void init(ResultSet result) throws SQLException {
@@ -160,7 +160,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MAJORDOMO_SERVERS,

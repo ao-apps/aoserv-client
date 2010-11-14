@@ -23,8 +23,8 @@ final public class TimeZone extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public TimeZone(TimeZoneService<?,?> table, String name) {
-        super(table, name);
+    public TimeZone(AOServConnector<?,?> connector, String name) {
+        super(connector, name);
     }
     // </editor-fold>
 
@@ -52,6 +52,7 @@ final public class TimeZone extends AOServObjectStringKey implements Comparable<
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServers());
         return unionSet;
     }
@@ -59,7 +60,7 @@ final public class TimeZone extends AOServObjectStringKey implements Comparable<
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<AOServer> getAoServers() throws RemoteException {
-        return getService().getConnector().getAoServers().filterIndexed(AOServer.COLUMN_TIME_ZONE, this);
+        return getConnector().getAoServers().filterIndexed(AOServer.COLUMN_TIME_ZONE, this);
     }
     // </editor-fold>
 

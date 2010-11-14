@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.Table;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.WrappedException;
@@ -12,12 +12,13 @@ import java.rmi.RemoteException;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Utilities provided for various AOServService implementations.  Not intended for direct use.
@@ -29,58 +30,42 @@ final public class AOServServiceUtils {
     private AOServServiceUtils() {
     }
 
+    private static final ConcurrentMap<Class<? extends AOServService>,ServiceName> findServiceNameByAnnotationCache = new ConcurrentHashMap<Class<? extends AOServService>,ServiceName>();
+
     /**
-     * Gets the service name by the interface annotations.
+     * Gets the service name by the class and interface annotations.
+     * Searches this class and all parent classes up to, but not including,
+     * java.lang.Object.
      */
     public static ServiceName findServiceNameByAnnotation(Class<? extends AOServService> clazz) {
-        ServiceName tname = null;
-        for(Class<?> iface : clazz.getInterfaces()) {
-            ServiceAnnotation annoServiceName = iface.getAnnotation(ServiceAnnotation.class);
-            if(annoServiceName!=null) {
-                ServiceName newTname = annoServiceName.value();
-                if(tname!=null) {
-                    if(tname!=newTname) throw new AssertionError("Incompatible services names found in interface hierarchy: "+tname+" and "+newTname);
-                } else {
-                    tname = newTname;
+        ServiceName tname = findServiceNameByAnnotationCache.get(clazz);
+        if(tname==null) {
+            for(Class<?> type = clazz; type!=Object.class; type=type.getSuperclass()) {
+                ServiceAnnotation annoServiceName = type.getAnnotation(ServiceAnnotation.class);
+                if(annoServiceName!=null) {
+                    ServiceName newTname = annoServiceName.value();
+                    if(tname!=null) {
+                        if(tname!=newTname) throw new AssertionError("Incompatible services names found in interface hierarchy: "+tname+" and "+newTname);
+                    } else {
+                        tname = newTname;
+                    }
+                }
+                for(Class<?> iface : type.getInterfaces()) {
+                    annoServiceName = iface.getAnnotation(ServiceAnnotation.class);
+                    if(annoServiceName!=null) {
+                        ServiceName newTname = annoServiceName.value();
+                        if(tname!=null) {
+                            if(tname!=newTname) throw new AssertionError("Incompatible services names found in interface hierarchy: "+tname+" and "+newTname);
+                        } else {
+                            tname = newTname;
+                        }
+                    }
                 }
             }
+            if(tname==null) throw new AssertionError("Unable to find service name: clazz="+clazz.getName());
+            findServiceNameByAnnotationCache.put(clazz, tname);
         }
-        if(tname==null) throw new AssertionError("Unable to find service name: clazz="+clazz.getName());
         return tname;
-    }
-
-    /**
-     * Sets the service on the provided object, possibly cloning it in the process.
-     */
-    @SuppressWarnings("unchecked")
-    public static <K extends Comparable<K>,V extends AOServObject<K>> V setService(V obj, AOServService<?,?,K,?> service) throws RemoteException {
-        return obj==null ? null : (V)obj.setService(service);
-    }
-
-    /**
-     * Sets the service on an entire collection, and returns an unmodifiable set.
-     */
-    public static <K extends Comparable<K>,V extends AOServObject<K>> IndexedSet<V> setServices(IndexedSet<V> objs, AOServService<?,?,K,?> service) throws RemoteException {
-        int size = objs.size();
-        if(size==0) return IndexedSet.emptyIndexedSet();
-        if(size==1) {
-            V oldObj = objs.iterator().next();
-            V newObj = setService(oldObj, service);
-            return newObj==oldObj ? objs : new IndexedSet<V>(newObj);
-        }
-        // Only create a new set when the first new object is created
-        boolean needsNewSet = false;
-        for(V oldObj : objs) {
-            V newObj = setService(oldObj, service);
-            if(newObj!=oldObj) {
-                needsNewSet = true;
-                break;
-            }
-        }
-        if(!needsNewSet) return objs;
-        Set<V> set = new HashSet<V>(size*4/3+1);
-        for(V oldObj : objs) set.add(setService(oldObj, service));
-        return new IndexedSet<V>(set);
     }
 
     /**
@@ -101,7 +86,7 @@ final public class AOServServiceUtils {
      */
     final public static class AnnotationTable<
         K extends Comparable<K>,
-        V extends AOServObject<K> & Comparable<V> & DtoFactory<?>
+        V extends AOServObject<K>
     > implements Table<MethodColumn,V> {
 
         final private AOServService<?,?,K,V> service;
@@ -277,7 +262,7 @@ final public class AOServServiceUtils {
      */
     final public static class ServiceMap<
         K extends Comparable<K>,
-        V extends AOServObject<K> & Comparable<V> & DtoFactory<?>
+        V extends AOServObject<K>
     > implements Map<K,V> {
 
         private final AOServService<?,?,K,V> service;

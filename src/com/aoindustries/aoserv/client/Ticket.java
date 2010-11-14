@@ -54,7 +54,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     transient private String internalNotes;
 
     public Ticket(
-        TicketService<?,?> service,
+        AOServConnector<?,?> connector,
         int ticketId,
         AccountingCode brand,
         AccountingCode reseller,
@@ -73,7 +73,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
         String contactEmails,
         String contactPhoneNumbers
     ) {
-        super(service, ticketId);
+        super(connector, ticketId);
         this.brand = brand;
         this.reseller = reseller;
         this.accounting = accounting;
@@ -131,7 +131,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     static final String COLUMN_BRAND = "brand";
     @SchemaColumn(order=1, name=COLUMN_BRAND, index=IndexType.INDEXED, description="the brand that created the ticket")
     public Brand getBrand() throws RemoteException {
-        return getService().getConnector().getBrands().get(brand);
+        return getConnector().getBrands().get(brand);
     }
 
     /**
@@ -142,7 +142,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     public Reseller getReseller() throws RemoteException {
         if(reseller==null) return null;
         try {
-            return getService().getConnector().getResellers().get(reseller);
+            return getConnector().getResellers().get(reseller);
         } catch(NoSuchElementException err) {
             return null;
         }
@@ -152,33 +152,33 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     @SchemaColumn(order=3, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business the ticket is for (optional)")
     public Business getBusiness() throws RemoteException {
         if(accounting==null) return null;
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     static final String COLUMN_LANGUAGE = "language";
     @SchemaColumn(order=4, name=COLUMN_LANGUAGE, index=IndexType.INDEXED, description="the language of the ticket")
     public Language getLanguage() throws RemoteException {
-        return getService().getConnector().getLanguages().get(language);
+        return getConnector().getLanguages().get(language);
     }
 
     static final String COLUMN_CREATED_BY = "created_by";
     @SchemaColumn(order=5, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the person who created the ticket")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
-        return getService().getConnector().getBusinessAdministrators().get(createdBy);
+        return getConnector().getBusinessAdministrators().get(createdBy);
     }
 
     static final String COLUMN_CATEGORY = "category";
     @SchemaColumn(order=6, name=COLUMN_CATEGORY, index=IndexType.INDEXED, description="the category of the ticket")
     public TicketCategory getCategory() throws RemoteException {
         if(category==null) return null;
-        return getService().getConnector().getTicketCategories().get(category);
+        return getConnector().getTicketCategories().get(category);
     }
 
     static final String COLUMN_TICKET_TYPE = "ticket_type";
     @SchemaColumn(order=7, name=COLUMN_TICKET_TYPE, index=IndexType.INDEXED, description="the type of the ticket")
     public TicketType getTicketType() throws RemoteException {
-        return getService().getConnector().getTicketTypes().get(ticketType);
+        return getConnector().getTicketTypes().get(ticketType);
     }
 
     @SchemaColumn(order=8, name="from_address", description="the from address of the ticket")
@@ -194,7 +194,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     @SchemaColumn(order=10, name="details", description="the details of the ticket")
     synchronized public String getDetails() throws RemoteException {
         if(!detailsLoaded) {
-            details = new GetTicketDetailsCommand(this).execute(getService().getConnector());
+            details = new GetTicketDetailsCommand(this).execute(getConnector());
             detailsLoaded = true;
         }
         return details;
@@ -204,7 +204,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     @SchemaColumn(order=11, name="raw_email", description="the raw email content of the original ticket requeset")
     synchronized public String getRawEmail() throws IOException, SQLException {
         if(!rawEmailLoaded) {
-            rawEmail = getService().getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_RAW_EMAIL, key);
+            rawEmail = getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_RAW_EMAIL, key);
             rawEmailLoaded = true;
         }
         return rawEmail;
@@ -218,20 +218,20 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     static final String COLUMN_CLIENT_PRIORITY = "client_priority";
     @SchemaColumn(order=12, name=COLUMN_CLIENT_PRIORITY, index=IndexType.INDEXED, description="the priority assigned by the client")
     public TicketPriority getClientPriority() throws RemoteException {
-        return getService().getConnector().getTicketPriorities().get(clientPriority);
+        return getConnector().getTicketPriorities().get(clientPriority);
     }
 
     static final String COLUMN_ADMIN_PRIORITY = "admin_priority";
     @SchemaColumn(order=13, name=COLUMN_ADMIN_PRIORITY, index=IndexType.INDEXED, description="the priority assigned by the administrator")
     public TicketPriority getAdminPriority() throws RemoteException {
         if(adminPriority==null) return null;
-        return getService().getConnector().getTicketPriorities().get(adminPriority);
+        return getConnector().getTicketPriorities().get(adminPriority);
     }
 
     static final String COLUMN_STATUS = "status";
     @SchemaColumn(order=14, name=COLUMN_STATUS, index=IndexType.INDEXED, description="the status of the ticket")
     public TicketStatus getStatus() throws RemoteException {
-        return getService().getConnector().getTicketStatuses().get(status);
+        return getConnector().getTicketStatuses().get(status);
     }
 
     @SchemaColumn(order=15, name="status_timeout", description="the time the ticket status will automatically return to \"opened\"")
@@ -253,7 +253,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     @SchemaColumn(order=19, name="internal_notes", description="the internal notes used while handling the ticket")
     synchronized public String getInternalNotes() throws IOException, SQLException {
         if(!internalNotesLoaded) {
-            internalNotes = getService().getConnector().requestLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, key);
+            internalNotes = getConnector().requestLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, key);
             internalNotesLoaded = true;
         }
         return internalNotes;
@@ -288,6 +288,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
@@ -303,6 +304,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
         return unionSet;
@@ -318,11 +320,11 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_TICKET, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_TICKET, this);
     }
 
     public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
-        return getService().getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_TICKET, this);
+        return getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_TICKET, this);
     }
     // </editor-fold>
 
@@ -330,39 +332,39 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     // TODO
 //    /*
 //    public void actBounceTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.pkey, comments);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.pkey, comments);
 //    }*/
 //
 //    public void actChangeAdminPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, key, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, key, priority==null ? "" : priority.pkey, business_administrator.pkey, comments);
 //    }
 //
 //    public void actAssignTo(BusinessAdministrator assignedTo, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, key, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, key, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.pkey, comments);
 //    }
 //
 //    /*
 //    public void actCompleteTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.COMPLETE_TICKET, pkey, business_administrator.pkey, comments);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.COMPLETE_TICKET, pkey, business_administrator.pkey, comments);
 //    }*/
 //
 //    /*
 //    public void actHoldTicket(String comments) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.HOLD_TICKET, pkey, comments);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.HOLD_TICKET, pkey, comments);
 //    }*/
 //
 //    /*
 //    public void actKillTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.KILL_TICKET, pkey, business_administrator.pkey, comments);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.KILL_TICKET, pkey, business_administrator.pkey, comments);
 //    }*/
 //
 //    /*
 //    public void actReactivateTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.pkey, comments);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.pkey, comments);
 //    }*/
 //
 //    public void actWorkEntry(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-//        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);
+//        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.pkey, comments);
 //    }
 //
 //
@@ -372,8 +374,8 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
 //     * @return <code>true</code> if successfully updated or <code>false</code> if oldType doesn't match the current type.
 //     */
 //    public boolean setTicketType(TicketType oldType, TicketType newType) throws IOException, SQLException {
-//        return getService().getConnector().requestBooleanQueryIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, key, oldType.pkey, newType.pkey);
-//        // getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
+//        return getConnector().requestBooleanQueryIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, key, oldType.pkey, newType.pkey);
+//        // getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.pkey, comments);
 //   }
 //
 //    /**
@@ -382,7 +384,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
 //     * @return <code>true</code> if successfully updated or <code>false</code> if oldStatus doesn't match the current status.
 //     */
 //    public boolean setStatus(TicketStatus oldStatus, TicketStatus newStatus, long statusTimeout) throws IOException, SQLException {
-//        return getService().getConnector().requestBooleanQueryIL(true, AOServProtocol.CommandID.SET_TICKET_STATUS, key, oldStatus.pkey, newStatus.pkey, statusTimeout);
+//        return getConnector().requestBooleanQueryIL(true, AOServProtocol.CommandID.SET_TICKET_STATUS, key, oldStatus.pkey, newStatus.pkey, statusTimeout);
 //    }
 //
 //    /**
@@ -391,7 +393,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
 //     * @return <code>true</code> if successfully updated or <code>false</code> if oldInternalNotes doesn't match the current internal notes.
 //     */
 //    public boolean setInternalNotes(final String oldInternalNotes, final String newInternalNotes) throws IOException, SQLException {
-//        return getService().getConnector().requestResult(
+//        return getConnector().requestResult(
 //            true,
 //            new AOServConnector.ResultRequest<Boolean>() {
 //                boolean result;
@@ -416,7 +418,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
 //                }
 //
 //                public Boolean afterRelease() {
-//                    getService().getConnector().tablesUpdated(invalidateList);
+//                    getConnector().tablesUpdated(invalidateList);
 //                    return result;
 //                }
 //            }

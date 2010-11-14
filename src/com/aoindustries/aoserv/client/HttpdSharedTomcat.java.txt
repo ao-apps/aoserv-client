@@ -94,11 +94,11 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
     public String getInstallDirectory() throws SQLException, IOException {
@@ -128,17 +128,17 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        return getService().getConnector().getDisableLogs().get(disable_log);
+        return getConnector().getDisableLogs().get(disable_log);
     }
 
     public List<HttpdTomcatSharedSite> getHttpdTomcatSharedSites() throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatSharedSites().getHttpdTomcatSharedSites(this);
+        return getConnector().getHttpdTomcatSharedSites().getHttpdTomcatSharedSites(this);
     }
 
     public HttpdTomcatVersion getHttpdTomcatVersion() throws SQLException, IOException {
-        HttpdTomcatVersion obj=getService().getConnector().getHttpdTomcatVersions().get(version);
+        HttpdTomcatVersion obj=getConnector().getHttpdTomcatVersions().get(version);
         if(
-            obj.getTechnologyVersion(getService().getConnector()).getOperatingSystemVersion(getService().getConnector()).getPkey()
+            obj.getTechnologyVersion(getConnector()).getOperatingSystemVersion(getConnector()).getPkey()
             != getAOServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
             throw new SQLException("resource/operating system version mismatch on HttpdSharedTomcat: #"+pkey);
@@ -147,11 +147,11 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        return getService().getConnector().getLinuxServerAccounts().get(linux_server_account);
+        return getConnector().getLinuxServerAccounts().get(linux_server_account);
     }
 
     public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-        return getService().getConnector().getLinuxServerGroups().get(linux_server_group);
+        return getConnector().getLinuxServerGroups().get(linux_server_group);
     }
 
     public String getName() {
@@ -159,7 +159,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        return getService().getConnector().getAoServers().get(ao_server);
+        return getConnector().getAoServers().get(ao_server);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -168,7 +168,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
     public HttpdWorker getTomcat4Worker() throws SQLException, IOException {
         if(tomcat4_worker==-1) return null;
-        return getService().getConnector().getHttpdWorkers().get(tomcat4_worker);
+        return getConnector().getHttpdWorkers().get(tomcat4_worker);
     }
 
     public String getTomcat4ShutdownKey() {
@@ -177,7 +177,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
     public NetBind getTomcat4ShutdownPort() throws IOException, SQLException {
         if(tomcat4_shutdown_port==-1) return null;
-        return getService().getConnector().getNetBinds().get(tomcat4_shutdown_port);
+        return getConnector().getNetBinds().get(tomcat4_shutdown_port);
     }
 
     public void init(ResultSet result) throws SQLException {
@@ -257,11 +257,11 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
     }
 
     public void setIsManual(boolean isManual) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
     }
 
     @Override

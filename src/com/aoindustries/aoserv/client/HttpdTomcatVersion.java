@@ -43,8 +43,8 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     private UnixPath installDir;
     final private boolean requiresModJk;
 
-    public HttpdTomcatVersion(HttpdTomcatVersionService<?,?> service, int version, UnixPath installDir, boolean requiresModJk) {
-        super(service, version);
+    public HttpdTomcatVersion(AOServConnector<?,?> connector, int version, UnixPath installDir, boolean requiresModJk) {
+        super(connector, version);
         this.installDir = installDir;
         this.requiresModJk = requiresModJk;
         intern();
@@ -75,7 +75,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     static final String COLUMN_VERSION = "version";
     @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="a reference to the tomcat details in the technology_versions table")
     public TechnologyVersion getTechnologyVersion() throws RemoteException {
-        return getService().getConnector().getTechnologyVersions().get(key);
+        return getConnector().getTechnologyVersions().get(key);
     }
 
     @SchemaColumn(order=1, name="install_dir", description="the directory the basic install files are located in")
@@ -99,12 +99,14 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersion());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossVersions());
         return unionSet;
     }
@@ -112,7 +114,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<HttpdJBossVersion> getHttpdJBossVersions() throws RemoteException {
-        return getService().getConnector().getHttpdJBossVersions().filterIndexed(HttpdJBossVersion.COLUMN_TOMCAT_VERSION, this);
+        return getConnector().getHttpdJBossVersions().filterIndexed(HttpdJBossVersion.COLUMN_TOMCAT_VERSION, this);
     }
     // </editor-fold>
 

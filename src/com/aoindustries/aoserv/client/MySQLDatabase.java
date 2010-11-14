@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDatabase extends AOServObjectIntegerKey implements Comparable<MySQLDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
+final public class MySQLDatabase extends AOServerResource implements Comparable<MySQLDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -68,12 +68,20 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
     final private int mysqlServer;
 
     public MySQLDatabase(
-        MySQLDatabaseService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         MySQLDatabaseName name,
         int mysqlServer
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.name = name;
         this.mysqlServer = mysqlServer;
         intern();
@@ -103,41 +111,49 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ao_server_resource", index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
     static final String COLUMN_NAME = "name";
-    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
     public MySQLDatabaseName getName() {
         return name;
     }
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";
-    @SchemaColumn(order=2, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the pkey of the server that this database is hosted on")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the pkey of the server that this database is hosted on")
     public MySQLServer getMysqlServer() throws RemoteException {
-        return getService().getConnector().getMysqlServers().get(mysqlServer);
+        return getConnector().getMysqlServers().get(mysqlServer);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLDatabase getDto() {
-        return new com.aoindustries.aoserv.client.dto.MySQLDatabase(key, getDto(name), mysqlServer);
+        return new com.aoindustries.aoserv.client.dto.MySQLDatabase(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            getDto(name),
+            mysqlServer
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlServer());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLDBUsers());
         return unionSet;
     }
@@ -152,7 +168,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<MySQLDBUser> getMySQLDBUsers() throws RemoteException {
-        return getService().getConnector().getMysqlDBUsers().filterIndexed(MySQLDBUser.COLUMN_MYSQL_DATABASE, this);
+        return getConnector().getMysqlDBUsers().filterIndexed(MySQLDBUser.COLUMN_MYSQL_DATABASE, this);
     }
     // </editor-fold>
 
@@ -178,7 +194,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
         boolean canEvent,
         boolean canTrigger
     ) throws IOException, SQLException {
-        return getService().getConnector().getMysqlDBUsers().addMySQLDBUser(
+        return getConnector().getMysqlDBUsers().addMySQLDBUser(
             this,
             mu,
             canSelect,
@@ -206,7 +222,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
     }
 
     public void dump(final Writer out) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             false,
             new AOServConnector.UpdateRequest() {
                 public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
@@ -238,7 +254,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
     }
 
     public String getJdbcDriver() throws SQLException, IOException {
-        int osv=getMySQLServer().getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey();
+        int osv=getMySQLServer().getAoServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
             case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: return CENTOS_JDBC_DRIVER;
@@ -248,7 +264,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
 
     public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
         MySQLServer ms=getMySQLServer();
-    	AOServer ao=ms.getAoServerResource().getAoServer();
+    	AOServer ao=ms.getAoServer();
         return
             "jdbc:mysql://"
             + (ipOnly
@@ -263,7 +279,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
     }
 
     public String getJdbcDocumentationUrl() throws SQLException, IOException {
-        int osv=getMySQLServer().getAoServerResource().getAoServer().getServer().getOperatingSystemVersion().getPkey();
+        int osv=getMySQLServer().getAoServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DOCUMENTATION_URL;
@@ -273,7 +289,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
     }
 
     public MySQLDBUser getMySQLDBUser(MySQLUser mu) throws IOException, SQLException {
-    	return getService().getConnector().getMysqlDBUsers().getMySQLDBUser(this, mu);
+    	return getConnector().getMysqlDBUsers().getMySQLDBUser(this, mu);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -294,7 +310,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DATABASES,
@@ -472,7 +488,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
      */
 /* TODO
     public List<TableStatus> getTableStatus(final FailoverMySQLReplication mysqlSlave) throws IOException, SQLException {
-        return getService().getConnector().requestResult(
+        return getConnector().requestResult(
             true,
             new AOServConnector.ResultRequest<List<TableStatus>>() {
                 private List<TableStatus> result;
@@ -588,7 +604,7 @@ final public class MySQLDatabase extends AOServObjectIntegerKey implements Compa
 /* TODO
     public List<CheckTableResult> checkTables(final FailoverMySQLReplication mysqlSlave, final Collection<String> tableNames) throws IOException, SQLException {
         if(tableNames.isEmpty()) return Collections.emptyList();
-        return getService().getConnector().requestResult(
+        return getConnector().requestResult(
             true,
             new AOServConnector.ResultRequest<List<CheckTableResult>>() {
                 private List<CheckTableResult> result;

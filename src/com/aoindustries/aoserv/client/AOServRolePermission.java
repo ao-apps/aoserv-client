@@ -29,8 +29,8 @@ implements
     final private int role;
     private String permission;
 
-    public AOServRolePermission(AOServRolePermissionService<?,?> service, int pkey, int role, String permission) {
-        super(service, pkey);
+    public AOServRolePermission(AOServConnector<?,?> connector, int pkey, int role, String permission) {
+        super(connector, pkey);
         this.role = role;
         this.permission = permission;
         intern();
@@ -68,13 +68,13 @@ implements
     static final String COLUMN_ROLE = "role";
     @SchemaColumn(order=1, name=COLUMN_ROLE, index=IndexType.INDEXED, description="the role")
     public AOServRole getRole() throws RemoteException {
-        return getService().getConnector().getAoservRoles().get(role);
+        return getConnector().getAoservRoles().get(role);
     }
 
     static final String COLUMN_PERMISSION = "permission";
     @SchemaColumn(order=2, name=COLUMN_PERMISSION, index=IndexType.INDEXED, description="the permission that is granted by this role")
     public AOServPermission getPermission() throws RemoteException {
-        return getService().getConnector().getAoservPermissions().get(permission);
+        return getConnector().getAoservPermissions().get(permission);
     }
     // </editor-fold>
 
@@ -88,6 +88,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getRole());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPermission());
         return unionSet;

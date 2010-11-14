@@ -41,11 +41,11 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     }
 
     public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-        return getService().getConnector().getLinuxServerAccounts().get(linux_server_account);
+        return getConnector().getLinuxServerAccounts().get(linux_server_account);
     }
 
     public EmailAttachmentType getEmailAttachmentType() throws SQLException, IOException {
-        return getService().getConnector().getEmailAttachmentTypes().get(extension);
+        return getConnector().getEmailAttachmentTypes().get(extension);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -80,7 +80,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
     }
 
     public void remove() throws SQLException, IOException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_ATTACHMENT_BLOCKS,

@@ -117,41 +117,41 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     }
 
     public EmailList getEmailList() throws SQLException, IOException {
-        return getService().getConnector().getEmailLists().get(pkey);
+        return getConnector().getEmailLists().get(pkey);
     }
 
     /**
      * Gets the info file for the list.
      */
     public String getInfoFile() throws IOException, SQLException {
-        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
+        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
     }
 
     /**
      * Gets the intro file for the list.
      */
     public String getIntroFile() throws IOException, SQLException {
-        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
+        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
     }
 
     public EmailPipeAddress getListPipeAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailPipeAddresses().get(listname_pipe_add);
+        return getConnector().getEmailPipeAddresses().get(listname_pipe_add);
     }
 
     public EmailAddress getListApprovalAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().get(listname_approval_add);
+        return getConnector().getEmailAddresses().get(listname_approval_add);
     }
 
     public EmailListAddress getListListAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailListAddresses().get(listname_list_add);
+        return getConnector().getEmailListAddresses().get(listname_list_add);
     }
 
     public EmailAddress getListOwnerAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().get(listname_owner_add);
+        return getConnector().getEmailAddresses().get(listname_owner_add);
     }
 
     public EmailPipeAddress getListRequestPipeAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailPipeAddresses().get(listname_request_pipe_add);
+        return getConnector().getEmailPipeAddresses().get(listname_request_pipe_add);
     }
 
     public String getName() {
@@ -159,11 +159,11 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     }
 
     public EmailAddress getOwnerListAddress() throws SQLException, IOException {
-        return getService().getConnector().getEmailAddresses().get(owner_listname_add);
+        return getConnector().getEmailAddresses().get(owner_listname_add);
     }
 
     public MajordomoServer getMajordomoServer() throws SQLException, IOException {
-        return getService().getConnector().getMajordomoServers().get(majordomo_server);
+        return getConnector().getMajordomoServers().get(majordomo_server);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -230,11 +230,11 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
     }
 
     public void setInfoFile(String file) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
+        getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
     }
 
     public void setIntroFile(String file) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
+        getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
     }
 
     @Override

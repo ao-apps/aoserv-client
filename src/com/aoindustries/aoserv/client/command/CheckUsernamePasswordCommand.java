@@ -43,7 +43,7 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        Username un = connectedUser.getService().getConnector().getUsernames().get(username);
+        Username un = connectedUser.getConnector().getUsernames().get(username);
         if(!connectedUser.canAccessUsername(un)) {
             errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {

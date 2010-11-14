@@ -8,27 +8,30 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MySQLDatabase {
+public class MySQLDatabase extends AOServerResource {
 
-    private int aoServerResource;
     private MySQLDatabaseName name;
     private int mysqlServer;
 
     public MySQLDatabase() {
     }
 
-    public MySQLDatabase(int aoServerResource, MySQLDatabaseName name, int mysqlServer) {
-        this.aoServerResource = aoServerResource;
+    public MySQLDatabase(
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
+        MySQLDatabaseName name,
+        int mysqlServer
+    ) {
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.name = name;
         this.mysqlServer = mysqlServer;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public MySQLDatabaseName getName() {

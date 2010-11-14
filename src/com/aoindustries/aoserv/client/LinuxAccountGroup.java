@@ -39,8 +39,8 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     private final int linuxGroup;
     private final boolean isPrimary;
 
-    public LinuxAccountGroup(LinuxAccountGroupService<?,?> service, int pkey, int linuxAccount, int linuxGroup, boolean isPrimary) {
-        super(service, pkey);
+    public LinuxAccountGroup(AOServConnector<?,?> connector, int pkey, int linuxAccount, int linuxGroup, boolean isPrimary) {
+        super(connector, pkey);
         this.linuxAccount = linuxAccount;
         this.linuxGroup = linuxGroup;
         this.isPrimary = isPrimary;
@@ -70,13 +70,13 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     static final String COLUMN_LINUX_ACCOUNT = "linux_account";
     @SchemaColumn(order=1, name=COLUMN_LINUX_ACCOUNT, index=IndexType.INDEXED, description="the linux account that belongs to the group")
     public LinuxAccount getLinuxAccount() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().get(linuxAccount);
+        return getConnector().getLinuxAccounts().get(linuxAccount);
     }
 
     static final String COLUMN_LINUX_GROUP = "linux_group";
     @SchemaColumn(order=2, name=COLUMN_LINUX_GROUP, index=IndexType.INDEXED, description="the linux group that the account belongs to")
     public LinuxGroup getLinuxGroup() throws RemoteException {
-        return getService().getConnector().getLinuxGroups().get(linuxGroup);
+        return getConnector().getLinuxGroups().get(linuxGroup);
     }
 
     static final String COLUMN_IS_PRIMARY = "is_primary";
@@ -96,6 +96,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroup());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
         return unionSet;
@@ -103,6 +104,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCvsRepositories());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSites());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
@@ -117,7 +119,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
         LinuxAccount la = getLinuxAccount();
         return ApplicationResources.accessor.getMessage(
             "LinuxAccountGroup.toString",
-            la.getAoServerResource().getAoServer().getHostname(),
+            la.getAoServer().getHostname(),
             la.getUserId(),
             getLinuxGroup().getGroupId()
         );
@@ -126,19 +128,19 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<CvsRepository> getCvsRepositories() throws RemoteException {
-        return getService().getConnector().getCvsRepositories().filterIndexed(CvsRepository.COLUMN_LINUX_ACCOUNT_GROUP, this);
+        return getConnector().getCvsRepositories().filterIndexed(CvsRepository.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
 
     public IndexedSet<HttpdSite> getHttpdSites() throws RemoteException {
-        return getService().getConnector().getHttpdSites().filterIndexed(HttpdSite.COLUMN_LINUX_ACCOUNT_GROUP, this);
+        return getConnector().getHttpdSites().filterIndexed(HttpdSite.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
 
     public IndexedSet<HttpdServer> getHttpdServers() throws RemoteException {
-        return getService().getConnector().getHttpdServers().filterIndexed(HttpdServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
+        return getConnector().getHttpdServers().filterIndexed(HttpdServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
 
     public IndexedSet<PrivateFtpServer> getPrivateFtpServers() throws RemoteException {
-        return getService().getConnector().getPrivateFtpServers().filterIndexed(PrivateFtpServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
+        return getConnector().getPrivateFtpServers().filterIndexed(PrivateFtpServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
     // </editor-fold>
 
@@ -151,7 +153,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
@@ -160,7 +162,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     }
 
     void setAsPrimary() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
             pkey

@@ -43,7 +43,7 @@ final public class CheckMySQLUserPasswordCommand extends AOServCommand<List<Pass
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        MySQLUser mu = connectedUser.getService().getConnector().getMysqlUsers().get(mysqlUser);
+        MySQLUser mu = connectedUser.getConnector().getMysqlUsers().get(mysqlUser);
         if(!connectedUser.canAccessMySQLUser(mu)) {
             errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {

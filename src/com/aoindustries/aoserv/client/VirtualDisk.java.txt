@@ -49,7 +49,7 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
     }
 
     public VirtualServer getVirtualServer() throws SQLException, IOException {
-        return getService().getConnector().getVirtualServers().get(virtualServer);
+        return getConnector().getVirtualServers().get(virtualServer);
     }
 
     /**

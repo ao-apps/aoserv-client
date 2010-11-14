@@ -41,7 +41,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
     int tomcat_site;
 
     public HttpdJKCode getCode() throws SQLException, IOException {
-        return getService().getConnector().getHttpdJKCodes().get(code);
+        return getConnector().getHttpdJKCodes().get(code);
     }
 
     Object getColumnImpl(int i) {
@@ -59,16 +59,16 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
     }
 
     public HttpdSharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
-        return getService().getConnector().getHttpdSharedTomcats().getHttpdSharedTomcat(this);
+        return getConnector().getHttpdSharedTomcats().getHttpdSharedTomcat(this);
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
         if(tomcat_site==-1) return null;
-        return getService().getConnector().getHttpdTomcatSites().get(tomcat_site);
+        return getConnector().getHttpdTomcatSites().get(tomcat_site);
     }
 
     public NetBind getNetBind() throws IOException, SQLException {
-        return getService().getConnector().getNetBinds().get(net_bind);
+        return getConnector().getNetBinds().get(net_bind);
     }
 
     public SchemaTable.TableID getTableID() {

@@ -60,7 +60,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     public HttpdSiteBind getHttpdSiteBind() throws SQLException, IOException {
-        return getService().getConnector().getHttpdSiteBinds().get(httpd_site_bind);
+        return getConnector().getHttpdSiteBinds().get(httpd_site_bind);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -83,7 +83,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
             protocol=Protocol.HTTPS;
     	}
         url.append(hostname);
-        if(!port.equals(getService().getConnector().getProtocols().get(protocol).getPort(getService().getConnector()))) url.append(':').append(port.getPort());
+        if(!port.equals(getConnector().getProtocols().get(protocol).getPort(getConnector()))) url.append(':').append(port.getPort());
         url.append('/');
         return url.toString();
     }
@@ -104,7 +104,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
             protocol=Protocol.HTTPS;
     	}
         url.append(hostname);
-        if(!port.equals(getService().getConnector().getProtocols().get(protocol).getPort(getService().getConnector()))) url.append(':').append(port.getPort());
+        if(!port.equals(getConnector().getProtocols().get(protocol).getPort(getConnector()))) url.append(':').append(port.getPort());
         return url.toString();
     }
 
@@ -143,11 +143,11 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITE_URLS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITE_URLS, pkey);
     }
 
     public void setAsPrimary() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_PRIMARY_HTTPD_SITE_URL, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_PRIMARY_HTTPD_SITE_URL, pkey);
     }
 
     @Override

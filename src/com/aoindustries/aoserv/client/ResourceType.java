@@ -55,8 +55,8 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public ResourceType(ResourceTypeService<?,?> service, String name) {
-        super(service, name);
+    public ResourceType(AOServConnector<?,?> connector, String name) {
+        super(connector, name);
     }
     // </editor-fold>
     
@@ -87,6 +87,7 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDependentObjectByResourceType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionLimits());
@@ -111,19 +112,19 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<Resource> getResources() throws RemoteException {
-        return getService().getConnector().getResources().filterIndexed(Resource.COLUMN_RESOURCE_TYPE, this);
+        return getConnector().getResources().filterIndexed(Resource.COLUMN_RESOURCE_TYPE, this);
     }
 
     public LinuxAccountType getLinuxAccountType() throws RemoteException {
-        return getService().getConnector().getLinuxAccountTypes().get(getKey());
+        return getConnector().getLinuxAccountTypes().get(getKey());
     }
 
     public LinuxGroupType getLinuxGroupType() throws RemoteException {
-        return getService().getConnector().getLinuxGroupTypes().get(getKey());
+        return getConnector().getLinuxGroupTypes().get(getKey());
     }
 
     public IndexedSet<PackageDefinitionLimit> getPackageDefinitionLimits() throws RemoteException {
-        return getService().getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_RESOURCE_TYPE, this);
+        return getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_RESOURCE_TYPE, this);
     }
     // </editor-fold>
 

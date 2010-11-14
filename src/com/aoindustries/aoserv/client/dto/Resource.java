@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class Resource {
+abstract public class Resource {
 
     private int pkey;
     private String resourceType;
@@ -23,7 +23,15 @@ public class Resource {
     public Resource() {
     }
 
-    public Resource(int pkey, String resourceType, AccountingCode accounting, long created, UserId createdBy, Integer disableLog, long lastEnabled) {
+    public Resource(
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled
+    ) {
         this.pkey = pkey;
         this.resourceType = resourceType;
         this.accounting = accounting;

@@ -94,7 +94,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdSites().get(httpd_site);
+        return getConnector().getHttpdSites().get(httpd_site);
     }
 
     public String getPath() {
@@ -159,7 +159,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, pkey);
     }
 
     public void setAttributes(
@@ -170,7 +170,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
         String authUserFile,
         String require
     ) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES,
             pkey,

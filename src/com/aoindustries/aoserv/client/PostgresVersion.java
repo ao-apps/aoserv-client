@@ -61,12 +61,12 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     final private Integer postgisVersion;
 
     public PostgresVersion(
-        PostgresVersionService<?,?> service,
+        AOServConnector<?,?> connector,
         int version,
         String minorVersion,
         Integer postgisVersion
     ) {
-        super(service, version);
+        super(connector, version);
         this.minorVersion = minorVersion;
         this.postgisVersion = postgisVersion;
         intern();
@@ -97,7 +97,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     static final String COLUMN_VERSION = "version";
     @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="a reference to the PostgreSQL details in the <code>technology_versions</code> table")
     public TechnologyVersion getTechnologyVersion() throws RemoteException {
-        return getService().getConnector().getTechnologyVersions().get(key);
+        return getConnector().getTechnologyVersions().get(key);
     }
 
     @SchemaColumn(order=1, name="minor_version", description="the minor version for this version")
@@ -112,7 +112,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     @SchemaColumn(order=2, name=COLUMN_POSTGIS_VERSION, index=IndexType.INDEXED, description="a reference to the PostGIS defails in the <code>technology_versions</code>")
     public TechnologyVersion getPostgisVersion() throws RemoteException {
         if(postgisVersion==null) return null;
-        TechnologyVersion tv = getService().getConnector().getTechnologyVersions().get(postgisVersion);
+        TechnologyVersion tv = getConnector().getTechnologyVersions().get(postgisVersion);
         if(
             tv.operatingSystemVersion
             != getTechnologyVersion().operatingSystemVersion
@@ -133,6 +133,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgisVersion());
         return unionSet;
@@ -140,6 +141,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresEncodings());
         return unionSet;
@@ -148,11 +150,11 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<PostgresServer> getPostgresServers() throws RemoteException {
-        return getService().getConnector().getPostgresServers().filterIndexed(PostgresServer.COLUMN_VERSION, this);
+        return getConnector().getPostgresServers().filterIndexed(PostgresServer.COLUMN_VERSION, this);
     }
 
     public IndexedSet<PostgresEncoding> getPostgresEncodings() throws RemoteException {
-        return getService().getConnector().getPostgresEncodings().filterIndexed(PostgresEncoding.COLUMN_POSTGRES_VERSION, this);
+        return getConnector().getPostgresEncodings().filterIndexed(PostgresEncoding.COLUMN_POSTGRES_VERSION, this);
     }
     /* TODO
     public PostgresEncoding getPostgresEncoding(AOServConnector<?,?> connector, String encoding) throws IOException, SQLException {

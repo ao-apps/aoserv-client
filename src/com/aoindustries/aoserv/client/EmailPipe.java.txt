@@ -39,7 +39,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     int disable_log;
 
     public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
-        return getService().getConnector().getEmailPipeAddresses().addEmailPipeAddress(address, this);
+        return getConnector().getEmailPipeAddresses().addEmailPipeAddress(address, this);
     }
 
     public boolean canDisable() {
@@ -53,11 +53,11 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_PIPES, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.EMAIL_PIPES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_PIPES, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.EMAIL_PIPES, pkey);
     }
 
     Object getColumnImpl(int i) {
@@ -77,11 +77,11 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        return getService().getConnector().getDisableLogs().get(disable_log);
+        return getConnector().getDisableLogs().get(disable_log);
     }
 
     public Business getBusiness() throws IOException, SQLException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     public String getPath() {
@@ -89,7 +89,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public AOServer getAOServer() throws SQLException, IOException {
-        return getService().getConnector().getAoServers().get(ao_server);
+        return getConnector().getAoServers().get(ao_server);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -132,7 +132,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.EMAIL_PIPES,
@@ -154,6 +154,6 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
     }
 
     public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
-        return getService().getConnector().getEmailPipeAddresses().getIndexedRows(EmailPipeAddress.COLUMN_EMAIL_PIPE, pkey);
+        return getConnector().getEmailPipeAddresses().getIndexedRows(EmailPipeAddress.COLUMN_EMAIL_PIPE, pkey);
     }
 }

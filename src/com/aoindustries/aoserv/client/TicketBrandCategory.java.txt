@@ -43,11 +43,11 @@ final public class TicketBrandCategory extends CachedObjectIntegerKey<TicketBran
     }
 
     public Brand getBrand() throws SQLException, IOException {
-        return getService().getConnector().getBrands().get(brand);
+        return getConnector().getBrands().get(brand);
     }
 
     public TicketCategory getCategory() throws IOException, SQLException {
-        return getService().getConnector().getTicketCategories().get(category);
+        return getConnector().getTicketCategories().get(category);
     }
 
     public boolean getEnabled() {

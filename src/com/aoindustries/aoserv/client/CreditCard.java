@@ -60,7 +60,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     final private Integer encryptionExpirationRecipient;
 
     public CreditCard(
-        CreditCardService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         String processorId,
         AccountingCode accounting,
@@ -95,8 +95,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
         Integer encryptionExpirationFrom,
         Integer encryptionExpirationRecipient
     ) {
-        super(service, pkey);
-        intern();
+        super(connector, pkey);
         this.processorId = processorId;
         this.accounting = accounting;
         this.groupName = groupName;
@@ -129,6 +128,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
         this.encryptedExpiration = encryptedExpiration;
         this.encryptionExpirationFrom = encryptionExpirationFrom;
         this.encryptionExpirationRecipient = encryptionExpirationRecipient;
+        intern();
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -170,13 +170,13 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
      */
     @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, index=IndexType.INDEXED, description="the processor that is storing the card number and expiration date")
     public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
-        return getService().getConnector().getCreditCardProcessors().get(processorId);
+        return getConnector().getCreditCardProcessors().get(processorId);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code for the card")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     /**
@@ -264,7 +264,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     static final String COLUMN_COUNTRY_CODE = "country_code";
     @SchemaColumn(order=18, name=COLUMN_COUNTRY_CODE, index=IndexType.INDEXED, description="the two-character country code")
     public CountryCode getCountryCode() throws RemoteException {
-        return getService().getConnector().getCountryCodes().get(this.countryCode);
+        return getConnector().getCountryCodes().get(this.countryCode);
     }
 
     @SchemaColumn(order=19, name="created", description="the time the card was added to the database")
@@ -275,7 +275,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     static final String COLUMN_CREATED_BY = "created_by";
     @SchemaColumn(order=20, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the business_administrator who added the card to the database")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(createdBy);
+        return getConnector().getBusinessAdministrators().get(createdBy);
     }
 
     /**
@@ -320,13 +320,13 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     @SchemaColumn(order=28, name="encryption_card_number_from", description="the from that was used for card number encryption")
     public EncryptionKey getEncryptionCardNumberFrom() throws RemoteException {
         if(encryptionCardNumberFrom==null) return null;
-        return getService().getConnector().getEncryptionKeys().get(encryptionCardNumberFrom);
+        return getConnector().getEncryptionKeys().get(encryptionCardNumberFrom);
     }
 
     @SchemaColumn(order=29, name="encryption_card_number_recipient", description="the recipient that was used for card number encryption")
     public EncryptionKey getEncryptionCardNumberRecipient() throws RemoteException {
         if(encryptionCardNumberRecipient==null) return null;
-        return getService().getConnector().getEncryptionKeys().get(encryptionCardNumberRecipient);
+        return getConnector().getEncryptionKeys().get(encryptionCardNumberRecipient);
     }
     */
     @SchemaColumn(order=28, name="encrypted_expiration", description="the expiration stored encrypted")
@@ -337,13 +337,13 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     @SchemaColumn(order=31, name="encryption_expiration_from", description="the from that was used for expiration encryption")
     public EncryptionKey getEncryptionExpirationFrom() throws RemoteException {
         if(encryptionExpirationFrom==null) return null;
-        return getService().getConnector().getEncryptionKeys().get(encryptionExpirationFrom);
+        return getConnector().getEncryptionKeys().get(encryptionExpirationFrom);
     }
 
     @SchemaColumn(order=32, name="encryption_expiration_recipient", description="the recipient that was used for expiration encryption")
     public EncryptionKey getEncryptionExpirationRecipient() throws RemoteException {
         if(encryptionExpirationRecipient==null) return null;
-        return getService().getConnector().getEncryptionKeys().get(encryptionExpirationRecipient);
+        return getConnector().getEncryptionKeys().get(encryptionExpirationRecipient);
     }*/
     // </editor-fold>
 
@@ -391,6 +391,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessor());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountryCode());
@@ -423,7 +424,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
      */
     /* TODO
     public void declined(String reason) throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.CREDIT_CARD_DECLINED,
             pkey,
@@ -451,7 +452,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
+    	getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
     }
     */
     /**
@@ -480,7 +481,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
             encryptedExpiration = null;
         }
 
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -506,7 +507,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
@@ -527,7 +528,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
         if(encryptionFrom!=null && encryptionRecipient!=null) {
             // Encrypt the expiration
             String encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
-            getService().getConnector().requestUpdateIL(
+            getConnector().requestUpdateIL(
                 true,
                 AOServProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
                 pkey,

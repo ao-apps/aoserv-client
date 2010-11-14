@@ -35,7 +35,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     private String additionalTransactionType;
 
     public PackageDefinitionLimit(
-        PackageDefinitionLimitService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int packageDefinition,
         String resourceType,
@@ -44,7 +44,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
         Money additionalRate,
         String additionalTransactionType
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.packageDefinition = packageDefinition;
         this.resourceType = resourceType;
         this.softLimit = softLimit;
@@ -87,13 +87,13 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
     @SchemaColumn(order=1, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the pkey of the package definition")
     public PackageDefinition getPackageDefinition() throws RemoteException {
-        return getService().getConnector().getPackageDefinitions().get(packageDefinition);
+        return getConnector().getPackageDefinitions().get(packageDefinition);
     }
 
     static final String COLUMN_RESOURCE_TYPE = "resource_type";
     @SchemaColumn(order=2, name=COLUMN_RESOURCE_TYPE, index=IndexType.INDEXED, description="the resource type")
     public ResourceType getResourceType() throws RemoteException {
-        return getService().getConnector().getResourceTypes().get(resourceType);
+        return getConnector().getResourceTypes().get(resourceType);
     }
 
     @SchemaColumn(order=3, name="soft_limit", description="the number that may be used before additional charges are added, NULL means unlimited")
@@ -118,7 +118,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     @SchemaColumn(order=6, name=COLUMN_ADDITIONAL_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the transaction type for those past the soft_limit")
     public TransactionType getAdditionalTransactionType() throws RemoteException {
         if(additionalTransactionType==null) return null;
-        return getService().getConnector().getTransactionTypes().get(additionalTransactionType);
+        return getConnector().getTransactionTypes().get(additionalTransactionType);
     }
     // </editor-fold>
 
@@ -140,6 +140,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAdditionalTransactionType());

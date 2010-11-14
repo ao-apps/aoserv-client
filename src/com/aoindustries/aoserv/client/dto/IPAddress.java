@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class IPAddress {
+public class IPAddress extends ServerResource {
 
-    private int serverResource;
     private InetAddress ipAddress;
     private Integer netDevice;
     private boolean isAlias;
@@ -26,7 +25,15 @@ public class IPAddress {
     }
 
     public IPAddress(
-        int serverResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int server,
+        int businessServer,
         InetAddress ipAddress,
         Integer netDevice,
         boolean isAlias,
@@ -38,7 +45,7 @@ public class IPAddress {
         InetAddress externalIpAddress,
         short netmask
     ) {
-        this.serverResource = serverResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, server, businessServer);
         this.ipAddress = ipAddress;
         this.netDevice = netDevice;
         this.isAlias = isAlias;
@@ -49,14 +56,6 @@ public class IPAddress {
         this.pingMonitorEnabled = pingMonitorEnabled;
         this.externalIpAddress = externalIpAddress;
         this.netmask = netmask;
-    }
-
-    public int getServerResource() {
-        return serverResource;
-    }
-
-    public void setServerResource(int serverResource) {
-        this.serverResource = serverResource;
     }
 
     public InetAddress getIpAddress() {

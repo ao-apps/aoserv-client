@@ -27,8 +27,8 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean ticketAutoEscalate;
 
-    public Reseller(ResellerService<?,?> service, AccountingCode accounting, boolean ticketAutoEscalate) {
-        super(service, accounting);
+    public Reseller(AOServConnector<?,?> connector, AccountingCode accounting, boolean ticketAutoEscalate) {
+        super(connector, accounting);
         this.ticketAutoEscalate = ticketAutoEscalate;
     }
     // </editor-fold>
@@ -44,7 +44,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the brand of this reseller")
     public Brand getBrand() throws RemoteException {
-        return getService().getConnector().getBrands().get(getKey());
+        return getConnector().getBrands().get(getKey());
     }
 
     @SchemaColumn(order=1, name="ticket_auto_escalate", description="indicates this reseller does not handle tickets directly and that they are automatically escalated to the parent reseller")
@@ -79,12 +79,14 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
         return unionSet;
@@ -93,7 +95,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
-        return getService().getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_RESELLER, this);
+        return getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_RESELLER, this);
     }
 
     /**
@@ -101,11 +103,11 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
      * business (that is a reseller) equal to this one.
      */
     public IndexedSet<Reseller> getChildResellers() throws RemoteException {
-        return getService().getConnector().getResellers().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getResellers().filterIndexed(COLUMN_PARENT, this);
     }
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_RESELLER, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_RESELLER, this);
     }
     // </editor-fold>
 }

@@ -74,8 +74,8 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     private String encoding;
     final private int postgresVersion;
 
-    public PostgresEncoding(PostgresEncodingService<?,?> service, int pkey, String encoding, int postgresVersion) {
-        super(service, pkey);
+    public PostgresEncoding(AOServConnector<?,?> connector, int pkey, String encoding, int postgresVersion) {
+        super(connector, pkey);
         this.encoding = encoding;
         this.postgresVersion = postgresVersion;
         intern();
@@ -118,7 +118,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     static final String COLUMN_POSTGRES_VERSION = "postgres_version";
     @SchemaColumn(order=2, name=COLUMN_POSTGRES_VERSION, index=IndexType.INDEXED, description="the version of PostgreSQL")
     public PostgresVersion getPostgresVersion() throws RemoteException {
-        return getService().getConnector().getPostgresVersions().get(postgresVersion);
+        return getConnector().getPostgresVersions().get(postgresVersion);
     }
     // </editor-fold>
 
@@ -132,12 +132,14 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
         return unionSet;
     }
@@ -145,7 +147,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
-    	return getService().getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_ENCODING, this);
+    	return getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_ENCODING, this);
     }
     // </editor-fold>
 }

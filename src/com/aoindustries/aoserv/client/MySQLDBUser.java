@@ -50,7 +50,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     final private boolean triggerPriv;
 
     public MySQLDBUser(
-        MySQLDBUserService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int mysqlDatabase,
         int mysqlUser,
@@ -74,7 +74,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
         boolean eventPriv,
         boolean triggerPriv
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.mysqlDatabase = mysqlDatabase;
         this.mysqlUser = mysqlUser;
         this.selectPriv = selectPriv;
@@ -121,13 +121,13 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     static final String COLUMN_MYSQL_DATABASE = "mysql_database";
     @SchemaColumn(order=1, name=COLUMN_MYSQL_DATABASE, index=IndexType.INDEXED, description="the pkey in mysql_databases")
     public MySQLDatabase getMysqlDatabase() throws RemoteException {
-    	return getService().getConnector().getMysqlDatabases().get(mysqlDatabase);
+    	return getConnector().getMysqlDatabases().get(mysqlDatabase);
     }
 
     static final String COLUMN_MYSQL_USER = "mysql_user";
     @SchemaColumn(order=2, name=COLUMN_MYSQL_USER, index=IndexType.INDEXED, description="the pkey in mysql_users")
     public MySQLUser getMysqlUser() throws RemoteException {
-    	return getService().getConnector().getMysqlUsers().get(mysqlUser);
+    	return getConnector().getMysqlUsers().get(mysqlUser);
     }
 
     @SchemaColumn(order=3, name="select_priv", description="the SELECT privilege")
@@ -236,6 +236,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabase());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUser());
         return unionSet;
@@ -252,7 +253,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DB_USERS,

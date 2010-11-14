@@ -68,7 +68,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     private String aowebStrutsKeystorePassword;
 
     public Brand(
-        BrandService<?,?> service,
+        AOServConnector<?,?> connector,
         AccountingCode accounting,
         DomainName nameserver1,
         DomainName nameserver2,
@@ -109,7 +109,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
         String aowebStrutsKeystoreType,
         String aowebStrutsKeystorePassword
     ) {
-        super(service, accounting);
+        super(connector, accounting);
         this.nameserver1 = nameserver1;
         this.nameserver2 = nameserver2;
         this.nameserver3 = nameserver3;
@@ -197,7 +197,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the business that is a brand")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(getKey());
+        return getConnector().getBusinesses().get(getKey());
     }
 
     @SchemaColumn(order=1, name="nameserver1", description="the primary nameserver")
@@ -227,7 +227,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     @SchemaColumn(order=5, name=COLUMN_SMTP_EMAIL_INBOX, index=IndexType.UNIQUE, description="the inbox used for outgoing email")
     public EmailInbox getSmtpEmailInbox() throws RemoteException {
         try {
-            return getService().getConnector().getEmailInboxes().get(smtpEmailInbox);
+            return getConnector().getEmailInboxes().get(smtpEmailInbox);
         } catch(NoSuchElementException err) {
             return null;
         }
@@ -239,7 +239,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
      */
     @SchemaColumn(order=6, name="smtp_host", description="the host used for outgoing email")
     public Hostname getSmtpHost() throws RemoteException {
-        return smtpHost!=null ? smtpHost : Hostname.valueOf(getSmtpEmailInbox().getLinuxAccount().getAoServerResource().getAoServer().getHostname());
+        return smtpHost!=null ? smtpHost : Hostname.valueOf(getSmtpEmailInbox().getLinuxAccount().getAoServer().getHostname());
     }
 
     /**
@@ -257,7 +257,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     @SchemaColumn(order=8, name=COLUMN_IMAP_EMAIL_INBOX, index=IndexType.UNIQUE, description="the inbox used for incoming email")
     public EmailInbox getImapEmailInbox() throws RemoteException {
         try {
-            return getService().getConnector().getEmailInboxes().get(imapEmailInbox);
+            return getConnector().getEmailInboxes().get(imapEmailInbox);
         } catch(NoSuchElementException err) {
             return null;
         }
@@ -269,7 +269,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
      */
     @SchemaColumn(order=9, name="imap_host", description="the host used for incoming email")
     public Hostname getImapHost() throws RemoteException {
-        return imapHost!=null ? imapHost : Hostname.valueOf(getImapEmailInbox().getLinuxAccount().getAoServerResource().getAoServer().getHostname());
+        return imapHost!=null ? imapHost : Hostname.valueOf(getImapEmailInbox().getLinuxAccount().getAoServer().getHostname());
     }
 
     /**
@@ -283,7 +283,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     /* TODO
     @SchemaColumn(order=11, name="support_email_address", index=IndexType.UNIQUE, description="the support address")
     public EmailAddress getSupportEmailAddress() throws RemoteException {
-        return getService().getConnector().getEmailAddresses().get(supportEmailAddress);
+        return getConnector().getEmailAddresses().get(supportEmailAddress);
     }*/
 
     @SchemaColumn(order=11, name="support_email_display", index=IndexType.UNIQUE, description="the support address display")
@@ -294,7 +294,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     /* TODO
     @SchemaColumn(order=13, name="signup_email_address", index=IndexType.UNIQUE, description="the signup address")
     public EmailAddress getSignupEmailAddress() throws RemoteException {
-        return getService().getConnector().getEmailAddresses().get(signupEmailAddress);
+        return getConnector().getEmailAddresses().get(signupEmailAddress);
     }*/
 
     @SchemaColumn(order=12, name="signup_email_display", index=IndexType.UNIQUE, description="the signup address display")
@@ -305,22 +305,22 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     /* TODO
     @SchemaColumn(order=15, name="ticket_encryption_from", description="the key used to encrypt ticket data")
     public EncryptionKey getTicketEncryptionFrom() throws IOException, SQLException {
-        return getService().getConnector().getEncryptionKeys().get(ticketEncryptionFrom);
+        return getConnector().getEncryptionKeys().get(ticketEncryptionFrom);
     }
 
     @SchemaColumn(order=16, name="ticket_encryption_recipient", description="the key used to decrypt ticket data")
     public EncryptionKey getTicketEncryptionRecipient() throws IOException, SQLException {
-        return getService().getConnector().getEncryptionKeys().get(ticketEncryptionRecipient);
+        return getConnector().getEncryptionKeys().get(ticketEncryptionRecipient);
     }
 
     @SchemaColumn(order=17, name="signup_encryption_from", description="the key used to encrypt signup data")
     public EncryptionKey getSignupEncryptionFrom() throws IOException, SQLException {
-        return getService().getConnector().getEncryptionKeys().get(signupEncryptionFrom);
+        return getConnector().getEncryptionKeys().get(signupEncryptionFrom);
     }
 
     @SchemaColumn(order=18, name="signup_encryption_recipient", description="the key used to decrypt signup data")
     public EncryptionKey getSignupEncryptionRecipient() throws IOException, SQLException {
-        return getService().getConnector().getEncryptionKeys().get(signupEncryptionRecipient);
+        return getConnector().getEncryptionKeys().get(signupEncryptionRecipient);
     }
      */
 
@@ -416,7 +416,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     @SchemaColumn(order=30, name=COLUMN_AOWEB_STRUTS_VNC_BIND, index=IndexType.UNIQUE, description="the port that listens for VNC connections")
     public NetBind getAowebStrutsVncBind() throws RemoteException {
         try {
-            return getService().getConnector().getNetBinds().get(aowebStrutsVncBind);
+            return getConnector().getNetBinds().get(aowebStrutsVncBind);
         } catch(NoSuchElementException err) {
             return null;
         }
@@ -502,6 +502,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getSmtpEmailInbox());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getImapEmailInbox());
@@ -517,6 +518,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupRequests());
@@ -530,12 +532,12 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
      * Gets the Reseller for this Brand or <code>null</code> if not a reseller.
      */
     public Reseller getReseller() throws RemoteException {
-        return getService().getConnector().getResellers().filterUnique(Reseller.COLUMN_ACCOUNTING, this);
+        return getConnector().getResellers().filterUnique(Reseller.COLUMN_ACCOUNTING, this);
     }
 
     /* TODO
     public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
-        return getService().getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
+        return getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
     }*/
 
     /**
@@ -543,16 +545,16 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
      * business (that is a brand) equal to this one.
      */
     public IndexedSet<Brand> getChildBrands() throws RemoteException {
-        return getService().getConnector().getBrands().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getBrands().filterIndexed(COLUMN_PARENT, this);
     }
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_BRAND, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_BRAND, this);
     }
 
     /* TODO
     public List<SignupRequest> getSignupRequests() throws IOException, SQLException {
-        return getService().getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_BRAND, pkey);
+        return getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_BRAND, pkey);
     }
      */
     // </editor-fold>

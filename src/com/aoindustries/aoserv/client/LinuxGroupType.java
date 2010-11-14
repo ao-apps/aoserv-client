@@ -48,8 +48,8 @@ final public class LinuxGroupType extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public LinuxGroupType(LinuxGroupTypeService<?,?> service, String resourceType) {
-        super(service, resourceType);
+    public LinuxGroupType(AOServConnector<?,?> connector, String resourceType) {
+        super(connector, resourceType);
     }
     // </editor-fold>
 
@@ -63,7 +63,7 @@ final public class LinuxGroupType extends AOServObjectStringKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, name="resource_type", index=IndexType.PRIMARY_KEY, description="the resource type this represents")
     public ResourceType getResourceType() throws RemoteException {
-        return getService().getConnector().getResourceTypes().get(getKey());
+        return getConnector().getResourceTypes().get(getKey());
     }
     // </editor-fold>
 
@@ -77,12 +77,14 @@ final public class LinuxGroupType extends AOServObjectStringKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroups());
         return unionSet;
     }
@@ -97,7 +99,7 @@ final public class LinuxGroupType extends AOServObjectStringKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<LinuxGroup> getLinuxGroups() throws RemoteException {
-        return getService().getConnector().getLinuxGroups().filterIndexed(LinuxGroup.COLUMN_LINUX_GROUP_TYPE, this);
+        return getConnector().getLinuxGroups().filterIndexed(LinuxGroup.COLUMN_LINUX_GROUP_TYPE, this);
     }
     // </editor-fold>
 }

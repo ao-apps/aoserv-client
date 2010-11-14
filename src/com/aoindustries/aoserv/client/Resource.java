@@ -11,12 +11,10 @@ import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * A <code>Resource</code> represents one accountable item.  For the purposes
@@ -25,7 +23,7 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-final public class Resource extends AOServObjectIntegerKey implements Comparable<Resource>, DtoFactory<com.aoindustries.aoserv.client.dto.Resource> {
+public abstract class Resource extends AOServObjectIntegerKey {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -34,13 +32,13 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private String resourceType;
     private AccountingCode accounting;
-    final private long created;
+    final protected long created;
     private UserId createdBy;
-    final private Integer disableLog;
-    final private long lastEnabled;
+    final protected Integer disableLog;
+    final protected long lastEnabled;
 
-    public Resource(
-        ResourceService<?,?> service,
+    protected Resource(
+        AOServConnector<?,?> connector,
         int pkey,
         String resourceType,
         AccountingCode accounting,
@@ -49,7 +47,7 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
         Integer disableLog,
         long lastEnabled
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.resourceType = resourceType;
         this.accounting = accounting;
         this.created = created;
@@ -71,23 +69,38 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(Resource other) {
-        try {
-            int diff = accounting==other.accounting ? 0 : getBusiness().compareTo(other.getBusiness()); // OK - interned
-            if(diff!=0) return diff;
-            diff = resourceType==other.resourceType ? 0 : getResourceType().compareTo(other.getResourceType()); // OK - interned
-            if(diff!=0) return diff;
-            return AOServObjectUtils.compare(key, other.key);
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
+    // <editor-fold defaultstate="collapsed" desc="Read-only access to fields for subclasses">
+    protected String getResourceTypeName() {
+        return resourceType;
+    }
+    protected AccountingCode getAccounting() {
+        return accounting;
+    }
+    protected UserId getCreatedByUsername() {
+        return createdBy;
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    public static final Comparator<Resource> resourceComparator = new Comparator<Resource>() {
+        @Override
+        public int compare(Resource o1, Resource o2) {
+            try {
+                int diff = o1.accounting==o2.accounting ? 0 : o1.getBusiness().compareTo(o2.getBusiness()); // OK - interned
+                if(diff!=0) return diff;
+                diff = o1.resourceType==o2.resourceType ? 0 : o1.getResourceType().compareTo(o2.getResourceType()); // OK - interned
+                if(diff!=0) return diff;
+                return AOServObjectUtils.compare(o1.key, o2.key);
+            } catch(RemoteException err) {
+                throw new WrappedException(err);
+            }
+        }
+    };
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique pkey")
+    static final String COLUMN_PKEY = "pkey";
+    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="a generated unique pkey")
     public int getPkey() {
         return key;
     }
@@ -95,7 +108,7 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
     static final String COLUMN_RESOURCE_TYPE = "resource_type";
     @SchemaColumn(order=1, name=COLUMN_RESOURCE_TYPE, index=IndexType.INDEXED, description="the type of resource")
     public ResourceType getResourceType() throws RemoteException {
-        return getService().getConnector().getResourceTypes().get(resourceType);
+        return getConnector().getResourceTypes().get(resourceType);
     }
 
     /**
@@ -105,7 +118,7 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that owns this resource")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
+        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     /**
@@ -123,7 +136,7 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
     @SchemaColumn(order=4, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the administrator who created the resource")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         try {
-            return getService().getConnector().getBusinessAdministrators().get(createdBy);
+            return getConnector().getBusinessAdministrators().get(createdBy);
         } catch(NoSuchElementException err) {
             // Filtered
             return null;
@@ -134,7 +147,10 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
     @SchemaColumn(order=5, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the resource is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
-        return getService().getConnector().getDisableLogs().get(disableLog);
+        return getConnector().getDisableLogs().get(disableLog);
+    }
+    public boolean isDisabled() {
+        return disableLog!=null;
     }
 
     /**
@@ -145,13 +161,7 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
     public Timestamp getLastEnabled() {
         return new Timestamp(lastEnabled);
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    @Override
-    public com.aoindustries.aoserv.client.dto.Resource getDto() {
-        return new com.aoindustries.aoserv.client.dto.Resource(key, resourceType, getDto(accounting), created, getDto(createdBy), disableLog, lastEnabled);
-    }
+    static final int RESOURCE_LAST_COLUMN = 6;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
@@ -175,76 +185,12 @@ final public class Resource extends AOServObjectIntegerKey implements Comparable
 
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
         return unionSet;
-    }
-
-    @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDependentObjectByResourceType());
-        return unionSet;
-    }
-
-    private static final Set<String> aoServerResourceTypes = new HashSet<String>(
-        Arrays.asList(
-            ResourceType.MYSQL_DATABASE,
-            ResourceType.MYSQL_SERVER,
-            ResourceType.MYSQL_USER,
-            ResourceType.POSTGRESQL_DATABASE,
-            ResourceType.POSTGRESQL_SERVER,
-            ResourceType.POSTGRESQL_USER,
-            ResourceType.EMAIL_INBOX,
-            ResourceType.FTPONLY_ACCOUNT,
-            ResourceType.SHELL_ACCOUNT,
-            ResourceType.SYSTEM_ACCOUNT,
-            ResourceType.SHELL_GROUP,
-            ResourceType.SYSTEM_GROUP,
-            ResourceType.HTTPD_JBOSS_SITE,
-            ResourceType.HTTPD_STATIC_SITE,
-            ResourceType.HTTPD_TOMCAT_SHARED_SITE,
-            ResourceType.HTTPD_TOMCAT_STD_SITE,
-            ResourceType.CVS_REPOSITORY,
-            ResourceType.HTTPD_SERVER,
-            ResourceType.PRIVATE_FTP_SERVER
-        )
-    );
-
-    private static final Set<String> serverResourceTypes = new HashSet<String>(
-        Arrays.asList(
-            ResourceType.IP_ADDRESS
-        )
-    );
-
-    private AOServObject getDependentObjectByResourceType() throws RemoteException {
-        // The following string comparisons safely use == instead of .equals because resourceType is interned.
-        if(resourceType==ResourceType.DNS_RECORD) return getDnsRecord();
-        if(resourceType==ResourceType.DNS_ZONE) return getDnsZone();
-        if(aoServerResourceTypes.contains(resourceType)) return getAoServerResource();
-        if(serverResourceTypes.contains(resourceType)) return getServerResource();
-        /* TODO: else*/ throw new AssertionError("Unexpected resource type: "+resourceType);
-        // TODO: if(obj==null) throw new SQLException("Type-specific resource object not found: "+pkey);
-        // TODO: return obj;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
-    public ServerResource getServerResource() throws RemoteException {
-        return getService().getConnector().getServerResources().get(key);
-    }
-
-    public DnsRecord getDnsRecord() throws RemoteException {
-        return getService().getConnector().getDnsRecords().get(key);
-    }
-
-    public DnsZone getDnsZone() throws RemoteException {
-        return getService().getConnector().getDnsZones().get(key);
     }
     // </editor-fold>
 

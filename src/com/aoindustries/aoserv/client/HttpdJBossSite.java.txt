@@ -46,27 +46,27 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
     }
 
     public HttpdJBossVersion getHttpdJBossVersion() throws SQLException, IOException {
-        return getService().getConnector().getHttpdJBossVersions().get(version);
+        return getConnector().getHttpdJBossVersions().get(version);
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdTomcatSites().get(pkey);
+        return getConnector().getHttpdTomcatSites().get(pkey);
     }
 
     public NetBind getHypersonicBind() throws IOException, SQLException {
-    	return getService().getConnector().getNetBinds().get(hypersonicBind);
+    	return getConnector().getNetBinds().get(hypersonicBind);
     }
 
     public NetBind getJmxBind() throws IOException, SQLException {
-    	return getService().getConnector().getNetBinds().get(jmxBind);
+    	return getConnector().getNetBinds().get(jmxBind);
     }
 
     public NetBind getJnpBind() throws IOException, SQLException {
-    	return getService().getConnector().getNetBinds().get(jnpBind);
+    	return getConnector().getNetBinds().get(jnpBind);
     }
 
     public NetBind getRmiBind() throws SQLException, IOException {
-    	return getService().getConnector().getNetBinds().get(rmiBind);
+    	return getConnector().getNetBinds().get(rmiBind);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -74,7 +74,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
     }
 
     public NetBind getWebserverBind() throws IOException, SQLException {
-        return getService().getConnector().getNetBinds().get(webserverBind);
+        return getConnector().getNetBinds().get(webserverBind);
     }
 
     public void init(ResultSet result) throws SQLException {

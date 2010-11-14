@@ -26,8 +26,8 @@ final public class EmailAttachmentType extends AOServObjectStringKey implements 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private boolean isDefaultBlock;
 
-    public EmailAttachmentType(EmailAttachmentTypeService<?,?> service, String extension, boolean isDefaultBlock) {
-        super(service, extension);
+    public EmailAttachmentType(AOServConnector<?,?> connector, String extension, boolean isDefaultBlock) {
+        super(connector, extension);
         this.isDefaultBlock = isDefaultBlock;
     }
     // </editor-fold>
@@ -61,6 +61,7 @@ final public class EmailAttachmentType extends AOServObjectStringKey implements 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailAttachmentBlocks());
         return unionSet;
     }
@@ -75,7 +76,7 @@ final public class EmailAttachmentType extends AOServObjectStringKey implements 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public IndexedSet<EmailAttachmentBlock> getEmailAttachmentBlocks() throws RemoteException {
-        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
      */
     // </editor-fold>

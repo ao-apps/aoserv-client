@@ -38,7 +38,7 @@ implements
     final private boolean active;
 
     public PackageDefinitionBusiness(
-        PackageDefinitionBusinessService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int packageDefinition,
         AccountingCode accounting,
@@ -46,7 +46,7 @@ implements
         String description,
         boolean active
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.packageDefinition = packageDefinition;
         this.accounting = accounting;
         this.display = display;
@@ -87,13 +87,13 @@ implements
     static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
     @SchemaColumn(order=1, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the pkey of the package definition")
     public PackageDefinition getPackageDefinition() throws RemoteException {
-        return getService().getConnector().getPackageDefinitions().get(packageDefinition);
+        return getConnector().getPackageDefinitions().get(packageDefinition);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that is allowed to create subaccounts with this package")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     @SchemaColumn(order=3, name="display", description="a short description for display use")
@@ -129,6 +129,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         return unionSet;

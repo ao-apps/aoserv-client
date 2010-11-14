@@ -21,8 +21,8 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public BackupRetention(BackupRetentionService<?,?> service, short days) {
-        super(service, days);
+    public BackupRetention(AOServConnector<?,?> connector, short days) {
+        super(connector, days);
     }
     // </editor-fold>
 
@@ -50,6 +50,7 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxesByTrashEmailRetention());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxesByJunkEmailRetention());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxAddresses());
@@ -67,15 +68,15 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<EmailInbox> getEmailInboxesByTrashEmailRetention() throws RemoteException {
-        return getService().getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_TRASH_EMAIL_RETENTION, this);
+        return getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_TRASH_EMAIL_RETENTION, this);
     }
 
     public IndexedSet<EmailInbox> getEmailInboxesByJunkEmailRetention() throws RemoteException {
-        return getService().getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_JUNK_EMAIL_RETENTION, this);
+        return getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_JUNK_EMAIL_RETENTION, this);
     }
 
     public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
-        return getService().getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_RETENTION, this);
+        return getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_RETENTION, this);
     }
     // </editor-fold>
 }

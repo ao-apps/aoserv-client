@@ -21,8 +21,8 @@ final public class ExpenseCategory extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public ExpenseCategory(ExpenseCategoryService<?,?> service, String expenseCode) {
-        super(service, expenseCode);
+    public ExpenseCategory(AOServConnector<?,?> connector, String expenseCode) {
+        super(connector, expenseCode);
     }
     // </editor-fold>
 
@@ -50,6 +50,7 @@ final public class ExpenseCategory extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
         return unionSet;
     }
@@ -58,7 +59,7 @@ final public class ExpenseCategory extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
      */
     // </editor-fold>

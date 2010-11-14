@@ -35,12 +35,12 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     final private int server;
 
     public MasterServer(
-        MasterServerService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         UserId username,
         int server
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.username = username;
         this.server = server;
         intern();
@@ -78,13 +78,13 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the unique username of the user")
     public MasterUser getMasterUser() throws RemoteException {
-        return getService().getConnector().getMasterUsers().get(username);
+        return getConnector().getMasterUsers().get(username);
     }
 
     static final String COLUMN_SERVER = "server";
     @SchemaColumn(order=2, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server they may control")
     public Server getServer() throws RemoteException {
-        return getService().getConnector().getServers().get(server);
+        return getConnector().getServers().get(server);
     }
     // </editor-fold>
 
@@ -98,6 +98,7 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
         return unionSet;

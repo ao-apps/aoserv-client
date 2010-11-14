@@ -46,7 +46,7 @@ final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
     public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        MySQLUser mu = connectedUser.getService().getConnector().getMysqlUsers().get(mysqlUser);
+        MySQLUser mu = connectedUser.getConnector().getMysqlUsers().get(mysqlUser);
         if(!connectedUser.canAccessMySQLUser(mu)) {
             errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
@@ -57,7 +57,7 @@ final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
             ) errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "SetMySQLUserPasswordCommand.validate.noSetRoot");
             else {
                 // Make sure not disabled
-                if(mu.getAoServerResource().getResource().getDisableLog()!=null) errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "SetMySQLUserPasswordCommand.validate.disabled");
+                if(mu.isDisabled()) errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "SetMySQLUserPasswordCommand.validate.disabled");
                 else {
                     // Check password strength
                     try {

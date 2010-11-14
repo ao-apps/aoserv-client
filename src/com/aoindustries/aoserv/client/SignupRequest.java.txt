@@ -268,7 +268,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     }
 
     public Brand getBrand() throws SQLException, IOException {
-        return getService().getConnector().getBrands().get(brand);
+        return getConnector().getBrands().get(brand);
     }
 
     public long getTime() {
@@ -280,7 +280,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     }
 
     public PackageDefinition getPackageDefinition() throws SQLException, IOException {
-        return getService().getConnector().getPackageDefinitions().get(package_definition);
+        return getConnector().getPackageDefinitions().get(package_definition);
     }
 
     public String getBusinessName() {
@@ -392,17 +392,17 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     }
 
     public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
-        return getService().getConnector().getEncryptionKeys().get(encryption_from);
+        return getConnector().getEncryptionKeys().get(encryption_from);
     }
 
     public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
-        return getService().getConnector().getEncryptionKeys().get(encryption_recipient);
+        return getConnector().getEncryptionKeys().get(encryption_recipient);
     }
 
     public BusinessAdministrator getCompletedBy() throws IOException, SQLException {
         if(completed_by==null) return null;
         // May be filtered, null is OK
-        return getService().getConnector().getBusinessAdministrators().get(completed_by);
+        return getConnector().getBusinessAdministrators().get(completed_by);
     }
 
     public long getCompletedTime() {
@@ -495,6 +495,6 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
     }
 
     public List<SignupRequestOption> getSignupRequestOptions() throws IOException, SQLException {
-        return getService().getConnector().getSignupRequestOptions().getIndexedRows(SignupRequestOption.COLUMN_REQUEST, pkey);
+        return getConnector().getSignupRequestOptions().getIndexedRows(SignupRequestOption.COLUMN_REQUEST, pkey);
     }
 }

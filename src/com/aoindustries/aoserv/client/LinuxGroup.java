@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroup extends AOServObjectIntegerKey implements Comparable<LinuxGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroup> /* Removable*/ {
+final public class LinuxGroup extends AOServerResource implements Comparable<LinuxGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroup> /* Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -78,13 +78,21 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     final private LinuxID gid;
 
     public LinuxGroup(
-        LinuxGroupService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         String linuxGroupType,
         GroupId groupName,
         LinuxID gid
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.linuxGroupType = linuxGroupType;
         this.groupName = groupName;
         this.gid = gid;
@@ -109,9 +117,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
             if(key==other.key) return 0;
             int diff = groupName==other.groupName ? 0 : getGroupName().compareTo(other.getGroupName());
             if(diff!=0) return diff;
-            AOServerResource aor1 = getAoServerResource();
-            AOServerResource aor2 = other.getAoServerResource();
-            return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareTo(aor2.getAoServer());
+            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -119,28 +125,22 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
-    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
     static final String COLUMN_LINUX_GROUP_TYPE = "linux_group_type";
-    @SchemaColumn(order=1, name=COLUMN_LINUX_GROUP_TYPE, index=IndexType.INDEXED, description="the type of group")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_LINUX_GROUP_TYPE, index=IndexType.INDEXED, description="the type of group")
     public LinuxGroupType getLinuxGroupType() throws RemoteException {
-        return getService().getConnector().getLinuxGroupTypes().get(linuxGroupType);
+        return getConnector().getLinuxGroupTypes().get(linuxGroupType);
     }
 
     static final String COLUMN_GROUP_NAME = "group_name";
-    @SchemaColumn(order=2, name=COLUMN_GROUP_NAME, index=IndexType.INDEXED, description="the name of the group")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_GROUP_NAME, index=IndexType.INDEXED, description="the name of the group")
     public GroupName getGroupName() throws RemoteException {
-        return getService().getConnector().getGroupNames().get(groupName);
+        return getConnector().getGroupNames().get(groupName);
     }
     public GroupId getGroupId() {
         return groupName;
     }
 
-    @SchemaColumn(order=3, name="gid", description="the gid of the group on the machine")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="gid", description="the gid of the group on the machine")
     public LinuxID getGid() {
         return gid;
     }
@@ -151,6 +151,14 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     public com.aoindustries.aoserv.client.dto.LinuxGroup getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxGroup(
             key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
             linuxGroupType,
             getDto(groupName),
             getDto(gid)
@@ -161,7 +169,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroupType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupName());
         return unionSet;
@@ -169,6 +177,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroups());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getCvsRepositories());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailLists());
@@ -183,13 +192,13 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("LinuxGroup.toString", groupName, getAoServerResource().getAoServer().getHostname());
+        return ApplicationResources.accessor.getMessage("LinuxGroup.toString", groupName, getAoServer().getHostname());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_GROUP, this);
+        return getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_GROUP, this);
     }
 
     public IndexedSet<LinuxAccountGroup> getAlternateLinuxAccountGroups() throws RemoteException {
@@ -200,22 +209,22 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
     public int addLinuxAccount(LinuxAccount account) throws IOException, SQLException {
-        return getService().getConnector().getLinuxGroupAccounts().addLinuxGroupAccount(this, account);
+        return getConnector().getLinuxGroupAccounts().addLinuxGroupAccount(this, account);
     }
 
     public int addLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-        return getService().getConnector().getLinuxServerGroups().addLinuxServerGroup(this, aoServer);
+        return getConnector().getLinuxServerGroups().addLinuxServerGroup(this, aoServer);
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-        return getService().getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
+        return getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be the primary group for any linux accounts
-        for(LinuxGroupAccount lga : getService().getConnector().getLinuxGroupAccounts().getRows()) {
+        for(LinuxGroupAccount lga : getConnector().getLinuxGroupAccounts().getRows()) {
             if(lga.isPrimary() && equals(lga.getLinuxGroup())) {
                 reasons.add(new CannotRemoveReason<LinuxGroupAccount>("Used as primary group for Linux account "+lga.getLinuxAccount().getUsername().getUsername(), lga));
             }
@@ -228,7 +237,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_GROUPS,
@@ -244,7 +253,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
             if(cr.linux_server_group==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
         }
 
-        for(EmailList el : getService().getConnector().getEmailLists().getRows()) {
+        for(EmailList el : getConnector().getEmailLists().getRows()) {
             if(el.linux_server_group==pkey) reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
         }
 
@@ -276,7 +285,7 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(
+        getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_SERVER_GROUPS,
@@ -285,27 +294,27 @@ final public class LinuxGroup extends AOServObjectIntegerKey implements Comparab
     }
 
     public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-        return getService().getConnector().getCvsRepositories().getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_GROUP, pkey);
+        return getConnector().getCvsRepositories().getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-        return getService().getConnector().getEmailLists().getIndexedRows(EmailList.COLUMN_LINUX_SERVER_GROUP, pkey);
+        return getConnector().getEmailLists().getIndexedRows(EmailList.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
 
     public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
-        return getService().getConnector().getHttpdServers().getIndexedRows(HttpdServer.COLUMN_LINUX_SERVER_GROUP, pkey);
+        return getConnector().getHttpdServers().getIndexedRows(HttpdServer.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSites().getIndexedRows(HttpdSite.COLUMN_LINUX_SERVER_GROUP, pkey);
+        return getConnector().getHttpdSites().getIndexedRows(HttpdSite.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
 
     public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_LINUX_SERVER_GROUP, pkey);
+        return getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
 
     public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
-        return getService().getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_LINUX_SERVER_GROUP, pkey);
+        return getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_LINUX_SERVER_GROUP, pkey);
     }
     */
     // </editor-fold>

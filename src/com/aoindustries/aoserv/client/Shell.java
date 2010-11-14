@@ -55,8 +55,8 @@ final public class Shell extends AOServObjectUnixPathKey implements Comparable<S
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public Shell(ShellService<?,?> service, UnixPath path) {
-        super(service, path);
+    public Shell(AOServConnector<?,?> connector, UnixPath path) {
+        super(connector, path);
     }
     // </editor-fold>
 
@@ -84,6 +84,7 @@ final public class Shell extends AOServObjectUnixPathKey implements Comparable<S
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccounts());
         return unionSet;
     }
@@ -91,7 +92,7 @@ final public class Shell extends AOServObjectUnixPathKey implements Comparable<S
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_SHELL, this);
+        return getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_SHELL, this);
     }
     // </editor-fold>
 }

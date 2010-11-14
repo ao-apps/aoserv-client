@@ -19,8 +19,8 @@ abstract public class AOServObjectUnixPathKey extends AOServObject<UnixPath> {
 
     private UnixPath key;
 
-    protected AOServObjectUnixPathKey(AOServService<?,?,UnixPath,? extends AOServObjectUnixPathKey> service, UnixPath key) {
-        super(service);
+    protected AOServObjectUnixPathKey(AOServConnector<?,?> connector, UnixPath key) {
+        super(connector);
         this.key = key;
         intern();
     }

@@ -42,7 +42,7 @@ implements
     final private LinuxID quotaGid;
 
     public FailoverFileReplication(
-        FailoverFileReplicationService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int server,
         int backupPartition,
@@ -54,7 +54,7 @@ implements
         boolean enabled,
         LinuxID quotaGid
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.server = server;
         this.backupPartition = backupPartition;
         this.maxBitRate = maxBitRate;
@@ -100,7 +100,7 @@ implements
     static final String COLUMN_SERVER = "server";
     @SchemaColumn(order=1, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server that the files are coming from")
     public Server getServer() throws RemoteException {
-        return getService().getConnector().getServers().get(server);
+        return getConnector().getServers().get(server);
     }
 
     static final String COLUMN_BACKUP_PARTITION = "backup_partition";
@@ -110,7 +110,7 @@ implements
     @SchemaColumn(order=2, name=COLUMN_BACKUP_PARTITION, index=IndexType.INDEXED, description="the pkey of the backup partition that the files are going to")
     public BackupPartition getBackupPartition() throws RemoteException {
         try {
-            return getService().getConnector().getBackupPartitions().get(backupPartition);
+            return getConnector().getBackupPartitions().get(backupPartition);
         } catch(NoSuchElementException err) {
             return null;
         }
@@ -130,7 +130,7 @@ implements
     static final String COLUMN_RETENTION = "retention";
     @SchemaColumn(order=5, name=COLUMN_RETENTION, index=IndexType.INDEXED, description="the number of days backups will be kept")
     public BackupRetention getRetention() throws RemoteException {
-        return getService().getConnector().getBackupRetentions().get(retention);
+        return getConnector().getBackupRetentions().get(retention);
     }
 
     /**
@@ -183,6 +183,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBackupPartition());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getRetention());
@@ -191,6 +192,7 @@ implements
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileSchedules());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
         return unionSet;
@@ -207,19 +209,19 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
-        return getService().getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_REPLICATION, this);
+        return getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_REPLICATION, this);
     }
 
     public IndexedSet<FailoverFileSchedule> getFailoverFileSchedules() throws RemoteException {
-        return getService().getConnector().getFailoverFileSchedules().filterIndexed(FailoverFileSchedule.COLUMN_REPLICATION, this);
+        return getConnector().getFailoverFileSchedules().filterIndexed(FailoverFileSchedule.COLUMN_REPLICATION, this);
     }
 
     public IndexedSet<FileBackupSetting> getFileBackupSettings() throws RemoteException {
-        return getService().getConnector().getFileBackupSettings().filterIndexed(FileBackupSetting.COLUMN_REPLICATION, this);
+        return getConnector().getFileBackupSettings().filterIndexed(FileBackupSetting.COLUMN_REPLICATION, this);
     }
 
     public IndexedSet<FailoverFileLog> getFailoverFileLogs() throws RemoteException {
-        return getService().getConnector().getFailoverFileLogs().filterIndexed(FailoverFileLog.COLUMN_REPLICATION, this);
+        return getConnector().getFailoverFileLogs().filterIndexed(FailoverFileLog.COLUMN_REPLICATION, this);
     }
     // </editor-fold>
 
@@ -233,23 +235,23 @@ implements
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /*
     public void setBitRate(int bitRate) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate);
     }
 
     public int addFileBackupSetting(String path, boolean backupEnabled) throws IOException, SQLException {
-        return getService().getConnector().getFileBackupSettings().addFileBackupSetting(this, path, backupEnabled);
+        return getConnector().getFileBackupSettings().addFileBackupSetting(this, path, backupEnabled);
     }
 
     public FileBackupSetting getFileBackupSetting(String path) throws IOException, SQLException {
-        return getService().getConnector().getFileBackupSettings().getFileBackupSetting(this, path);
+        return getConnector().getFileBackupSettings().getFileBackupSetting(this, path);
     }
 
     public void setFailoverFileSchedules(List<Short> hours, List<Short> minutes) throws IOException, SQLException {
-        getService().getConnector().getFailoverFileSchedules().setFailoverFileSchedules(this, hours, minutes);
+        getConnector().getFailoverFileSchedules().setFailoverFileSchedules(this, hours, minutes);
     }
 
     public void setFileBackupSettings(List<String> paths, List<Boolean> backupEnableds) throws IOException, SQLException {
-        getService().getConnector().getFileBackupSettings().setFileBackupSettings(this, paths, backupEnableds);
+        getConnector().getFileBackupSettings().setFileBackupSettings(this, paths, backupEnableds);
     }
      */
     // </editor-fold>

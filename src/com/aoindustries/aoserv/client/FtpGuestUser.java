@@ -27,8 +27,8 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public FtpGuestUser(FtpGuestUserService<?,?> service, int linuxAccount) {
-        super(service, linuxAccount);
+    public FtpGuestUser(AOServConnector<?,?> connector, int linuxAccount) {
+        super(connector, linuxAccount);
     }
     // </editor-fold>
 
@@ -47,7 +47,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     static final String COLUMN_LINUX_ACCOUNT = "linux_account";
     @SchemaColumn(order=0, name=COLUMN_LINUX_ACCOUNT, index=IndexType.PRIMARY_KEY, description="the resource id of the Linux account")
     public LinuxAccount getLinuxAccount() throws RemoteException {
-        return getService().getConnector().getLinuxAccounts().get(key);
+        return getConnector().getLinuxAccounts().get(key);
     }
     // </editor-fold>
 
@@ -61,6 +61,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
         return unionSet;
     }
@@ -80,7 +81,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     }
 
     public void remove() throws IOException, SQLException {
-    	getService().getConnector().requestUpdateIL(
+    	getConnector().requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.FTP_GUEST_USERS,

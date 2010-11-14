@@ -44,7 +44,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
     }
 
     public ServerFarm getServerFarm() throws SQLException, IOException {
-        return getService().getConnector().getServerFarms().get(farm);
+        return getConnector().getServerFarms().get(farm);
     }
     
     public String getName() {
@@ -115,6 +115,6 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
     }
 
     public List<PhysicalServer> getPhysicalServers() throws IOException, SQLException {
-        return getService().getConnector().getPhysicalServers().getIndexedRows(PhysicalServer.COLUMN_RACK, pkey);
+        return getConnector().getPhysicalServers().getIndexedRows(PhysicalServer.COLUMN_RACK, pkey);
     }
 }

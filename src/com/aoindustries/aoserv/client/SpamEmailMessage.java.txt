@@ -50,7 +50,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
     }
     
     public EmailSmtpRelay getEmailSmtpRelay() throws SQLException, IOException {
-        return getService().getConnector().getEmailSmtpRelays().get(email_relay);
+        return getConnector().getEmailSmtpRelays().get(email_relay);
     }
     
     public long getTime() {

@@ -24,8 +24,8 @@ final public class Language extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public Language(LanguageService<?,?> table, String code) {
-        super(table, code);
+    public Language(AOServConnector<?,?> connector, String code) {
+        super(connector, code);
     }
     // </editor-fold>
 
@@ -53,6 +53,7 @@ final public class Language extends AOServObjectStringKey implements Comparable<
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
         return unionSet;
     }
@@ -67,7 +68,7 @@ final public class Language extends AOServObjectStringKey implements Comparable<
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_LANGUAGE, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_LANGUAGE, this);
     }
     // </editor-fold>
 }

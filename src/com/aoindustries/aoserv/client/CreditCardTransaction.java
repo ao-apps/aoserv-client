@@ -109,7 +109,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     private String status;
 
     public CreditCardTransaction(
-        CreditCardTransactionService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         String processorId,
         AccountingCode accounting,
@@ -193,7 +193,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
         String voidProviderUniqueId,
         String status
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.processorId = processorId;
         this.accounting = accounting;
         this.groupName = groupName;
@@ -332,7 +332,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      */
     @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, index=IndexType.INDEXED, description="the name of the processor used for this transaction")
     public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
-        return getService().getConnector().getCreditCardProcessors().get(processorId);
+        return getConnector().getCreditCardProcessors().get(processorId);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
@@ -343,7 +343,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      */
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code for the source of this transaction")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(accounting);
+        return getConnector().getBusinesses().get(accounting);
     }
 
     /**
@@ -468,7 +468,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     @SchemaColumn(order=20, name=COLUMN_SHIPPING_COUNTRY_CODE, index=IndexType.INDEXED, description="the shipping two-digit ISO 3166-1 alpha-2 country code")
     public CountryCode getShippingCountryCode() throws RemoteException {
         if(shippingCountryCode==null) return null;
-        return getService().getConnector().getCountryCodes().get(shippingCountryCode);
+        return getConnector().getCountryCodes().get(shippingCountryCode);
     }
 
     @SchemaColumn(order=21, name="email_customer", description="the flag indicating the API should generate an email to the customer")
@@ -499,7 +499,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     static final String COLUMN_CREDIT_CARD_CREATED_BY = "credit_card_created_by";
     @SchemaColumn(order=26, name=COLUMN_CREDIT_CARD_CREATED_BY, index=IndexType.INDEXED, description="the business administrator account that provided this credit card")
     public BusinessAdministrator getCreditCardCreatedBy() throws RemoteException {
-        return getService().getConnector().getBusinessAdministrators().get(creditCardCreatedBy);
+        return getConnector().getBusinessAdministrators().get(creditCardCreatedBy);
     }
 
     /**
@@ -513,7 +513,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     static final String COLUMN_CREDIT_CARD_ACCOUNTING = "credit_card_accounting";
     @SchemaColumn(order=28, name=COLUMN_CREDIT_CARD_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business that provided this credit card")
     public Business getCreditCardBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().get(creditCardAccounting);
+        return getConnector().getBusinesses().get(creditCardAccounting);
     }
 
     @SchemaColumn(order=29, name="credit_card_group_name", description="any application-specific grouping")
@@ -599,7 +599,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      */
     @SchemaColumn(order=44, name=COLUMN_CREDIT_CARD_COUNTRY_CODE, index=IndexType.INDEXED, description="the two-digit ISO 3166-1 alpha-2 country code of the card holder")
     public CountryCode getCreditCardCountryCode() throws RemoteException {
-        return getService().getConnector().getCountryCodes().get(creditCardCountryCode);
+        return getConnector().getCountryCodes().get(creditCardCountryCode);
     }
 
     @SchemaColumn(order=45, name="credit_card_comments", description="any comments associated with the credit card")
@@ -623,7 +623,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     @SchemaColumn(order=47, name=COLUMN_AUTHORIZATION_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the transaction")
     public BusinessAdministrator getAuthorizationAdministrator() throws RemoteException {
         if(authorizationUsername==null) return null;
-        return getService().getConnector().getBusinessAdministrators().get(authorizationUsername);
+        return getConnector().getBusinessAdministrators().get(authorizationUsername);
     }
 
     /**
@@ -731,7 +731,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     @SchemaColumn(order=66, name=COLUMN_CAPTURE_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the capture")
     public BusinessAdministrator getCaptureAdministrator() throws RemoteException {
         if(captureUsername==null) return null;
-        return getService().getConnector().getBusinessAdministrators().get(captureUsername);
+        return getConnector().getBusinessAdministrators().get(captureUsername);
     }
 
     /**
@@ -784,7 +784,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     @SchemaColumn(order=74, name=COLUMN_VOID_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the void")
     public BusinessAdministrator getVoidAdministrator() throws RemoteException {
         if(voidUsername==null) return null;
-        return getService().getConnector().getBusinessAdministrators().get(voidUsername);
+        return getConnector().getBusinessAdministrators().get(voidUsername);
     }
 
     /**
@@ -920,6 +920,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessor());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getShippingCountryCode());
@@ -934,6 +935,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransaction());
         return unionSet;
     }
@@ -941,7 +943,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public Transaction getTransaction() throws RemoteException {
-        return getService().getConnector().getTransactions().filterUnique(Transaction.COLUMN_CREDIT_CARD_TRANSACTION, this);
+        return getConnector().getTransactions().filterUnique(Transaction.COLUMN_CREDIT_CARD_TRANSACTION, this);
     }
     // </editor-fold>
 
@@ -976,9 +978,9 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
         final String captureProviderUniqueId,
         final String status
     ) throws RemoteException {
-        if(!getService().getConnector().isSecure()) throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+getService().getConnector().getProtocol()+" protocol, which is not secure.");
+        if(!getConnector().isSecure()) throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+getConnector().getProtocol()+" protocol, which is not secure.");
 
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -1023,7 +1025,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
@@ -1052,9 +1054,9 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
         final String approvalCode,
         final String status
     ) throws RemoteException {
-        if(!getService().getConnector().isSecure()) throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+getService().getConnector().getProtocol()+" protocol, which is not secure.");
+        if(!getConnector().isSecure()) throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+getConnector().getProtocol()+" protocol, which is not secure.");
 
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -1092,7 +1094,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );

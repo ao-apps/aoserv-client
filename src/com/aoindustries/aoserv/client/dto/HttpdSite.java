@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class HttpdSite {
+public class HttpdSite extends AOServerResource {
 
-    private int aoServerResource;
     private DomainName siteName;
     private boolean listFirst;
     private int linuxAccountGroup;
@@ -22,7 +21,15 @@ public class HttpdSite {
     }
 
     public HttpdSite(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         DomainName siteName,
         boolean listFirst,
         int linuxAccountGroup,
@@ -30,21 +37,13 @@ public class HttpdSite {
         boolean isManualConfig,
         String awstatsSkipFiles
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.siteName = siteName;
         this.listFirst = listFirst;
         this.linuxAccountGroup = linuxAccountGroup;
         this.serverAdmin = serverAdmin;
         this.isManualConfig = isManualConfig;
         this.awstatsSkipFiles = awstatsSkipFiles;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public DomainName getSiteName() {

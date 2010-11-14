@@ -23,8 +23,8 @@ final public class ProcessorType extends AOServObjectStringKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private short sortOrder;
 
-    public ProcessorType(ProcessorTypeService<?,?> service, String type, short sortOrder) {
-        super(service, type);
+    public ProcessorType(AOServConnector<?,?> connector, String type, short sortOrder) {
+        super(connector, type);
         this.sortOrder = sortOrder;
     }
     // </editor-fold>
@@ -58,6 +58,7 @@ final public class ProcessorType extends AOServObjectStringKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getPhysicalServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServersByMinimumProcessorType());
         return unionSet;
@@ -66,7 +67,7 @@ final public class ProcessorType extends AOServObjectStringKey implements Compar
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<VirtualServer> getVirtualServersByMinimumProcessorType() throws RemoteException {
-        return getService().getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_TYPE, this);
+        return getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_TYPE, this);
     }
     // </editor-fold>
 }

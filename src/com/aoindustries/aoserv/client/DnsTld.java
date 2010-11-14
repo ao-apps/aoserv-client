@@ -30,8 +30,8 @@ final public class DnsTld extends AOServObjectDomainNameKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    public DnsTld(DnsTldService<?,?> service, DomainName domain) {
-        super(service, domain);
+    public DnsTld(AOServConnector<?,?> connector, DomainName domain) {
+        super(connector, domain);
     }
     // </editor-fold>
 

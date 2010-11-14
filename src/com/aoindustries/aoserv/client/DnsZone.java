@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class DnsZone extends AOServObjectIntegerKey implements Comparable<DnsZone>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsZone> /*, TODO: Removable, Dumpable */ {
+final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsZone> /*, TODO: Removable, Dumpable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -50,15 +50,21 @@ final public class DnsZone extends AOServObjectIntegerKey implements Comparable<
     final private int ttl;
 
     public DnsZone(
-        DnsZoneService<?,?> service,
-        int resource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
         DomainName zone,
         String file,
         DomainName hostmaster,
         long serial,
         int ttl
     ) {
-        super(service, resource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
         this.zone = zone;
         this.file = file;
         this.hostmaster = hostmaster;
@@ -87,32 +93,27 @@ final public class DnsZone extends AOServObjectIntegerKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="resource", index=IndexType.PRIMARY_KEY, description="the resource id")
-    public Resource getResource() throws RemoteException {
-        return getService().getConnector().getResources().get(key);
-    }
-
-    @SchemaColumn(order=1, name="zone", index=IndexType.UNIQUE, description="the zone (domain) that is hosted")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, name="zone", index=IndexType.UNIQUE, description="the zone (domain) that is hosted")
     public DomainName getZone() {
         return zone;
     }
 
-    @SchemaColumn(order=2, name="file", index=IndexType.UNIQUE, description="the filename of the zone file")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, name="file", index=IndexType.UNIQUE, description="the filename of the zone file")
     public String getFile() {
         return file;
     }
 
-    @SchemaColumn(order=3, name="hostmaster", description="the email address of the person in charge of the domain")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, name="hostmaster", description="the email address of the person in charge of the domain")
     public DomainName getHostmaster() {
         return hostmaster;
     }
 
-    @SchemaColumn(order=4, name="serial", description="the ever-incrementing serial number for the file")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+4, name="serial", description="the ever-incrementing serial number for the file")
     public long getSerial() {
         return serial;
     }
 
-    @SchemaColumn(order=5, name="ttl", description="the number of seconds before distributed caches are refreshed")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+5, name="ttl", description="the number of seconds before distributed caches are refreshed")
     public int getTtl() {
         return ttl;
     }
@@ -121,19 +122,27 @@ final public class DnsZone extends AOServObjectIntegerKey implements Comparable<
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.DnsZone getDto() {
-        return new com.aoindustries.aoserv.client.dto.DnsZone(key, getDto(zone), file, getDto(hostmaster), serial, ttl);
+        return new com.aoindustries.aoserv.client.dto.DnsZone(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            getDto(zone),
+            file,
+            getDto(hostmaster),
+            serial,
+            ttl
+        );
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResource());
-        return unionSet;
-    }
-
-    @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDnsRecords());
         return unionSet;
     }
@@ -148,11 +157,11 @@ final public class DnsZone extends AOServObjectIntegerKey implements Comparable<
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<DnsRecord> getDnsRecords() throws RemoteException {
-        return getService().getConnector().getDnsRecords().filterIndexed(DnsRecord.COLUMN_ZONE, this);
+        return getConnector().getDnsRecords().filterIndexed(DnsRecord.COLUMN_ZONE, this);
     }
     /* TODO
     public List<DnsRecord> getDnsRecords(String domain, DnsType type) throws IOException, SQLException {
-        return getService().getConnector().getDnsRecords().getDnsRecords(this, domain, type);
+        return getConnector().getDnsRecords().getDnsRecords(this, domain, type);
     }
      */
     // </editor-fold>
@@ -208,7 +217,7 @@ final public class DnsZone extends AOServObjectIntegerKey implements Comparable<
     }
 
     public void printZoneFile(Appendable out) throws IOException {
-        Business bu = getResource().getBusiness();
+        Business bu = getBusiness();
         Brand brand = null;
         while(bu!=null && brand==null) {
             brand = bu.getBrand();
@@ -315,7 +324,7 @@ final public class DnsZone extends AOServObjectIntegerKey implements Comparable<
         String destination,
         int ttl
     ) throws IOException, SQLException {
-    	return getService().getConnector().getDnsRecords().addDnsRecord(this, domain, type, mx_priority, destination, ttl);
+    	return getConnector().getDnsRecords().addDnsRecord(this, domain, type, mx_priority, destination, ttl);
     }
 
     public void dump(PrintWriter out) throws SQLException, IOException {
@@ -323,7 +332,7 @@ final public class DnsZone extends AOServObjectIntegerKey implements Comparable<
     }
 
     public DnsType[] getAllowedDnsTypes() throws IOException, SQLException {
-	DnsTypeService tt=getService().getConnector().getDnsTypes();
+	DnsTypeService tt=getConnector().getDnsTypes();
 	if(isArpa()) {
             DnsType[] types={
                 tt.get(DnsType.NS),
@@ -381,11 +390,11 @@ final public class DnsZone extends AOServObjectIntegerKey implements Comparable<
     }
 
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_ZONES, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.DNS_ZONES, pkey);
     }
     
     public void setTTL(int ttl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_DNS_ZONE_TTL, pkey, ttl);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_DNS_ZONE_TTL, pkey, ttl);
         this.ttl=ttl;
     }
     */

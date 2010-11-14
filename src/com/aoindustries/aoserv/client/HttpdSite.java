@@ -31,7 +31,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdSite extends AOServObjectIntegerKey implements Comparable<HttpdSite>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdSite> /*, Disablable, Removable */ {
+final public class HttpdSite extends AOServerResource implements Comparable<HttpdSite>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdSite> /*, Disablable, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -62,8 +62,16 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
     private String awstatsSkipFiles;
 
     public HttpdSite(
-        HttpdSiteService<?,?> service,
-        int aoServerResource,
+        AOServConnector<?,?> connector,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         DomainName siteName,
         boolean listFirst,
         int linuxAccountGroup,
@@ -71,7 +79,7 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
         boolean isManualConfig,
         String awstatsSkipFiles
     ) {
-        super(service, aoServerResource);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.siteName = siteName;
         this.listFirst = listFirst;
         this.linuxAccountGroup = linuxAccountGroup;
@@ -100,9 +108,7 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
             if(this==other) return 0;
             int diff = siteName.compareTo(other.siteName);
             if(diff!=0) return diff;
-            AOServerResource aor1 = getAoServerResource();
-            AOServerResource aor2 = other.getAoServerResource();
-            return aor1.aoServer==aor2.aoServer ? 0 : aor1.getAoServer().compareTo(aor2.getAoServer());
+            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -110,39 +116,33 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_AO_SERVER_RESOURCE = "ao_server_resource";
-    @SchemaColumn(order=0, name=COLUMN_AO_SERVER_RESOURCE, index=IndexType.PRIMARY_KEY, description="the unique resource id")
-    public AOServerResource getAoServerResource() throws RemoteException {
-        return getService().getConnector().getAoServerResources().get(key);
-    }
-
-    @SchemaColumn(order=1, name="site_name", description="the name of the site, as used in the /www directory.")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name="site_name", description="the name of the site, as used in the /www directory.")
     public DomainName getSiteName() {
         return siteName;
     }
 
-    @SchemaColumn(order=2, name="list_first", description="if <code>true</code>, this site will be listed first in the Apache configs.  This is normally used only for the \"not found\" site for each httpd_server.")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name="list_first", description="if <code>true</code>, this site will be listed first in the Apache configs.  This is normally used only for the \"not found\" site for each httpd_server.")
     public boolean isListFirst() {
         return listFirst;
     }
 
     static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
-    @SchemaColumn(order=3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the user the site \"runs as\"")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the user the site \"runs as\"")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
-        return getService().getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
+        return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
 
-    @SchemaColumn(order=4, name="server_admin", description="the email address of the server administrator.  This address is provided when an error occurs.  The value is most often <code>webmaster@<i>domain.com</i></code>")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="server_admin", description="the email address of the server administrator.  This address is provided when an error occurs.  The value is most often <code>webmaster@<i>domain.com</i></code>")
     public Email getServerAdmin() {
         return serverAdmin;
     }
 
-    @SchemaColumn(order=5, name="is_manual_config", description="configuration of this site config file is performed manually")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="is_manual_config", description="configuration of this site config file is performed manually")
     public boolean isManualConfig() {
         return isManualConfig;
     }
 
-    @SchemaColumn(order=6, name="awstats_skip_files", description="the SkipFiles setting for AWStats")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="awstats_skip_files", description="the SkipFiles setting for AWStats")
     public String getAwstatsSkipFiles() {
         return awstatsSkipFiles;
     }
@@ -151,7 +151,23 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="DTO">
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdSite getDto() {
-        return new com.aoindustries.aoserv.client.dto.HttpdSite(key, getDto(siteName), listFirst, linuxAccountGroup, getDto(serverAdmin), isManualConfig, awstatsSkipFiles);
+        return new com.aoindustries.aoserv.client.dto.HttpdSite(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            aoServer,
+            businessServer,
+            getDto(siteName),
+            listFirst,
+            linuxAccountGroup,
+            getDto(serverAdmin),
+            isManualConfig,
+            awstatsSkipFiles
+        );
     }
     // </editor-fold>
 
@@ -159,13 +175,14 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
         // Could serverAdmin be a dependency when hosted on AO?  Or, at least a removal warning?
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResource());
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdStaticSite());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatSite());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSiteAuthenticatedLocations());
@@ -177,26 +194,26 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("HttpdSite.toString", siteName, getAoServerResource().getAoServer().getHostname());
+        return ApplicationResources.accessor.getMessage("HttpdSite.toString", siteName, getAoServer().getHostname());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public List<HttpdSiteAuthenticatedLocation> getHttpdSiteAuthenticatedLocations() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSiteAuthenticatedLocationTable().getHttpdSiteAuthenticatedLocations(this);
+        return getConnector().getHttpdSiteAuthenticatedLocationTable().getHttpdSiteAuthenticatedLocations(this);
     }
 
     public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
-        return getService().getConnector().getHttpdSiteBinds().getHttpdSiteBinds(this);
+        return getConnector().getHttpdSiteBinds().getHttpdSiteBinds(this);
     }
 
     public HttpdStaticSite getHttpdStaticSite() throws IOException, SQLException {
-        return getService().getConnector().getHttpdStaticSites().get(pkey);
+        return getConnector().getHttpdStaticSites().get(pkey);
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatSites().get(pkey);
+        return getConnector().getHttpdTomcatSites().get(pkey);
     }
      */
 
@@ -210,7 +227,7 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
         String authUserFile,
         String require
     ) throws IOException, SQLException {
-        return getService().getConnector().getHttpdSiteAuthenticatedLocationTable().addHttpdSiteAuthenticatedLocation(
+        return getConnector().getHttpdSiteAuthenticatedLocationTable().addHttpdSiteAuthenticatedLocation(
             this,
             path,
             isRegularExpression,
@@ -242,11 +259,11 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITES, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
     */
     /**
@@ -262,7 +279,7 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
     }
 
     public List<HttpdSiteBind> getHttpdSiteBinds(HttpdServer server) throws SQLException, IOException {
-        return getService().getConnector().getHttpdSiteBinds().getHttpdSiteBinds(this, server);
+        return getConnector().getHttpdSiteBinds().getHttpdSiteBinds(this, server);
     }
 
     public HttpdSiteURL getPrimaryHttpdSiteURL() throws SQLException, IOException {
@@ -270,7 +287,7 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
         if(binds.isEmpty()) return null;
 
         // Find the first one that binds to the default HTTP port, if one exists
-        NetPort httpPort=getService().getConnector().getProtocols().get(Protocol.HTTP).getPort(getService().getConnector());
+        NetPort httpPort=getConnector().getProtocols().get(Protocol.HTTP).getPort(getConnector());
 
         int index=-1;
         for(int c=0;c<binds.size();c++) {
@@ -293,19 +310,19 @@ final public class HttpdSite extends AOServObjectIntegerKey implements Comparabl
      */
     /* TODO
     public void remove() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
     public void setIsManual(boolean isManual) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
     }
 
     public void setServerAdmin(String address) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
     }
 
     public void getAWStatsFile(final String path, final String queryString, final OutputStream out) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             false,
             new AOServConnector.UpdateRequest() {
                 public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {

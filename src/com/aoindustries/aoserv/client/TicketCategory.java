@@ -31,8 +31,8 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     final private Integer parent;
     private String name;
 
-    public TicketCategory(TicketCategoryService<?,?> service, int pkey, Integer parent, String name) {
-        super(service, pkey);
+    public TicketCategory(AOServConnector<?,?> connector, int pkey, Integer parent, String name) {
+        super(connector, pkey);
         this.parent = parent;
         this.name = name;
         intern();
@@ -67,7 +67,7 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     @SchemaColumn(order=1, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the category id of its parent or null if this is a top-level category")
     public TicketCategory getParent() throws RemoteException {
         if(parent==null) return null;
-        return getService().getConnector().getTicketCategories().get(parent);
+        return getConnector().getTicketCategories().get(parent);
     }
 
     @SchemaColumn(order=2, name="name", description="the name of this category, unique per parent")
@@ -102,12 +102,14 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getParent());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getChildrenCategories());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldCategory());
@@ -126,24 +128,24 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<TicketCategory> getChildrenCategories() throws RemoteException {
-        return getService().getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
 
     public IndexedSet<TicketAction> getTicketActionsByOldCategory() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_CATEGORY, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_CATEGORY, this);
     }
 
     public IndexedSet<TicketAction> getTicketActionsByNewCategory() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_CATEGORY, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_CATEGORY, this);
     }
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_CATEGORY, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_CATEGORY, this);
     }
 
     /* TODO
     public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
-        return getService().getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
+        return getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
     }
     */
     // </editor-fold>

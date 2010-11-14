@@ -39,7 +39,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdTomcatSites().get(pkey);
+        return getConnector().getHttpdTomcatSites().get(pkey);
     }
 
     public String getTomcat4ShutdownKey() {
@@ -48,7 +48,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 
     public NetBind getTomcat4ShutdownPort() throws IOException, SQLException {
         if(tomcat4_shutdown_port==-1) return null;
-        return getService().getConnector().getNetBinds().get(tomcat4_shutdown_port);
+        return getConnector().getNetBinds().get(tomcat4_shutdown_port);
     }
 
     public SchemaTable.TableID getTableID() {

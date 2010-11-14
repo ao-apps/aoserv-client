@@ -44,7 +44,7 @@ final public class BankTransaction extends CachedObjectIntegerKey<BankTransactio
     private boolean confirmed;
 
     public MasterUser getAdministrator() throws SQLException, IOException {
-    	return getService().getConnector().getMasterUsers().get(administrator);
+    	return getConnector().getMasterUsers().get(administrator);
     }
 
     public int getAmount() {
@@ -52,13 +52,13 @@ final public class BankTransaction extends CachedObjectIntegerKey<BankTransactio
     }
 
     public BankAccount getBankAccount() throws SQLException, IOException {
-    	BankAccount bankAccountObject = getService().getConnector().getBankAccounts().get(bankAccount);
+    	BankAccount bankAccountObject = getConnector().getBankAccounts().get(bankAccount);
         if (bankAccountObject == null) throw new SQLException("BankAccount not found: " + bankAccount);
         return bankAccountObject;
     }
 
     public BankTransactionType getBankTransactionType() throws SQLException, IOException {
-        BankTransactionType typeObject = getService().getConnector().getBankTransactionTypes().get(type);
+        BankTransactionType typeObject = getConnector().getBankTransactionTypes().get(type);
         if (typeObject == null) throw new SQLException("BankTransactionType not found: " + type);
         return typeObject;
     }
@@ -90,14 +90,14 @@ final public class BankTransaction extends CachedObjectIntegerKey<BankTransactio
 
     public ExpenseCategory getExpenseCategory() throws SQLException, IOException {
         if(expenseCode==null) return null;
-        ExpenseCategory cat=getService().getConnector().getExpenseCategories().get(expenseCode);
+        ExpenseCategory cat=getConnector().getExpenseCategories().get(expenseCode);
         if (cat == null) throw new SQLException("ExpenseCategory not found: " + expenseCode);
         return cat;
     }
 
     public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
         if (processor == null) return null;
-        CreditCardProcessor ccProcessor = getService().getConnector().getCreditCardProcessors().get(processor);
+        CreditCardProcessor ccProcessor = getConnector().getCreditCardProcessors().get(processor);
         if (ccProcessor == null) throw new SQLException("CreditCardProcessor not found: " + processor);
         return ccProcessor;
     }

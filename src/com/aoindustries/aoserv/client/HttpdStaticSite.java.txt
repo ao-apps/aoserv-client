@@ -30,7 +30,7 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdSites().get(pkey);
+        return getConnector().getHttpdSites().get(pkey);
     }
 
     public SchemaTable.TableID getTableID() {

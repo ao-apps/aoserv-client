@@ -61,11 +61,11 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
 
     public HttpdSharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
 	// May be null when filtered
-	return getService().getConnector().getHttpdSharedTomcats().get(httpd_shared_tomcat);
+	return getConnector().getHttpdSharedTomcats().get(httpd_shared_tomcat);
     }
 
     public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdTomcatSites().get(pkey);
+        return getConnector().getHttpdTomcatSites().get(pkey);
     }
 
     public SchemaTable.TableID getTableID() {

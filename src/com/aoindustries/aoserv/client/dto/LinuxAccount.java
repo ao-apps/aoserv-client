@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class LinuxAccount {
+public class LinuxAccount extends AOServerResource {
 
-    private int aoServerResource;
     private String linuxAccountType;
     private UserId username;
     private LinuxID uid;
@@ -26,7 +25,15 @@ public class LinuxAccount {
     }
 
     public LinuxAccount(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         String linuxAccountType,
         UserId username,
         LinuxID uid,
@@ -38,7 +45,7 @@ public class LinuxAccount {
         UnixPath shell,
         String predisablePassword
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.linuxAccountType = linuxAccountType;
         this.username = username;
         this.uid = uid;
@@ -49,14 +56,6 @@ public class LinuxAccount {
         this.homePhone = homePhone;
         this.shell = shell;
         this.predisablePassword = predisablePassword;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public String getLinuxAccountType() {

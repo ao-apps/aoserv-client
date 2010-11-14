@@ -53,7 +53,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
         int debug,
         String workDir
     ) throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatContexts().addHttpdTomcatContext(
+        return getConnector().getHttpdTomcatContexts().addHttpdTomcatContext(
             this,
             className,
             cookies,
@@ -100,33 +100,33 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
     }
 
     public HttpdJBossSite getHttpdJBossSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdJBossSites().get(pkey);
+        return getConnector().getHttpdJBossSites().get(pkey);
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdSites().get(pkey);
+        return getConnector().getHttpdSites().get(pkey);
     }
 
     public HttpdTomcatContext getHttpdTomcatContext(String path) throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatContexts().getHttpdTomcatContext(this, path);
+        return getConnector().getHttpdTomcatContexts().getHttpdTomcatContext(this, path);
     }
 
     public List<HttpdTomcatContext> getHttpdTomcatContexts() throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatContexts().getHttpdTomcatContexts(this);
+        return getConnector().getHttpdTomcatContexts().getHttpdTomcatContexts(this);
     }
 
     public HttpdTomcatSharedSite getHttpdTomcatSharedSite() throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatSharedSites().get(pkey);
+        return getConnector().getHttpdTomcatSharedSites().get(pkey);
     }
 
     public HttpdTomcatStdSite getHttpdTomcatStdSite() throws IOException, SQLException {
-        return getService().getConnector().getHttpdTomcatStdSites().get(pkey);
+        return getConnector().getHttpdTomcatStdSites().get(pkey);
     }
 
     public HttpdTomcatVersion getHttpdTomcatVersion() throws SQLException, IOException {
-        HttpdTomcatVersion obj=getService().getConnector().getHttpdTomcatVersions().get(version);
+        HttpdTomcatVersion obj=getConnector().getHttpdTomcatVersions().get(version);
         if(
-            obj.getTechnologyVersion(getService().getConnector()).getOperatingSystemVersion(getService().getConnector()).getPkey()
+            obj.getTechnologyVersion(getConnector()).getOperatingSystemVersion(getConnector()).getPkey()
             != getHttpdSite().getAOServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
             throw new SQLException("resource/operating system version mismatch on HttpdTomcatSite: #"+pkey);
@@ -145,7 +145,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
     }
 
     public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
-        return getService().getConnector().getHttpdWorkers().getHttpdWorkers(this);
+        return getConnector().getHttpdWorkers().getHttpdWorkers(this);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -184,7 +184,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
     }
 
     public String startJVM() throws IOException, SQLException {
-        return getService().getConnector().requestResult(
+        return getConnector().requestResult(
             false,
             new AOServConnector.ResultRequest<String>() {
                 String result;
@@ -211,7 +211,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
     }
 
     public String stopJVM() throws IOException, SQLException {
-        return getService().getConnector().requestResult(
+        return getConnector().requestResult(
             false,
             new AOServConnector.ResultRequest<String>() {
                 String result;

@@ -26,8 +26,8 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
     private AccountingCode accounting;
     private String name;
 
-    public AOServRole(AOServRoleService<?,?> service, int pkey, AccountingCode accounting, String name) {
-        super(service, pkey);
+    public AOServRole(AOServConnector<?,?> connector, int pkey, AccountingCode accounting, String name) {
+        super(connector, pkey);
         this.accounting = accounting;
         this.name = name;
         intern();
@@ -69,7 +69,7 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
      */
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that owns the role")
     public Business getBusiness() throws RemoteException {
-        return getService().getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
+        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     @SchemaColumn(order=2, name="name", description="the per-business unique role name")
@@ -88,12 +88,14 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         return unionSet;
     }
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoservRolePermissions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministratorRoles());
         return unionSet;
@@ -109,11 +111,11 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<AOServRolePermission> getAoservRolePermissions() throws RemoteException {
-        return getService().getConnector().getAoservRolePermissions().filterIndexed(AOServRolePermission.COLUMN_ROLE, this);
+        return getConnector().getAoservRolePermissions().filterIndexed(AOServRolePermission.COLUMN_ROLE, this);
     }
 
     public IndexedSet<BusinessAdministratorRole> getBusinessAdministratorRoles() throws RemoteException {
-        return getService().getConnector().getBusinessAdministratorRoles().filterIndexed(BusinessAdministratorRole.COLUMN_ROLE, this);
+        return getConnector().getBusinessAdministratorRoles().filterIndexed(BusinessAdministratorRole.COLUMN_ROLE, this);
     }
     // </editor-fold>
 }

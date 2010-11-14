@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class PostgresServer {
+public class PostgresServer extends AOServerResource {
 
-    private int aoServerResource;
     private PostgresServerName name;
     private int version;
     private int maxConnections;
@@ -23,7 +22,15 @@ public class PostgresServer {
     }
 
     public PostgresServer(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         PostgresServerName name,
         int version,
         int maxConnections,
@@ -32,7 +39,7 @@ public class PostgresServer {
         int sharedBuffers,
         boolean fsync
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.name = name;
         this.version = version;
         this.maxConnections = maxConnections;
@@ -40,14 +47,6 @@ public class PostgresServer {
         this.sortMem = sortMem;
         this.sharedBuffers = sharedBuffers;
         this.fsync = fsync;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public PostgresServerName getName() {

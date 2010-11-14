@@ -31,12 +31,12 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     private InetAddress host;
 
     public MasterHost(
-        MasterHostService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         UserId username,
         InetAddress host
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.username = username;
         this.host = host;
         intern();
@@ -75,7 +75,7 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     static final String COLUMN_USERNAME = "username";
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the unique username of the user")
     public MasterUser getMasterUser() throws RemoteException {
-    	return getService().getConnector().getMasterUsers().get(username);
+    	return getConnector().getMasterUsers().get(username);
     }
 
     @SchemaColumn(order=2, name="host", description="the IP address they are allowed to connect from")
@@ -94,6 +94,7 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
         return unionSet;
     }

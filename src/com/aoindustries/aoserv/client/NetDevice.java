@@ -39,7 +39,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     final private Long monitoringBitRateCritical;
 
     public NetDevice(
-        NetDeviceService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int server,
         String deviceId,
@@ -54,7 +54,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
         Long monitoringBitRateHigh,
         Long monitoringBitRateCritical
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.server = server;
         this.deviceId = deviceId;
         this.description = description;
@@ -107,13 +107,13 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     static final String COLUMN_SERVER = "server";
     @SchemaColumn(order=1, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server that contains the device")
     public Server getServer() throws RemoteException {
-        return getService().getConnector().getServers().get(server);
+        return getConnector().getServers().get(server);
     }
 
     static final String COLUMN_DEVICE_ID = "device_id";
     @SchemaColumn(order=2, name=COLUMN_DEVICE_ID, index=IndexType.INDEXED, description="the name of the device")
     public NetDeviceID getNetDeviceID() throws RemoteException {
-        return getService().getConnector().getNetDeviceIDs().get(deviceId);
+        return getConnector().getNetDeviceIDs().get(deviceId);
     }
 
     @SchemaColumn(order=3, name="description", description="a description of the device")
@@ -191,6 +191,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDeviceID());
         return unionSet;
@@ -198,6 +199,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
 
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getIpAddresses());
         return unionSet;
     }
@@ -213,11 +215,11 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
     public IPAddress getIPAddress(String ipAddress) throws IOException, SQLException {
-        return getService().getConnector().getIpAddresses().getIPAddress(this, ipAddress);
+        return getConnector().getIpAddresses().getIPAddress(this, ipAddress);
     } */
 
     public IndexedSet<IPAddress> getIpAddresses() throws RemoteException {
-        return getService().getConnector().getIpAddresses().filterIndexed(IPAddress.COLUMN_NET_DEVICE, this);
+        return getConnector().getIpAddresses().filterIndexed(IPAddress.COLUMN_NET_DEVICE, this);
     }
 
     public IPAddress getPrimaryIPAddress() throws RemoteException, NoSuchElementException {
@@ -234,7 +236,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
 //     */
 //    public String getBondingReport() throws IOException, SQLException {
 //        if(!deviceId.startsWith("bond")) return null;
-//        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
+//        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
 //    }
 //
 //    /**
@@ -242,7 +244,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
 //     * or <code>null</code> if not an AOServer.
 //     */
 //    public String getStatisticsReport() throws IOException, SQLException {
-//        return getService().getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_NET_DEVICE_STATISTICS_REPORT, pkey);
+//        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_NET_DEVICE_STATISTICS_REPORT, pkey);
 //    }
     // </editor-fold>
 }

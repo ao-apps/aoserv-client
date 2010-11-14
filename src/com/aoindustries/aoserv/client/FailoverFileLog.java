@@ -33,7 +33,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     final private boolean isSuccessful;
 
     public FailoverFileLog(
-        FailoverFileLogService<?,?> service,
+        AOServConnector<?,?> connector,
         int pkey,
         int replication,
         long startTime,
@@ -43,7 +43,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
         long bytes,
         boolean isSuccessful
     ) {
-        super(service, pkey);
+        super(connector, pkey);
         this.replication = replication;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -76,7 +76,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     static final String COLUMN_REPLICATION = "replication";
     @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the replication that was performed")
     public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
-        return getService().getConnector().getFailoverFileReplications().get(replication);
+        return getConnector().getFailoverFileReplications().get(replication);
     }
 
     @SchemaColumn(order=2, name="start_time", description="the time the replication started")

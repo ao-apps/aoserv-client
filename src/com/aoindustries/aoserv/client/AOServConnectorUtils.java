@@ -1,16 +1,20 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.util.ArraySet;
+import com.aoindustries.util.HashCodeComparator;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,5 +59,40 @@ final public class AOServConnectorUtils {
         } catch(InvocationTargetException err) {
             throw new RemoteException(err.getMessage(), err);
         }
+    }
+
+    /**
+     * Sets the connector on the provided object, possibly cloning it in the process.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V extends AOServObject<?>> V setConnector(V obj, AOServConnector<?,?> connector) throws RemoteException {
+        return obj==null ? null : (V)obj.setConnector(connector);
+    }
+
+    /**
+     * Sets the connector on an entire collection, and returns an unmodifiable set.
+     */
+    public static <V extends AOServObject<?>> IndexedSet<V> setConnector(IndexedSet<V> objs, AOServConnector<?,?> connector) throws RemoteException {
+        int size = objs.size();
+        if(size==0) return objs;
+        if(size==1) {
+            V oldObj = objs.iterator().next();
+            V newObj = setConnector(oldObj, connector);
+            return newObj==oldObj ? objs : IndexedSet.wrap(objs.getServiceName(), newObj);
+        }
+        // Only create a new set when the first new object is created
+        boolean needsNewSet = false;
+        for(V oldObj : objs) {
+            V newObj = setConnector(oldObj, connector);
+            if(newObj!=oldObj) {
+                needsNewSet = true;
+                break;
+            }
+        }
+        if(!needsNewSet) return objs;
+        List<V> elements = new ArrayList<V>(size);
+        for(V oldObj : objs) elements.add(setConnector(oldObj, connector));
+        Collections.sort(elements, HashCodeComparator.getInstance());
+        return IndexedSet.wrap(objs.getServiceName(), new ArraySet<V>(elements));
     }
 }

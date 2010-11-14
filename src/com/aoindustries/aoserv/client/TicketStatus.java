@@ -38,8 +38,8 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private short sortOrder;
 
-    public TicketStatus(TicketStatusService<?,?> table, String status, short sortOrder) {
-        super(table, status);
+    public TicketStatus(AOServConnector<?,?> connector, String status, short sortOrder) {
+        super(connector, status);
         this.sortOrder = sortOrder;
     }
     // </editor-fold>
@@ -73,6 +73,7 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
     protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldStatus());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewStatus());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
@@ -96,15 +97,15 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     public IndexedSet<TicketAction> getTicketActionsByOldStatus() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_STATUS, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_STATUS, this);
     }
 
     public IndexedSet<TicketAction> getTicketActionsByNewStatus() throws RemoteException {
-        return getService().getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_STATUS, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_STATUS, this);
     }
 
     public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getService().getConnector().getTickets().filterIndexed(Ticket.COLUMN_STATUS, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_STATUS, this);
     }
     // </editor-fold>
 }

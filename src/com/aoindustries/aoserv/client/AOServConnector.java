@@ -35,6 +35,12 @@ public interface AOServConnector<C extends AOServConnector<C,F>, F extends AOSer
     F getFactory() throws RemoteException;
 
     /**
+     * Checks if this connector returns objects that may safely have their connector reset without copying.
+     * This implies that this connector performs no caching of the objects.
+     */
+    boolean isAoServObjectConnectorSettable() throws RemoteException;
+
+    /**
      * Gets the user's locale for this connector.  Defaults to the locale
      * provided to the factory getConnector method.
      *

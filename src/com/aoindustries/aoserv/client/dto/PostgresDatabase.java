@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class PostgresDatabase {
+public class PostgresDatabase extends AOServerResource {
 
-    private int aoServerResource;
     private PostgresDatabaseName name;
     private int postgresServer;
     private int datdba;
@@ -23,7 +22,15 @@ public class PostgresDatabase {
     }
 
     public PostgresDatabase(
-        int aoServerResource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int aoServer,
+        int businessServer,
         PostgresDatabaseName name,
         int postgresServer,
         int datdba,
@@ -32,7 +39,7 @@ public class PostgresDatabase {
         boolean allowConn,
         boolean enablePostgis
     ) {
-        this.aoServerResource = aoServerResource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
         this.name = name;
         this.postgresServer = postgresServer;
         this.datdba = datdba;
@@ -40,14 +47,6 @@ public class PostgresDatabase {
         this.isTemplate = isTemplate;
         this.allowConn = allowConn;
         this.enablePostgis = enablePostgis;
-    }
-
-    public int getAoServerResource() {
-        return aoServerResource;
-    }
-
-    public void setAoServerResource(int aoServerResource) {
-        this.aoServerResource = aoServerResource;
     }
 
     public PostgresDatabaseName getName() {

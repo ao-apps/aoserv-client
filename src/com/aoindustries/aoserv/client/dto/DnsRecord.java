@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class DnsRecord {
+public class DnsRecord extends Resource {
 
-    private int resource;
     private int zone;
     private String domain;
     private String type;
@@ -25,7 +24,13 @@ public class DnsRecord {
     }
 
     public DnsRecord(
-        int resource,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
         int zone,
         String domain,
         String type,
@@ -36,7 +41,7 @@ public class DnsRecord {
         Integer dhcpAddress,
         Integer ttl
     ) {
-        this.resource = resource;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
         this.zone = zone;
         this.domain = domain;
         this.type = type;
@@ -46,14 +51,6 @@ public class DnsRecord {
         this.dataText = dataText;
         this.dhcpAddress = dhcpAddress;
         this.ttl = ttl;
-    }
-
-    public int getResource() {
-        return resource;
-    }
-
-    public void setResource(int resource) {
-        this.resource = resource;
     }
 
     public int getZone() {

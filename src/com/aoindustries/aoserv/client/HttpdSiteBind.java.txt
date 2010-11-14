@@ -39,7 +39,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     private boolean redirect_to_primary_hostname;
 
     public int addHttpdSiteURL(String hostname) throws IOException, SQLException {
-        return getService().getConnector().getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
+        return getConnector().getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
     }
 
     public boolean canDisable() {
@@ -53,11 +53,11 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, dl.pkey, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, pkey);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, pkey);
     }
 
     public String getAccessLog() {
@@ -65,7 +65,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public List<HttpdSiteURL> getAltHttpdSiteURLs() throws IOException, SQLException {
-	return getService().getConnector().getHttpdSiteURLs().getAltHttpdSiteURLs(this);
+	return getConnector().getHttpdSiteURLs().getAltHttpdSiteURLs(this);
     }
 
     Object getColumnImpl(int i) {
@@ -91,7 +91,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
-        return getService().getConnector().getDisableLogs().get(disable_log);
+        return getConnector().getDisableLogs().get(disable_log);
     }
 
     public String getErrorLog() {
@@ -99,15 +99,15 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public HttpdBind getHttpdBind() throws SQLException, IOException {
-        return getService().getConnector().getHttpdBinds().get(httpd_bind);
+        return getConnector().getHttpdBinds().get(httpd_bind);
     }
 
     public HttpdSite getHttpdSite() throws SQLException, IOException {
-        return getService().getConnector().getHttpdSites().get(httpd_site);
+        return getConnector().getHttpdSites().get(httpd_site);
     }
 
     public List<HttpdSiteURL> getHttpdSiteURLs() throws IOException, SQLException {
-	return getService().getConnector().getHttpdSiteURLs().getHttpdSiteURLs(this);
+	return getConnector().getHttpdSiteURLs().getHttpdSiteURLs(this);
     }
 
     public String getPredisableConfig() {
@@ -115,7 +115,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public HttpdSiteURL getPrimaryHttpdSiteURL() throws SQLException, IOException {
-	return getService().getConnector().getHttpdSiteURLs().getPrimaryHttpdSiteURL(this);
+	return getConnector().getHttpdSiteURLs().getPrimaryHttpdSiteURL(this);
     }
 
     public String getSSLCertFile() {
@@ -182,15 +182,15 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
     }
 
     public void setIsManual(boolean isManual) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
     }
 
     public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) throws IOException, SQLException {
-        getService().getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
+        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
     }
 
     public void setPredisableConfig(final String config) throws IOException, SQLException {
-        getService().getConnector().requestUpdate(
+        getConnector().requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -211,7 +211,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
                 }
 
                 public void afterRelease() {
-                    getService().getConnector().tablesUpdated(invalidateList);
+                    getConnector().tablesUpdated(invalidateList);
                 }
             }
         );
