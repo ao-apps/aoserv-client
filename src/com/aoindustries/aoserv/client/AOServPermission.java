@@ -114,6 +114,10 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public AOServPermission(AOServConnector connector, com.aoindustries.aoserv.client.dto.AOServPermission dto) {
+        this(connector, dto.getName(), dto.getSortOrder());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.AOServPermission getDto() {
         return new com.aoindustries.aoserv.client.dto.AOServPermission(getKey(), sortOrder);

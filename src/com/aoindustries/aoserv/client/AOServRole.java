@@ -79,6 +79,15 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public AOServRole(AOServConnector connector, com.aoindustries.aoserv.client.dto.AOServRole dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            getAccountingCode(dto.getAccounting()),
+            dto.getName()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.AOServRole getDto() {
         return new com.aoindustries.aoserv.client.dto.AOServRole(key, getDto(accounting), name);

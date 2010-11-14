@@ -41,6 +41,10 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public BackupRetention(AOServConnector connector, com.aoindustries.aoserv.client.dto.BackupRetention dto) {
+        this(connector, dto.getDays());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.BackupRetention getDto() {
         return new com.aoindustries.aoserv.client.dto.BackupRetention(key);

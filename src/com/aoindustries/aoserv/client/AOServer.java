@@ -251,6 +251,30 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public AOServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.AOServer dto) throws ValidationException {
+        this(
+            connector,
+            dto.getServer(),
+            getDomainName(dto.getHostname()),
+            dto.getDaemonBind(),
+            getHashedPassword(dto.getDaemonKey()),
+            dto.getPoolSize(),
+            dto.getDistroHour(),
+            getTimeMillis(dto.getLastDistroTime()),
+            dto.getFailoverServer(),
+            dto.getDaemonDeviceId(),
+            dto.getDaemonConnectBind(),
+            dto.getTimeZone(),
+            dto.getJilterBind(),
+            dto.isRestrictOutboundEmail(),
+            getInetAddress(dto.getDaemonConnectAddress()),
+            dto.getFailoverBatchSize(),
+            dto.getMonitoringLoadLow(),
+            dto.getMonitoringLoadMedium(),
+            dto.getMonitoringLoadHigh(),
+            dto.getMonitoringLoadCritical()
+        );
+    }
     @Override
     public com.aoindustries.aoserv.client.dto.AOServer getDto() {
         return new com.aoindustries.aoserv.client.dto.AOServer(key, getDto(hostname), daemonBind, getDto(daemonKey), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getDto(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);

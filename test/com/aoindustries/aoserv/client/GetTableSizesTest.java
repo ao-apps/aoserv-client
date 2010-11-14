@@ -49,6 +49,7 @@ public class GetTableSizesTest extends TestCase {
             int[][] counts=new int[PASSES][numTables];
             for(int d=0;d<PASSES;d++) {
                 System.out.print("        Pass"+(d<9?"  ":" ")+(d+1)+" of "+PASSES+": ");
+                if(d==0) System.out.println();
                 for(int c=0;c<numTables;c++) {
                     AOServService<?,?> service = conn.getServices().get(ServiceName.values.get(c));
                     // Excluded for testing speed
@@ -57,8 +58,9 @@ public class GetTableSizesTest extends TestCase {
                         || c==SchemaTable.TableID.TRANSACTIONS.ordinal()
                         || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
                     ) continue;*/
-                    System.out.print('.');
                     int size=service.getSize();
+                    if(d==0) System.out.println(service+": "+size);
+                    else System.out.print('.');
                     //if(c==SchemaTable.TableID.AO_SERVER_RESOURCES.ordinal()) System.out.println("\nao_server_resources.size="+size);
                     if(size<0) fail("Table size < 0 for table "+service.getTable().getTableName()+": "+size);
                     counts[d][c]=size;

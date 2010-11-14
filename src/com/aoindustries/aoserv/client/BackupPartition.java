@@ -96,6 +96,15 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public BackupPartition(AOServConnector connector, com.aoindustries.aoserv.client.dto.BackupPartition dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getAoServer(),
+            getUnixPath(dto.getPath()),
+            dto.isQuotaEnabled()
+        );
+    }
     @Override
     public com.aoindustries.aoserv.client.dto.BackupPartition getDto() {
         return new com.aoindustries.aoserv.client.dto.BackupPartition(key, aoServer, getDto(path), quotaEnabled);

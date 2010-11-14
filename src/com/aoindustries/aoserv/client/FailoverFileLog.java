@@ -111,6 +111,19 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public FailoverFileLog(AOServConnector connector, com.aoindustries.aoserv.client.dto.FailoverFileLog dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getReplication(),
+            getTimeMillis(dto.getStartTime()),
+            getTimeMillis(dto.getEndTime()),
+            dto.getScanned(),
+            dto.getUpdated(),
+            dto.getBytes(),
+            dto.isIsSuccessful()
+        );
+    }
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverFileLog getDto() {
         return new com.aoindustries.aoserv.client.dto.FailoverFileLog(

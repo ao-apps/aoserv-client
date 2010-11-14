@@ -83,6 +83,14 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public AOServerDaemonHost(AOServConnector connector, com.aoindustries.aoserv.client.dto.AOServerDaemonHost dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getAoServer(),
+            getHostname(dto.getHost())
+        );
+    }
     @Override
     public com.aoindustries.aoserv.client.dto.AOServerDaemonHost getDto() {
         return new com.aoindustries.aoserv.client.dto.AOServerDaemonHost(key, aoServer, getDto(host));

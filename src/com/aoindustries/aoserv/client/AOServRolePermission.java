@@ -79,6 +79,10 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public AOServRolePermission(AOServConnector connector, com.aoindustries.aoserv.client.dto.AOServRolePermission dto) {
+        this(connector, dto.getPkey(), dto.getRole(), dto.getPermission());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.AOServRolePermission getDto() {
         return new com.aoindustries.aoserv.client.dto.AOServRolePermission(key, role, permission);
