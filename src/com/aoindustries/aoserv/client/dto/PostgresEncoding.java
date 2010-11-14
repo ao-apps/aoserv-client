@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class PostgresEncoding {
+public class PostgresEncoding extends AOServObject {
 
     private int pkey;
     private String encoding;

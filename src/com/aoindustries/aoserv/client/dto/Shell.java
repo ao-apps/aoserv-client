@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Shell {
+public class Shell extends AOServObject {
 
     private UnixPath path;
 

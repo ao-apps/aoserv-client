@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class LinuxAccountGroup {
+public class LinuxAccountGroup extends AOServObject {
 
     private int pkey;
     private int linuxAccount;

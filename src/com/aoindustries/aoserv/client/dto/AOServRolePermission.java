@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class AOServRolePermission {
+public class AOServRolePermission extends AOServObject {
 
     private int pkey;
     private int role;

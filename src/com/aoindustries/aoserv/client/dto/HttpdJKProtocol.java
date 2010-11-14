@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class HttpdJKProtocol {
+public class HttpdJKProtocol extends AOServObject {
 
     private String protocol;
 

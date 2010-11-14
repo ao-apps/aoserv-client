@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class TicketStatus {
+public class TicketStatus extends AOServObject {
 
     private String status;
     private short sortOrder;

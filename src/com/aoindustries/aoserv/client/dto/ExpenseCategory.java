@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class ExpenseCategory {
+public class ExpenseCategory extends AOServObject {
 
     private String expenseCode;
 

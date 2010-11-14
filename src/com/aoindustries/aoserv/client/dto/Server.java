@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Server {
+public class Server extends AOServObject {
 
     private int pkey;
     private DomainLabel farm;

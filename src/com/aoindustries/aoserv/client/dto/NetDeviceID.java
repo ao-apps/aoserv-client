@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class NetDeviceID {
+public class NetDeviceID extends AOServObject {
 
     private String name;
     private boolean isLoopback;

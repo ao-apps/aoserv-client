@@ -18,7 +18,7 @@ public class Email {
 
     public Email(String localPart, DomainName domain) {
         this.localPart = localPart;
-        this.domain = domain;;
+        this.domain = domain;
     }
 
     public String getLocalPart() {

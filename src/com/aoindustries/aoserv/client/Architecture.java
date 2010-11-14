@@ -69,6 +69,10 @@ final public class Architecture extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Architecture(AOServConnector connector, com.aoindustries.aoserv.client.dto.Architecture dto) {
+        this(connector, dto.getName(), dto.getBits());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Architecture getDto() {
         return new com.aoindustries.aoserv.client.dto.Architecture(getKey(), bits);

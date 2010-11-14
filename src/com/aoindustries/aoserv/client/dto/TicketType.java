@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class TicketType {
+public class TicketType extends AOServObject {
 
     private String type;
 

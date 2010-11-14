@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class NetProtocol {
+public class NetProtocol extends AOServObject {
 
     private String protocol;
 

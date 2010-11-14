@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Username {
+public class Username extends AOServObject {
 
     private UserId username;
     private AccountingCode accounting;

@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class Ticket {
+public class Ticket extends AOServObject {
 
     private int ticketId;
     private AccountingCode brand;

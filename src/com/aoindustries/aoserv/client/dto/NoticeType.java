@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class NoticeType {
+public class NoticeType extends AOServObject {
 
     private String type;
 

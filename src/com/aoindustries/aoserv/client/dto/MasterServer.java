@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MasterServer {
+public class MasterServer extends AOServObject {
 
     private int pkey;
     private UserId username;

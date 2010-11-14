@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class ResourceType {
+public class ResourceType extends AOServObject {
 
     private String name;
 

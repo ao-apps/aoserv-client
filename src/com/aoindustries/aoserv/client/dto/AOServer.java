@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class AOServer {
+public class AOServer extends AOServObject {
 
     private int server;
     private DomainName hostname;

@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Protocol {
+public class Protocol extends AOServObject {
 
     private String protocol;
     private NetPort port;

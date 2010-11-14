@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class NetDevice {
+public class NetDevice extends AOServObject {
 
     private int pkey;
     private int server;

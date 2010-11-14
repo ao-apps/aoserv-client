@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class BackupRetention {
+public class BackupRetention extends AOServObject {
 
     private short days;
 

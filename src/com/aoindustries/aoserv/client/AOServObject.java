@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.UnionSet;
@@ -13,7 +14,10 @@ import com.aoindustries.util.i18n.Money;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Currency;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -240,6 +244,203 @@ implements
             throw new WrappedException(err);
         }
     }
+
+    // <editor-fold defaultstate="collapsed" desc="DTO Conversions">
+    // TODO: These getters may be removed once all moved to AOServObject
+    /**
+     * null-safe accounting code conversion.
+     */
+    protected static AccountingCode getAccountingCode(com.aoindustries.aoserv.client.dto.AccountingCode accounting) throws ValidationException {
+        if(accounting==null) return null;
+        return AccountingCode.valueOf(accounting.getAccounting());
+    }
+
+    /**
+     * null-safe domain label conversion.
+     */
+    protected static DomainLabel getDomainLabel(com.aoindustries.aoserv.client.dto.DomainLabel domainLabel) throws ValidationException {
+        if(domainLabel==null) return null;
+        return DomainLabel.valueOf(domainLabel.getLabel());
+    }
+
+    /**
+     * null-safe conversion from java.util.Date to java.sql.Date, will cast when possible.
+     */
+    /*
+    protected static java.sql.Date getDate(Date date) {
+        if(date==null) return null;
+        if(date instanceof java.sql.Date) return (java.sql.Date)date;
+        return new java.sql.Date(date.getTime());
+    }*/
+
+    /**
+     * null-safe domain name conversion.
+     */
+    protected static DomainName getDomainName(com.aoindustries.aoserv.client.dto.DomainName domainName) throws ValidationException {
+        if(domainName==null) return null;
+        return DomainName.valueOf(domainName.getDomain());
+    }
+
+    /**
+     * null-safe email conversion.
+     */
+    protected static Email getEmail(com.aoindustries.aoserv.client.dto.Email email) throws ValidationException {
+        if(email==null) return null;
+        return Email.valueOf(email.getLocalPart(), DomainName.valueOf(email.getDomain().getDomain()));
+    }
+
+    /**
+     * null-safe GECOS conversion.
+     */
+    protected static Gecos getGecos(com.aoindustries.aoserv.client.dto.Gecos gecos) throws ValidationException {
+        if(gecos==null) return null;
+        return Gecos.valueOf(gecos.getValue());
+    }
+
+    /**
+     * null-safe group id conversion.
+     */
+    protected static GroupId getGroupId(com.aoindustries.aoserv.client.dto.GroupId gid) throws ValidationException {
+        if(gid==null) return null;
+        return GroupId.valueOf(gid.getId());
+    }
+
+    /**
+     * null-safe hashed password conversion.
+     */
+    protected static HashedPassword getHashedPassword(com.aoindustries.aoserv.client.dto.HashedPassword hashedPassword) throws ValidationException {
+        if(hashedPassword==null) return null;
+        return HashedPassword.valueOf(hashedPassword.getHashedPassword());
+    }
+
+    /**
+     * null-safe hostname conversion.
+     */
+    protected static Hostname getHostname(com.aoindustries.aoserv.client.dto.Hostname hostname) throws ValidationException {
+        if(hostname==null) return null;
+        return Hostname.valueOf(hostname.getHostname());
+    }
+
+    /**
+     * null-safe inet address conversion.
+     */
+    protected static InetAddress getInetAddress(com.aoindustries.aoserv.client.dto.InetAddress inetAddress) throws ValidationException {
+        if(inetAddress==null) return null;
+        return InetAddress.valueOf(inetAddress.getAddress());
+    }
+
+    /**
+     * null-safe Linux id conversion.
+     */
+    protected static LinuxID getLinuxID(com.aoindustries.aoserv.client.dto.LinuxID lid) throws ValidationException {
+        if(lid==null) return null;
+        return LinuxID.valueOf(lid.getId());
+    }
+
+    /**
+     * null-safe MAC address conversion.
+     */
+    protected static MacAddress getMacAddress(com.aoindustries.aoserv.client.dto.MacAddress macAddress) throws ValidationException {
+        if(macAddress==null) return null;
+        return MacAddress.valueOf(macAddress.getAddress());
+    }
+
+    /**
+     * null-safe MySQL database name conversion.
+     */
+    protected static MySQLDatabaseName getMySQLDatabaseName(com.aoindustries.aoserv.client.dto.MySQLDatabaseName databaseName) throws ValidationException {
+        if(databaseName==null) return null;
+        return MySQLDatabaseName.valueOf(databaseName.getName());
+    }
+
+    /**
+     * null-safe MySQL server name conversion.
+     */
+    protected static MySQLServerName getMySQLServerName(com.aoindustries.aoserv.client.dto.MySQLServerName serverName) throws ValidationException {
+        if(serverName==null) return null;
+        return MySQLServerName.valueOf(serverName.getName());
+    }
+
+    /**
+     * null-safe MySQL user id conversion.
+     */
+    protected static MySQLUserId getMySQLUserId(com.aoindustries.aoserv.client.dto.MySQLUserId mysqlUserId) throws ValidationException {
+        if(mysqlUserId==null) return null;
+        return MySQLUserId.valueOf(mysqlUserId.getId());
+    }
+
+    /**
+     * null-safe net port conversion.
+     */
+    protected static NetPort getNetPort(com.aoindustries.aoserv.client.dto.NetPort netPort) throws ValidationException {
+        if(netPort==null) return null;
+        return NetPort.valueOf(netPort.getPort());
+    }
+
+    /**
+     * null-safe PostgreSQL database name conversion.
+     */
+    protected static PostgresDatabaseName getPostgresDatabaseName(com.aoindustries.aoserv.client.dto.PostgresDatabaseName databaseName) throws ValidationException {
+        if(databaseName==null) return null;
+        return PostgresDatabaseName.valueOf(databaseName.getName());
+    }
+
+    /**
+     * null-safe PostgreSQL server name conversion.
+     */
+    protected static PostgresServerName getPostgresServerName(com.aoindustries.aoserv.client.dto.PostgresServerName serverName) throws ValidationException {
+        if(serverName==null) return null;
+        return PostgresServerName.valueOf(serverName.getName());
+    }
+
+    /**
+     * null-safe PostgreSQL user id conversion.
+     */
+    protected static PostgresUserId getPostgresUserId(com.aoindustries.aoserv.client.dto.PostgresUserId postgresUserId) throws ValidationException {
+        if(postgresUserId==null) return null;
+        return PostgresUserId.valueOf(postgresUserId.getId());
+    }
+
+    /**
+     * null-safe conversion from Date to Long.
+     */
+    protected static Long getTimeMillis(Date date) {
+        if(date==null) return null;
+        return date.getTime();
+    }
+
+    /**
+     * null-safe conversion from Calendar to Long.
+     */
+    protected static Long getTimeMillis(Calendar datetime) {
+        if(datetime==null) return null;
+        return datetime.getTimeInMillis();
+    }
+
+    /**
+     * null-safe Unix path conversion.
+     */
+    protected static UnixPath getUnixPath(com.aoindustries.aoserv.client.dto.UnixPath unixPath) throws ValidationException {
+        if(unixPath==null) return null;
+        return UnixPath.valueOf(unixPath.getPath());
+    }
+
+    /**
+     * null-safe user id conversion.
+     */
+    protected static UserId getUserId(com.aoindustries.aoserv.client.dto.UserId userId) throws ValidationException {
+        if(userId==null) return null;
+        return UserId.valueOf(userId.getId());
+    }
+
+    /**
+     * null-safe money conversion.
+     */
+    protected static Money getMoney(com.aoindustries.aoserv.client.dto.Money money) {
+        if(money==null) return null;
+        return new Money(Currency.getInstance(money.getCurrency()), money.getValue());
+    }
+    // </editor-fold>
 
     /* TODO
     final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {

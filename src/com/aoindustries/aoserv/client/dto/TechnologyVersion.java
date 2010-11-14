@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class TechnologyVersion {
+public class TechnologyVersion extends AOServObject {
 
     private int pkey;
     private String name;

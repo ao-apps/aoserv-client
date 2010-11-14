@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class HttpdJBossVersion {
+public class HttpdJBossVersion extends AOServObject {
 
     private int version;
     private int tomcatVersion;

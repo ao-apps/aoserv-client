@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class EmailAttachmentType {
+public class EmailAttachmentType extends AOServObject {
 
     private String extension;
     private boolean isDefaultBlock;

@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Architecture {
+public class Architecture extends AOServObject {
 
     private String name;
     private int bits;

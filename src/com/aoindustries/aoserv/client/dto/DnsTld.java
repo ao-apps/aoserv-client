@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class DnsTld {
+public class DnsTld extends AOServObject {
 
     private DomainName domain;
 

@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class MajordomoVersion {
+public class MajordomoVersion extends AOServObject {
 
     private String version;
     private long created;

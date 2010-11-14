@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class FileBackupSetting {
+public class FileBackupSetting extends AOServObject {
 
     private int pkey;
     private int replication;

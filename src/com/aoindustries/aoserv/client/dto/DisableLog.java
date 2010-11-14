@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class DisableLog {
+public class DisableLog extends AOServObject {
 
     private int pkey;
     private long time;

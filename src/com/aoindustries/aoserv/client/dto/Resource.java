@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-abstract public class Resource {
+abstract public class Resource extends AOServObject {
 
     private int pkey;
     private String resourceType;

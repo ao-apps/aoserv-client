@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class GroupName {
+public class GroupName extends AOServObject {
 
     private GroupId groupName;
     private AccountingCode accounting;

@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Reseller {
+public class Reseller extends AOServObject {
 
     private AccountingCode accounting;
     private boolean ticketAutoEscalate;

@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class AOServPermission {
+public class AOServPermission extends AOServObject {
 
     private String name;
     private short sortOrder;

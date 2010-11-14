@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * @author  AO Industries, Inc.
  */
-public class BusinessAdministrator {
+public class BusinessAdministrator extends AOServObject {
 
     private UserId username;
     private HashedPassword password;

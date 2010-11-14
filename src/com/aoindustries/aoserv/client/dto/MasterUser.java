@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MasterUser {
+public class MasterUser extends AOServObject {
 
     private UserId username;
     private boolean isActive;

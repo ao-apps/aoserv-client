@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class CountryCode {
+public class CountryCode extends AOServObject {
 
     private String code;
     private String name;

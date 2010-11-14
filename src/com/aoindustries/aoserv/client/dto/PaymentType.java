@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class PaymentType {
+public class PaymentType extends AOServObject {
 
     private String name;
     private boolean isActive;

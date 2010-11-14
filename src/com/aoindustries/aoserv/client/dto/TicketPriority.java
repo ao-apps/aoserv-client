@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class TicketPriority {
+public class TicketPriority extends AOServObject {
 
     private String priority;
 

@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class CreditCardTransaction {
+public class CreditCardTransaction extends AOServObject {
 
     private int pkey;
     private String processorId;

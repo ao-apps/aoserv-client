@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class TicketActionType {
+public class TicketActionType extends AOServObject {
 
     private String type;
     private boolean visibleAdminOnly;

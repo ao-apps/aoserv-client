@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class FtpGuestUser {
+public class FtpGuestUser extends AOServObject {
 
     private int linuxAccount;
 

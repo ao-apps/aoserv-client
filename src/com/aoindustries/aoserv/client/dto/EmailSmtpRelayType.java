@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class EmailSmtpRelayType {
+public class EmailSmtpRelayType extends AOServObject {
 
     private String name;
     private String sendmailConfig;

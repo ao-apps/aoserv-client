@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class BackupPartition {
+public class BackupPartition extends AOServObject {
 
     private int pkey;
     private int aoServer;

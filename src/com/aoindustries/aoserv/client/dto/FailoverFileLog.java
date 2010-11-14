@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class FailoverFileLog {
+public class FailoverFileLog extends AOServObject {
 
     private int pkey;
     private int replication;

@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class NetTcpRedirect {
+public class NetTcpRedirect extends AOServObject {
 
     private int netBind;
     private int cps;

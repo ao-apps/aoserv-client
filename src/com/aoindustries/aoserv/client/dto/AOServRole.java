@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class AOServRole {
+public class AOServRole extends AOServObject {
 
     private int pkey;
     private AccountingCode accounting;

@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class OperatingSystem {
+public class OperatingSystem extends AOServObject {
 
     private String name;
     private String display;

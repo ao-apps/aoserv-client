@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class TicketCategory {
+public class TicketCategory extends AOServObject {
 
     private int pkey;
     private Integer parent;

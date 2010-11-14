@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class HttpdTomcatVersion {
+public class HttpdTomcatVersion extends AOServObject {
 
     private int version;
     private UnixPath installDir;

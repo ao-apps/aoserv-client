@@ -210,6 +210,31 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public LinuxAccount(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxAccount dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            dto.getLinuxAccountType(),
+            getUserId(dto.getUsername()),
+            getLinuxID(dto.getUid()),
+            getUnixPath(dto.getHome()),
+            getGecos(dto.getName()),
+            getGecos(dto.getOfficeLocation()),
+            getGecos(dto.getOfficePhone()),
+            getGecos(dto.getHomePhone()),
+            getUnixPath(dto.getShell()),
+            dto.getPredisablePassword()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxAccount getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxAccount(

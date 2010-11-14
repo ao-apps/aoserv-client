@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class TransactionType {
+public class TransactionType extends AOServObject {
 
     private String name;
     private boolean isCredit;

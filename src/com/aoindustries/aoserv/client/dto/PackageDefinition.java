@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class PackageDefinition {
+public class PackageDefinition extends AOServObject {
 
     private int pkey;
     private String category;

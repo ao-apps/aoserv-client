@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class EmailInbox {
+public class EmailInbox extends AOServObject {
 
     private int linuxAccount;
     private Integer autoresponderFrom;

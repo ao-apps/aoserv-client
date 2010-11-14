@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class VirtualServer {
+public class VirtualServer extends AOServObject {
 
     private int server;
     private int primaryRam;

@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MySQLDBUser {
+public class MySQLDBUser extends AOServObject {
 
     private int pkey;
     private int mysqlDatabase;

@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class TimeZone {
+public class TimeZone extends AOServObject {
 
     private String name;
 

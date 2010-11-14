@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Brand {
+public class Brand extends AOServObject {
 
     private AccountingCode accounting;
     private DomainName nameserver1;

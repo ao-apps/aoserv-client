@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class OperatingSystemVersion {
+public class OperatingSystemVersion extends AOServObject {
 
     private int pkey;
     private String operatingSystem;

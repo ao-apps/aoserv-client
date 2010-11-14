@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Technology {
+public class Technology extends AOServObject {
 
     private int pkey;
     private String name;

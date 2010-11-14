@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class PostgresVersion {
+public class PostgresVersion extends AOServObject {
 
     private int version;
     private String minorVersion;

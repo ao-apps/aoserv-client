@@ -212,6 +212,9 @@ final public class AOServClientConfiguration {
                 try {
                     String protocol = getProtocol();
                     AOServConnectorFactory newFactory;
+                    long timeout = getTimeout();
+                    TimeUnit timeoutUnit = getTimeoutUnit();
+                    boolean timeoutApplied = false;
                     if(protocol.equalsIgnoreCase(Protocol.RMI)) {
                         String trustStorePath = getTrustStorePath();
                         if(trustStorePath!=null) System.setProperty("javax.net.ssl.trustStore", trustStorePath);
@@ -236,10 +239,11 @@ final public class AOServClientConfiguration {
                             String targetEndpoint = getSoapTargetEndpoint();
                             if(targetEndpoint==null || targetEndpoint.length()==0) {
                                 // Default constructor
-                                newFactory = clazz.getConstructor().newInstance();
+                                newFactory = clazz.getConstructor(Long.TYPE).newInstance(timeoutUnit.toMillis(timeout));
                             } else {
-                                newFactory = clazz.getConstructor(String.class).newInstance(targetEndpoint);
+                                newFactory = clazz.getConstructor(Long.TYPE, String.class).newInstance(timeoutUnit.toMillis(timeout), targetEndpoint);
                             }
+                            timeoutApplied = true;
                         } catch(ClassNotFoundException err) {
                             throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unableToLoad", classname, "aoserv-client-ws.jar"), err);
                         } catch(ClassCastException err) {
@@ -257,8 +261,7 @@ final public class AOServClientConfiguration {
                         throw new RemoteException(ApplicationResources.accessor.getMessage("AOServClientConfiguration.unsupportedProtocol", protocol));
                     }
                     if(isTrace()) newFactory = new TraceConnectorFactory(newFactory);
-                    long timeout = getTimeout();
-                    if(timeout>0) newFactory = new TimeoutConnectorFactory(newFactory, timeout, getTimeoutUnit());
+                    if(!timeoutApplied && timeout>0) newFactory = new TimeoutConnectorFactory(newFactory, timeout, timeoutUnit);
                     if(isRetry()) newFactory = new RetryConnectorFactory(newFactory);
                     if(getUseCache()) newFactory = new CachedConnectorFactory(newFactory);
                     if(isNoSwing()) newFactory = new NoSwingConnectorFactory(newFactory);

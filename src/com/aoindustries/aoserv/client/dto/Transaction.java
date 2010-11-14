@@ -11,7 +11,7 @@ import java.util.Calendar;
 /**
  * @author  AO Industries, Inc.
  */
-public class Transaction {
+public class Transaction extends AOServObject {
 
     private int transid;
     private long time;

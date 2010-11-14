@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class HttpdJKCode {
+public class HttpdJKCode extends AOServObject {
 
     private String code;
 

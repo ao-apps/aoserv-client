@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class CreditCardProcessor {
+public class CreditCardProcessor extends AOServObject {
 
     private String providerId;
     private AccountingCode accounting;

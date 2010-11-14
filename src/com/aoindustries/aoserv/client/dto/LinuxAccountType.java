@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class LinuxAccountType {
+public class LinuxAccountType extends AOServObject {
 
     private String resourceType;
 

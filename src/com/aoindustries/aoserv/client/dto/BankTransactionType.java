@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class BankTransactionType {
+public class BankTransactionType extends AOServObject {
 
     private String name;
     private boolean isNegative;

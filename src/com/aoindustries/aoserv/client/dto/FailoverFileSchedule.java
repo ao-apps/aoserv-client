@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class FailoverFileSchedule {
+public class FailoverFileSchedule extends AOServObject {
 
     private int pkey;
     private int replication;

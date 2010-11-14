@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class ProcessorType {
+public class ProcessorType extends AOServObject {
 
     private String type;
     private short sortOrder;
