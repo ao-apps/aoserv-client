@@ -68,6 +68,10 @@ final public class LinuxGroupType extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public LinuxGroupType(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxGroupType dto) {
+        this(connector, dto.getResourceType());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxGroupType getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxGroupType (getKey());

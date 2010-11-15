@@ -85,6 +85,15 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public MasterHost(AOServConnector connector, com.aoindustries.aoserv.client.dto.MasterHost dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            getUserId(dto.getUsername()),
+            getInetAddress(dto.getHost())
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.MasterHost getDto() {
         return new com.aoindustries.aoserv.client.dto.MasterHost(key, getDto(username), getDto(host));

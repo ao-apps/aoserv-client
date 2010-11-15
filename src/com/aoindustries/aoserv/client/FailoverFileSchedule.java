@@ -87,6 +87,17 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public FailoverFileSchedule(AOServConnector connector, com.aoindustries.aoserv.client.dto.FailoverFileSchedule dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getReplication(),
+            dto.getHour(),
+            dto.getMinute(),
+            dto.isEnabled()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverFileSchedule getDto() {
         return new com.aoindustries.aoserv.client.dto.FailoverFileSchedule(key, replication, hour, minute, enabled);

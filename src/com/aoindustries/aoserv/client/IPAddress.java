@@ -160,6 +160,31 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public IPAddress(AOServConnector connector, com.aoindustries.aoserv.client.dto.IPAddress dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getServer(),
+            dto.getBusinessServer(),
+            getInetAddress(dto.getIpAddress()),
+            dto.getNetDevice(),
+            dto.isIsAlias(),
+            getDomainName(dto.getHostname()),
+            dto.isAvailable(),
+            dto.isIsOverflow(),
+            dto.isIsDhcp(),
+            dto.isPingMonitorEnabled(),
+            getInetAddress(dto.getExternalIpAddress()),
+            dto.getNetmask()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.IPAddress getDto() {
         return new com.aoindustries.aoserv.client.dto.IPAddress(

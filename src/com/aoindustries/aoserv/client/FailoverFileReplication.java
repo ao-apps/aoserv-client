@@ -174,6 +174,22 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public FailoverFileReplication(AOServConnector connector, com.aoindustries.aoserv.client.dto.FailoverFileReplication dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getServer(),
+            dto.getBackupPartition(),
+            dto.getMaxBitRate(),
+            dto.isUseCompression(),
+            dto.getRetention(),
+            getInetAddress(dto.getConnectAddress()),
+            getInetAddress(dto.getConnectFrom()),
+            dto.isEnabled(),
+            getLinuxID(dto.getQuotaGid())
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverFileReplication getDto() {
         return new com.aoindustries.aoserv.client.dto.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, getDto(connectAddress), getDto(connectFrom), enabled, getDto(quotaGid));

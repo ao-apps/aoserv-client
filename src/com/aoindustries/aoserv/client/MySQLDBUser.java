@@ -227,6 +227,34 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public MySQLDBUser(AOServConnector connector, com.aoindustries.aoserv.client.dto.MySQLDBUser dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getMysqlDatabase(),
+            dto.getMysqlUser(),
+            dto.isSelectPriv(),
+            dto.isInsertPriv(),
+            dto.isUpdatePriv(),
+            dto.isDeletePriv(),
+            dto.isCreatePriv(),
+            dto.isDropPriv(),
+            dto.isGrantPriv(),
+            dto.isReferencesPriv(),
+            dto.isIndexPriv(),
+            dto.isAlterPriv(),
+            dto.isCreateTmpTablePriv(),
+            dto.isLockTablesPriv(),
+            dto.isCreateViewPriv(),
+            dto.isShowViewPriv(),
+            dto.isCreateRoutinePriv(),
+            dto.isAlterRoutinePriv(),
+            dto.isExecutePriv(),
+            dto.isEventPriv(),
+            dto.isTriggerPriv()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLDBUser getDto() {
         return new com.aoindustries.aoserv.client.dto.MySQLDBUser(key, mysqlDatabase, mysqlUser, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, grantPriv, referencesPriv, indexPriv, alterPriv, createTmpTablePriv, lockTablesPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, executePriv, eventPriv, triggerPriv);

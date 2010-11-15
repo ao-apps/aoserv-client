@@ -115,6 +115,20 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public FailoverMySQLReplication(AOServConnector connector, com.aoindustries.aoserv.client.dto.FailoverMySQLReplication dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getAoServer(),
+            dto.getReplication(),
+            dto.getMysqlServer(),
+            dto.getMonitoringSecondsBehindLow(),
+            dto.getMonitoringSecondsBehindMedium(),
+            dto.getMonitoringSecondsBehindHigh(),
+            dto.getMonitoringSecondsBehindCritical()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverMySQLReplication getDto() {
         return new com.aoindustries.aoserv.client.dto.FailoverMySQLReplication(key, aoServer, replication, mysqlServer, monitoringSecondsBehindLow, monitoringSecondsBehindMedium, monitoringSecondsBehindHigh, monitoringSecondsBehindCritical);

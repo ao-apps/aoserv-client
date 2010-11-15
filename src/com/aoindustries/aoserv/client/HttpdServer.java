@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
@@ -142,6 +143,29 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public HttpdServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdServer dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            dto.getNumber(),
+            dto.getMaxBinds(),
+            dto.getLinuxAccountGroup(),
+            dto.getModPhpVersion(),
+            dto.isUseSuexec(),
+            dto.isIsShared(),
+            dto.isUseModPerl(),
+            dto.getTimeout()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdServer getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdServer(

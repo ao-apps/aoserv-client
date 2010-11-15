@@ -174,6 +174,10 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public LinuxAccountType(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxAccountType dto) {
+        this(connector, dto.getResourceType());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxAccountType getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxAccountType(getKey());

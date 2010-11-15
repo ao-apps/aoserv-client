@@ -147,6 +147,24 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public LinuxGroup(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxGroup dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            dto.getLinuxGroupType(),
+            getGroupId(dto.getGroupName()),
+            getLinuxID(dto.getGid())
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxGroup getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxGroup(

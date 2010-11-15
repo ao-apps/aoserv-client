@@ -102,6 +102,19 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public MasterUser(AOServConnector connector, com.aoindustries.aoserv.client.dto.MasterUser dto) throws ValidationException {
+        this(
+            connector,
+            getUserId(dto.getUsername()),
+            dto.isIsActive(),
+            dto.isCanAccessAccounting(),
+            dto.isCanAccessBankAccount(),
+            dto.isCanInvalidateTables(),
+            dto.isCanAccessAdminWeb(),
+            dto.isIsDnsAdmin()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.MasterUser getDto() {
         return new com.aoindustries.aoserv.client.dto.MasterUser(getDto(getKey()), isActive, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, isDnsAdmin);

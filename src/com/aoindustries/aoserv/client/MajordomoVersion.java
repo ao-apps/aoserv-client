@@ -58,6 +58,10 @@ final public class MajordomoVersion extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public MajordomoVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.MajordomoVersion dto) {
+        this(connector, dto.getVersion(), getTimeMillis(dto.getCreated()));
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.MajordomoVersion getDto() {
         return new com.aoindustries.aoserv.client.dto.MajordomoVersion(getKey(), created);

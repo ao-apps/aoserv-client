@@ -86,6 +86,16 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public FileBackupSetting(AOServConnector connector, com.aoindustries.aoserv.client.dto.FileBackupSetting dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getReplication(),
+            dto.getPath(),
+            dto.isBackupEnabled()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.FileBackupSetting getDto() {
         return new com.aoindustries.aoserv.client.dto.FileBackupSetting(key, replication, path, backupEnabled);

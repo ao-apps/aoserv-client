@@ -89,6 +89,15 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public MasterServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.MasterServer dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            getUserId(dto.getUsername()),
+            dto.getServer()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.MasterServer getDto() {
         return new com.aoindustries.aoserv.client.dto.MasterServer(key, getDto(username), server);

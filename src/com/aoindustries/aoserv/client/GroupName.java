@@ -77,6 +77,15 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public GroupName(AOServConnector connector, com.aoindustries.aoserv.client.dto.GroupName dto) throws ValidationException {
+        this(
+            connector,
+            getGroupId(dto.getGroupName()),
+            getAccountingCode(dto.getAccounting()),
+            dto.getDisableLog()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.GroupName getDto() {
         return new com.aoindustries.aoserv.client.dto.GroupName(getDto(getKey()), getDto(accounting), disableLog);

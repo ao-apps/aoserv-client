@@ -52,6 +52,10 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public FtpGuestUser(AOServConnector connector, com.aoindustries.aoserv.client.dto.FtpGuestUser dto) {
+        this(connector, dto.getLinuxAccount());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.FtpGuestUser getDto() {
         return new com.aoindustries.aoserv.client.dto.FtpGuestUser(key);

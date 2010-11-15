@@ -88,6 +88,15 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public HttpdJBossVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdJBossVersion dto) throws ValidationException {
+        this(
+            connector,
+            dto.getVersion(),
+            dto.getTomcatVersion(),
+            getUnixPath(dto.getTemplateDir())
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdJBossVersion getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdJBossVersion(key, tomcatVersion, getDto(templateDir));

@@ -87,6 +87,16 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public LinuxAccountGroup(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxAccountGroup dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getLinuxAccount(),
+            dto.getLinuxGroup(),
+            dto.isIsPrimary()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxAccountGroup getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxAccountGroup(key, linuxAccount, linuxGroup, isPrimary);

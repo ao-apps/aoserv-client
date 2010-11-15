@@ -149,6 +149,27 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public HttpdSite(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdSite dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            getDomainName(dto.getSiteName()),
+            dto.isListFirst(),
+            dto.getLinuxAccountGroup(),
+            getEmail(dto.getServerAdmin()),
+            dto.isIsManualConfig(),
+            dto.getAwstatsSkipFiles()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdSite getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdSite(
@@ -216,6 +237,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
         return getConnector().getHttpdTomcatSites().get(pkey);
     }
      */
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">
     /* TODO
@@ -353,4 +375,5 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
         );
     }
      */
+    // </editor-fold>
 }

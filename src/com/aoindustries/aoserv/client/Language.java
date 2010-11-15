@@ -44,6 +44,10 @@ final public class Language extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Language(AOServConnector connector, com.aoindustries.aoserv.client.dto.Language dto) {
+        this(connector, dto.getCode());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Language getDto() {
         return new com.aoindustries.aoserv.client.dto.Language(getKey());

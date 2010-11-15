@@ -402,6 +402,25 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public MySQLServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.MySQLServer dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            getMySQLServerName(dto.getName()),
+            dto.getVersion(),
+            dto.getMaxConnections(),
+            dto.getNetBind()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLServer getDto() {
         return new com.aoindustries.aoserv.client.dto.MySQLServer(

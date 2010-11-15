@@ -58,6 +58,10 @@ final public class HttpdJKProtocol extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public HttpdJKProtocol(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdJKProtocol dto) {
+        this(connector, dto.getProtocol());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdJKProtocol getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdJKProtocol(getKey());

@@ -90,6 +90,15 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public HttpdTomcatVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdTomcatVersion dto) throws ValidationException {
+        this(
+            connector,
+            dto.getVersion(),
+            getUnixPath(dto.getInstallDir()),
+            dto.isRequiresModJk()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdTomcatVersion getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdTomcatVersion(key, getDto(installDir), requiresModJk);

@@ -43,6 +43,10 @@ final public class HttpdJKCode extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public HttpdJKCode(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdJKCode dto) {
+        this(connector, dto.getCode());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdJKCode getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdJKCode(getKey());
