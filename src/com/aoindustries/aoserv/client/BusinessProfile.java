@@ -223,6 +223,30 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public BusinessProfile(AOServConnector connector, com.aoindustries.aoserv.client.dto.BusinessProfile dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            getAccountingCode(dto.getAccounting()),
+            dto.getPriority(),
+            dto.getName(),
+            dto.isIsPrivate(),
+            dto.getPhone(),
+            dto.getFax(),
+            dto.getAddress1(),
+            dto.getAddress2(),
+            dto.getCity(),
+            dto.getState(),
+            dto.getCountry(),
+            dto.getZip(),
+            dto.isSendInvoice(),
+            getTimeMillis(dto.getCreated()),
+            dto.getBillingContact(),
+            dto.getBillingEmail(),
+            dto.getTechnicalContact(),
+            dto.getTechnicalEmail()
+        );
+    }
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessProfile getDto() {
         return new com.aoindustries.aoserv.client.dto.BusinessProfile(key, getDto(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);

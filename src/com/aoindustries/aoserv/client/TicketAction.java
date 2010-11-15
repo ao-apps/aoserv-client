@@ -404,6 +404,31 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TicketAction(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketAction dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getTicket(),
+            getUserId(dto.getAdministrator()),
+            getTimeMillis(dto.getTime()),
+            dto.getActionType(),
+            getAccountingCode(dto.getOldAccounting()),
+            getAccountingCode(dto.getNewAccounting()),
+            dto.getOldPriority(),
+            dto.getNewPriority(),
+            dto.getOldType(),
+            dto.getNewType(),
+            dto.getOldStatus(),
+            dto.getNewStatus(),
+            getUserId(dto.getOldAssignedTo()),
+            getUserId(dto.getNewAssignedTo()),
+            dto.getOldCategory(),
+            dto.getNewCategory(),
+            getEmail(dto.getFromAddress()),
+            dto.getSummary()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TicketAction getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketAction(

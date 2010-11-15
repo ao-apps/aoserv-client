@@ -261,6 +261,29 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Ticket(AOServConnector connector, com.aoindustries.aoserv.client.dto.Ticket dto) throws ValidationException {
+        this(
+            connector,
+            dto.getTicketId(),
+            getAccountingCode(dto.getBrand()),
+            getAccountingCode(dto.getReseller()),
+            getAccountingCode(dto.getAccounting()),
+            dto.getLanguage(),
+            getUserId(dto.getCreatedBy()),
+            dto.getCategory(),
+            dto.getTicketType(),
+            getEmail(dto.getFromAddress()),
+            dto.getSummary(),
+            getTimeMillis(dto.getOpenDate()),
+            dto.getClientPriority(),
+            dto.getAdminPriority(),
+            dto.getStatus(),
+            getTimeMillis(dto.getStatusTimeout()),
+            dto.getContactEmails(),
+            dto.getContactPhoneNumbers()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Ticket getDto() {
         return new com.aoindustries.aoserv.client.dto.Ticket(

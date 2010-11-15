@@ -94,6 +94,17 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public NetTcpRedirect(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetTcpRedirect dto) throws ValidationException {
+        this(
+            connector,
+            dto.getNetBind(),
+            dto.getCps(),
+            dto.getCpsOverloadSleepTime(),
+            getHostname(dto.getDestinationHost()),
+            getNetPort(dto.getDestinationPort())
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.NetTcpRedirect getDto() {
         return new com.aoindustries.aoserv.client.dto.NetTcpRedirect(key, cps, cpsOverloadSleepTime, getDto(destinationHost), getDto(destinationPort));

@@ -144,6 +144,21 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PackageDefinition(AOServConnector connector, com.aoindustries.aoserv.client.dto.PackageDefinition dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getCategory(),
+            dto.getName(),
+            dto.getVersion(),
+            getMoney(dto.getSetupFee()),
+            dto.getSetupFeeTransactionType(),
+            getMoney(dto.getMonthlyRate()),
+            dto.getMonthlyRateTransactionType(),
+            dto.isApproved()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PackageDefinition getDto() {
         return new com.aoindustries.aoserv.client.dto.PackageDefinition(

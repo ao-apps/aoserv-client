@@ -80,6 +80,16 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public ServerFarm(AOServConnector connector, com.aoindustries.aoserv.client.dto.ServerFarm dto) throws ValidationException {
+        this(
+            connector,
+            getDomainLabel(dto.getName()),
+            dto.getDescription(),
+            getAccountingCode(dto.getOwner()),
+            dto.isUseRestrictedSmtpPort()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.ServerFarm getDto() {
         return new com.aoindustries.aoserv.client.dto.ServerFarm(getDto(getKey()), description, getDto(owner), useRestrictedSmtpPort);

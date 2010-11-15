@@ -120,6 +120,27 @@ final public class PrivateFtpServer extends AOServerResource implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PrivateFtpServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.PrivateFtpServer dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            dto.getNetBind(),
+            getUnixPath(dto.getLogfile()),
+            getDomainName(dto.getHostname()),
+            getEmail(dto.getEmail()),
+            dto.getLinuxAccountGroup(),
+            dto.isAllowAnonymous()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PrivateFtpServer getDto() {
         return new com.aoindustries.aoserv.client.dto.PrivateFtpServer(

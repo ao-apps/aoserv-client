@@ -49,6 +49,10 @@ final public class ProcessorType extends AOServObjectStringKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public ProcessorType(AOServConnector connector, com.aoindustries.aoserv.client.dto.ProcessorType dto) {
+        this(connector, dto.getType(), dto.getSortOrder());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.ProcessorType getDto() {
         return new com.aoindustries.aoserv.client.dto.ProcessorType(getKey(), sortOrder);

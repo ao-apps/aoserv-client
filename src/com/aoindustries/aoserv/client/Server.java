@@ -129,6 +129,19 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Server(AOServConnector connector, com.aoindustries.aoserv.client.dto.Server dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            getDomainLabel(dto.getFarm()),
+            dto.getDescription(),
+            dto.getOperatingSystemVersion(),
+            getAccountingCode(dto.getAccounting()),
+            dto.getName(),
+            dto.isMonitoringEnabled()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Server getDto() {
         return new com.aoindustries.aoserv.client.dto.Server(key, getDto(farm), description, operatingSystemVersion, getDto(accounting), name, monitoringEnabled);

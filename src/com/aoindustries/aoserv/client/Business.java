@@ -329,6 +329,33 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Business(AOServConnector connector, com.aoindustries.aoserv.client.dto.Business dto) throws ValidationException {
+        this(
+            connector,
+            getAccountingCode(dto.getAccounting()),
+            dto.getContractVersion(),
+            getTimeMillis(dto.getCreated()),
+            getTimeMillis(dto.getCanceled()),
+            dto.getCancelReason(),
+            getAccountingCode(dto.getParent()),
+            dto.isCanAddBackupServer(),
+            dto.isCanAddBusinesses(),
+            dto.isCanSeePrices(),
+            dto.getDisableLog(),
+            dto.getDoNotDisableReason(),
+            dto.isAutoEnable(),
+            dto.isBillParent(),
+            dto.getPackageDefinition(),
+            getUserId(dto.getCreatedBy()),
+            dto.getEmailInBurst(),
+            dto.getEmailInRate(),
+            dto.getEmailOutBurst(),
+            dto.getEmailOutRate(),
+            dto.getEmailRelayBurst(),
+            dto.getEmailRelayRate()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Business getDto() {
         return new com.aoindustries.aoserv.client.dto.Business(getDto(getKey()), contractVersion, created, canceled, cancelReason, getDto(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getDto(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);

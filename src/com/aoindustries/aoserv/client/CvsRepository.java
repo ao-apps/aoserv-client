@@ -112,6 +112,24 @@ final public class CvsRepository extends AOServerResource implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public CvsRepository(AOServConnector connector, com.aoindustries.aoserv.client.dto.CvsRepository dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            getUnixPath(dto.getPath()),
+            dto.getLinuxAccountGroup(),
+            dto.getMode()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.CvsRepository getDto() {
         return new com.aoindustries.aoserv.client.dto.CvsRepository(

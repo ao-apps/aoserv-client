@@ -80,6 +80,10 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Technology(AOServConnector connector, com.aoindustries.aoserv.client.dto.Technology dto) {
+        this(connector, dto.getPkey(), dto.getName(), dto.getTechnologyClass());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Technology getDto() {
         return new com.aoindustries.aoserv.client.dto.Technology(key, name, technologyClass);

@@ -92,6 +92,16 @@ final public class CountryCode extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public CountryCode(AOServConnector connector, com.aoindustries.aoserv.client.dto.CountryCode dto) {
+        this(
+            connector,
+            dto.getCode(),
+            dto.getName(),
+            dto.isChargeComSupported(),
+            dto.getChargeComName()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.CountryCode getDto() {
         return new com.aoindustries.aoserv.client.dto.CountryCode(getKey(), name, chargeComSupported, chargeComName);

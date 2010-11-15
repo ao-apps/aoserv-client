@@ -123,6 +123,19 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PackageDefinitionLimit(AOServConnector connector, com.aoindustries.aoserv.client.dto.PackageDefinitionLimit dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getPackageDefinition(),
+            dto.getResourceType(),
+            dto.getSoftLimit(),
+            dto.getHardLimit(),
+            getMoney(dto.getAdditionalRate()),
+            dto.getAdditionalTransactionType()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PackageDefinitionLimit getDto() {
         return new com.aoindustries.aoserv.client.dto.PackageDefinitionLimit(

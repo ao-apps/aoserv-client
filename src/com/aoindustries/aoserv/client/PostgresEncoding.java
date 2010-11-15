@@ -123,6 +123,15 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PostgresEncoding(AOServConnector connector, com.aoindustries.aoserv.client.dto.PostgresEncoding dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getEncoding(),
+            dto.getPostgresVersion()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresEncoding getDto() {
         return new com.aoindustries.aoserv.client.dto.PostgresEncoding(key, encoding, postgresVersion);

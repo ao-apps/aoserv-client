@@ -64,6 +64,10 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public EmailSpamAssassinIntegrationMode(AOServConnector connector, com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode dto) {
+        this(connector, dto.getName(), dto.getSortOrder());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode getDto() {
         return new com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode(getKey(), sortOrder);

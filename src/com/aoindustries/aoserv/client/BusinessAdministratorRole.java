@@ -81,6 +81,15 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public BusinessAdministratorRole(AOServConnector connector, com.aoindustries.aoserv.client.dto.BusinessAdministratorRole dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            getUserId(dto.getUsername()),
+            dto.getRole()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessAdministratorRole getDto() {
         return new com.aoindustries.aoserv.client.dto.BusinessAdministratorRole(key, getDto(username), role);

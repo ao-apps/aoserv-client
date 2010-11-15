@@ -50,6 +50,10 @@ final public class NoticeType extends AOServObjectStringKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public NoticeType(AOServConnector connector, com.aoindustries.aoserv.client.dto.NoticeType dto) {
+        this(connector, dto.getType());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.NoticeType getDto() {
         return new com.aoindustries.aoserv.client.dto.NoticeType(getKey());

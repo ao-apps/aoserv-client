@@ -168,6 +168,25 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public NetDevice(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetDevice dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getServer(),
+            dto.getDeviceId(),
+            dto.getDescription(),
+            getInetAddress(dto.getGateway()),
+            getInetAddress(dto.getNetwork()),
+            getInetAddress(dto.getBroadcast()),
+            getMacAddress(dto.getMacAddress()),
+            dto.getMaxBitRate(),
+            dto.getMonitoringBitRateLow(),
+            dto.getMonitoringBitRateMedium(),
+            dto.getMonitoringBitRateHigh(),
+            dto.getMonitoringBitRateCritical()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.NetDevice getDto() {
         return new com.aoindustries.aoserv.client.dto.NetDevice(

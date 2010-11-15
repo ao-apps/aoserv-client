@@ -45,6 +45,10 @@ final public class TechnologyName extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TechnologyName(AOServConnector connector, com.aoindustries.aoserv.client.dto.TechnologyName dto) {
+        this(connector, dto.getName());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TechnologyName getDto() {
         return new com.aoindustries.aoserv.client.dto.TechnologyName(getKey());

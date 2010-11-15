@@ -80,6 +80,10 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public OperatingSystem(AOServConnector connector, com.aoindustries.aoserv.client.dto.OperatingSystem dto) {
+        this(connector, dto.getName(), dto.getDisplay(), dto.isIsUnix());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.OperatingSystem getDto() {
         return new com.aoindustries.aoserv.client.dto.OperatingSystem(getKey(), display, isUnix);

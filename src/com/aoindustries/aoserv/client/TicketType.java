@@ -54,6 +54,10 @@ final public class TicketType extends AOServObjectStringKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TicketType(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketType dto) {
+        this(connector, dto.getType());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TicketType getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketType(getKey());

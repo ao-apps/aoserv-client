@@ -162,6 +162,28 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PostgresDatabase(AOServConnector connector, com.aoindustries.aoserv.client.dto.PostgresDatabase dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            getPostgresDatabaseName(dto.getName()),
+            dto.getPostgresServer(),
+            dto.getDatdba(),
+            dto.getEncoding(),
+            dto.isIsTemplate(),
+            dto.isAllowConn(),
+            dto.isEnablePostgis()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresDatabase getDto() {
         return new com.aoindustries.aoserv.client.dto.PostgresDatabase(

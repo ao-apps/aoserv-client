@@ -53,6 +53,10 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public BankTransactionType(AOServConnector connector, com.aoindustries.aoserv.client.dto.BankTransactionType dto) {
+        this(connector, dto.getName(), dto.isIsNegative());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.BankTransactionType getDto() {
         return new com.aoindustries.aoserv.client.dto.BankTransactionType(getKey(), isNegative);

@@ -91,6 +91,16 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TicketAssignment(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketAssignment dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getTicket(),
+            getAccountingCode(dto.getReseller()),
+            getUserId(dto.getAdministrator())
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TicketAssignment getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketAssignment(key, ticket, getDto(reseller), getDto(administrator));

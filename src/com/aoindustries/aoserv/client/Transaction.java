@@ -212,6 +212,25 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Transaction(AOServConnector connector, com.aoindustries.aoserv.client.dto.Transaction dto) throws ValidationException {
+        this(
+            connector,
+            dto.getTransid(),
+            getTimeMillis(dto.getTime()),
+            getAccountingCode(dto.getAccounting()),
+            getAccountingCode(dto.getSourceAccounting()),
+            getUserId(dto.getUsername()),
+            dto.getType(),
+            dto.getQuantity(),
+            getMoney(dto.getRate()),
+            dto.getPaymentType(),
+            dto.getPaymentInfo(),
+            dto.getProcessor(),
+            dto.getCreditCardTransaction(),
+            Transaction.Status.valueOf(dto.getStatus())
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Transaction getDto() {
         return new com.aoindustries.aoserv.client.dto.Transaction(

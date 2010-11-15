@@ -62,6 +62,10 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TechnologyClass(AOServConnector connector, com.aoindustries.aoserv.client.dto.TechnologyClass dto) {
+        this(connector, connector, dto.getName());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TechnologyClass getDto() {
         return new com.aoindustries.aoserv.client.dto.TechnologyClass(getKey());

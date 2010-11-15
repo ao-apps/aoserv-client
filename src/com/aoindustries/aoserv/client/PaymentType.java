@@ -73,6 +73,10 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PaymentType(AOServConnector connector, com.aoindustries.aoserv.client.dto.PaymentType dto) {
+        this(connector, dto.getName(), dto.isIsActive(), dto.isAllowWeb());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PaymentType getDto() {
         return new com.aoindustries.aoserv.client.dto.PaymentType(getKey(), isActive, allowWeb);

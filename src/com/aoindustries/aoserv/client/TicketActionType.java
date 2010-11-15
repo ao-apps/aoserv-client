@@ -68,6 +68,10 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TicketActionType(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketActionType dto) {
+        this(connector, dto.getType(), dto.getVisibleAdminOnly());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TicketActionType getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketActionType(getKey(), visibleAdminOnly);

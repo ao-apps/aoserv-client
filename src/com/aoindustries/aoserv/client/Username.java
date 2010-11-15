@@ -84,6 +84,15 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Username(AOServConnector connector, com.aoindustries.aoserv.client.dto.Username dto) throws ValidationException {
+        this(
+            connector,
+            getUserId(dto.getUsername()),
+            getAccountingCode(dto.getAccounting()),
+            dto.getDisableLog()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Username getDto() {
         return new com.aoindustries.aoserv.client.dto.Username(getDto(getKey()), getDto(accounting), disableLog);

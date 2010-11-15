@@ -415,6 +415,57 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public MySQLUser(AOServConnector connector, com.aoindustries.aoserv.client.dto.MySQLUser dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            getMySQLUserId(dto.getUsername()),
+            dto.getMysqlServer(),
+            getInetAddress(dto.getHost()),
+            dto.isSelectPriv(),
+            dto.isInsertPriv(),
+            dto.isUpdatePriv(),
+            dto.isDeletePriv(),
+            dto.isCreatePriv(),
+            dto.isDropPriv(),
+            dto.isReloadPriv(),
+            dto.isShutdownPriv(),
+            dto.isProcessPriv(),
+            dto.isFilePriv(),
+            dto.isGrantPriv(),
+            dto.isReferencesPriv(),
+            dto.isIndexPriv(),
+            dto.isAlterPriv(),
+            dto.isShowDbPriv(),
+            dto.isSuperPriv(),
+            dto.isCreateTmpTablePriv(),
+            dto.isLockTablesPriv(),
+            dto.isExecutePriv(),
+            dto.isReplSlavePriv(),
+            dto.isReplClientPriv(),
+            dto.isCreateViewPriv(),
+            dto.isShowViewPriv(),
+            dto.isCreateRoutinePriv(),
+            dto.isAlterRoutinePriv(),
+            dto.isCreateUserPriv(),
+            dto.isEventPriv(),
+            dto.isTriggerPriv(),
+            dto.getPredisablePassword(),
+            dto.getMaxQuestions(),
+            dto.getMaxUpdates(),
+            dto.getMaxConnections(),
+            dto.getMaxUserConnections()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLUser getDto() {
         return new com.aoindustries.aoserv.client.dto.MySQLUser(
@@ -430,7 +481,39 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
             getDto(username),
             mysqlServer,
             getDto(host),
-            selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, reloadPriv, shutdownPriv, processPriv, filePriv, grantPriv, referencesPriv, indexPriv, alterPriv, showDbPriv, superPriv, createTmpTablePriv, lockTablesPriv, executePriv, replSlavePriv, replClientPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, createUserPriv, eventPriv, triggerPriv, predisablePassword, maxQuestions, maxUpdates, maxConnections, maxUserConnections
+            selectPriv,
+            insertPriv,
+            updatePriv,
+            deletePriv,
+            createPriv,
+            dropPriv,
+            reloadPriv,
+            shutdownPriv,
+            processPriv,
+            filePriv,
+            grantPriv,
+            referencesPriv,
+            indexPriv,
+            alterPriv,
+            showDbPriv,
+            superPriv,
+            createTmpTablePriv,
+            lockTablesPriv,
+            executePriv,
+            replSlavePriv,
+            replClientPriv,
+            createViewPriv,
+            showViewPriv,
+            createRoutinePriv,
+            alterRoutinePriv,
+            createUserPriv,
+            eventPriv,
+            triggerPriv,
+            predisablePassword,
+            maxQuestions,
+            maxUpdates,
+            maxConnections,
+            maxUserConnections
         );
     }
     // </editor-fold>

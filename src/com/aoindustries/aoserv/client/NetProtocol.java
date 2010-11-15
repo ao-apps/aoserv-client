@@ -50,6 +50,10 @@ final public class NetProtocol extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public NetProtocol(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetProtocol dto) {
+        this(connector, dto.getProtocol());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.NetProtocol getDto() {
         return new com.aoindustries.aoserv.client.dto.NetProtocol(getKey());

@@ -124,6 +124,15 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PostgresVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.PostgresVersion dto) {
+        this(
+            connector,
+            dto.getVersion(),
+            dto.getMinorVersion(),
+            dto.getPostgisVersion()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresVersion getDto() {
         return new com.aoindustries.aoserv.client.dto.PostgresVersion(key, minorVersion, postgisVersion);

@@ -54,6 +54,10 @@ final public class TicketPriority extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TicketPriority(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketPriority dto) {
+        this(connector, dto.getPriority());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TicketPriority getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketPriority(getKey());

@@ -265,6 +265,34 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public BusinessAdministrator(AOServConnector connector, com.aoindustries.aoserv.client.dto.BusinessAdministrator dto) throws ValidationException {
+        this(
+            connector,
+            getUserId(dto.getUsername()),
+            getHashedPassword(dto.getPassword()),
+            dto.getFullName(),
+            dto.getTitle(),
+            getTimeMillis(dto.getBirthday()),
+            dto.isIsPreferred(),
+            dto.isIsPrivate(),
+            getTimeMillis(dto.getCreated()),
+            dto.getWorkPhone(),
+            dto.getHomePhone(),
+            dto.getCellPhone(),
+            dto.getFax(),
+            getEmail(dto.getEmail()),
+            dto.getAddress1(),
+            dto.getAddress2(),
+            dto.getCity(),
+            dto.getState(),
+            dto.getCountry(),
+            dto.getZip(),
+            dto.getDisableLog(),
+            dto.isCanSwitchUsers(),
+            dto.getSupportCode()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessAdministrator getDto() {
         return new com.aoindustries.aoserv.client.dto.BusinessAdministrator(getDto(getKey()), getDto(password), fullName, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, getDto(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);

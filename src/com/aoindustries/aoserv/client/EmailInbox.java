@@ -172,6 +172,22 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public EmailInbox(AOServConnector connector, com.aoindustries.aoserv.client.dto.EmailInbox dto) throws ValidationException {
+        this(
+            connector,
+            dto.getLinuxAccount(),
+            dto.getAutoresponderFrom(),
+            dto.getAutoresponderSubject(),
+            getUnixPath(dto.getAutoresponderPath()),
+            dto.isIsAutoresponderEnabled(),
+            dto.isUseInbox(),
+            dto.getTrashEmailRetention(),
+            dto.getJunkEmailRetention(),
+            dto.getSaIntegrationMode(),
+            dto.getSaRequiredScore(),
+            dto.getSaDiscardScore()
+        );
+    }
     @Override
     public com.aoindustries.aoserv.client.dto.EmailInbox getDto() {
         return new com.aoindustries.aoserv.client.dto.EmailInbox(key, autoresponderFrom, autoresponderSubject, getDto(autoresponderPath), isAutoresponderEnabled, useInbox, trashEmailRetention, junkEmailRetention, saIntegrationMode, saRequiredScore, saDiscardScore);

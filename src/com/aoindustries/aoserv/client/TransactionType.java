@@ -66,6 +66,14 @@ final public class TransactionType extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TransactionType(AOServConnector connector, com.aoindustries.aoserv.client.dto.TransactionType dto) {
+        this(
+            connector,
+            dto.getName(),
+            dto.isIsCredit()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TransactionType getDto() {
         return new com.aoindustries.aoserv.client.dto.TransactionType(getKey(), isCredit);

@@ -73,6 +73,10 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public EmailSmtpRelayType(AOServConnector connector, com.aoindustries.aoserv.client.dto.EmailSmtpRelayType dto) {
+        this(connector, dto.getName(), dto.getSendmailConfig());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.EmailSmtpRelayType getDto() {
         return new com.aoindustries.aoserv.client.dto.EmailSmtpRelayType(getKey(), sendmailConfig);

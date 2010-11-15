@@ -156,6 +156,28 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public DnsRecord(AOServConnector connector, com.aoindustries.aoserv.client.dto.DnsRecord dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getZone(),
+            dto.getDomain(),
+            dto.getType(),
+            dto.getMxPriority(),
+            getInetAddress(dto.getDataIpAddress()),
+            getDomainName(dto.getDataDomainName()),
+            dto.getDataText(),
+            dto.getDhcpAddress(),
+            dto.getTtl()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.DnsRecord getDto() {
         return new com.aoindustries.aoserv.client.dto.DnsRecord(

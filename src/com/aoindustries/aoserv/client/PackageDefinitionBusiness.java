@@ -20,11 +20,7 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageDefinitionBusiness
-extends AOServObjectIntegerKey
-implements
-    Comparable<PackageDefinitionBusiness>,
-    DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness> {
+final public class PackageDefinitionBusiness extends AOServObjectIntegerKey implements Comparable<PackageDefinitionBusiness>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
     private static final long serialVersionUID = 1L;
@@ -113,6 +109,18 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PackageDefinitionBusiness(AOServConnector connector, com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getPackageDefinition(),
+            getAccountingCode(dto.getAccounting()),
+            dto.getDisplay(),
+            dto.getDescription(),
+            dto.isActive()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness getDto() {
         return new com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness(

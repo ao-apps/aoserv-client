@@ -283,6 +283,28 @@ final public class PostgresServer extends AOServerResource implements Comparable
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PostgresServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.PostgresServer dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            getPostgresServerName(dto.getName()),
+            dto.getVersion(),
+            dto.getMaxConnections(),
+            dto.getNetBind(),
+            dto.getSortMem(),
+            dto.getSharedBuffers(),
+            dto.isFsync()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresServer getDto() {
         return new com.aoindustries.aoserv.client.dto.PostgresServer(

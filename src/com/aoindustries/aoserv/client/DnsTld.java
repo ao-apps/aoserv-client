@@ -50,6 +50,10 @@ final public class DnsTld extends AOServObjectDomainNameKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public DnsTld(AOServConnector connector, com.aoindustries.aoserv.client.dto.DnsTld dto) throws ValidationException {
+        this(connector, getDomainName(dto.getDomain()));
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.DnsTld getDto() {
         return new com.aoindustries.aoserv.client.dto.DnsTld(getDto(getKey()));

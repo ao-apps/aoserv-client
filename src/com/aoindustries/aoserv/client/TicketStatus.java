@@ -64,6 +64,10 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TicketStatus(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketStatus dto) {
+        this(connector, dto.getStatus(), dto.getSortOrder());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TicketStatus getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketStatus(getKey(), sortOrder);

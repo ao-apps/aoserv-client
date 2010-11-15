@@ -170,6 +170,21 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public NetBind(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetBind dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getBusinessServer(),
+            dto.getIpAddress(),
+            getNetPort(dto.getPort()),
+            dto.getNetProtocol(),
+            dto.getAppProtocol(),
+            dto.isOpenFirewall(),
+            dto.isMonitoringEnabled(),
+            dto.getMonitoringParameters()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.NetBind getDto() {
         return new com.aoindustries.aoserv.client.dto.NetBind(

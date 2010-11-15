@@ -60,6 +60,10 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PackageCategory(AOServConnector connector, com.aoindustries.aoserv.client.dto.PackageCategory dto) {
+        this(connector, dto.getName());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PackageCategory getDto() {
         return new com.aoindustries.aoserv.client.dto.PackageCategory(getKey());

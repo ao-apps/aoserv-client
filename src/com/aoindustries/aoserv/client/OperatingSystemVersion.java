@@ -131,6 +131,20 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public OperatingSystemVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.OperatingSystemVersion dto) {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getOperatingSystem(),
+            dto.getVersionNumber(),
+            dto.getVersionName(),
+            dto.getArchitecture(),
+            dto.getDisplay(),
+            dto.isIsAoservDaemonSupported(),
+            dto.getSortOrder()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.OperatingSystemVersion getDto() {
         return new com.aoindustries.aoserv.client.dto.OperatingSystemVersion(key, operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);

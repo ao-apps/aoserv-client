@@ -159,6 +159,28 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public PostgresUser(AOServConnector connector, com.aoindustries.aoserv.client.dto.PostgresUser dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getAoServer(),
+            dto.getBusinessServer(),
+            getPostgresUserId(dto.getUsername()),
+            dto.getPostgresServer(),
+            dto.isCreatedb(),
+            dto.isTrace(),
+            dto.isSuperPriv(),
+            dto.isCatupd(),
+            dto.getPredisablePassword()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresUser getDto() {
         return new com.aoindustries.aoserv.client.dto.PostgresUser(

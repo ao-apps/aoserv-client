@@ -120,6 +120,24 @@ final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoF
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public DnsZone(AOServConnector connector, com.aoindustries.aoserv.client.dto.DnsZone dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            getDomainName(dto.getZone()),
+            dto.getFile(),
+            getDomainName(dto.getHostmaster()),
+            dto.getSerial(),
+            dto.getTtl()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.DnsZone getDto() {
         return new com.aoindustries.aoserv.client.dto.DnsZone(

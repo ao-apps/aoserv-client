@@ -111,6 +111,17 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public DisableLog(AOServConnector connector, com.aoindustries.aoserv.client.dto.DisableLog dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            getTimeMillis(dto.getTime()),
+            getAccountingCode(dto.getAccounting()),
+            getUserId(dto.getDisabledBy()),
+            dto.getDisableReason()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.DisableLog getDto() {
         return new com.aoindustries.aoserv.client.dto.DisableLog(key, time, getDto(accounting), getDto(disabledBy), disableReason);

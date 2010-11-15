@@ -78,6 +78,10 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public ResourceType(AOServConnector connector, com.aoindustries.aoserv.client.dto.ResourceType dto) {
+        this(connector, dto.getName());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.ResourceType getDto() {
         return new com.aoindustries.aoserv.client.dto.ResourceType(getKey());

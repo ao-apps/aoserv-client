@@ -108,6 +108,18 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TechnologyVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.TechnologyVersion dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getName(),
+            dto.getVersion(),
+            getTimeMillis(dto.getUpdated()),
+            getUserId(dto.getOwner()),
+            dto.getOperatingSystemVersion()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TechnologyVersion getDto() {
         return new com.aoindustries.aoserv.client.dto.TechnologyVersion(key, name, version, updated, getDto(owner), operatingSystemVersion);

@@ -453,6 +453,50 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Brand(AOServConnector connector, com.aoindustries.aoserv.client.dto.Brand dto) throws ValidationException {
+        this(
+            connector,
+            getAccountingCode(dto.getAccounting()),
+            getDomainName(dto.getNameserver1()),
+            getDomainName(dto.getNameserver2()),
+            getDomainName(dto.getNameserver3()),
+            getDomainName(dto.getNameserver4()),
+            dto.getSmtpEmailInbox(),
+            getHostname(dto.getSmtpHost()),
+            dto.getSmtpPassword(),
+            dto.getImapEmailInbox(),
+            getHostname(dto.getImapHost()),
+            dto.getImapPassword(),
+            dto.getSupportEmailAddress(),
+            dto.getSupportEmailDisplay(),
+            dto.getSignupEmailAddress(),
+            dto.getSignupEmailDisplay(),
+            dto.getTicketEncryptionFrom(),
+            dto.getTicketEncryptionRecipient(),
+            dto.getSignupEncryptionFrom(),
+            dto.getSignupEncryptionRecipient(),
+            dto.getSupportTollFree(),
+            dto.getSupportDayPhone(),
+            dto.getSupportEmergencyPhone1(),
+            dto.getSupportEmergencyPhone2(),
+            dto.getSupportFax(),
+            dto.getSupportMailingAddress1(),
+            dto.getSupportMailingAddress2(),
+            dto.getSupportMailingAddress3(),
+            dto.getSupportMailingAddress4(),
+            dto.isEnglishEnabled(),
+            dto.isJapaneseEnabled(),
+            dto.getAowebStrutsHttpUrlBase(),
+            dto.getAowebStrutsHttpsUrlBase(),
+            dto.getAowebStrutsGoogleVerifyContent(),
+            dto.isAowebStrutsNoindex(),
+            dto.getAowebStrutsGoogleAnalyticsNewTrackingCode(),
+            getEmail(dto.getAowebStrutsSignupAdminAddress()),
+            dto.getAowebStrutsVncBind(),
+            dto.getAowebStrutsKeystoreType(),
+            dto.getAowebStrutsKeystorePassword()
+        );
+    }
     @Override
     public com.aoindustries.aoserv.client.dto.Brand getDto() {
         return new com.aoindustries.aoserv.client.dto.Brand(

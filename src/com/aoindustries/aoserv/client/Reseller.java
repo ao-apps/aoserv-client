@@ -70,6 +70,14 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Reseller(AOServConnector connector, com.aoindustries.aoserv.client.dto.Reseller dto) throws ValidationException {
+        this(
+            connector,
+            getAccountingCode(dto.getAccounting()),
+            dto.isTicketAutoEscalate()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Reseller getDto() {
         return new com.aoindustries.aoserv.client.dto.Reseller(getDto(getKey()), ticketAutoEscalate);

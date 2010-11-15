@@ -75,6 +75,10 @@ final public class Shell extends AOServObjectUnixPathKey implements Comparable<S
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Shell(AOServConnector connector, com.aoindustries.aoserv.client.dto.Shell dto) throws ValidationException {
+        this(connector, getUnixPath(dto.getPath()));
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Shell getDto() {
         return new com.aoindustries.aoserv.client.dto.Shell(getDto(getKey()));

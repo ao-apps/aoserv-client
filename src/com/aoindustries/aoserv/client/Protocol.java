@@ -136,6 +136,17 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public Protocol(AOServConnector connector, com.aoindustries.aoserv.client.dto.Protocol dto) throws ValidationException {
+        this(
+            connector,
+            dto.getProtocol(),
+            getNetPort(dto.getPort()),
+            dto.getName(),
+            dto.isIsUserService(),
+            dto.getNetProtocol()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.Protocol getDto() {
         return new com.aoindustries.aoserv.client.dto.Protocol(getKey(), getDto(port), name, isUserService, netProtocol);

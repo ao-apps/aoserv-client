@@ -59,6 +59,10 @@ final public class DnsType extends AOServObjectStringKey implements Comparable<D
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public DnsType(AOServConnector connector, com.aoindustries.aoserv.client.dto.DnsType dto) {
+        this(connector, dto.getType());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.DnsType getDto() {
         return new com.aoindustries.aoserv.client.dto.DnsType(getKey());

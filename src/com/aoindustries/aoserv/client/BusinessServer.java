@@ -105,6 +105,16 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public BusinessServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.BusinessServer dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            getAccountingCode(dto.getAccounting()),
+            dto.getServer(),
+            dto.isIsDefault(),
+            dto.isCanVncConsole()
+        );
+    }
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessServer getDto() {
         return new com.aoindustries.aoserv.client.dto.BusinessServer(key, getDto(accounting), server, isDefault, canVncConsole);

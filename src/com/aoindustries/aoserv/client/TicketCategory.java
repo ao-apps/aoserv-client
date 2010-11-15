@@ -93,6 +93,10 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public TicketCategory(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketCategory dto) {
+        this(connector, dto.getPkey(), dto.getParent(), dto.getName());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.TicketCategory getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketCategory(key, parent, name);

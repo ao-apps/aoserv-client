@@ -348,6 +348,45 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public CreditCard(AOServConnector connector, com.aoindustries.aoserv.client.dto.CreditCard dto) throws ValidationException {
+        this(
+            connector,
+            dto.getPkey(),
+            dto.getProcessorId(),
+            getAccountingCode(dto.getAccounting()),
+            dto.getGroupName(),
+            dto.getCardInfo(),
+            dto.getProviderUniqueId(),
+            dto.getFirstName(),
+            dto.getLastName(),
+            dto.getCompanyName(),
+            getEmail(dto.getEmail()),
+            dto.getPhone(),
+            dto.getFax(),
+            dto.getCustomerTaxId(),
+            dto.getStreetAddress1(),
+            dto.getStreetAddress2(),
+            dto.getCity(),
+            dto.getState(),
+            dto.getPostalCode(),
+            dto.getCountryCode(),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getPrincipalName(),
+            dto.isUseMonthly(),
+            dto.isActive(),
+            getTimeMillis(dto.getDeactivatedOn()),
+            dto.getDeactivateReason(),
+            dto.getDescription(),
+            dto.getEncryptedCardNumber(),
+            dto.getEncryptionCardNumberFrom(),
+            dto.getEncryptionCardNumberRecipient(),
+            dto.getEncryptedExpiration(),
+            dto.getEncryptionExpirationFrom(),
+            dto.getEncryptionExpirationRecipient()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.CreditCard getDto() {
         return new com.aoindustries.aoserv.client.dto.CreditCard(

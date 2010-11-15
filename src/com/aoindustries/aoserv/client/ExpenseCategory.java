@@ -41,6 +41,10 @@ final public class ExpenseCategory extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public ExpenseCategory(AOServConnector connector, com.aoindustries.aoserv.client.dto.ExpenseCategory dto) {
+        this(connector, dto.getExpenseCode());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.ExpenseCategory getDto() {
         return new com.aoindustries.aoserv.client.dto.ExpenseCategory(getKey());

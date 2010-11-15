@@ -64,6 +64,10 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public NetDeviceID(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetDeviceID dto) {
+        this(connector, dto.getName(), dto.isIsLoopback());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.NetDeviceID getDto() {
         return new com.aoindustries.aoserv.client.dto.NetDeviceID(getKey(), isLoopback);

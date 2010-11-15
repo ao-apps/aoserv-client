@@ -235,6 +235,29 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public VirtualServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.VirtualServer dto) {
+        this(
+            connector,
+            dto.getServer(),
+            dto.getPrimaryRam(),
+            dto.getPrimaryRamTarget(),
+            dto.getSecondaryRam(),
+            dto.getSecondaryRamTarget(),
+            dto.getMinimumProcessorType(),
+            dto.getMinimumProcessorArchitecture(),
+            dto.getMinimumProcessorSpeed(),
+            dto.getMinimumProcessorSpeedTarget(),
+            dto.getProcessorCores(),
+            dto.getProcessorCoresTarget(),
+            dto.getProcessorWeight(),
+            dto.getProcessorWeightTarget(),
+            dto.isPrimaryPhysicalServerLocked(),
+            dto.isSecondaryPhysicalServerLocked(),
+            dto.isRequiresHvm(),
+            dto.getVncPassword()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.VirtualServer getDto() {
         return new com.aoindustries.aoserv.client.dto.VirtualServer(key, primaryRam, primaryRamTarget, secondaryRam, secondaryRamTarget, minimumProcessorType, minimumProcessorArchitecture, minimumProcessorSpeed, minimumProcessorSpeedTarget, processorCores, processorCoresTarget, processorWeight, processorWeightTarget, primaryPhysicalServerLocked, secondaryPhysicalServerLocked, requiresHvm, vncPassword);

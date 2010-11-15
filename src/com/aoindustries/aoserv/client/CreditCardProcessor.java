@@ -167,6 +167,24 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public CreditCardProcessor(AOServConnector connector, com.aoindustries.aoserv.client.dto.CreditCardProcessor dto) throws ValidationException {
+        this(
+            connector,
+            dto.getProviderId(),
+            getAccountingCode(dto.getAccounting()),
+            dto.getClassName(),
+            dto.getParam1(),
+            dto.getParam2(),
+            dto.getParam3(),
+            dto.getParam4(),
+            dto.isEnabled(),
+            dto.getWeight(),
+            dto.getDescription(),
+            dto.getEncryptionFrom(),
+            dto.getEncryptionRecipient()
+        );
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.CreditCardProcessor getDto() {
         return new com.aoindustries.aoserv.client.dto.CreditCardProcessor(getKey(), getDto(accounting), className, param1, param2, param3, param4, enabled, weight, description, encryptionFrom, encryptionRecipient);

@@ -52,6 +52,10 @@ final public class EmailAttachmentType extends AOServObjectStringKey implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
+    public EmailAttachmentType(AOServConnector connector, com.aoindustries.aoserv.client.dto.EmailAttachmentType dto) {
+        this(connector, dto.getExtension(), dto.isIsDefaultBlock());
+    }
+
     @Override
     public com.aoindustries.aoserv.client.dto.EmailAttachmentType getDto() {
         return new com.aoindustries.aoserv.client.dto.EmailAttachmentType(getKey(), isDefaultBlock);
