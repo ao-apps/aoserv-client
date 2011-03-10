@@ -196,7 +196,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
         // Caused cycle: AOServObjectUtils.addDependencySet(unionSet, getAutoresponderFrom());
@@ -207,7 +207,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandFromSmtpEmailInbox());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandFromImapEmailInbox());

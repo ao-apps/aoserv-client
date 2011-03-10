@@ -1007,7 +1007,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessor());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
@@ -1022,7 +1022,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransaction());
         return unionSet;

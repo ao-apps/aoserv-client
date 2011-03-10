@@ -130,7 +130,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisabledBy());
@@ -138,12 +138,12 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
-        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getBusinesses());
-        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrators());
+        // Caused cycle in dependency DAG: unionSet =  AOServObjectUtils.addDependencySet(unionSet, getBusinesses());
+        /*// Caused cycle in dependency DAG:*/ unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrators());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupNames());
-        // Caused loop in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getUsernames());
+        // Caused cycle in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getUsernames());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
         return unionSet;
     }

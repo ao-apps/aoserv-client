@@ -186,7 +186,7 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroupType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupName());
@@ -194,7 +194,7 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroups());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getCvsRepositories());

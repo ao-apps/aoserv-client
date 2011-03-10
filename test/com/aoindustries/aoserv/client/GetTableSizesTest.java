@@ -58,8 +58,10 @@ public class GetTableSizesTest extends TestCase {
                         || c==SchemaTable.TableID.TRANSACTIONS.ordinal()
                         || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
                     ) continue;*/
+                    //long startTime = System.currentTimeMillis();
                     int size=service.getSize();
-                    if(d==0) System.out.println(service+": "+size);
+                    //long endTime = System.currentTimeMillis();
+                    if(d==0) System.out.println(service+": "+size); //+" in "+(endTime-startTime)+" ms");
                     else System.out.print('.');
                     //if(c==SchemaTable.TableID.AO_SERVER_RESOURCES.ordinal()) System.out.println("\nao_server_resources.size="+size);
                     if(size<0) fail("Table size < 0 for table "+service.getTable().getTableName()+": "+size);

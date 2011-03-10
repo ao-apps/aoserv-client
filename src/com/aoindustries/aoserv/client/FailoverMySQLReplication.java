@@ -137,7 +137,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplication());

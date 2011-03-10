@@ -203,7 +203,7 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getZone());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getType());

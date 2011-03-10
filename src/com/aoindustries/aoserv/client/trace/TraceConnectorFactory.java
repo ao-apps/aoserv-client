@@ -9,8 +9,8 @@ import com.aoindustries.aoserv.client.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.aoserv.client.wrapped.*;
 import com.aoindustries.security.LoginException;
-import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ErrorPrinter;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Locale;
 
@@ -32,7 +32,7 @@ final public class TraceConnectorFactory extends WrappedConnectorFactory<TraceCo
             return new TraceConnector(this, locale, connectAs, authenticateAs, password, daemonServer);
         } finally {
             long nanos = System.nanoTime() - startNanos;
-            ErrorPrinter.printStackTraces(new Throwable(SQLUtility.getMilliDecimal(nanos / 1000)+"ms"), System.err);
+            ErrorPrinter.printStackTraces(new Throwable(BigDecimal.valueOf(nanos / 1000, 3)+"ms"), System.err);
             System.err.flush();
         }
     }

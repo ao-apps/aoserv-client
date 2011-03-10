@@ -76,7 +76,7 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldStatus());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewStatus());

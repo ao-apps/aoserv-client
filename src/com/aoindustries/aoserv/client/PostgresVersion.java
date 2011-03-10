@@ -141,7 +141,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgisVersion());
@@ -149,7 +149,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresEncodings());

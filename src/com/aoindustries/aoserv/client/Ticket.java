@@ -310,7 +310,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
@@ -326,7 +326,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());

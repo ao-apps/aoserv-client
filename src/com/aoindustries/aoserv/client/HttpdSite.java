@@ -194,7 +194,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         // Could serverAdmin be a dependency when hosted on AO?  Or, at least a removal warning?
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
@@ -202,7 +202,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdStaticSite());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatSite());

@@ -82,9 +82,9 @@ public class AOServObjectUtils {
     /**
      * Adds the set of objects to the union.
      */
-    public static UnionSet<AOServObject> addDependencySet(UnionSet<AOServObject> unionSet, Set<? extends AOServObject> set) {
+    public static UnionSet<AOServObject<?>> addDependencySet(UnionSet<AOServObject<?>> unionSet, Set<? extends AOServObject<?>> set) {
         if(!set.isEmpty()) {
-            if(unionSet==null) unionSet = new UnionSet<AOServObject>(set);
+            if(unionSet==null) unionSet = new UnionSet<AOServObject<?>>(set);
             else unionSet.addAll(set);
         }
         return unionSet;
@@ -93,9 +93,9 @@ public class AOServObjectUtils {
     /**
      * Adds an object to the union if the reference is not null.
      */
-    public static UnionSet<AOServObject> addDependencySet(UnionSet<AOServObject> unionSet, AOServObject obj) {
+    public static UnionSet<AOServObject<?>> addDependencySet(UnionSet<AOServObject<?>> unionSet, AOServObject<?> obj) {
         if(obj!=null) {
-            if(unionSet==null) unionSet = new UnionSet<AOServObject>();
+            if(unionSet==null) unionSet = new UnionSet<AOServObject<?>>();
             unionSet.add(obj);
         }
         return unionSet;

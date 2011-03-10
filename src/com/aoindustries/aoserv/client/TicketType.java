@@ -66,7 +66,7 @@ final public class TicketType extends AOServObjectStringKey implements Comparabl
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewType());

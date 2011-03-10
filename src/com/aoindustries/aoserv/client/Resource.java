@@ -184,7 +184,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());

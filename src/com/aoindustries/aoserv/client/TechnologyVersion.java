@@ -128,7 +128,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyName());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOwner());
@@ -137,7 +137,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossVersion());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatVersion());

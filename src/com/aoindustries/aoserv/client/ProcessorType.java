@@ -61,7 +61,7 @@ final public class ProcessorType extends AOServObjectStringKey implements Compar
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getPhysicalServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServersByMinimumProcessorType());

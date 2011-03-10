@@ -153,7 +153,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystem());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getArchitecture());
@@ -161,7 +161,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersions());

@@ -152,7 +152,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());

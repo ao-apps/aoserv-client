@@ -150,7 +150,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerFarm());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersion());
@@ -159,7 +159,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServer());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getPhysicalServer());

@@ -62,7 +62,7 @@ final public class NetProtocol extends AOServObjectStringKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getProtocols());

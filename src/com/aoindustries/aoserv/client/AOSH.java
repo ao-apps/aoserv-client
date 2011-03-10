@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.security.LoginException;
-import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ShellInterpreter;
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
@@ -20,6 +19,7 @@ import java.io.Reader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1271,13 +1271,11 @@ final public class AOSH extends ShellInterpreter {
                 handleCommand(newArgs);
             } finally {
                 long timeSpan=System.currentTimeMillis()-startTime;
-                int mins=(int)(timeSpan/60000);
-                int secs=(int)(timeSpan%60000);
                 out.println();
                 out.print("real    ");
-                out.print(mins);
+                out.print(timeSpan / 60000);
                 out.print('m');
-                out.print(SQLUtility.getMilliDecimal(secs));
+                out.print(BigDecimal.valueOf(timeSpan % 60000, 3));
                 out.println('s');
                 out.flush();
             }

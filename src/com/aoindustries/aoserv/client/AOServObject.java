@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.graph.BackConnectedDirectedGraphVertex;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.UnionSet;
@@ -36,7 +37,8 @@ abstract public class AOServObject<K extends Comparable<K>>
 implements
     Row,
     Serializable,
-    Cloneable {
+    Cloneable,
+    BackConnectedDirectedGraphVertex<AOServObject<?>,RemoteException> {
 
     private static final long serialVersionUID = 1L;
 
@@ -181,6 +183,8 @@ implements
         return getKey().toString();
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Dependencies and Dependent Objects">
+
     /**
      * Gets an unmodifiable set of objects this object directly depends on.
      * This should result in a directed acyclic graph - there should never be any loops in the graph.
@@ -188,14 +192,16 @@ implements
      * By default, there are no dependencies.
      *
      * @see #getDependentObjects() for the opposite direction
+     *
+     * @see #getConnectedVertices()
      */
-    final public Set<? extends AOServObject> getDependencies() throws RemoteException {
-        UnionSet<AOServObject> unionSet = addDependencies(null);
+    final public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
+        UnionSet<AOServObject<?>> unionSet = addDependencies(null);
         if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
         else return Collections.unmodifiableSet(unionSet);
     }
 
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         return unionSet;
     }
 
@@ -206,16 +212,39 @@ implements
      * By default, there are no dependent objects.
      *
      * @see #getDependencies() for the opposite direction
+     *
+     * @see #getBackConnectedVertices()
      */
-    final public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        UnionSet<AOServObject> unionSet = addDependentObjects(null);
+    final public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
+        UnionSet<AOServObject<?>> unionSet = addDependentObjects(null);
         if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
         else return Collections.unmodifiableSet(unionSet);
     }
 
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         return unionSet;
     }
+
+    /**
+     * Vertices connect to the objects they depend on.
+     *
+     * @see  #getDependencies()
+     */
+    @Override
+    public Set<? extends AOServObject<?>> getConnectedVertices() throws RemoteException {
+        return getDependencies();
+    }
+
+    /**
+     * Vertices connect back to the objects that depend on it.
+     *
+     * @see  #getDependentObjects()
+     */
+    @Override
+    public Set<? extends AOServObject<?>> getBackConnectedVertices() throws RemoteException {
+        return getDependentObjects();
+    }
+    // </editor-fold>
 
     /**
      * Gets value of the column with the provided index, by using the SchemaColumn annotation.

@@ -263,7 +263,7 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
@@ -272,7 +272,7 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFtpGuestUser());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInbox());

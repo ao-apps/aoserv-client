@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client.validate;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.math.LongLong;
-import com.aoindustries.sql.SQLUtility;
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,21 +48,21 @@ public class InetAddressTest extends TestCase {
             );
         }
         long endNanos = System.nanoTime();
-        System.out.println("    "+NUM_TEST+" random InetAddresses created in "+SQLUtility.getMilliDecimal((endNanos-startNanos)/1000)+" ms");
+        System.out.println("    "+NUM_TEST+" random InetAddresses created in "+BigDecimal.valueOf((endNanos-startNanos)/1000, 3)+" ms");
 
         // Test toString performance
         List<String> toParse = new ArrayList<String>(NUM_TEST);
         startNanos = System.nanoTime();
         for(int c=0;c<NUM_TEST;c++) toParse.add(inetAddresses.get(c).toString());
         endNanos = System.nanoTime();
-        System.out.println("    "+NUM_TEST+" toString() in "+SQLUtility.getMilliDecimal((endNanos-startNanos)/1000)+" ms");
+        System.out.println("    "+NUM_TEST+" toString() in "+BigDecimal.valueOf((endNanos-startNanos)/1000, 3)+" ms");
 
         // Test toString performance
         List<InetAddress> parsed = new ArrayList<InetAddress>(NUM_TEST);
         startNanos = System.nanoTime();
         for(int c=0;c<NUM_TEST;c++) parsed.add(InetAddress.valueOf(toParse.get(c)));
         endNanos = System.nanoTime();
-        System.out.println("    "+NUM_TEST+" valueOf(String) in "+SQLUtility.getMilliDecimal((endNanos-startNanos)/1000)+" ms");
+        System.out.println("    "+NUM_TEST+" valueOf(String) in "+BigDecimal.valueOf((endNanos-startNanos)/1000, 3)+" ms");
 
         // Test parsing result of toString
         for(int c=0; c<NUM_TEST; c++) assertEquals(parsed.get(c), inetAddresses.get(c));

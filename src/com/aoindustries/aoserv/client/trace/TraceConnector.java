@@ -8,8 +8,8 @@ package com.aoindustries.aoserv.client.trace;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.aoserv.client.wrapped.*;
 import com.aoindustries.security.LoginException;
-import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ErrorPrinter;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -33,7 +33,7 @@ final public class TraceConnector extends WrappedConnector<TraceConnector,TraceC
             return super.call(callable, allowRetry);
         } finally {
             long nanos = System.nanoTime() - startNanos;
-            ErrorPrinter.printStackTraces(new Throwable(SQLUtility.getMilliDecimal(nanos / 1000)+"ms"), System.err);
+            ErrorPrinter.printStackTraces(new Throwable(BigDecimal.valueOf(nanos / 1000, 3)+"ms"), System.err);
             System.err.flush();
         }
     }

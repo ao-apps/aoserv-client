@@ -63,7 +63,7 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     public TechnologyClass(AOServConnector connector, com.aoindustries.aoserv.client.dto.TechnologyClass dto) {
-        this(connector, connector, dto.getName());
+        this(connector,dto.getName());
     }
 
     @Override
@@ -74,7 +74,7 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologies());
         return unionSet;

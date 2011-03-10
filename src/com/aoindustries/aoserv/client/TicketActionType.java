@@ -69,7 +69,7 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     public TicketActionType(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketActionType dto) {
-        this(connector, dto.getType(), dto.getVisibleAdminOnly());
+        this(connector, dto.getType(), dto.isVisibleAdminOnly());
     }
 
     @Override
@@ -80,7 +80,7 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
         return unionSet;

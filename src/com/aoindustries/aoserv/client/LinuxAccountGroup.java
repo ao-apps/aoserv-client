@@ -105,7 +105,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject> addDependencies(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroup());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
@@ -113,7 +113,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     }
 
     @Override
-    protected UnionSet<AOServObject> addDependentObjects(UnionSet<AOServObject> unionSet) throws RemoteException {
+    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependentObjects(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCvsRepositories());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSites());
