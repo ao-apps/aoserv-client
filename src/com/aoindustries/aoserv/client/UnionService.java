@@ -6,14 +6,12 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.table.Table;
 import com.aoindustries.util.ArraySet;
 import com.aoindustries.util.HashCodeComparator;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -24,12 +22,9 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class UnionService<K extends Comparable<K>, V extends AOServObject<K>> implements AOServService<K,V> {
+abstract public class UnionService<K extends Comparable<K>, V extends AOServObject<K>> extends AbstractService<K,V> {
 
     protected final AOServConnector connector;
-    private final ServiceName serviceName;
-    private final AOServServiceUtils.AnnotationTable<K,V> table;
-    private final Map<K,V> map;
 
     /**
      * The internal objects are stored in an unmodifiable set
@@ -40,15 +35,8 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
     private IndexedSet<V> cachedSet;
 
     protected UnionService(AOServConnector connector, Class<K> keyClass, Class<V> valueClass) {
+        super(keyClass, valueClass);
         this.connector = connector;
-        serviceName = AOServServiceUtils.findServiceNameByAnnotation(getClass());
-        table = new AOServServiceUtils.AnnotationTable<K,V>(this, valueClass);
-        map = new AOServServiceUtils.ServiceMap<K,V>(this, keyClass, valueClass);
-    }
-
-    @Override
-    final public String toString() {
-        return serviceName.toString();
     }
 
     @Override
@@ -87,25 +75,10 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
             ArrayList<V> list = new ArrayList<V>(totalSize);
             for(IndexedSet<? extends V> set : sets) list.addAll(set);
             Collections.sort(list, HashCodeComparator.getInstance());
-            cachedSet = IndexedSet.wrap(serviceName, new ArraySet<V>(list));
+            cachedSet = IndexedSet.wrap(getServiceName(), new ArraySet<V>(list));
             cachedSets = sets;
             return cachedSet;
         }
-    }
-
-    @Override
-    final public ServiceName getServiceName() {
-        return serviceName;
-    }
-
-    @Override
-    final public Table<MethodColumn,V> getTable() {
-        return table;
-    }
-
-    @Override
-    final public Map<K,V> getMap() {
-        return map;
     }
 
     @Override
@@ -131,7 +104,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
                 // Try next subset
             }
         }
-        throw new NoSuchElementException("service="+serviceName+", key="+key);
+        throw new NoSuchElementException("service="+getServiceName()+", key="+key);
     }
 
     @Override
@@ -144,7 +117,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
 
     @Override
     final public IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
-        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(serviceName);
+        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(getServiceName());
         IndexType indexType = table.getColumn(columnName).getIndexType();
         if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+columnName);
         return getSet().filterUniqueSet(columnName, values);
@@ -152,13 +125,13 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
 
     @Override
     final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
-        if(value==null) return IndexedSet.emptyIndexedSet(serviceName);
+        if(value==null) return IndexedSet.emptyIndexedSet(getServiceName());
         return getSet().filterIndexed(columnName, value);
     }
 
     @Override
     final public IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
-        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(serviceName);
+        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(getServiceName());
         return getSet().filterIndexedSet(columnName, values);
     }
 }

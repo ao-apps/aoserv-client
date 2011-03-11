@@ -5,17 +5,24 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.ArraySet;
 import com.aoindustries.util.HashCodeComparator;
+import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.graph.Edge;
+import com.aoindustries.util.graph.SymmetricGraph;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Utilities provided for various AOServConnector implementations.  Not intended for direct use.
@@ -93,5 +100,106 @@ final public class AOServConnectorUtils {
         for(V oldObj : objs) elements.add(setConnector(oldObj, connector));
         Collections.sort(elements, HashCodeComparator.getInstance());
         return IndexedSet.wrap(objs.getServiceName(), new ArraySet<V>(elements));
+    }
+
+    /**
+     * @see  AOServConnector#getDependencyGraph()
+     */
+    public static SymmetricGraph<AOServObject<?>,Edge<AOServObject<?>>,RemoteException> createDependencyMap(final AOServConnector conn) {
+        return new SymmetricGraph<AOServObject<?>,Edge<AOServObject<?>>,RemoteException>() {
+
+            @Override
+            public Set<AOServObject<?>> getVertices() throws RemoteException {
+                Set<AOServObject<?>> vertices = new UnionSet<AOServObject<?>>();
+                for(AOServService<?,?> service : conn.getServices().values()) vertices.addAll(service.getSet());
+                return AoCollections.optimalUnmodifiableSet(vertices);
+            }
+
+            @Override
+            public Set<Edge<AOServObject<?>>> getEdgesFrom(final AOServObject<?> from) throws RemoteException {
+                final Set<? extends AOServObject<?>> tos = from.getDependencies();
+                return new AbstractSet<Edge<AOServObject<?>>>() {
+                    @Override
+                    public int size() {
+                        return tos.size();
+                    }
+                    @Override
+                    public boolean isEmpty() {
+                        return tos.isEmpty();
+                    }
+                    @Override
+                    public boolean contains(Object o) {
+                        if(!(o instanceof Edge)) return false;
+                        @SuppressWarnings("unchecked")
+                        Edge<AOServObject<?>> other = (Edge<AOServObject<?>>)o;
+                        return
+                            from.equals(other.getFrom())
+                            && tos.contains(other.getTo())
+                        ;
+                    }
+                    @Override
+                    public Iterator<Edge<AOServObject<?>>> iterator() {
+                        final Iterator<? extends AOServObject<?>> toIter = tos.iterator();
+                        return new Iterator<Edge<AOServObject<?>>>() {
+                            @Override
+                            public boolean hasNext() {
+                                return toIter.hasNext();
+                            }
+                            @Override
+                            public Edge<AOServObject<?>> next() {
+                                return new Edge<AOServObject<?>>(from, toIter.next());
+                            }
+                            @Override
+                            public void remove() {
+                                throw new UnsupportedOperationException();
+                            }
+                        };
+                    }
+                };
+            }
+
+            @Override
+            public Set<Edge<AOServObject<?>>> getEdgesTo(final AOServObject<?> to) throws RemoteException {
+                final Set<? extends AOServObject<?>> froms = to.getDependentObjects();
+                return new AbstractSet<Edge<AOServObject<?>>>() {
+                    @Override
+                    public int size() {
+                        return froms.size();
+                    }
+                    @Override
+                    public boolean isEmpty() {
+                        return froms.isEmpty();
+                    }
+                    @Override
+                    public boolean contains(Object o) {
+                        if(!(o instanceof Edge)) return false;
+                        @SuppressWarnings("unchecked")
+                        Edge<AOServObject<?>> other = (Edge<AOServObject<?>>)o;
+                        return
+                            to.equals(other.getTo())
+                            && froms.contains(other.getFrom())
+                        ;
+                    }
+                    @Override
+                    public Iterator<Edge<AOServObject<?>>> iterator() {
+                        final Iterator<? extends AOServObject<?>> fromIter = froms.iterator();
+                        return new Iterator<Edge<AOServObject<?>>>() {
+                            @Override
+                            public boolean hasNext() {
+                                return fromIter.hasNext();
+                            }
+                            @Override
+                            public Edge<AOServObject<?>> next() {
+                                return new Edge<AOServObject<?>>(fromIter.next(), to);
+                            }
+                            @Override
+                            public void remove() {
+                                throw new UnsupportedOperationException();
+                            }
+                        };
+                    }
+                };
+            }
+        };
     }
 }

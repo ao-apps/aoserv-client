@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client.cache;
 
 import com.aoindustries.aoserv.client.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.table.Table;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,13 +23,9 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
-abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>> implements AOServService<K,V> {
+abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>> extends AbstractService<K,V> {
 
     final CachedConnector connector;
-    //final Class<K> keyClass;
-    final ServiceName serviceName;
-    final AOServServiceUtils.AnnotationTable<K,V> table;
-    final Map<K,V> map;
     final AOServService<K,V> wrapped;
 
     /**
@@ -47,17 +42,9 @@ abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>>
     private boolean cachedHashValid = false;
 
     CachedService(CachedConnector connector, Class<K> keyClass, Class<V> valueClass, AOServService<K,V> wrapped) {
+        super(keyClass, valueClass);
         this.connector = connector;
-        //this.keyClass = keyClass;
         this.wrapped = wrapped;
-        serviceName = AOServServiceUtils.findServiceNameByAnnotation(getClass());
-        table = new AOServServiceUtils.AnnotationTable<K,V>(this, valueClass);
-        map = new AOServServiceUtils.ServiceMap<K,V>(this, keyClass, valueClass);
-    }
-
-    @Override
-    final public String toString() {
-        return serviceName.toString();
     }
 
     @Override
@@ -71,21 +58,6 @@ abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>>
             if(cachedSet==null) cachedSet = AOServConnectorUtils.setConnector(wrapped.getSet(), connector);
             return cachedSet;
         }
-    }
-
-    @Override
-    final public ServiceName getServiceName() {
-        return serviceName;
-    }
-
-    @Override
-    final public Table<MethodColumn,V> getTable() {
-        return table;
-    }
-
-    @Override
-    final public Map<K,V> getMap() {
-        return map;
     }
 
     @Override
@@ -113,7 +85,7 @@ abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>>
             }
             result = cachedHash.get(key);
         }
-        if(result==null) throw new NoSuchElementException("service="+serviceName+", key="+key);
+        if(result==null) throw new NoSuchElementException("service="+getServiceName()+", key="+key);
         return result;
     }
 
@@ -130,7 +102,7 @@ abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>>
      */
     @Override
     final public IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
-        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(serviceName);
+        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(getServiceName());
         IndexType indexType = table.getColumn(columnName).getIndexType();
         if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+columnName);
         return getSet().filterUniqueSet(columnName, values);
@@ -138,13 +110,13 @@ abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>>
 
     @Override
     final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
-        if(value==null) return IndexedSet.emptyIndexedSet(serviceName);
+        if(value==null) return IndexedSet.emptyIndexedSet(getServiceName());
         return getSet().filterIndexed(columnName, value);
     }
 
     @Override
     final public IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
-        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(serviceName);
+        if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(getServiceName());
         return getSet().filterIndexedSet(columnName, values);
     }
 

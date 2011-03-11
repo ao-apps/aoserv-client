@@ -40,9 +40,7 @@ public interface AOServService<
     AOServConnector getConnector() throws RemoteException;
 
     /**
-     * Gets the set of all accessible objects.  These objects may or
-     * may not be sorted.  Unless otherwise necessary, the set view of the data
-     * should be preferred due to being the fastest.  This set represents an
+     * Gets the set of all accessible objects.  This set represents an
      * unmodifiable snapshot of all objects in the service and will not change
      * even when the underlying data has changed.
      *
@@ -66,8 +64,7 @@ public interface AOServService<
 
     /**
      * Gets a <code>Map</code> view of this service.  Unlike the <code>getSet</code>
-     * and <code>getSortedSet</code> methods, this does not completely act as
-     * a snapshot of the underlying data.
+     * method, this does not completely act as a snapshot of the underlying data.
      */
     Map<K,V> getMap() throws RemoteException;
 

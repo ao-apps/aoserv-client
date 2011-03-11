@@ -11,35 +11,24 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @see  WrappedConnectorFactory
  *
  * @author  AO Industries, Inc.
  */
-abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> implements AOServConnector {
+abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends AbstractConnector {
 
     protected final F factory;
-    Locale locale;
-    final UserId connectAs;
-    private final UserId authenticateAs;
-    private final String password;
-    private final DomainName daemonServer;
 
     final Object connectionLock = new Object();
     private AOServConnector wrapped;
 
     protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
+        super(locale, connectAs, authenticateAs, password, daemonServer);
         this.factory = factory;
-        this.locale = locale;
-        this.connectAs = connectAs;
-        this.authenticateAs = authenticateAs;
-        this.password = password;
-        this.daemonServer = daemonServer;
         aoserverDaemonHosts = new WrappedAOServerDaemonHostService<C,F>(this);
         aoserverResources = new AOServerResourceService(this);
         aoservers = new WrappedAOServerService<C,F>(this);
@@ -225,7 +214,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     final protected AOServConnector getWrapped() throws RemoteException, LoginException {
         synchronized(connectionLock) {
             // (Re)connects to the wrapped factory
-            if(wrapped==null) wrapped = factory.wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+            if(wrapped==null) wrapped = factory.wrapped.newConnector(getLocale(), getConnectAs(), getAuthenticateAs(), getPassword(), getDaemonServer());
             return wrapped;
         }
     }
@@ -258,23 +247,9 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return factory;
     }
 
-    /**
-     * Defaults to <code>true</code>.
-     */
-    @Override
-    public boolean isAoServObjectConnectorSettable() throws RemoteException {
-        return true;
-    }
-
-    @Override
-    final public Locale getLocale() {
-        return locale;
-    }
-
     @Override
     final public void setLocale(final Locale locale) throws RemoteException {
-        if(!this.locale.equals(locale)) {
-            this.locale = locale;
+        if(!getLocale().equals(locale)) {
             call(
                 new Callable<Void>() {
                     @Override
@@ -288,27 +263,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
                     }
                 }
             );
+            super.setLocale(locale);
         }
-    }
-
-    @Override
-    final public UserId getConnectAs() {
-        return connectAs;
-    }
-
-    @Override
-    final public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
-        return getBusinessAdministrators().get(connectAs);
-    }
-
-    @Override
-    final public UserId getAuthenticateAs() {
-        return authenticateAs;
-    }
-
-    @Override
-    final public String getPassword() {
-        return password;
     }
 
     @Override
@@ -326,17 +282,6 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
             },
             command.isIdempotent()
         );
-    }
-
-    private final AtomicReference<Map<ServiceName,AOServService<?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<?,?>>>();
-    @Override
-    final public Map<ServiceName,AOServService<?,?>> getServices() throws RemoteException {
-        Map<ServiceName,AOServService<?,?>> ts = tables.get();
-        if(ts==null) {
-            ts = AOServConnectorUtils.createServiceMap(this);
-            if(!tables.compareAndSet(null, ts)) ts = tables.get();
-        }
-        return ts;
     }
 
     // <editor-fold defaultstate="collapsed" desc="AOServerDaemonHostService">

@@ -12,7 +12,6 @@ import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * An implementation of <code>AOServConnector</code> that transfers entire
@@ -20,22 +19,15 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author  AO Industries, Inc.
  */
-final public class CachedConnector implements AOServConnector {
+final public class CachedConnector extends AbstractConnector {
 
     final CachedConnectorFactory factory;
     final AOServConnector wrapped;
-    Locale locale;
-    final UserId connectAs;
-    private final UserId authenticateAs;
-    private final String password;
 
     CachedConnector(CachedConnectorFactory factory, AOServConnector wrapped) throws RemoteException, LoginException {
+        super(wrapped.getLocale(), wrapped.getConnectAs(), wrapped.getAuthenticateAs(), wrapped.getPassword(), wrapped.getDaemonServer());
         this.factory = factory;
         this.wrapped = wrapped;
-        locale = wrapped.getLocale();
-        connectAs = wrapped.getConnectAs();
-        authenticateAs = wrapped.getAuthenticateAs();
-        password = wrapped.getPassword();
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAoServerDaemonHosts());
         aoserverResources = new AOServerResourceService(this);
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
@@ -204,42 +196,20 @@ final public class CachedConnector implements AOServConnector {
         return factory;
     }
 
+    /**
+     * Because these objects are cached and reused, their connector should not be reset.
+     */
     @Override
     public boolean isAoServObjectConnectorSettable() {
         return false;
     }
 
     @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
     public void setLocale(Locale locale) throws RemoteException {
-        if(!this.locale.equals(locale)) {
+        if(!getLocale().equals(locale)) {
             wrapped.setLocale(locale);
-            this.locale = locale;
+            super.setLocale(locale);
         }
-    }
-
-    @Override
-    public UserId getConnectAs() {
-        return connectAs;
-    }
-
-    @Override
-    public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
-        return getBusinessAdministrators().get(connectAs);
-    }
-
-    @Override
-    public UserId getAuthenticateAs() {
-        return authenticateAs;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
     }
 
     @Override
@@ -248,17 +218,6 @@ final public class CachedConnector implements AOServConnector {
         Map<ServiceName,AOServService<?,?>> services = getServices();
         for(ServiceName service : result.getModifiedServiceNames()) ((CachedService)services.get(service)).clearCache();
         return result;
-    }
-
-    private final AtomicReference<Map<ServiceName,AOServService<?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<?,?>>>();
-    @Override
-    final public Map<ServiceName,AOServService<?,?>> getServices() throws RemoteException {
-        Map<ServiceName,AOServService<?,?>> ts = tables.get();
-        if(ts==null) {
-            ts = AOServConnectorUtils.createServiceMap(this);
-            if(!tables.compareAndSet(null, ts)) ts = tables.get();
-        }
-        return ts;
     }
 
     // <editor-fold defaultstate="collapsed" desc="AOServerDaemonHostService">

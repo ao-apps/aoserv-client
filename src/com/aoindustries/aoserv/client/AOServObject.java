@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.graph.BackConnectedDirectedGraphVertex;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.UnionSet;
@@ -37,8 +36,7 @@ abstract public class AOServObject<K extends Comparable<K>>
 implements
     Row,
     Serializable,
-    Cloneable,
-    BackConnectedDirectedGraphVertex<AOServObject<?>,RemoteException> {
+    Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -223,26 +221,6 @@ implements
 
     protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
         return unionSet;
-    }
-
-    /**
-     * Vertices connect to the objects they depend on.
-     *
-     * @see  #getDependencies()
-     */
-    @Override
-    public Set<? extends AOServObject<?>> getConnectedVertices() throws RemoteException {
-        return getDependencies();
-    }
-
-    /**
-     * Vertices connect back to the objects that depend on it.
-     *
-     * @see  #getDependentObjects()
-     */
-    @Override
-    public Set<? extends AOServObject<?>> getBackConnectedVertices() throws RemoteException {
-        return getDependentObjects();
     }
     // </editor-fold>
 

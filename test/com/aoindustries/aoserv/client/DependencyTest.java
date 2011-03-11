@@ -6,12 +6,12 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.ValidationException;
-import com.aoindustries.graph.GraphUtils;
 import com.aoindustries.security.LoginException;
+import com.aoindustries.util.graph.SymmetricAcyclicGraphChecker;
+import com.aoindustries.util.graph.TopologicalSorter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import junit.framework.Test;
@@ -62,6 +62,7 @@ public class DependencyTest extends TestCase {
             for(ServiceName serviceName : ServiceName.values) System.out.print(serviceName.name().charAt(0));
             System.out.println();
             System.out.print("        ");
+            /*
             List<AOServObject<?>> allObjects = new ArrayList<AOServObject<?>>();
             for(ServiceName serviceName : ServiceName.values) {
                 AOServService<?,?> service = conn.getServices().get(serviceName);
@@ -72,8 +73,8 @@ public class DependencyTest extends TestCase {
                     allObjects.addAll(set);
                     System.out.print('.');
                 }
-            }
-            new GraphUtils<AOServObject<?>,RemoteException>().checkBackConnectedDirectedAcyclicGraph(allObjects, isForward);
+            }*/
+            new SymmetricAcyclicGraphChecker<AOServObject<?>,RemoteException>(conn.getDependencyGraph(), isForward).checkGraph();
             System.out.println();
         }
     }
@@ -113,6 +114,7 @@ public class DependencyTest extends TestCase {
             for(ServiceName serviceName : ServiceName.values) System.out.print(serviceName.name().charAt(0));
             System.out.println();
             System.out.print("        ");
+            /*
             List<AOServObject<?>> allObjects = new ArrayList<AOServObject<?>>();
             for(ServiceName serviceName : ServiceName.values) {
                 AOServService<?,?> service = conn.getServices().get(serviceName);
@@ -123,8 +125,8 @@ public class DependencyTest extends TestCase {
                     allObjects.addAll(set);
                     System.out.print('.');
                 }
-            }
-            List<? extends AOServObject<?>> topological = new GraphUtils<AOServObject<?>,RemoteException>().topologicalSort(allObjects, isForward);
+            }*/
+            List<? extends AOServObject<?>> topological = new TopologicalSorter<AOServObject<?>,RemoteException>(conn.getDependencyGraph(), isForward).sortGraph();
             System.out.println();
         }
     }
@@ -144,6 +146,26 @@ public class DependencyTest extends TestCase {
         for(int c=0; c<NUM_TESTS; c++) {
             long startTime = System.currentTimeMillis();
             doTestTopologicalSort(false);
+            long endTime = System.currentTimeMillis() - startTime;
+            System.out.println("    Finished in "+BigDecimal.valueOf(endTime, 3)+" sec");
+        }
+    }
+
+    private void doTestDependencyGraphIterateVerticesTime() throws RemoteException {
+        for(final AOServConnector conn : conns) {
+            System.out.print("    "+conn.getConnectAs()+": ");
+            Set<AOServObject<?>> vertices = conn.getDependencyGraph().getVertices();
+            int count = 0;
+            for(AOServObject<?> vertex : vertices) count++;
+            System.out.println(count);
+        }
+    }
+
+    public void testDependencyGraphIterateVerticesTime() throws RemoteException {
+        System.out.println("testDependencyGraphIterateVerticesTime:");
+        for(int c=0; c<NUM_TESTS * 10; c++) {
+            long startTime = System.currentTimeMillis();
+            doTestDependencyGraphIterateVerticesTime();
             long endTime = System.currentTimeMillis() - startTime;
             System.out.println("    Finished in "+BigDecimal.valueOf(endTime, 3)+" sec");
         }

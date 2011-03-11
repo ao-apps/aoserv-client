@@ -7,6 +7,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.util.graph.Edge;
+import com.aoindustries.util.graph.SymmetricGraph;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Locale;
@@ -81,6 +83,11 @@ public interface AOServConnector extends Remote {
     String getPassword() throws RemoteException;
 
     /**
+     * Gets the name of the server this connection represents.
+     */
+    DomainName getDaemonServer() throws RemoteException;
+
+    /**
      * Executes the command and retrieves the result.  If the command return
      * value is void, returns a CommandResult containing <code>null</code>.
      */
@@ -93,6 +100,12 @@ public interface AOServConnector extends Remote {
      *          service is at an index corresponding to its unique ID.
      */
     Map<ServiceName,AOServService<?,?>> getServices() throws RemoteException;
+
+    /**
+     * Gets a symmetric directed acyclic graph representing the depedencies between
+     * objects.
+     */
+    SymmetricGraph<AOServObject<?>,Edge<AOServObject<?>>,RemoteException> getDependencyGraph() throws RemoteException;
 
     AOServerDaemonHostService getAoServerDaemonHosts() throws RemoteException;
     AOServerResourceService getAoServerResources() throws RemoteException;

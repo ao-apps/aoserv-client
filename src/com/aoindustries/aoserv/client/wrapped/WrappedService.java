@@ -7,9 +7,7 @@ package com.aoindustries.aoserv.client.wrapped;
 
 import com.aoindustries.aoserv.client.*;
 import com.aoindustries.security.LoginException;
-import com.aoindustries.table.Table;
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -22,24 +20,14 @@ abstract public class WrappedService<
     F extends WrappedConnectorFactory<C,F>,
     K extends Comparable<K>,
     V extends AOServObject<K>
-> implements AOServService<K,V> {
+> extends AbstractService<K,V> {
 
     final WrappedConnector<C,F> connector;
-    final ServiceName serviceName;
-    final Table<MethodColumn,V> table;
-    final Map<K,V> map;
     AOServService<K,V> wrapped;
 
     protected WrappedService(WrappedConnector<C,F> connector, Class<K> keyClass, Class<V> valueClass) {
+        super(keyClass, valueClass);
         this.connector = connector;
-        serviceName = AOServServiceUtils.findServiceNameByAnnotation(getClass());
-        table = new AOServServiceUtils.AnnotationTable<K,V>(this, valueClass);
-        map = new AOServServiceUtils.ServiceMap<K,V>(this, keyClass, valueClass);
-    }
-
-    @Override
-    final public String toString() {
-        return serviceName.toString();
     }
 
     /**
@@ -50,7 +38,7 @@ abstract public class WrappedService<
         synchronized(connector.connectionLock) {
             if(wrapped==null) {
                 try {
-                    wrapped = (AOServService<K,V>)connector.getWrapped().getServices().get(serviceName);
+                    wrapped = (AOServService<K,V>)connector.getWrapped().getServices().get(getServiceName());
                 } catch(LoginException err) {
                     throw new RemoteException(err.getMessage(), err);
                 }
@@ -74,21 +62,6 @@ abstract public class WrappedService<
                 }
             }
         );
-    }
-
-    @Override
-    final public ServiceName getServiceName() {
-        return serviceName;
-    }
-
-    @Override
-    final public Table<MethodColumn,V> getTable() {
-        return table;
-    }
-
-    @Override
-    final public Map<K,V> getMap() {
-        return map;
     }
 
     @Override
