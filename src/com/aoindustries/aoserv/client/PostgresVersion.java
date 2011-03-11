@@ -6,11 +6,11 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,7 +41,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
      * preference.  Index <code>0</code> is the most
      * preferred.
      */
-    private static final List<String> preferredMinorVersions = Collections.unmodifiableList(
+    private static final List<String> preferredMinorVersions = AoCollections.optimalUnmodifiableList(
         Arrays.asList(
             VERSION_8_3,
             VERSION_8_1,

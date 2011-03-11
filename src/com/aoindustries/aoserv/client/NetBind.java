@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
@@ -161,7 +162,7 @@ implements
         if(myParamString==null) return Collections.emptyMap();
         Map<String,String> params = getMonitoringParametersCache.get(myParamString);
         if(params==null) {
-            params = Collections.unmodifiableMap(decodeParameters(myParamString));
+            params = AoCollections.optimalUnmodifiableMap(decodeParameters(myParamString));
             Map<String,String> previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
             if(previous!=null) params = previous;
         }

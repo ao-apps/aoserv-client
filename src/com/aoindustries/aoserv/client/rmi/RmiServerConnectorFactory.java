@@ -108,10 +108,10 @@ final public class RmiServerConnectorFactory implements AOServConnectorFactory {
     /**
      * Connectors are exported as they are created.
      */
-    @Override
-    public AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    //@Override
+    private AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
-            AOServConnector connector = wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+            AOServConnector connector = wrapped.getConnector(locale, connectAs, authenticateAs, password, daemonServer);
             UnicastRemoteObject.exportObject(connector, port.getPort(), csf, ssf);
             for(AOServService<?,?> service : connector.getServices().values()) {
                 UnicastRemoteObject.exportObject(service, port.getPort(), csf, ssf);

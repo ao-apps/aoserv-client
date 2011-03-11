@@ -6,11 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.ArraySet;
-import com.aoindustries.util.HashCodeComparator;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -74,8 +71,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
             for(IndexedSet<? extends V> set : sets) totalSize += set.size();
             ArrayList<V> list = new ArrayList<V>(totalSize);
             for(IndexedSet<? extends V> set : sets) list.addAll(set);
-            Collections.sort(list, HashCodeComparator.getInstance());
-            cachedSet = IndexedSet.wrap(getServiceName(), new ArraySet<V>(list));
+            cachedSet = IndexedSet.wrap(getServiceName(), list);
             cachedSets = sets;
             return cachedSet;
         }

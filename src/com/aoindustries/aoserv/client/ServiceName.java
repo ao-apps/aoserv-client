@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.util.AoCollections;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -204,7 +205,7 @@ public enum ServiceName {
     /**
      * An unmodifiable list of all service names.
      */
-    public static final List<ServiceName> values = Collections.unmodifiableList(
+    public static final List<ServiceName> values = AoCollections.optimalUnmodifiableList(
         Arrays.asList(
             values()
         )

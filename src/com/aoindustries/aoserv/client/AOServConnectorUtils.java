@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.ArraySet;
-import com.aoindustries.util.HashCodeComparator;
 import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.graph.Edge;
 import com.aoindustries.util.graph.SymmetricGraph;
@@ -17,10 +15,8 @@ import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
 import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,7 +55,7 @@ final public class AOServConnectorUtils {
             for(ServiceName tableName : ServiceName.values) {
                 if(!serviceMap.containsKey(tableName)) throw new AssertionError("Table not found: "+tableName);
             }
-            return Collections.unmodifiableMap(serviceMap);
+            return AoCollections.optimalUnmodifiableMap(serviceMap);
         } catch(IllegalAccessException err) {
             throw new RemoteException(err.getMessage(), err);
         } catch(InvocationTargetException err) {
@@ -96,10 +92,9 @@ final public class AOServConnectorUtils {
             }
         }
         if(!needsNewSet) return objs;
-        List<V> elements = new ArrayList<V>(size);
+        ArrayList<V> elements = new ArrayList<V>(size);
         for(V oldObj : objs) elements.add(setConnector(oldObj, connector));
-        Collections.sort(elements, HashCodeComparator.getInstance());
-        return IndexedSet.wrap(objs.getServiceName(), new ArraySet<V>(elements));
+        return IndexedSet.wrap(objs.getServiceName(), elements);
     }
 
     /**

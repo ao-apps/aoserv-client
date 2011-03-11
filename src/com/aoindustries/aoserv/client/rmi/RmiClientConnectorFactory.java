@@ -88,14 +88,14 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
             }
         }
 
-        @Override
-        public AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+        //@Override
+        private AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
             try {
                 // Connect to the remote registry and get each of the stubs
                 Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
                 AOServConnectorFactory serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
                 synchronized(connectors) {
-                    AOServConnector connector = serverFactory.newConnector(locale, connectAs, authenticateAs, password, daemonServer);
+                    AOServConnector connector = serverFactory.getConnector(locale, connectAs, authenticateAs, password, daemonServer);
                     connectors.put(
                         connectAs,
                         authenticateAs,

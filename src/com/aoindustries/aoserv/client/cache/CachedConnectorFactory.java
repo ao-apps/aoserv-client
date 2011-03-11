@@ -46,10 +46,10 @@ final public class CachedConnectorFactory implements AOServConnectorFactory {
         }
     }
 
-    @Override
-    public CachedConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    //@Override
+    private CachedConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
-            CachedConnector connector = new CachedConnector(this, wrapped.newConnector(locale, connectAs, authenticateAs, password, daemonServer));
+            CachedConnector connector = new CachedConnector(this, wrapped.getConnector(locale, connectAs, authenticateAs, password, daemonServer));
             connectors.put(
                 connectAs,
                 authenticateAs,

@@ -7,11 +7,11 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +54,7 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
      * preference.  Index <code>0</code> is the most
      * preferred.
      */
-    public static final List<String> PREFERRED_VERSION_PREFIXES = Collections.unmodifiableList(
+    public static final List<String> PREFERRED_VERSION_PREFIXES = AoCollections.optimalUnmodifiableList(
         Arrays.asList(
             VERSION_5_1_PREFIX,
             VERSION_5_0_PREFIX,

@@ -29,5 +29,5 @@ public interface AOServConnectorFactory extends Remote {
     /**
      * Creates a new <code>AOServConnector</code> for the provided connectAs, authenticateAs, and password.
      */
-    AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException;
+    //AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException;
 }

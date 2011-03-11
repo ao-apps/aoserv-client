@@ -163,7 +163,7 @@ public class DependencyTest extends TestCase {
 
     public void testDependencyGraphIterateVerticesTime() throws RemoteException {
         System.out.println("testDependencyGraphIterateVerticesTime:");
-        for(int c=0; c<NUM_TESTS; c++) {
+        for(int c=0; c<NUM_TESTS*1000; c++) {
             long startTime = System.currentTimeMillis();
             doTestDependencyGraphIterateVerticesTime();
             long endTime = System.currentTimeMillis() - startTime;

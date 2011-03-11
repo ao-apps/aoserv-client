@@ -6,11 +6,11 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.UnionSet;
 import java.lang.reflect.Method;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -195,13 +195,9 @@ public class AOServObjectUtils {
                 throw new AssertionError(message.toString());
             }
             // Make unmodifiable
-            List<MethodColumn> unmod;
             if(size==0) throw new AssertionError("No columns found");
-            if(size==1) unmod = Collections.singletonList(newColumns.get(0));
-            else {
-                newColumns.trimToSize();
-                unmod = Collections.unmodifiableList(newColumns);
-            }
+            newColumns.trimToSize();
+            List<MethodColumn> unmod = AoCollections.optimalUnmodifiableList(newColumns);
             // Put in cache
             List<MethodColumn> existingColumns = columns.putIfAbsent(clazz, unmod);
             methodColumns = existingColumns==null ? unmod : existingColumns;
@@ -220,7 +216,7 @@ public class AOServObjectUtils {
             List<MethodColumn> list = getMethodColumns(clazz);
             Map<String,MethodColumn> newMap = new HashMap<String,MethodColumn>(list.size()*4/3+1);
             for(MethodColumn mc : list) newMap.put(mc.getColumnName(), mc);
-            newMap = Collections.unmodifiableMap(newMap);
+            newMap = AoCollections.optimalUnmodifiableMap(newMap);
             // Put in cache
             Map<String,MethodColumn> existingColumnMap = columnMaps.putIfAbsent(clazz, newMap);
             map = existingColumnMap==null ? newMap : existingColumnMap;

@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.Row;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
@@ -196,7 +197,7 @@ implements
     final public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
         UnionSet<AOServObject<?>> unionSet = addDependencies(null);
         if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
-        else return Collections.unmodifiableSet(unionSet);
+        else return AoCollections.optimalUnmodifiableSet(unionSet);
     }
 
     protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
@@ -216,7 +217,7 @@ implements
     final public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
         UnionSet<AOServObject<?>> unionSet = addDependentObjects(null);
         if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
-        else return Collections.unmodifiableSet(unionSet);
+        else return AoCollections.optimalUnmodifiableSet(unionSet);
     }
 
     protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {

@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -100,7 +101,7 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
             this.setPasswordAllowed = setPasswordAllowed;
             this.passwordStrength = passwordStrength;
             if(allowedShells.length==1) this.allowedShells = Collections.singleton(allowedShells[0]);
-            else this.allowedShells = Collections.unmodifiableSet(new HashSet<UnixPath>(Arrays.asList(allowedShells)));
+            else this.allowedShells = AoCollections.optimalUnmodifiableSet(new HashSet<UnixPath>(Arrays.asList(allowedShells)));
         }
         /*
         public String getResourceType() {

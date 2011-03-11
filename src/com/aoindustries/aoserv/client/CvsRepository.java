@@ -7,11 +7,11 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,7 +29,7 @@ final public class CvsRepository extends AOServerResource implements Comparable<
      */
     public static final long DEFAULT_MODE=0770;
 
-    public static final List<Long> VALID_MODES = Collections.unmodifiableList(
+    public static final List<Long> VALID_MODES = AoCollections.optimalUnmodifiableList(
         Arrays.asList(
             Long.valueOf(0700),
             Long.valueOf(0750),

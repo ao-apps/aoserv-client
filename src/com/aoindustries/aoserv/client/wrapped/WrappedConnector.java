@@ -214,7 +214,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     final protected AOServConnector getWrapped() throws RemoteException, LoginException {
         synchronized(connectionLock) {
             // (Re)connects to the wrapped factory
-            if(wrapped==null) wrapped = factory.wrapped.newConnector(getLocale(), getConnectAs(), getAuthenticateAs(), getPassword(), getDaemonServer());
+            if(wrapped==null) wrapped = factory.wrapped.getConnector(getLocale(), getConnectAs(), getAuthenticateAs(), getPassword(), getDaemonServer());
             return wrapped;
         }
     }

@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.CurrencyComparator;
@@ -665,7 +666,7 @@ implements
             Currency usd = Currency.getInstance("USD");
             totals.put(usd, new Money(usd, BigDecimal.ZERO));
         }
-        return Collections.unmodifiableSortedMap(totals);
+        return AoCollections.optimalUnmodifiableSortedMap(totals);
     }
 
     /**

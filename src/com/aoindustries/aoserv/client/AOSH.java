@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.security.LoginException;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.ShellInterpreter;
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
@@ -24,7 +25,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -64,7 +64,7 @@ final public class AOSH extends ShellInterpreter {
         /**
          * Unmodifiable list of values.
          */
-        public static final List<BuiltIn> values = Collections.unmodifiableList(Arrays.asList(values()));
+        public static final List<BuiltIn> values = AoCollections.optimalUnmodifiableList(Arrays.asList(values()));
 
         private final String syntax;
 

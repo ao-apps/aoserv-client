@@ -45,8 +45,8 @@ abstract public class WrappedConnectorFactory<C extends WrappedConnector<C,F>, F
         }
     }
 
-    @Override
-    final public C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    //@Override
+    final private C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
         synchronized(connectors) {
             C connector = newWrappedConnector(locale, connectAs, authenticateAs, password, daemonServer);
             connectors.put(

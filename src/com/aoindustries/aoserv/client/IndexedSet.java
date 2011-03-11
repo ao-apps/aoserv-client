@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.ArraySet;
 import com.aoindustries.util.ArraySortedSet;
 import com.aoindustries.util.HashCodeComparator;
@@ -40,7 +41,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
             Set<AOServObject> emptySet = Collections.emptySet();
             emptyIndexedSets.put(serviceName, new IndexedSet<AOServObject>(serviceName, emptySet));
         }
-        EMPTY_INDEXED_SETS = Collections.unmodifiableMap(emptyIndexedSets);
+        EMPTY_INDEXED_SETS = AoCollections.optimalUnmodifiableMap(emptyIndexedSets);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,6 +92,20 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         if(size==1) return wrap(serviceName, wrapped.iterator().next());
         wrapped.trimToSize();
         return new IndexedSet<T>(serviceName, wrapped);
+    }
+
+    /**
+     * Wraps an unsorted ArrayList.  The list will be sorted in-place.
+     */
+    public static <T extends AOServObject<?>> IndexedSet<T> wrap(ServiceName serviceName, ArrayList<T> wrapped) {
+        int size = wrapped.size();
+        // Empty
+        if(size==0) return emptyIndexedSet(serviceName);
+        // Singleton
+        if(size==1) return wrap(serviceName, wrapped.get(0));
+        wrapped.trimToSize();
+        Collections.sort(wrapped, HashCodeComparator.getInstance());
+        return new IndexedSet<T>(serviceName, new ArraySet<T>(wrapped));
     }
 
     /**
@@ -338,8 +353,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
                     }
                 }
             }
-            Collections.sort(results, HashCodeComparator.getInstance());
-            return wrap(serviceName, new ArraySet<E>(results));
+            return wrap(serviceName, results);
         }
     }
 
@@ -380,8 +394,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
             indexedHash = new HashMap<Object,IndexedSet<E>>(listByValue.size()*4/3+1);
             for(Map.Entry<Object,ArrayList<E>> entry : listByValue.entrySet()) {
                 ArrayList<E> list = entry.getValue();
-                Collections.sort(list, HashCodeComparator.getInstance());
-                indexedHash.put(entry.getKey(), wrap(serviceName, new ArraySet<E>(list)));
+                indexedHash.put(entry.getKey(), wrap(serviceName, list));
             }
             indexedHashes.put(columnName, indexedHash);
         }
@@ -419,8 +432,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
                     if(values.contains(value)) results.addAll(entry.getValue());
                 }
             }
-            Collections.sort(results, HashCodeComparator.getInstance());
-            return wrap(serviceName, new ArraySet<E>());
+            return wrap(serviceName, results);
         }
     }
 }

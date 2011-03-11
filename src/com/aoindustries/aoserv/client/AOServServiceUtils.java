@@ -11,7 +11,6 @@ import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.AbstractSet;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -66,17 +65,6 @@ final public class AOServServiceUtils {
             findServiceNameByAnnotationCache.put(clazz, tname);
         }
         return tname;
-    }
-
-    /**
-     * Wraps the set to make it unmodifiable.  Takes advantage of
-     * <code>Collections.emptySet</code> and <code>Collections.singleton</code> when possible.
-     */
-    public static <T> Set<T> unmodifiableSet(Set<? extends T> objs) {
-        int size = objs.size();
-        if(size==0) return Collections.emptySet();
-        if(size==1) return Collections.singleton(objs.iterator().next());
-        return Collections.unmodifiableSet(objs);
     }
 
     /**
