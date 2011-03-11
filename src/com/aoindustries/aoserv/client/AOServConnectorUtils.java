@@ -8,7 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.ArraySet;
 import com.aoindustries.util.HashCodeComparator;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.graph.Edge;
 import com.aoindustries.util.graph.SymmetricGraph;
 import java.lang.reflect.InvocationTargetException;
@@ -110,8 +110,11 @@ final public class AOServConnectorUtils {
 
             @Override
             public Set<AOServObject<?>> getVertices() throws RemoteException {
-                Set<AOServObject<?>> vertices = new UnionSet<AOServObject<?>>();
-                for(AOServService<?,?> service : conn.getServices().values()) vertices.addAll(service.getSet());
+                Set<AOServObject<?>> vertices = new UnionClassSet<AOServObject<?>>();
+                for(AOServService<?,?> service : conn.getServices().values()) {
+                    // UnionServices do not add any new types of rows.
+                    if(!(service instanceof UnionService)) vertices.addAll(service.getSet());
+                }
                 return AoCollections.optimalUnmodifiableSet(vertices);
             }
 
