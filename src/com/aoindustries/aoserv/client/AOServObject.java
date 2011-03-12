@@ -217,7 +217,7 @@ implements
     final public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
         UnionSet<AOServObject<?>> unionSet = addDependentObjects(null);
         if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
-        else return AoCollections.optimalUnmodifiableSet(unionSet);
+        else return Collections.unmodifiableSet(unionSet);
     }
 
     protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {

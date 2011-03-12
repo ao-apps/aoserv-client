@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
  */
 public class DependencyTest extends TestCase {
 
-    private static final int NUM_TESTS = 1;
+    private static final int NUM_TESTS = 5;
 
     private List<AOServConnector> conns;
 
@@ -163,7 +163,7 @@ public class DependencyTest extends TestCase {
 
     public void testDependencyGraphIterateVerticesTime() throws RemoteException {
         System.out.println("testDependencyGraphIterateVerticesTime:");
-        for(int c=0; c<NUM_TESTS*1000; c++) {
+        for(int c=0; c<NUM_TESTS; c++) {
             long startTime = System.currentTimeMillis();
             doTestDependencyGraphIterateVerticesTime();
             long endTime = System.currentTimeMillis() - startTime;
