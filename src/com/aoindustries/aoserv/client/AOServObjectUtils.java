@@ -66,66 +66,6 @@ public class AOServObjectUtils {
         }
     }
 
-    /**
-     * Compares two timestamps allowing for nulls, sorts non-null before null.
-     */
-    /*
-    public static int compare(Timestamp obj1, Timestamp obj2) {
-        if(obj1!=null) {
-            return obj2!=null ? obj1.compareTo(obj2) : -1;
-        } else {
-            return obj2!=null ? 1 : 0;
-        }
-    }*/
-
-    /**
-     * Adds the set of objects to the union.
-     */
-    /*
-    public static <T extends AOServObject<?>> UnionSet<T> addDependencyUnionSet(UnionSet<T> unionSet, Set<? extends T> set) {
-        if(!set.isEmpty()) {
-            if(unionSet==null) unionSet = new UnionSet<T>(set);
-            else unionSet.addAll(set);
-        }
-        return unionSet;
-    }*/
-
-    /**
-     * Adds an object to the union if the reference is not null.
-     */
-    /*
-    public static <T extends AOServObject<?>> UnionSet<T> addDependencyUnionSet(UnionSet<T> unionSet, T obj) {
-        if(obj!=null) {
-            if(unionSet==null) unionSet = new UnionSet<T>();
-            unionSet.add(obj);
-        }
-        return unionSet;
-    }*/
-
-    /**
-     * Adds the set of objects to the union.
-     */
-    /*
-    public static UnionClassSet<AOServObject<?>> addDependencySet(UnionClassSet<AOServObject<?>> unionSet, Set<? extends AOServObject<?>> set) {
-        if(set!=null && !set.isEmpty()) {
-            if(unionSet==null) unionSet = new UnionClassSet<AOServObject<?>>(set);
-            else unionSet.addAll(set);
-        }
-        return unionSet;
-    }*/
-
-    /**
-     * Adds an object to the union if the reference is not null.
-     */
-    /*
-    public static UnionClassSet<AOServObject<?>> addDependencySet(UnionClassSet<AOServObject<?>> unionSet, AOServObject<?> obj) {
-        if(obj!=null) {
-            if(unionSet==null) unionSet = new UnionClassSet<AOServObject<?>>();
-            unionSet.addAll(Collections.singleton(obj));
-        }
-        return unionSet;
-    }*/
-
     private static final ConcurrentMap<Class<? extends AOServObject>,List<MethodColumn>> columns = new ConcurrentHashMap<Class<? extends AOServObject>, List<MethodColumn>>(ServiceName.values.size()*4/3+1);
 
     /**
