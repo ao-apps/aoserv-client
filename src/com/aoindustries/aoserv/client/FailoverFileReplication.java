@@ -9,7 +9,7 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
@@ -198,7 +198,7 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBackupPartition());
@@ -207,8 +207,8 @@ implements
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileSchedules());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
         return unionSet;

@@ -7,7 +7,9 @@ package com.aoindustries.aoserv.client;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @see  AOServerResource
@@ -21,22 +23,28 @@ public class AOServerResourceService extends UnionService<Integer,AOServerResour
         super(connector, Integer.class, AOServerResource.class);
     }
 
+    private final AtomicReference<List<AOServService<Integer, ? extends AOServerResource>>> subservices = new AtomicReference<List<AOServService<Integer, ? extends AOServerResource>>>();
+
     @Override
     protected List<AOServService<Integer, ? extends AOServerResource>> getSubServices() throws RemoteException {
-        List<AOServService<Integer, ? extends AOServerResource>> subservices =
-            new ArrayList<AOServService<Integer, ? extends AOServerResource>>(12);
-        subservices.add(connector.getCvsRepositories());
-        subservices.add(connector.getHttpdServers());
-        subservices.add(connector.getHttpdSites());
-        subservices.add(connector.getLinuxAccounts());
-        subservices.add(connector.getLinuxGroups());
-        subservices.add(connector.getMysqlDatabases());
-        subservices.add(connector.getMysqlServers());
-        subservices.add(connector.getMysqlUsers());
-        subservices.add(connector.getPostgresDatabases());
-        subservices.add(connector.getPostgresServers());
-        subservices.add(connector.getPostgresUsers());
-        subservices.add(connector.getPrivateFtpServers());
-        return subservices;
+        List<AOServService<Integer, ? extends AOServerResource>> ss = subservices.get();
+        if(ss==null) {
+            ss = new ArrayList<AOServService<Integer, ? extends AOServerResource>>(12);
+            ss.add(connector.getCvsRepositories());
+            ss.add(connector.getHttpdServers());
+            ss.add(connector.getHttpdSites());
+            ss.add(connector.getLinuxAccounts());
+            ss.add(connector.getLinuxGroups());
+            ss.add(connector.getMysqlDatabases());
+            ss.add(connector.getMysqlServers());
+            ss.add(connector.getMysqlUsers());
+            ss.add(connector.getPostgresDatabases());
+            ss.add(connector.getPostgresServers());
+            ss.add(connector.getPostgresUsers());
+            ss.add(connector.getPrivateFtpServers());
+            ss = Collections.unmodifiableList(ss);
+            if(!subservices.compareAndSet(null, ss)) ss = subservices.get(); // Created by another thread
+        }
+        return ss;
     }
 }

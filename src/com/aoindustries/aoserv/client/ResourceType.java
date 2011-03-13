@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -90,10 +90,12 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDependentObjectByResourceType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
+        for(AOServService<Integer,? extends Resource> subService : getConnector().getResources().getSubServices()) {
+            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(Resource.COLUMN_RESOURCE_TYPE, this));
+        }
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionLimits());
         return unionSet;
     }

@@ -8,6 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
+import com.aoindustries.util.UnionClassSet;
+import com.aoindustries.util.UnionMethodSet;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.CurrencyComparator;
@@ -22,7 +24,9 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -365,7 +369,7 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getParentBusiness());
         // Caused cycle in dependency DAG: unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
@@ -374,9 +378,19 @@ implements
         return unionSet;
     }
 
+    private static final Map<Class<? extends AOServObject<?>>, ? extends List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods
+         = getDependentObjectsMethods(Business.class);
+
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    @SuppressWarnings("unchecked")
+    public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
+        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependentObjectsMethods);
+    }
+
+    /*
+    @Override
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoservRoles());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getChildBusinesses());
@@ -384,8 +398,12 @@ implements
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCards());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessors());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactionsByCreditCardAccounting());
+
+        UnionSet<CreditCardTransaction> creditCardTransactions = null;
+        creditCardTransactions = AOServObjectUtils.addDependencyUnionSet(creditCardTransactions, getCreditCardTransactions());
+        creditCardTransactions = AOServObjectUtils.addDependencyUnionSet(creditCardTransactions, getCreditCardTransactionsByCreditCardAccounting());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, creditCardTransactions);
+
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLogs());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getDnsZones());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupNames());
@@ -402,99 +420,129 @@ implements
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabases());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionBusinesses());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
+        for(AOServService<Integer,? extends Resource> subService : getConnector().getResources().getSubServices()) {
+            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(Resource.COLUMN_ACCOUNTING, this));
+        }
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerFarms());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsernames());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactionsBySourceAccounting());
+
+        UnionSet<TicketAction> ticketActions = null;
+        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldBusiness());
+        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
+
+        UnionSet<Transaction> transactions = null;
+        transactions = AOServObjectUtils.addDependencyUnionSet(transactions, getTransactions());
+        transactions = AOServObjectUtils.addDependencyUnionSet(transactions, getTransactionsBySourceAccounting());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, transactions);
+
         return unionSet;
     }
+     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /**
      * Gets the Brand for this business or <code>null</code> if not a brand.
      */
+    @DependentObjectSet
     public IndexedSet<AOServRole> getAoservRoles() throws RemoteException {
         return getConnector().getAoservRoles().filterIndexed(AOServRole.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSingleton
     public Brand getBrand() throws RemoteException {
         return getConnector().getBrands().filterUnique(Brand.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Business> getChildBusinesses() throws RemoteException {
         return getConnector().getBusinesses().filterIndexed(COLUMN_PARENT, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
         return getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
         return getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<GroupName> getGroupNames() throws RemoteException {
         return getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Resource> getResources() throws RemoteException {
         return getConnector().getResources().filterIndexed(Resource.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PackageDefinitionBusiness> getPackageDefinitionBusinesses() throws RemoteException {
         return getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Server> getServers() throws RemoteException {
         return getConnector().getServers().filterIndexed(Server.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<ServerFarm> getServerFarms() throws RemoteException {
         return getConnector().getServerFarms().filterIndexed(ServerFarm.COLUMN_OWNER, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Username> getUsernames() throws RemoteException {
         return getConnector().getUsernames().filterIndexed(Username.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<CreditCardProcessor> getCreditCardProcessors() throws RemoteException {
     	return getConnector().getCreditCardProcessors().filterIndexed(CreditCardProcessor.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
     	return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
     	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws RemoteException {
     	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByOldBusiness() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByNewBusiness() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Ticket> getTickets() throws RemoteException {
         return getConnector().getTickets().filterIndexed(Ticket.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
         return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_ACCOUNTING, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Transaction> getTransactionsBySourceAccounting() throws RemoteException {
         return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_SOURCE_ACCOUNTING, this);
     }
@@ -515,6 +563,7 @@ implements
     /**
      * Gets all of the <code>BusinessProfile</code>s for this <code>Business</code>.
      */
+    @DependentObjectSet
     public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
         return getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_ACCOUNTING, this);
     }

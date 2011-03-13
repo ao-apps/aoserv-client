@@ -10,7 +10,7 @@ import com.aoindustries.aoserv.client.command.CheckUsernamePasswordCommand;
 import com.aoindustries.aoserv.client.command.SetUsernamePasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -101,7 +101,7 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         // Caused cycle in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
@@ -109,8 +109,8 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccounts());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUsers());

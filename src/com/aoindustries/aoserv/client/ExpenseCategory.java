@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -53,8 +53,8 @@ final public class ExpenseCategory extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
         return unionSet;
     }

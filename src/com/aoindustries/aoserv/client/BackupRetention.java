@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 
@@ -53,10 +54,14 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxesByTrashEmailRetention());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxesByJunkEmailRetention());
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
+        
+        UnionSet<EmailInbox> emailInboxes = null;
+        emailInboxes = AOServObjectUtils.addDependencyUnionSet(emailInboxes, getEmailInboxesByTrashEmailRetention());
+        emailInboxes = AOServObjectUtils.addDependencyUnionSet(emailInboxes, getEmailInboxesByJunkEmailRetention());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, emailInboxes);
+
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxAddresses());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
         return unionSet;

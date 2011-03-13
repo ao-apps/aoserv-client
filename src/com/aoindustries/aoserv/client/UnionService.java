@@ -45,6 +45,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
      * Gets the individual services that should be combined into a single view.
      * They must be returned in the same order every time so the cached
      * union may be reused when no underlying set has changed.
+     * This should return all direct dependencies, even if they are also a UnionService.
      */
     protected abstract List<AOServService<K,? extends V>> getSubServices() throws RemoteException;
 

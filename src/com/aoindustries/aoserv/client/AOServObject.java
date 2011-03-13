@@ -7,18 +7,31 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.Row;
-import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.Internable;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
+import com.aoindustries.util.UnionMethodSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
 import java.io.Serializable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -194,14 +207,86 @@ implements
      *
      * @see #getConnectedVertices()
      */
-    final public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
-        UnionSet<AOServObject<?>> unionSet = addDependencies(null);
+    public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
+        UnionClassSet<AOServObject<?>> unionSet = addDependencies(null);
         if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
-        else return AoCollections.optimalUnmodifiableSet(unionSet);
+        //else return AoCollections.optimalUnmodifiableSet(unionSet);
+        else return unionSet;
     }
 
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         return unionSet;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    protected static @interface DependentObjectSet {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    protected static @interface DependentObjectSingleton {
+    }
+
+    /**
+     * Gets the set of methods that return objects that are dependent on this object.
+     * Methods are annotated for this purpose.
+     */
+    protected static Map<Class<? extends AOServObject<?>>, ? extends List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods(Class<? extends AOServObject<?>> clazz) {
+        Map<Class<? extends AOServObject<?>>, List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods
+            = new LinkedHashMap<Class<? extends AOServObject<?>>, List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>>();
+        for(Method method : clazz.getMethods()) {
+            int modifiers = method.getModifiers();
+            if(
+                Modifier.isPublic(modifiers)
+                && !Modifier.isStatic(modifiers)
+            ) {
+                boolean isDependentObjectSet = method.isAnnotationPresent(DependentObjectSet.class);
+                boolean isDependentObjectSingleton = method.isAnnotationPresent(DependentObjectSingleton.class);
+                if(isDependentObjectSet && isDependentObjectSingleton) throw new RuntimeException("Method may not be both @DependentObjectSet and @DependentObjectSingleton: "+clazz.getName()+'.'+method.getName());
+                UnionMethodSet.Method<AOServObject<?>> unionMethod;
+                Class<? extends AOServObject<?>> returnType;
+                if(isDependentObjectSet) {
+                    // Make sure is a Set
+                    Class<?> setType = method.getReturnType();
+                    if(!Set.class.isAssignableFrom(setType)) throw new RuntimeException("@DependentObjectSet method must return a Set: "+clazz.getName()+'.'+method.getName());
+                    // Get the return type from the generic type parameters
+                    Type[] genericTypes = ((ParameterizedType)method.getGenericReturnType()).getActualTypeArguments();
+                    if(genericTypes.length==0) throw new RuntimeException("Generic type not found for @DependentObjectSet method: "+clazz.getName()+'.'+method.getName());
+                    if(genericTypes.length>1) throw new RuntimeException("Only one generic type allowed for @DependentObjectSet method: "+clazz.getName()+'.'+method.getName());
+                    unionMethod = new UnionMethodSet.SetMethod<AOServObject<?>>(method);
+                    @SuppressWarnings("unchecked")
+                    Class<? extends AOServObject<?>> returnTypeFix = (Class<? extends AOServObject<?>>)((Class<?>)genericTypes[0]).asSubclass(AOServObject.class);
+                    returnType = returnTypeFix;
+                } else if(isDependentObjectSingleton) {
+                    if(Set.class.isAssignableFrom(method.getReturnType())) throw new RuntimeException("@DependentObjectSingleton method may not return a Set: "+clazz.getName()+'.'+method.getName());
+                    unionMethod = new UnionMethodSet.SingletonMethod<AOServObject<?>>(method);
+                    @SuppressWarnings("unchecked")
+                    Class<? extends AOServObject<?>> returnTypeFix = (Class<? extends AOServObject<?>>)method.getReturnType().asSubclass(AOServObject.class);
+                    returnType = returnTypeFix;
+                } else {
+                    unionMethod = null;
+                    returnType = null;
+                }
+                if(unionMethod!=null) {
+                    List<? extends UnionMethodSet.Method<? extends AOServObject<?>>> methods = getDependentObjectsMethods.get(returnType);
+                    if(methods==null) {
+                        // Add first as singletonList
+                        List<UnionMethodSet.Method<AOServObject<?>>> test = Collections.singletonList(unionMethod);
+                        getDependentObjectsMethods.put(returnType, test);
+                    } else {
+                        // Convert to arraylist for second
+                        List<UnionMethodSet.Method<? extends AOServObject<?>>> test = new ArrayList<UnionMethodSet.Method<? extends AOServObject<?>>>(methods.size()+1);
+                        test.addAll(methods);
+                        test.add(unionMethod);
+                        getDependentObjectsMethods.put(returnType, test);
+                    }
+                }
+            }
+        }
+        return getDependentObjectsMethods;
     }
 
     /**
@@ -214,13 +299,14 @@ implements
      *
      * @see #getBackConnectedVertices()
      */
-    final public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
-        UnionSet<AOServObject<?>> unionSet = addDependentObjects(null);
+    public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
+        UnionClassSet<AOServObject<?>> unionSet = addDependentObjects(null);
         if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
-        else return Collections.unmodifiableSet(unionSet);
+        //else return AoCollections.optimalUnmodifiableSet(unionSet);
+        else return unionSet;
     }
 
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         return unionSet;
     }
     // </editor-fold>

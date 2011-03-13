@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.io.UnsupportedEncodingException;
@@ -204,7 +205,7 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getIpAddress());
@@ -214,11 +215,15 @@ implements
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServerByDaemonNetBind());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServerByDaemonConnectNetBind());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServerByJilterNetBind());
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
+
+        UnionSet<AOServer> aoServers = null;
+        aoServers = AOServObjectUtils.addDependencyUnionSet(aoServers, getAOServerByDaemonNetBind());
+        aoServers = AOServObjectUtils.addDependencyUnionSet(aoServers, getAOServerByDaemonConnectNetBind());
+        aoServers = AOServObjectUtils.addDependencyUnionSet(aoServers, getAOServerByJilterNetBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, aoServers);
+
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandByAowebStrutsVncBind());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetTcpRedirect());
@@ -226,11 +231,14 @@ implements
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPrivateFtpServer());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmartHost(),
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdBind(),
+
+        // TODO: As union
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByJNPPort(),
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByWebserverPort(),
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByRMIPort(),
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByHypersonicPort(),
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByJMXPort(),
+
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSharedTomcatByShutdownPort(),
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdWorker(),
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatStdSiteByShutdownPort(),

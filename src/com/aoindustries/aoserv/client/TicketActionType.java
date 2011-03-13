@@ -6,8 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
+import java.util.Set;
 
 /**
  * All of the types of ticket changes are represented by these
@@ -80,11 +80,17 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
-        return unionSet;
+    public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
+        return getTicketActions();
     }
+
+    /*
+    @Override
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, );
+        return unionSet;
+    }*/
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">

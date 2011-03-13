@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -283,23 +284,29 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDaemonBind());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDaemonDeviceID());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDaemonConnectBind());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTimeZone());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getJilterBind());
+
+        UnionSet<NetBind> netBinds = null;
+        netBinds = AOServObjectUtils.addDependencyUnionSet(netBinds, getDaemonBind());
+        netBinds = AOServObjectUtils.addDependencyUnionSet(netBinds, getDaemonConnectBind());
+        netBinds = AOServObjectUtils.addDependencyUnionSet(netBinds, getJilterBind());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, netBinds);
+
         return unionSet;
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerDaemonHosts());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResources());
+        for(AOServService<Integer,? extends AOServerResource> subService : getConnector().getAoServerResources().getSubServices()) {
+            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(AOServerResource.COLUMN_AO_SERVER, this));
+        }
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBackupPartitions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNestedAoServers());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxServerAccounts());

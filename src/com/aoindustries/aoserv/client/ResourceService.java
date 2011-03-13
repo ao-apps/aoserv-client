@@ -7,7 +7,9 @@ package com.aoindustries.aoserv.client;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @see  Resource
@@ -21,13 +23,20 @@ public class ResourceService extends UnionService<Integer,Resource> {
         super(connector, Integer.class, Resource.class);
     }
 
+    private final AtomicReference<List<AOServService<Integer, ? extends Resource>>> subservices = new AtomicReference<List<AOServService<Integer, ? extends Resource>>>();
+
     @Override
     protected List<AOServService<Integer, ? extends Resource>> getSubServices() throws RemoteException {
-        List<AOServService<Integer, ? extends Resource>> subservices = new ArrayList<AOServService<Integer, ? extends Resource>>(4);
-        subservices.add(connector.getAoServerResources());
-        subservices.add(connector.getDnsRecords());
-        subservices.add(connector.getDnsZones());
-        subservices.add(connector.getServerResources());
-        return subservices;
+        List<AOServService<Integer, ? extends Resource>> ss = subservices.get();
+        if(ss==null) {
+            ss = new ArrayList<AOServService<Integer, ? extends Resource>>(4);
+            ss.add(connector.getAoServerResources());
+            ss.add(connector.getDnsRecords());
+            ss.add(connector.getDnsZones());
+            ss.add(connector.getServerResources());
+            ss = Collections.unmodifiableList(ss);
+            if(!subservices.compareAndSet(null, ss)) ss = subservices.get(); // Created by another thread
+        }
+        return ss;
     }
 }

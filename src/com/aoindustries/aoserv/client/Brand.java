@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -545,11 +546,15 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getSmtpEmailInbox());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getImapEmailInbox());
+
+        UnionSet<EmailInbox> emailInboxes = null;
+        emailInboxes = AOServObjectUtils.addDependencyUnionSet(emailInboxes, getSmtpEmailInbox());
+        emailInboxes = AOServObjectUtils.addDependencyUnionSet(emailInboxes, getImapEmailInbox());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, emailInboxes);
+
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSupportEmailAddress());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupEmailAddress);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketEncryptionFrom());
@@ -561,8 +566,8 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupRequests());

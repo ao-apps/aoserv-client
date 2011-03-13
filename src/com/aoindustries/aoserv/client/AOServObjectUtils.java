@@ -7,10 +7,12 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import java.lang.reflect.Method;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,9 +84,9 @@ public class AOServObjectUtils {
     /**
      * Adds the set of objects to the union.
      */
-    public static UnionSet<AOServObject<?>> addDependencySet(UnionSet<AOServObject<?>> unionSet, Set<? extends AOServObject<?>> set) {
+    public static <T extends AOServObject<?>> UnionSet<T> addDependencyUnionSet(UnionSet<T> unionSet, Set<? extends T> set) {
         if(!set.isEmpty()) {
-            if(unionSet==null) unionSet = new UnionSet<AOServObject<?>>(set);
+            if(unionSet==null) unionSet = new UnionSet<T>(set);
             else unionSet.addAll(set);
         }
         return unionSet;
@@ -93,10 +95,32 @@ public class AOServObjectUtils {
     /**
      * Adds an object to the union if the reference is not null.
      */
-    public static UnionSet<AOServObject<?>> addDependencySet(UnionSet<AOServObject<?>> unionSet, AOServObject<?> obj) {
+    public static <T extends AOServObject<?>> UnionSet<T> addDependencyUnionSet(UnionSet<T> unionSet, T obj) {
         if(obj!=null) {
-            if(unionSet==null) unionSet = new UnionSet<AOServObject<?>>();
+            if(unionSet==null) unionSet = new UnionSet<T>();
             unionSet.add(obj);
+        }
+        return unionSet;
+    }
+
+    /**
+     * Adds the set of objects to the union.
+     */
+    public static UnionClassSet<AOServObject<?>> addDependencySet(UnionClassSet<AOServObject<?>> unionSet, Set<? extends AOServObject<?>> set) {
+        if(set!=null && !set.isEmpty()) {
+            if(unionSet==null) unionSet = new UnionClassSet<AOServObject<?>>(set);
+            else unionSet.addAll(set);
+        }
+        return unionSet;
+    }
+
+    /**
+     * Adds an object to the union if the reference is not null.
+     */
+    public static UnionClassSet<AOServObject<?>> addDependencySet(UnionClassSet<AOServObject<?>> unionSet, AOServObject<?> obj) {
+        if(obj!=null) {
+            if(unionSet==null) unionSet = new UnionClassSet<AOServObject<?>>();
+            unionSet.addAll(Collections.singleton(obj));
         }
         return unionSet;
     }

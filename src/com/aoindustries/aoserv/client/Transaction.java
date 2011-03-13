@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
@@ -253,10 +254,14 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getSourceBusiness());
+
+        UnionSet<Business> businesses = null;
+        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getBusiness());
+        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getSourceBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, businesses);
+
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getType());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPaymentType());
@@ -266,8 +271,8 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
         return unionSet;
     }

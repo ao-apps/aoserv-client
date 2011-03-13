@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
@@ -150,7 +150,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerFarm());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersion());
@@ -159,8 +159,8 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServer());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getPhysicalServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServer());
@@ -168,7 +168,9 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevices());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerResources());
+        for(AOServService<Integer,? extends ServerResource> subService : getConnector().getServerResources().getSubServices()) {
+            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(ServerResource.COLUMN_SERVER, this));
+        }
         return unionSet;
     }
     // </editor-fold>

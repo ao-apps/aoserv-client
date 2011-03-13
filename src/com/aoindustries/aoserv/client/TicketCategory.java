@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -105,19 +106,23 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getParent());
         return unionSet;
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getChildrenCategories());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldCategory());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewCategory());
+
+        UnionSet<TicketAction> ticketActions = null;
+        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldCategory());
+        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewCategory());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
+
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketBrandCategories());
         return unionSet;
     }

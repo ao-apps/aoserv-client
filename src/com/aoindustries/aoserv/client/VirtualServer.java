@@ -6,7 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -266,7 +266,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getMinimumProcessorType());

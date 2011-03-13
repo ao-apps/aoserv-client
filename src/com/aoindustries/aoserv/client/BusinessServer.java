@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -123,7 +123,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
@@ -131,11 +131,15 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerResources());
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
+        for(AOServService<Integer,? extends AOServerResource> subService : getConnector().getAoServerResources().getSubServices()) {
+            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(AOServerResource.COLUMN_BUSINESS_SERVER, this));
+        }
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerResources());
+        for(AOServService<Integer,? extends ServerResource> subService : getConnector().getServerResources().getSubServices()) {
+            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(ServerResource.COLUMN_BUSINESS_SERVER, this));
+        }
         return unionSet;
     }
     // </editor-fold>

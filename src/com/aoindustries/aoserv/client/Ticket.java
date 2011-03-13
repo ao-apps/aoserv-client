@@ -8,10 +8,17 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
+import com.aoindustries.util.UnionMethodSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * The <code>Ticket</code> system allows clients to submit support
@@ -309,8 +316,46 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    private static final Map<
+        Class<? extends AOServObject<?>>,
+        List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>
+    > getDependenciesMethods = new LinkedHashMap<
+        Class<? extends AOServObject<?>>,
+        List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>
+    >();
+
+    static {
+        try {
+            // None: getDependentObjectsMethods.putAll(AOServObjectIntegerKey.getDependentObjectsMethods);
+
+            getDependenciesMethods.put(Brand.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Brand>(Ticket.class.getMethod("getBrand"))));
+            getDependenciesMethods.put(Reseller.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Reseller>(Ticket.class.getMethod("getReseller"))));
+            getDependenciesMethods.put(Business.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Business>(Ticket.class.getMethod("getBusiness"))));
+            getDependenciesMethods.put(Language.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Language>(Ticket.class.getMethod("getLanguage"))));
+            getDependenciesMethods.put(BusinessAdministrator.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<BusinessAdministrator>(Ticket.class.getMethod("getCreatedBy"))));
+            getDependenciesMethods.put(TicketCategory.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<TicketCategory>(Ticket.class.getMethod("getCategory"))));
+            getDependenciesMethods.put(TicketType.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<TicketType>(Ticket.class.getMethod("getTicketType"))));
+
+            List<UnionMethodSet.Method<TicketPriority>> ticketPriorities = new ArrayList<UnionMethodSet.Method<TicketPriority>>(2);
+            ticketPriorities.add(new UnionMethodSet.SingletonMethod<TicketPriority>(Ticket.class.getMethod("getClientPriority")));
+            ticketPriorities.add(new UnionMethodSet.SingletonMethod<TicketPriority>(Ticket.class.getMethod("getAdminPriority")));
+            getDependenciesMethods.put(TicketPriority.class, ticketPriorities);
+
+            getDependenciesMethods.put(TicketStatus.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<TicketStatus>(Ticket.class.getMethod("getStatus"))));
+        } catch(NoSuchMethodException exc) {
+            throw new RuntimeException(exc);
+        }
+    }
+
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    @SuppressWarnings("unchecked")
+    public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
+        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependenciesMethods);
+    }
+
+    /*
+    @Override
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
@@ -319,15 +364,19 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCategory());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getClientPriority());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAdminPriority());
+
+        UnionSet<TicketPriority> ticketPriorities = null;
+        ticketPriorities = AOServObjectUtils.addDependencyUnionSet(ticketPriorities, getClientPriority());
+        ticketPriorities = AOServObjectUtils.addDependencyUnionSet(ticketPriorities, getAdminPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketPriorities);
+
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getStatus());
         return unionSet;
-    }
+    }*/
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
         return unionSet;

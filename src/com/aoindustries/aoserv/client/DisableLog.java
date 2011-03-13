@@ -7,11 +7,15 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
+import com.aoindustries.util.UnionMethodSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * When a resource or resources are disabled, the reason and time is logged.
@@ -130,23 +134,36 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisabledBy());
         return unionSet;
     }
 
+    private static final Map<Class<? extends AOServObject<?>>, ? extends List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods
+         = getDependentObjectsMethods(DisableLog.class);
+
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    @SuppressWarnings("unchecked")
+    public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
+        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependentObjectsMethods);
+    }
+
+    /*
+    @Override
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         // Caused cycle in dependency DAG: unionSet =  AOServObjectUtils.addDependencySet(unionSet, getBusinesses());
-        /*// Caused cycle in dependency DAG:*/ unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrators());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrators());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupNames());
         // Caused cycle in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getUsernames());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResources());
+        for(AOServService<Integer,? extends Resource> subService : getConnector().getResources().getSubServices()) {
+            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(Resource.COLUMN_DISABLE_LOG, this));
+        }
         return unionSet;
     }
+     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
@@ -154,10 +171,12 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
         return getConnector().getBusinesses().filterIndexed(Business.COLUMN_DISABLE_LOG, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
         return getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_DISABLE_LOG, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<GroupName> getGroupNames() throws RemoteException {
         return getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_DISABLE_LOG, this);
     }
@@ -166,6 +185,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
         return getConnector().getUsernames().filterIndexed(Username.COLUMN_DISABLE_LOG, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Resource> getResources() throws RemoteException {
         return getConnector().getResources().filterIndexed(Resource.COLUMN_DISABLE_LOG, this);
     }

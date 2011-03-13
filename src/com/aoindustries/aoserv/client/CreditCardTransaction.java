@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
@@ -1007,23 +1008,33 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessor());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getShippingCountryCode());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardCreatedBy());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardCountryCode());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAuthorizationAdministrator());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCaptureAdministrator());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getVoidAdministrator());
+
+        UnionSet<CountryCode> countryCodes = null;
+        countryCodes = AOServObjectUtils.addDependencyUnionSet(countryCodes, getShippingCountryCode());
+        countryCodes = AOServObjectUtils.addDependencyUnionSet(countryCodes, getCreditCardCountryCode());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, countryCodes);
+
+        UnionSet<Business> businesses = null;
+        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getBusiness());
+        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getCreditCardBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, businesses);
+
+        UnionSet<BusinessAdministrator> businessAdministrators = null;
+        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getCreditCardCreatedBy());
+        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getAuthorizationAdministrator());
+        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getCaptureAdministrator());
+        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getVoidAdministrator());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, businessAdministrators);
+
         return unionSet;
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransaction());
         return unionSet;
     }

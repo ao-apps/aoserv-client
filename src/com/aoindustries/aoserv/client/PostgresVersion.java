@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
@@ -141,16 +142,20 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgisVersion());
+
+        UnionSet<TechnologyVersion> technologyVersions = null;
+        technologyVersions = AOServObjectUtils.addDependencyUnionSet(technologyVersions, getTechnologyVersion());
+        technologyVersions = AOServObjectUtils.addDependencyUnionSet(technologyVersions, getPostgisVersion());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, technologyVersions);
+
         return unionSet;
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServers());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresEncodings());
         return unionSet;

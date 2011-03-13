@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 
@@ -82,11 +83,15 @@ final public class TransactionType extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionsBySetupFeeTransactionType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionsByMonthlyRateTransactionType());
+
+        UnionSet<PackageDefinition> packageDefinitions = null;
+        packageDefinitions = AOServObjectUtils.addDependencyUnionSet(packageDefinitions, getPackageDefinitionsBySetupFeeTransactionType());
+        packageDefinitions = AOServObjectUtils.addDependencyUnionSet(packageDefinitions, getPackageDefinitionsByMonthlyRateTransactionType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, packageDefinitions);
+
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionLimits());
         return unionSet;
     }

@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 
@@ -76,10 +77,14 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByOldStatus());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActionsByNewStatus());
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
+
+        UnionSet<TicketAction> ticketActions = null;
+        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldStatus());
+        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewStatus());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
+
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
         return unionSet;
     }

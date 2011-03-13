@@ -7,6 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
@@ -196,21 +197,29 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
         // Caused cycle: AOServObjectUtils.addDependencySet(unionSet, getAutoresponderFrom());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTrashEmailRetention());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getJunkEmailRetention());
+
+        UnionSet<BackupRetention> backupRetentions = null;
+        backupRetentions = AOServObjectUtils.addDependencyUnionSet(backupRetentions, getTrashEmailRetention());
+        backupRetentions = AOServObjectUtils.addDependencyUnionSet(backupRetentions, getJunkEmailRetention());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, backupRetentions);
+
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSpamAssassinIntegrationMode());
         return unionSet;
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandFromSmtpEmailInbox());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandFromImapEmailInbox());
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
+
+        UnionSet<Brand> brands = null;
+        brands = AOServObjectUtils.addDependencyUnionSet(brands, getBrandFromSmtpEmailInbox());
+        brands = AOServObjectUtils.addDependencyUnionSet(brands, getBrandFromImapEmailInbox());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, brands);
+
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailAttachmentBlocks());
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxAddresses());
         return unionSet;

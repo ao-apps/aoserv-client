@@ -9,7 +9,7 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -192,7 +192,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getModPhpVersion());
@@ -200,8 +200,8 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     }
 
     @Override
-    protected UnionSet<AOServObject<?>> addDependentObjects(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(unionSet);
+    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
+        unionSet = super.addDependentObjects(null);
         // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdBinds());
         return unionSet;
     }

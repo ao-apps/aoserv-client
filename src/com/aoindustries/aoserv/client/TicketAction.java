@@ -7,11 +7,17 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionSet;
+import com.aoindustries.util.UnionMethodSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * <code>TicketAction</code>s represent a complete history of the changes that have been made to a ticket.
@@ -456,26 +462,103 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">
+    private static final Map<
+        Class<? extends AOServObject<?>>,
+        List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>
+    > getDependenciesMethods = new LinkedHashMap<
+        Class<? extends AOServObject<?>>,
+        List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>
+    >();
+
+    static {
+        try {
+            // None: getDependentObjectsMethods.putAll(AOServObjectIntegerKey.getDependentObjectsMethods);
+
+            getDependenciesMethods.put(Ticket.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Ticket>(TicketAction.class.getMethod("getTicket"))));
+            getDependenciesMethods.put(TicketActionType.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<TicketActionType>(TicketAction.class.getMethod("getActionType"))));
+
+            List<UnionMethodSet.Method<Business>> businesses = new ArrayList<UnionMethodSet.Method<Business>>(2);
+            businesses.add(new UnionMethodSet.SingletonMethod<Business>(TicketAction.class.getMethod("getOldBusiness")));
+            businesses.add(new UnionMethodSet.SingletonMethod<Business>(TicketAction.class.getMethod("getNewBusiness")));
+            getDependenciesMethods.put(Business.class, businesses);
+
+            List<UnionMethodSet.Method<TicketPriority>> ticketPriorities = new ArrayList<UnionMethodSet.Method<TicketPriority>>(2);
+            ticketPriorities.add(new UnionMethodSet.SingletonMethod<TicketPriority>(TicketAction.class.getMethod("getOldPriority")));
+            ticketPriorities.add(new UnionMethodSet.SingletonMethod<TicketPriority>(TicketAction.class.getMethod("getNewPriority")));
+            getDependenciesMethods.put(TicketPriority.class, ticketPriorities);
+
+            List<UnionMethodSet.Method<TicketType>> ticketTypes = new ArrayList<UnionMethodSet.Method<TicketType>>(2);
+            ticketTypes.add(new UnionMethodSet.SingletonMethod<TicketType>(TicketAction.class.getMethod("getOldType")));
+            ticketTypes.add(new UnionMethodSet.SingletonMethod<TicketType>(TicketAction.class.getMethod("getNewType")));
+            getDependenciesMethods.put(TicketType.class, ticketTypes);
+
+            List<UnionMethodSet.Method<TicketStatus>> ticketStatuses = new ArrayList<UnionMethodSet.Method<TicketStatus>>(2);
+            ticketStatuses.add(new UnionMethodSet.SingletonMethod<TicketStatus>(TicketAction.class.getMethod("getOldStatus")));
+            ticketStatuses.add(new UnionMethodSet.SingletonMethod<TicketStatus>(TicketAction.class.getMethod("getNewStatus")));
+            getDependenciesMethods.put(TicketStatus.class, ticketStatuses);
+
+            List<UnionMethodSet.Method<BusinessAdministrator>> businessAdministrators = new ArrayList<UnionMethodSet.Method<BusinessAdministrator>>(3);
+            businessAdministrators.add(new UnionMethodSet.SingletonMethod<BusinessAdministrator>(TicketAction.class.getMethod("getAdministrator")));
+            businessAdministrators.add(new UnionMethodSet.SingletonMethod<BusinessAdministrator>(TicketAction.class.getMethod("getOldAssignedTo")));
+            businessAdministrators.add(new UnionMethodSet.SingletonMethod<BusinessAdministrator>(TicketAction.class.getMethod("getNewAssignedTo")));
+            getDependenciesMethods.put(BusinessAdministrator.class, businessAdministrators);
+
+            List<UnionMethodSet.Method<TicketCategory>> ticketCategories = new ArrayList<UnionMethodSet.Method<TicketCategory>>(2);
+            ticketCategories.add(new UnionMethodSet.SingletonMethod<TicketCategory>(TicketAction.class.getMethod("getOldCategory")));
+            ticketCategories.add(new UnionMethodSet.SingletonMethod<TicketCategory>(TicketAction.class.getMethod("getNewCategory")));
+            getDependenciesMethods.put(TicketCategory.class, ticketCategories);
+        } catch(NoSuchMethodException exc) {
+            throw new RuntimeException(exc);
+        }
+    }
+
     @Override
-    protected UnionSet<AOServObject<?>> addDependencies(UnionSet<AOServObject<?>> unionSet) throws RemoteException {
+    @SuppressWarnings("unchecked")
+    public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
+        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependenciesMethods);
+    }
+
+    /*
+    @Override
+    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
         unionSet = super.addDependencies(unionSet);
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicket());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAdministrator());
         unionSet = AOServObjectUtils.addDependencySet(unionSet, getActionType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldPriority());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewPriority());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldStatus());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewStatus());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldAssignedTo());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewAssignedTo());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOldCategory());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNewCategory());
+
+        UnionSet<Business> businesses = null;
+        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getOldBusiness());
+        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getNewBusiness());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, businesses);
+
+        UnionSet<TicketPriority> ticketPriorities = null;
+        ticketPriorities = AOServObjectUtils.addDependencyUnionSet(ticketPriorities, getOldPriority());
+        ticketPriorities = AOServObjectUtils.addDependencyUnionSet(ticketPriorities, getNewPriority());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketPriorities);
+
+        UnionSet<TicketType> ticketTypes = null;
+        ticketTypes = AOServObjectUtils.addDependencyUnionSet(ticketTypes, getOldType());
+        ticketTypes = AOServObjectUtils.addDependencyUnionSet(ticketTypes, getNewType());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketTypes);
+
+        UnionSet<TicketStatus> ticketStatuses = null;
+        ticketStatuses = AOServObjectUtils.addDependencyUnionSet(ticketStatuses, getOldStatus());
+        ticketStatuses = AOServObjectUtils.addDependencyUnionSet(ticketStatuses, getNewStatus());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketStatuses);
+
+        UnionSet<BusinessAdministrator> businessAdministrators = null;
+        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getAdministrator());
+        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getOldAssignedTo());
+        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getNewAssignedTo());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, businessAdministrators);
+        
+        UnionSet<TicketCategory> ticketCategories = null;
+        ticketCategories = AOServObjectUtils.addDependencyUnionSet(ticketCategories, getOldCategory());
+        ticketCategories = AOServObjectUtils.addDependencyUnionSet(ticketCategories, getNewCategory());
+        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketCategories);
+
         return unionSet;
     }
+     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
