@@ -5,7 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.util.Arrays;
+import com.aoindustries.util.AoArrays;
 import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
 import java.io.Serializable;
 
@@ -26,7 +26,7 @@ public class ValidationException extends Exception {
         super(accessor.getMessage(key));
         this.accessor = accessor;
         this.key = key;
-        this.args = Arrays.EMPTY_SERIALIZABLE_ARRAY;
+        this.args = AoArrays.EMPTY_SERIALIZABLE_ARRAY;
     }
 
     public ValidationException(ApplicationResourcesAccessor accessor, String key, Serializable... args) {
@@ -40,7 +40,7 @@ public class ValidationException extends Exception {
         super(accessor.getMessage(key), cause);
         this.accessor = accessor;
         this.key = key;
-        this.args = Arrays.EMPTY_SERIALIZABLE_ARRAY;
+        this.args = AoArrays.EMPTY_SERIALIZABLE_ARRAY;
     }
 
     public ValidationException(Throwable cause, ApplicationResourcesAccessor accessor, String key, Serializable... args) {

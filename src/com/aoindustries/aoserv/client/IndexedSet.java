@@ -7,9 +7,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.ArraySet;
-import com.aoindustries.util.ArraySortedSet;
 import com.aoindustries.util.HashCodeComparator;
+import com.aoindustries.util.UnmodifiableArraySet;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -71,6 +70,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
     /**
      * Wraps the provided ArraySet.
      */
+    /*
     public static <T extends AOServObject> IndexedSet<T> wrap(ServiceName serviceName, ArraySet<T> wrapped) {
         int size = wrapped.size();
         // Empty
@@ -79,11 +79,12 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         if(size==1) return wrap(serviceName, wrapped.iterator().next());
         wrapped.trimToSize();
         return new IndexedSet<T>(serviceName, wrapped);
-    }
+    }*/
 
     /**
      * Wraps the provided ArraySortedSet.
      */
+    /*
     public static <T extends AOServObject> IndexedSet<T> wrap(ServiceName serviceName, ArraySortedSet<T> wrapped) {
         int size = wrapped.size();
         // Empty
@@ -93,6 +94,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         wrapped.trimToSize();
         return new IndexedSet<T>(serviceName, wrapped);
     }
+     */
 
     /**
      * Wraps an unsorted ArrayList.  The list will be sorted in-place.
@@ -105,7 +107,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         if(size==1) return wrap(serviceName, wrapped.get(0));
         wrapped.trimToSize();
         Collections.sort(wrapped, HashCodeComparator.getInstance());
-        return new IndexedSet<T>(serviceName, new ArraySet<T>(wrapped));
+        return new IndexedSet<T>(serviceName, new UnmodifiableArraySet<T>(wrapped));
     }
 
     /**
