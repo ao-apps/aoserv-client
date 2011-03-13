@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 
 /**
@@ -52,22 +50,6 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        
-        UnionSet<EmailInbox> emailInboxes = null;
-        emailInboxes = AOServObjectUtils.addDependencyUnionSet(emailInboxes, getEmailInboxesByTrashEmailRetention());
-        emailInboxes = AOServObjectUtils.addDependencyUnionSet(emailInboxes, getEmailInboxesByJunkEmailRetention());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, emailInboxes);
-
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxAddresses());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -76,14 +58,17 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<EmailInbox> getEmailInboxesByTrashEmailRetention() throws RemoteException {
         return getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_TRASH_EMAIL_RETENTION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<EmailInbox> getEmailInboxesByJunkEmailRetention() throws RemoteException {
         return getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_JUNK_EMAIL_RETENTION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
         return getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_RETENTION, this);
     }

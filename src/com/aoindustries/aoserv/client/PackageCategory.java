@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -70,15 +69,6 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitions());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -87,6 +77,7 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<PackageDefinition> getPackageDefinitions() throws RemoteException {
         return getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_CATEGORY, this);
     }

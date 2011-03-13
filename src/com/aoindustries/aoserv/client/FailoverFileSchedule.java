@@ -65,6 +65,7 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     }
 
     static final String COLUMN_REPLICATION = "replication";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the replication that will be started")
     public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
         return getConnector().getFailoverFileReplications().get(replication);

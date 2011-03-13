@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -90,16 +89,8 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersions());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
         return getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_OPERATING_SYSTEM, this);
     }

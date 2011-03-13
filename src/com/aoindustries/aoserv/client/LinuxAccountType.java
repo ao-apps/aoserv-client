@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.UnionClassSet;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -168,7 +167,9 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="resource_type", index=IndexType.PRIMARY_KEY, description="the resource type this represents")
+    static final String COLUMN_RESOURCE_TYPE = "resource_type";
+    @DependencySingleton
+    @SchemaColumn(order=0, name=COLUMN_RESOURCE_TYPE, index=IndexType.PRIMARY_KEY, description="the resource type this represents")
     public ResourceType getResourceType() throws RemoteException {
         return getConnector().getResourceTypes().get(getKey());
     }
@@ -185,22 +186,6 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccounts());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -209,6 +194,7 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
         return getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_LINUX_ACCOUNT_TYPE, this);
     }

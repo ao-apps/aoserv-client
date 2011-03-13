@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -67,12 +66,14 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     }
 
     static final String COLUMN_NAME = "name";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the package")
     public TechnologyName getTechnologyName() throws RemoteException {
         return getConnector().getTechnologyNames().get(name);
     }
 
     static final String COLUMN_CLASS = "class";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_CLASS, index=IndexType.INDEXED, description="the name of the group this package belongs to")
     public TechnologyClass getTechnologyClass() throws RemoteException {
         return getConnector().getTechnologyClasses().get(technologyClass);
@@ -87,16 +88,6 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     @Override
     public com.aoindustries.aoserv.client.dto.Technology getDto() {
         return new com.aoindustries.aoserv.client.dto.Technology(key, name, technologyClass);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyName());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyClass());
-        return unionSet;
     }
     // </editor-fold>
 }

@@ -7,17 +7,10 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionMethodSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * <code>TicketAction</code>s represent a complete history of the changes that have been made to a ticket.
@@ -149,12 +142,14 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_TICKET = "ticket";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_TICKET, index=IndexType.INDEXED, description="the ticket this action is part of")
     public Ticket getTicket() throws RemoteException {
         return getConnector().getTickets().get(ticket);
     }
 
     static final String COLUMN_ADMINISTRATOR = "administrator";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_ADMINISTRATOR, index=IndexType.INDEXED, description="the administrator who performed this action")
     public BusinessAdministrator getAdministrator() throws RemoteException {
         if(administrator==null) return null;
@@ -167,6 +162,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_ACTION_TYPE = "action_type";
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_ACTION_TYPE, index=IndexType.INDEXED, description="the type of action performed")
     public TicketActionType getActionType() throws RemoteException {
         return getConnector().getTicketActionTypes().get(actionType);
@@ -176,6 +172,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     /**
      * May be filtered.
      */
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_OLD_ACCOUNTING, index=IndexType.INDEXED, description="if changed, contains the old accounting code")
     public Business getOldBusiness() throws RemoteException {
         if(oldAccounting==null) return null;
@@ -186,6 +183,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     /**
      * May be filtered.
      */
+    @DependencySingleton
     @SchemaColumn(order=6, name=COLUMN_NEW_ACCOUNTING, index=IndexType.INDEXED, description="if changed, contains the new accounting code")
     public Business getNewBusiness() throws RemoteException {
         if(oldAccounting==null) return null;
@@ -193,6 +191,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_OLD_PRIORITY = "old_priority";
+    @DependencySingleton
     @SchemaColumn(order=7, name=COLUMN_OLD_PRIORITY, index=IndexType.INDEXED, description="if changed, contains the old priority")
     public TicketPriority getOldPriority() throws RemoteException {
         if(oldPriority==null) return null;
@@ -200,6 +199,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_NEW_PRIORITY = "new_priority";
+    @DependencySingleton
     @SchemaColumn(order=8, name=COLUMN_NEW_PRIORITY, index=IndexType.INDEXED, description="if changed, contains the new priority")
     public TicketPriority getNewPriority() throws RemoteException {
         if(newPriority==null) return null;
@@ -207,6 +207,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_OLD_TYPE = "old_type";
+    @DependencySingleton
     @SchemaColumn(order=9, name=COLUMN_OLD_TYPE, index=IndexType.INDEXED, description="if changed, contains the old ticket type")
     public TicketType getOldType() throws RemoteException {
         if(oldType==null) return null;
@@ -214,6 +215,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_NEW_TYPE = "new_type";
+    @DependencySingleton
     @SchemaColumn(order=10, name=COLUMN_NEW_TYPE, index=IndexType.INDEXED, description="if changed, contains the new ticket type")
     public TicketType getNewType() throws RemoteException {
         if(newType==null) return null;
@@ -221,6 +223,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_OLD_STATUS = "old_status";
+    @DependencySingleton
     @SchemaColumn(order=11, name=COLUMN_OLD_STATUS, index=IndexType.INDEXED, description="if changed, contains the old ticket status")
     public TicketStatus getOldStatus() throws RemoteException {
         if(oldStatus==null) return null;
@@ -228,6 +231,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_NEW_STATUS = "new_status";
+    @DependencySingleton
     @SchemaColumn(order=12, name=COLUMN_NEW_STATUS, index=IndexType.INDEXED, description="if changed, contains the new ticket status")
     public TicketStatus getNewStatus() throws RemoteException {
         if(newStatus==null) return null;
@@ -238,6 +242,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     /**
      * May be filtered.
      */
+    @DependencySingleton
     @SchemaColumn(order=13, name=COLUMN_OLD_ASSIGNED_TO, index=IndexType.INDEXED, description="if changed, contains the old assignment")
     public BusinessAdministrator getOldAssignedTo() throws RemoteException {
         if(oldAssignedTo==null) return null;
@@ -252,6 +257,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     /**
      * May be filtered.
      */
+    @DependencySingleton
     @SchemaColumn(order=14, name=COLUMN_NEW_ASSIGNED_TO, index=IndexType.INDEXED, description="if changed, contains the new assignment")
     public BusinessAdministrator getNewAssignedTo() throws RemoteException {
         if(newAssignedTo==null) return null;
@@ -263,6 +269,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_OLD_CATEGORY = "old_category";
+    @DependencySingleton
     @SchemaColumn(order=15, name=COLUMN_OLD_CATEGORY, index=IndexType.INDEXED, description="if changed, contains the old category")
     public TicketCategory getOldCategory() throws RemoteException {
         if(oldCategory==null) return null;
@@ -270,6 +277,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_NEW_CATEGORY = "new_category";
+    @DependencySingleton
     @SchemaColumn(order=16, name=COLUMN_NEW_CATEGORY, index=IndexType.INDEXED, description="if changed, contains the new category")
     public TicketCategory getNewCategory() throws RemoteException {
         if(newCategory==null) return null;
@@ -459,106 +467,6 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
             summary
         );
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    private static final Map<
-        Class<? extends AOServObject<?>>,
-        List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>
-    > getDependenciesMethods = new LinkedHashMap<
-        Class<? extends AOServObject<?>>,
-        List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>
-    >();
-
-    static {
-        try {
-            // None: getDependentObjectsMethods.putAll(AOServObjectIntegerKey.getDependentObjectsMethods);
-
-            getDependenciesMethods.put(Ticket.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Ticket>(TicketAction.class.getMethod("getTicket"))));
-            getDependenciesMethods.put(TicketActionType.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<TicketActionType>(TicketAction.class.getMethod("getActionType"))));
-
-            List<UnionMethodSet.Method<Business>> businesses = new ArrayList<UnionMethodSet.Method<Business>>(2);
-            businesses.add(new UnionMethodSet.SingletonMethod<Business>(TicketAction.class.getMethod("getOldBusiness")));
-            businesses.add(new UnionMethodSet.SingletonMethod<Business>(TicketAction.class.getMethod("getNewBusiness")));
-            getDependenciesMethods.put(Business.class, businesses);
-
-            List<UnionMethodSet.Method<TicketPriority>> ticketPriorities = new ArrayList<UnionMethodSet.Method<TicketPriority>>(2);
-            ticketPriorities.add(new UnionMethodSet.SingletonMethod<TicketPriority>(TicketAction.class.getMethod("getOldPriority")));
-            ticketPriorities.add(new UnionMethodSet.SingletonMethod<TicketPriority>(TicketAction.class.getMethod("getNewPriority")));
-            getDependenciesMethods.put(TicketPriority.class, ticketPriorities);
-
-            List<UnionMethodSet.Method<TicketType>> ticketTypes = new ArrayList<UnionMethodSet.Method<TicketType>>(2);
-            ticketTypes.add(new UnionMethodSet.SingletonMethod<TicketType>(TicketAction.class.getMethod("getOldType")));
-            ticketTypes.add(new UnionMethodSet.SingletonMethod<TicketType>(TicketAction.class.getMethod("getNewType")));
-            getDependenciesMethods.put(TicketType.class, ticketTypes);
-
-            List<UnionMethodSet.Method<TicketStatus>> ticketStatuses = new ArrayList<UnionMethodSet.Method<TicketStatus>>(2);
-            ticketStatuses.add(new UnionMethodSet.SingletonMethod<TicketStatus>(TicketAction.class.getMethod("getOldStatus")));
-            ticketStatuses.add(new UnionMethodSet.SingletonMethod<TicketStatus>(TicketAction.class.getMethod("getNewStatus")));
-            getDependenciesMethods.put(TicketStatus.class, ticketStatuses);
-
-            List<UnionMethodSet.Method<BusinessAdministrator>> businessAdministrators = new ArrayList<UnionMethodSet.Method<BusinessAdministrator>>(3);
-            businessAdministrators.add(new UnionMethodSet.SingletonMethod<BusinessAdministrator>(TicketAction.class.getMethod("getAdministrator")));
-            businessAdministrators.add(new UnionMethodSet.SingletonMethod<BusinessAdministrator>(TicketAction.class.getMethod("getOldAssignedTo")));
-            businessAdministrators.add(new UnionMethodSet.SingletonMethod<BusinessAdministrator>(TicketAction.class.getMethod("getNewAssignedTo")));
-            getDependenciesMethods.put(BusinessAdministrator.class, businessAdministrators);
-
-            List<UnionMethodSet.Method<TicketCategory>> ticketCategories = new ArrayList<UnionMethodSet.Method<TicketCategory>>(2);
-            ticketCategories.add(new UnionMethodSet.SingletonMethod<TicketCategory>(TicketAction.class.getMethod("getOldCategory")));
-            ticketCategories.add(new UnionMethodSet.SingletonMethod<TicketCategory>(TicketAction.class.getMethod("getNewCategory")));
-            getDependenciesMethods.put(TicketCategory.class, ticketCategories);
-        } catch(NoSuchMethodException exc) {
-            throw new RuntimeException(exc);
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
-        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependenciesMethods);
-    }
-
-    /*
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicket());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getActionType());
-
-        UnionSet<Business> businesses = null;
-        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getOldBusiness());
-        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getNewBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, businesses);
-
-        UnionSet<TicketPriority> ticketPriorities = null;
-        ticketPriorities = AOServObjectUtils.addDependencyUnionSet(ticketPriorities, getOldPriority());
-        ticketPriorities = AOServObjectUtils.addDependencyUnionSet(ticketPriorities, getNewPriority());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketPriorities);
-
-        UnionSet<TicketType> ticketTypes = null;
-        ticketTypes = AOServObjectUtils.addDependencyUnionSet(ticketTypes, getOldType());
-        ticketTypes = AOServObjectUtils.addDependencyUnionSet(ticketTypes, getNewType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketTypes);
-
-        UnionSet<TicketStatus> ticketStatuses = null;
-        ticketStatuses = AOServObjectUtils.addDependencyUnionSet(ticketStatuses, getOldStatus());
-        ticketStatuses = AOServObjectUtils.addDependencyUnionSet(ticketStatuses, getNewStatus());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketStatuses);
-
-        UnionSet<BusinessAdministrator> businessAdministrators = null;
-        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getAdministrator());
-        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getOldAssignedTo());
-        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getNewAssignedTo());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, businessAdministrators);
-        
-        UnionSet<TicketCategory> ticketCategories = null;
-        ticketCategories = AOServObjectUtils.addDependencyUnionSet(ticketCategories, getOldCategory());
-        ticketCategories = AOServObjectUtils.addDependencyUnionSet(ticketCategories, getNewCategory());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketCategories);
-
-        return unionSet;
-    }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">

@@ -10,7 +10,6 @@ import com.aoindustries.aoserv.client.command.CheckUsernamePasswordCommand;
 import com.aoindustries.aoserv.client.command.SetUsernamePasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -70,12 +69,14 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that this user is part of")
     public Business getBusiness() throws RemoteException {
     	return getConnector().getBusinesses().get(accounting);
     }
 
     static final String COLUMN_DISABLE_LOG = "disable_log";
+    // Caused cycle in dependency DAG: @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that the username is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
@@ -99,39 +100,23 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        // Caused cycle in dependency DAG: AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccounts());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUsers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresUsers());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSingleton
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
     	return getConnector().getBusinessAdministrators().filterUnique(BusinessAdministrator.COLUMN_USERNAME, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
         return getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_USERNAME, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<MySQLUser> getMysqlUsers() throws RemoteException {
         return getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_USERNAME, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
         return getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_USERNAME, this);
     }

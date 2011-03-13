@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -107,12 +106,14 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     /**
      * May be filtered.
      */
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the account and group the servers runs as")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getConnector().getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_PKEY, linuxAccountGroup);
     }
 
     static final String COLUMN_MOD_PHP_VERSION = "mod_php_version";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_MOD_PHP_VERSION, index=IndexType.INDEXED, description="the version of mod_php to run")
     public TechnologyVersion getModPhpVersion() throws RemoteException {
         if(modPhpVersion==null) return null;
@@ -190,23 +191,6 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getModPhpVersion());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdBinds());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -216,6 +200,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public List<HttpdBind> getHttpdBinds() throws IOException, SQLException {
         return getConnector().getHttpdBinds().getHttpdBinds(this);
     }

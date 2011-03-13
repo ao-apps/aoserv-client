@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import java.rmi.RemoteException;
 
 /**
  * The <code>EmailSmtpRelayType</code> of an <code>EmailSmtpRelay</code>
@@ -83,17 +81,9 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey implements C
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmtpRelays());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public IndexedSet<EmailSmtpRelay> getEmailSmtpRelays() throws RemoteException {
         return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }

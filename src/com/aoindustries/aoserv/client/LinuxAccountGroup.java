@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -68,12 +67,14 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     }
 
     static final String COLUMN_LINUX_ACCOUNT = "linux_account";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_LINUX_ACCOUNT, index=IndexType.INDEXED, description="the linux account that belongs to the group")
     public LinuxAccount getLinuxAccount() throws RemoteException {
         return getConnector().getLinuxAccounts().get(linuxAccount);
     }
 
     static final String COLUMN_LINUX_GROUP = "linux_group";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_LINUX_GROUP, index=IndexType.INDEXED, description="the linux group that the account belongs to")
     public LinuxGroup getLinuxGroup() throws RemoteException {
         return getConnector().getLinuxGroups().get(linuxGroup);
@@ -103,26 +104,6 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroup());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCvsRepositories());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSites());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPrivateFtpServers());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -137,18 +118,22 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<CvsRepository> getCvsRepositories() throws RemoteException {
         return getConnector().getCvsRepositories().filterIndexed(CvsRepository.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<HttpdSite> getHttpdSites() throws RemoteException {
         return getConnector().getHttpdSites().filterIndexed(HttpdSite.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<HttpdServer> getHttpdServers() throws RemoteException {
         return getConnector().getHttpdServers().filterIndexed(HttpdServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PrivateFtpServer> getPrivateFtpServers() throws RemoteException {
         return getConnector().getPrivateFtpServers().filterIndexed(PrivateFtpServer.COLUMN_LINUX_ACCOUNT_GROUP, this);
     }

@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import java.rmi.RemoteException;
 
 /**
  * An <code>EmailAttachmentType</code> represents one extension that may
@@ -62,15 +60,6 @@ final public class EmailAttachmentType extends AOServObjectStringKey implements 
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailAttachmentBlocks());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
         return ApplicationResources.accessor.getMessage("EmailAttachmentType."+getKey()+".description");
@@ -79,6 +68,7 @@ final public class EmailAttachmentType extends AOServObjectStringKey implements 
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public IndexedSet<EmailAttachmentBlock> getEmailAttachmentBlocks() throws RemoteException {
         return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }

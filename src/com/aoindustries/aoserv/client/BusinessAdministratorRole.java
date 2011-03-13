@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -68,12 +67,14 @@ implements
     }
 
     static final String COLUMN_USERNAME = "username";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the business administrator who has the role")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(username);
     }
     
     static final String COLUMN_ROLE = "role";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_ROLE, index=IndexType.INDEXED, description="the role the business administrator has")
     public AOServRole getRole() throws RemoteException {
         return getConnector().getAoservRoles().get(role);
@@ -93,16 +94,6 @@ implements
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessAdministratorRole getDto() {
         return new com.aoindustries.aoserv.client.dto.BusinessAdministratorRole(key, getDto(username), role);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getRole());
-        return unionSet;
     }
     // </editor-fold>
 

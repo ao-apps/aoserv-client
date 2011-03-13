@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -81,12 +80,14 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey impl
     }
 
     static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the pkey of the package definition")
     public PackageDefinition getPackageDefinition() throws RemoteException {
         return getConnector().getPackageDefinitions().get(packageDefinition);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that is allowed to create subaccounts with this package")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
@@ -131,16 +132,6 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey impl
             description,
             active
         );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        return unionSet;
     }
     // </editor-fold>
 

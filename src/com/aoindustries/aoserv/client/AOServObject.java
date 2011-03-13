@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.Internable;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnionMethodSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
@@ -33,6 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * An <code>AOServObject</code> is the lowest level object
@@ -197,25 +198,115 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies and Dependent Objects">
 
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    protected static @interface DependencySet {
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    protected static @interface DependencySingleton {
+    }
+
+    private static final ConcurrentMap<
+        Class<? extends AOServObject<?>>,
+        Map<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>>
+    > getDependenciesMethodsCache = new ConcurrentHashMap<
+        Class<? extends AOServObject<?>>,
+        Map<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>>
+    >();
+
+    /**
+     * Gets the set of methods that return objects that are dependent on this object.
+     * Methods are annotated for this purpose.
+     */
+    protected static Map<Class<? extends AOServObject<?>>, ? extends List<UnionMethodSet.Method<? extends AOServObject<?>>>> getDependenciesMethods(Class<? extends AOServObject<?>> clazz) {
+        Map<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>> getDependenciesMethods = getDependenciesMethodsCache.get(clazz);
+        if(getDependenciesMethods==null) {
+            getDependenciesMethods = new LinkedHashMap<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>>();
+            for(Method method : clazz.getMethods()) {
+                int modifiers = method.getModifiers();
+                if(
+                    Modifier.isPublic(modifiers)
+                    && !Modifier.isStatic(modifiers)
+                ) {
+                    boolean isDependencySet = method.isAnnotationPresent(DependencySet.class);
+                    boolean isDependencySingleton = method.isAnnotationPresent(DependencySingleton.class);
+                    if(isDependencySet && isDependencySingleton) throw new RuntimeException("Method may not be both @DependencySet and @DependencySingleton: "+clazz.getName()+'.'+method.getName());
+                    if((isDependencySet || isDependencySingleton) && method.getParameterTypes().length>0) throw new RuntimeException("Method may not take any parameters: "+clazz.getName()+'.'+method.getName());
+                    UnionMethodSet.Method<AOServObject<?>> unionMethod;
+                    Class<? extends AOServObject<?>> returnType;
+                    if(isDependencySet) {
+                        // Make sure is a Set
+                        Class<?> setType = method.getReturnType();
+                        if(!Set.class.isAssignableFrom(setType)) throw new RuntimeException("@DependencySet method must return a Set: "+clazz.getName()+'.'+method.getName());
+                        // Get the return type from the generic type parameters
+                        Type[] genericTypes = ((ParameterizedType)method.getGenericReturnType()).getActualTypeArguments();
+                        if(genericTypes.length==0) throw new RuntimeException("Generic type not found for @DependencySet method: "+clazz.getName()+'.'+method.getName());
+                        if(genericTypes.length>1) throw new RuntimeException("Only one generic type allowed for @DependencySet method: "+clazz.getName()+'.'+method.getName());
+                        unionMethod = new UnionMethodSet.SetMethod<AOServObject<?>>(method);
+                        @SuppressWarnings("unchecked")
+                        Class<? extends AOServObject<?>> returnTypeFix = (Class<? extends AOServObject<?>>)((Class<?>)genericTypes[0]).asSubclass(AOServObject.class);
+                        returnType = returnTypeFix;
+                    } else if(isDependencySingleton) {
+                        if(Set.class.isAssignableFrom(method.getReturnType())) throw new RuntimeException("@DependencySingleton method may not return a Set: "+clazz.getName()+'.'+method.getName());
+                        unionMethod = new UnionMethodSet.SingletonMethod<AOServObject<?>>(method);
+                        @SuppressWarnings("unchecked")
+                        Class<? extends AOServObject<?>> returnTypeFix = (Class<? extends AOServObject<?>>)method.getReturnType().asSubclass(AOServObject.class);
+                        returnType = returnTypeFix;
+                    } else {
+                        unionMethod = null;
+                        returnType = null;
+                    }
+                    if(unionMethod!=null) {
+                        List<UnionMethodSet.Method<? extends AOServObject<?>>> methods = getDependenciesMethods.get(returnType);
+                        if(methods==null) {
+                            // Add first as singletonList
+                            List<UnionMethodSet.Method<AOServObject<?>>> test = Collections.singletonList(unionMethod);
+                            getDependenciesMethods.put(returnType, (List)test);
+                        } else {
+                            // Convert to arraylist for second
+                            List<UnionMethodSet.Method<? extends AOServObject<?>>> test = new ArrayList<UnionMethodSet.Method<? extends AOServObject<?>>>(methods.size()+1);
+                            test.addAll(methods);
+                            test.add(unionMethod);
+                            getDependenciesMethods.put(returnType, test);
+                        }
+                    }
+                }
+            }
+            // Switch to empty or singleton if possible
+            if(getDependenciesMethods.isEmpty()) getDependenciesMethods = Collections.emptyMap();
+            else if(getDependenciesMethods.size()==1) {
+                Map.Entry<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>> entry = getDependenciesMethods.entrySet().iterator().next();
+                getDependenciesMethods = (Map)Collections.singletonMap(entry.getKey(), entry.getValue());
+            }
+            Map<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>> existing = getDependenciesMethodsCache.putIfAbsent(clazz, getDependenciesMethods);
+            if(existing!=null) getDependenciesMethods = existing;
+        }
+        return getDependenciesMethods;
+    }
+
     /**
      * Gets an unmodifiable set of objects this object directly depends on.
      * This should result in a directed acyclic graph - there should never be any loops in the graph.
      * This acyclic graph, however, should be an exact mirror of the acyclic graph obtained from <code>getDependentObjects</code>.
      * By default, there are no dependencies.
      *
-     * @see #getDependentObjects() for the opposite direction
+     * This default implementation adds all methods annotated as DependentObjectSet or DependentObjectSingleton.
      *
-     * @see #getConnectedVertices()
+     * @see #getDependentObjects() for the opposite direction
+     * @see DependencySet
+     * @see DependencySingleton
      */
     public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
-        UnionClassSet<AOServObject<?>> unionSet = addDependencies(null);
-        if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
-        //else return AoCollections.optimalUnmodifiableSet(unionSet);
-        else return unionSet;
-    }
-
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        return unionSet;
+        @SuppressWarnings("unchecked")
+        Class<AOServObject<?>> thisClassFixed = (Class)getClass();
+        Map<Class<? extends AOServObject<?>>, ? extends List<UnionMethodSet.Method<? extends AOServObject<?>>>> getDependenciesMethods = getDependenciesMethods(thisClassFixed);
+        @SuppressWarnings("unchecked")
+        Class<AOServObject<?>> returnType = (Class)AOServObject.class;
+        return new UnionMethodSet<AOServObject<?>>(this, returnType, getDependenciesMethods);
     }
 
     @Documented
@@ -230,61 +321,80 @@ implements
     protected static @interface DependentObjectSingleton {
     }
 
+    private static final ConcurrentMap<
+        Class<? extends AOServObject<?>>,
+        Map<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>>
+    > getDependentObjectsMethodsCache = new ConcurrentHashMap<
+        Class<? extends AOServObject<?>>,
+        Map<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>>
+    >();
+
     /**
      * Gets the set of methods that return objects that are dependent on this object.
      * Methods are annotated for this purpose.
      */
-    protected static Map<Class<? extends AOServObject<?>>, ? extends List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods(Class<? extends AOServObject<?>> clazz) {
-        Map<Class<? extends AOServObject<?>>, List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods
-            = new LinkedHashMap<Class<? extends AOServObject<?>>, List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>>();
-        for(Method method : clazz.getMethods()) {
-            int modifiers = method.getModifiers();
-            if(
-                Modifier.isPublic(modifiers)
-                && !Modifier.isStatic(modifiers)
-            ) {
-                boolean isDependentObjectSet = method.isAnnotationPresent(DependentObjectSet.class);
-                boolean isDependentObjectSingleton = method.isAnnotationPresent(DependentObjectSingleton.class);
-                if(isDependentObjectSet && isDependentObjectSingleton) throw new RuntimeException("Method may not be both @DependentObjectSet and @DependentObjectSingleton: "+clazz.getName()+'.'+method.getName());
-                UnionMethodSet.Method<AOServObject<?>> unionMethod;
-                Class<? extends AOServObject<?>> returnType;
-                if(isDependentObjectSet) {
-                    // Make sure is a Set
-                    Class<?> setType = method.getReturnType();
-                    if(!Set.class.isAssignableFrom(setType)) throw new RuntimeException("@DependentObjectSet method must return a Set: "+clazz.getName()+'.'+method.getName());
-                    // Get the return type from the generic type parameters
-                    Type[] genericTypes = ((ParameterizedType)method.getGenericReturnType()).getActualTypeArguments();
-                    if(genericTypes.length==0) throw new RuntimeException("Generic type not found for @DependentObjectSet method: "+clazz.getName()+'.'+method.getName());
-                    if(genericTypes.length>1) throw new RuntimeException("Only one generic type allowed for @DependentObjectSet method: "+clazz.getName()+'.'+method.getName());
-                    unionMethod = new UnionMethodSet.SetMethod<AOServObject<?>>(method);
-                    @SuppressWarnings("unchecked")
-                    Class<? extends AOServObject<?>> returnTypeFix = (Class<? extends AOServObject<?>>)((Class<?>)genericTypes[0]).asSubclass(AOServObject.class);
-                    returnType = returnTypeFix;
-                } else if(isDependentObjectSingleton) {
-                    if(Set.class.isAssignableFrom(method.getReturnType())) throw new RuntimeException("@DependentObjectSingleton method may not return a Set: "+clazz.getName()+'.'+method.getName());
-                    unionMethod = new UnionMethodSet.SingletonMethod<AOServObject<?>>(method);
-                    @SuppressWarnings("unchecked")
-                    Class<? extends AOServObject<?>> returnTypeFix = (Class<? extends AOServObject<?>>)method.getReturnType().asSubclass(AOServObject.class);
-                    returnType = returnTypeFix;
-                } else {
-                    unionMethod = null;
-                    returnType = null;
-                }
-                if(unionMethod!=null) {
-                    List<? extends UnionMethodSet.Method<? extends AOServObject<?>>> methods = getDependentObjectsMethods.get(returnType);
-                    if(methods==null) {
-                        // Add first as singletonList
-                        List<UnionMethodSet.Method<AOServObject<?>>> test = Collections.singletonList(unionMethod);
-                        getDependentObjectsMethods.put(returnType, test);
+    protected static Map<Class<? extends AOServObject<?>>, ? extends List<UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods(Class<? extends AOServObject<?>> clazz) {
+        Map<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods = getDependentObjectsMethodsCache.get(clazz);
+        if(getDependentObjectsMethods==null) {
+            getDependentObjectsMethods = new LinkedHashMap<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>>();
+            for(Method method : clazz.getMethods()) {
+                int modifiers = method.getModifiers();
+                if(
+                    Modifier.isPublic(modifiers)
+                    && !Modifier.isStatic(modifiers)
+                ) {
+                    boolean isDependentObjectSet = method.isAnnotationPresent(DependentObjectSet.class);
+                    boolean isDependentObjectSingleton = method.isAnnotationPresent(DependentObjectSingleton.class);
+                    if(isDependentObjectSet && isDependentObjectSingleton) throw new RuntimeException("Method may not be both @DependentObjectSet and @DependentObjectSingleton: "+clazz.getName()+'.'+method.getName());
+                    if((isDependentObjectSet || isDependentObjectSingleton) && method.getParameterTypes().length>0) throw new RuntimeException("Method may not take any parameters: "+clazz.getName()+'.'+method.getName());
+                    UnionMethodSet.Method<AOServObject<?>> unionMethod;
+                    Class<? extends AOServObject<?>> returnType;
+                    if(isDependentObjectSet) {
+                        // Make sure is a Set
+                        Class<?> setType = method.getReturnType();
+                        if(!Set.class.isAssignableFrom(setType)) throw new RuntimeException("@DependentObjectSet method must return a Set: "+clazz.getName()+'.'+method.getName());
+                        // Get the return type from the generic type parameters
+                        Type[] genericTypes = ((ParameterizedType)method.getGenericReturnType()).getActualTypeArguments();
+                        if(genericTypes.length==0) throw new RuntimeException("Generic type not found for @DependentObjectSet method: "+clazz.getName()+'.'+method.getName());
+                        if(genericTypes.length>1) throw new RuntimeException("Only one generic type allowed for @DependentObjectSet method: "+clazz.getName()+'.'+method.getName());
+                        unionMethod = new UnionMethodSet.SetMethod<AOServObject<?>>(method);
+                        @SuppressWarnings("unchecked")
+                        Class<? extends AOServObject<?>> returnTypeFix = (Class<? extends AOServObject<?>>)((Class<?>)genericTypes[0]).asSubclass(AOServObject.class);
+                        returnType = returnTypeFix;
+                    } else if(isDependentObjectSingleton) {
+                        if(Set.class.isAssignableFrom(method.getReturnType())) throw new RuntimeException("@DependentObjectSingleton method may not return a Set: "+clazz.getName()+'.'+method.getName());
+                        unionMethod = new UnionMethodSet.SingletonMethod<AOServObject<?>>(method);
+                        @SuppressWarnings("unchecked")
+                        Class<? extends AOServObject<?>> returnTypeFix = (Class<? extends AOServObject<?>>)method.getReturnType().asSubclass(AOServObject.class);
+                        returnType = returnTypeFix;
                     } else {
-                        // Convert to arraylist for second
-                        List<UnionMethodSet.Method<? extends AOServObject<?>>> test = new ArrayList<UnionMethodSet.Method<? extends AOServObject<?>>>(methods.size()+1);
-                        test.addAll(methods);
-                        test.add(unionMethod);
-                        getDependentObjectsMethods.put(returnType, test);
+                        unionMethod = null;
+                        returnType = null;
+                    }
+                    if(unionMethod!=null) {
+                        List<UnionMethodSet.Method<? extends AOServObject<?>>> methods = getDependentObjectsMethods.get(returnType);
+                        if(methods==null) {
+                            // Add first as singletonList
+                            List<UnionMethodSet.Method<AOServObject<?>>> test = Collections.singletonList(unionMethod);
+                            getDependentObjectsMethods.put(returnType, (List)test);
+                        } else {
+                            // Convert to arraylist for second
+                            List<UnionMethodSet.Method<? extends AOServObject<?>>> test = new ArrayList<UnionMethodSet.Method<? extends AOServObject<?>>>(methods.size()+1);
+                            test.addAll(methods);
+                            test.add(unionMethod);
+                            getDependentObjectsMethods.put(returnType, test);
+                        }
                     }
                 }
             }
+            // Switch to empty or singleton if possible
+            if(getDependentObjectsMethods.isEmpty()) getDependentObjectsMethods = Collections.emptyMap();
+            else if(getDependentObjectsMethods.size()==1) {
+                Map.Entry<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>> entry = getDependentObjectsMethods.entrySet().iterator().next();
+                getDependentObjectsMethods = (Map)Collections.singletonMap(entry.getKey(), entry.getValue());
+            }
+            Map<Class<? extends AOServObject<?>>, List<UnionMethodSet.Method<? extends AOServObject<?>>>> existing = getDependentObjectsMethodsCache.putIfAbsent(clazz, getDependentObjectsMethods);
+            if(existing!=null) getDependentObjectsMethods = existing;
         }
         return getDependentObjectsMethods;
     }
@@ -293,21 +403,20 @@ implements
      * Gets the set of objects directly dependent upon this object.
      * This should result in a directed acyclic graph - there should never be any loops in the graph.
      * This acyclic graph, however, should be an exact mirror of the acyclic graph obtained from <code>getDependencies</code>.
-     * By default, there are no dependent objects.
+     *
+     * This default implementation adds all methods annotated as DependentObjectSet or DependentObjectSingleton.
      *
      * @see #getDependencies() for the opposite direction
-     *
-     * @see #getBackConnectedVertices()
+     * @see DependentObjectSet
+     * @see DependentObjectSingleton
      */
     public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
-        UnionClassSet<AOServObject<?>> unionSet = addDependentObjects(null);
-        if(unionSet==null || unionSet.isEmpty()) return Collections.emptySet();
-        //else return AoCollections.optimalUnmodifiableSet(unionSet);
-        else return unionSet;
-    }
-
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        return unionSet;
+        @SuppressWarnings("unchecked")
+        Class<AOServObject<?>> thisClassFixed = (Class)getClass();
+        Map<Class<? extends AOServObject<?>>, ? extends List<UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods = getDependentObjectsMethods(thisClassFixed);
+        @SuppressWarnings("unchecked")
+        Class<AOServObject<?>> returnType = (Class)AOServObject.class;
+        return new UnionMethodSet<AOServObject<?>>(this, returnType, getDependentObjectsMethods);
     }
     // </editor-fold>
 

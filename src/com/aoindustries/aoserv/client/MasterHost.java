@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -73,6 +72,7 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     }
 
     static final String COLUMN_USERNAME = "username";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the unique username of the user")
     public MasterUser getMasterUser() throws RemoteException {
     	return getConnector().getMasterUsers().get(username);
@@ -97,15 +97,6 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     @Override
     public com.aoindustries.aoserv.client.dto.MasterHost getDto() {
         return new com.aoindustries.aoserv.client.dto.MasterHost(key, getDto(username), getDto(host));
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
-        return unionSet;
     }
     // </editor-fold>
 }

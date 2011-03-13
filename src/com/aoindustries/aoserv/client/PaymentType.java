@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -83,15 +82,6 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
         return ApplicationResources.accessor.getMessage("PaymentType."+getKey()+".description");
@@ -104,6 +94,7 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
         return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PAYMENT_TYPE, this);
     }

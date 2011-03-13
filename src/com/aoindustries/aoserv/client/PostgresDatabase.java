@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -120,18 +119,21 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
     }
 
     static final String COLUMN_POSTGRES_SERVER = "postgres_server";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
     public PostgresServer getPostgresServer() throws RemoteException {
         return getConnector().getPostgresServers().get(postgresServer);
     }
 
     static final String COLUMN_DATDBA = "datdba";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_DATDBA, index=IndexType.INDEXED, description="the datdba for the database")
     public PostgresUser getDatDBA() throws RemoteException {
         return getConnector().getPostgresUsers().get(datdba);
     }
 
     static final String COLUMN_ENCODING = "encoding";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_ENCODING, index=IndexType.INDEXED, description="the pkey of the encoding system used for the database")
     public PostgresEncoding getPostgresEncoding() throws RemoteException {
     	PostgresEncoding obj=getConnector().getPostgresEncodings().get(encoding);
@@ -204,17 +206,6 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
             allowConn,
             enablePostgis
         );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDatDBA());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresEncoding());
-        return unionSet;
     }
     // </editor-fold>
 

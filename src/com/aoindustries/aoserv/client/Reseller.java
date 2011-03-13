@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -42,6 +41,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the brand of this reseller")
     public Brand getBrand() throws RemoteException {
         return getConnector().getBrands().get(getKey());
@@ -84,24 +84,8 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
         return getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_RESELLER, this);
     }
@@ -114,6 +98,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
         return getConnector().getResellers().filterIndexed(COLUMN_PARENT, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Ticket> getTickets() throws RemoteException {
         return getConnector().getTickets().filterIndexed(Ticket.COLUMN_RESELLER, this);
     }

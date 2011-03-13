@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -55,21 +54,13 @@ final public class TechnologyName extends AOServObjectStringKey implements Compa
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologies());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
         return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_NAME, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Technology> getTechnologies() throws RemoteException {
         return getConnector().getTechnologies().filterIndexed(Technology.COLUMN_NAME, this);
     }

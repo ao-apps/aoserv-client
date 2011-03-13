@@ -9,8 +9,6 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -111,6 +109,7 @@ implements
     }
 
     static final String COLUMN_BUSINESS_SERVER = "business_server";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_BUSINESS_SERVER, index=IndexType.INDEXED, description="the business and server this bind is on")
     public BusinessServer getBusinessServer() throws RemoteException {
         return getConnector().getBusinessServers().get(businessServer);
@@ -121,6 +120,7 @@ implements
      * Gets the IP address this bind is on or <code>null</code> if should listen to all available
      * addresses on the server.
      */
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_IP_ADDRESS, index=IndexType.INDEXED, description="the pkey of the IP address that is bound to")
     public IPAddress getIpAddress() throws RemoteException {
         if(ipAddress==null) return null;
@@ -133,12 +133,14 @@ implements
     }
 
     static final String COLUMN_NET_PROTOCOL = "net_protocol";
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the network protocol (<code>net_protocols</code>)")
     public NetProtocol getNetProtocol() throws RemoteException {
         return getConnector().getNetProtocols().get(netProtocol);
     }
 
     static final String COLUMN_APP_PROTOCOL = "app_protocol";
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_APP_PROTOCOL, index=IndexType.INDEXED, description="the application protocol (<code>protocols</code>)")
     public Protocol getAppProtocol() throws RemoteException {
         return getConnector().getProtocols().get(appProtocol);
@@ -203,49 +205,6 @@ implements
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getIpAddress());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetProtocol());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAppProtocol());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-
-        UnionSet<AOServer> aoServers = null;
-        aoServers = AOServObjectUtils.addDependencyUnionSet(aoServers, getAOServerByDaemonNetBind());
-        aoServers = AOServObjectUtils.addDependencyUnionSet(aoServers, getAOServerByDaemonConnectNetBind());
-        aoServers = AOServObjectUtils.addDependencyUnionSet(aoServers, getAOServerByJilterNetBind());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, aoServers);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrandByAowebStrutsVncBind());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetTcpRedirect());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPrivateFtpServer());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmartHost(),
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdBind(),
-
-        // TODO: As union
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByJNPPort(),
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByWebserverPort(),
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByRMIPort(),
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByHypersonicPort(),
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSiteByJMXPort(),
-
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSharedTomcatByShutdownPort(),
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdWorker(),
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatStdSiteByShutdownPort(),
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -258,75 +217,93 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSingleton
     public AOServer getAOServerByDaemonNetBind() throws RemoteException {
         return getConnector().getAoServers().filterUnique(AOServer.COLUMN_DAEMON_BIND, this);
     }
 
+    @DependentObjectSingleton
     public AOServer getAOServerByDaemonConnectNetBind() throws RemoteException {
         return getConnector().getAoServers().filterUnique(AOServer.COLUMN_DAEMON_CONNECT_BIND, this);
     }
 
+    @DependentObjectSingleton
     public AOServer getAOServerByJilterNetBind() throws RemoteException {
         return getConnector().getAoServers().filterUnique(AOServer.COLUMN_JILTER_BIND, this);
     }
 
+    @DependentObjectSingleton
     public Brand getBrandByAowebStrutsVncBind() throws RemoteException {
         return getConnector().getBrands().filterUnique(Brand.COLUMN_AOWEB_STRUTS_VNC_BIND, this);
     }
 
+    @DependentObjectSingleton
     public MySQLServer getMySQLServer() throws RemoteException {
         return getConnector().getMysqlServers().filterUnique(MySQLServer.COLUMN_NET_BIND, this);
     }
 
+    @DependentObjectSingleton
     public NetTcpRedirect getNetTcpRedirect() throws RemoteException {
         return getConnector().getNetTcpRedirects().filterUnique(NetTcpRedirect.COLUMN_NET_BIND, this);
     }
 
+    @DependentObjectSingleton
     public PostgresServer getPostgresServer() throws RemoteException {
         return getConnector().getPostgresServers().filterUnique(PostgresServer.COLUMN_NET_BIND, this);
     }
 
+    @DependentObjectSingleton
     public PrivateFtpServer getPrivateFtpServer() throws RemoteException {
         return getConnector().getPrivateFtpServers().filterUnique(PrivateFtpServer.COLUMN_NET_BIND, this);
     }
 
     /* TODO
+    @DependentObjectSingleton
     public HttpdBind getHttpdBind() throws IOException, SQLException {
         return getConnector().getHttpdBinds().get(pkey);
     }
 
+    @DependentObjectSingleton
     public HttpdJBossSite getHttpdJBossSiteByJNPPort() throws IOException, SQLException {
         return getConnector().getHttpdJBossSites().getHttpdJBossSiteByJNPPort(this);
     }
 
+    @DependentObjectSingleton
     public HttpdJBossSite getHttpdJBossSiteByWebserverPort() throws IOException, SQLException {
         return getConnector().getHttpdJBossSites().getHttpdJBossSiteByWebserverPort(this);
     }
 
+    @DependentObjectSingleton
     public HttpdJBossSite getHttpdJBossSiteByRMIPort() throws IOException, SQLException {
         return getConnector().getHttpdJBossSites().getHttpdJBossSiteByRMIPort(this);
     }
 
+    @DependentObjectSingleton
     public HttpdJBossSite getHttpdJBossSiteByHypersonicPort() throws IOException, SQLException {
         return getConnector().getHttpdJBossSites().getHttpdJBossSiteByHypersonicPort(this);
     }
 
+    @DependentObjectSingleton
     public HttpdJBossSite getHttpdJBossSiteByJMXPort() throws IOException, SQLException {
         return getConnector().getHttpdJBossSites().getHttpdJBossSiteByJMXPort(this);
     }
 
+    @DependentObjectSingleton
     public HttpdWorker getHttpdWorker() throws IOException, SQLException {
         return getConnector().getHttpdWorkers().getHttpdWorker(this);
     }
 
+    @DependentObjectSingleton
     public HttpdSharedTomcat getHttpdSharedTomcatByShutdownPort() throws SQLException, IOException {
         return getConnector().getHttpdSharedTomcats().getHttpdSharedTomcatByShutdownPort(this);
     }
 
+    @DependentObjectSingleton
     public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
         return getConnector().getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
     }
 
+    @DependentObjectSingleton
     public EmailSmtpSmartHost getEmailSmartHost() throws IOException, SQLException {
         return getConnector().getEmailSmtpSmartHosts().getUniqueRow(EmailSmtpSmartHost.COLUMN_NET_BIND, pkey);
     }

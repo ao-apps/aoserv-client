@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -72,18 +71,21 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     }
 
     static final String COLUMN_TICKET = "ticket";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_TICKET, index=IndexType.INDEXED, description="the ticket id that is assigned")
     public Ticket getTicket() throws RemoteException {
         return getConnector().getTickets().get(ticket);
     }
 
     static final String COLUMN_RESELLER = "reseller";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_RESELLER, index=IndexType.INDEXED, description="the reseller for the assignment")
     public Reseller getReseller() throws RemoteException {
         return getConnector().getResellers().get(reseller);
     }
 
     static final String COLUMN_ADMINISTRATOR = "administrator";
+    @DependencySingleton
     @SchemaColumn(order=3, name=COLUMN_ADMINISTRATOR, index=IndexType.INDEXED, description="the individual that the ticket is assigned to within the reseller")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(administrator);
@@ -104,17 +106,6 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     @Override
     public com.aoindustries.aoserv.client.dto.TicketAssignment getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketAssignment(key, ticket, getDto(reseller), getDto(administrator));
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicket());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
-        return unionSet;
     }
     // </editor-fold>
 

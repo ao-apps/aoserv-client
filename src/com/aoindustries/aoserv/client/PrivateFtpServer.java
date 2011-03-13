@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -87,6 +86,7 @@ final public class PrivateFtpServer extends AOServerResource implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_NET_BIND = "net_bind";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the pkey of the net_bind that the FTP server is on")
     public NetBind getNetBind() throws RemoteException {
         return getConnector().getNetBinds().get(netBind);
@@ -108,6 +108,7 @@ final public class PrivateFtpServer extends AOServerResource implements Comparab
     }
 
     static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the Linux account and group this FTP server runs as")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
@@ -160,16 +161,6 @@ final public class PrivateFtpServer extends AOServerResource implements Comparab
             linuxAccountGroup,
             allowAnonymous
         );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
-        return unionSet;
     }
     // </editor-fold>
 

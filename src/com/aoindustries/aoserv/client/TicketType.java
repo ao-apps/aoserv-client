@@ -6,11 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionMethodSet;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Each <code>Ticket</code> is of a specific <code>TicketType</code>.
@@ -65,32 +61,6 @@ final public class TicketType extends AOServObjectStringKey implements Comparabl
     public com.aoindustries.aoserv.client.dto.TicketType getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketType(getKey());
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    private static final Map<Class<? extends AOServObject<?>>, ? extends List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods
-         = getDependentObjectsMethods(TicketType.class);
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
-        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependentObjectsMethods);
-    }
-
-    /*
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-
-        UnionSet<TicketAction> ticketActions = null;
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldType());
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
-        return unionSet;
-    }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">

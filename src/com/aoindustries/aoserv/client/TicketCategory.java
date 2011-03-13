@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
@@ -65,6 +63,7 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     }
 
     static final String COLUMN_PARENT = "parent";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the category id of its parent or null if this is a top-level category")
     public TicketCategory getParent() throws RemoteException {
         if(parent==null) return null;
@@ -104,30 +103,6 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getParent());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getChildrenCategories());
-
-        UnionSet<TicketAction> ticketActions = null;
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldCategory());
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewCategory());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
-
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketBrandCategories());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -136,18 +111,22 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<TicketCategory> getChildrenCategories() throws RemoteException {
         return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByOldCategory() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_CATEGORY, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByNewCategory() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_CATEGORY, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Ticket> getTickets() throws RemoteException {
         return getConnector().getTickets().filterIndexed(Ticket.COLUMN_CATEGORY, this);
     }

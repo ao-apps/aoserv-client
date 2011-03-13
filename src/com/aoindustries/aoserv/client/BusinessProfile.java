@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -117,6 +116,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
@@ -168,6 +168,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     }
 
     static final String COLUMN_COUNTRY = "country";
+    @DependencySingleton
     @SchemaColumn(order=11, name=COLUMN_COUNTRY, index=IndexType.INDEXED, description="the two-character country code")
     public CountryCode getCountry() throws RemoteException {
         return getConnector().getCountryCodes().get(country);
@@ -250,16 +251,6 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessProfile getDto() {
         return new com.aoindustries.aoserv.client.dto.BusinessProfile(key, getDto(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountry());
-        return unionSet;
     }
     // </editor-fold>
 

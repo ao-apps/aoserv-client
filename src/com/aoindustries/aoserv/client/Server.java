@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
@@ -91,6 +90,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     }
 
     static final String COLUMN_FARM = "farm";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_FARM, index=IndexType.INDEXED, description="the name of the farm the server is located in")
     public ServerFarm getServerFarm() throws RemoteException {
         return getConnector().getServerFarms().get(farm);
@@ -102,6 +102,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     }
 
     static final String COLUMN_OPERATING_SYSTEM_VERSION="operating_system_version";
+    @DependencySingleton
     @SchemaColumn(order=3, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of operating system running on the server, if known")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         if(operatingSystemVersion==null) return null;
@@ -112,6 +113,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
      * May be filtered.
      */
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business accountable for resources used by the server")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
@@ -148,47 +150,25 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerFarm());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServer());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getPhysicalServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevices());
-        for(AOServService<Integer,? extends ServerResource> subService : getConnector().getServerResources().getSubServices()) {
-            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(ServerResource.COLUMN_SERVER, this));
-        }
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSingleton
     public AOServer getAoServer() throws RemoteException {
         return getConnector().getAoServers().filterUnique(AOServer.COLUMN_SERVER, this);
     }
 
     /* TODO
+    @DependentObjectSingleton
     public PhysicalServer getPhysicalServer() throws IOException, SQLException {
         return getConnector().getPhysicalServers().get(pkey);
     }
      */
+
+    @DependentObjectSingleton
     public VirtualServer getVirtualServer() throws RemoteException {
         return getConnector().getVirtualServers().filterUnique(VirtualServer.COLUMN_SERVER, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
         return getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_SERVER, this);
     }
@@ -196,6 +176,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     /**
      * Gets the list of all replications coming from this server.
      */
+    @DependentObjectSet
     public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
         return getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_SERVER, this);
     }
@@ -204,6 +185,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
         return getConnector().getIpAddresses().filterIndexedSet(IPAddress.COLUMN_NET_DEVICE, getNetDevices());
     }
 
+    @DependentObjectSet
     public IndexedSet<NetDevice> getNetDevices() throws RemoteException {
     	return getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_SERVER, this);
     }
@@ -219,10 +201,12 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
         return nd;
     }
 
+    @DependentObjectSet
     public IndexedSet<ServerResource> getServerResources() throws RemoteException {
         return getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_SERVER, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<MasterServer> getMasterServers() throws RemoteException {
         return getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_SERVER, this);
     }

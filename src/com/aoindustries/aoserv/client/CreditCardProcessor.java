@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -96,6 +95,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business owning the merchant account")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
@@ -191,38 +191,23 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCards());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransactions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
         return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_PROCESSOR_ID, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
         return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PROCESSOR, this);
     }
     /* TODO
+    @DependentObjectSet
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
         return getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_PROCESSOR, pkey);
     }
     */
+    @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
         return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_PROCESSOR_ID, this);
     }

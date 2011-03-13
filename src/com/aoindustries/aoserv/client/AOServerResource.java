@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -52,26 +51,18 @@ public abstract class AOServerResource extends Resource {
      * Gets the resource that this represents.
      */
     static final String COLUMN_AO_SERVER = "ao_server";
+    @DependencySingleton
     @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the server that this resource is on")
     public AOServer getAoServer() throws RemoteException {
         return getConnector().getAoServers().get(aoServer);
     }
 
     static final String COLUMN_BUSINESS_SERVER = "business_server";
+    @DependencySingleton
     @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, name=COLUMN_BUSINESS_SERVER, index=IndexType.INDEXED, description="the business server that this resource depends on")
     public BusinessServer getBusinessServer() throws RemoteException {
         return getConnector().getBusinessServers().get(businessServer);
     }
     static final int AOSERVER_RESOURCE_LAST_COLUMN = RESOURCE_LAST_COLUMN+2;
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServer());
-        return unionSet;
-    }
     // </editor-fold>
 }

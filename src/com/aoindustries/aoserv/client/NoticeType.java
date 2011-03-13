@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import java.rmi.RemoteException;
 
 /**
  * Each reason for notifying clients is represented by a
@@ -57,15 +55,6 @@ final public class NoticeType extends AOServObjectStringKey implements Comparabl
     @Override
     public com.aoindustries.aoserv.client.dto.NoticeType getDto() {
         return new com.aoindustries.aoserv.client.dto.NoticeType(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
-        return unionSet;
     }
     // </editor-fold>
 

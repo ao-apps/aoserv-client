@@ -69,6 +69,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
     }
 
     static final String COLUMN_REPLICATION = "replication";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the pkey of the failover_file_replication configured")
     public FailoverFileReplication getReplication() throws RemoteException {
         return getConnector().getFailoverFileReplications().get(replication);

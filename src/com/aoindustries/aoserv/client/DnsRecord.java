@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -107,6 +106,7 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_ZONE = "zone";
+    @DependencySingleton
     @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, name=COLUMN_ZONE, index=IndexType.INDEXED, description="the zone as found in dns_zones")
     public DnsZone getZone() throws RemoteException {
         return getConnector().getDnsZones().get(zone);
@@ -118,6 +118,7 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
     }
 
     static final String COLUMN_TYPE = "type";
+    @DependencySingleton
     @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, name=COLUMN_TYPE, index=IndexType.INDEXED, description="the type as found in dns_types")
     public DnsType getType() throws RemoteException {
         return getConnector().getDnsTypes().get(type);
@@ -143,6 +144,7 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
         return dataText;
     }
 
+    @DependencySingleton
     @SchemaColumn(order=RESOURCE_LAST_COLUMN+8, name="dhcp_address", description="the pkey of the IP address that will update this DNS record")
     public IPAddress getDhcpAddress() throws RemoteException {
         if(dhcpAddress==null) return null;
@@ -198,17 +200,6 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
             dhcpAddress,
             ttl
         );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getZone());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDhcpAddress());
-        return unionSet;
     }
     // </editor-fold>
 

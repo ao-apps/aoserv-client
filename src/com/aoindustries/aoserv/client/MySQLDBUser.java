@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -119,12 +118,14 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     }
 
     static final String COLUMN_MYSQL_DATABASE = "mysql_database";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_MYSQL_DATABASE, index=IndexType.INDEXED, description="the pkey in mysql_databases")
     public MySQLDatabase getMysqlDatabase() throws RemoteException {
     	return getConnector().getMysqlDatabases().get(mysqlDatabase);
     }
 
     static final String COLUMN_MYSQL_USER = "mysql_user";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_MYSQL_USER, index=IndexType.INDEXED, description="the pkey in mysql_users")
     public MySQLUser getMysqlUser() throws RemoteException {
     	return getConnector().getMysqlUsers().get(mysqlUser);
@@ -258,16 +259,6 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLDBUser getDto() {
         return new com.aoindustries.aoserv.client.dto.MySQLDBUser(key, mysqlDatabase, mysqlUser, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, grantPriv, referencesPriv, indexPriv, alterPriv, createTmpTablePriv, lockTablesPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, executePriv, eventPriv, triggerPriv);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabase());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUser());
-        return unionSet;
     }
     // </editor-fold>
 

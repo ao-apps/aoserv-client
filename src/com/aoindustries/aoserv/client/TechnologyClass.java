@@ -72,15 +72,6 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologies());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
         return ApplicationResources.accessor.getMessage("TechnologyClass."+getKey()+".description");
@@ -93,6 +84,7 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<Technology> getTechnologies() throws RemoteException {
         return getConnector().getTechnologies().filterIndexed(Technology.COLUMN_CLASS, this);
     }

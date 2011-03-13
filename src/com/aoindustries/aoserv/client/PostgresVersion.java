@@ -7,8 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -96,6 +94,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_VERSION = "version";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="a reference to the PostgreSQL details in the <code>technology_versions</code> table")
     public TechnologyVersion getTechnologyVersion() throws RemoteException {
         return getConnector().getTechnologyVersions().get(key);
@@ -110,6 +109,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
      * Gets the PostGIS version of <code>null</code> if not supported by this PostgreSQL version....
      */
     static final String COLUMN_POSTGIS_VERSION = "postgis_version";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_POSTGIS_VERSION, index=IndexType.INDEXED, description="a reference to the PostGIS defails in the <code>technology_versions</code>")
     public TechnologyVersion getPostgisVersion() throws RemoteException {
         if(postgisVersion==null) return null;
@@ -140,33 +140,13 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-
-        UnionSet<TechnologyVersion> technologyVersions = null;
-        technologyVersions = AOServObjectUtils.addDependencyUnionSet(technologyVersions, getTechnologyVersion());
-        technologyVersions = AOServObjectUtils.addDependencyUnionSet(technologyVersions, getPostgisVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, technologyVersions);
-
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresEncodings());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<PostgresServer> getPostgresServers() throws RemoteException {
         return getConnector().getPostgresServers().filterIndexed(PostgresServer.COLUMN_VERSION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PostgresEncoding> getPostgresEncodings() throws RemoteException {
         return getConnector().getPostgresEncodings().filterIndexed(PostgresEncoding.COLUMN_POSTGRES_VERSION, this);
     }

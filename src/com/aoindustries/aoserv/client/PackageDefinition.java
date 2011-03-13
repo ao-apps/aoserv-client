@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
@@ -96,6 +94,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     }
 
     static final String COLUMN_CATEGORY = "category";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_CATEGORY, index=IndexType.INDEXED, description="the package category")
     public PackageCategory getCategory() throws RemoteException {
         return getConnector().getPackageCategories().get(category);
@@ -120,6 +119,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     }
 
     static final String COLUMN_SETUP_FEE_TRANSACTION_TYPE = "setup_fee_transaction_type";
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_SETUP_FEE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction of the setup fee")
     public TransactionType getSetupFeeTransactionType() throws RemoteException {
         if(setupFeeTransactionType==null) return null;
@@ -132,6 +132,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     }
 
     static final String COLUMN_MONTHLY_RATE_TRANSACTION_TYPE = "monthly_rate_transaction_type";
+    @DependencySingleton
     @SchemaColumn(order=7, name=COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction for the monthly fee")
     public TransactionType getMonthlyRateTransactionType() throws RemoteException {
         if(monthlyRateTransactionType==null) return null;
@@ -176,31 +177,6 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCategory());
-
-        UnionSet<TransactionType> transactionTypes = null;
-        transactionTypes = AOServObjectUtils.addDependencyUnionSet(transactionTypes, getSetupFeeTransactionType());
-        transactionTypes = AOServObjectUtils.addDependencyUnionSet(transactionTypes, getMonthlyRateTransactionType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, transactionTypes);
-
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinesses());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLimits());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionBusinesses());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSignupRequests());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -212,14 +188,17 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     /**
      * Gets the list of businesses using this definition.
      */
+    @DependentObjectSet
     public IndexedSet<Business> getBusinesses() throws RemoteException {
         return getConnector().getBusinesses().filterIndexed(Business.COLUMN_PACKAGE_DEFINITION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PackageDefinitionLimit> getLimits() throws RemoteException {
         return getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PackageDefinitionBusiness> getPackageDefinitionBusinesses() throws RemoteException {
         return getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_PACKAGE_DEFINITION, this);
     }
@@ -230,6 +209,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
         return getConnector().getPackageDefinitionLimits().getPackageDefinitionLimit(this, resourceType);
     }
 
+    @DependentObjectSet
     public List<SignupRequest> getSignupRequests() throws RemoteException {
         return getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_PACKAGE_DEFINITION, pkey);
     }

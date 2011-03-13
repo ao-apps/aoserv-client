@@ -10,7 +10,6 @@ import com.aoindustries.aoserv.client.command.CheckMySQLUserPasswordCommand;
 import com.aoindustries.aoserv.client.command.SetMySQLUserPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -230,6 +229,7 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_USERNAME = "username";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the MySQL user")
     public Username getUsername() throws RemoteException {
         return getConnector().getUsernames().get(username.getUserId());
@@ -239,6 +239,7 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
     }
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the resource ID of the MySQL server")
     public MySQLServer getMysqlServer() throws RemoteException {
     	return getConnector().getMysqlServers().get(mysqlServer);
@@ -518,23 +519,6 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlServer());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDBUsers());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -543,6 +527,7 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<MySQLDBUser> getMysqlDBUsers() throws RemoteException {
         return getConnector().getMysqlDBUsers().filterIndexed(MySQLDBUser.COLUMN_MYSQL_USER, this);
     }

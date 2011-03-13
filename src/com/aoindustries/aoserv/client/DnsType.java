@@ -69,15 +69,6 @@ final public class DnsType extends AOServObjectStringKey implements Comparable<D
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDnsRecords());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -86,6 +77,7 @@ final public class DnsType extends AOServObjectStringKey implements Comparable<D
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<DnsRecord> getDnsRecords() throws RemoteException {
         return getConnector().getDnsRecords().filterIndexed(DnsRecord.COLUMN_TYPE, this);
     }

@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import java.rmi.RemoteException;
 
 /**
  * For AO Industries use only.
@@ -63,15 +61,6 @@ implements
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
         return ApplicationResources.accessor.getMessage("BankTransactionType."+getKey()+".description");
@@ -89,6 +78,7 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
         return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }

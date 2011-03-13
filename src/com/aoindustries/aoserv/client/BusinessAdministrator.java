@@ -10,15 +10,11 @@ import com.aoindustries.aoserv.client.command.CheckBusinessAdministratorPassword
 import com.aoindustries.aoserv.client.command.SetBusinessAdministratorPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionMethodSet;
-import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -147,6 +143,7 @@ implements
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_USERNAME = "username";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
     public Username getUsername() throws RemoteException {
         return getConnector().getUsernames().get(getKey());
@@ -236,6 +233,7 @@ implements
     }
 
     static final String COLUMN_COUNTRY="country";
+    @DependencySingleton
     @SchemaColumn(order=17, name=COLUMN_COUNTRY, index=IndexType.INDEXED, description="the country (if different than business)")
     public CountryCode getCountry() throws RemoteException {
         if(country == null) return null;
@@ -250,6 +248,7 @@ implements
     }
 
     static final String COLUMN_DISABLE_LOG = "disable_log";
+    @DependencySingleton
     @SchemaColumn(order=19, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that this account is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
@@ -300,65 +299,6 @@ implements
     public com.aoindustries.aoserv.client.dto.BusinessAdministrator getDto() {
         return new com.aoindustries.aoserv.client.dto.BusinessAdministrator(getDto(getKey()), getDto(password), fullName, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, getDto(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountry());
-        /*// Caused cycle in dependency DAG:*/ unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
-        return unionSet;
-    }
-
-    private static final Map<Class<? extends AOServObject<?>>, ? extends List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods
-         = getDependentObjectsMethods(BusinessAdministrator.class);
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
-        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependentObjectsMethods);
-    }
-
-    /*
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministratorRoles());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardsByCreatedBy());
-
-        UnionSet<CreditCardTransaction> creditCardTransactions = null;
-        creditCardTransactions = AOServObjectUtils.addDependencyUnionSet(creditCardTransactions, getCreditCardTransactionsByCreditCardCreatedBy());
-        creditCardTransactions = AOServObjectUtils.addDependencyUnionSet(creditCardTransactions, getCreditCardTransactionsByAuthorizationUsername());
-        creditCardTransactions = AOServObjectUtils.addDependencyUnionSet(creditCardTransactions, getCreditCardTransactionsByCaptureUsername());
-        creditCardTransactions = AOServObjectUtils.addDependencyUnionSet(creditCardTransactions, getCreditCardTransactionsByVoidUsername());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, creditCardTransactions);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLogs());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyCharges());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyChargesByCreatedBy());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessesByCreatedBy());
-
-        for(AOServService<Integer,? extends Resource> subService : getConnector().getResources().getSubServices()) {
-            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(Resource.COLUMN_CREATED_BY, this));
-        }
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketsByCreatedBy());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getCompletedSignupRequests());
-
-        UnionSet<TicketAction> ticketActions = null;
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActions());
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldAssignedTo());
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewAssignedTo());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
-        return unionSet;
-    }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">

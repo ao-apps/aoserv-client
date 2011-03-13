@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -68,6 +67,7 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
      * May be filtered.
      */
     static final String COLUMN_OWNER = "owner";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_OWNER, index=IndexType.INDEXED, description="the business that owns of the farm")
     public Business getOwner() throws RemoteException {
         return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, owner);
@@ -96,23 +96,6 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOwner());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getRacks());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -122,10 +105,12 @@ final public class ServerFarm extends AOServObjectDomainLabelKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public List<Rack> getRacks() throws IOException, SQLException {
         return getConnector().getRacks().getIndexedRows(Rack.COLUMN_FARM, pkey);
     }*/
 
+    @DependentObjectSet
     public IndexedSet<Server> getServers() throws RemoteException {
         return getConnector().getServers().filterIndexed(Server.COLUMN_FARM, this);
     }

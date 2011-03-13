@@ -127,6 +127,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     }
 
     static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the user the site \"runs as\"")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
@@ -192,26 +193,6 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        // Could serverAdmin be a dependency when hosted on AO?  Or, at least a removal warning?
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdStaticSite());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatSite());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSiteAuthenticatedLocations());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSiteBinds());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -221,18 +202,22 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public List<HttpdSiteAuthenticatedLocation> getHttpdSiteAuthenticatedLocations() throws IOException, SQLException {
         return getConnector().getHttpdSiteAuthenticatedLocationTable().getHttpdSiteAuthenticatedLocations(this);
     }
 
+    @DependentObjectSet
     public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
         return getConnector().getHttpdSiteBinds().getHttpdSiteBinds(this);
     }
 
+    @DependentObjectSet
     public HttpdStaticSite getHttpdStaticSite() throws IOException, SQLException {
         return getConnector().getHttpdStaticSites().get(pkey);
     }
 
+    @DependentObjectSet
     public HttpdTomcatSite getHttpdTomcatSite() throws IOException, SQLException {
         return getConnector().getHttpdTomcatSites().get(pkey);
     }

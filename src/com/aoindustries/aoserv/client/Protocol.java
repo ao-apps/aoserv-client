@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -129,6 +128,7 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     }
 
     static final String COLUMN_NET_PROTOCOL = "net_protocol";
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the default network protocol for this protocol")
     public NetProtocol getNetProtocol() throws RemoteException {
         return getConnector().getNetProtocols().get(netProtocol);
@@ -153,28 +153,13 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetProtocol());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJKProtocol());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSingleton
     public HttpdJKProtocol getHttpdJKProtocol() throws RemoteException {
         return getConnector().getHttpdJKProtocols().filterUnique(HttpdJKProtocol.COLUMN_PROTOCOL, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
         return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_APP_PROTOCOL, this);
     }

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -70,12 +69,14 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_VERSION = "version";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="jboss version designator")
     public TechnologyVersion getTechnologyVersion() throws RemoteException {
         return getConnector().getTechnologyVersions().get(key);
     }
 
     static final String COLUMN_TOMCAT_VERSION = "tomcat_version";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_TOMCAT_VERSION, index=IndexType.INDEXED, description="version of tomcat associated with this jboss version")
     public HttpdTomcatVersion getHttpdTomcatVersion() throws RemoteException {
         return getConnector().getHttpdTomcatVersions().get(tomcatVersion);
@@ -103,25 +104,9 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatVersion());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossSites());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public IndexedSet<HttpdJBossSite> getHttpdJBossSites() throws RemoteException {
         return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
     }

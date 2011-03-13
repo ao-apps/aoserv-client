@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -67,6 +66,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_NET_BIND = "net_bind";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_NET_BIND, index=IndexType.PRIMARY_KEY, description="the pkey as found in net_binds")
     public NetBind getNetBind() throws RemoteException {
         return getConnector().getNetBinds().get(key);
@@ -108,15 +108,6 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     @Override
     public com.aoindustries.aoserv.client.dto.NetTcpRedirect getDto() {
         return new com.aoindustries.aoserv.client.dto.NetTcpRedirect(key, cps, cpsOverloadSleepTime, getDto(destinationHost), getDto(destinationPort));
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
-        return unionSet;
     }
     // </editor-fold>
 

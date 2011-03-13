@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -111,6 +110,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     public static final String COLUMN_SERVER = "server";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_SERVER, index=IndexType.PRIMARY_KEY, description="a reference to servers")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(key);
@@ -129,6 +129,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
      * Gets the port information to bind to.
      */
     static final String COLUMN_DAEMON_BIND = "daemon_bind";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_DAEMON_BIND, index=IndexType.UNIQUE, description="the network bind info for the AOServ Daemon")
     public NetBind getDaemonBind() throws RemoteException {
     	if(daemonBind==null) return null;
@@ -156,6 +157,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     }
 
     static final String COLUMN_FAILOVER_SERVER = "failover_server";
+    @DependencySingleton
     @SchemaColumn(order=7, name=COLUMN_FAILOVER_SERVER, index=IndexType.INDEXED, description="the server that is currently running this server")
     public AOServer getFailoverServer() throws RemoteException {
         if(failoverServer==null) return null;
@@ -163,12 +165,14 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     }
 
     static final String COLUMN_DAEMON_DEVICE_ID = "daemon_device_id";
+    @DependencySingleton
     @SchemaColumn(order=8, name=COLUMN_DAEMON_DEVICE_ID, index=IndexType.INDEXED, description="the device name the master connects to")
     public NetDeviceID getDaemonDeviceID() throws RemoteException {
         return getConnector().getNetDeviceIDs().get(daemonDeviceId);
     }
 
     static final String COLUMN_DAEMON_CONNECT_BIND = "daemon_connect_bind";
+    @DependencySingleton
     @SchemaColumn(order=9, name=COLUMN_DAEMON_CONNECT_BIND, index=IndexType.UNIQUE, description="the bind to connect to")
     public NetBind getDaemonConnectBind() throws RemoteException {
         if(daemonConnectBind==null) return null;
@@ -176,12 +180,14 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     }
 
     static final String COLUMN_TIME_ZONE = "time_zone";
+    @DependencySingleton
     @SchemaColumn(order=10, name=COLUMN_TIME_ZONE, index=IndexType.INDEXED, description="the time zone setting for the server")
     public TimeZone getTimeZone() throws RemoteException {
         return getConnector().getTimeZones().get(timeZone);
     }
 
     static final String COLUMN_JILTER_BIND = "jilter_bind";
+    @DependencySingleton
     @SchemaColumn(order=11, name=COLUMN_JILTER_BIND, index=IndexType.UNIQUE, description="the bind that sendmail uses to connect to jilter")
     public NetBind getJilterBind() throws RemoteException {
     	if(jilterBind==null) return null;
@@ -282,50 +288,13 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDaemonDeviceID());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTimeZone());
-
-        UnionSet<NetBind> netBinds = null;
-        netBinds = AOServObjectUtils.addDependencyUnionSet(netBinds, getDaemonBind());
-        netBinds = AOServObjectUtils.addDependencyUnionSet(netBinds, getDaemonConnectBind());
-        netBinds = AOServObjectUtils.addDependencyUnionSet(netBinds, getJilterBind());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, netBinds);
-
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServerDaemonHosts());
-        for(AOServService<Integer,? extends AOServerResource> subService : getConnector().getAoServerResources().getSubServices()) {
-            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(AOServerResource.COLUMN_AO_SERVER, this));
-        }
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBackupPartitions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNestedAoServers());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxServerAccounts());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailDomains());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxServerGroups());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailPipes());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getSystemEmailAliases());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmtpRelays());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSharedTomcats());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<AOServerResource> getAoServerResources() throws RemoteException {
         return getConnector().getAoServerResources().filterIndexed(AOServerResource.COLUMN_AO_SERVER, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<BackupPartition> getBackupPartitions() throws RemoteException {
         return getConnector().getBackupPartitions().filterIndexed(BackupPartition.COLUMN_AO_SERVER, this);
     }
@@ -345,6 +314,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     /**
      * Gets the set of servers that are currently failed-over to this server.
      */
+    @DependentObjectSet
     public IndexedSet<AOServer> getNestedAoServers() throws RemoteException {
         return getConnector().getAoServers().filterIndexed(AOServer.COLUMN_FAILOVER_SERVER, this);
     }
@@ -427,6 +397,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         return ps;
     }
 
+    @DependentObjectSet
     public IndexedSet<AOServerDaemonHost> getAoServerDaemonHosts() throws RemoteException {
     	return getConnector().getAoServerDaemonHosts().filterIndexed(AOServerDaemonHost.COLUMN_AO_SERVER, this);
     }
@@ -446,6 +417,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         return address;
     }
 
+    @DependentObjectSet
     public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
         return getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_AO_SERVER, this);
     }

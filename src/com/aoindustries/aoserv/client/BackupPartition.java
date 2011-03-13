@@ -71,6 +71,7 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     }
 
     static final String COLUMN_AO_SERVER = "ao_server";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the pkey of the server that stores the backup data")
     public AOServer getAOServer() throws RemoteException {
         return getConnector().getAoServers().get(aoServer);
@@ -111,22 +112,6 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServer());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplications());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -135,6 +120,7 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
         return getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_BACKUP_PARTITION, this);
     }

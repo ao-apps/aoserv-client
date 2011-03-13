@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -82,12 +81,14 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
      * May be filtered.
      */
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     static final String COLUMN_SERVER = "server";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the server")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(server);
@@ -121,29 +122,6 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        for(AOServService<Integer,? extends AOServerResource> subService : getConnector().getAoServerResources().getSubServices()) {
-            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(AOServerResource.COLUMN_BUSINESS_SERVER, this));
-        }
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
-        for(AOServService<Integer,? extends ServerResource> subService : getConnector().getServerResources().getSubServices()) {
-            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(ServerResource.COLUMN_BUSINESS_SERVER, this));
-        }
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -153,14 +131,17 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<AOServerResource> getAoServerResources() throws RemoteException {
         return getConnector().getAoServerResources().filterIndexed(AOServerResource.COLUMN_BUSINESS_SERVER, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
         return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_BUSINESS_SERVER, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<ServerResource> getServerResources() throws RemoteException {
         return getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_BUSINESS_SERVER, this);
     }

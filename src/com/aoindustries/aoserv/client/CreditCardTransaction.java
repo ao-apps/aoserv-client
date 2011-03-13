@@ -7,8 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -331,6 +329,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the credit card processor used for this transaction.
      */
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, index=IndexType.INDEXED, description="the name of the processor used for this transaction")
     public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
         return getConnector().getCreditCardProcessors().get(processorId);
@@ -342,6 +341,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      * For application-only use (not a sub-account to parent-account payment), use the same business
      * as the owner of the credit card processor.
      */
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code for the source of this transaction")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
@@ -466,6 +466,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      *
      * See <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2</a>
      */
+    @DependencySingleton
     @SchemaColumn(order=20, name=COLUMN_SHIPPING_COUNTRY_CODE, index=IndexType.INDEXED, description="the shipping two-digit ISO 3166-1 alpha-2 country code")
     public CountryCode getShippingCountryCode() throws RemoteException {
         if(shippingCountryCode==null) return null;
@@ -498,6 +499,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     }
 
     static final String COLUMN_CREDIT_CARD_CREATED_BY = "credit_card_created_by";
+    @DependencySingleton
     @SchemaColumn(order=26, name=COLUMN_CREDIT_CARD_CREATED_BY, index=IndexType.INDEXED, description="the business administrator account that provided this credit card")
     public BusinessAdministrator getCreditCardCreatedBy() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(creditCardCreatedBy);
@@ -512,6 +514,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     }
 
     static final String COLUMN_CREDIT_CARD_ACCOUNTING = "credit_card_accounting";
+    @DependencySingleton
     @SchemaColumn(order=28, name=COLUMN_CREDIT_CARD_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business that provided this credit card")
     public Business getCreditCardBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(creditCardAccounting);
@@ -598,6 +601,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      *
      * See <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2</a>
      */
+    @DependencySingleton
     @SchemaColumn(order=44, name=COLUMN_CREDIT_CARD_COUNTRY_CODE, index=IndexType.INDEXED, description="the two-digit ISO 3166-1 alpha-2 country code of the card holder")
     public CountryCode getCreditCardCountryCode() throws RemoteException {
         return getConnector().getCountryCodes().get(creditCardCountryCode);
@@ -621,6 +625,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      * Gets the <code>BusinessAdministrator</code> who authorized this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
+    @DependencySingleton
     @SchemaColumn(order=47, name=COLUMN_AUTHORIZATION_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the transaction")
     public BusinessAdministrator getAuthorizationAdministrator() throws RemoteException {
         if(authorizationUsername==null) return null;
@@ -729,6 +734,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      * Gets the <code>BusinessAdministrator</code> who captured this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
+    @DependencySingleton
     @SchemaColumn(order=66, name=COLUMN_CAPTURE_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the capture")
     public BusinessAdministrator getCaptureAdministrator() throws RemoteException {
         if(captureUsername==null) return null;
@@ -782,6 +788,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      * Gets the <code>BusinessAdministrator</code> who voided this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
+    @DependencySingleton
     @SchemaColumn(order=74, name=COLUMN_VOID_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the void")
     public BusinessAdministrator getVoidAdministrator() throws RemoteException {
         if(voidUsername==null) return null;
@@ -1006,41 +1013,8 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessor());
-
-        UnionSet<CountryCode> countryCodes = null;
-        countryCodes = AOServObjectUtils.addDependencyUnionSet(countryCodes, getShippingCountryCode());
-        countryCodes = AOServObjectUtils.addDependencyUnionSet(countryCodes, getCreditCardCountryCode());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, countryCodes);
-
-        UnionSet<Business> businesses = null;
-        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getBusiness());
-        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getCreditCardBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, businesses);
-
-        UnionSet<BusinessAdministrator> businessAdministrators = null;
-        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getCreditCardCreatedBy());
-        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getAuthorizationAdministrator());
-        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getCaptureAdministrator());
-        businessAdministrators = AOServObjectUtils.addDependencyUnionSet(businessAdministrators, getVoidAdministrator());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, businessAdministrators);
-
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransaction());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSingleton
     public Transaction getTransaction() throws RemoteException {
         return getConnector().getTransactions().filterUnique(Transaction.COLUMN_CREDIT_CARD_TRANSACTION, this);
     }

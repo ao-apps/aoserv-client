@@ -78,6 +78,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     }
 
     static final String COLUMN_NAME = "name";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the software package")
     public TechnologyName getTechnologyName() throws RemoteException {
         return getConnector().getTechnologyNames().get(name);
@@ -94,6 +95,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     }
 
     static final String COLUMN_OWNER = "owner";
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_OWNER, index=IndexType.INDEXED, description="the business_administrator who is responsible for maintaining this package")
     public MasterUser getOwner() throws RemoteException {
         if(owner==null) return null;
@@ -101,6 +103,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     }
 
     static final String COLUMN_OPERATING_SYSTEM_VERSION = "operating_system_version";
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of the OS that this packages is installed")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         return getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
@@ -126,50 +129,33 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyName());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOwner());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersion());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdJBossVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdTomcatVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersionsByPostgisVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServers());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<HttpdServer> getHttpdServers() throws RemoteException {
         return getConnector().getHttpdServers().filterIndexed(HttpdServer.COLUMN_MOD_PHP_VERSION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<MySQLServer> getMySQLServers() throws RemoteException {
         return getConnector().getMysqlServers().filterIndexed(MySQLServer.COLUMN_VERSION, this);
     }
 
+    @DependentObjectSingleton
     public HttpdJBossVersion getHttpdJBossVersion() throws RemoteException {
         return getConnector().getHttpdJBossVersions().filterUnique(HttpdJBossVersion.COLUMN_VERSION, this);
     }
 
+    @DependentObjectSingleton
     public HttpdTomcatVersion getHttpdTomcatVersion() throws RemoteException {
         return getConnector().getHttpdTomcatVersions().filterUnique(HttpdTomcatVersion.COLUMN_VERSION, this);
     }
 
+    @DependentObjectSingleton
     public PostgresVersion getPostgresVersion() throws RemoteException {
         return getConnector().getPostgresVersions().filterUnique(PostgresVersion.COLUMN_VERSION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PostgresVersion> getPostgresVersionsByPostgisVersion() throws RemoteException {
         return getConnector().getPostgresVersions().filterIndexed(PostgresVersion.COLUMN_POSTGIS_VERSION, this);
     }

@@ -75,21 +75,6 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-
-        UnionSet<TicketAction> ticketActions = null;
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldStatus());
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewStatus());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -105,14 +90,17 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByOldStatus() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_STATUS, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByNewStatus() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_STATUS, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Ticket> getTickets() throws RemoteException {
         return getConnector().getTickets().filterIndexed(Ticket.COLUMN_STATUS, this);
     }

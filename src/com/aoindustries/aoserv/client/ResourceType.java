@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -88,47 +87,23 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDependentObjectByResourceType());
-        for(AOServService<Integer,? extends Resource> subService : getConnector().getResources().getSubServices()) {
-            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(Resource.COLUMN_RESOURCE_TYPE, this));
-        }
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionLimits());
-        return unionSet;
-    }
-
-    private AOServObject getDependentObjectByResourceType() throws RemoteException {
-        String key = getKey();
-        if(
-            key==ResourceType.EMAIL_INBOX // OK - interned
-            || key==ResourceType.FTPONLY_ACCOUNT // OK - interned
-            || key==ResourceType.SHELL_ACCOUNT // OK - interned
-            || key==ResourceType.SYSTEM_ACCOUNT // OK - interned
-        ) return getLinuxAccountType();
-        if(
-            key==ResourceType.SHELL_GROUP // OK - interned
-            || key==ResourceType.SYSTEM_GROUP // OK - interned
-        ) return getLinuxGroupType();
-        return null;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<Resource> getResources() throws RemoteException {
         return getConnector().getResources().filterIndexed(Resource.COLUMN_RESOURCE_TYPE, this);
     }
 
+    @DependentObjectSingleton
     public LinuxAccountType getLinuxAccountType() throws RemoteException {
-        return getConnector().getLinuxAccountTypes().get(getKey());
+        return getConnector().getLinuxAccountTypes().filterUnique(LinuxAccountType.COLUMN_RESOURCE_TYPE, this);
     }
 
+    @DependentObjectSingleton
     public LinuxGroupType getLinuxGroupType() throws RemoteException {
-        return getConnector().getLinuxGroupTypes().get(getKey());
+        return getConnector().getLinuxGroupTypes().filterUnique(LinuxGroupType.COLUMN_RESOURCE_TYPE, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PackageDefinitionLimit> getPackageDefinitionLimits() throws RemoteException {
         return getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_RESOURCE_TYPE, this);
     }

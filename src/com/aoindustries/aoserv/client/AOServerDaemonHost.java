@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -71,6 +70,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     }
 
     static final String COLUMN_AO_SERVER = "ao_server";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the pkey of the ao_server")
     public AOServer getAoServer() throws RemoteException {
         return getConnector().getAoServers().get(aoServer);
@@ -94,15 +94,6 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     @Override
     public com.aoindustries.aoserv.client.dto.AOServerDaemonHost getDto() {
         return new com.aoindustries.aoserv.client.dto.AOServerDaemonHost(key, aoServer, getDto(host));
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServer());
-        return unionSet;
     }
     // </editor-fold>
 

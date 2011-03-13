@@ -10,7 +10,6 @@ import com.aoindustries.aoserv.client.command.CheckLinuxAccountPasswordCommand;
 import com.aoindustries.aoserv.client.command.SetLinuxAccountPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -152,12 +151,14 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_LINUX_ACCOUNT_TYPE = "linux_account_type";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_LINUX_ACCOUNT_TYPE, index=IndexType.INDEXED, description="the type of account")
     public LinuxAccountType getLinuxAccountType() throws RemoteException {
         return getConnector().getLinuxAccountTypes().get(linuxAccountType);
     }
 
     static final String COLUMN_USERNAME = "username";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the user")
     public Username getUsername() throws RemoteException {
         return getConnector().getUsernames().get(username);
@@ -198,6 +199,7 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     }
 
     static final String COLUMN_SHELL = "shell";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+9, name=COLUMN_SHELL, index=IndexType.INDEXED, description="the users shell preference")
     public Shell getShell() throws RemoteException {
         return getConnector().getShells().get(shell);
@@ -261,26 +263,6 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getShell());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFtpGuestUser());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInbox());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroups());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -289,15 +271,18 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSingleton
     public EmailInbox getEmailInbox() throws RemoteException {
         if(linuxAccountType!=ResourceType.EMAIL_INBOX && linuxAccountType!=ResourceType.SHELL_ACCOUNT) return null; // OK - interned
         return getConnector().getEmailInboxes().get(key);
     }
 
+    @DependentObjectSingleton
     public FtpGuestUser getFtpGuestUser() throws RemoteException {
         return getConnector().getFtpGuestUsers().filterUnique(FtpGuestUser.COLUMN_LINUX_ACCOUNT, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
         return getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_ACCOUNT, this);
     }

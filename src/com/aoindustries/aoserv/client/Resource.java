@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -106,6 +105,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
     }
 
     static final String COLUMN_RESOURCE_TYPE = "resource_type";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_RESOURCE_TYPE, index=IndexType.INDEXED, description="the type of resource")
     public ResourceType getResourceType() throws RemoteException {
         return getConnector().getResourceTypes().get(resourceType);
@@ -116,6 +116,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
      * This may be filtered.
      */
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that owns this resource")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
@@ -133,6 +134,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
      * May be filtered.
      */
     static final String COLUMN_CREATED_BY = "created_by";
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the administrator who created the resource")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         try {
@@ -144,6 +146,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
     }
 
     static final String COLUMN_DISABLE_LOG = "disable_log";
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the resource is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
@@ -181,16 +184,6 @@ public abstract class Resource extends AOServObjectIntegerKey {
     public List<Resource> getAllDependentResources() throws RemoteException {
         // TODO
         return Collections.emptyList();
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
-        return unionSet;
     }
     // </editor-fold>
 

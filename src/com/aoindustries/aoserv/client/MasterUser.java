@@ -65,6 +65,7 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_USERNAME = "username";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique username of this master user")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(getKey());
@@ -121,39 +122,24 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getBankTransactions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterHosts());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersions());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
         return getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_ADMINISTRATOR, pkey);
     }
      */
+    @DependentObjectSet
     public IndexedSet<MasterHost> getMasterHosts() throws RemoteException {
         return getConnector().getMasterHosts().filterIndexed(MasterHost.COLUMN_USERNAME, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<MasterServer> getMasterServers() throws RemoteException {
         return getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_USERNAME, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
         return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OWNER, this);
     }

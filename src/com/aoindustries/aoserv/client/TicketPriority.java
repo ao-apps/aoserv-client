@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 
 /**
@@ -65,38 +63,23 @@ final public class TicketPriority extends AOServObjectStringKey implements Compa
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-
-        UnionSet<TicketAction> ticketActions = null;
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldPriority());
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewPriority());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
-
-        UnionSet<Ticket> tickets = null;
-        tickets = AOServObjectUtils.addDependencyUnionSet(tickets, getTicketsByClientPriority());
-        tickets = AOServObjectUtils.addDependencyUnionSet(tickets, getTicketsByAdminPriority());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, tickets);
-
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByOldPriority() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_PRIORITY, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByNewPriority() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_PRIORITY, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Ticket> getTicketsByClientPriority() throws RemoteException {
         return getConnector().getTickets().filterIndexed(Ticket.COLUMN_CLIENT_PRIORITY, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Ticket> getTicketsByAdminPriority() throws RemoteException {
         return getConnector().getTickets().filterIndexed(Ticket.COLUMN_ADMIN_PRIORITY, this);
     }

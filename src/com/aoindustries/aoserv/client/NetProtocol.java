@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -60,21 +59,13 @@ final public class NetProtocol extends AOServObjectStringKey implements Comparab
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getProtocols());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
         return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_NET_PROTOCOL, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<Protocol> getProtocols() throws RemoteException {
         return getConnector().getProtocols().filterIndexed(Protocol.COLUMN_NET_PROTOCOL, this);
     }

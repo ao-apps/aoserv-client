@@ -8,9 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionMethodSet;
-import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.CurrencyComparator;
 import com.aoindustries.util.i18n.Money;
@@ -24,9 +21,7 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -211,6 +206,7 @@ implements
     /**
      * Gets the parent of this business or <code>null</code> if filtered or is top-level business.
      */
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the parent business to this one")
     public Business getParentBusiness() throws RemoteException {
         if(parent==null) return null;
@@ -233,6 +229,7 @@ implements
     }
 
     static final String COLUMN_DISABLE_LOG = "disable_log";
+    // Caused cycle in dependency DAG: @DependencySingleton
     @SchemaColumn(order=9, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the business is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
@@ -258,6 +255,7 @@ implements
      * May be filtered.
      */
     static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
+    @DependencySingleton
     @SchemaColumn(order=13, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the definition of the package")
     public PackageDefinition getPackageDefinition() throws RemoteException {
         return getConnector().getPackageDefinitions().filterUnique(PackageDefinition.COLUMN_PKEY, packageDefinition);
@@ -267,6 +265,7 @@ implements
      * May be filtered.  May also be null for the root business only.
      */
     static final String COLUMN_CREATED_BY = "created_by";
+    @DependencySingleton
     @SchemaColumn(order=14, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the user who added this business")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
@@ -365,82 +364,6 @@ implements
     public com.aoindustries.aoserv.client.dto.Business getDto() {
         return new com.aoindustries.aoserv.client.dto.Business(getDto(getKey()), contractVersion, created, canceled, cancelReason, getDto(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getDto(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getParentBusiness());
-        // Caused cycle in dependency DAG: unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLog());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
-        return unionSet;
-    }
-
-    private static final Map<Class<? extends AOServObject<?>>, ? extends List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>> getDependentObjectsMethods
-         = getDependentObjectsMethods(Business.class);
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Set<? extends AOServObject<?>> getDependentObjects() throws RemoteException {
-        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependentObjectsMethods);
-    }
-
-    /*
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoservRoles());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getChildBusinesses());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessProfiles());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCards());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessors());
-
-        UnionSet<CreditCardTransaction> creditCardTransactions = null;
-        creditCardTransactions = AOServObjectUtils.addDependencyUnionSet(creditCardTransactions, getCreditCardTransactions());
-        creditCardTransactions = AOServObjectUtils.addDependencyUnionSet(creditCardTransactions, getCreditCardTransactionsByCreditCardAccounting());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, creditCardTransactions);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getDisableLogs());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getDnsZones());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getGroupNames());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getIPAddresses());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailDomains());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxGroups());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionKeys());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailPipes());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSmtpRelays());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdServers());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getHttpdSites());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyCharges());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMonthlyChargesBySourceBusiness());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabases());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionBusinesses());
-        for(AOServService<Integer,? extends Resource> subService : getConnector().getResources().getSubServices()) {
-            unionSet = AOServObjectUtils.addDependencySet(unionSet, subService.filterIndexed(Resource.COLUMN_ACCOUNTING, this));
-        }
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServerFarms());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsernames());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTickets());
-
-        UnionSet<TicketAction> ticketActions = null;
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByOldBusiness());
-        ticketActions = AOServObjectUtils.addDependencyUnionSet(ticketActions, getTicketActionsByNewBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketActions);
-
-        UnionSet<Transaction> transactions = null;
-        transactions = AOServObjectUtils.addDependencyUnionSet(transactions, getTransactions());
-        transactions = AOServObjectUtils.addDependencyUnionSet(transactions, getTransactionsBySourceAccounting());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, transactions);
-
-        return unionSet;
-    }
-     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">

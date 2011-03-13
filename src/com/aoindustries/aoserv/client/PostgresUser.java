@@ -10,7 +10,6 @@ import com.aoindustries.aoserv.client.command.CheckPostgresUserPasswordCommand;
 import com.aoindustries.aoserv.client.command.SetPostgresUserPasswordCommand;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -118,6 +117,7 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_USERNAME = "username";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the PostgreSQL user")
     public Username getUsername() throws RemoteException {
         return getConnector().getUsernames().get(username.getUserId());
@@ -127,6 +127,7 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
     }
 
     static final String COLUMN_POSTGRES_SERVER = "postgres_server";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
     public PostgresServer getPostgresServer() throws RemoteException {
         return getConnector().getPostgresServers().get(postgresServer);
@@ -204,23 +205,6 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getUsername());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresServer());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -229,6 +213,7 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
         return getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_DATDBA, this);
     }

@@ -7,8 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -109,12 +107,14 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
+    @DependencySingleton
     @SchemaColumn(order=0, name="linux_account", index=IndexType.PRIMARY_KEY, description="the Linux account that supports this inbox")
     public LinuxAccount getLinuxAccount() throws RemoteException {
         return getConnector().getLinuxAccounts().get(key);
     }
 
     /* TODO
+    // Caused cycle in DAG: @DependencySingleton
     @SchemaColumn(order=1, name="autoresponder_from", description="the pkey of the email address used for the autoresponder")
     public EmailInboxAddress getAutoresponderFrom() throws RemoteException {
         if(autoresponderFrom==null) return null;
@@ -142,6 +142,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     static final String COLUMN_TRASH_EMAIL_RETENTION = "trash_email_retention";
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_TRASH_EMAIL_RETENTION, index=IndexType.INDEXED, description="the number of days before messages in the Trash folder are automatically removed.")
     public BackupRetention getTrashEmailRetention() throws RemoteException {
         if(trashEmailRetention==null) return null;
@@ -149,6 +150,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     static final String COLUMN_JUNK_EMAIL_RETENTION = "junk_email_retention";
+    @DependencySingleton
     @SchemaColumn(order=6, name=COLUMN_JUNK_EMAIL_RETENTION, index=IndexType.INDEXED, description="the number of days before messages in the Junk folder are automatically removed.")
     public BackupRetention getJunkEmailRetention() throws RemoteException {
         if(junkEmailRetention==null) return null;
@@ -156,6 +158,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
 
     static final String COLUMN_SA_INTEGRATION_MODE = "sa_integration_mode";
+    @DependencySingleton
     @SchemaColumn(order=7, name=COLUMN_SA_INTEGRATION_MODE, index=IndexType.INDEXED, description="the integration mode for SpamAssassin")
     public EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode() throws RemoteException {
         return getConnector().getEmailSpamAssassinIntegrationModes().get(saIntegrationMode);
@@ -195,37 +198,6 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
-        // Caused cycle: AOServObjectUtils.addDependencySet(unionSet, getAutoresponderFrom());
-
-        UnionSet<BackupRetention> backupRetentions = null;
-        backupRetentions = AOServObjectUtils.addDependencyUnionSet(backupRetentions, getTrashEmailRetention());
-        backupRetentions = AOServObjectUtils.addDependencyUnionSet(backupRetentions, getJunkEmailRetention());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, backupRetentions);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailSpamAssassinIntegrationMode());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-
-        UnionSet<Brand> brands = null;
-        brands = AOServObjectUtils.addDependencyUnionSet(brands, getBrandFromSmtpEmailInbox());
-        brands = AOServObjectUtils.addDependencyUnionSet(brands, getBrandFromImapEmailInbox());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, brands);
-
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailAttachmentBlocks());
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getEmailInboxAddresses());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -235,15 +207,18 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSingleton
     public Brand getBrandFromSmtpEmailInbox() throws RemoteException {
         return getConnector().getBrands().filterUnique(Brand.COLUMN_SMTP_EMAIL_INBOX, this);
     }
 
+    @DependentObjectSingleton
     public Brand getBrandFromImapEmailInbox() throws RemoteException {
         return getConnector().getBrands().filterUnique(Brand.COLUMN_IMAP_EMAIL_INBOX, this);
     }
 
     /* TODO
+    @DependentObjectSet
     public IndexedSet<EmailAttachmentBlock> getEmailAttachmentBlocks() throws IOException, SQLException {
         return getConnector().getEmailAttachmentBlocks().getEmailAttachmentBlocks(this);
     }
@@ -252,6 +227,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
         return getConnector().getLinuxAccAddresses().getEmailAddresses(this);
     }
 
+    @DependentObjectSet
     public List<EmailInboxAddress> getEmailInboxAddresses() throws IOException, SQLException {
         return getConnector().getLinuxAccAddresses().getLinuxAccAddresses(this);
     }

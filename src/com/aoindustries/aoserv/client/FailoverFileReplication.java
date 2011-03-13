@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.BufferManager;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
@@ -98,6 +97,7 @@ implements
     }
 
     static final String COLUMN_SERVER = "server";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server that the files are coming from")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(server);
@@ -107,6 +107,7 @@ implements
     /**
      * May be filtered.
      */
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_BACKUP_PARTITION, index=IndexType.INDEXED, description="the pkey of the backup partition that the files are going to")
     public BackupPartition getBackupPartition() throws RemoteException {
         try {
@@ -128,6 +129,7 @@ implements
     }
 
     static final String COLUMN_RETENTION = "retention";
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_RETENTION, index=IndexType.INDEXED, description="the number of days backups will be kept")
     public BackupRetention getRetention() throws RemoteException {
         return getConnector().getBackupRetentions().get(retention);
@@ -196,25 +198,6 @@ implements
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBackupPartition());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getRetention());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileSchedules());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -224,18 +207,22 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
         return getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_REPLICATION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<FailoverFileSchedule> getFailoverFileSchedules() throws RemoteException {
         return getConnector().getFailoverFileSchedules().filterIndexed(FailoverFileSchedule.COLUMN_REPLICATION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<FileBackupSetting> getFileBackupSettings() throws RemoteException {
         return getConnector().getFileBackupSettings().filterIndexed(FileBackupSetting.COLUMN_REPLICATION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<FailoverFileLog> getFailoverFileLogs() throws RemoteException {
         return getConnector().getFailoverFileLogs().filterIndexed(FailoverFileLog.COLUMN_REPLICATION, this);
     }

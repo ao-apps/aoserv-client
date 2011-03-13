@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
@@ -377,6 +376,7 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     }
 
     static final String COLUMN_VERSION = "version";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the MySQL version")
     public TechnologyVersion getVersion() throws RemoteException {
         TechnologyVersion obj=getConnector().getTechnologyVersions().get(version);
@@ -395,6 +395,7 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     }
 
     static final String COLUMN_NET_BIND = "net_bind";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
         return getConnector().getNetBinds().get(netBind);
@@ -441,25 +442,6 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverMySQLReplications());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlDatabases());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlUsers());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -468,10 +450,12 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
         return getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_MYSQL_SERVER, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<MySQLDatabase> getMysqlDatabases() throws RemoteException {
         return getConnector().getMysqlDatabases().filterIndexed(MySQLDatabase.COLUMN_MYSQL_SERVER, this);
     }
@@ -486,6 +470,7 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
         return getConnector().getMysqlDBUsers().filterIndexedSet(MySQLDBUser.COLUMN_MYSQL_DATABASE, getMysqlDatabases());
     }
 
+    @DependentObjectSet
     public IndexedSet<MySQLUser> getMysqlUsers() throws RemoteException {
     	return getConnector().getMysqlUsers().filterIndexed(MySQLUser.COLUMN_MYSQL_SERVER, this);
     }

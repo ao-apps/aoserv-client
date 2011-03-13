@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -79,21 +78,13 @@ final public class Architecture extends AOServObjectStringKey implements Compara
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystemVersions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getVirtualServersByMinimumProcessorArchitecture());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
         return getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_ARCHITECTURE, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<VirtualServer> getVirtualServersByMinimumProcessorArchitecture() throws RemoteException {
         return getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, this);
     }

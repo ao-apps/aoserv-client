@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -76,12 +75,14 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     }
 
     static final String COLUMN_USERNAME = "username";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the unique username of the user")
     public MasterUser getMasterUser() throws RemoteException {
         return getConnector().getMasterUsers().get(username);
     }
 
     static final String COLUMN_SERVER = "server";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server they may control")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(server);
@@ -101,16 +102,6 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     @Override
     public com.aoindustries.aoserv.client.dto.MasterServer getDto() {
         return new com.aoindustries.aoserv.client.dto.MasterServer(key, getDto(username), server);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMasterUser());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
-        return unionSet;
     }
     // </editor-fold>
 }

@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -111,6 +110,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     }
 
     static final String COLUMN_NET_DEVICE = "net_device";
+    @DependencySingleton
     @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_NET_DEVICE, index=IndexType.INDEXED, description="the network_device that this IP address is routed through, is null when unassigned")
     public NetDevice getNetDevice() throws RemoteException {
         if(netDevice==null) return null;
@@ -211,23 +211,6 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     }
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevice());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getDhcpDnsRecords());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBinds());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -236,11 +219,13 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<NetBind> getNetBinds() throws RemoteException {
         return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_IP_ADDRESS, this);
     }
 
     /* TODO
+    @DependentObjectSet
     public IndexedSet<DnsRecord> getDhcpDnsRecords() throws IOException, SQLException {
         return getConnector().getDnsRecords().getIndexedRows(DnsRecord.COLUMN_DHCP_ADDRESS, pkey);
     }*/

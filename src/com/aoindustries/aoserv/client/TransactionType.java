@@ -6,8 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import java.rmi.RemoteException;
 
 /**
@@ -81,22 +79,6 @@ final public class TransactionType extends AOServObjectStringKey implements Comp
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTransactions());
-
-        UnionSet<PackageDefinition> packageDefinitions = null;
-        packageDefinitions = AOServObjectUtils.addDependencyUnionSet(packageDefinitions, getPackageDefinitionsBySetupFeeTransactionType());
-        packageDefinitions = AOServObjectUtils.addDependencyUnionSet(packageDefinitions, getPackageDefinitionsByMonthlyRateTransactionType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, packageDefinitions);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinitionLimits());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
         return ApplicationResources.accessor.getMessage("TransactionType."+getKey()+".description");
@@ -113,18 +95,22 @@ final public class TransactionType extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
         return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_TYPE, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PackageDefinition> getPackageDefinitionsBySetupFeeTransactionType() throws RemoteException {
         return getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_SETUP_FEE_TRANSACTION_TYPE, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PackageDefinition> getPackageDefinitionsByMonthlyRateTransactionType() throws RemoteException {
         return getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<PackageDefinitionLimit> getPackageDefinitionLimits() throws RemoteException {
         return getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_ADDITIONAL_TRANSACTION_TYPE, this);
     }

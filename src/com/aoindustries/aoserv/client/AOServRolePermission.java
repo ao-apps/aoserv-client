@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -66,12 +65,14 @@ implements
     }
 
     static final String COLUMN_ROLE = "role";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_ROLE, index=IndexType.INDEXED, description="the role")
     public AOServRole getRole() throws RemoteException {
         return getConnector().getAoservRoles().get(role);
     }
 
     static final String COLUMN_PERMISSION = "permission";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_PERMISSION, index=IndexType.INDEXED, description="the permission that is granted by this role")
     public AOServPermission getPermission() throws RemoteException {
         return getConnector().getAoservPermissions().get(permission);
@@ -86,16 +87,6 @@ implements
     @Override
     public com.aoindustries.aoserv.client.dto.AOServRolePermission getDto() {
         return new com.aoindustries.aoserv.client.dto.AOServRolePermission(key, role, permission);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getRole());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPermission());
-        return unionSet;
     }
     // </editor-fold>
 

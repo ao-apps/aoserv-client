@@ -8,8 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionSet;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -131,12 +129,14 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the identifier for the business")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
     }
 
     static final String COLUMN_SOURCE_ACCOUNTING = "source_accounting";
+    @DependencySingleton
     @SchemaColumn(order=3, name=COLUMN_SOURCE_ACCOUNTING, index=IndexType.INDEXED, description="the source of the charge to this account")
     public Business getSourceBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(sourceAccounting);
@@ -146,6 +146,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     /**
      * May be filtered.
      */
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the admin involved in the transaction")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         try {
@@ -156,6 +157,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     }
 
     static final String COLUMN_TYPE = "type";
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_TYPE, index=IndexType.INDEXED, description="the type of transaction")
     public TransactionType getType() throws RemoteException {
         return getConnector().getTransactionTypes().get(type);
@@ -178,6 +180,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     }
 
     static final String COLUMN_PAYMENT_TYPE = "payment_type";
+    @DependencySingleton
     @SchemaColumn(order=9, name=COLUMN_PAYMENT_TYPE, index=IndexType.INDEXED, description="the type of payment made")
     public PaymentType getPaymentType() throws RemoteException {
         if (paymentType == null) return null;
@@ -190,6 +193,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     }
 
     static final String COLUMN_PROCESSOR = "processor";
+    @DependencySingleton
     @SchemaColumn(order=11, name=COLUMN_PROCESSOR, index=IndexType.INDEXED, description="the credit card processor that handled the payment")
     public CreditCardProcessor getProcessor() throws RemoteException {
         if(processor==null) return null;
@@ -201,6 +205,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
      * May be filtered.
      */
     @SchemaColumn(order=12, name=COLUMN_CREDIT_CARD_TRANSACTION, index=IndexType.UNIQUE, description="the credit card transaction for this transaction")
+    @DependencySingleton
     public CreditCardTransaction getCreditCardTransaction() throws RemoteException {
         if(creditCardTransaction==null) return null;
         return getConnector().getCreditCardTransactions().filterUnique(CreditCardTransaction.COLUMN_PKEY, creditCardTransaction);
@@ -252,32 +257,6 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-
-        UnionSet<Business> businesses = null;
-        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getBusiness());
-        businesses = AOServObjectUtils.addDependencyUnionSet(businesses, getSourceBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, businesses);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusinessAdministrator());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPaymentType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getProcessor());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardTransaction());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        // TODO: unionSet = AOServObjectUtils.addDependencySet(unionSet, getNoticeLogs());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -301,6 +280,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
         return getConnector().getNoticeLogs().getIndexedRows(NoticeLog.COLUMN_TRANSID, pkey);
     } */

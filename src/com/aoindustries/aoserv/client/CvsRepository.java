@@ -100,6 +100,7 @@ final public class CvsRepository extends AOServerResource implements Comparable<
     }
 
     static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the directory owner")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
@@ -146,15 +147,6 @@ final public class CvsRepository extends AOServerResource implements Comparable<
             linuxAccountGroup,
             mode
         );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccountGroup());
-        return unionSet;
     }
     // </editor-fold>
 

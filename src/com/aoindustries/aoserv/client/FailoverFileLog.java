@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2000-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
@@ -74,6 +74,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     }
 
     static final String COLUMN_REPLICATION = "replication";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the replication that was performed")
     public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
         return getConnector().getFailoverFileReplications().get(replication);

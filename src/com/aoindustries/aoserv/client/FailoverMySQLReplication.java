@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -74,6 +73,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     }
 
     static final String COLUMN_AO_SERVER = "ao_server";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the ao_server that receives the replication")
     public AOServer getAOServer() throws RemoteException {
         if(aoServer==null) return null;
@@ -81,6 +81,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     }
 
     static final String COLUMN_REPLICATION = "replication";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the failover server that receives the replication")
     public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
         if(replication==null) return null;
@@ -88,6 +89,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     }
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";
+    @DependencySingleton
     @SchemaColumn(order=3, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the MySQL Server that is being replicated")
     public MySQLServer getMySQLServer() throws RemoteException {
         return getConnector().getMysqlServers().get(mysqlServer);
@@ -132,17 +134,6 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverMySQLReplication getDto() {
         return new com.aoindustries.aoserv.client.dto.FailoverMySQLReplication(key, aoServer, replication, mysqlServer, monitoringSecondsBehindLow, monitoringSecondsBehindMedium, monitoringSecondsBehindHigh, monitoringSecondsBehindCritical);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAOServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getFailoverFileReplication());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLServer());
-        return unionSet;
     }
     // </editor-fold>
 

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -118,6 +117,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     }
 
     static final String COLUMN_MYSQL_SERVER = "mysql_server";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the pkey of the server that this database is hosted on")
     public MySQLServer getMysqlServer() throws RemoteException {
         return getConnector().getMysqlServers().get(mysqlServer);
@@ -160,22 +160,6 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMysqlServer());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMySQLDBUsers());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -184,6 +168,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<MySQLDBUser> getMySQLDBUsers() throws RemoteException {
         return getConnector().getMysqlDBUsers().filterIndexed(MySQLDBUser.COLUMN_MYSQL_DATABASE, this);
     }

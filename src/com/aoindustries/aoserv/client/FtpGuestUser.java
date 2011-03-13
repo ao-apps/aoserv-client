@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -45,6 +44,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_LINUX_ACCOUNT = "linux_account";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_LINUX_ACCOUNT, index=IndexType.PRIMARY_KEY, description="the resource id of the Linux account")
     public LinuxAccount getLinuxAccount() throws RemoteException {
         return getConnector().getLinuxAccounts().get(key);
@@ -59,15 +59,6 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     @Override
     public com.aoindustries.aoserv.client.dto.FtpGuestUser getDto() {
         return new com.aoindustries.aoserv.client.dto.FtpGuestUser(key);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLinuxAccount());
-        return unionSet;
     }
     // </editor-fold>
 

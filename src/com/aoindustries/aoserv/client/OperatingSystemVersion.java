@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -93,6 +92,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     }
 
     static final String COLUMN_OPERATING_SYSTEM = "operating_system";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_OPERATING_SYSTEM, index=IndexType.INDEXED, description="the name of the OS")
     public OperatingSystem getOperatingSystem() throws RemoteException {
         return getConnector().getOperatingSystems().get(operatingSystem);
@@ -109,6 +109,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     }
 
     static final String COLUMN_ARCHITECTURE = "architecture";
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_ARCHITECTURE, index=IndexType.INDEXED, description="the name of the architecture")
     public Architecture getArchitecture() throws RemoteException {
         return getConnector().getArchitectures().get(architecture);
@@ -151,29 +152,13 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getOperatingSystem());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getArchitecture());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTechnologyVersions());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<Server> getServers() throws RemoteException {
         return getConnector().getServers().filterIndexed(Server.COLUMN_OPERATING_SYSTEM_VERSION, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
         return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OPERATING_SYSTEM_VERSION, this);
     }

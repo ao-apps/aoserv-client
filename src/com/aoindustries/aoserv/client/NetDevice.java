@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
@@ -105,12 +104,14 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     }
 
     static final String COLUMN_SERVER = "server";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server that contains the device")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(server);
     }
 
     static final String COLUMN_DEVICE_ID = "device_id";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_DEVICE_ID, index=IndexType.INDEXED, description="the name of the device")
     public NetDeviceID getNetDeviceID() throws RemoteException {
         return getConnector().getNetDeviceIDs().get(deviceId);
@@ -207,23 +208,6 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDeviceID());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getIpAddresses());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -237,6 +221,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
         return getConnector().getIpAddresses().getIPAddress(this, ipAddress);
     } */
 
+    @DependentObjectSet
     public IndexedSet<IPAddress> getIpAddresses() throws RemoteException {
         return getConnector().getIpAddresses().filterIndexed(IPAddress.COLUMN_NET_DEVICE, this);
     }

@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 
 /**
@@ -74,21 +73,13 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAoServers());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetDevices());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<AOServer> getAoServers() throws RemoteException {
         return getConnector().getAoServers().filterIndexed(AOServer.COLUMN_DAEMON_DEVICE_ID, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<NetDevice> getNetDevices() throws RemoteException {
     	return getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_DEVICE_ID, this);
     }

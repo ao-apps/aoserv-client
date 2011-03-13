@@ -8,17 +8,9 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
-import com.aoindustries.util.UnionMethodSet;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * The <code>Ticket</code> system allows clients to submit support
@@ -136,6 +128,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     static final String COLUMN_BRAND = "brand";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_BRAND, index=IndexType.INDEXED, description="the brand that created the ticket")
     public Brand getBrand() throws RemoteException {
         return getConnector().getBrands().get(brand);
@@ -145,6 +138,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
      * May be filtered.
      */
     static final String COLUMN_RESELLER = "reseller";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_RESELLER, index=IndexType.INDEXED, description="the reseller that received the ticket")
     public Reseller getReseller() throws RemoteException {
         if(reseller==null) return null;
@@ -156,6 +150,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=3, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business the ticket is for (optional)")
     public Business getBusiness() throws RemoteException {
         if(accounting==null) return null;
@@ -163,12 +158,14 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     static final String COLUMN_LANGUAGE = "language";
+    @DependencySingleton
     @SchemaColumn(order=4, name=COLUMN_LANGUAGE, index=IndexType.INDEXED, description="the language of the ticket")
     public Language getLanguage() throws RemoteException {
         return getConnector().getLanguages().get(language);
     }
 
     static final String COLUMN_CREATED_BY = "created_by";
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the person who created the ticket")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
@@ -176,6 +173,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     static final String COLUMN_CATEGORY = "category";
+    @DependencySingleton
     @SchemaColumn(order=6, name=COLUMN_CATEGORY, index=IndexType.INDEXED, description="the category of the ticket")
     public TicketCategory getCategory() throws RemoteException {
         if(category==null) return null;
@@ -183,6 +181,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     static final String COLUMN_TICKET_TYPE = "ticket_type";
+    @DependencySingleton
     @SchemaColumn(order=7, name=COLUMN_TICKET_TYPE, index=IndexType.INDEXED, description="the type of the ticket")
     public TicketType getTicketType() throws RemoteException {
         return getConnector().getTicketTypes().get(ticketType);
@@ -223,12 +222,14 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     static final String COLUMN_CLIENT_PRIORITY = "client_priority";
+    @DependencySingleton
     @SchemaColumn(order=12, name=COLUMN_CLIENT_PRIORITY, index=IndexType.INDEXED, description="the priority assigned by the client")
     public TicketPriority getClientPriority() throws RemoteException {
         return getConnector().getTicketPriorities().get(clientPriority);
     }
 
     static final String COLUMN_ADMIN_PRIORITY = "admin_priority";
+    @DependencySingleton
     @SchemaColumn(order=13, name=COLUMN_ADMIN_PRIORITY, index=IndexType.INDEXED, description="the priority assigned by the administrator")
     public TicketPriority getAdminPriority() throws RemoteException {
         if(adminPriority==null) return null;
@@ -236,6 +237,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     static final String COLUMN_STATUS = "status";
+    @DependencySingleton
     @SchemaColumn(order=14, name=COLUMN_STATUS, index=IndexType.INDEXED, description="the status of the ticket")
     public TicketStatus getStatus() throws RemoteException {
         return getConnector().getTicketStatuses().get(status);
@@ -315,74 +317,6 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    private static final Map<
-        Class<? extends AOServObject<?>>,
-        List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>
-    > getDependenciesMethods = new LinkedHashMap<
-        Class<? extends AOServObject<?>>,
-        List<? extends UnionMethodSet.Method<? extends AOServObject<?>>>
-    >();
-
-    static {
-        try {
-            // None: getDependentObjectsMethods.putAll(AOServObjectIntegerKey.getDependentObjectsMethods);
-
-            getDependenciesMethods.put(Brand.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Brand>(Ticket.class.getMethod("getBrand"))));
-            getDependenciesMethods.put(Reseller.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Reseller>(Ticket.class.getMethod("getReseller"))));
-            getDependenciesMethods.put(Business.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Business>(Ticket.class.getMethod("getBusiness"))));
-            getDependenciesMethods.put(Language.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<Language>(Ticket.class.getMethod("getLanguage"))));
-            getDependenciesMethods.put(BusinessAdministrator.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<BusinessAdministrator>(Ticket.class.getMethod("getCreatedBy"))));
-            getDependenciesMethods.put(TicketCategory.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<TicketCategory>(Ticket.class.getMethod("getCategory"))));
-            getDependenciesMethods.put(TicketType.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<TicketType>(Ticket.class.getMethod("getTicketType"))));
-
-            List<UnionMethodSet.Method<TicketPriority>> ticketPriorities = new ArrayList<UnionMethodSet.Method<TicketPriority>>(2);
-            ticketPriorities.add(new UnionMethodSet.SingletonMethod<TicketPriority>(Ticket.class.getMethod("getClientPriority")));
-            ticketPriorities.add(new UnionMethodSet.SingletonMethod<TicketPriority>(Ticket.class.getMethod("getAdminPriority")));
-            getDependenciesMethods.put(TicketPriority.class, ticketPriorities);
-
-            getDependenciesMethods.put(TicketStatus.class, Collections.singletonList(new UnionMethodSet.SingletonMethod<TicketStatus>(Ticket.class.getMethod("getStatus"))));
-        } catch(NoSuchMethodException exc) {
-            throw new RuntimeException(exc);
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Set<? extends AOServObject<?>> getDependencies() throws RemoteException {
-        return new UnionMethodSet<AOServObject<?>>(this, (Class)AOServObject.class, getDependenciesMethods);
-    }
-
-    /*
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBrand());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getReseller());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getLanguage());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCategory());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketType());
-
-        UnionSet<TicketPriority> ticketPriorities = null;
-        ticketPriorities = AOServObjectUtils.addDependencyUnionSet(ticketPriorities, getClientPriority());
-        ticketPriorities = AOServObjectUtils.addDependencyUnionSet(ticketPriorities, getAdminPriority());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, ticketPriorities);
-
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getStatus());
-        return unionSet;
-    }*/
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketActions());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getTicketAssignments());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
@@ -391,10 +325,12 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
         return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_TICKET, this);
     }
 
+    @DependentObjectSet
     public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
         return getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_TICKET, this);
     }

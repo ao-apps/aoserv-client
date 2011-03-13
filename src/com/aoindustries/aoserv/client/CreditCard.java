@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -168,12 +167,14 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     /**
      * Gets the processor that is storing the credit card numbers.
      */
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, index=IndexType.INDEXED, description="the processor that is storing the card number and expiration date")
     public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
         return getConnector().getCreditCardProcessors().get(processorId);
     }
 
     static final String COLUMN_ACCOUNTING = "accounting";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code for the card")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
@@ -262,6 +263,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     }
 
     static final String COLUMN_COUNTRY_CODE = "country_code";
+    @DependencySingleton
     @SchemaColumn(order=18, name=COLUMN_COUNTRY_CODE, index=IndexType.INDEXED, description="the two-character country code")
     public CountryCode getCountryCode() throws RemoteException {
         return getConnector().getCountryCodes().get(this.countryCode);
@@ -273,6 +275,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     }
 
     static final String COLUMN_CREATED_BY = "created_by";
+    @DependencySingleton
     @SchemaColumn(order=20, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the business_administrator who added the card to the database")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(createdBy);
@@ -317,12 +320,14 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     }
 
     /* TODO
+    @DependencySingleton
     @SchemaColumn(order=28, name="encryption_card_number_from", description="the from that was used for card number encryption")
     public EncryptionKey getEncryptionCardNumberFrom() throws RemoteException {
         if(encryptionCardNumberFrom==null) return null;
         return getConnector().getEncryptionKeys().get(encryptionCardNumberFrom);
     }
 
+    @DependencySingleton
     @SchemaColumn(order=29, name="encryption_card_number_recipient", description="the recipient that was used for card number encryption")
     public EncryptionKey getEncryptionCardNumberRecipient() throws RemoteException {
         if(encryptionCardNumberRecipient==null) return null;
@@ -334,12 +339,14 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
         return encryptedExpiration;
     }
     /* TODO
+    @DependencySingleton
     @SchemaColumn(order=31, name="encryption_expiration_from", description="the from that was used for expiration encryption")
     public EncryptionKey getEncryptionExpirationFrom() throws RemoteException {
         if(encryptionExpirationFrom==null) return null;
         return getConnector().getEncryptionKeys().get(encryptionExpirationFrom);
     }
 
+    @DependencySingleton
     @SchemaColumn(order=32, name="encryption_expiration_recipient", description="the recipient that was used for expiration encryption")
     public EncryptionKey getEncryptionExpirationRecipient() throws RemoteException {
         if(encryptionExpirationRecipient==null) return null;
@@ -424,24 +431,6 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
             encryptionExpirationFrom,
             encryptionExpirationRecipient
         );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getBusiness());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreditCardProcessor());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCountryCode());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getCreatedBy());
-        /* TODO
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionCardNumberFrom());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionCardNumberRecipient());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionExpirationFrom());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getEncryptionExpirationRecipient());
-         */
-        return unionSet;
     }
     // </editor-fold>
 

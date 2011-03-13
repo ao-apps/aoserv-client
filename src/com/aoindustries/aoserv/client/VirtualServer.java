@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -106,6 +105,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_SERVER = "server";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_SERVER, index=IndexType.PRIMARY_KEY, description="the server that is virtualized")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(key);
@@ -142,6 +142,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets the minimum processor type or <code>null</code> if none.
      */
+    @DependencySingleton
     @SchemaColumn(order=5, name=COLUMN_MINIMUM_PROCESSOR_TYPE, index=IndexType.INDEXED, description="the minimum processor type")
     public ProcessorType getMinimumProcessorType() throws RemoteException {
         if(minimumProcessorType==null) return null;
@@ -152,6 +153,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets the minimum processor architecture.
      */
+    @DependencySingleton
     @SchemaColumn(order=6, name=COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, index=IndexType.INDEXED, description="the minimum processor architecture, compatible architectures may be substituted")
     public Architecture getMinimumProcessorArchitecture() throws RemoteException {
         return getConnector().getArchitectures().get(minimumProcessorArchitecture);
@@ -264,26 +266,6 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getServer());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMinimumProcessorType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getMinimumProcessorArchitecture());
-        return unionSet;
-    }
-
-    /* TODO
-    @Override
-    public Set<? extends AOServObject> getDependentObjects() throws RemoteException {
-        return AOServObjectUtils.createDependencySet(
-            getVirtualDisks()
-        );
-    }
-     */
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -293,6 +275,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     /* TODO
+    @DependentObjectSet
     public List<VirtualDisk> getVirtualDisks() throws IOException, SQLException {
         return getConnector().getVirtualDisks().getVirtualDisks(this);
     }

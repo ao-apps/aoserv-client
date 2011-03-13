@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
@@ -85,12 +84,14 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     }
 
     static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
+    @DependencySingleton
     @SchemaColumn(order=1, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the pkey of the package definition")
     public PackageDefinition getPackageDefinition() throws RemoteException {
         return getConnector().getPackageDefinitions().get(packageDefinition);
     }
 
     static final String COLUMN_RESOURCE_TYPE = "resource_type";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_RESOURCE_TYPE, index=IndexType.INDEXED, description="the resource type")
     public ResourceType getResourceType() throws RemoteException {
         return getConnector().getResourceTypes().get(resourceType);
@@ -115,6 +116,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     }
 
     static final String COLUMN_ADDITIONAL_TRANSACTION_TYPE = "additional_transaction_type";
+    @DependencySingleton
     @SchemaColumn(order=6, name=COLUMN_ADDITIONAL_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the transaction type for those past the soft_limit")
     public TransactionType getAdditionalTransactionType() throws RemoteException {
         if(additionalTransactionType==null) return null;
@@ -147,17 +149,6 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
             getDto(additionalRate),
             additionalTransactionType
         );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPackageDefinition());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getResourceType());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getAdditionalTransactionType());
-        return unionSet;
     }
     // </editor-fold>
 

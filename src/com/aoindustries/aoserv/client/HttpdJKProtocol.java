@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -51,6 +50,7 @@ final public class HttpdJKProtocol extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     static final String COLUMN_PROTOCOL = "protocol";
+    @DependencySingleton
     @SchemaColumn(order=0, name=COLUMN_PROTOCOL, index=IndexType.PRIMARY_KEY, description="the protocol used, as found in protocols.protocol")
     public Protocol getProtocol() throws RemoteException {
         return getConnector().getProtocols().get(getKey());
@@ -65,15 +65,6 @@ final public class HttpdJKProtocol extends AOServObjectStringKey implements Comp
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdJKProtocol getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdJKProtocol(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getProtocol());
-        return unionSet;
     }
     // </editor-fold>
 }

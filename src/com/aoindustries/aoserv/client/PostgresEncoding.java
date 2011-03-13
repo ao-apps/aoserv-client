@@ -6,7 +6,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 
@@ -116,6 +115,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     }
 
     static final String COLUMN_POSTGRES_VERSION = "postgres_version";
+    @DependencySingleton
     @SchemaColumn(order=2, name=COLUMN_POSTGRES_VERSION, index=IndexType.INDEXED, description="the version of PostgreSQL")
     public PostgresVersion getPostgresVersion() throws RemoteException {
         return getConnector().getPostgresVersions().get(postgresVersion);
@@ -138,23 +138,8 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
     	return getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_ENCODING, this);
     }

@@ -8,7 +8,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
 import java.util.HashSet;
@@ -246,6 +245,7 @@ final public class PostgresServer extends AOServerResource implements Comparable
     }
 
     static final String COLUMN_VERSION = "version";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the PostgreSQL version")
     public PostgresVersion getPostgresVersion() throws RemoteException {
         PostgresVersion obj=getConnector().getPostgresVersions().get(version);
@@ -261,6 +261,7 @@ final public class PostgresServer extends AOServerResource implements Comparable
     }
 
     static final String COLUMN_NET_BIND = "net_bind";
+    @DependencySingleton
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
         return getConnector().getNetBinds().get(netBind);
@@ -328,24 +329,6 @@ final public class PostgresServer extends AOServerResource implements Comparable
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependencies(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependencies(unionSet);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresVersion());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getNetBind());
-        return unionSet;
-    }
-
-    @Override
-    protected UnionClassSet<AOServObject<?>> addDependentObjects(UnionClassSet<AOServObject<?>> unionSet) throws RemoteException {
-        unionSet = super.addDependentObjects(null);
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresDatabases());
-        unionSet = AOServObjectUtils.addDependencySet(unionSet, getPostgresUsers());
-        return unionSet;
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
@@ -354,6 +337,7 @@ final public class PostgresServer extends AOServerResource implements Comparable
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
+    @DependentObjectSet
     public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
     	return getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_POSTGRES_SERVER, this);
     }
@@ -369,6 +353,7 @@ final public class PostgresServer extends AOServerResource implements Comparable
         return pd;
     }
 
+    @DependentObjectSet
     public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
         return getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
     }
