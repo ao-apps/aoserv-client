@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
  */
 abstract public class RemoteCommand<R> extends AOServCommand<R> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     //private static final Object[] emptyObjectArray = new Object[0];
 

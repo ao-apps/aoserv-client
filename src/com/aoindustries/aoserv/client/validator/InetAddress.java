@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class InetAddress implements Comparable<InetAddress>, Serializable, DtoFactory<com.aoindustries.aoserv.client.dto.InetAddress>, Internable<InetAddress> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * Checks if the address is valid by calling <code>parse(String)</code> and discarding the result.

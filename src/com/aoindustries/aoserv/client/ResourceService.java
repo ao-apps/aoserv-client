@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.resources)
-public class ResourceService extends UnionService<Integer,Resource> {
+final public class ResourceService extends UnionService<Integer,Resource> {
 
     public ResourceService(AOServConnector connector) {
         super(connector, Integer.class, Resource.class);
@@ -29,11 +29,24 @@ public class ResourceService extends UnionService<Integer,Resource> {
     protected List<AOServService<Integer, ? extends Resource>> getSubServices() throws RemoteException {
         List<AOServService<Integer, ? extends Resource>> ss = subservices.get();
         if(ss==null) {
-            ss = new ArrayList<AOServService<Integer, ? extends Resource>>(4);
-            ss.add(connector.getAoServerResources());
+            List<AOServService<Integer,? extends AOServerResource>> asrs = connector.getAoServerResources().getSubServices();
+            List<AOServService<Integer,? extends ServerResource>> srs = connector.getServerResources().getSubServices();
+            List<AOServService<Integer,? extends Server>> ses = connector.getServers().getSubServices();
+
+            ss = new ArrayList<AOServService<Integer, ? extends Resource>>(
+                asrs.size()
+                + 3
+                + srs.size()
+                + ses.size()
+                + 1
+            );
+            ss.addAll(asrs);
             ss.add(connector.getDnsRecords());
             ss.add(connector.getDnsZones());
-            ss.add(connector.getServerResources());
+            ss.add(connector.getServerFarms());
+            ss.addAll(srs);
+            ss.addAll(ses);
+            ss.add(connector.getRacks());
             ss = Collections.unmodifiableList(ss);
             if(!subservices.compareAndSet(null, ss)) ss = subservices.get(); // Created by another thread
         }

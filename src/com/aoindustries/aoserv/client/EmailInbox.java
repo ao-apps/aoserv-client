@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 final public class EmailInbox extends AOServObjectIntegerKey implements Comparable<EmailInbox>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailInbox> /* TODO , Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The default number of days email messages will be kept in the "Trash" folder.
@@ -108,68 +108,68 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @DependencySingleton
-    @SchemaColumn(order=0, name="linux_account", index=IndexType.PRIMARY_KEY, description="the Linux account that supports this inbox")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the Linux account that supports this inbox")
     public LinuxAccount getLinuxAccount() throws RemoteException {
         return getConnector().getLinuxAccounts().get(key);
     }
 
     /* TODO
     // Caused cycle in DAG: @DependencySingleton
-    @SchemaColumn(order=1, name="autoresponder_from", description="the pkey of the email address used for the autoresponder")
+    @SchemaColumn(order=1, description="the pkey of the email address used for the autoresponder")
     public EmailInboxAddress getAutoresponderFrom() throws RemoteException {
         if(autoresponderFrom==null) return null;
         return getConnector().getEmailInboxAddresses().get(autoresponderFrom);
     } */
 
-    @SchemaColumn(order=1, name="autoresponder_subject", description="the subject of autoresponder messages")
+    @SchemaColumn(order=1, description="the subject of autoresponder messages")
     public String getAutoresponderSubject() {
         return autoresponderSubject;
     }
 
-    @SchemaColumn(order=2, name="autoresponder_path", description="the full path of the autoresponder text file")
+    @SchemaColumn(order=2, description="the full path of the autoresponder text file")
     public UnixPath getAutoresponderPath() {
         return autoresponderPath;
     }
 
-    @SchemaColumn(order=3, name="isAutoresponder_enabled", description="flags if the autoresponder is enabled")
+    @SchemaColumn(order=3, description="flags if the autoresponder is enabled")
     public boolean isAutoresponderEnabled() {
         return isAutoresponderEnabled;
     }
 
-    @SchemaColumn(order=4, name="use_inbox", description="email for this account will be stored in the inbox, otherwise it is just deleted")
+    @SchemaColumn(order=4, description="email for this account will be stored in the inbox, otherwise it is just deleted")
     public boolean getUseInbox() {
         return useInbox;
     }
 
-    static final String COLUMN_TRASH_EMAIL_RETENTION = "trash_email_retention";
+    public static final MethodColumn COLUMN_TRASH_EMAIL_RETENTION = getMethodColumn(EmailInbox.class, "trashEmailRetention");
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_TRASH_EMAIL_RETENTION, index=IndexType.INDEXED, description="the number of days before messages in the Trash folder are automatically removed.")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the number of days before messages in the Trash folder are automatically removed.")
     public BackupRetention getTrashEmailRetention() throws RemoteException {
         if(trashEmailRetention==null) return null;
         return getConnector().getBackupRetentions().get(trashEmailRetention);
     }
 
-    static final String COLUMN_JUNK_EMAIL_RETENTION = "junk_email_retention";
+    public static final MethodColumn COLUMN_JUNK_EMAIL_RETENTION = getMethodColumn(EmailInbox.class, "junkEmailRetention");
     @DependencySingleton
-    @SchemaColumn(order=6, name=COLUMN_JUNK_EMAIL_RETENTION, index=IndexType.INDEXED, description="the number of days before messages in the Junk folder are automatically removed.")
+    @SchemaColumn(order=6, index=IndexType.INDEXED, description="the number of days before messages in the Junk folder are automatically removed.")
     public BackupRetention getJunkEmailRetention() throws RemoteException {
         if(junkEmailRetention==null) return null;
         return getConnector().getBackupRetentions().get(junkEmailRetention);
     }
 
-    static final String COLUMN_SA_INTEGRATION_MODE = "sa_integration_mode";
+    public static final MethodColumn COLUMN_SA_INTEGRATION_MODE = getMethodColumn(EmailInbox.class, "spamAssassinIntegrationMode");
     @DependencySingleton
-    @SchemaColumn(order=7, name=COLUMN_SA_INTEGRATION_MODE, index=IndexType.INDEXED, description="the integration mode for SpamAssassin")
-    public EmailSpamAssassinIntegrationMode getEmailSpamAssassinIntegrationMode() throws RemoteException {
+    @SchemaColumn(order=7, index=IndexType.INDEXED, description="the integration mode for SpamAssassin")
+    public EmailSpamAssassinIntegrationMode getSpamAssassinIntegrationMode() throws RemoteException {
         return getConnector().getEmailSpamAssassinIntegrationModes().get(saIntegrationMode);
     }
 
-    @SchemaColumn(order=8, name="sa_required_score", description="the minimum SpamAssassin score considered Junk")
+    @SchemaColumn(order=8, description="the minimum SpamAssassin score considered Junk")
     public float getSpamAssassinRequiredScore() {
         return saRequiredScore;
     }
 
-    @SchemaColumn(order=9, name="sa_discard_score", description="the minimum SpamAssassin score that will be discarded instead of tagged or placed in the Junk folder")
+    @SchemaColumn(order=9, description="the minimum SpamAssassin score that will be discarded instead of tagged or placed in the Junk folder")
     public Integer getSpamAssassinDiscardScore() {
         return saDiscardScore;
     }

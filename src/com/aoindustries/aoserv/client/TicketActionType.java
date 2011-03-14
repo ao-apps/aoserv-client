@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 final public class TicketActionType extends AOServObjectStringKey implements Comparable<TicketActionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketActionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         SET_BUSINESS="set_business",
@@ -50,17 +50,17 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TicketActionType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the type name")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the type name")
     public String getType() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="visible_admin_only", description="when true, only visible to ticket administrators")
+    @SchemaColumn(order=1, description="when true, only visible to ticket administrators")
     public boolean isVisibleAdminOnly() {
         return visibleAdminOnly;
     }

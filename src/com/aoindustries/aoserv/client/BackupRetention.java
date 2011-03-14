@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
 final public class BackupRetention extends AOServObjectShortKey implements Comparable<BackupRetention>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupRetention> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -28,12 +28,12 @@ final public class BackupRetention extends AOServObjectShortKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(BackupRetention other) {
-        return AOServObjectUtils.compare(key, other.key);
+        return compare(key, other.key);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="days", index=IndexType.PRIMARY_KEY, description="the number of days to keep the backup data")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the number of days to keep the backup data")
     public short getDays() {
         return key;
     }

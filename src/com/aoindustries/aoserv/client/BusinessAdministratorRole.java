@@ -22,7 +22,7 @@ implements
     DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministratorRole> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -61,21 +61,21 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_BUSINESS_ADMINISTRATOR = getMethodColumn(BusinessAdministratorRole.class, "businessAdministrator");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the business administrator who has the role")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the business administrator who has the role")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(username);
     }
     
-    static final String COLUMN_ROLE = "role";
+    public static final MethodColumn COLUMN_ROLE = getMethodColumn(BusinessAdministratorRole.class, "role");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_ROLE, index=IndexType.INDEXED, description="the role the business administrator has")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the role the business administrator has")
     public AOServRole getRole() throws RemoteException {
         return getConnector().getAoservRoles().get(role);
     }

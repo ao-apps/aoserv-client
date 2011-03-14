@@ -29,7 +29,6 @@ final public class CachedConnector extends AbstractConnector {
         this.factory = factory;
         this.wrapped = wrapped;
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAoServerDaemonHosts());
-        aoserverResources = new AOServerResourceService(this);
         aoservers = new CachedAOServerService(this, wrapped.getAoServers());
         aoservPermissions = new CachedAOServPermissionService(this, wrapped.getAoservPermissions());
         aoservRoles = new CachedAOServRoleService(this, wrapped.getAoservRoles());
@@ -37,6 +36,7 @@ final public class CachedConnector extends AbstractConnector {
         architectures = new CachedArchitectureService(this, wrapped.getArchitectures());
         backupPartitions = new CachedBackupPartitionService(this, wrapped.getBackupPartitions());
         backupRetentions = new CachedBackupRetentionService(this, wrapped.getBackupRetentions());
+        backupServers = new CachedBackupServerService(this, wrapped.getBackupServers());
         // TODO: bankAccounts = new CachedBankAccountService(this, wrapped.getBankAccounts());
         bankTransactionTypes = new CachedBankTransactionTypeService(this, wrapped.getBankTransactionTypes());
         // TODO: bankTransactions = new CachedBankTransactionService(this, wrapped.getBankTransactions());
@@ -146,7 +146,7 @@ final public class CachedConnector extends AbstractConnector {
         packageDefinitionLimits = new CachedPackageDefinitionLimitService(this, wrapped.getPackageDefinitionLimits());
         packageDefinitions = new CachedPackageDefinitionService(this, wrapped.getPackageDefinitions());
         paymentTypes = new CachedPaymentTypeService(this, wrapped.getPaymentTypes());
-        // TODO: physicalServers = new CachedPhysicalServerService(this, wrapped.getPhysicalServers());
+        physicalServers = new CachedPhysicalServerService(this, wrapped.getPhysicalServers());
         postgresDatabases = new CachedPostgresDatabaseService(this, wrapped.getPostgresDatabases());
         postgresEncodings = new CachedPostgresEncodingService(this, wrapped.getPostgresEncodings());
         postgresServers = new CachedPostgresServerService(this, wrapped.getPostgresServers());
@@ -155,13 +155,10 @@ final public class CachedConnector extends AbstractConnector {
         privateFtpServers = new CachedPrivateFtpServerService(this, wrapped.getPrivateFtpServers());
         processorTypes = new CachedProcessorTypeService(this, wrapped.getProcessorTypes());
         protocols = new CachedProtocolService(this, wrapped.getProtocols());
-        // TODO: racks = new CachedRackService(this, wrapped.getRacks());
+        racks = new CachedRackService(this, wrapped.getRacks());
         resellers = new CachedResellerService(this, wrapped.getResellers());
         resourceTypes = new CachedResourceTypeService(this, wrapped.getResourceTypes());
-        resources = new ResourceService(this);
         serverFarms = new CachedServerFarmService(this, wrapped.getServerFarms());
-        serverResources = new ServerResourceService(this);
-        servers = new CachedServerService(this, wrapped.getServers());
         shells = new CachedShellService(this, wrapped.getShells());
         /* TODO
         signupRequestOptions = new CachedSignupRequestOptionService(this, wrapped.getSignupRequestOptions());
@@ -230,13 +227,6 @@ final public class CachedConnector extends AbstractConnector {
     @Override
     public AOServerDaemonHostService getAoServerDaemonHosts() {
         return aoserverDaemonHosts;
-    }
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="AOServerResourceService">
-    final AOServerResourceService aoserverResources;
-    @Override
-    public AOServerResourceService getAoServerResources() {
-        return aoserverResources;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServerService">
@@ -321,6 +311,18 @@ final public class CachedConnector extends AbstractConnector {
     @Override
     public BackupRetentionService getBackupRetentions() {
         return backupRetentions;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BackupServerService">
+    static class CachedBackupServerService extends CachedService<Integer,BackupServer> implements BackupServerService {
+        CachedBackupServerService(CachedConnector connector, BackupServerService wrapped) {
+            super(connector, Integer.class, BackupServer.class, wrapped);
+        }
+    }
+    final CachedBackupServerService backupServers;
+    @Override
+    public BackupServerService getBackupServers() {
+        return backupServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankAccountService">
@@ -1224,8 +1226,16 @@ final public class CachedConnector extends AbstractConnector {
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PhysicalServerService">
-    // TODO: final CachedPhysicalServerService physicalServers;
-    // TODO: public PhysicalServerService getPhysicalServers();
+    static class CachedPhysicalServerService extends CachedService<Integer,PhysicalServer> implements PhysicalServerService {
+        CachedPhysicalServerService(CachedConnector connector, PhysicalServerService wrapped) {
+            super(connector, Integer.class, PhysicalServer.class, wrapped);
+        }
+    }
+    final CachedPhysicalServerService physicalServers;
+    @Override
+    public PhysicalServerService getPhysicalServers() {
+        return physicalServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresDatabaseService">
     static class CachedPostgresDatabaseService extends CachedService<Integer,PostgresDatabase> implements PostgresDatabaseService {
@@ -1324,8 +1334,16 @@ final public class CachedConnector extends AbstractConnector {
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="RackService">
-    // TODO: final CachedRackService racks;
-    // TODO: public RackService getRacks();
+    static class CachedRackService extends CachedService<Integer,Rack> implements RackService {
+        CachedRackService(CachedConnector connector, RackService wrapped) {
+            super(connector, Integer.class, Rack.class, wrapped);
+        }
+    }
+    final CachedRackService racks;
+    @Override
+    public RackService getRacks() {
+        return racks;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResellerService">
     static class CachedResellerService extends CachedService<AccountingCode,Reseller> implements ResellerService {
@@ -1351,42 +1369,16 @@ final public class CachedConnector extends AbstractConnector {
         return resourceTypes;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="ResourceService">
-    final ResourceService resources;
-    @Override
-    public ResourceService getResources() {
-        return resources;
-    }
-    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerFarmService">
-    static class CachedServerFarmService extends CachedService<DomainLabel,ServerFarm> implements ServerFarmService {
+    static class CachedServerFarmService extends CachedService<Integer,ServerFarm> implements ServerFarmService {
         CachedServerFarmService(CachedConnector connector, ServerFarmService wrapped) {
-            super(connector, DomainLabel.class, ServerFarm.class, wrapped);
+            super(connector, Integer.class, ServerFarm.class, wrapped);
         }
     }
     final CachedServerFarmService serverFarms;
     @Override
     public ServerFarmService getServerFarms() {
         return serverFarms;
-    }
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="ServerResourceService">
-    final ServerResourceService serverResources;
-    @Override
-    public ServerResourceService getServerResources() {
-        return serverResources;
-    }
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="ServerService">
-    static class CachedServerService extends CachedService<Integer,Server> implements ServerService {
-        CachedServerService(CachedConnector connector, ServerService wrapped) {
-            super(connector, Integer.class, Server.class, wrapped);
-        }
-    }
-    final CachedServerService servers;
-    @Override
-    public ServerService getServers() {
-        return servers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ShellService">

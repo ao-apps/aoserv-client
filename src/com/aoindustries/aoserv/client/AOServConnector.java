@@ -116,6 +116,7 @@ public interface AOServConnector extends Remote {
     ArchitectureService getArchitectures() throws RemoteException;
     BackupPartitionService getBackupPartitions() throws RemoteException;
     BackupRetentionService getBackupRetentions() throws RemoteException;
+    BackupServerService getBackupServers() throws RemoteException;
     // TODO: BankAccountService getBankAccounts() throws RemoteException;
     BankTransactionTypeService getBankTransactionTypes() throws RemoteException;
     /* TODO
@@ -219,7 +220,7 @@ public interface AOServConnector extends Remote {
     PackageDefinitionLimitService getPackageDefinitionLimits() throws RemoteException;
     PackageDefinitionService getPackageDefinitions() throws RemoteException;
     PaymentTypeService getPaymentTypes() throws RemoteException;
-    // TODO: PhysicalServerService getPhysicalServers() throws RemoteException;
+    PhysicalServerService getPhysicalServers() throws RemoteException;
     PostgresDatabaseService getPostgresDatabases() throws RemoteException;
     PostgresEncodingService getPostgresEncodings() throws RemoteException;
     PostgresServerService getPostgresServers() throws RemoteException;
@@ -228,9 +229,7 @@ public interface AOServConnector extends Remote {
     PrivateFtpServerService getPrivateFtpServers() throws RemoteException;
     ProcessorTypeService getProcessorTypes() throws RemoteException;
     ProtocolService getProtocols() throws RemoteException;
-    /* TODO
     RackService getRacks() throws RemoteException;
-    */
     ResellerService getResellers() throws RemoteException;
     ResourceTypeService getResourceTypes() throws RemoteException;
     ResourceService getResources() throws RemoteException;

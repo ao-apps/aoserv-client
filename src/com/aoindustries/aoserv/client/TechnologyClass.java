@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 final public class TechnologyClass extends AOServObjectStringKey implements Comparable<TechnologyClass>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyClass> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The possible <code>TechnologyClass</code>es.
@@ -49,12 +49,12 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TechnologyClass other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the class")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the name of the class")
     public String getName() {
     	return getKey();
     }
@@ -85,7 +85,7 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Relations">
     @DependentObjectSet
     public IndexedSet<Technology> getTechnologies() throws RemoteException {
-        return getConnector().getTechnologies().filterIndexed(Technology.COLUMN_CLASS, this);
+        return getConnector().getTechnologies().filterIndexed(Technology.COLUMN_TECHNOLOGY_CLASS, this);
     }
     // </editor-fold>
 }

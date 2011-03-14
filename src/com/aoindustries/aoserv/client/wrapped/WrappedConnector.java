@@ -29,8 +29,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
         super(locale, connectAs, authenticateAs, password, daemonServer);
         this.factory = factory;
+        // TODO: If possible (construction order OK), instantiate where declared
         aoserverDaemonHosts = new WrappedAOServerDaemonHostService<C,F>(this);
-        aoserverResources = new AOServerResourceService(this);
         aoservers = new WrappedAOServerService<C,F>(this);
         aoservPermissions = new WrappedAOServPermissionService<C,F>(this);
         aoservRoles = new WrappedAOServRoleService<C,F>(this);
@@ -38,6 +38,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         architectures = new WrappedArchitectureService<C,F>(this);
         backupPartitions = new WrappedBackupPartitionService<C,F>(this);
         backupRetentions = new WrappedBackupRetentionService<C,F>(this);
+        backupServers = new WrappedBackupServerService<C,F>(this);
         // TODO: bankAccounts = new WrappedBankAccountService<C,F>(this);
         bankTransactionTypes = new WrappedBankTransactionTypeService<C,F>(this);
         // TODO: bankTransactions = new WrappedBankTransactionService<C,F>(this);
@@ -147,7 +148,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         packageDefinitionLimits = new WrappedPackageDefinitionLimitService<C,F>(this);
         packageDefinitions = new WrappedPackageDefinitionService<C,F>(this);
         paymentTypes = new WrappedPaymentTypeService<C,F>(this);
-        // TODO: physicalServers = new WrappedPhysicalServerService<C,F>(this);
+        physicalServers = new WrappedPhysicalServerService<C,F>(this);
         postgresDatabases = new WrappedPostgresDatabaseService<C,F>(this);
         postgresEncodings = new WrappedPostgresEncodingService<C,F>(this);
         postgresServers = new WrappedPostgresServerService<C,F>(this);
@@ -156,13 +157,10 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         privateFtpServers = new WrappedPrivateFtpServerService<C,F>(this);
         processorTypes = new WrappedProcessorTypeService<C,F>(this);
         protocols = new WrappedProtocolService<C,F>(this);
-        // TODO: racks = new WrappedRackService<C,F>(this);
+        racks = new WrappedRackService<C,F>(this);
         resellers = new WrappedResellerService<C,F>(this);
         resourceTypes = new WrappedResourceTypeService<C,F>(this);
-        resources = new ResourceService(this);
         serverFarms = new WrappedServerFarmService<C,F>(this);
-        serverResources = new ServerResourceService(this);
-        servers = new WrappedServerService<C,F>(this);
         shells = new WrappedShellService<C,F>(this);
         /* TODO
         signupRequestOptions = new WrappedSignupRequestOptionService<C,F>(this);
@@ -296,13 +294,6 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return aoserverDaemonHosts;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="AOServerResourceService">
-    final AOServerResourceService aoserverResources;
-    @Override
-    final public AOServerResourceService getAoServerResources() {
-        return aoserverResources;
-    }
-    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="AOServerService">
     static class WrappedAOServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,AOServer> implements AOServerService {
         WrappedAOServerService(WrappedConnector<C,F> connector) {
@@ -385,6 +376,18 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     @Override
     final public BackupRetentionService getBackupRetentions() {
         return backupRetentions;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="BackupServerService">
+    static class WrappedBackupServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BackupServer> implements BackupServerService {
+        WrappedBackupServerService(WrappedConnector<C,F> connector) {
+            super(connector, Integer.class, BackupServer.class);
+        }
+    }
+    final WrappedBackupServerService<C,F> backupServers;
+    @Override
+    final public BackupServerService getBackupServers() {
+        return backupServers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankAccountService">
@@ -1288,8 +1291,16 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PhysicalServerService">
-    // TODO: final WrappedPhysicalServerService<C,F> physicalServers;
-    // TODO: final public PhysicalServerService getPhysicalServers();
+    static class WrappedPhysicalServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PhysicalServer> implements PhysicalServerService {
+        WrappedPhysicalServerService(WrappedConnector<C,F> connector) {
+            super(connector, Integer.class, PhysicalServer.class);
+        }
+    }
+    final WrappedPhysicalServerService<C,F> physicalServers;
+    @Override
+    final public PhysicalServerService getPhysicalServers() {
+        return physicalServers;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="PostgresDatabaseService">
     static class WrappedPostgresDatabaseService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,PostgresDatabase> implements PostgresDatabaseService {
@@ -1388,8 +1399,16 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="RackService">
-    // TODO: final WrappedRackService<C,F> racks;
-    // TODO: final public RackService getRacks();
+    static class WrappedRackService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Rack> implements RackService {
+        WrappedRackService(WrappedConnector<C,F> connector) {
+            super(connector, Integer.class, Rack.class);
+        }
+    }
+    final WrappedRackService<C,F> racks;
+    @Override
+    final public RackService getRacks() {
+        return racks;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ResellerService">
     static class WrappedResellerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Reseller> implements ResellerService {
@@ -1415,42 +1434,16 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         return resourceTypes;
     }
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="ResourceService">
-    final ResourceService resources;
-    @Override
-    final public ResourceService getResources() {
-        return resources;
-    }
-    // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ServerFarmService">
-    static class WrappedServerFarmService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,DomainLabel,ServerFarm> implements ServerFarmService {
+    static class WrappedServerFarmService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,ServerFarm> implements ServerFarmService {
         WrappedServerFarmService(WrappedConnector<C,F> connector) {
-            super(connector, DomainLabel.class, ServerFarm.class);
+            super(connector, Integer.class, ServerFarm.class);
         }
     }
     final WrappedServerFarmService<C,F> serverFarms;
     @Override
     final public ServerFarmService getServerFarms() {
         return serverFarms;
-    }
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="ServerResourceService">
-    final ServerResourceService serverResources;
-    @Override
-    final public ServerResourceService getServerResources() {
-        return serverResources;
-    }
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="ServerService">
-    static class WrappedServerService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,Server> implements ServerService {
-        WrappedServerService(WrappedConnector<C,F> connector) {
-            super(connector, Integer.class, Server.class);
-        }
-    }
-    final WrappedServerService<C,F> servers;
-    @Override
-    final public ServerService getServers() {
-        return servers;
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="ShellService">

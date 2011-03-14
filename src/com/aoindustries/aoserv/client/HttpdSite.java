@@ -33,8 +33,6 @@ import java.rmi.RemoteException;
 final public class HttpdSite extends AOServerResource implements Comparable<HttpdSite>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdSite> /*, Disablable, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     public static final int MAX_SITE_NAME_LENGTH=255;
 
     /**
@@ -53,11 +51,13 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -2644853941410100318L;
+
     private DomainName siteName;
     final private boolean listFirst;
     final private int linuxAccountGroup;
     private Email serverAdmin;
-    final private boolean isManualConfig;
+    final private boolean manualConfig;
     private String awstatsSkipFiles;
 
     public HttpdSite(
@@ -83,7 +83,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
         this.listFirst = listFirst;
         this.linuxAccountGroup = linuxAccountGroup;
         this.serverAdmin = serverAdmin;
-        this.isManualConfig = isManualConfig;
+        this.manualConfig = isManualConfig;
         this.awstatsSkipFiles = awstatsSkipFiles;
         intern();
     }
@@ -115,34 +115,34 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name="site_name", description="the name of the site, as used in the /www directory.")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, description="the name of the site, as used in the /www directory.")
     public DomainName getSiteName() {
         return siteName;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name="list_first", description="if <code>true</code>, this site will be listed first in the Apache configs.  This is normally used only for the \"not found\" site for each httpd_server.")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, description="if <code>true</code>, this site will be listed first in the Apache configs.  This is normally used only for the \"not found\" site for each httpd_server.")
     public boolean isListFirst() {
         return listFirst;
     }
 
-    static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    public static final MethodColumn COLUMN_LINUX_ACCOUNT_GROUP = getMethodColumn(HttpdSite.class, "linuxAccountGroup");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the user the site \"runs as\"")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the user the site \"runs as\"")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="server_admin", description="the email address of the server administrator.  This address is provided when an error occurs.  The value is most often <code>webmaster@<i>domain.com</i></code>")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, description="the email address of the server administrator.  This address is provided when an error occurs.  The value is most often <code>webmaster@<i>domain.com</i></code>")
     public Email getServerAdmin() {
         return serverAdmin;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="is_manual_config", description="configuration of this site config file is performed manually")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="configuration of this site config file is performed manually")
     public boolean isManualConfig() {
-        return isManualConfig;
+        return manualConfig;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="awstats_skip_files", description="the SkipFiles setting for AWStats")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="the SkipFiles setting for AWStats")
     public String getAwstatsSkipFiles() {
         return awstatsSkipFiles;
     }
@@ -165,7 +165,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
             dto.isListFirst(),
             dto.getLinuxAccountGroup(),
             getEmail(dto.getServerAdmin()),
-            dto.isIsManualConfig(),
+            dto.isManualConfig(),
             dto.getAwstatsSkipFiles()
         );
     }
@@ -186,7 +186,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
             listFirst,
             linuxAccountGroup,
             getDto(serverAdmin),
-            isManualConfig,
+            manualConfig,
             awstatsSkipFiles
         );
     }

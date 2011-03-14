@@ -40,7 +40,7 @@ implements
     DtoFactory<com.aoindustries.aoserv.client.dto.DomainName>,
     Internable<DomainName> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2384488670340662487L;
 
     public static final int MAX_LENGTH = 253;
 
@@ -182,10 +182,10 @@ implements
                 domain2=domain2.substring(0, pos);
             }
 
-            int diff=AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(section1, section2);
+            int diff=AOServObject.compareIgnoreCaseConsistentWithEquals(section1, section2);
             if(diff!=0) return diff;
         }
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(domain1, domain2);
+        return AOServObject.compareIgnoreCaseConsistentWithEquals(domain1, domain2);
     }
 
     @Override

@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.util.AoCollections;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,6 +25,7 @@ public enum ServiceName {
     architectures,
     backup_partitions,
     backup_retentions,
+    backup_servers,
     /* TODO
     bank_accounts,
      */
@@ -149,7 +149,7 @@ public enum ServiceName {
     package_definition_limits,
     package_definitions,
     payment_types,
-    // TODO: physical_servers,
+    physical_servers,
     postgres_databases,
     postgres_encodings,
     postgres_servers,
@@ -158,9 +158,7 @@ public enum ServiceName {
     private_ftp_servers,
     processor_types,
     protocols,
-    /* TODO
     racks,
-     */
     resellers,
     resource_types,
     resources,

@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class PostgresUserId implements Comparable<PostgresUserId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUserId>, Internable<PostgresUserId> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The maximum length of a PostgreSQL username.

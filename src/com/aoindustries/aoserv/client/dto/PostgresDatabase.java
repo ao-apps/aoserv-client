@@ -14,7 +14,7 @@ public class PostgresDatabase extends AOServerResource {
     private int postgresServer;
     private int datdba;
     private int encoding;
-    private boolean isTemplate;
+    private boolean template;
     private boolean allowConn;
     private boolean enablePostgis;
 
@@ -35,7 +35,7 @@ public class PostgresDatabase extends AOServerResource {
         int postgresServer,
         int datdba,
         int encoding,
-        boolean isTemplate,
+        boolean template,
         boolean allowConn,
         boolean enablePostgis
     ) {
@@ -44,7 +44,7 @@ public class PostgresDatabase extends AOServerResource {
         this.postgresServer = postgresServer;
         this.datdba = datdba;
         this.encoding = encoding;
-        this.isTemplate = isTemplate;
+        this.template = template;
         this.allowConn = allowConn;
         this.enablePostgis = enablePostgis;
     }
@@ -81,12 +81,12 @@ public class PostgresDatabase extends AOServerResource {
         this.encoding = encoding;
     }
 
-    public boolean isIsTemplate() {
-        return isTemplate;
+    public boolean isTemplate() {
+        return template;
     }
 
-    public void setIsTemplate(boolean isTemplate) {
-        this.isTemplate = isTemplate;
+    public void setTemplate(boolean template) {
+        this.template = template;
     }
 
     public boolean isAllowConn() {

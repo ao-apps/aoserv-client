@@ -90,34 +90,34 @@ abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>>
     }
 
     @Override
-    final public V filterUnique(String columnName, Object value) throws RemoteException {
+    final public V filterUnique(MethodColumn column, Object value) throws RemoteException {
         if(value==null) return null;
-        IndexType indexType = table.getColumn(columnName).getIndexType();
-        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+columnName);
-        return getSet().filterUnique(columnName, value);
+        IndexType indexType = column.getIndexType();
+        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+column);
+        return getSet().filterUnique(column, value);
     }
 
     /**
      * The filtered set is based on the intersection of the values set and uniqueHash.keySet
      */
     @Override
-    final public IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
+    final public IndexedSet<V> filterUniqueSet(MethodColumn column, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(getServiceName());
-        IndexType indexType = table.getColumn(columnName).getIndexType();
-        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+columnName);
-        return getSet().filterUniqueSet(columnName, values);
+        IndexType indexType = column.getIndexType();
+        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+column);
+        return getSet().filterUniqueSet(column, values);
     }
 
     @Override
-    final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
+    final public IndexedSet<V> filterIndexed(MethodColumn column, Object value) throws RemoteException {
         if(value==null) return IndexedSet.emptyIndexedSet(getServiceName());
-        return getSet().filterIndexed(columnName, value);
+        return getSet().filterIndexed(column, value);
     }
 
     @Override
-    final public IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
+    final public IndexedSet<V> filterIndexedSet(MethodColumn column, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(getServiceName());
-        return getSet().filterIndexedSet(columnName, values);
+        return getSet().filterIndexedSet(column, values);
     }
 
     /**

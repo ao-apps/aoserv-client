@@ -17,11 +17,9 @@ import java.rmi.RemoteException;
  */
 final public class FailoverFileSchedule extends AOServObjectIntegerKey implements Comparable<FailoverFileSchedule>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileSchedule> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 3128236449184268134L;
+
     final private int replication;
     final private short hour;
     final private short minute;
@@ -47,11 +45,11 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     @Override
     public int compareTo(FailoverFileSchedule other) {
         try {
-            int diff = replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+            int diff = replication==other.replication ? 0 : getReplication().compareTo(other.getReplication());
             if(diff!=0) return diff;
-            diff = AOServObjectUtils.compare(hour, other.hour);
+            diff = compare(hour, other.hour);
             if(diff!=0) return diff;
-            return AOServObjectUtils.compare(minute, other.minute);
+            return compare(minute, other.minute);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -59,29 +57,29 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_REPLICATION = "replication";
+    public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FailoverFileSchedule.class, "replication");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the replication that will be started")
-    public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the replication that will be started")
+    public FailoverFileReplication getReplication() throws RemoteException {
         return getConnector().getFailoverFileReplications().get(replication);
     }
 
-    @SchemaColumn(order=2, name="hour", description="the hour of day (in server timezone)")
+    @SchemaColumn(order=2, description="the hour of day (in server timezone)")
     public short getHour() {
         return hour;
     }
 
-    @SchemaColumn(order=3, name="minute", description="the minute (in server timezone)")
+    @SchemaColumn(order=3, description="the minute (in server timezone)")
     public short getMinute() {
         return minute;
     }
 
-    @SchemaColumn(order=4, name="enabled", description="indicates this schedule is enabled")
+    @SchemaColumn(order=4, description="indicates this schedule is enabled")
     public boolean isEnabled() {
         return enabled;
     }
@@ -109,7 +107,7 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     @Override
     String toStringImpl() throws RemoteException {
         StringBuilder SB = new StringBuilder();
-        SB.append(getFailoverFileReplication().toStringImpl());
+        SB.append(getReplication().toStringImpl());
         SB.append('@');
         if(hour<10) SB.append('0');
         SB.append(hour);

@@ -21,7 +21,7 @@ final public class GetMySQLSlaveStatusCommand extends RemoteCommand<GetMySQLSlav
 
     final public static class SlaveStatus implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+        // TODO: private static final long serialVersionUID = 1L;
 
         final private String slaveIOState;
         final private String masterLogFile;
@@ -127,7 +127,7 @@ final public class GetMySQLSlaveStatusCommand extends RemoteCommand<GetMySQLSlav
         }
     }
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     final private int pkey;
 

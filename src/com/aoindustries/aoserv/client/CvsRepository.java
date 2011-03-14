@@ -21,7 +21,7 @@ import java.util.List;
 final public class CvsRepository extends AOServerResource implements Comparable<CvsRepository>, DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The default permissions for a CVS repository.
@@ -93,19 +93,19 @@ final public class CvsRepository extends AOServerResource implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name="path", description="the full path to the repository")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, description="the full path to the repository")
     public UnixPath getPath() {
         return path;
     }
 
-    static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    public static final MethodColumn COLUMN_LINUX_ACCOUNT_GROUP = getMethodColumn(CvsRepository.class, "linuxAccountGroup");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the directory owner")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the directory owner")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="mode", description="the directory permissions")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the directory permissions")
     public long getMode() {
         return mode;
     }

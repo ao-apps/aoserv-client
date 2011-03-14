@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 final public class PackageDefinition extends AOServObjectIntegerKey implements Comparable<PackageDefinition>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinition> /*TODO:, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -77,9 +77,9 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
             if(diff!=0) return diff;
             diff = monthlyRate.compareTo(other.monthlyRate);
             if(diff!=0) return diff;
-            diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+            diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
             if(diff!=0) return diff;
-            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(version, other.version);
+            return compareIgnoreCaseConsistentWithEquals(version, other.version);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -87,25 +87,25 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_PKEY = "pkey";
-    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="the unique ID of the package definition")
+    public static final MethodColumn COLUMN_PKEY = getMethodColumn(PackageDefinition.class, "pkey");
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique ID of the package definition")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_CATEGORY = "category";
+    public static final MethodColumn COLUMN_CATEGORY = getMethodColumn(PackageDefinition.class, "category");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_CATEGORY, index=IndexType.INDEXED, description="the package category")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the package category")
     public PackageCategory getCategory() throws RemoteException {
         return getConnector().getPackageCategories().get(category);
     }
 
-    @SchemaColumn(order=2, name="name", description="the name of the package")
+    @SchemaColumn(order=2, description="the name of the package")
     public String getName() {
         return name;
     }
 
-    @SchemaColumn(order=3, name="version", description="the unique version of this package")
+    @SchemaColumn(order=3, description="the unique version of this package")
     public String getVersion() {
         return version;
     }
@@ -113,33 +113,33 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     /**
      * Gets the setup fee or <code>null</code> for none.
      */
-    @SchemaColumn(order=4, name="setup_fee", description="the setup fee for this package definition")
+    @SchemaColumn(order=4, description="the setup fee for this package definition")
     public Money getSetupFee() {
         return setupFee;
     }
 
-    static final String COLUMN_SETUP_FEE_TRANSACTION_TYPE = "setup_fee_transaction_type";
+    public static final MethodColumn COLUMN_SETUP_FEE_TRANSACTION_TYPE = getMethodColumn(PackageDefinition.class, "setupFeeTransactionType");
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_SETUP_FEE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction of the setup fee")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the type of transaction of the setup fee")
     public TransactionType getSetupFeeTransactionType() throws RemoteException {
         if(setupFeeTransactionType==null) return null;
         return getConnector().getTransactionTypes().get(setupFeeTransactionType);
     }
 
-    @SchemaColumn(order=6, name="monthly_rate", description="the default monthly charge for this package")
+    @SchemaColumn(order=6, description="the default monthly charge for this package")
     public Money getMonthlyRate() {
         return monthlyRate;
     }
 
-    static final String COLUMN_MONTHLY_RATE_TRANSACTION_TYPE = "monthly_rate_transaction_type";
+    public static final MethodColumn COLUMN_MONTHLY_RATE_TRANSACTION_TYPE = getMethodColumn(PackageDefinition.class, "monthlyRateTransactionType");
     @DependencySingleton
-    @SchemaColumn(order=7, name=COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the type of transaction for the monthly fee")
+    @SchemaColumn(order=7, index=IndexType.INDEXED, description="the type of transaction for the monthly fee")
     public TransactionType getMonthlyRateTransactionType() throws RemoteException {
         if(monthlyRateTransactionType==null) return null;
         return getConnector().getTransactionTypes().get(monthlyRateTransactionType);
     }
 
-    @SchemaColumn(order=8, name="approved", description="once approved a definition may be used for businesses, but may not be modified")
+    @SchemaColumn(order=8, description="once approved a definition may be used for businesses, but may not be modified")
     public boolean isApproved() {
         return approved;
     }

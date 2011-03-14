@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Hostname implements Comparable<Hostname>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.Hostname>, Internable<Hostname> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     private static boolean isIp(String hostname) throws ValidationException {
         if(hostname==null) throw new ValidationException(ApplicationResources.accessor, "Hostname.isIp.isNull");

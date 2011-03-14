@@ -18,45 +18,45 @@ import com.aoindustries.table.IndexType;
 final public class EmailAttachmentType extends AOServObjectStringKey implements Comparable<EmailAttachmentType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailAttachmentType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private boolean isDefaultBlock;
+    final private boolean defaultBlock;
 
-    public EmailAttachmentType(AOServConnector connector, String extension, boolean isDefaultBlock) {
+    public EmailAttachmentType(AOServConnector connector, String extension, boolean defaultBlock) {
         super(connector, extension);
-        this.isDefaultBlock = isDefaultBlock;
+        this.defaultBlock = defaultBlock;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(EmailAttachmentType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="extension", index=IndexType.PRIMARY_KEY, description="the unique filename extension")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique filename extension")
     public String getExtension() {
         return getKey();
     }
     
-    @SchemaColumn(order=1, name="is_default_block", description="indicates that the type will be blocked by default")
+    @SchemaColumn(order=1, description="indicates that the type will be blocked by default")
     public boolean isDefaultBlock() {
-        return isDefaultBlock;
+        return defaultBlock;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     public EmailAttachmentType(AOServConnector connector, com.aoindustries.aoserv.client.dto.EmailAttachmentType dto) {
-        this(connector, dto.getExtension(), dto.isIsDefaultBlock());
+        this(connector, dto.getExtension(), dto.isDefaultBlock());
     }
 
     @Override
     public com.aoindustries.aoserv.client.dto.EmailAttachmentType getDto() {
-        return new com.aoindustries.aoserv.client.dto.EmailAttachmentType(getKey(), isDefaultBlock);
+        return new com.aoindustries.aoserv.client.dto.EmailAttachmentType(getKey(), defaultBlock);
     }
     // </editor-fold>
 

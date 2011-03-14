@@ -24,34 +24,34 @@ import java.rmi.RemoteException;
 final public class MasterUser extends AOServObjectUserIdKey implements Comparable<MasterUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterUser> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private boolean isActive;
+    final private boolean active;
     final private boolean canAccessAccounting;
     final private boolean canAccessBankAccount;
     final private boolean canInvalidateTables;
     final private boolean canAccessAdminWeb;
-    final private boolean isDnsAdmin;
+    final private boolean dnsAdmin;
 
     public MasterUser(
         AOServConnector connector,
         UserId username,
-        boolean isActive,
+        boolean active,
         boolean canAccessAccounting,
         boolean canAccessBankAccount,
         boolean canInvalidateTables,
         boolean canAccessAdminWeb,
-        boolean isDnsAdmin
+        boolean dnsAdmin
     ) {
         super(connector, username);
-        this.isActive = isActive;
+        this.active = active;
         this.canAccessAccounting = canAccessAccounting;
         this.canAccessBankAccount = canAccessBankAccount;
         this.canInvalidateTables = canInvalidateTables;
         this.canAccessAdminWeb = canAccessAdminWeb;
-        this.isDnsAdmin = isDnsAdmin;
+        this.dnsAdmin = dnsAdmin;
     }
     // </editor-fold>
 
@@ -63,41 +63,41 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_BUSINESS_ADMINISTRATOR = getMethodColumn(MasterUser.class, "businessAdministrator");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique username of this master user")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique username of this master user")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(getKey());
     }
 
-    @SchemaColumn(order=1, name="is_active", description="this level of access may be disabled")
+    @SchemaColumn(order=1, description="this level of access may be disabled")
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
-    @SchemaColumn(order=2, name="can_access_accounting", description="if they can access accounting resources")
+    @SchemaColumn(order=2, description="if they can access accounting resources")
     public boolean getCanAccessAccounting() {
         return canAccessAccounting;
     }
 
-    @SchemaColumn(order=3, name="can_access_bank_account", description="if they can access bank account info")
+    @SchemaColumn(order=3, description="if they can access bank account info")
     public boolean getCanAccessBankAccount() {
         return canAccessBankAccount;
     }
 
-    @SchemaColumn(order=4, name="can_invalidate_tables", description="if they can invalidate master tables")
+    @SchemaColumn(order=4, description="if they can invalidate master tables")
     public boolean getCanInvalidateTables() {
         return canInvalidateTables;
     }
 
-    @SchemaColumn(order=5, name="can_access_admin_web", description="if they can access administrative web pages")
-    public boolean isWebAdmin() {
+    @SchemaColumn(order=5, description="if they can access administrative web pages")
+    public boolean getCanAccessAdminWeb() {
         return canAccessAdminWeb;
     }
 
-    @SchemaColumn(order=6, name="is_dns_admin", description="if they can access all DNS zones and records")
+    @SchemaColumn(order=6, description="if they can access all DNS zones and records")
     public boolean isDnsAdmin() {
-        return isDnsAdmin;
+        return dnsAdmin;
     }
     // </editor-fold>
 
@@ -106,18 +106,18 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
         this(
             connector,
             getUserId(dto.getUsername()),
-            dto.isIsActive(),
+            dto.isActive(),
             dto.isCanAccessAccounting(),
             dto.isCanAccessBankAccount(),
             dto.isCanInvalidateTables(),
             dto.isCanAccessAdminWeb(),
-            dto.isIsDnsAdmin()
+            dto.isDnsAdmin()
         );
     }
 
     @Override
     public com.aoindustries.aoserv.client.dto.MasterUser getDto() {
-        return new com.aoindustries.aoserv.client.dto.MasterUser(getDto(getKey()), isActive, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, isDnsAdmin);
+        return new com.aoindustries.aoserv.client.dto.MasterUser(getDto(getKey()), active, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, dnsAdmin);
     }
     // </editor-fold>
 
@@ -130,12 +130,12 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
      */
     @DependentObjectSet
     public IndexedSet<MasterHost> getMasterHosts() throws RemoteException {
-        return getConnector().getMasterHosts().filterIndexed(MasterHost.COLUMN_USERNAME, this);
+        return getConnector().getMasterHosts().filterIndexed(MasterHost.COLUMN_MASTER_USER, this);
     }
 
     @DependentObjectSet
     public IndexedSet<MasterServer> getMasterServers() throws RemoteException {
-        return getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_USERNAME, this);
+        return getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_MASTER_USER, this);
     }
 
     @DependentObjectSet

@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  */
 abstract public class AOServObjectShortKey extends AOServObject<Short> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     final protected short key;
 

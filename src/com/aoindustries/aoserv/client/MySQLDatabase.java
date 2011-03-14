@@ -24,8 +24,6 @@ import java.rmi.RemoteException;
 final public class MySQLDatabase extends AOServerResource implements Comparable<MySQLDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     /**
      * The classname of the JDBC driver used for the <code>MySQLDatabase</code>.
      */
@@ -63,6 +61,8 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 5235199386519358800L;
+
     private MySQLDatabaseName name;
     final private int mysqlServer;
 
@@ -110,15 +110,15 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_NAME = "name";
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
+    public static final MethodColumn COLUMN_NAME = getMethodColumn(MySQLDatabase.class, "name");
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the name of the database")
     public MySQLDatabaseName getName() {
         return name;
     }
 
-    static final String COLUMN_MYSQL_SERVER = "mysql_server";
+    public static final MethodColumn COLUMN_MYSQL_SERVER = getMethodColumn(MySQLDatabase.class, "mysqlServer");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the pkey of the server that this database is hosted on")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the pkey of the server that this database is hosted on")
     public MySQLServer getMysqlServer() throws RemoteException {
         return getConnector().getMysqlServers().get(mysqlServer);
     }
@@ -330,7 +330,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
 
     public static class TableStatus implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = -6666081829820808838L;
 
         public enum RowFormat {
             Compact,
@@ -546,7 +546,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     */
     public static class CheckTableResult implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = -1955886824424419791L;
 
         public enum MsgType {
             status,

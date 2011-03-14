@@ -11,32 +11,32 @@ package com.aoindustries.aoserv.client.dto;
 public class MasterUser extends AOServObject {
 
     private UserId username;
-    private boolean isActive;
+    private boolean active;
     private boolean canAccessAccounting;
     private boolean canAccessBankAccount;
     private boolean canInvalidateTables;
     private boolean canAccessAdminWeb;
-    private boolean isDnsAdmin;
+    private boolean dnsAdmin;
 
     public MasterUser() {
     }
 
     public MasterUser(
         UserId username,
-        boolean isActive,
+        boolean active,
         boolean canAccessAccounting,
         boolean canAccessBankAccount,
         boolean canInvalidateTables,
         boolean canAccessAdminWeb,
-        boolean isDnsAdmin
+        boolean dnsAdmin
     ) {
         this.username = username;
-        this.isActive = isActive;
+        this.active = active;
         this.canAccessAccounting = canAccessAccounting;
         this.canAccessBankAccount = canAccessBankAccount;
         this.canInvalidateTables = canInvalidateTables;
         this.canAccessAdminWeb = canAccessAdminWeb;
-        this.isDnsAdmin = isDnsAdmin;
+        this.dnsAdmin = dnsAdmin;
     }
 
     public UserId getUsername() {
@@ -47,12 +47,12 @@ public class MasterUser extends AOServObject {
         this.username = username;
     }
 
-    public boolean isIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public boolean isCanAccessAccounting() {
@@ -87,11 +87,11 @@ public class MasterUser extends AOServObject {
         this.canAccessAdminWeb = canAccessAdminWeb;
     }
 
-    public boolean isIsDnsAdmin() {
-        return isDnsAdmin;
+    public boolean isDnsAdmin() {
+        return dnsAdmin;
     }
 
-    public void setIsDnsAdmin(boolean isDnsAdmin) {
-        this.isDnsAdmin = isDnsAdmin;
+    public void setDnsAdmin(boolean dnsAdmin) {
+        this.dnsAdmin = dnsAdmin;
     }
 }

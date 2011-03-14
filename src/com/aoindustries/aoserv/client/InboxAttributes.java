@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 final public class InboxAttributes implements Streamable, Serializable {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     private long systemTime;
     private long fileSize;

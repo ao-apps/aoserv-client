@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 final public class Protocol extends AOServObjectStringKey implements Comparable<Protocol>, DtoFactory<com.aoindustries.aoserv.client.dto.Protocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         AOSERV_DAEMON="aoserv-daemon",
@@ -63,7 +63,7 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     // <editor-fold defaultstate="collapsed" desc="Fields">
     final private NetPort port;
     private String name;
-    final private boolean isUserService;
+    final private boolean userService;
     private String netProtocol;
 
     public Protocol(
@@ -71,13 +71,13 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
         String protocol,
         NetPort port,
         String name,
-        boolean isUserService,
+        boolean userService,
         String netProtocol
     ) {
         super(connector, protocol);
         this.port = port;
         this.name = name;
-        this.isUserService = isUserService;
+        this.userService = userService;
         this.netProtocol = netProtocol;
         intern();
     }
@@ -107,29 +107,29 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="protocol", index=IndexType.PRIMARY_KEY, description="the unique name of the protocol")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the protocol")
     public String getProtocol() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="port", description="the default port of the protocol")
+    @SchemaColumn(order=1, description="the default port of the protocol")
     public NetPort getPort() {
         return port;
     }
 
-    @SchemaColumn(order=2, name="name", description="the name of the service")
+    @SchemaColumn(order=2, description="the name of the service")
     public String getName() {
         return name;
     }
 
-    @SchemaColumn(order=3, name="is_user_service", description="indicates that a user may add and remove this service")
+    @SchemaColumn(order=3, description="indicates that a user may add and remove this service")
     public boolean isUserService() {
-        return isUserService;
+        return userService;
     }
 
-    static final String COLUMN_NET_PROTOCOL = "net_protocol";
+    public static final MethodColumn COLUMN_NET_PROTOCOL = getMethodColumn(Protocol.class, "netProtocol");
     @DependencySingleton
-    @SchemaColumn(order=4, name=COLUMN_NET_PROTOCOL, index=IndexType.INDEXED, description="the default network protocol for this protocol")
+    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the default network protocol for this protocol")
     public NetProtocol getNetProtocol() throws RemoteException {
         return getConnector().getNetProtocols().get(netProtocol);
     }
@@ -142,14 +142,14 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
             dto.getProtocol(),
             getNetPort(dto.getPort()),
             dto.getName(),
-            dto.isIsUserService(),
+            dto.isUserService(),
             dto.getNetProtocol()
         );
     }
 
     @Override
     public com.aoindustries.aoserv.client.dto.Protocol getDto() {
-        return new com.aoindustries.aoserv.client.dto.Protocol(getKey(), getDto(port), name, isUserService, netProtocol);
+        return new com.aoindustries.aoserv.client.dto.Protocol(getKey(), getDto(port), name, userService, netProtocol);
     }
     // </editor-fold>
 

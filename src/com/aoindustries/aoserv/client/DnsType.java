@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 final public class DnsType extends AOServObjectStringKey implements Comparable<DnsType>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The possible <code>DnsType</code>s.
@@ -46,12 +46,12 @@ final public class DnsType extends AOServObjectStringKey implements Comparable<D
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(DnsType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the type name")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the type name")
     public String getType() {
         return getKey();
     }

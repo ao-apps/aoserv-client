@@ -20,8 +20,6 @@ import java.rmi.RemoteException;
 final public class ResourceType extends AOServObjectStringKey implements Comparable<ResourceType>, DtoFactory<com.aoindustries.aoserv.client.dto.ResourceType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     public static final String
         // linux_account types
         SHELL_ACCOUNT="shell_account",
@@ -54,6 +52,8 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    // TODO: private static final long serialVersionUID = 1L;
+
     public ResourceType(AOServConnector connector, String name) {
         super(connector, name);
     }
@@ -62,7 +62,7 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(ResourceType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
@@ -70,7 +70,7 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     /**
      * Gets the unique name of this resource type.
      */
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the resource type")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the name of the resource type")
     public String getName() {
         return getKey();
     }

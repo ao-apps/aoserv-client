@@ -99,7 +99,7 @@ public interface AOServService<
      * The column must have an index type of PRIMARY_KEY or UNIQUE.
      */
     @Override
-    V filterUnique(String columnName, Object value) throws RemoteException;
+    V filterUnique(MethodColumn column, Object value) throws RemoteException;
 
     /**
      * Gets the set of objects having one of the provided column values.  Like SQL, a <code>null</code> value will not match
@@ -107,7 +107,7 @@ public interface AOServService<
      * The column must have an index type of PRIMARY_KEY or UNIQUE.
      */
     @Override
-    IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException;
+    IndexedSet<V> filterUniqueSet(MethodColumn column, Set<?> values) throws RemoteException;
 
     /**
      * Gets the set of objects having the provided column value.  Like SQL, a <code>null</code> value will not match
@@ -115,7 +115,7 @@ public interface AOServService<
      * The column must have an index type of INDEXED.
      */
     @Override
-    IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException;
+    IndexedSet<V> filterIndexed(MethodColumn column, Object value) throws RemoteException;
 
     /**
      * Gets the set of objects having one of the provided column values.  Like SQL, a <code>null</code> value will not match
@@ -123,5 +123,5 @@ public interface AOServService<
      * The column must have an index type of INDEXED.
      */
     @Override
-    IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException;
+    IndexedSet<V> filterIndexedSet(MethodColumn column, Set<?> values) throws RemoteException;
 }

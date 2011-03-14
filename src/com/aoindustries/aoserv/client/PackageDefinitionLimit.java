@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 final public class PackageDefinitionLimit extends AOServObjectIntegerKey implements Comparable<PackageDefinitionLimit>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionLimit> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -78,31 +78,31 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="the unique identifier for this limit")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier for this limit")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
+    public static final MethodColumn COLUMN_PACKAGE_DEFINITION = getMethodColumn(PackageDefinitionLimit.class, "packageDefinition");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the pkey of the package definition")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the pkey of the package definition")
     public PackageDefinition getPackageDefinition() throws RemoteException {
         return getConnector().getPackageDefinitions().get(packageDefinition);
     }
 
-    static final String COLUMN_RESOURCE_TYPE = "resource_type";
+    public static final MethodColumn COLUMN_RESOURCE_TYPE = getMethodColumn(PackageDefinitionLimit.class, "resourceType");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_RESOURCE_TYPE, index=IndexType.INDEXED, description="the resource type")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the resource type")
     public ResourceType getResourceType() throws RemoteException {
         return getConnector().getResourceTypes().get(resourceType);
     }
 
-    @SchemaColumn(order=3, name="soft_limit", description="the number that may be used before additional charges are added, NULL means unlimited")
+    @SchemaColumn(order=3, description="the number that may be used before additional charges are added, NULL means unlimited")
     public Integer getSoftLimit() {
         return softLimit;
     }
 
-    @SchemaColumn(order=4, name="hard_limit", description="the maximum number that may be allocated, NULL means unlimited")
+    @SchemaColumn(order=4, description="the maximum number that may be allocated, NULL means unlimited")
     public Integer getHardLimit() {
         return hardLimit;
     }
@@ -110,14 +110,14 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     /**
      * Gets the additional rate or <code>null</code> if there is none.
      */
-    @SchemaColumn(order=5, name="additional_rate", description="the monthly rate for those past the soft_limit")
+    @SchemaColumn(order=5, description="the monthly rate for those past the soft_limit")
     public Money getAdditionalRate() {
         return additionalRate;
     }
 
-    static final String COLUMN_ADDITIONAL_TRANSACTION_TYPE = "additional_transaction_type";
+    public static final MethodColumn COLUMN_ADDITIONAL_TRANSACTION_TYPE = getMethodColumn(PackageDefinitionLimit.class, "additionalTransactionType");
     @DependencySingleton
-    @SchemaColumn(order=6, name=COLUMN_ADDITIONAL_TRANSACTION_TYPE, index=IndexType.INDEXED, description="the transaction type for those past the soft_limit")
+    @SchemaColumn(order=6, index=IndexType.INDEXED, description="the transaction type for those past the soft_limit")
     public TransactionType getAdditionalTransactionType() throws RemoteException {
         if(additionalTransactionType==null) return null;
         return getConnector().getTransactionTypes().get(additionalTransactionType);

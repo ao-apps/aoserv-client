@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 final public class NetDeviceID extends AOServObjectStringKey implements Comparable<NetDeviceID>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDeviceID> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         BOND0="bond0",
@@ -35,41 +35,41 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    final private boolean isLoopback;
+    final private boolean loopback;
 
-    public NetDeviceID(AOServConnector connector, String name, boolean isLoopback) {
+    public NetDeviceID(AOServConnector connector, String name, boolean loopback) {
         super(connector, name);
-        this.isLoopback = isLoopback;
+        this.loopback = loopback;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(NetDeviceID other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the device")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the device")
     public String getName() {
     	return getKey();
     }
 
-    @SchemaColumn(order=1, name="is_loopback", description="if the device is the loopback device")
+    @SchemaColumn(order=1, description="if the device is the loopback device")
     public boolean isLoopback() {
-        return isLoopback;
+        return loopback;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     public NetDeviceID(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetDeviceID dto) {
-        this(connector, dto.getName(), dto.isIsLoopback());
+        this(connector, dto.getName(), dto.isLoopback());
     }
 
     @Override
     public com.aoindustries.aoserv.client.dto.NetDeviceID getDto() {
-        return new com.aoindustries.aoserv.client.dto.NetDeviceID(getKey(), isLoopback);
+        return new com.aoindustries.aoserv.client.dto.NetDeviceID(getKey(), loopback);
     }
     // </editor-fold>
 

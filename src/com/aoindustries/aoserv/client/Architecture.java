@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 final public class Architecture extends AOServObjectStringKey implements Comparable<Architecture>, DtoFactory<com.aoindustries.aoserv.client.dto.Architecture> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         ALPHA="alpha",
@@ -51,17 +51,17 @@ final public class Architecture extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(Architecture other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the architecture")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the architecture")
     public String getName() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="bits", description="the number of bits used by the architecture")
+    @SchemaColumn(order=1, description="the number of bits used by the architecture")
     public int getBits() {
         return bits;
     }

@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
 final public class LinuxAccountGroup extends AOServObjectIntegerKey implements Comparable<LinuxAccountGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountGroup> /*, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The maximum number of groups allowed for one account.
@@ -36,13 +36,13 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private final int linuxAccount;
     private final int linuxGroup;
-    private final boolean isPrimary;
+    private final boolean primary;
 
     public LinuxAccountGroup(AOServConnector connector, int pkey, int linuxAccount, int linuxGroup, boolean isPrimary) {
         super(connector, pkey);
         this.linuxAccount = linuxAccount;
         this.linuxGroup = linuxGroup;
-        this.isPrimary = isPrimary;
+        this.primary = isPrimary;
     }
     // </editor-fold>
 
@@ -60,30 +60,30 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_PKEY = "pkey";
-    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="a generated unique id")
+    public static final MethodColumn COLUMN_PKEY = getMethodColumn(LinuxAccountGroup.class, "pkey");
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_LINUX_ACCOUNT = "linux_account";
+    public static final MethodColumn COLUMN_LINUX_ACCOUNT = getMethodColumn(LinuxAccountGroup.class, "linuxAccount");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_LINUX_ACCOUNT, index=IndexType.INDEXED, description="the linux account that belongs to the group")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the linux account that belongs to the group")
     public LinuxAccount getLinuxAccount() throws RemoteException {
         return getConnector().getLinuxAccounts().get(linuxAccount);
     }
 
-    static final String COLUMN_LINUX_GROUP = "linux_group";
+    public static final MethodColumn COLUMN_LINUX_GROUP = getMethodColumn(LinuxAccountGroup.class, "linuxGroup");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_LINUX_GROUP, index=IndexType.INDEXED, description="the linux group that the account belongs to")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the linux group that the account belongs to")
     public LinuxGroup getLinuxGroup() throws RemoteException {
         return getConnector().getLinuxGroups().get(linuxGroup);
     }
 
-    static final String COLUMN_IS_PRIMARY = "is_primary";
-    @SchemaColumn(order=3, name=COLUMN_IS_PRIMARY, index=IndexType.INDEXED, description="flag showing that this group is the user's primary group")
+    public static final MethodColumn COLUMN_IS_PRIMARY = getMethodColumn(LinuxAccountGroup.class, "primary");
+    @SchemaColumn(order=3, index=IndexType.INDEXED, description="flag showing that this group is the user's primary group")
     public boolean isPrimary() {
-        return isPrimary;
+        return primary;
     }
     // </editor-fold>
 
@@ -94,13 +94,13 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
             dto.getPkey(),
             dto.getLinuxAccount(),
             dto.getLinuxGroup(),
-            dto.isIsPrimary()
+            dto.isPrimary()
         );
     }
 
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxAccountGroup getDto() {
-        return new com.aoindustries.aoserv.client.dto.LinuxAccountGroup(key, linuxAccount, linuxGroup, isPrimary);
+        return new com.aoindustries.aoserv.client.dto.LinuxAccountGroup(key, linuxAccount, linuxGroup, primary);
     }
     // </editor-fold>
 

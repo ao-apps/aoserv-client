@@ -30,7 +30,7 @@ import java.util.Set;
 final public class LinuxAccountType extends AOServObjectStringKey implements Comparable<LinuxAccountType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The different Linux account types.
@@ -162,14 +162,14 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(LinuxAccountType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_RESOURCE_TYPE = "resource_type";
+    public static final MethodColumn COLUMN_RESOURCE_TYPE = getMethodColumn(LinuxAccountType.class, "resourceType");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_RESOURCE_TYPE, index=IndexType.PRIMARY_KEY, description="the resource type this represents")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the resource type this represents")
     public ResourceType getResourceType() throws RemoteException {
         return getConnector().getResourceTypes().get(getKey());
     }

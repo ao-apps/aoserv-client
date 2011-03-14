@@ -23,7 +23,7 @@ implements
     DtoFactory<com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         NONE="none",
@@ -46,17 +46,17 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(EmailSpamAssassinIntegrationMode other) {
-        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
+        return compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the mode")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the mode")
     public String getName() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="provides ordering of the modes")
+    @SchemaColumn(order=1, description="provides ordering of the modes")
     public short getSortOrder() {
         return sortOrder;
     }

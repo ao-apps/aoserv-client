@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 final public class PackageDefinitionBusiness extends AOServObjectIntegerKey implements Comparable<PackageDefinitionBusiness>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -74,36 +74,36 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey impl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique identifier")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique identifier")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
+    public static final MethodColumn COLUMN_PACKAGE_DEFINITION = getMethodColumn(PackageDefinitionBusiness.class, "packageDefinition");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the pkey of the package definition")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the pkey of the package definition")
     public PackageDefinition getPackageDefinition() throws RemoteException {
         return getConnector().getPackageDefinitions().get(packageDefinition);
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(PackageDefinitionBusiness.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that is allowed to create subaccounts with this package")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the business that is allowed to create subaccounts with this package")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
     }
 
-    @SchemaColumn(order=3, name="display", description="a short description for display use")
+    @SchemaColumn(order=3, description="a short description for display use")
     public String getDisplay() {
         return display;
     }
 
-    @SchemaColumn(order=4, name="description", description="a longer description of the package")
+    @SchemaColumn(order=4, description="a longer description of the package")
     public String getDescription() {
         return description;
     }
 
-    @SchemaColumn(order=5, name="active", description="includes this package in signup forms and advertising")
+    @SchemaColumn(order=5, description="includes this package in signup forms and advertising")
     public boolean isActive() {
         return active;
     }

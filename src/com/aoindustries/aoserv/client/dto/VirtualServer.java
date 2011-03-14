@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class VirtualServer extends AOServObject {
+public class VirtualServer extends Server {
 
-    private int server;
     private int primaryRam;
     private int primaryRamTarget;
     private Integer secondaryRam;
@@ -32,7 +31,18 @@ public class VirtualServer extends AOServObject {
     }
 
     public VirtualServer(
-        int server,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int farm,
+        String description,
+        Integer operatingSystemVersion,
+        String name,
+        boolean monitoringEnabled,
         int primaryRam,
         int primaryRamTarget,
         Integer secondaryRam,
@@ -50,7 +60,7 @@ public class VirtualServer extends AOServObject {
         boolean requiresHvm,
         String vncPassword
     ) {
-        this.server = server;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, farm, description, operatingSystemVersion, name, monitoringEnabled);
         this.primaryRam = primaryRam;
         this.primaryRamTarget = primaryRamTarget;
         this.secondaryRam = secondaryRam;
@@ -67,14 +77,6 @@ public class VirtualServer extends AOServObject {
         this.secondaryPhysicalServerLocked = secondaryPhysicalServerLocked;
         this.requiresHvm = requiresHvm;
         this.vncPassword = vncPassword;
-    }
-
-    public int getServer() {
-        return server;
-    }
-
-    public void setServer(int server) {
-        this.server = server;
     }
 
     public int getPrimaryRam() {

@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class DomainLabel implements Comparable<DomainLabel>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.DomainLabel>, Internable<DomainLabel> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3692661338685551188L;
 
     public static final int MAX_LENGTH = 63;
 
@@ -119,7 +119,7 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
 
     @Override
     public int compareTo(DomainLabel other) {
-        return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(label, other.label);
+        return this==other ? 0 : AOServObject.compareIgnoreCaseConsistentWithEquals(label, other.label);
     }
 
     @Override

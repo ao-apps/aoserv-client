@@ -22,7 +22,7 @@ import java.util.List;
 final public class BusinessProfile extends AOServObjectIntegerKey implements Comparable<BusinessProfile>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessProfile> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -105,91 +105,91 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     public int compareTo(BusinessProfile other) {
         int diff = accounting.compareTo(other.accounting);
         if(diff!=0) return diff;
-        return -AOServObjectUtils.compare(priority, other.priority);
+        return -compare(priority, other.priority);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a unique primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a unique primary key")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(BusinessProfile.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the accounting code of the business")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
     }
 
-    @SchemaColumn(order=2, name="priority", description="the highest priority profile is used")
+    @SchemaColumn(order=2, description="the highest priority profile is used")
     public int getPriority() {
         return priority;
     }
 
-    @SchemaColumn(order=3, name="name", description="the name of the business")
+    @SchemaColumn(order=3, description="the name of the business")
     public String getName() {
         return name;
     }
 
-    @SchemaColumn(order=4, name="private", description="indicates if the business should not be listed in publicly available lists")
+    @SchemaColumn(order=4, description="indicates if the business should not be listed in publicly available lists")
     public boolean isPrivate() {
         return isPrivate;
     }
 
-    @SchemaColumn(order=5, name="phone", description="the phone number")
+    @SchemaColumn(order=5, description="the phone number")
     public String getPhone() {
         return phone;
     }
 
-    @SchemaColumn(order=6, name="fax", description="the fax number")
+    @SchemaColumn(order=6, description="the fax number")
     public String getFax() {
         return fax;
     }
 
-    @SchemaColumn(order=7, name="address1", description="the street address of the business")
+    @SchemaColumn(order=7, description="the street address of the business")
     public String getAddress1() {
         return address1;
     }
 
-    @SchemaColumn(order=8, name="address2", description="the street address of the business")
+    @SchemaColumn(order=8, description="the street address of the business")
     public String getAddress2() {
         return address2;
     }
 
-    @SchemaColumn(order=9, name="city", description="the city")
+    @SchemaColumn(order=9, description="the city")
     public String getCity() {
         return city;
     }
 
-    @SchemaColumn(order=10, name="state", description="the state or providence")
+    @SchemaColumn(order=10, description="the state or providence")
     public String getState() {
         return state;
     }
 
-    static final String COLUMN_COUNTRY = "country";
+    public static final MethodColumn COLUMN_COUNTRY = getMethodColumn(BusinessProfile.class, "country");
     @DependencySingleton
-    @SchemaColumn(order=11, name=COLUMN_COUNTRY, index=IndexType.INDEXED, description="the two-character country code")
+    @SchemaColumn(order=11, index=IndexType.INDEXED, description="the two-character country code")
     public CountryCode getCountry() throws RemoteException {
         return getConnector().getCountryCodes().get(country);
     }
 
-    @SchemaColumn(order=12, name="zip", description="the zip code")
+    @SchemaColumn(order=12, description="the zip code")
     public String getZip() {
         return zip;
     }
 
-    @SchemaColumn(order=13, name="send_invoice", description="indicates to send a monthly invoice via regular mail")
+    @SchemaColumn(order=13, description="indicates to send a monthly invoice via regular mail")
     public boolean getSendInvoice() {
     	return sendInvoice;
     }
 
-    @SchemaColumn(order=14, name="created", description="the time this entry was created")
+    @SchemaColumn(order=14, description="the time this entry was created")
     public Timestamp getCreated() {
         return new Timestamp(created);
     }
 
-    @SchemaColumn(order=15, name="billing_contact", description="the name to contact for billing information")
+    @SchemaColumn(order=15, description="the name to contact for billing information")
     public String getBillingContact() {
         return billingContact;
     }
@@ -207,17 +207,17 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
         return Collections.unmodifiableList(results);
     }
 
-    @SchemaColumn(order=16, name="billing_email", description="the email address to notify for billing")
+    @SchemaColumn(order=16, description="the email address to notify for billing")
     public List<Email> getBillingEmail() throws ValidationException {
         return getEmailList(billingEmail);
     }
 
-    @SchemaColumn(order=17, name="technical_contact", description="the name to contact for technical information")
+    @SchemaColumn(order=17, description="the name to contact for technical information")
     public String getTechnicalContact() {
         return technicalContact;
     }
 
-    @SchemaColumn(order=18, name="technical_email", description="the email address to notify for technical")
+    @SchemaColumn(order=18, description="the email address to notify for technical")
     public List<Email> getTechnicalEmail() throws ValidationException {
         return getEmailList(technicalEmail);
     }

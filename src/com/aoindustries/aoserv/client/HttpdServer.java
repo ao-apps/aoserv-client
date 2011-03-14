@@ -27,8 +27,6 @@ import java.rmi.RemoteException;
 final public class HttpdServer extends AOServerResource implements Comparable<HttpdServer>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     /**
      * The highest recommended number of sites to bind in one server.
      */
@@ -36,12 +34,14 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -8904437243470486353L;
+
     final private int number;
     final private int maxBinds;
     final private int linuxAccountGroup;
     final private Integer modPhpVersion;
     final private boolean useSuexec;
-    final private boolean isShared;
+    final private boolean shared;
     final private boolean useModPerl;
     final private int timeout;
 
@@ -71,7 +71,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
         this.linuxAccountGroup = linuxAccountGroup;
         this.modPhpVersion = modPhpVersion;
         this.useSuexec = useSuexec;
-        this.isShared = isShared;
+        this.shared = isShared;
         this.useModPerl = useModPerl;
         this.timeout = timeout;
     }
@@ -84,7 +84,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
             if(key==other.key) return 0;
             int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
             if(diff!=0) return diff;
-            return AOServObjectUtils.compare(number, other.number);
+            return compare(number, other.number);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -92,29 +92,29 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name="number", description="the number of the instance on the server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, description="the number of the instance on the server")
     public int getNumber() {
         return number;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name="max_binds", description="the maximum number of httpd_site_binds on this server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, description="the maximum number of httpd_site_binds on this server")
     public int getMaxBinds() {
         return maxBinds;
     }
 
-    static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    public static final MethodColumn COLUMN_LINUX_ACCOUNT_GROUP = getMethodColumn(HttpdServer.class, "linuxAccountGroup");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the account and group the servers runs as")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the account and group the servers runs as")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getConnector().getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_PKEY, linuxAccountGroup);
     }
 
-    static final String COLUMN_MOD_PHP_VERSION = "mod_php_version";
+    public static final MethodColumn COLUMN_MOD_PHP_VERSION = getMethodColumn(HttpdServer.class, "modPhpVersion");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_MOD_PHP_VERSION, index=IndexType.INDEXED, description="the version of mod_php to run")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, index=IndexType.INDEXED, description="the version of mod_php to run")
     public TechnologyVersion getModPhpVersion() throws RemoteException {
         if(modPhpVersion==null) return null;
         TechnologyVersion tv=getConnector().getTechnologyVersions().get(modPhpVersion);
@@ -122,22 +122,22 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
         return tv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="use_suexec", description="indicates that the suexec wrapper will be used for CGI")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="indicates that the suexec wrapper will be used for CGI")
     public boolean getUseSuexec() {
         return useSuexec;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="is_shared", description="indicates that any user on the server may use this httpd instance")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="indicates that any user on the server may use this httpd instance")
     public boolean isShared() {
-        return isShared;
+        return shared;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="use_mod_perl", description="enables mod_perl")
-    public boolean useModPerl() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="enables mod_perl")
+    public boolean getUseModPerl() {
         return useModPerl;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, name="timeout", description="the timeout setting in seconds")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, description="the timeout setting in seconds")
     public int getTimeOut() {
         return timeout;
     }
@@ -161,7 +161,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
             dto.getLinuxAccountGroup(),
             dto.getModPhpVersion(),
             dto.isUseSuexec(),
-            dto.isIsShared(),
+            dto.isShared(),
             dto.isUseModPerl(),
             dto.getTimeout()
         );
@@ -184,7 +184,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
             linuxAccountGroup,
             modPhpVersion,
             useSuexec,
-            isShared,
+            shared,
             useModPerl,
             timeout
         );

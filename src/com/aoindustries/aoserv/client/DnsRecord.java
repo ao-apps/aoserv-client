@@ -20,11 +20,9 @@ import java.rmi.RemoteException;
  */
 final public class DnsRecord extends Resource implements Comparable<DnsRecord>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsRecord> /*, TODO: Removable */ {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 3037419132925775543L;
+
     final private int zone;
     private String domain;
     private String type;
@@ -91,13 +89,13 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
             if(diff!=0) return diff;
             diff = type==other.type ? 0 : getType().compareTo(other.getType()); // OK - interned
             if(diff!=0) return diff;
-            diff = AOServObjectUtils.compare(mxPriority, other.mxPriority);
+            diff = compare(mxPriority, other.mxPriority);
             if(diff!=0) return diff;
-            diff = AOServObjectUtils.compare(dataIpAddress, other.dataIpAddress);
+            diff = compare(dataIpAddress, other.dataIpAddress);
             if(diff!=0) return diff;
-            diff = AOServObjectUtils.compare(dataDomainName, other.dataDomainName);
+            diff = compare(dataDomainName, other.dataDomainName);
             if(diff!=0) return diff;
-            return AOServObjectUtils.compare(dataText, other.dataText);
+            return compare(dataText, other.dataText);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -105,53 +103,54 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_ZONE = "zone";
+    public static final MethodColumn COLUMN_ZONE = getMethodColumn(DnsRecord.class, "zone");
     @DependencySingleton
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, name=COLUMN_ZONE, index=IndexType.INDEXED, description="the zone as found in dns_zones")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the zone as found in dns_zones")
     public DnsZone getZone() throws RemoteException {
         return getConnector().getDnsZones().get(zone);
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, name="domain", description="the first column in the zone files")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, description="the first column in the zone files")
     public String getDomain() {
         return domain;
     }
 
-    static final String COLUMN_TYPE = "type";
+    public static final MethodColumn COLUMN_TYPE = getMethodColumn(DnsRecord.class, "type");
     @DependencySingleton
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, name=COLUMN_TYPE, index=IndexType.INDEXED, description="the type as found in dns_types")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the type as found in dns_types")
     public DnsType getType() throws RemoteException {
         return getConnector().getDnsTypes().get(type);
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+4, name="mx_priority", description="the priority for the MX records")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+4, description="the priority for the MX records")
     public Integer getMxPriority() {
         return mxPriority;
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+5, name="data_ip_address", description="the destination IP address for A and AAAA records")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+5, description="the destination IP address for A and AAAA records")
     public InetAddress getDataIpAddress() {
         return dataIpAddress;
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+6, name="data_domain_name", description="the fully-qualitied domain name for CNAME, MX, NS, and PTR records")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+6, description="the fully-qualitied domain name for CNAME, MX, NS, and PTR records")
     public DomainName getDataDomainName() {
         return dataDomainName;
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+7, name="data_text", description="the text data for SPF and TXT records")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+7, description="the text data for SPF and TXT records")
     public String getDataText() {
         return dataText;
     }
 
+    public static final MethodColumn COLUMN_DHCP_ADDRESS = getMethodColumn(DnsRecord.class, "dhcpAddress");
     @DependencySingleton
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+8, name="dhcp_address", description="the pkey of the IP address that will update this DNS record")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+8, index=IndexType.INDEXED, description="the pkey of the IP address that will update this DNS record")
     public IPAddress getDhcpAddress() throws RemoteException {
         if(dhcpAddress==null) return null;
         return getConnector().getIpAddresses().get(dhcpAddress);
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+9, name="ttl", description="the record-specific TTL, if not provided will use the TTL of the zone")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+9, description="the record-specific TTL, if not provided will use the TTL of the zone")
     public Integer getTtl() {
         return ttl;
     }

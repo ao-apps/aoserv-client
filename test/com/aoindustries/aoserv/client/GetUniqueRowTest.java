@@ -76,11 +76,11 @@ public class GetUniqueRowTest extends TestCase {
                             // Multiple rows may have null values even when the column is otherwise unique
                             if(uniqueValue!=null) {
                                 // Check that is actually unique in overall list of data
-                                if(uniqueMap.containsKey(uniqueValue)) fail("Column is flagged as unique but has a duplicate value.  Table="+serviceName+", Column="+column.getColumnName()+", Value="+uniqueValue);
+                                if(uniqueMap.containsKey(uniqueValue)) fail("Column is flagged as unique but has a duplicate value.  Table="+serviceName+", Column="+column.getName()+", Value="+uniqueValue);
                                 uniqueMap.put(uniqueValue, row);
                                 // Check that the object returned from the get unique row call matches the row that provides the unique value
-                                AOServObject fromUniqueCall=service.filterUnique(column.getColumnName(), uniqueValue);
-                                assertEquals("Table="+serviceName+", Column="+column.getColumnName(), row, fromUniqueCall);
+                                AOServObject fromUniqueCall=service.filterUnique(column, uniqueValue);
+                                assertEquals("Table="+serviceName+", Column="+column.getName(), row, fromUniqueCall);
                             } else {
                                 // Make sure is nullable
                                 //if(!column.isNullable()) fail("Column returned null value but is not flagged as nullable.  Table="+table.getTableName()+", Column="+column.getColumnName()+", Value="+uniqueValue);

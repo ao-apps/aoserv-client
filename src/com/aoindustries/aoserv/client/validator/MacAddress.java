@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class MacAddress implements Comparable<MacAddress>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MacAddress>, Internable<MacAddress> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     private static void checkHexValue(char ch) throws ValidationException {
         if(

@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 final public class Shell extends AOServObjectUnixPathKey implements Comparable<Shell>, DtoFactory<com.aoindustries.aoserv.client.dto.Shell> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final UnixPath
         BASH,
@@ -67,7 +67,7 @@ final public class Shell extends AOServObjectUnixPathKey implements Comparable<S
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="path", index=IndexType.PRIMARY_KEY, description="the complete path to the executable")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the complete path to the executable")
     public UnixPath getPath() {
     	return getKey();
     }

@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class OperatingSystemVersion extends AOServObjectIntegerKey implements Comparable<OperatingSystemVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystemVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         VERSION_5="5",
@@ -81,51 +81,51 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(OperatingSystemVersion other) {
-        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
+        return compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique ID")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique ID")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_OPERATING_SYSTEM = "operating_system";
+    public static final MethodColumn COLUMN_OPERATING_SYSTEM = getMethodColumn(OperatingSystemVersion.class, "operatingSystem");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_OPERATING_SYSTEM, index=IndexType.INDEXED, description="the name of the OS")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the name of the OS")
     public OperatingSystem getOperatingSystem() throws RemoteException {
         return getConnector().getOperatingSystems().get(operatingSystem);
     }
 
-    @SchemaColumn(order=2, name="version_number", description="the number of OS version")
+    @SchemaColumn(order=2, description="the number of OS version")
     public String getVersionNumber() {
         return versionNumber;
     }
 
-    @SchemaColumn(order=3, name="version_name", description="the name of this OS release")
+    @SchemaColumn(order=3, description="the name of this OS release")
     public String getVersionName() {
         return versionName;
     }
 
-    static final String COLUMN_ARCHITECTURE = "architecture";
+    public static final MethodColumn COLUMN_ARCHITECTURE = getMethodColumn(OperatingSystemVersion.class, "architecture");
     @DependencySingleton
-    @SchemaColumn(order=4, name=COLUMN_ARCHITECTURE, index=IndexType.INDEXED, description="the name of the architecture")
+    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the name of the architecture")
     public Architecture getArchitecture() throws RemoteException {
         return getConnector().getArchitectures().get(architecture);
     }
 
-    @SchemaColumn(order=5, name="display", index=IndexType.UNIQUE, description="the full display name for this version")
+    @SchemaColumn(order=5, index=IndexType.UNIQUE, description="the full display name for this version")
     public String getDisplay() {
         return display;
     }
 
-    @SchemaColumn(order=6, name="is_aoserv_daemon_supported", description="can AOServ Daemon be ran on this OS")
-    public boolean isAOServDaemonSupported() {
+    @SchemaColumn(order=6, description="can AOServ Daemon be ran on this OS")
+    public boolean isAoservDaemonSupported() {
         return isAoservDaemonSupported;
     }
 
-    @SchemaColumn(order=7, name="sort_order", index=IndexType.UNIQUE, description="the default sort order")
+    @SchemaColumn(order=7, index=IndexType.UNIQUE, description="the default sort order")
     public short getSortOrder() {
         return sortOrder;
     }

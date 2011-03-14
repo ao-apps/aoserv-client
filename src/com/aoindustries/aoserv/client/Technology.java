@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 final public class Technology extends AOServObjectIntegerKey implements Comparable<Technology>, DtoFactory<com.aoindustries.aoserv.client.dto.Technology> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -60,21 +60,21 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="the unique identifier")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_NAME = "name";
+    public static final MethodColumn COLUMN_TECHNOLOGY_NAME = getMethodColumn(Technology.class, "technologyName");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the package")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the name of the package")
     public TechnologyName getTechnologyName() throws RemoteException {
         return getConnector().getTechnologyNames().get(name);
     }
 
-    static final String COLUMN_CLASS = "class";
+    public static final MethodColumn COLUMN_TECHNOLOGY_CLASS = getMethodColumn(Technology.class, "technologyClass");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_CLASS, index=IndexType.INDEXED, description="the name of the group this package belongs to")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the name of the group this package belongs to")
     public TechnologyClass getTechnologyClass() throws RemoteException {
         return getConnector().getTechnologyClasses().get(technologyClass);
     }

@@ -21,7 +21,7 @@ implements
     java.security.acl.Permission {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The possible permissions.
@@ -96,17 +96,17 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(AOServPermission other) {
-        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
+        return compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the permission")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the permission")
     public String getName() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="the sort order for the permission")
+    @SchemaColumn(order=1, index=IndexType.UNIQUE, description="the sort order for the permission")
     public short getSortOrder() {
         return sortOrder;
     }

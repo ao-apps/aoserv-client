@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class CreditCardProcessor extends AOServObjectStringKey implements Comparable<CreditCardProcessor>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardProcessor> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -79,9 +79,9 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     @Override
     public int compareTo(CreditCardProcessor other) {
         try {
-            int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness()); // OK - interned
+            int diff = accounting==other.accounting ? 0 : compare(getBusiness(), other.getBusiness()); // OK - interned
             if(diff!=0) return diff;
-            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+            return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -89,54 +89,54 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="provider_id", index=IndexType.PRIMARY_KEY, description="the unique ID of this processor")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique ID of this processor")
     public String getProviderId() {
         return getKey();
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(CreditCardProcessor.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business owning the merchant account")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the accounting code of the business owning the merchant account")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
     }
 
-    @SchemaColumn(order=2, name="class_name", description="the classname of the Java code that connects to the merchant services provider")
+    @SchemaColumn(order=2, description="the classname of the Java code that connects to the merchant services provider")
     public String getClassName() {
         return className;
     }
 
-    @SchemaColumn(order=3, name="param1", description="the optional parameters for the Java code that connects to the merchant services provider")
+    @SchemaColumn(order=3, description="the optional parameters for the Java code that connects to the merchant services provider")
     public String getParam1() {
         return param1;
     }
 
-    @SchemaColumn(order=4, name="param2", description="the optional parameters for the Java code that connects to the merchant services provider")
+    @SchemaColumn(order=4, description="the optional parameters for the Java code that connects to the merchant services provider")
     public String getParam2() {
         return param2;
     }
 
-    @SchemaColumn(order=5, name="param3", description="the optional parameters for the Java code that connects to the merchant services provider")
+    @SchemaColumn(order=5, description="the optional parameters for the Java code that connects to the merchant services provider")
     public String getParam3() {
         return param3;
     }
 
-    @SchemaColumn(order=6, name="param4", description="the optional parameters for the Java code that connects to the merchant services provider")
+    @SchemaColumn(order=6, description="the optional parameters for the Java code that connects to the merchant services provider")
     public String getParam4() {
         return param4;
     }
 
-    @SchemaColumn(order=7, name="enabled", description="the enabled flag")
-    public boolean getEnabled() {
+    @SchemaColumn(order=7, description="the enabled flag")
+    public boolean isEnabled() {
         return enabled;
     }
 
-    @SchemaColumn(order=8, name="weight", description="the weight used for multi-processor weighted transaction distribution")
+    @SchemaColumn(order=8, description="the weight used for multi-processor weighted transaction distribution")
     public int getWeight() {
         return weight;
     }
 
-    @SchemaColumn(order=9, name="description", description="an optional description of the processor")
+    @SchemaColumn(order=9, description="an optional description of the processor")
     public String getDescription() {
         return description;
     }
@@ -146,7 +146,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
      * if the card is not stored in the database.
      */
     /* TODO
-    @SchemaColumn(order=10, name="encryption_from", description="the from that will be used for encryption")
+    @SchemaColumn(order=10, description="the from that will be used for encryption")
     public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
         if(encryptionFrom==-1) return null;
         return getConnector().getEncryptionKeys().get(encryptionFrom);
@@ -158,7 +158,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
      * if the card is not stored in the database.
      */
     /* TODO
-    @SchemaColumn(order=11, name="encryption_recipient", description="the recipient that will be used for encryption")
+    @SchemaColumn(order=11, description="the recipient that will be used for encryption")
     public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
         if(encryptionRecipient==-1) return null;
         return getConnector().getEncryptionKeys().get(encryptionRecipient);
@@ -194,7 +194,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     @DependentObjectSet
     public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-        return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_PROCESSOR_ID, this);
+        return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_PROCESSOR, this);
     }
 
     @DependentObjectSet
@@ -209,7 +209,7 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     */
     @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_PROCESSOR_ID, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_PROCESSOR, this);
     }
     // </editor-fold>
 }

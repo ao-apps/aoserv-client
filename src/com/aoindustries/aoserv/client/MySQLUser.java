@@ -25,8 +25,6 @@ import java.util.List;
 final public class MySQLUser extends AOServerResource implements Comparable<MySQLUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUser>, PasswordProtected /* TODO, Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     public static final int
         UNLIMITED_QUESTIONS=0,
         DEFAULT_MAX_QUESTIONS=UNLIMITED_QUESTIONS
@@ -77,6 +75,8 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -3410157014290683392L;
+
     private MySQLUserId username;
     final private int mysqlServer;
     private InetAddress host;
@@ -228,9 +228,9 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_USERNAME = getMethodColumn(MySQLUser.class, "username");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the MySQL user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the username of the MySQL user")
     public Username getUsername() throws RemoteException {
         return getConnector().getUsernames().get(username.getUserId());
     }
@@ -238,178 +238,178 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
         return username;
     }
 
-    static final String COLUMN_MYSQL_SERVER = "mysql_server";
+    public static final MethodColumn COLUMN_MYSQL_SERVER = getMethodColumn(MySQLUser.class, "mysqlServer");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the resource ID of the MySQL server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the resource ID of the MySQL server")
     public MySQLServer getMysqlServer() throws RemoteException {
     	return getConnector().getMysqlServers().get(mysqlServer);
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="host", description="the host this user is allowed to connect from, if this is not null, all access is restricted to these hosts, otherwise the entries in mysql_db_users and mysql_hosts are used.")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the host this user is allowed to connect from, if this is not null, all access is restricted to these hosts, otherwise the entries in mysql_db_users and mysql_hosts are used.")
     public InetAddress getHost() {
     	return host;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="select_priv", description="the SELECT privilege to all databases")
-    public boolean canSelect() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, description="the SELECT privilege to all databases")
+    public boolean getSelectPriv() {
         return selectPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="insert_priv", description="the INSERT privilege to all databases")
-    public boolean canInsert() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="the INSERT privilege to all databases")
+    public boolean getInsertPriv() {
         return insertPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="update_priv", description="the UPDATE privilege to all databases")
-    public boolean canUpdate() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="the UPDATE privilege to all databases")
+    public boolean getUpdatePriv() {
         return updatePriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="delete_priv", description="the DELETE privilege to all databases")
-    public boolean canDelete() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="the DELETE privilege to all databases")
+    public boolean getDeletePriv() {
         return deletePriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, name="create_priv", description="the CREATE privilege to all databases")
-    public boolean canCreate() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, description="the CREATE privilege to all databases")
+    public boolean getCreatePriv() {
         return createPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+9, name="drop_priv", description="the DROP privilege to all databases")
-    public boolean canDrop() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+9, description="the DROP privilege to all databases")
+    public boolean getDropPriv() {
         return dropPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+10, name="reload_priv", description="the RELOAD privilege to all databases")
-    public boolean canReload() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+10, description="the RELOAD privilege to all databases")
+    public boolean getReloadPriv() {
         return reloadPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+11, name="shutdown_priv", description="the SHUTDOWN privilege to all databases")
-    public boolean canShutdown() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+11, description="the SHUTDOWN privilege to all databases")
+    public boolean getShutdownPriv() {
         return shutdownPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+12, name="process_priv", description="the PROCESS privilege to all databases")
-    public boolean canProcess() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+12, description="the PROCESS privilege to all databases")
+    public boolean getProcessPriv() {
         return processPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+13, name="file_priv", description="the FILE privilege to all databases")
-    public boolean canFile() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+13, description="the FILE privilege to all databases")
+    public boolean getFilePriv() {
         return filePriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+14, name="grant_priv", description="the GRANT privilege to all databases")
-    public boolean canGrant() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+14, description="the GRANT privilege to all databases")
+    public boolean getGrantPriv() {
         return grantPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+15, name="references_priv", description="the REFERENCES privilege to all databases")
-    public boolean canReference() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+15, description="the REFERENCES privilege to all databases")
+    public boolean getReferencePriv() {
         return referencesPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+16, name="index_priv", description="the INDEX privilege to all databases")
-    public boolean canIndex() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+16, description="the INDEX privilege to all databases")
+    public boolean getIndexPriv() {
         return indexPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+17, name="alter_priv", description="the ALTER privilege to all databases")
-    public boolean canAlter() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+17, description="the ALTER privilege to all databases")
+    public boolean getAlterPriv() {
         return alterPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+18, name="show_db_priv", description="the SHOW_DB privilege to all databases")
-    public boolean canShowDB() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+18, description="the SHOW_DB privilege to all databases")
+    public boolean getShowDbPriv() {
         return showDbPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+19, name="super_priv", description="the SUPER privilege to all databases")
-    public boolean isSuper() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+19, description="the SUPER privilege to all databases")
+    public boolean getSuperPriv() {
         return superPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+20, name="create_tmp_table_priv", description="the CREATE_TMP_TABLE privilege to all databases")
-    public boolean canCreateTempTable() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+20, description="the CREATE_TMP_TABLE privilege to all databases")
+    public boolean getCreateTmpTablePriv() {
         return createTmpTablePriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+21, name="lock_tables_priv", description="the LOCK_TABLES privilege to all databases")
-    public boolean canLockTables() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+21, description="the LOCK_TABLES privilege to all databases")
+    public boolean getLockTablesPriv() {
         return lockTablesPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+22, name="execute_priv", description="the EXECUTE privilege to all databases")
-    public boolean canExecute() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+22, description="the EXECUTE privilege to all databases")
+    public boolean getExecutePriv() {
         return executePriv;
     }
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+23, name="repl_slave_priv", description="the REPL_SLAVE privilege to all databases")
-    public boolean isReplicationSlave() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+23, description="the REPL_SLAVE privilege to all databases")
+    public boolean getReplSlavePriv() {
         return replSlavePriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+24, name="repl_client_priv", description="the REPL_CLIENT privilege to all databases")
-    public boolean isReplicationClient() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+24, description="the REPL_CLIENT privilege to all databases")
+    public boolean getReplClientPriv() {
         return replClientPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+25, name="create_view_priv", description="the CREATE_VIEW privilege to all databases")
-    public boolean canCreateView() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+25, description="the CREATE_VIEW privilege to all databases")
+    public boolean getCreateViewPriv() {
         return createViewPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+26, name="show_view_priv", description="the SHOW_VIEW privilege to all databases")
-    public boolean canShowView() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+26, description="the SHOW_VIEW privilege to all databases")
+    public boolean getShowViewPriv() {
         return showViewPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+27, name="create_routine_priv", description="the CREATE_ROUTINE privilege to all databases")
-    public boolean canCreateRoutine() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+27, description="the CREATE_ROUTINE privilege to all databases")
+    public boolean getCreateRoutinePriv() {
         return createRoutinePriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+28, name="alter_routine_priv", description="the ALTER_ROUTINE privilege to all databases")
-    public boolean canAlterRoutine() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+28, description="the ALTER_ROUTINE privilege to all databases")
+    public boolean getAlterRoutinePriv() {
         return alterRoutinePriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+29, name="create_user_priv", description="the  CREATE_USER privilege to all databases")
-    public boolean canCreateUser() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+29, description="the  CREATE_USER privilege to all databases")
+    public boolean getCreateUserPriv() {
         return createUserPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+30, name="event_priv", description="the EVENT_PRIV privilege to all databases")
-    public boolean canEvent() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+30, description="the EVENT_PRIV privilege to all databases")
+    public boolean getEventPriv() {
         return eventPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+31, name="trigger_priv", description="the TRIGGER_PRIV privilege to all databases")
-    public boolean canTrigger() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+31, description="the TRIGGER_PRIV privilege to all databases")
+    public boolean getTriggerPriv() {
         return triggerPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+32, name="predisable_password", description="the password used before the account was disabled")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+32, description="the password used before the account was disabled")
     public String getPredisablePassword() {
         return predisablePassword;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+33, name="max_questions", description="the maximum number of questions to this database server, 0 means unlimited")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+33, description="the maximum number of questions to this database server, 0 means unlimited")
     public int getMaxQuestions() {
         return maxQuestions;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+34, name="max_updates", description="the maximum number of updates to this database server, 0 means unlimited")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+34, description="the maximum number of updates to this database server, 0 means unlimited")
     public int getMaxUpdates() {
         return maxUpdates;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+35, name="max_connections", description="the maximum number of connections to this database server, 0 means unlimited")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+35, description="the maximum number of connections to this database server, 0 means unlimited")
     public int getMaxConnections() {
         return maxConnections;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+36, name="max_user_connections", description="the maximum number of user connections to this database server, 0 means unlimited")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+36, description="the maximum number of user connections to this database server, 0 means unlimited")
     public int getMaxUserConnections() {
         return maxUserConnections;
     }
@@ -431,34 +431,34 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
             getMySQLUserId(dto.getUsername()),
             dto.getMysqlServer(),
             getInetAddress(dto.getHost()),
-            dto.isSelectPriv(),
-            dto.isInsertPriv(),
-            dto.isUpdatePriv(),
-            dto.isDeletePriv(),
-            dto.isCreatePriv(),
-            dto.isDropPriv(),
-            dto.isReloadPriv(),
-            dto.isShutdownPriv(),
-            dto.isProcessPriv(),
-            dto.isFilePriv(),
-            dto.isGrantPriv(),
-            dto.isReferencesPriv(),
-            dto.isIndexPriv(),
-            dto.isAlterPriv(),
-            dto.isShowDbPriv(),
-            dto.isSuperPriv(),
-            dto.isCreateTmpTablePriv(),
-            dto.isLockTablesPriv(),
-            dto.isExecutePriv(),
-            dto.isReplSlavePriv(),
-            dto.isReplClientPriv(),
-            dto.isCreateViewPriv(),
-            dto.isShowViewPriv(),
-            dto.isCreateRoutinePriv(),
-            dto.isAlterRoutinePriv(),
-            dto.isCreateUserPriv(),
-            dto.isEventPriv(),
-            dto.isTriggerPriv(),
+            dto.getSelectPriv(),
+            dto.getInsertPriv(),
+            dto.getUpdatePriv(),
+            dto.getDeletePriv(),
+            dto.getCreatePriv(),
+            dto.getDropPriv(),
+            dto.getReloadPriv(),
+            dto.getShutdownPriv(),
+            dto.getProcessPriv(),
+            dto.getFilePriv(),
+            dto.getGrantPriv(),
+            dto.getReferencesPriv(),
+            dto.getIndexPriv(),
+            dto.getAlterPriv(),
+            dto.getShowDbPriv(),
+            dto.getSuperPriv(),
+            dto.getCreateTmpTablePriv(),
+            dto.getLockTablesPriv(),
+            dto.getExecutePriv(),
+            dto.getReplSlavePriv(),
+            dto.getReplClientPriv(),
+            dto.getCreateViewPriv(),
+            dto.getShowViewPriv(),
+            dto.getCreateRoutinePriv(),
+            dto.getAlterRoutinePriv(),
+            dto.getCreateUserPriv(),
+            dto.getEventPriv(),
+            dto.getTriggerPriv(),
             dto.getPredisablePassword(),
             dto.getMaxQuestions(),
             dto.getMaxUpdates(),

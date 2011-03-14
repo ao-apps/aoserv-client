@@ -11,14 +11,14 @@ package com.aoindustries.aoserv.client.dto;
 public class TransactionType extends AOServObject {
 
     private String name;
-    private boolean isCredit;
+    private boolean credit;
 
     public TransactionType() {
     }
 
-    public TransactionType(String name, boolean isCredit) {
+    public TransactionType(String name, boolean credit) {
         this.name = name;
-        this.isCredit = isCredit;
+        this.credit = credit;
     }
 
     public String getName() {
@@ -29,11 +29,11 @@ public class TransactionType extends AOServObject {
         this.name = name;
     }
 
-    public boolean isIsCredit() {
-        return isCredit;
+    public boolean isCredit() {
+        return credit;
     }
 
-    public void setIsCredit(boolean isCredit) {
-        this.isCredit = isCredit;
+    public void setCredit(boolean credit) {
+        this.credit = credit;
     }
 }

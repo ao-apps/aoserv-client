@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 final public class TicketPriority extends AOServObjectStringKey implements Comparable<TicketPriority>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketPriority> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The possible ticket priorities.
@@ -41,12 +41,12 @@ final public class TicketPriority extends AOServObjectStringKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TicketPriority other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="priority", index=IndexType.PRIMARY_KEY, description="the unique priority")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique priority")
     public String getPriority() {
     	return getKey();
     }

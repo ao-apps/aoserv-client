@@ -13,17 +13,17 @@ public class Protocol extends AOServObject {
     private String protocol;
     private NetPort port;
     private String name;
-    private boolean isUserService;
+    private boolean userService;
     private String netProtocol;
 
     public Protocol() {
     }
 
-    public Protocol(String protocol, NetPort port, String name, boolean isUserService, String netProtocol) {
+    public Protocol(String protocol, NetPort port, String name, boolean userService, String netProtocol) {
         this.protocol = protocol;
         this.port = port;
         this.name = name;
-        this.isUserService = isUserService;
+        this.userService = userService;
         this.netProtocol = netProtocol;
     }
 
@@ -51,12 +51,12 @@ public class Protocol extends AOServObject {
         this.name = name;
     }
 
-    public boolean isIsUserService() {
-        return isUserService;
+    public boolean isUserService() {
+        return userService;
     }
 
-    public void setIsUserService(boolean isUserService) {
-        this.isUserService = isUserService;
+    public void setUserService(boolean userService) {
+        this.userService = userService;
     }
 
     public String getNetProtocol() {

@@ -12,11 +12,11 @@ public class IPAddress extends ServerResource {
 
     private InetAddress ipAddress;
     private Integer netDevice;
-    private boolean isAlias;
+    private boolean alias;
     private DomainName hostname;
     private boolean available;
-    private boolean isOverflow;
-    private boolean isDhcp;
+    private boolean overflow;
+    private boolean dhcp;
     private boolean pingMonitorEnabled;
     private InetAddress externalIpAddress;
     private short netmask;
@@ -36,11 +36,11 @@ public class IPAddress extends ServerResource {
         int businessServer,
         InetAddress ipAddress,
         Integer netDevice,
-        boolean isAlias,
+        boolean alias,
         DomainName hostname,
         boolean available,
-        boolean isOverflow,
-        boolean isDhcp,
+        boolean overflow,
+        boolean dhcp,
         boolean pingMonitorEnabled,
         InetAddress externalIpAddress,
         short netmask
@@ -48,11 +48,11 @@ public class IPAddress extends ServerResource {
         super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, server, businessServer);
         this.ipAddress = ipAddress;
         this.netDevice = netDevice;
-        this.isAlias = isAlias;
+        this.alias = alias;
         this.hostname = hostname;
         this.available = available;
-        this.isOverflow = isOverflow;
-        this.isDhcp = isDhcp;
+        this.overflow = overflow;
+        this.dhcp = dhcp;
         this.pingMonitorEnabled = pingMonitorEnabled;
         this.externalIpAddress = externalIpAddress;
         this.netmask = netmask;
@@ -74,12 +74,12 @@ public class IPAddress extends ServerResource {
         this.netDevice = netDevice;
     }
 
-    public boolean isIsAlias() {
-        return isAlias;
+    public boolean isAlias() {
+        return alias;
     }
 
-    public void setIsAlias(boolean isAlias) {
-        this.isAlias = isAlias;
+    public void setAlias(boolean alias) {
+        this.alias = alias;
     }
 
     public DomainName getHostname() {
@@ -98,20 +98,20 @@ public class IPAddress extends ServerResource {
         this.available = available;
     }
 
-    public boolean isIsOverflow() {
-        return isOverflow;
+    public boolean isOverflow() {
+        return overflow;
     }
 
-    public void setIsOverflow(boolean isOverflow) {
-        this.isOverflow = isOverflow;
+    public void setOverflow(boolean overflow) {
+        this.overflow = overflow;
     }
 
-    public boolean isIsDhcp() {
-        return isDhcp;
+    public boolean isDhcp() {
+        return dhcp;
     }
 
-    public void setIsDhcp(boolean isDhcp) {
-        this.isDhcp = isDhcp;
+    public void setDhcp(boolean dhcp) {
+        this.dhcp = dhcp;
     }
 
     public boolean isPingMonitorEnabled() {

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.server_resources)
-public class ServerResourceService extends UnionService<Integer,ServerResource> {
+final public class ServerResourceService extends UnionService<Integer,ServerResource> {
 
     public ServerResourceService(AOServConnector connector) {
         super(connector, Integer.class, ServerResource.class);

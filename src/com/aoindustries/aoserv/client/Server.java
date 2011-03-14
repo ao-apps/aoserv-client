@@ -12,70 +12,52 @@ import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 
 /**
- * A <code>Server</code> stores the details about a single, physical server.
+ * A <code>Server</code> stores the details about a single, physical or virtual server.
  *
  * @author  AO Industries, Inc.
  */
-final public class Server extends AOServObjectIntegerKey implements Comparable<Server>, DtoFactory<com.aoindustries.aoserv.client.dto.Server> {
-
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * The daemon key is only available to <code>MasterUser</code>s.  This value is used
-     * in place of the key when not accessible.
-     */
-    public static final String HIDDEN_PASSWORD="*";
-    // </editor-fold>
+abstract public class Server extends Resource implements Comparable<Server> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private DomainLabel farm;
-    private String description;
-    final Integer operatingSystemVersion;
-    private AccountingCode accounting;
-    private String name;
-    final private boolean monitoringEnabled;
+    // TODO: private static final long serialVersionUID = 1L;
+
+    final protected int farm;
+    final protected String description;
+    final protected Integer operatingSystemVersion;
+    final protected String name;
+    final protected boolean monitoringEnabled;
 
     public Server(
         AOServConnector connector,
         int pkey,
-        DomainLabel farm,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int farm,
         String description,
         Integer operatingSystemVersion,
-        AccountingCode accounting,
         String name,
         boolean monitoringEnabled
     ) {
-        super(connector, pkey);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
         this.farm = farm;
         this.description = description;
         this.operatingSystemVersion = operatingSystemVersion;
-        this.accounting = accounting;
         this.name = name;
         this.monitoringEnabled = monitoringEnabled;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        farm = intern(farm);
-        description = intern(description);
-        accounting = intern(accounting);
-        name = intern(name);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    public int compareTo(Server other) {
+    final public int compareTo(Server other) {
         try {
-            int diff = accounting==other.accounting ? 0 : getBusiness().compareTo(other.getBusiness()); // OK - interned
+            int diff = getAccounting()==other.getAccounting() ? 0 : getBusiness().compareTo(other.getBusiness()); // OK - interned
             if(diff!=0) return diff;
-            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+            return compareIgnoreCaseConsistentWithEquals(name, other.name);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -83,51 +65,39 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final String COLUMN_PKEY = "pkey";
-    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="a generated, unique ID")
-    public int getPkey() {
-        return key;
-    }
-
-    static final String COLUMN_FARM = "farm";
+    public static final MethodColumn COLUMN_FARM = getMethodColumn(Server.class, "farm");
+    /**
+     * May be filtered.
+     */
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_FARM, index=IndexType.INDEXED, description="the name of the farm the server is located in")
-    public ServerFarm getServerFarm() throws RemoteException {
-        return getConnector().getServerFarms().get(farm);
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the farm the server is located in")
+    public ServerFarm getFarm() throws RemoteException {
+        return getConnector().getServerFarms().filterUnique(ServerFarm.COLUMN_PKEY, farm);
     }
 
-    @SchemaColumn(order=2, name="description", description="a description of the servers purpose")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, description="a description of the servers purpose")
     public String getDescription() {
         return description;
     }
 
-    static final String COLUMN_OPERATING_SYSTEM_VERSION="operating_system_version";
+    public static final MethodColumn COLUMN_OPERATING_SYSTEM_VERSION = getMethodColumn(Server.class, "operatingSystemVersion");
     @DependencySingleton
-    @SchemaColumn(order=3, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of operating system running on the server, if known")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the version of operating system running on the server, if known")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         if(operatingSystemVersion==null) return null;
         return getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
     }
 
-    /**
-     * May be filtered.
-     */
-    static final String COLUMN_ACCOUNTING = "accounting";
-    @DependencySingleton
-    @SchemaColumn(order=4, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business accountable for resources used by the server")
-    public Business getBusiness() throws RemoteException {
-        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
-    }
-
-    @SchemaColumn(order=5, name="name", description="the per-package unique name of the server (no special formatting required)")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+4, description="the per-package unique name of the server (no special formatting required)")
     public String getName() {
         return name;
     }
 
-    @SchemaColumn(order=6, name="monitoring_enabled", description="enables/disables monitoring")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+5, description="enables/disables monitoring")
     public boolean isMonitoringEnabled() {
         return monitoringEnabled;
     }
+    protected static final int SERVER_LAST_COLUMN = RESOURCE_LAST_COLUMN + 5;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
@@ -135,18 +105,18 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
         this(
             connector,
             dto.getPkey(),
-            getDomainLabel(dto.getFarm()),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getFarm(),
             dto.getDescription(),
             dto.getOperatingSystemVersion(),
-            getAccountingCode(dto.getAccounting()),
             dto.getName(),
             dto.isMonitoringEnabled()
         );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.Server getDto() {
-        return new com.aoindustries.aoserv.client.dto.Server(key, getDto(farm), description, operatingSystemVersion, getDto(accounting), name, monitoringEnabled);
     }
     // </editor-fold>
 
@@ -154,18 +124,6 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     @DependentObjectSingleton
     public AOServer getAoServer() throws RemoteException {
         return getConnector().getAoServers().filterUnique(AOServer.COLUMN_SERVER, this);
-    }
-
-    /* TODO
-    @DependentObjectSingleton
-    public PhysicalServer getPhysicalServer() throws IOException, SQLException {
-        return getConnector().getPhysicalServers().get(pkey);
-    }
-     */
-
-    @DependentObjectSingleton
-    public VirtualServer getVirtualServer() throws RemoteException {
-        return getConnector().getVirtualServers().filterUnique(VirtualServer.COLUMN_SERVER, this);
     }
 
     @DependentObjectSet
@@ -261,7 +219,7 @@ final public class Server extends AOServObjectIntegerKey implements Comparable<S
     String toStringImpl() throws RemoteException {
         AOServer aoServer = getAoServer();
         if(aoServer!=null) return aoServer.toStringImpl();
-        return accounting.toString()+'/'+name;
+        return getAccounting().toString()+'/'+name;
     }
     // </editor-fold>
 

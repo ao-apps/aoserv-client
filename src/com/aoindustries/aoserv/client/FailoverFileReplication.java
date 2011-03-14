@@ -26,7 +26,7 @@ implements
     BitRateProvider {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -83,7 +83,7 @@ implements
         try {
             int diff = server==other.server ? 0 : getServer().compareTo(other.getServer());
             if(diff!=0) return diff;
-            return AOServObjectUtils.compare(backupPartition, other.backupPartition); // Sorting by pkey only because BackupPartition objects may be filtered
+            return compare(backupPartition, other.backupPartition); // Sorting by pkey only because BackupPartition objects may be filtered
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -91,24 +91,24 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_SERVER = "server";
+    public static final MethodColumn COLUMN_SERVER = getMethodColumn(FailoverFileReplication.class, "server");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server that the files are coming from")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the pkey of the server that the files are coming from")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(server);
     }
 
-    static final String COLUMN_BACKUP_PARTITION = "backup_partition";
+    public static final MethodColumn COLUMN_BACKUP_PARTITION = getMethodColumn(FailoverFileReplication.class, "backupPartition");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_BACKUP_PARTITION, index=IndexType.INDEXED, description="the pkey of the backup partition that the files are going to")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the pkey of the backup partition that the files are going to")
     public BackupPartition getBackupPartition() throws RemoteException {
         try {
             return getConnector().getBackupPartitions().get(backupPartition);
@@ -117,20 +117,20 @@ implements
         }
     }
 
-    @SchemaColumn(order=3, name="max_bit_rate", description="the maximum bit rate for files being replicated")
+    @SchemaColumn(order=3, description="the maximum bit rate for files being replicated")
     @Override
     public Long getBitRate() {
         return maxBitRate;
     }
 
-    @SchemaColumn(order=4, name="use_compression", description="when compression is enabled, chunk mode is used on mirroring, resulting in more CPU and disk, but less bandwidth")
+    @SchemaColumn(order=4, description="when compression is enabled, chunk mode is used on mirroring, resulting in more CPU and disk, but less bandwidth")
     public boolean getUseCompression() {
         return useCompression;
     }
 
-    static final String COLUMN_RETENTION = "retention";
+    public static final MethodColumn COLUMN_RETENTION = getMethodColumn(FailoverFileReplication.class, "retention");
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_RETENTION, index=IndexType.INDEXED, description="the number of days backups will be kept")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the number of days backups will be kept")
     public BackupRetention getRetention() throws RemoteException {
         return getConnector().getBackupRetentions().get(retention);
     }
@@ -139,7 +139,7 @@ implements
      * Gets a connect address that should override the normal address resolution mechanisms.  This allows
      * a replication to be specifically sent through a gigabit connection or alternate route.
      */
-    @SchemaColumn(order=6, name="connect_address", description="an address that overrides regular AOServ connections for failovers")
+    @SchemaColumn(order=6, description="an address that overrides regular AOServ connections for failovers")
     public InetAddress getConnectAddress() {
         return connectAddress;
     }
@@ -148,7 +148,7 @@ implements
      * Gets the address connections should be made from that overrides the normal address resolution mechanism.  This
      * allows a replication to be specifically sent through a gigabit connection or alternate route.
      */
-    @SchemaColumn(order=7, name="connect_from", description="an address that overrides regular AOServ connection source addresses for failovers")
+    @SchemaColumn(order=7, description="an address that overrides regular AOServ connection source addresses for failovers")
     public InetAddress getConnectFrom() {
         return connectFrom;
     }
@@ -156,8 +156,8 @@ implements
     /**
      * Gets the enabled flag for this replication.
      */
-    @SchemaColumn(order=8, name="enabled", description="the enabled flag for failovers")
-    public boolean getEnabled() {
+    @SchemaColumn(order=8, description="the enabled flag for failovers")
+    public boolean isEnabled() {
         return enabled;
     }
 
@@ -169,8 +169,8 @@ implements
      * partition by group ID.  This may only be set (and must be set) when stored on a
      * backup_partition with quota_enabled.
      */
-    @SchemaColumn(order=9, name="quota_gid", description="the gid used on the backup_partition for quota reports, required if backup_partitions quotas are enabled, not allowed otherwise")
-    public LinuxID getQuotaGID() {
+    @SchemaColumn(order=9, description="the gid used on the backup_partition for quota reports, required if backup_partitions quotas are enabled, not allowed otherwise")
+    public LinuxID getQuotaGid() {
         return quotaGid;
     }
     // </editor-fold>

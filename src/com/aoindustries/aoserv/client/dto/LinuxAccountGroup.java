@@ -13,16 +13,16 @@ public class LinuxAccountGroup extends AOServObject {
     private int pkey;
     private int linuxAccount;
     private int linuxGroup;
-    private boolean isPrimary;
+    private boolean primary;
 
     public LinuxAccountGroup() {
     }
 
-    public LinuxAccountGroup(int pkey, int linuxAccount, int linuxGroup, boolean isPrimary) {
+    public LinuxAccountGroup(int pkey, int linuxAccount, int linuxGroup, boolean primary) {
         this.pkey = pkey;
         this.linuxAccount = linuxAccount;
         this.linuxGroup = linuxGroup;
-        this.isPrimary = isPrimary;
+        this.primary = primary;
     }
 
     public int getPkey() {
@@ -49,11 +49,11 @@ public class LinuxAccountGroup extends AOServObject {
         this.linuxGroup = linuxGroup;
     }
 
-    public boolean isIsPrimary() {
-        return isPrimary;
+    public boolean isPrimary() {
+        return primary;
     }
 
-    public void setIsPrimary(boolean isPrimary) {
-        this.isPrimary = isPrimary;
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
     }
 }

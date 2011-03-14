@@ -30,8 +30,6 @@ import java.util.Set;
 final public class PostgresServer extends AOServerResource implements Comparable<PostgresServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     /**
      * The directory that contains the PostgreSQL data files.
      */
@@ -175,6 +173,8 @@ final public class PostgresServer extends AOServerResource implements Comparable
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -9148226929378829089L;
+
     private PostgresServerName name;
     final int version;
     final private int maxConnections;
@@ -238,46 +238,46 @@ final public class PostgresServer extends AOServerResource implements Comparable
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_NAME = "name";
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
+    public static final MethodColumn COLUMN_NAME = getMethodColumn(PostgresServer.class, "name");
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the name of the database")
     public PostgresServerName getName() {
         return name;
     }
 
-    static final String COLUMN_VERSION = "version";
+    public static final MethodColumn COLUMN_VERSION = getMethodColumn(PostgresServer.class, "version");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the PostgreSQL version")
-    public PostgresVersion getPostgresVersion() throws RemoteException {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the pkey of the PostgreSQL version")
+    public PostgresVersion getVersion() throws RemoteException {
         PostgresVersion obj=getConnector().getPostgresVersions().get(version);
-        if(!StringUtility.equals(obj.getTechnologyVersion().operatingSystemVersion, getAoServer().getServer().operatingSystemVersion)) {
+        if(!StringUtility.equals(obj.getVersion().operatingSystemVersion, getAoServer().getServer().operatingSystemVersion)) {
             throw new RemoteException("resource/operating system version mismatch on PostgresServer: #"+key);
         }
     	return obj;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="max_connections", description="the maximum number of connections for the db")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the maximum number of connections for the db")
     public int getMaxConnections() {
         return maxConnections;
     }
 
-    static final String COLUMN_NET_BIND = "net_bind";
+    public static final MethodColumn COLUMN_NET_BIND = getMethodColumn(PostgresServer.class, "netBind");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, index=IndexType.UNIQUE, description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
         return getConnector().getNetBinds().get(netBind);
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="sort_mem", description="the amount of shared memory used for sorting")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="the amount of shared memory used for sorting")
     public int getSortMem() {
         return sortMem;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="shared_buffers", description="the number of shared buffers")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="the number of shared buffers")
     public int getSharedBuffers() {
         return sharedBuffers;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="fsync", description="indicates that writes are synchronous")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="indicates that writes are synchronous")
     public boolean getFsync() {
         return fsync;
     }

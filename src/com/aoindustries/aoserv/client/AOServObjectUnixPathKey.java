@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  */
 abstract public class AOServObjectUnixPathKey extends AOServObject<UnixPath> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     private UnixPath key;
 

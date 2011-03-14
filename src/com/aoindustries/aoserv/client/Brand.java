@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 final public class Brand extends AOServObjectAccountingCodeKey implements Comparable<Brand>, DtoFactory<com.aoindustries.aoserv.client.dto.Brand> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -193,39 +193,39 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(Brand.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the business that is a brand")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the business that is a brand")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(getKey());
     }
 
-    @SchemaColumn(order=1, name="nameserver1", description="the primary nameserver")
+    @SchemaColumn(order=1, description="the primary nameserver")
     public DomainName getNameserver1() {
         return nameserver1;
     }
 
-    @SchemaColumn(order=2, name="nameserver2", description="the secondary nameserver")
+    @SchemaColumn(order=2, description="the secondary nameserver")
     public DomainName getNameserver2() {
         return nameserver2;
     }
 
-    @SchemaColumn(order=3, name="nameserver3", description="the tertiary nameserver (optional)")
+    @SchemaColumn(order=3, description="the tertiary nameserver (optional)")
     public DomainName getNameserver3() {
         return nameserver3;
     }
 
-    @SchemaColumn(order=4, name="nameserver4", description="the quaternary nameserver (optional)")
+    @SchemaColumn(order=4, description="the quaternary nameserver (optional)")
     public DomainName getNameserver4() {
         return nameserver4;
     }
 
-    static final String COLUMN_SMTP_EMAIL_INBOX = "smtp_email_inbox";
+    public static final MethodColumn COLUMN_SMTP_EMAIL_INBOX = getMethodColumn(Brand.class, "smtpEmailInbox");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_SMTP_EMAIL_INBOX, index=IndexType.UNIQUE, description="the inbox used for outgoing email")
+    @SchemaColumn(order=5, index=IndexType.UNIQUE, description="the inbox used for outgoing email")
     public EmailInbox getSmtpEmailInbox() throws RemoteException {
         try {
             return getConnector().getEmailInboxes().get(smtpEmailInbox);
@@ -238,7 +238,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
      * Gets the host that should be used for SMTP.  Will use the hostname
      * of the SmtpEmailInbox's AOServer if smtp_host is null.
      */
-    @SchemaColumn(order=6, name="smtp_host", description="the host used for outgoing email")
+    @SchemaColumn(order=6, description="the host used for outgoing email")
     public Hostname getSmtpHost() throws RemoteException {
         return smtpHost!=null ? smtpHost : Hostname.valueOf(getSmtpEmailInbox().getLinuxAccount().getAoServer().getHostname());
     }
@@ -246,17 +246,17 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=7, name="smtp_password", description="the password used for outgoing email")
+    @SchemaColumn(order=7, description="the password used for outgoing email")
     public String getSmtpPassword() {
         return smtpPassword;
     }
 
-    static final String COLUMN_IMAP_EMAIL_INBOX = "imap_email_inbox";
+    public static final MethodColumn COLUMN_IMAP_EMAIL_INBOX = getMethodColumn(Brand.class, "imapEmailInbox");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=8, name=COLUMN_IMAP_EMAIL_INBOX, index=IndexType.UNIQUE, description="the inbox used for incoming email")
+    @SchemaColumn(order=8, index=IndexType.UNIQUE, description="the inbox used for incoming email")
     public EmailInbox getImapEmailInbox() throws RemoteException {
         try {
             return getConnector().getEmailInboxes().get(imapEmailInbox);
@@ -269,7 +269,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
      * Gets the host that should be used for IMAP.  Will use the hostname
      * of the ImapLinuxServerAccount's AOServer if imap_host is null.
      */
-    @SchemaColumn(order=9, name="imap_host", description="the host used for incoming email")
+    @SchemaColumn(order=9, description="the host used for incoming email")
     public Hostname getImapHost() throws RemoteException {
         return imapHost!=null ? imapHost : Hostname.valueOf(getImapEmailInbox().getLinuxAccount().getAoServer().getHostname());
     }
@@ -277,152 +277,152 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=10, name="imap_password", description="the password used for incoming email")
+    @SchemaColumn(order=10, description="the password used for incoming email")
     public String getImapPassword() {
         return imapPassword;
     }
 
     /* TODO
     @DependencySingleton
-    @SchemaColumn(order=11, name="support_email_address", index=IndexType.UNIQUE, description="the support address")
+    @SchemaColumn(order=11, index=IndexType.UNIQUE, description="the support address")
     public EmailAddress getSupportEmailAddress() throws RemoteException {
         return getConnector().getEmailAddresses().get(supportEmailAddress);
     }*/
 
-    @SchemaColumn(order=11, name="support_email_display", index=IndexType.UNIQUE, description="the support address display")
+    @SchemaColumn(order=11, index=IndexType.UNIQUE, description="the support address display")
     public String getSupportEmailDisplay() {
         return supportEmailDisplay;
     }
 
     /* TODO
     @DependencySingleton
-    @SchemaColumn(order=13, name="signup_email_address", index=IndexType.UNIQUE, description="the signup address")
+    @SchemaColumn(order=13, index=IndexType.UNIQUE, description="the signup address")
     public EmailAddress getSignupEmailAddress() throws RemoteException {
         return getConnector().getEmailAddresses().get(signupEmailAddress);
     }*/
 
-    @SchemaColumn(order=12, name="signup_email_display", index=IndexType.UNIQUE, description="the signup address display")
+    @SchemaColumn(order=12, index=IndexType.UNIQUE, description="the signup address display")
     public String getSignupEmailDisplay() {
         return signupEmailDisplay;
     }
 
     /* TODO
     @DependencySingleton
-    @SchemaColumn(order=15, name="ticket_encryption_from", description="the key used to encrypt ticket data")
+    @SchemaColumn(order=15, description="the key used to encrypt ticket data")
     public EncryptionKey getTicketEncryptionFrom() throws IOException, SQLException {
         return getConnector().getEncryptionKeys().get(ticketEncryptionFrom);
     }
 
     @DependencySingleton
-    @SchemaColumn(order=16, name="ticket_encryption_recipient", description="the key used to decrypt ticket data")
+    @SchemaColumn(order=16, description="the key used to decrypt ticket data")
     public EncryptionKey getTicketEncryptionRecipient() throws IOException, SQLException {
         return getConnector().getEncryptionKeys().get(ticketEncryptionRecipient);
     }
 
     @DependencySingleton
-    @SchemaColumn(order=17, name="signup_encryption_from", description="the key used to encrypt signup data")
+    @SchemaColumn(order=17, description="the key used to encrypt signup data")
     public EncryptionKey getSignupEncryptionFrom() throws IOException, SQLException {
         return getConnector().getEncryptionKeys().get(signupEncryptionFrom);
     }
 
     @DependencySingleton
-    @SchemaColumn(order=18, name="signup_encryption_recipient", description="the key used to decrypt signup data")
+    @SchemaColumn(order=18, description="the key used to decrypt signup data")
     public EncryptionKey getSignupEncryptionRecipient() throws IOException, SQLException {
         return getConnector().getEncryptionKeys().get(signupEncryptionRecipient);
     }
      */
 
-    @SchemaColumn(order=13, name="support_toll_free", description="the support toll-free number")
+    @SchemaColumn(order=13, description="the support toll-free number")
     public String getSupportTollFree() {
         return supportTollFree;
     }
 
-    @SchemaColumn(order=14, name="support_day_phone", description="the support day phone number")
+    @SchemaColumn(order=14, description="the support day phone number")
     public String getSupportDayPhone() {
         return supportDayPhone;
     }
 
-    @SchemaColumn(order=15, name="support_emergency_phone1", description="the support 24-hour phone number")
+    @SchemaColumn(order=15, description="the support 24-hour phone number")
     public String getSupportEmergencyPhone1() {
         return supportEmergencyPhone1;
     }
 
-    @SchemaColumn(order=16, name="support_emergency_phone2", description="the secondary support 24-hour phone number")
+    @SchemaColumn(order=16, description="the secondary support 24-hour phone number")
     public String getSupportEmergencyPhone2() {
         return supportEmergencyPhone2;
     }
 
-    @SchemaColumn(order=17, name="support_fax", description="")
+    @SchemaColumn(order=17, description="")
     public String getSupportFax() {
         return supportFax;
     }
 
-    @SchemaColumn(order=18, name="support_mailing_address1", description="the support mailing address line 1")
+    @SchemaColumn(order=18, description="the support mailing address line 1")
     public String getSupportMailingAddress1() {
         return supportMailingAddress1;
     }
 
-    @SchemaColumn(order=19, name="support_mailing_address2", description="the support mailing address line 2")
+    @SchemaColumn(order=19, description="the support mailing address line 2")
     public String getSupportMailingAddress2() {
         return supportMailingAddress2;
     }
 
-    @SchemaColumn(order=20, name="support_mailing_address3", description="the support mailing address line 3")
+    @SchemaColumn(order=20, description="the support mailing address line 3")
     public String getSupportMailingAddress3() {
         return supportMailingAddress3;
     }
 
-    @SchemaColumn(order=21, name="support_mailing_address4", description="the support mailing address line 4")
+    @SchemaColumn(order=21, description="the support mailing address line 4")
     public String getSupportMailingAddress4() {
         return supportMailingAddress4;
     }
 
-    @SchemaColumn(order=22, name="english_enabled", description="enables the English language in all support tools")
-    public boolean getEnglishEnabled() {
+    @SchemaColumn(order=22, description="enables the English language in all support tools")
+    public boolean isEnglishEnabled() {
         return englishEnabled;
     }
 
-    @SchemaColumn(order=23, name="japanese_enabled", description="enables the Japanese language in all support tools")
-    public boolean getJapaneseEnabled() {
+    @SchemaColumn(order=23, description="enables the Japanese language in all support tools")
+    public boolean isJapaneseEnabled() {
         return japaneseEnabled;
     }
 
-    @SchemaColumn(order=24, name="aoweb_struts_http_url_base", description="the base URL for the non-SSL aoweb-struts installation")
+    @SchemaColumn(order=24, description="the base URL for the non-SSL aoweb-struts installation")
     public String getAowebStrutsHttpUrlBase() {
         return aowebStrutsHttpUrlBase;
     }
 
-    @SchemaColumn(order=25, name="aoweb_struts_https_url_base", description="the base URL for the SSL aoweb-struts installation")
+    @SchemaColumn(order=25, description="the base URL for the SSL aoweb-struts installation")
     public String getAowebStrutsHttpsUrlBase() {
         return aowebStrutsHttpsUrlBase;
     }
 
-    @SchemaColumn(order=26, name="aoweb_struts_google_verify_content", description="the Google Webmaster Tools verification code")
+    @SchemaColumn(order=26, description="the Google Webmaster Tools verification code")
     public String getAowebStrutsGoogleVerifyContent() {
         return aowebStrutsGoogleVerifyContent;
     }
 
-    @SchemaColumn(order=27, name="aoweb_struts_noindex", description="indicates this site will have ROBOTS NOINDEX meta tags on aoweb-struts common code")
+    @SchemaColumn(order=27, description="indicates this site will have ROBOTS NOINDEX meta tags on aoweb-struts common code")
     public boolean getAowebStrutsNoindex() {
         return aowebStrutsNoindex;
     }
 
-    @SchemaColumn(order=28, name="aoweb_struts_google_analytics_new_tracking_code", description="the Google Analytics tracking code")
+    @SchemaColumn(order=28, description="the Google Analytics tracking code")
     public String getAowebStrutsGoogleAnalyticsNewTrackingCode() {
         return aowebStrutsGoogleAnalyticsNewTrackingCode;
     }
 
-    @SchemaColumn(order=29, name="aoweb_struts_signup_admin_address", description="the email address that will receive copies of all signups")
+    @SchemaColumn(order=29, description="the email address that will receive copies of all signups")
     public Email getAowebStrutsSignupAdminAddress() {
         return aowebStrutsSignupAdminAddress;
     }
 
-    static final String COLUMN_AOWEB_STRUTS_VNC_BIND = "aoweb_struts_vnc_bind";
+    public static final MethodColumn COLUMN_AOWEB_STRUTS_VNC_BIND = getMethodColumn(Brand.class, "aowebStrutsVncBind");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=30, name=COLUMN_AOWEB_STRUTS_VNC_BIND, index=IndexType.UNIQUE, description="the port that listens for VNC connections")
+    @SchemaColumn(order=30, index=IndexType.UNIQUE, description="the port that listens for VNC connections")
     public NetBind getAowebStrutsVncBind() throws RemoteException {
         try {
             return getConnector().getNetBinds().get(aowebStrutsVncBind);
@@ -434,7 +434,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=31, name="aoweb_struts_keystore_type", description="the keystore type for native Java SSL")
+    @SchemaColumn(order=31, description="the keystore type for native Java SSL")
     public String getAowebStrutsKeystoreType() {
         return aowebStrutsKeystoreType;
     }
@@ -442,13 +442,13 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=32, name="aoweb_struts_keystore_password", description="the keystore password for native Java SSL")
+    @SchemaColumn(order=32, description="the keystore password for native Java SSL")
     public String getAowebStrutsKeystorePassword() {
         return aowebStrutsKeystorePassword;
     }
 
-    static final String COLUMN_PARENT = "parent";
-    @SchemaColumn(order=33, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the immediate parent of this brand or <code>null</code> if none available")
+    public static final MethodColumn COLUMN_PARENT_BRAND = getMethodColumn(Brand.class, "parentBrand");
+    @SchemaColumn(order=33, index=IndexType.INDEXED, description="the immediate parent of this brand or <code>null</code> if none available")
     public Brand getParentBrand() throws RemoteException {
         Business bu = getBusiness();
         if(bu==null) return null;
@@ -558,7 +558,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
      */
     @DependentObjectSingleton
     public Reseller getReseller() throws RemoteException {
-        return getConnector().getResellers().filterUnique(Reseller.COLUMN_ACCOUNTING, this);
+        return getConnector().getResellers().filterUnique(Reseller.COLUMN_BRAND, this);
     }
 
     /* TODO
@@ -572,7 +572,7 @@ final public class Brand extends AOServObjectAccountingCodeKey implements Compar
      * business (that is a brand) equal to this one.
      */
     public IndexedSet<Brand> getChildBrands() throws RemoteException {
-        return getConnector().getBrands().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getBrands().filterIndexed(COLUMN_PARENT_BRAND, this);
     }
 
     @DependentObjectSet

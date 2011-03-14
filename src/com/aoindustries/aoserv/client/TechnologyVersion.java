@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 final public class TechnologyVersion extends AOServObjectIntegerKey implements Comparable<TechnologyVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -64,46 +64,46 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TechnologyVersion other) {
-        int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+        int diff = compareIgnoreCaseConsistentWithEquals(name, other.name);
         if(diff!=0) return diff;
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(version, other.version);
+        return compareIgnoreCaseConsistentWithEquals(version, other.version);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique key")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_NAME = "name";
+    public static final MethodColumn COLUMN_NAME = getMethodColumn(TechnologyVersion.class, "technologyName");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the software package")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the name of the software package")
     public TechnologyName getTechnologyName() throws RemoteException {
         return getConnector().getTechnologyNames().get(name);
     }
 
-    @SchemaColumn(order=2, name="version", description="the version number of the package in #.##.##-## format")
+    @SchemaColumn(order=2, description="the version number of the package in #.##.##-## format")
     public String getVersion() {
         return version;
     }
 
-    @SchemaColumn(order=3, name="updated", description="the time this package was last updated")
+    @SchemaColumn(order=3, description="the time this package was last updated")
     public Timestamp getUpdated() {
     	return new Timestamp(updated);
     }
 
-    static final String COLUMN_OWNER = "owner";
+    public static final MethodColumn COLUMN_OWNER = getMethodColumn(TechnologyVersion.class, "owner");
     @DependencySingleton
-    @SchemaColumn(order=4, name=COLUMN_OWNER, index=IndexType.INDEXED, description="the business_administrator who is responsible for maintaining this package")
+    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the business_administrator who is responsible for maintaining this package")
     public MasterUser getOwner() throws RemoteException {
         if(owner==null) return null;
         return getConnector().getMasterUsers().get(owner);
     }
 
-    static final String COLUMN_OPERATING_SYSTEM_VERSION = "operating_system_version";
+    public static final MethodColumn COLUMN_OPERATING_SYSTEM_VERSION = getMethodColumn(TechnologyVersion.class, "operatingSystemVersion");
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_OPERATING_SYSTEM_VERSION, index=IndexType.INDEXED, description="the version of the OS that this packages is installed")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the version of the OS that this packages is installed")
     public OperatingSystemVersion getOperatingSystemVersion() throws RemoteException {
         return getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
     }

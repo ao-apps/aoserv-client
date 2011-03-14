@@ -12,7 +12,7 @@ public class OperatingSystem extends AOServObject {
 
     private String name;
     private String display;
-    private boolean isUnix;
+    private boolean unix;
 
     public OperatingSystem() {
     }
@@ -20,7 +20,7 @@ public class OperatingSystem extends AOServObject {
     public OperatingSystem(String name, String display, boolean is_unix) {
         this.name = name;
         this.display = display;
-        this.isUnix = is_unix;
+        this.unix = is_unix;
     }
 
     public String getName() {
@@ -39,11 +39,11 @@ public class OperatingSystem extends AOServObject {
         this.display = display;
     }
 
-    public boolean isIsUnix() {
-        return isUnix;
+    public boolean isUnix() {
+        return unix;
     }
 
-    public void setIsUnix(boolean isUnix) {
-        this.isUnix = isUnix;
+    public void setUnix(boolean unix) {
+        this.unix = unix;
     }
 }

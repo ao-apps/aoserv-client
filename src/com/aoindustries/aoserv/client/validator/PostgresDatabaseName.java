@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class PostgresDatabaseName implements Comparable<PostgresDatabaseName>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabaseName>, Internable<PostgresDatabaseName> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The name of a database is limited by the internal data type of

@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class TicketAssignment extends AOServObjectIntegerKey implements Comparable<TicketAssignment>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAssignment> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -65,29 +65,29 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_TICKET = "ticket";
+    public static final MethodColumn COLUMN_TICKET = getMethodColumn(TicketAssignment.class, "ticket");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_TICKET, index=IndexType.INDEXED, description="the ticket id that is assigned")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the ticket id that is assigned")
     public Ticket getTicket() throws RemoteException {
         return getConnector().getTickets().get(ticket);
     }
 
-    static final String COLUMN_RESELLER = "reseller";
+    public static final MethodColumn COLUMN_RESELLER = getMethodColumn(TicketAssignment.class, "reseller");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_RESELLER, index=IndexType.INDEXED, description="the reseller for the assignment")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the reseller for the assignment")
     public Reseller getReseller() throws RemoteException {
         return getConnector().getResellers().get(reseller);
     }
 
-    static final String COLUMN_ADMINISTRATOR = "administrator";
+    public static final MethodColumn COLUMN_ADMINISTRATOR = getMethodColumn(TicketAssignment.class, "administrator");
     @DependencySingleton
-    @SchemaColumn(order=3, name=COLUMN_ADMINISTRATOR, index=IndexType.INDEXED, description="the individual that the ticket is assigned to within the reseller")
-    public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
+    @SchemaColumn(order=3, index=IndexType.INDEXED, description="the individual that the ticket is assigned to within the reseller")
+    public BusinessAdministrator getAdministrator() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(administrator);
     }
     // </editor-fold>

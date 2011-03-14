@@ -24,7 +24,7 @@ import java.rmi.RemoteException;
 final public class HttpdJBossVersion extends AOServObjectIntegerKey implements Comparable<HttpdJBossVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJBossVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String TECHNOLOGY_NAME="JBoss";
 
@@ -60,7 +60,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     @Override
     public int compareTo(HttpdJBossVersion other) {
         try {
-            return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+            return key==other.key ? 0 : getVersion().compareTo(other.getVersion());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -68,22 +68,22 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_VERSION = "version";
+    public static final MethodColumn COLUMN_VERSION = getMethodColumn(HttpdJBossVersion.class, "version");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="jboss version designator")
-    public TechnologyVersion getTechnologyVersion() throws RemoteException {
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="jboss version designator")
+    public TechnologyVersion getVersion() throws RemoteException {
         return getConnector().getTechnologyVersions().get(key);
     }
 
-    static final String COLUMN_TOMCAT_VERSION = "tomcat_version";
+    public static final MethodColumn COLUMN_TOMCAT_VERSION = getMethodColumn(HttpdJBossVersion.class, "tomcatVersion");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_TOMCAT_VERSION, index=IndexType.INDEXED, description="version of tomcat associated with this jboss version")
-    public HttpdTomcatVersion getHttpdTomcatVersion() throws RemoteException {
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="version of tomcat associated with this jboss version")
+    public HttpdTomcatVersion getTomcatVersion() throws RemoteException {
         return getConnector().getHttpdTomcatVersions().get(tomcatVersion);
     }
 
-    @SchemaColumn(order=2, name="template_dir", description="directory containing the install template")
-    public UnixPath getTemplateDirectory() {
+    @SchemaColumn(order=2, description="directory containing the install template")
+    public UnixPath getTemplateDir() {
         return templateDir;
     }
     // </editor-fold>

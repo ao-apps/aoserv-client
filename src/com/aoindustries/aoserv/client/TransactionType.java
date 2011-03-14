@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
 final public class TransactionType extends AOServObjectStringKey implements Comparable<TransactionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TransactionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         HTTPD="httpd",
@@ -37,30 +37,30 @@ final public class TransactionType extends AOServObjectStringKey implements Comp
      * If <code>true</code> this <code>TransactionType</code> represents a credit to
      * an account and will be listed in payments received reports.
      */
-    final private boolean isCredit;
+    final private boolean credit;
 
-    public TransactionType(AOServConnector connector, String name, boolean isCredit) {
+    public TransactionType(AOServConnector connector, String name, boolean credit) {
         super(connector, name);
-        this.isCredit = isCredit;
+        this.credit = credit;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TransactionType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of this transaction type")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of this transaction type")
     public String getName() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="is_credit", description="indicates that this type of transaction represents payment or credit")
+    @SchemaColumn(order=1, description="indicates that this type of transaction represents payment or credit")
     public boolean isCredit() {
-        return isCredit;
+        return credit;
     }
     // </editor-fold>
 
@@ -69,13 +69,13 @@ final public class TransactionType extends AOServObjectStringKey implements Comp
         this(
             connector,
             dto.getName(),
-            dto.isIsCredit()
+            dto.isCredit()
         );
     }
 
     @Override
     public com.aoindustries.aoserv.client.dto.TransactionType getDto() {
-        return new com.aoindustries.aoserv.client.dto.TransactionType(getKey(), isCredit);
+        return new com.aoindustries.aoserv.client.dto.TransactionType(getKey(), credit);
     }
     // </editor-fold>
 

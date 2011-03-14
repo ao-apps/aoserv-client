@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class GetTransactionDescriptionCommand extends RemoteCommand<String> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     final private int transid;
 

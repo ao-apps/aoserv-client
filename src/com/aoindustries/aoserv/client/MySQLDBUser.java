@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 final public class MySQLDBUser extends AOServObjectIntegerKey implements Comparable<MySQLDBUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDBUser> /*, Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -112,117 +112,117 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_MYSQL_DATABASE = "mysql_database";
+    public static final MethodColumn COLUMN_MYSQL_DATABASE = getMethodColumn(MySQLDBUser.class, "mysqlDatabase");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_MYSQL_DATABASE, index=IndexType.INDEXED, description="the pkey in mysql_databases")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the pkey in mysql_databases")
     public MySQLDatabase getMysqlDatabase() throws RemoteException {
     	return getConnector().getMysqlDatabases().get(mysqlDatabase);
     }
 
-    static final String COLUMN_MYSQL_USER = "mysql_user";
+    public static final MethodColumn COLUMN_MYSQL_USER = getMethodColumn(MySQLDBUser.class, "mysqlUser");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_MYSQL_USER, index=IndexType.INDEXED, description="the pkey in mysql_users")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the pkey in mysql_users")
     public MySQLUser getMysqlUser() throws RemoteException {
     	return getConnector().getMysqlUsers().get(mysqlUser);
     }
 
-    @SchemaColumn(order=3, name="select_priv", description="the SELECT privilege")
-    public boolean canSelect() {
+    @SchemaColumn(order=3, description="the SELECT privilege")
+    public boolean getSelectPriv() {
         return selectPriv;
     }
 
-    @SchemaColumn(order=4, name="insert_priv", description="the INSERT privilege")
-    public boolean canInsert() {
+    @SchemaColumn(order=4, description="the INSERT privilege")
+    public boolean getInsertPriv() {
         return insertPriv;
     }
 
-    @SchemaColumn(order=5, name="update_priv", description="the UPDATE privilege")
-    public boolean canUpdate() {
+    @SchemaColumn(order=5, description="the UPDATE privilege")
+    public boolean getUpdatePriv() {
         return updatePriv;
     }
 
-    @SchemaColumn(order=6, name="delete_priv", description="the DELETE privilege")
-    public boolean canDelete() {
+    @SchemaColumn(order=6, description="the DELETE privilege")
+    public boolean getDeletePriv() {
         return deletePriv;
     }
 
-    @SchemaColumn(order=7, name="create_priv", description="the CREATE privilege")
-    public boolean canCreate() {
+    @SchemaColumn(order=7, description="the CREATE privilege")
+    public boolean getCreatePriv() {
         return createPriv;
     }
 
-    @SchemaColumn(order=8, name="drop_priv", description="the DROP privilege")
-    public boolean canDrop() {
+    @SchemaColumn(order=8, description="the DROP privilege")
+    public boolean getDropPriv() {
         return dropPriv;
     }
 
-    @SchemaColumn(order=9, name="grant_priv", description="the GRANT privilege")
-    public boolean canGrant() {
+    @SchemaColumn(order=9, description="the GRANT privilege")
+    public boolean getGrantPriv() {
         return grantPriv;
     }
 
-    @SchemaColumn(order=10, name="references_priv", description="the REFERENCES privilege")
-    public boolean canReference() {
+    @SchemaColumn(order=10, description="the REFERENCES privilege")
+    public boolean getReferencesPriv() {
         return referencesPriv;
     }
 
-    @SchemaColumn(order=11, name="index_priv", description="the INDEX privilege")
-    public boolean canIndex() {
+    @SchemaColumn(order=11, description="the INDEX privilege")
+    public boolean getIndexPriv() {
         return indexPriv;
     }
 
-    @SchemaColumn(order=12, name="alter_priv", description="the ALTER privilete")
-    public boolean canAlter() {
+    @SchemaColumn(order=12, description="the ALTER privilete")
+    public boolean getAlterPriv() {
     	return alterPriv;
     }
 
-    @SchemaColumn(order=13, name="create_tmp_table_priv", description="the Create_tmp_table_priv")
-    public boolean canCreateTempTable() {
+    @SchemaColumn(order=13, description="the Create_tmp_table_priv")
+    public boolean getCreateTmpTablePriv() {
         return createTmpTablePriv;
     }
 
-    @SchemaColumn(order=14, name="lock_tables_priv", description="the Lock_tables_priv")
-    public boolean canLockTables() {
+    @SchemaColumn(order=14, description="the Lock_tables_priv")
+    public boolean getLockTablesPriv() {
         return lockTablesPriv;
     }
 
-    @SchemaColumn(order=15, name="create_view_priv", description="the Create_view_priv")
-    public boolean canCreateView() {
+    @SchemaColumn(order=15, description="the Create_view_priv")
+    public boolean getCreateViewPriv() {
         return createViewPriv;
     }
 
-    @SchemaColumn(order=16, name="show_view_priv", description="the Show_view_priv")
-    public boolean canShowView() {
+    @SchemaColumn(order=16, description="the Show_view_priv")
+    public boolean getShowViewPriv() {
         return showViewPriv;
     }
 
-    @SchemaColumn(order=17, name="create_routine_priv", description="the Create_routine_priv")
-    public boolean canCreateRoutine() {
+    @SchemaColumn(order=17, description="the Create_routine_priv")
+    public boolean getCreateRoutinePriv() {
         return createRoutinePriv;
     }
 
-    @SchemaColumn(order=18, name="alter_routine_priv", description="the Alter_routine_priv")
-    public boolean canAlterRoutine() {
+    @SchemaColumn(order=18, description="the Alter_routine_priv")
+    public boolean getAlterRoutinePriv() {
         return alterRoutinePriv;
     }
 
-    @SchemaColumn(order=19, name="execute_priv", description="the Execute_priv")
-    public boolean canExecute() {
+    @SchemaColumn(order=19, description="the Execute_priv")
+    public boolean getExecutePriv() {
         return executePriv;
     }
 
-    @SchemaColumn(order=20, name="event_priv", description="the Event_priv")
-    public boolean canEvent() {
+    @SchemaColumn(order=20, description="the Event_priv")
+    public boolean getEventPriv() {
         return eventPriv;
     }
 
-    @SchemaColumn(order=21, name="trigger_priv", description="the Trigger_priv")
-    public boolean canTrigger() {
+    @SchemaColumn(order=21, description="the Trigger_priv")
+    public boolean getTriggerPriv() {
         return triggerPriv;
     }
     // </editor-fold>
@@ -234,25 +234,25 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
             dto.getPkey(),
             dto.getMysqlDatabase(),
             dto.getMysqlUser(),
-            dto.isSelectPriv(),
-            dto.isInsertPriv(),
-            dto.isUpdatePriv(),
-            dto.isDeletePriv(),
-            dto.isCreatePriv(),
-            dto.isDropPriv(),
-            dto.isGrantPriv(),
-            dto.isReferencesPriv(),
-            dto.isIndexPriv(),
-            dto.isAlterPriv(),
-            dto.isCreateTmpTablePriv(),
-            dto.isLockTablesPriv(),
-            dto.isCreateViewPriv(),
-            dto.isShowViewPriv(),
-            dto.isCreateRoutinePriv(),
-            dto.isAlterRoutinePriv(),
-            dto.isExecutePriv(),
-            dto.isEventPriv(),
-            dto.isTriggerPriv()
+            dto.getSelectPriv(),
+            dto.getInsertPriv(),
+            dto.getUpdatePriv(),
+            dto.getDeletePriv(),
+            dto.getCreatePriv(),
+            dto.getDropPriv(),
+            dto.getGrantPriv(),
+            dto.getReferencesPriv(),
+            dto.getIndexPriv(),
+            dto.getAlterPriv(),
+            dto.getCreateTmpTablePriv(),
+            dto.getLockTablesPriv(),
+            dto.getCreateViewPriv(),
+            dto.getShowViewPriv(),
+            dto.getCreateRoutinePriv(),
+            dto.getAlterRoutinePriv(),
+            dto.getExecutePriv(),
+            dto.getEventPriv(),
+            dto.getTriggerPriv()
         );
     }
 

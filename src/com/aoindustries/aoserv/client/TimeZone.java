@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 final public class TimeZone extends AOServObjectStringKey implements Comparable<TimeZone>, DtoFactory<com.aoindustries.aoserv.client.dto.TimeZone> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -30,12 +30,12 @@ final public class TimeZone extends AOServObjectStringKey implements Comparable<
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TimeZone other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of this time zone")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of this time zone")
     public String getName() {
         return getKey();
     }

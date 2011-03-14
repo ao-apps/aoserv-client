@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 final public class NetProtocol extends AOServObjectStringKey implements Comparable<NetProtocol>, DtoFactory<com.aoindustries.aoserv.client.dto.NetProtocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         RAW="raw",
@@ -37,12 +37,12 @@ final public class NetProtocol extends AOServObjectStringKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(NetProtocol other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="protocol", index=IndexType.PRIMARY_KEY, description="the network protocol")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the network protocol")
     public String getProtocol() {
         return getKey();
     }

@@ -17,7 +17,7 @@ import java.util.Map;
  */
 final public class AddFailoverFileLogCommand extends RemoteCommand<Integer> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     final private int replication;
     final private long startTime;

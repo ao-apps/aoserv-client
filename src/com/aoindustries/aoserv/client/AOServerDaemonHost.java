@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 final public class AOServerDaemonHost extends AOServObjectIntegerKey implements Comparable<AOServerDaemonHost>, DtoFactory<com.aoindustries.aoserv.client.dto.AOServerDaemonHost> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -64,19 +64,19 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_AO_SERVER = "ao_server";
+    public static final MethodColumn COLUMN_AO_SERVER = getMethodColumn(AOServerDaemonHost.class, "aoServer");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the pkey of the ao_server")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the pkey of the ao_server")
     public AOServer getAoServer() throws RemoteException {
         return getConnector().getAoServers().get(aoServer);
     }
 
-    @SchemaColumn(order=2, name="host", description="the hostname or IP address that is allowed to connect")
+    @SchemaColumn(order=2, description="the hostname or IP address that is allowed to connect")
     public Hostname getHost() {
         return host;
     }

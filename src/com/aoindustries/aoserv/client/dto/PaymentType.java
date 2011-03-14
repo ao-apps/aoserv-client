@@ -11,15 +11,15 @@ package com.aoindustries.aoserv.client.dto;
 public class PaymentType extends AOServObject {
 
     private String name;
-    private boolean isActive;
+    private boolean active;
     private boolean allowWeb;
 
     public PaymentType() {
     }
 
-    public PaymentType(String name, boolean isActive, boolean allowWeb) {
+    public PaymentType(String name, boolean active, boolean allowWeb) {
         this.name = name;
-        this.isActive = isActive;
+        this.active = active;
         this.allowWeb = allowWeb;
     }
 
@@ -31,12 +31,12 @@ public class PaymentType extends AOServObject {
         this.name = name;
     }
 
-    public boolean isIsActive() {
-        return isActive;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public boolean isAllowWeb() {

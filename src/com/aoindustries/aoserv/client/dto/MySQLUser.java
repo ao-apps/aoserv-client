@@ -160,7 +160,7 @@ public class MySQLUser extends AOServerResource {
         this.host = host;
     }
 
-    public boolean isSelectPriv() {
+    public boolean getSelectPriv() {
         return selectPriv;
     }
 
@@ -168,7 +168,7 @@ public class MySQLUser extends AOServerResource {
         this.selectPriv = selectPriv;
     }
 
-    public boolean isInsertPriv() {
+    public boolean getInsertPriv() {
         return insertPriv;
     }
 
@@ -176,7 +176,7 @@ public class MySQLUser extends AOServerResource {
         this.insertPriv = insertPriv;
     }
 
-    public boolean isUpdatePriv() {
+    public boolean getUpdatePriv() {
         return updatePriv;
     }
 
@@ -184,7 +184,7 @@ public class MySQLUser extends AOServerResource {
         this.updatePriv = updatePriv;
     }
 
-    public boolean isDeletePriv() {
+    public boolean getDeletePriv() {
         return deletePriv;
     }
 
@@ -192,7 +192,7 @@ public class MySQLUser extends AOServerResource {
         this.deletePriv = deletePriv;
     }
 
-    public boolean isCreatePriv() {
+    public boolean getCreatePriv() {
         return createPriv;
     }
 
@@ -200,7 +200,7 @@ public class MySQLUser extends AOServerResource {
         this.createPriv = createPriv;
     }
 
-    public boolean isDropPriv() {
+    public boolean getDropPriv() {
         return dropPriv;
     }
 
@@ -208,7 +208,7 @@ public class MySQLUser extends AOServerResource {
         this.dropPriv = dropPriv;
     }
 
-    public boolean isReloadPriv() {
+    public boolean getReloadPriv() {
         return reloadPriv;
     }
 
@@ -216,7 +216,7 @@ public class MySQLUser extends AOServerResource {
         this.reloadPriv = reloadPriv;
     }
 
-    public boolean isShutdownPriv() {
+    public boolean getShutdownPriv() {
         return shutdownPriv;
     }
 
@@ -224,7 +224,7 @@ public class MySQLUser extends AOServerResource {
         this.shutdownPriv = shutdownPriv;
     }
 
-    public boolean isProcessPriv() {
+    public boolean getProcessPriv() {
         return processPriv;
     }
 
@@ -232,7 +232,7 @@ public class MySQLUser extends AOServerResource {
         this.processPriv = processPriv;
     }
 
-    public boolean isFilePriv() {
+    public boolean getFilePriv() {
         return filePriv;
     }
 
@@ -240,7 +240,7 @@ public class MySQLUser extends AOServerResource {
         this.filePriv = filePriv;
     }
 
-    public boolean isGrantPriv() {
+    public boolean getGrantPriv() {
         return grantPriv;
     }
 
@@ -248,7 +248,7 @@ public class MySQLUser extends AOServerResource {
         this.grantPriv = grantPriv;
     }
 
-    public boolean isReferencesPriv() {
+    public boolean getReferencesPriv() {
         return referencesPriv;
     }
 
@@ -256,7 +256,7 @@ public class MySQLUser extends AOServerResource {
         this.referencesPriv = referencesPriv;
     }
 
-    public boolean isIndexPriv() {
+    public boolean getIndexPriv() {
         return indexPriv;
     }
 
@@ -264,7 +264,7 @@ public class MySQLUser extends AOServerResource {
         this.indexPriv = indexPriv;
     }
 
-    public boolean isAlterPriv() {
+    public boolean getAlterPriv() {
         return alterPriv;
     }
 
@@ -272,7 +272,7 @@ public class MySQLUser extends AOServerResource {
         this.alterPriv = alterPriv;
     }
 
-    public boolean isShowDbPriv() {
+    public boolean getShowDbPriv() {
         return showDbPriv;
     }
 
@@ -280,7 +280,7 @@ public class MySQLUser extends AOServerResource {
         this.showDbPriv = showDbPriv;
     }
 
-    public boolean isSuperPriv() {
+    public boolean getSuperPriv() {
         return superPriv;
     }
 
@@ -288,7 +288,7 @@ public class MySQLUser extends AOServerResource {
         this.superPriv = superPriv;
     }
 
-    public boolean isCreateTmpTablePriv() {
+    public boolean getCreateTmpTablePriv() {
         return createTmpTablePriv;
     }
 
@@ -296,7 +296,7 @@ public class MySQLUser extends AOServerResource {
         this.createTmpTablePriv = createTmpTablePriv;
     }
 
-    public boolean isLockTablesPriv() {
+    public boolean getLockTablesPriv() {
         return lockTablesPriv;
     }
 
@@ -304,7 +304,7 @@ public class MySQLUser extends AOServerResource {
         this.lockTablesPriv = lockTablesPriv;
     }
 
-    public boolean isExecutePriv() {
+    public boolean getExecutePriv() {
         return executePriv;
     }
 
@@ -312,7 +312,7 @@ public class MySQLUser extends AOServerResource {
         this.executePriv = executePriv;
     }
 
-    public boolean isReplSlavePriv() {
+    public boolean getReplSlavePriv() {
         return replSlavePriv;
     }
 
@@ -320,7 +320,7 @@ public class MySQLUser extends AOServerResource {
         this.replSlavePriv = replSlavePriv;
     }
 
-    public boolean isReplClientPriv() {
+    public boolean getReplClientPriv() {
         return replClientPriv;
     }
 
@@ -328,7 +328,7 @@ public class MySQLUser extends AOServerResource {
         this.replClientPriv = replClientPriv;
     }
 
-    public boolean isCreateViewPriv() {
+    public boolean getCreateViewPriv() {
         return createViewPriv;
     }
 
@@ -336,7 +336,7 @@ public class MySQLUser extends AOServerResource {
         this.createViewPriv = createViewPriv;
     }
 
-    public boolean isShowViewPriv() {
+    public boolean getShowViewPriv() {
         return showViewPriv;
     }
 
@@ -344,7 +344,7 @@ public class MySQLUser extends AOServerResource {
         this.showViewPriv = showViewPriv;
     }
 
-    public boolean isCreateRoutinePriv() {
+    public boolean getCreateRoutinePriv() {
         return createRoutinePriv;
     }
 
@@ -352,7 +352,7 @@ public class MySQLUser extends AOServerResource {
         this.createRoutinePriv = createRoutinePriv;
     }
 
-    public boolean isAlterRoutinePriv() {
+    public boolean getAlterRoutinePriv() {
         return alterRoutinePriv;
     }
 
@@ -360,7 +360,7 @@ public class MySQLUser extends AOServerResource {
         this.alterRoutinePriv = alterRoutinePriv;
     }
 
-    public boolean isCreateUserPriv() {
+    public boolean getCreateUserPriv() {
         return createUserPriv;
     }
 
@@ -368,7 +368,7 @@ public class MySQLUser extends AOServerResource {
         this.createUserPriv = createUserPriv;
     }
 
-    public boolean isEventPriv() {
+    public boolean getEventPriv() {
         return eventPriv;
     }
 
@@ -376,7 +376,7 @@ public class MySQLUser extends AOServerResource {
         this.eventPriv = eventPriv;
     }
 
-    public boolean isTriggerPriv() {
+    public boolean getTriggerPriv() {
         return triggerPriv;
     }
 

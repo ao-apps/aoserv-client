@@ -31,7 +31,7 @@ import java.util.Set;
 final public class MySQLServer extends AOServerResource implements Comparable<MySQLServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The supported versions of MySQL.
@@ -369,15 +369,15 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_NAME = "name";
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
+    public static final MethodColumn COLUMN_NAME = getMethodColumn(MySQLServer.class, "name");
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the name of the database")
     public MySQLServerName getName() {
     	return name;
     }
 
-    static final String COLUMN_VERSION = "version";
+    public static final MethodColumn COLUMN_VERSION = getMethodColumn(MySQLServer.class, "version");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_VERSION, index=IndexType.INDEXED, description="the pkey of the MySQL version")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the pkey of the MySQL version")
     public TechnologyVersion getVersion() throws RemoteException {
         TechnologyVersion obj=getConnector().getTechnologyVersions().get(version);
         if(
@@ -389,14 +389,14 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     	return obj;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="max_connections", description="the maximum number of connections for the db")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the maximum number of connections for the db")
     public int getMaxConnections() {
         return maxConnections;
     }
 
-    static final String COLUMN_NET_BIND = "net_bind";
+    public static final MethodColumn COLUMN_NET_BIND = getMethodColumn(MySQLServer.class, "netBind");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the port the servers binds to")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, index=IndexType.UNIQUE, description="the port the servers binds to")
     public NetBind getNetBind() throws RemoteException {
         return getConnector().getNetBinds().get(netBind);
     }

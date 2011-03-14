@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 final public class TicketStatus extends AOServObjectStringKey implements Comparable<TicketStatus>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketStatus> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The different ticket statuses.
@@ -46,17 +46,17 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TicketStatus other) {
-        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
+        return compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="status", index=IndexType.PRIMARY_KEY, description="the name of this status")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the name of this status")
     public String getStatus() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="the default sort ordering")
+    @SchemaColumn(order=1, index=IndexType.UNIQUE, description="the default sort ordering")
     public short getSortOrder() {
         return sortOrder;
     }

@@ -35,7 +35,7 @@ implements
     PasswordProtected /* TODO , Removable, Disablable, Comparable<BusinessAdministrator> */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -142,9 +142,9 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_USERNAME = getMethodColumn(BusinessAdministrator.class, "username");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_USERNAME, index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
     public Username getUsername() throws RemoteException {
         return getConnector().getUsernames().get(getKey());
     }
@@ -152,89 +152,89 @@ implements
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="password", description="the encrypted password for this admin")
+    @SchemaColumn(order=1, description="the encrypted password for this admin")
     public HashedPassword getPassword() {
     	return password;
     }
 
-    @SchemaColumn(order=2, name="full_name", description="the name of this admin")
+    @SchemaColumn(order=2, description="the name of this admin")
     public String getFullName() {
     	return fullName;
     }
 
-    @SchemaColumn(order=3, name="title", description="the admins title within their organization")
+    @SchemaColumn(order=3, description="the admins title within their organization")
     public String getTitle() {
         return title;
     }
 
-    @SchemaColumn(order=4, name="birthday", description="the admins birthday")
+    @SchemaColumn(order=4, description="the admins birthday")
     public Date getBirthday() {
     	return new Date(birthday);
     }
 
-    @SchemaColumn(order=5, name="is_preferred", description="if true, customers is preferred")
+    @SchemaColumn(order=5, description="if true, customers is preferred")
     public boolean isPreferred() {
     	return isPreferred;
     }
 
-    @SchemaColumn(order=6, name="private", description="indicates if the admin should not be listed in publicly available lists")
+    @SchemaColumn(order=6, description="indicates if the admin should not be listed in publicly available lists")
     public boolean isPrivate() {
         return isPrivate;
     }
 
-    @SchemaColumn(order=7, name="created", description="the time the admin entry was created")
+    @SchemaColumn(order=7, description="the time the admin entry was created")
     public Timestamp getCreated() {
     	return new Timestamp(created);
     }
 
-    @SchemaColumn(order=8, name="work_phone", description="the work phone number (if different than business)")
+    @SchemaColumn(order=8, description="the work phone number (if different than business)")
     public String getWorkPhone() {
     	return workPhone;
     }
 
-    @SchemaColumn(order=9, name="home_phone", description="the home phone number")
+    @SchemaColumn(order=9, description="the home phone number")
     public String getHomePhone() {
     	return homePhone;
     }
 
-    @SchemaColumn(order=10, name="cell_phone", description="the cellular phone number")
+    @SchemaColumn(order=10, description="the cellular phone number")
     public String getCellPhone() {
     	return cellPhone;
     }
 
-    @SchemaColumn(order=11, name="fax", description="the fax number (if different than business)")
+    @SchemaColumn(order=11, description="the fax number (if different than business)")
     public String getFax() {
     	return fax;
     }
 
-    @SchemaColumn(order=12, name="email", description="the email address")
+    @SchemaColumn(order=12, description="the email address")
     public Email getEmail() {
     	return email;
     }
 
-    @SchemaColumn(order=13, name="address1", description="the street address (if different than business)")
+    @SchemaColumn(order=13, description="the street address (if different than business)")
     public String getAddress1() {
         return address1;
     }
 
-    @SchemaColumn(order=14, name="address2", description="the street address (if different than business)")
+    @SchemaColumn(order=14, description="the street address (if different than business)")
     public String getAddress2() {
     	return address2;
     }
 
-    @SchemaColumn(order=15, name="city", description="the city (if different than business)")
+    @SchemaColumn(order=15, description="the city (if different than business)")
     public String getCity() {
     	return city;
     }
 
-    @SchemaColumn(order=16, name="state", description="the state (if different than business)")
+    @SchemaColumn(order=16, description="the state (if different than business)")
     public String getState() {
     	return state;
     }
 
-    static final String COLUMN_COUNTRY="country";
+    public static final MethodColumn COLUMN_COUNTRY = getMethodColumn(BusinessAdministrator.class, "country");
     @DependencySingleton
-    @SchemaColumn(order=17, name=COLUMN_COUNTRY, index=IndexType.INDEXED, description="the country (if different than business)")
+    @SchemaColumn(order=17, index=IndexType.INDEXED, description="the country (if different than business)")
     public CountryCode getCountry() throws RemoteException {
         if(country == null) return null;
         CountryCode countryCode=getConnector().getCountryCodes().get(country);
@@ -242,25 +242,25 @@ implements
         return countryCode;
     }
 
-    @SchemaColumn(order=18, name="zip", description="the zip code (if different than business)")
-    public String getZIP() {
+    @SchemaColumn(order=18, description="the zip code (if different than business)")
+    public String getZip() {
         return zip;
     }
 
-    static final String COLUMN_DISABLE_LOG = "disable_log";
+    public static final MethodColumn COLUMN_DISABLE_LOG = getMethodColumn(BusinessAdministrator.class, "disableLog");
     @DependencySingleton
-    @SchemaColumn(order=19, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that this account is disabled")
+    @SchemaColumn(order=19, index=IndexType.INDEXED, description="indicates that this account is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
         return getConnector().getDisableLogs().get(disableLog);
     }
 
-    @SchemaColumn(order=20, name="can_switch_users", description="allows this person to switch users to any subaccounts")
-    public boolean canSwitchUsers() {
+    @SchemaColumn(order=20, description="allows this person to switch users to any subaccounts")
+    public boolean getCanSwitchUsers() {
         return canSwitchUsers;
     }
 
-    @SchemaColumn(order=21, name="support_code", index=IndexType.UNIQUE, description="used to authenticate for email-based supprt")
+    @SchemaColumn(order=21, index=IndexType.UNIQUE, description="used to authenticate for email-based supprt")
     public String getSupportCode() {
         return supportCode;
     }
@@ -309,7 +309,7 @@ implements
 
     @DependentObjectSet
     public IndexedSet<BusinessAdministratorRole> getBusinessAdministratorRoles() throws RemoteException {
-        return getConnector().getBusinessAdministratorRoles().filterIndexed(BusinessAdministratorRole.COLUMN_USERNAME, this);
+        return getConnector().getBusinessAdministratorRoles().filterIndexed(BusinessAdministratorRole.COLUMN_BUSINESS_ADMINISTRATOR, this);
     }
 
     @DependentObjectSet
@@ -324,17 +324,17 @@ implements
 
     @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByAuthorizationUsername() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_AUTHORIZATION_USERNAME, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_AUTHORIZATION_ADMINISTRATOR, this);
     }
 
     @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCaptureUsername() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CAPTURE_USERNAME, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CAPTURE_ADMINISTRATOR, this);
     }
 
     @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByVoidUsername() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_VOID_USERNAME, this);
+        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_VOID_ADMINISTRATOR, this);
     }
 
     @DependentObjectSet
@@ -344,7 +344,7 @@ implements
 
     @DependentObjectSingleton
     public MasterUser getMasterUser() throws RemoteException {
-    	return getConnector().getMasterUsers().filterUnique(MasterUser.COLUMN_USERNAME, this);
+    	return getConnector().getMasterUsers().filterUnique(MasterUser.COLUMN_BUSINESS_ADMINISTRATOR, this);
     }
 
     @DependentObjectSet
@@ -379,7 +379,7 @@ implements
 
     @DependentObjectSet
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_USERNAME, this);
+        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_BUSINESS_ADMINISTRATOR, this);
     }
     // </editor-fold>
 

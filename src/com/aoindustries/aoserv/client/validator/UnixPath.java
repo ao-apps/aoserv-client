@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class UnixPath implements Comparable<UnixPath>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.UnixPath>, Internable<UnixPath> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4832121065303689152L;
 
     public static void validate(String path) throws ValidationException {
         // Be non-null
@@ -117,7 +117,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
 
     @Override
     public int compareTo(UnixPath other) {
-        return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
+        return this==other ? 0 : AOServObject.compareIgnoreCaseConsistentWithEquals(path, other.path);
     }
 
     @Override

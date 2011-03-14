@@ -17,7 +17,7 @@ import java.util.Map;
  */
 final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String PARAM_USERNAME = "username";
     public static final String PARAM_PLAINTEXT = "plaintext";

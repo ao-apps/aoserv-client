@@ -64,7 +64,7 @@ public class GetIndexedRowTest extends TestCase {
                         MethodColumn column = columns.get(col);
                         boolean supported = column.getIndexType()==IndexType.INDEXED;
                         if(supported) {
-                            String columnName=column.getColumnName();
+                            String columnName=column.getName();
                             try {
                                 // Build our set of the expected objects by iterating through the entire list
                                 expectedSets.clear();
@@ -80,7 +80,7 @@ public class GetIndexedRowTest extends TestCase {
                                 // Compare to the lists using the index routines
                                 for(Object value : expectedSets.keySet()) {
                                     Set<AOServObject<?>> expectedSet=expectedSets.get(value);
-                                    Set<? extends AOServObject<?>> indexedSet=service.filterIndexed(columnName, value);
+                                    Set<? extends AOServObject<?>> indexedSet=service.filterIndexed(column, value);
                                     assertEquals(serviceName.name()+"."+columnName+"="+value+": Mismatch in list size: ", expectedSet.size(), indexedSet.size());
                                     if(!expectedSet.containsAll(indexedSet)) fail(serviceName.name()+"."+columnName+"="+value+": expectedSet does not contain all the rows of indexedSet");
                                     if(!indexedSet.containsAll(expectedSet)) fail(serviceName.name()+"."+columnName+"="+value+": indexedSet does not contain all the rows of expectedSet");

@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 final public class CountryCode extends AOServObjectStringKey implements Comparable<CountryCode>, DtoFactory<com.aoindustries.aoserv.client.dto.CountryCode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * <code>CountryCode</code>s used as constants.
@@ -61,7 +61,7 @@ final public class CountryCode extends AOServObjectStringKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(CountryCode other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+        return compareIgnoreCaseConsistentWithEquals(name, other.name);
     }
     // </editor-fold>
 
@@ -69,22 +69,22 @@ final public class CountryCode extends AOServObjectStringKey implements Comparab
     /**
      * Gets the two-character unique code for this country.
      */
-    @SchemaColumn(order=0, name="code", index=IndexType.PRIMARY_KEY, description="the two-character code for the country")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the two-character code for the country")
     public String getCode() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="name", description="the name of the country")
+    @SchemaColumn(order=1, description="the name of the country")
     public String getName() {
     	return name;
     }
 
-    @SchemaColumn(order=2, name="charge_com_supported", description="if the country is supported by Charge.Com")
+    @SchemaColumn(order=2, description="if the country is supported by Charge.Com")
     public boolean getChargeComSupported() {
         return chargeComSupported;
     }
 
-    @SchemaColumn(order=3, name="charge_com_name", description="the Charge.Com specific name")
+    @SchemaColumn(order=3, description="the Charge.Com specific name")
     public String getChargeComName() {
     	return chargeComName==null?name:chargeComName;
     }

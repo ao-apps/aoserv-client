@@ -101,48 +101,48 @@ abstract public class WrappedService<
     }
 
     @Override
-    final public V filterUnique(final String columnName, final Object value) throws RemoteException {
+    final public V filterUnique(final MethodColumn column, final Object value) throws RemoteException {
         return connector.call(
             new Callable<V>() {
                 @Override
                 public V call() throws RemoteException {
-                    return AOServConnectorUtils.setConnector(getWrapped().filterUnique(columnName, value), connector);
+                    return AOServConnectorUtils.setConnector(getWrapped().filterUnique(column, value), connector);
                 }
             }
         );
     }
 
     @Override
-    final public IndexedSet<V> filterUniqueSet(final String columnName, final Set<?> values) throws RemoteException {
+    final public IndexedSet<V> filterUniqueSet(final MethodColumn column, final Set<?> values) throws RemoteException {
         return connector.call(
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServConnectorUtils.setConnector(getWrapped().filterUniqueSet(columnName, values), connector);
+                    return AOServConnectorUtils.setConnector(getWrapped().filterUniqueSet(column, values), connector);
                 }
             }
         );
     }
 
     @Override
-    final public IndexedSet<V> filterIndexed(final String columnName, final Object value) throws RemoteException {
+    final public IndexedSet<V> filterIndexed(final MethodColumn column, final Object value) throws RemoteException {
         return connector.call(
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServConnectorUtils.setConnector(getWrapped().filterIndexed(columnName, value), connector);
+                    return AOServConnectorUtils.setConnector(getWrapped().filterIndexed(column, value), connector);
                 }
             }
         );
     }
 
     @Override
-    final public IndexedSet<V> filterIndexedSet(final String columnName, final Set<?> values) throws RemoteException {
+    final public IndexedSet<V> filterIndexedSet(final MethodColumn column, final Set<?> values) throws RemoteException {
         return connector.call(
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServConnectorUtils.setConnector(getWrapped().filterIndexedSet(columnName, values), connector);
+                    return AOServConnectorUtils.setConnector(getWrapped().filterIndexedSet(column, values), connector);
                 }
             }
         );

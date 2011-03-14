@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class AOServRole extends AOServObjectIntegerKey implements Comparable<AOServRole>, DtoFactory<com.aoindustries.aoserv.client.dto.AOServRole> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -47,9 +47,9 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
     @Override
     public int compareTo(AOServRole other) {
         try {
-            int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness());
+            int diff = accounting==other.accounting ? 0 : compare(getBusiness(), other.getBusiness());
             if(diff!=0) return diff;
-            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+            return compareIgnoreCaseConsistentWithEquals(name, other.name);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -57,22 +57,22 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(AOServRole.class, "business");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that owns the role")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the business that owns the role")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
-    @SchemaColumn(order=2, name="name", description="the per-business unique role name")
+    @SchemaColumn(order=2, description="the per-business unique role name")
     public String getName() {
         return name;
     }

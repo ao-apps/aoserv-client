@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 final public class MasterHost extends AOServObjectIntegerKey implements Comparable<MasterHost>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterHost> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -66,19 +66,19 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_MASTER_USER = getMethodColumn(MasterHost.class, "masterUser");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the unique username of the user")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the unique username of the user")
     public MasterUser getMasterUser() throws RemoteException {
     	return getConnector().getMasterUsers().get(username);
     }
 
-    @SchemaColumn(order=2, name="host", description="the IP address they are allowed to connect from")
+    @SchemaColumn(order=2, description="the IP address they are allowed to connect from")
     public InetAddress getHost() {
         return host;
     }

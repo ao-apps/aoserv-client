@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.Set;
  */
 abstract public class UnionService<K extends Comparable<K>, V extends AOServObject<K>> extends AbstractService<K,V> {
 
+    private static final boolean USE_UNION_CLASS_SET = true;
+
     protected final AOServConnector connector;
 
     /**
@@ -29,7 +32,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
      */
     private final Object cachedSetLock = new Object();
     private List<IndexedSet<? extends V>> cachedSets;
-    private IndexedSet<V> cachedSet;
+    private IndexedSet<V> combinedSet;
 
     protected UnionService(AOServConnector connector, Class<K> keyClass, Class<V> valueClass) {
         super(keyClass, valueClass);
@@ -45,7 +48,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
      * Gets the individual services that should be combined into a single view.
      * They must be returned in the same order every time so the cached
      * union may be reused when no underlying set has changed.
-     * This should return all direct dependencies, even if they are also a UnionService.
+     * This should return all leaf nodes, each having a distinct class.
      */
     protected abstract List<AOServService<K,? extends V>> getSubServices() throws RemoteException;
 
@@ -56,9 +59,9 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
         for(AOServService<K,? extends V> subservice : subservices) sets.add(subservice.getSet());
         synchronized(cachedSetLock) {
             // Reuse cache if no underlying set has changed
-            if(cachedSet!=null) {
+            if(combinedSet!=null) {
                 int size = cachedSets.size();
-                if(size!=sets.size()) throw new AssertionError("size!=sets.size(): "+size+"!="+sets.size());
+                assert size==sets.size() : "size!=sets.size(): "+size+"!="+sets.size();
                 boolean setChanged = false;
                 for(int i=0; i<size; i++) {
                     if(sets.get(i)!=cachedSets.get(i)) {
@@ -66,15 +69,21 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
                         break;
                     }
                 }
-                if(!setChanged) return cachedSet;
+                if(!setChanged) return combinedSet;
             }
-            int totalSize = 0;
-            for(IndexedSet<? extends V> set : sets) totalSize += set.size();
-            ArrayList<V> list = new ArrayList<V>(totalSize);
-            for(IndexedSet<? extends V> set : sets) list.addAll(set);
-            cachedSet = IndexedSet.wrap(getServiceName(), list);
+            if(USE_UNION_CLASS_SET) {
+                UnionClassSet<V> unionSet = new UnionClassSet<V>();
+                for(IndexedSet<? extends V> set : sets) unionSet.addAll(set);
+                combinedSet = IndexedSet.wrap(getServiceName(), unionSet);
+            } else {
+                int totalSize = 0;
+                for(IndexedSet<? extends V> set : sets) totalSize += set.size();
+                ArrayList<V> list = new ArrayList<V>(totalSize);
+                for(IndexedSet<? extends V> set : sets) list.addAll(set);
+                combinedSet = IndexedSet.wrap(getServiceName(), list);
+            }
             cachedSets = sets;
-            return cachedSet;
+            return combinedSet;
         }
     }
 
@@ -105,30 +114,58 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
     }
 
     @Override
-    final public V filterUnique(String columnName, Object value) throws RemoteException {
+    final public V filterUnique(MethodColumn column, Object value) throws RemoteException {
         if(value==null) return null;
-        IndexType indexType = table.getColumn(columnName).getIndexType();
-        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+columnName);
-        return getSet().filterUnique(columnName, value);
+        IndexType indexType = column.getIndexType();
+        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+column);
+        for(AOServService<K,? extends V> subservice : getSubServices()) {
+            V result = subservice.filterUnique(column, value);
+            if(result!=null) return result;
+        }
+        return null;
     }
 
     @Override
-    final public IndexedSet<V> filterUniqueSet(String columnName, Set<?> values) throws RemoteException {
+    final public IndexedSet<V> filterUniqueSet(MethodColumn column, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(getServiceName());
-        IndexType indexType = table.getColumn(columnName).getIndexType();
-        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+columnName);
-        return getSet().filterUniqueSet(columnName, values);
+        IndexType indexType = column.getIndexType();
+        if(indexType!=IndexType.PRIMARY_KEY && indexType!=IndexType.UNIQUE) throw new IllegalArgumentException("Column neither primary key nor unique: "+column);
+        if(USE_UNION_CLASS_SET) {
+            UnionClassSet<V> unionSet = new UnionClassSet<V>();
+            for(AOServService<K,? extends V> subservice : getSubServices()) {
+                unionSet.addAll(subservice.filterUniqueSet(column, values));
+            }
+            return IndexedSet.wrap(getServiceName(), unionSet);
+        } else {
+            return getSet().filterUniqueSet(column, values);
+        }
     }
 
     @Override
-    final public IndexedSet<V> filterIndexed(String columnName, Object value) throws RemoteException {
+    final public IndexedSet<V> filterIndexed(MethodColumn column, Object value) throws RemoteException {
         if(value==null) return IndexedSet.emptyIndexedSet(getServiceName());
-        return getSet().filterIndexed(columnName, value);
+        if(USE_UNION_CLASS_SET) {
+            UnionClassSet<V> unionSet = new UnionClassSet<V>();
+            for(AOServService<K,? extends V> subservice : getSubServices()) {
+                unionSet.addAll(subservice.filterIndexed(column, value));
+            }
+            return IndexedSet.wrap(getServiceName(), unionSet);
+        } else {
+            return getSet().filterIndexed(column, value);
+        }
     }
 
     @Override
-    final public IndexedSet<V> filterIndexedSet(String columnName, Set<?> values) throws RemoteException {
+    final public IndexedSet<V> filterIndexedSet(MethodColumn column, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty()) return IndexedSet.emptyIndexedSet(getServiceName());
-        return getSet().filterIndexedSet(columnName, values);
+        if(USE_UNION_CLASS_SET) {
+            UnionClassSet<V> unionSet = new UnionClassSet<V>();
+            for(AOServService<K,? extends V> subservice : getSubServices()) {
+                unionSet.addAll(subservice.filterIndexedSet(column, values));
+            }
+            return IndexedSet.wrap(getServiceName(), unionSet);
+        } else {
+            return getSet().filterIndexedSet(column, values);
+        }
     }
 }

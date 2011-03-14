@@ -17,7 +17,7 @@ import java.util.Map;
  */
 final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String PARAM_LINUX_ACCOUNT = "linuxAccount";
     public static final String PARAM_PLAINTEXT = "plaintext";

@@ -15,7 +15,7 @@ import com.aoindustries.table.IndexType;
 final public class ExpenseCategory extends AOServObjectStringKey implements Comparable<ExpenseCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.ExpenseCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -27,12 +27,12 @@ final public class ExpenseCategory extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(ExpenseCategory other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="expense_code", index=IndexType.PRIMARY_KEY, description="a simple code used as primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a simple code used as primary key")
     public String getExpenseCode() {
         return getKey();
     }

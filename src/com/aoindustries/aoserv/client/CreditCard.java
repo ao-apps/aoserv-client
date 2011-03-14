@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 final public class CreditCard extends AOServObjectIntegerKey implements Comparable<CreditCard>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCard> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -148,9 +148,9 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     @Override
     public int compareTo(CreditCard other) {
         try {
-            int diff = accounting==other.accounting ? 0 : AOServObjectUtils.compare(getBusiness(), other.getBusiness());
+            int diff = accounting==other.accounting ? 0 : compare(getBusiness(), other.getBusiness());
             if(diff!=0) return diff;
-            return AOServObjectUtils.compare(created, other.created);
+            return compare(created, other.created);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -158,24 +158,24 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="primary key value")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="primary key value")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_PROCESSOR_ID = "processor_id";
+    public static final MethodColumn COLUMN_PROCESSOR = getMethodColumn(CreditCard.class, "processor");
     /**
      * Gets the processor that is storing the credit card numbers.
      */
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, index=IndexType.INDEXED, description="the processor that is storing the card number and expiration date")
-    public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the processor that is storing the card number and expiration date")
+    public CreditCardProcessor getProcessor() throws RemoteException {
         return getConnector().getCreditCardProcessors().get(processorId);
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(CreditCard.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code for the card")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the accounting code for the card")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
     }
@@ -183,12 +183,12 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     /**
      * Gets the application-specific grouping for this credit card.
      */
-    @SchemaColumn(order=3, name="group_name", description="any application-specific grouping")
+    @SchemaColumn(order=3, description="any application-specific grouping")
     public String getGroupName() {
         return groupName;
     }
 
-    @SchemaColumn(order=4, name="card_info", description="the masked card number")
+    @SchemaColumn(order=4, description="the masked card number")
     public String getCardInfo() {
         return cardInfo;
     }
@@ -197,86 +197,86 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
      * Gets the unique identifier that represents the CISP - compliant storage mechanism for the card
      * number and expiration date.
      */
-    @SchemaColumn(order=5, name="provider_unique_id", description="the per-provider unique ID allowing use of this credit card for new transactions")
+    @SchemaColumn(order=5, description="the per-provider unique ID allowing use of this credit card for new transactions")
     public String getProviderUniqueId() {
         return providerUniqueId;
     }
 
-    @SchemaColumn(order=6, name="first_name", description="the first name")
+    @SchemaColumn(order=6, description="the first name")
     public String getFirstName() {
         return firstName;
     }
 
-    @SchemaColumn(order=7, name="last_name", description="the last name")
+    @SchemaColumn(order=7, description="the last name")
     public String getLastName() {
         return lastName;
     }
 
-    @SchemaColumn(order=8, name="company_name", description="the company name")
+    @SchemaColumn(order=8, description="the company name")
     public String getCompanyName() {
         return companyName;
     }
 
-    @SchemaColumn(order=9, name="email", description="the email address")
+    @SchemaColumn(order=9, description="the email address")
     public Email getEmail() {
         return email;
     }
 
-    @SchemaColumn(order=10, name="phone", description="the daytime phone number")
+    @SchemaColumn(order=10, description="the daytime phone number")
     public String getPhone() {
         return phone;
     }
 
-    @SchemaColumn(order=11, name="fax", description="the fax number")
+    @SchemaColumn(order=11, description="the fax number")
     public String getFax() {
         return fax;
     }
 
-    @SchemaColumn(order=12, name="customer_tax_id", description="the social security number or employer identification number")
+    @SchemaColumn(order=12, description="the social security number or employer identification number")
     public String getCustomerTaxId() {
         return customerTaxId;
     }
 
-    @SchemaColumn(order=13, name="street_address1", description="the first line of the street address")
+    @SchemaColumn(order=13, description="the first line of the street address")
     public String getStreetAddress1() {
         return streetAddress1;
     }
 
-    @SchemaColumn(order=14, name="street_address2", description="the second line of the street address")
+    @SchemaColumn(order=14, description="the second line of the street address")
     public String getStreetAddress2() {
         return streetAddress2;
     }
 
-    @SchemaColumn(order=15, name="city", description="the card holders city")
+    @SchemaColumn(order=15, description="the card holders city")
     public String getCity() {
         return city;
     }
 
-    @SchemaColumn(order=16, name="state", description="the card holders state")
+    @SchemaColumn(order=16, description="the card holders state")
     public String getState() {
         return state;
     }
 
-    @SchemaColumn(order=17, name="postal_code", description="the card holders postal code")
+    @SchemaColumn(order=17, description="the card holders postal code")
     public String getPostalCode() {
         return postalCode;
     }
 
-    static final String COLUMN_COUNTRY_CODE = "country_code";
+    public static final MethodColumn COLUMN_COUNTRY_CODE = getMethodColumn(CreditCard.class, "countryCode");
     @DependencySingleton
-    @SchemaColumn(order=18, name=COLUMN_COUNTRY_CODE, index=IndexType.INDEXED, description="the two-character country code")
+    @SchemaColumn(order=18, index=IndexType.INDEXED, description="the two-character country code")
     public CountryCode getCountryCode() throws RemoteException {
         return getConnector().getCountryCodes().get(this.countryCode);
     }
 
-    @SchemaColumn(order=19, name="created", description="the time the card was added to the database")
+    @SchemaColumn(order=19, description="the time the card was added to the database")
     public Timestamp getCreated() {
         return new Timestamp(created);
     }
 
-    static final String COLUMN_CREATED_BY = "created_by";
+    public static final MethodColumn COLUMN_CREATED_BY = getMethodColumn(CreditCard.class, "createdBy");
     @DependencySingleton
-    @SchemaColumn(order=20, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the business_administrator who added the card to the database")
+    @SchemaColumn(order=20, index=IndexType.INDEXED, description="the business_administrator who added the card to the database")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(createdBy);
     }
@@ -284,70 +284,70 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     /**
      * Gets the application-provided principal name that stored this credit card.
      */
-    @SchemaColumn(order=21, name="principal_name", description="the application-provided principal name of the person added the card to the database")
+    @SchemaColumn(order=21, description="the application-provided principal name of the person added the card to the database")
     public String getPrincipalName() {
         return principalName;
     }
 
-    @SchemaColumn(order=22, name="use_monthly", description="if <code>true</code> the card will be used monthly")
+    @SchemaColumn(order=22, description="if <code>true</code> the card will be used monthly")
     public boolean getUseMonthly() {
         return useMonthly;
     }
 
-    @SchemaColumn(order=23, name="active", description="if <code>true</code> the card is currently active")
+    @SchemaColumn(order=23, description="if <code>true</code> the card is currently active")
     public boolean isActive() {
         return active;
     }
 
-    @SchemaColumn(order=24, name="deactivated_on", description="the time the card was deactivated")
+    @SchemaColumn(order=24, description="the time the card was deactivated")
     public Timestamp getDeactivatedOn() {
         return deactivatedOn==null ? null : new Timestamp(deactivatedOn);
     }
 
-    @SchemaColumn(order=25, name="deactivate_reason", description="the reason the card was deactivated")
+    @SchemaColumn(order=25, description="the reason the card was deactivated")
     public String getDeactivateReason() {
         return deactivateReason;
     }
 
-    @SchemaColumn(order=26, name="description", description="any comment or description")
+    @SchemaColumn(order=26, description="any comment or description")
     public String getDescription() {
         return description;
     }
 
-    @SchemaColumn(order=27, name="encrypted_card_number", description="the card number stored encrypted")
+    @SchemaColumn(order=27, description="the card number stored encrypted")
     public String getEncryptedCardNumber() {
         return encryptedCardNumber;
     }
 
     /* TODO
     @DependencySingleton
-    @SchemaColumn(order=28, name="encryption_card_number_from", description="the from that was used for card number encryption")
+    @SchemaColumn(order=28, description="the from that was used for card number encryption")
     public EncryptionKey getEncryptionCardNumberFrom() throws RemoteException {
         if(encryptionCardNumberFrom==null) return null;
         return getConnector().getEncryptionKeys().get(encryptionCardNumberFrom);
     }
 
     @DependencySingleton
-    @SchemaColumn(order=29, name="encryption_card_number_recipient", description="the recipient that was used for card number encryption")
+    @SchemaColumn(order=29, description="the recipient that was used for card number encryption")
     public EncryptionKey getEncryptionCardNumberRecipient() throws RemoteException {
         if(encryptionCardNumberRecipient==null) return null;
         return getConnector().getEncryptionKeys().get(encryptionCardNumberRecipient);
     }
     */
-    @SchemaColumn(order=28, name="encrypted_expiration", description="the expiration stored encrypted")
+    @SchemaColumn(order=28, description="the expiration stored encrypted")
     public String getEncryptedExpiration() {
         return encryptedExpiration;
     }
     /* TODO
     @DependencySingleton
-    @SchemaColumn(order=31, name="encryption_expiration_from", description="the from that was used for expiration encryption")
+    @SchemaColumn(order=31, description="the from that was used for expiration encryption")
     public EncryptionKey getEncryptionExpirationFrom() throws RemoteException {
         if(encryptionExpirationFrom==null) return null;
         return getConnector().getEncryptionKeys().get(encryptionExpirationFrom);
     }
 
     @DependencySingleton
-    @SchemaColumn(order=32, name="encryption_expiration_recipient", description="the recipient that was used for expiration encryption")
+    @SchemaColumn(order=32, description="the recipient that was used for expiration encryption")
     public EncryptionKey getEncryptionExpirationRecipient() throws RemoteException {
         if(encryptionExpirationRecipient==null) return null;
         return getConnector().getEncryptionKeys().get(encryptionExpirationRecipient);

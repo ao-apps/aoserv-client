@@ -16,7 +16,7 @@ import com.aoindustries.table.IndexType;
 final public class NoticeType extends AOServObjectStringKey implements Comparable<NoticeType>, DtoFactory<com.aoindustries.aoserv.client.dto.NoticeType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         NONPAY="nonpay",
@@ -36,12 +36,12 @@ final public class NoticeType extends AOServObjectStringKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(NoticeType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the unique type name")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique type name")
     public String getType() {
         return getKey();
     }

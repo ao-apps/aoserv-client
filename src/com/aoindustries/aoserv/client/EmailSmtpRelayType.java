@@ -18,7 +18,7 @@ import com.aoindustries.table.IndexType;
 final public class EmailSmtpRelayType extends AOServObjectStringKey implements Comparable<EmailSmtpRelayType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailSmtpRelayType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The different relay types.
@@ -53,17 +53,17 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey implements C
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(EmailSmtpRelayType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the name of the type")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the name of the type")
     public String getName() {
         return getKey();
     }
     
-    @SchemaColumn(order=1, name="sendmail_config", description="the config value used for sendmail")
+    @SchemaColumn(order=1, description="the config value used for sendmail")
     public String getSendmailConfig() {
         return sendmailConfig;
     }

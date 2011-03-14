@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 final public class TicketAction extends AOServObjectIntegerKey implements Comparable<TicketAction>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -126,9 +126,9 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
         try {
             int diff = ticket==other.ticket ? 0 : getTicket().compareTo(other.getTicket());
             if(diff!=0) return diff;
-            diff = AOServObjectUtils.compare(time, other.time);
+            diff = compare(time, other.time);
             if(diff!=0) return diff;
-            return AOServObjectUtils.compare(key, other.key);
+            return compare(key, other.key);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -136,114 +136,114 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_TICKET = "ticket";
+    public static final MethodColumn COLUMN_TICKET = getMethodColumn(TicketAction.class, "ticket");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_TICKET, index=IndexType.INDEXED, description="the ticket this action is part of")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the ticket this action is part of")
     public Ticket getTicket() throws RemoteException {
         return getConnector().getTickets().get(ticket);
     }
 
-    static final String COLUMN_ADMINISTRATOR = "administrator";
+    public static final MethodColumn COLUMN_ADMINISTRATOR = getMethodColumn(TicketAction.class, "administrator");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_ADMINISTRATOR, index=IndexType.INDEXED, description="the administrator who performed this action")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the administrator who performed this action")
     public BusinessAdministrator getAdministrator() throws RemoteException {
         if(administrator==null) return null;
         return getConnector().getBusinessAdministrators().get(administrator);
     }
 
-    @SchemaColumn(order=3, name="time", description="the time this action was performed")
+    @SchemaColumn(order=3, description="the time this action was performed")
     public Timestamp getTime() {
         return new Timestamp(time);
     }
 
-    static final String COLUMN_ACTION_TYPE = "action_type";
+    public static final MethodColumn COLUMN_ACTION_TYPE = getMethodColumn(TicketAction.class, "actionType");
     @DependencySingleton
-    @SchemaColumn(order=4, name=COLUMN_ACTION_TYPE, index=IndexType.INDEXED, description="the type of action performed")
+    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the type of action performed")
     public TicketActionType getActionType() throws RemoteException {
         return getConnector().getTicketActionTypes().get(actionType);
     }
 
-    static final String COLUMN_OLD_ACCOUNTING = "old_accounting";
+    public static final MethodColumn COLUMN_OLD_BUSINESS = getMethodColumn(TicketAction.class, "oldBusiness");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_OLD_ACCOUNTING, index=IndexType.INDEXED, description="if changed, contains the old accounting code")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="if changed, contains the old accounting code")
     public Business getOldBusiness() throws RemoteException {
         if(oldAccounting==null) return null;
         return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, oldAccounting);
     }
 
-    static final String COLUMN_NEW_ACCOUNTING = "new_accounting";
+    public static final MethodColumn COLUMN_NEW_BUSINESS = getMethodColumn(TicketAction.class, "newBusiness");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=6, name=COLUMN_NEW_ACCOUNTING, index=IndexType.INDEXED, description="if changed, contains the new accounting code")
+    @SchemaColumn(order=6, index=IndexType.INDEXED, description="if changed, contains the new accounting code")
     public Business getNewBusiness() throws RemoteException {
         if(oldAccounting==null) return null;
         return getConnector().getBusinesses().get(oldAccounting);
     }
 
-    static final String COLUMN_OLD_PRIORITY = "old_priority";
+    public static final MethodColumn COLUMN_OLD_PRIORITY = getMethodColumn(TicketAction.class, "oldPriority");
     @DependencySingleton
-    @SchemaColumn(order=7, name=COLUMN_OLD_PRIORITY, index=IndexType.INDEXED, description="if changed, contains the old priority")
+    @SchemaColumn(order=7, index=IndexType.INDEXED, description="if changed, contains the old priority")
     public TicketPriority getOldPriority() throws RemoteException {
         if(oldPriority==null) return null;
         return getConnector().getTicketPriorities().get(oldPriority);
     }
 
-    static final String COLUMN_NEW_PRIORITY = "new_priority";
+    public static final MethodColumn COLUMN_NEW_PRIORITY = getMethodColumn(TicketAction.class, "newPriority");
     @DependencySingleton
-    @SchemaColumn(order=8, name=COLUMN_NEW_PRIORITY, index=IndexType.INDEXED, description="if changed, contains the new priority")
+    @SchemaColumn(order=8, index=IndexType.INDEXED, description="if changed, contains the new priority")
     public TicketPriority getNewPriority() throws RemoteException {
         if(newPriority==null) return null;
         return getConnector().getTicketPriorities().get(newPriority);
     }
 
-    static final String COLUMN_OLD_TYPE = "old_type";
+    public static final MethodColumn COLUMN_OLD_TYPE = getMethodColumn(TicketAction.class, "oldType");
     @DependencySingleton
-    @SchemaColumn(order=9, name=COLUMN_OLD_TYPE, index=IndexType.INDEXED, description="if changed, contains the old ticket type")
+    @SchemaColumn(order=9, index=IndexType.INDEXED, description="if changed, contains the old ticket type")
     public TicketType getOldType() throws RemoteException {
         if(oldType==null) return null;
         return getConnector().getTicketTypes().get(oldType);
     }
 
-    static final String COLUMN_NEW_TYPE = "new_type";
+    public static final MethodColumn COLUMN_NEW_TYPE = getMethodColumn(TicketAction.class, "newType");
     @DependencySingleton
-    @SchemaColumn(order=10, name=COLUMN_NEW_TYPE, index=IndexType.INDEXED, description="if changed, contains the new ticket type")
+    @SchemaColumn(order=10, index=IndexType.INDEXED, description="if changed, contains the new ticket type")
     public TicketType getNewType() throws RemoteException {
         if(newType==null) return null;
         return getConnector().getTicketTypes().get(newType);
     }
 
-    static final String COLUMN_OLD_STATUS = "old_status";
+    public static final MethodColumn COLUMN_OLD_STATUS = getMethodColumn(TicketAction.class, "oldStatus");
     @DependencySingleton
-    @SchemaColumn(order=11, name=COLUMN_OLD_STATUS, index=IndexType.INDEXED, description="if changed, contains the old ticket status")
+    @SchemaColumn(order=11, index=IndexType.INDEXED, description="if changed, contains the old ticket status")
     public TicketStatus getOldStatus() throws RemoteException {
         if(oldStatus==null) return null;
         return getConnector().getTicketStatuses().get(oldStatus);
     }
 
-    static final String COLUMN_NEW_STATUS = "new_status";
+    public static final MethodColumn COLUMN_NEW_STATUS = getMethodColumn(TicketAction.class, "newStatus");
     @DependencySingleton
-    @SchemaColumn(order=12, name=COLUMN_NEW_STATUS, index=IndexType.INDEXED, description="if changed, contains the new ticket status")
+    @SchemaColumn(order=12, index=IndexType.INDEXED, description="if changed, contains the new ticket status")
     public TicketStatus getNewStatus() throws RemoteException {
         if(newStatus==null) return null;
         return getConnector().getTicketStatuses().get(newStatus);
     }
 
-    static final String COLUMN_OLD_ASSIGNED_TO = "old_assigned_to";
+    public static final MethodColumn COLUMN_OLD_ASSIGNED_TO = getMethodColumn(TicketAction.class, "oldAssignedTo");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=13, name=COLUMN_OLD_ASSIGNED_TO, index=IndexType.INDEXED, description="if changed, contains the old assignment")
+    @SchemaColumn(order=13, index=IndexType.INDEXED, description="if changed, contains the old assignment")
     public BusinessAdministrator getOldAssignedTo() throws RemoteException {
         if(oldAssignedTo==null) return null;
         try {
@@ -253,12 +253,12 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
         }
     }
 
-    static final String COLUMN_NEW_ASSIGNED_TO = "new_assigned_to";
+    public static final MethodColumn COLUMN_NEW_ASSIGNED_TO = getMethodColumn(TicketAction.class, "newAssignedTo");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=14, name=COLUMN_NEW_ASSIGNED_TO, index=IndexType.INDEXED, description="if changed, contains the new assignment")
+    @SchemaColumn(order=14, index=IndexType.INDEXED, description="if changed, contains the new assignment")
     public BusinessAdministrator getNewAssignedTo() throws RemoteException {
         if(newAssignedTo==null) return null;
         try {
@@ -268,24 +268,24 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
         }
     }
 
-    static final String COLUMN_OLD_CATEGORY = "old_category";
+    public static final MethodColumn COLUMN_OLD_CATEGORY = getMethodColumn(TicketAction.class, "oldCategory");
     @DependencySingleton
-    @SchemaColumn(order=15, name=COLUMN_OLD_CATEGORY, index=IndexType.INDEXED, description="if changed, contains the old category")
+    @SchemaColumn(order=15, index=IndexType.INDEXED, description="if changed, contains the old category")
     public TicketCategory getOldCategory() throws RemoteException {
         if(oldCategory==null) return null;
         return getConnector().getTicketCategories().get(oldCategory);
     }
 
-    static final String COLUMN_NEW_CATEGORY = "new_category";
+    public static final MethodColumn COLUMN_NEW_CATEGORY = getMethodColumn(TicketAction.class, "newCategory");
     @DependencySingleton
-    @SchemaColumn(order=16, name=COLUMN_NEW_CATEGORY, index=IndexType.INDEXED, description="if changed, contains the new category")
+    @SchemaColumn(order=16, index=IndexType.INDEXED, description="if changed, contains the new category")
     public TicketCategory getNewCategory() throws RemoteException {
         if(newCategory==null) return null;
         return getConnector().getTicketCategories().get(newCategory);
     }
 
     /* TODO
-    @SchemaColumn(order=17, name="old_value", description="if changed, contains the old value")
+    @SchemaColumn(order=17, description="if changed, contains the old value")
     synchronized public String getOldValue() throws RemoteException {
         if(!oldValueLoaded) {
             // Only perform the query for action types that have old values
@@ -306,7 +306,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
      */
 
     /* TODO
-    @SchemaColumn(order=18, name="new_value", description="if changed, contains the new value")
+    @SchemaColumn(order=18, description="if changed, contains the new value")
     synchronized public String getNewValue() throws RemoteException {
         if(!newValueLoaded) {
             // Only perform the query for action types that have new values
@@ -326,7 +326,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
      */
 
-    @SchemaColumn(order=17, name="from_address", description="the from address of the email used to create the action")
+    @SchemaColumn(order=17, description="the from address of the email used to create the action")
     public Email getFromAddress() {
         return fromAddress;
     }
@@ -334,7 +334,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     /**
      * Gets the summary, may be generated for certain action types.
      */
-    @SchemaColumn(order=18, name="summary", description="a summary of the action")
+    @SchemaColumn(order=18, description="a summary of the action")
     public String getSummary() throws RemoteException {
         if(summary!=null) return summary;
         final String myOldValue;
@@ -385,7 +385,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
 
     /* TODO
-    @SchemaColumn(order=21, name="details", description="the details of the action")
+    @SchemaColumn(order=21, description="the details of the action")
     synchronized public String getDetails() throws RemoteException {
         if(!detailsLoaded) {
             // Only perform the query for action types that have details
@@ -401,7 +401,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
      */
 
     /* TODO
-    @SchemaColumn(order=22, name="raw_email", description="the raw email used to create the action")
+    @SchemaColumn(order=22, description="the raw email used to create the action")
     synchronized public String getRawEmail() throws RemoteException {
         if(!rawEmailLoaded) {
             // Only perform the query for action types that may have raw email

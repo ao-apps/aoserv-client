@@ -108,7 +108,7 @@ public class MySQLDBUser extends AOServObject {
         this.mysqlUser = mysqlUser;
     }
 
-    public boolean isSelectPriv() {
+    public boolean getSelectPriv() {
         return selectPriv;
     }
 
@@ -116,7 +116,7 @@ public class MySQLDBUser extends AOServObject {
         this.selectPriv = selectPriv;
     }
 
-    public boolean isInsertPriv() {
+    public boolean getInsertPriv() {
         return insertPriv;
     }
 
@@ -124,7 +124,7 @@ public class MySQLDBUser extends AOServObject {
         this.insertPriv = insertPriv;
     }
 
-    public boolean isUpdatePriv() {
+    public boolean getUpdatePriv() {
         return updatePriv;
     }
 
@@ -132,7 +132,7 @@ public class MySQLDBUser extends AOServObject {
         this.updatePriv = updatePriv;
     }
 
-    public boolean isDeletePriv() {
+    public boolean getDeletePriv() {
         return deletePriv;
     }
 
@@ -140,7 +140,7 @@ public class MySQLDBUser extends AOServObject {
         this.deletePriv = deletePriv;
     }
 
-    public boolean isCreatePriv() {
+    public boolean getCreatePriv() {
         return createPriv;
     }
 
@@ -148,7 +148,7 @@ public class MySQLDBUser extends AOServObject {
         this.createPriv = createPriv;
     }
 
-    public boolean isDropPriv() {
+    public boolean getDropPriv() {
         return dropPriv;
     }
 
@@ -156,7 +156,7 @@ public class MySQLDBUser extends AOServObject {
         this.dropPriv = dropPriv;
     }
 
-    public boolean isGrantPriv() {
+    public boolean getGrantPriv() {
         return grantPriv;
     }
 
@@ -164,7 +164,7 @@ public class MySQLDBUser extends AOServObject {
         this.grantPriv = grantPriv;
     }
 
-    public boolean isReferencesPriv() {
+    public boolean getReferencesPriv() {
         return referencesPriv;
     }
 
@@ -172,7 +172,7 @@ public class MySQLDBUser extends AOServObject {
         this.referencesPriv = referencesPriv;
     }
 
-    public boolean isIndexPriv() {
+    public boolean getIndexPriv() {
         return indexPriv;
     }
 
@@ -180,7 +180,7 @@ public class MySQLDBUser extends AOServObject {
         this.indexPriv = indexPriv;
     }
 
-    public boolean isAlterPriv() {
+    public boolean getAlterPriv() {
         return alterPriv;
     }
 
@@ -188,7 +188,7 @@ public class MySQLDBUser extends AOServObject {
         this.alterPriv = alterPriv;
     }
 
-    public boolean isCreateTmpTablePriv() {
+    public boolean getCreateTmpTablePriv() {
         return createTmpTablePriv;
     }
 
@@ -196,7 +196,7 @@ public class MySQLDBUser extends AOServObject {
         this.createTmpTablePriv = createTmpTablePriv;
     }
 
-    public boolean isLockTablesPriv() {
+    public boolean getLockTablesPriv() {
         return lockTablesPriv;
     }
 
@@ -204,7 +204,7 @@ public class MySQLDBUser extends AOServObject {
         this.lockTablesPriv = lockTablesPriv;
     }
 
-    public boolean isCreateViewPriv() {
+    public boolean getCreateViewPriv() {
         return createViewPriv;
     }
 
@@ -212,7 +212,7 @@ public class MySQLDBUser extends AOServObject {
         this.createViewPriv = createViewPriv;
     }
 
-    public boolean isShowViewPriv() {
+    public boolean getShowViewPriv() {
         return showViewPriv;
     }
 
@@ -220,7 +220,7 @@ public class MySQLDBUser extends AOServObject {
         this.showViewPriv = showViewPriv;
     }
 
-    public boolean isCreateRoutinePriv() {
+    public boolean getCreateRoutinePriv() {
         return createRoutinePriv;
     }
 
@@ -228,7 +228,7 @@ public class MySQLDBUser extends AOServObject {
         this.createRoutinePriv = createRoutinePriv;
     }
 
-    public boolean isAlterRoutinePriv() {
+    public boolean getAlterRoutinePriv() {
         return alterRoutinePriv;
     }
 
@@ -236,7 +236,7 @@ public class MySQLDBUser extends AOServObject {
         this.alterRoutinePriv = alterRoutinePriv;
     }
 
-    public boolean isExecutePriv() {
+    public boolean getExecutePriv() {
         return executePriv;
     }
 
@@ -244,7 +244,7 @@ public class MySQLDBUser extends AOServObject {
         this.executePriv = executePriv;
     }
 
-    public boolean isEventPriv() {
+    public boolean getEventPriv() {
         return eventPriv;
     }
 
@@ -252,7 +252,7 @@ public class MySQLDBUser extends AOServObject {
         this.eventPriv = eventPriv;
     }
 
-    public boolean isTriggerPriv() {
+    public boolean getTriggerPriv() {
         return triggerPriv;
     }
 

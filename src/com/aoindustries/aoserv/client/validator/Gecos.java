@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.Gecos>, Internable<Gecos> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -117164942375352467L;
 
     public static final int MAX_LENGTH = 100;
 
@@ -134,7 +134,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
 
     @Override
     public int compareTo(Gecos other) {
-        return this==other ? 0 : AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(value, other.value);
+        return this==other ? 0 : AOServObject.compareIgnoreCaseConsistentWithEquals(value, other.value);
     }
 
     @Override

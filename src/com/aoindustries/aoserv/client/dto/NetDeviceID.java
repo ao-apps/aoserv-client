@@ -11,14 +11,14 @@ package com.aoindustries.aoserv.client.dto;
 public class NetDeviceID extends AOServObject {
 
     private String name;
-    private boolean isLoopback;
+    private boolean loopback;
 
     public NetDeviceID() {
     }
 
-    public NetDeviceID(String name, boolean isLoopback) {
+    public NetDeviceID(String name, boolean loopback) {
         this.name = name;
-        this.isLoopback = isLoopback;
+        this.loopback = loopback;
     }
 
     public String getName() {
@@ -29,11 +29,11 @@ public class NetDeviceID extends AOServObject {
         this.name = name;
     }
 
-    public boolean isIsLoopback() {
-        return isLoopback;
+    public boolean isLoopback() {
+        return loopback;
     }
 
-    public void setIsLoopback(boolean isLoopback) {
-        this.isLoopback = isLoopback;
+    public void setLoopback(boolean loopback) {
+        this.loopback = loopback;
     }
 }

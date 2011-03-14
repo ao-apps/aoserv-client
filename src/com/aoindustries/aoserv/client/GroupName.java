@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 final public class GroupName extends AOServObjectGroupIdKey implements Comparable<GroupName>, DtoFactory<com.aoindustries.aoserv.client.dto.GroupName> {
 	
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -53,7 +53,7 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="group_name", index=IndexType.PRIMARY_KEY, description="the unique group name")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique group name")
     public GroupId getGroupName() {
         return getKey();
     }
@@ -61,16 +61,16 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
     /**
      * May be filtered.
      */
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(GroupName.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that this group is part of")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the business that this group is part of")
     public Business getBusiness() throws RemoteException {
     	return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
-    static final String COLUMN_DISABLE_LOG = "disable_log";
+    public static final MethodColumn COLUMN_DISABLE_LOG = getMethodColumn(GroupName.class, "disableLog");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates that the group name is disabled")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="indicates that the group name is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
         return getConnector().getDisableLogs().get(disableLog);

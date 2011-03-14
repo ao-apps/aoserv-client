@@ -93,7 +93,7 @@ final public class DescribeCommand extends AOServCommand<String> {
         for(int c=0;c<len;c++) {
             MethodColumn methodColumn = columns.get(c);
             SchemaColumn schemaColumn = methodColumn.getSchemaColumn();
-            values[pos++]=methodColumn.getColumnName();
+            values[pos++]=methodColumn.getName();
             values[pos++]=getReturnType(methodColumn.getMethod());
             values[pos++]=methodColumn.getIndexType();
             values[pos++]=schemaColumn.description();

@@ -25,7 +25,7 @@ import java.util.List;
 final public class LinuxAccount extends AOServerResource implements Comparable<LinuxAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * Some commonly used system and application account usernames.
@@ -150,16 +150,16 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_LINUX_ACCOUNT_TYPE = "linux_account_type";
+    public static final MethodColumn COLUMN_LINUX_ACCOUNT_TYPE = getMethodColumn(LinuxAccount.class, "linuxAccountType");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_LINUX_ACCOUNT_TYPE, index=IndexType.INDEXED, description="the type of account")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the type of account")
     public LinuxAccountType getLinuxAccountType() throws RemoteException {
         return getConnector().getLinuxAccountTypes().get(linuxAccountType);
     }
 
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_USERNAME = getMethodColumn(LinuxAccount.class, "username");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the username of the user")
     public Username getUsername() throws RemoteException {
         return getConnector().getUsernames().get(username);
     }
@@ -167,45 +167,45 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
         return username;
     }
 
-    static final String COLUMN_UID = "uid";
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_UID, index=IndexType.INDEXED, description="the uid of the user on the machine")
+    public static final MethodColumn COLUMN_UID = getMethodColumn(LinuxAccount.class, "uid");
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the uid of the user on the machine")
     public LinuxID getUid() {
         return uid;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="home", description="the home directory of the user on this machine")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, description="the home directory of the user on this machine")
     public UnixPath getHome() {
         return home;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="name", description="the full name of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="the full name of the user")
     public Gecos getName() {
         return name;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="office_location", description="the location of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="the location of the user")
     public Gecos getOfficeLocation() {
         return officeLocation;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="office_phone", description="the work phone number of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="the work phone number of the user")
     public Gecos getOfficePhone() {
         return officePhone;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, name="home_phone", description="the home phone number of the user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, description="the home phone number of the user")
     public Gecos getHomePhone() {
         return homePhone;
     }
 
-    static final String COLUMN_SHELL = "shell";
+    public static final MethodColumn COLUMN_SHELL = getMethodColumn(LinuxAccount.class, "shell");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+9, name=COLUMN_SHELL, index=IndexType.INDEXED, description="the users shell preference")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+9, index=IndexType.INDEXED, description="the users shell preference")
     public Shell getShell() throws RemoteException {
         return getConnector().getShells().get(shell);
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+10, name="predisable_password", description="stores the password that was used before the account was disabled")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+10, description="stores the password that was used before the account was disabled")
     public String getPredisablePassword() {
         return predisablePassword;
     }

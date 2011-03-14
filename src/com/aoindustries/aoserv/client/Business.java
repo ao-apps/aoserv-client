@@ -41,7 +41,7 @@ implements
     Group /* TODO: implements Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The maximum depth of the business tree.
@@ -176,87 +176,87 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_ACCOUNTING = "accounting";
-    @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
+    public static final MethodColumn COLUMN_ACCOUNTING = getMethodColumn(Business.class, "accounting");
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
     public AccountingCode getAccounting() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="contract_version", description="the version number of the contract")
+    @SchemaColumn(order=1, description="the version number of the contract")
     public String getContractVersion() {
     	return contractVersion;
     }
 
-    @SchemaColumn(order=2, name="created", description="the time the account was created")
+    @SchemaColumn(order=2, description="the time the account was created")
     public Timestamp getCreated() {
     	return new Timestamp(created);
     }
 
-    @SchemaColumn(order=3, name="canceled", description="the time the account was deactivated")
+    @SchemaColumn(order=3, description="the time the account was deactivated")
     public Timestamp getCanceled() {
     	return canceled==null ? null : new Timestamp(canceled);
     }
 
-    @SchemaColumn(order=4, name="cancel_reason", description="the reason the account was canceled")
+    @SchemaColumn(order=4, description="the reason the account was canceled")
     public String getCancelReason() {
         return cancelReason;
     }
 
-    static final String COLUMN_PARENT = "parent";
+    public static final MethodColumn COLUMN_PARENT_BUSINESS = getMethodColumn(Business.class, "parentBusiness");
     /**
      * Gets the parent of this business or <code>null</code> if filtered or is top-level business.
      */
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the parent business to this one")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the parent business to this one")
     public Business getParentBusiness() throws RemoteException {
         if(parent==null) return null;
         return getConnector().getBusinesses().filterUnique(COLUMN_ACCOUNTING, parent);
     }
 
-    @SchemaColumn(order=6, name="can_add_backup_server", description="the business may add servers to the backup system")
-    public boolean canAddBackupServer() {
+    @SchemaColumn(order=6, description="the business may add servers to the backup system")
+    public boolean getCanAddBackupServer() {
         return canAddBackupServer;
     }
 
-    @SchemaColumn(order=7, name="can_add_businesses", description="if <code>true</code> this business can create and be the parent of other businesses")
-    public boolean canAddBusinesses() {
+    @SchemaColumn(order=7, description="if <code>true</code> this business can create and be the parent of other businesses")
+    public boolean getCanAddBusinesses() {
     	return canAddBusinesses;
     }
 
-    @SchemaColumn(order=8, name="can_see_prices", description="control whether prices will be visible or filtered")
-    public boolean canSeePrices() {
+    @SchemaColumn(order=8, description="control whether prices will be visible or filtered")
+    public boolean getCanSeePrices() {
         return canSeePrices;
     }
 
-    static final String COLUMN_DISABLE_LOG = "disable_log";
+    public static final MethodColumn COLUMN_DISABLE_LOG = getMethodColumn(Business.class, "disableLog");
     // Caused cycle in dependency DAG: @DependencySingleton
-    @SchemaColumn(order=9, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the business is disabled")
+    @SchemaColumn(order=9, index=IndexType.INDEXED, description="indicates the business is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
         return getConnector().getDisableLogs().get(disableLog);
     }
 
-    @SchemaColumn(order=10, name="do_not_disable_reason", description="a reason why we should not disable the account")
+    @SchemaColumn(order=10, description="a reason why we should not disable the account")
     public String getDoNotDisableReason() {
         return doNotDisableReason;
     }
 
-    @SchemaColumn(order=11, name="auto_enable", description="allows the account to be automatically reenabled on payment")
-    public boolean getAutoEnable() {
+    @SchemaColumn(order=11, description="allows the account to be automatically reenabled on payment")
+    public boolean isAutoEnable() {
         return autoEnable;
     }
 
-    @SchemaColumn(order=12, name="bill_parent", description="if <code>true</code>, the parent business will be charged for all resources used by this account")
-    public boolean billParent() {
+    @SchemaColumn(order=12, description="if <code>true</code>, the parent business will be charged for all resources used by this account")
+    public boolean getBillParent() {
         return billParent;
     }
 
     /**
      * May be filtered.
      */
-    static final String COLUMN_PACKAGE_DEFINITION = "package_definition";
+    public static final MethodColumn COLUMN_PACKAGE_DEFINITION = getMethodColumn(Business.class, "packageDefinition");
     @DependencySingleton
-    @SchemaColumn(order=13, name=COLUMN_PACKAGE_DEFINITION, index=IndexType.INDEXED, description="the definition of the package")
+    @SchemaColumn(order=13, index=IndexType.INDEXED, description="the definition of the package")
     public PackageDefinition getPackageDefinition() throws RemoteException {
         return getConnector().getPackageDefinitions().filterUnique(PackageDefinition.COLUMN_PKEY, packageDefinition);
     }
@@ -264,9 +264,9 @@ implements
     /**
      * May be filtered.  May also be null for the root business only.
      */
-    static final String COLUMN_CREATED_BY = "created_by";
+    public static final MethodColumn COLUMN_CREATED_BY = getMethodColumn(Business.class, "createdBy");
     @DependencySingleton
-    @SchemaColumn(order=14, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the user who added this business")
+    @SchemaColumn(order=14, index=IndexType.INDEXED, description="the user who added this business")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
         try {
@@ -281,7 +281,7 @@ implements
      * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=15, name="email_in_burst", description="the maximum burst of inbound email before limiting begins")
+    @SchemaColumn(order=15, description="the maximum burst of inbound email before limiting begins")
     public Integer getEmailInBurst() {
         return emailInBurst;
     }
@@ -290,7 +290,7 @@ implements
      * Gets the inbound sustained email rate in emails/second.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=16, name="email_in_rate", description="the number of sustained inbound emails per second")
+    @SchemaColumn(order=16, description="the number of sustained inbound emails per second")
     public Float getEmailInRate() {
         return emailInRate;
     }
@@ -299,7 +299,7 @@ implements
      * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=17, name="email_out_burst", description="the maximum burst of outbound email before limiting begins")
+    @SchemaColumn(order=17, description="the maximum burst of outbound email before limiting begins")
     public Integer getEmailOutBurst() {
         return emailOutBurst;
     }
@@ -308,7 +308,7 @@ implements
      * Gets the outbound sustained email rate in emails/second.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=18, name="email_out_rate", description="the number of sustained outbound emails per second")
+    @SchemaColumn(order=18, description="the number of sustained outbound emails per second")
     public Float getEmailOutRate() {
         return emailOutRate;
     }
@@ -317,7 +317,7 @@ implements
      * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=19, name="email_relay_burst", description="the maximum burst of relay email before limiting begins")
+    @SchemaColumn(order=19, description="the maximum burst of relay email before limiting begins")
     public Integer getEmailRelayBurst() {
         return emailRelayBurst;
     }
@@ -326,7 +326,7 @@ implements
      * Gets the relay sustained email rate in emails/second.
      * A value of <code>null</code> indicates unlimited.
      */
-    @SchemaColumn(order=20, name="email_relay_rate", description="the number of sustained relay emails per second")
+    @SchemaColumn(order=20, description="the number of sustained relay emails per second")
     public Float getEmailRelayRate() {
         return emailRelayRate;
     }
@@ -372,102 +372,97 @@ implements
      */
     @DependentObjectSet
     public IndexedSet<AOServRole> getAoservRoles() throws RemoteException {
-        return getConnector().getAoservRoles().filterIndexed(AOServRole.COLUMN_ACCOUNTING, this);
+        return getConnector().getAoservRoles().filterIndexed(AOServRole.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSingleton
     public Brand getBrand() throws RemoteException {
-        return getConnector().getBrands().filterUnique(Brand.COLUMN_ACCOUNTING, this);
+        return getConnector().getBrands().filterUnique(Brand.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<Business> getChildBusinesses() throws RemoteException {
-        return getConnector().getBusinesses().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getBusinesses().filterIndexed(COLUMN_PARENT_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
-        return getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_ACCOUNTING, this);
+        return getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
-        return getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_ACCOUNTING, this);
+        return getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<GroupName> getGroupNames() throws RemoteException {
-        return getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_ACCOUNTING, this);
+        return getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<Resource> getResources() throws RemoteException {
-        return getConnector().getResources().filterIndexed(Resource.COLUMN_ACCOUNTING, this);
+        return getConnector().getResources().filterIndexed(Resource.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<PackageDefinitionBusiness> getPackageDefinitionBusinesses() throws RemoteException {
-        return getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_ACCOUNTING, this);
+        return getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<Server> getServers() throws RemoteException {
-        return getConnector().getServers().filterIndexed(Server.COLUMN_ACCOUNTING, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<ServerFarm> getServerFarms() throws RemoteException {
-        return getConnector().getServerFarms().filterIndexed(ServerFarm.COLUMN_OWNER, this);
+        return getConnector().getServers().filterIndexed(Server.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<Username> getUsernames() throws RemoteException {
-        return getConnector().getUsernames().filterIndexed(Username.COLUMN_ACCOUNTING, this);
+        return getConnector().getUsernames().filterIndexed(Username.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<CreditCardProcessor> getCreditCardProcessors() throws RemoteException {
-    	return getConnector().getCreditCardProcessors().filterIndexed(CreditCardProcessor.COLUMN_ACCOUNTING, this);
+    	return getConnector().getCreditCardProcessors().filterIndexed(CreditCardProcessor.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-    	return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_ACCOUNTING, this);
+    	return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
-    	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_ACCOUNTING, this);
+    	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws RemoteException {
-    	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_ACCOUNTING, this);
+    	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByOldBusiness() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ACCOUNTING, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<TicketAction> getTicketActionsByNewBusiness() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ACCOUNTING, this);
+        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_ACCOUNTING, this);
+        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_ACCOUNTING, this);
+        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_BUSINESS, this);
     }
 
     @DependentObjectSet
     public IndexedSet<Transaction> getTransactionsBySourceAccounting() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_SOURCE_ACCOUNTING, this);
+        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_SOURCE_BUSINESS, this);
     }
 
     /**
@@ -488,7 +483,7 @@ implements
      */
     @DependentObjectSet
     public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
-        return getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_ACCOUNTING, this);
+        return getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_BUSINESS, this);
     }
 
     /**

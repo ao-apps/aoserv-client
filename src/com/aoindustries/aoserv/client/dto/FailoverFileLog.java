@@ -19,7 +19,7 @@ public class FailoverFileLog extends AOServObject {
     private int scanned;
     private int updated;
     private long bytes;
-    private boolean isSuccessful;
+    private boolean successful;
 
     public FailoverFileLog() {
     }
@@ -32,7 +32,7 @@ public class FailoverFileLog extends AOServObject {
         int scanned,
         int updated,
         long bytes,
-        boolean isSuccessful
+        boolean successful
     ) {
         this.pkey = pkey;
         this.replication = replication;
@@ -41,7 +41,7 @@ public class FailoverFileLog extends AOServObject {
         this.scanned = scanned;
         this.updated = updated;
         this.bytes = bytes;
-        this.isSuccessful = isSuccessful;
+        this.successful = successful;
     }
 
     public int getPkey() {
@@ -100,11 +100,11 @@ public class FailoverFileLog extends AOServObject {
         this.bytes = bytes;
     }
 
-    public boolean isIsSuccessful() {
-        return isSuccessful;
+    public boolean isSuccessful() {
+        return successful;
     }
 
-    public void setIsSuccessful(boolean isSuccessful) {
-        this.isSuccessful = isSuccessful;
+    public void setSuccessful(boolean successful) {
+        this.successful = successful;
     }
 }

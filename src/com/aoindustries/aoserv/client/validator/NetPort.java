@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  */
 final public class NetPort implements Comparable<NetPort>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.NetPort> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -29372775620060200L;
 
     public static void validate(int port) throws ValidationException {
         if(port<1) throw new ValidationException(ApplicationResources.accessor, "NetPort.validate.lessThanOne", port);
@@ -97,7 +97,7 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
 
     @Override
     public int compareTo(NetPort other) {
-        return this==other ? 0 : AOServObjectUtils.compare(port, other.port);
+        return this==other ? 0 : AOServObject.compare(port, other.port);
     }
 
     @Override

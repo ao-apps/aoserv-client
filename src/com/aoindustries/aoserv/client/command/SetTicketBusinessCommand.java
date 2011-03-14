@@ -17,7 +17,7 @@ import java.util.Map;
  */
 final public class SetTicketBusinessCommand extends RemoteCommand<Boolean> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     final private int ticketId;
     final private AccountingCode oldAccounting;

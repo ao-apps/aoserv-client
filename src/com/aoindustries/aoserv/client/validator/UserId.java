@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class UserId implements Comparable<UserId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.UserId>, Internable<UserId> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final int MAX_LENGTH=255;
 

@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 final public class DisableLog extends AOServObjectIntegerKey implements Comparable<DisableLog>, DtoFactory<com.aoindustries.aoserv.client.dto.DisableLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -61,11 +61,11 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     @Override
     public int compareTo(DisableLog other) {
         try {
-            int diff = AOServObjectUtils.compare(time, other.time);
+            int diff = compare(time, other.time);
             if(diff!=0) return diff;
             diff = accounting==other.accounting ? 0 : getBusiness().compareTo(other.getBusiness()); // OK - interned
             if(diff!=0) return diff;
-            return AOServObjectUtils.compare(key, other.key);
+            return compare(key, other.key);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -73,19 +73,19 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
         return key;
     }
 
-    @SchemaColumn(order=1, name="time", description="the time the stuff was disabled")
+    @SchemaColumn(order=1, description="the time the stuff was disabled")
     public Timestamp getTime() {
         return new Timestamp(time);
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(DisableLog.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business whos resources are being disabled")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the business whos resources are being disabled")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
     }
@@ -93,9 +93,9 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     /**
      * May be filtered.
      */
-    static final String COLUMN_DISABLED_BY = "disabled_by";
+    public static final MethodColumn COLUMN_DISABLED_BY = getMethodColumn(DisableLog.class, "disabledBy");
     @DependencySingleton
-    @SchemaColumn(order=3, name=COLUMN_DISABLED_BY, index=IndexType.INDEXED, description="the person who disabled the accounts")
+    @SchemaColumn(order=3, index=IndexType.INDEXED, description="the person who disabled the accounts")
     public BusinessAdministrator getDisabledBy() throws RemoteException {
         try {
             return getConnector().getBusinessAdministrators().get(disabledBy);
@@ -105,7 +105,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
         }
     }
 
-    @SchemaColumn(order=4, name="disable_reason", description="the optional reason the accounts were disabled")
+    @SchemaColumn(order=4, description="the optional reason the accounts were disabled")
     public String getDisableReason() {
         return disableReason;
     }

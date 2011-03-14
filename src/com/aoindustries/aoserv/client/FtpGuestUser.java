@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 final public class FtpGuestUser extends AOServObjectIntegerKey implements Comparable<FtpGuestUser>, DtoFactory<com.aoindustries.aoserv.client.dto.FtpGuestUser> /*, TODO: Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -43,9 +43,9 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_LINUX_ACCOUNT = "linux_account";
+    public static final MethodColumn COLUMN_LINUX_ACCOUNT = getMethodColumn(FtpGuestUser.class, "linuxAccount");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_LINUX_ACCOUNT, index=IndexType.PRIMARY_KEY, description="the resource id of the Linux account")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the resource id of the Linux account")
     public LinuxAccount getLinuxAccount() throws RemoteException {
         return getConnector().getLinuxAccounts().get(key);
     }

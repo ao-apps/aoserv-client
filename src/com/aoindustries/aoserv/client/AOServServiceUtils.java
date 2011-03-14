@@ -83,8 +83,8 @@ final public class AOServServiceUtils {
 
         public AnnotationTable(AOServService<K,V> service, Class<V> valueClass) {
             this.service = service;
-            columns = AOServObjectUtils.getMethodColumns(valueClass);
-            columnMap = AOServObjectUtils.getMethodColumnMap(valueClass);
+            columns = AOServObject.getMethodColumns(valueClass);
+            columnMap = AOServObject.getMethodColumnMap(valueClass);
         }
 
         @Override

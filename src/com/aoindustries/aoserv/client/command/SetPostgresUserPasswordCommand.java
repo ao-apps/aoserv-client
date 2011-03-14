@@ -18,7 +18,7 @@ import java.util.Map;
  */
 final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String PARAM_POSTGRES_USER = "postgresUser";
     public static final String PARAM_PLAINTEXT = "plaintext";

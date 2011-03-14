@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 final public class Ticket extends AOServObjectIntegerKey implements Comparable<Ticket>, DtoFactory<com.aoindustries.aoserv.client.dto.Ticket> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -115,21 +115,21 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(Ticket other) {
-        int diff = AOServObjectUtils.compare(other.openDate, openDate); // Descending
+        int diff = compare(other.openDate, openDate); // Descending
         if(diff!=0) return diff;
-        return AOServObjectUtils.compare(other.key, key); // Descending
+        return compare(other.key, key); // Descending
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="ticket_id", index=IndexType.PRIMARY_KEY, description="a generated unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getTicketId() {
         return key;
     }
 
-    static final String COLUMN_BRAND = "brand";
+    public static final MethodColumn COLUMN_BRAND = getMethodColumn(Ticket.class, "brand");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_BRAND, index=IndexType.INDEXED, description="the brand that created the ticket")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the brand that created the ticket")
     public Brand getBrand() throws RemoteException {
         return getConnector().getBrands().get(brand);
     }
@@ -137,9 +137,9 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     /**
      * May be filtered.
      */
-    static final String COLUMN_RESELLER = "reseller";
+    public static final MethodColumn COLUMN_RESELLER = getMethodColumn(Ticket.class, "reseller");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_RESELLER, index=IndexType.INDEXED, description="the reseller that received the ticket")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the reseller that received the ticket")
     public Reseller getReseller() throws RemoteException {
         if(reseller==null) return null;
         try {
@@ -149,55 +149,55 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
         }
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(Ticket.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=3, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business the ticket is for (optional)")
+    @SchemaColumn(order=3, index=IndexType.INDEXED, description="the business the ticket is for (optional)")
     public Business getBusiness() throws RemoteException {
         if(accounting==null) return null;
         return getConnector().getBusinesses().get(accounting);
     }
 
-    static final String COLUMN_LANGUAGE = "language";
+    public static final MethodColumn COLUMN_LANGUAGE = getMethodColumn(Ticket.class, "language");
     @DependencySingleton
-    @SchemaColumn(order=4, name=COLUMN_LANGUAGE, index=IndexType.INDEXED, description="the language of the ticket")
+    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the language of the ticket")
     public Language getLanguage() throws RemoteException {
         return getConnector().getLanguages().get(language);
     }
 
-    static final String COLUMN_CREATED_BY = "created_by";
+    public static final MethodColumn COLUMN_CREATED_BY = getMethodColumn(Ticket.class, "createdBy");
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the person who created the ticket")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the person who created the ticket")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         if(createdBy==null) return null;
         return getConnector().getBusinessAdministrators().get(createdBy);
     }
 
-    static final String COLUMN_CATEGORY = "category";
+    public static final MethodColumn COLUMN_CATEGORY = getMethodColumn(Ticket.class, "category");
     @DependencySingleton
-    @SchemaColumn(order=6, name=COLUMN_CATEGORY, index=IndexType.INDEXED, description="the category of the ticket")
+    @SchemaColumn(order=6, index=IndexType.INDEXED, description="the category of the ticket")
     public TicketCategory getCategory() throws RemoteException {
         if(category==null) return null;
         return getConnector().getTicketCategories().get(category);
     }
 
-    static final String COLUMN_TICKET_TYPE = "ticket_type";
+    public static final MethodColumn COLUMN_TICKET_TYPE = getMethodColumn(Ticket.class, "ticketType");
     @DependencySingleton
-    @SchemaColumn(order=7, name=COLUMN_TICKET_TYPE, index=IndexType.INDEXED, description="the type of the ticket")
+    @SchemaColumn(order=7, index=IndexType.INDEXED, description="the type of the ticket")
     public TicketType getTicketType() throws RemoteException {
         return getConnector().getTicketTypes().get(ticketType);
     }
 
-    @SchemaColumn(order=8, name="from_address", description="the from address of the ticket")
+    @SchemaColumn(order=8, description="the from address of the ticket")
     public Email getFromAddress() {
         return fromAddress;
     }
 
-    @SchemaColumn(order=9, name="summary", description="a brief, one-line summary of the ticket")
+    @SchemaColumn(order=9, description="a brief, one-line summary of the ticket")
     public String getSummary() {
         return summary;
     }
 
-    @SchemaColumn(order=10, name="details", description="the details of the ticket")
+    @SchemaColumn(order=10, description="the details of the ticket")
     synchronized public String getDetails() throws RemoteException {
         if(!detailsLoaded) {
             details = new GetTicketDetailsCommand(this).execute(getConnector());
@@ -207,7 +207,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     }
 
     /* TODO
-    @SchemaColumn(order=11, name="raw_email", description="the raw email content of the original ticket requeset")
+    @SchemaColumn(order=11, description="the raw email content of the original ticket requeset")
     synchronized public String getRawEmail() throws IOException, SQLException {
         if(!rawEmailLoaded) {
             rawEmail = getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_RAW_EMAIL, key);
@@ -216,50 +216,50 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
         return rawEmail;
     }*/
 
-    @SchemaColumn(order=11, name="open_date", description="the time the ticket was opened")
+    @SchemaColumn(order=11, description="the time the ticket was opened")
     public Timestamp getOpenDate() {
         return new Timestamp(openDate);
     }
 
-    static final String COLUMN_CLIENT_PRIORITY = "client_priority";
+    public static final MethodColumn COLUMN_CLIENT_PRIORITY = getMethodColumn(Ticket.class, "clientPriority");
     @DependencySingleton
-    @SchemaColumn(order=12, name=COLUMN_CLIENT_PRIORITY, index=IndexType.INDEXED, description="the priority assigned by the client")
+    @SchemaColumn(order=12, index=IndexType.INDEXED, description="the priority assigned by the client")
     public TicketPriority getClientPriority() throws RemoteException {
         return getConnector().getTicketPriorities().get(clientPriority);
     }
 
-    static final String COLUMN_ADMIN_PRIORITY = "admin_priority";
+    public static final MethodColumn COLUMN_ADMIN_PRIORITY = getMethodColumn(Ticket.class, "adminPriority");
     @DependencySingleton
-    @SchemaColumn(order=13, name=COLUMN_ADMIN_PRIORITY, index=IndexType.INDEXED, description="the priority assigned by the administrator")
+    @SchemaColumn(order=13, index=IndexType.INDEXED, description="the priority assigned by the administrator")
     public TicketPriority getAdminPriority() throws RemoteException {
         if(adminPriority==null) return null;
         return getConnector().getTicketPriorities().get(adminPriority);
     }
 
-    static final String COLUMN_STATUS = "status";
+    public static final MethodColumn COLUMN_STATUS = getMethodColumn(Ticket.class, "status");
     @DependencySingleton
-    @SchemaColumn(order=14, name=COLUMN_STATUS, index=IndexType.INDEXED, description="the status of the ticket")
+    @SchemaColumn(order=14, index=IndexType.INDEXED, description="the status of the ticket")
     public TicketStatus getStatus() throws RemoteException {
         return getConnector().getTicketStatuses().get(status);
     }
 
-    @SchemaColumn(order=15, name="status_timeout", description="the time the ticket status will automatically return to \"opened\"")
+    @SchemaColumn(order=15, description="the time the ticket status will automatically return to \"opened\"")
     public Timestamp getStatusTimeout() {
         return statusTimeout==null ? null : new Timestamp(statusTimeout);
     }
 
-    @SchemaColumn(order=16, name="contact_emails", description="the set of email addresses that will be notified for the ticket")
+    @SchemaColumn(order=16, description="the set of email addresses that will be notified for the ticket")
     public String getContactEmails() {
         return contactEmails;
     }
 
-    @SchemaColumn(order=17, name="contact_phone_numbers", description="the set of phone numbers that may be used in handling the ticket request")
+    @SchemaColumn(order=17, description="the set of phone numbers that may be used in handling the ticket request")
     public String getContactPhoneNumbers() {
         return contactPhoneNumbers;
     }
 
     /* TODO
-    @SchemaColumn(order=19, name="internal_notes", description="the internal notes used while handling the ticket")
+    @SchemaColumn(order=19, description="the internal notes used while handling the ticket")
     synchronized public String getInternalNotes() throws IOException, SQLException {
         if(!internalNotesLoaded) {
             internalNotes = getConnector().requestLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, key);

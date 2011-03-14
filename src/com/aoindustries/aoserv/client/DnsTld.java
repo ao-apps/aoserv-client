@@ -26,7 +26,7 @@ import com.aoindustries.table.IndexType;
 final public class DnsTld extends AOServObjectDomainNameKey implements Comparable<DnsTld>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsTld> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -43,7 +43,7 @@ final public class DnsTld extends AOServObjectDomainNameKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="domain", index=IndexType.PRIMARY_KEY, description="the unique top-level domain")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique top-level domain")
     public DomainName getDomain() {
         return getKey();
     }

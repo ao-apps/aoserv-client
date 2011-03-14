@@ -26,8 +26,6 @@ import java.util.List;
 final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsZone> /*, TODO: Removable, Dumpable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     public static final int DEFAULT_TTL = 43200;
 
     /**
@@ -42,6 +40,8 @@ final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoF
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    // TODO: private static final long serialVersionUID = 1L;
+
     private DomainName zone;
     private String file;
     private DomainName hostmaster;
@@ -92,27 +92,27 @@ final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoF
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, name="zone", index=IndexType.UNIQUE, description="the zone (domain) that is hosted")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, index=IndexType.UNIQUE, description="the zone (domain) that is hosted")
     public DomainName getZone() {
         return zone;
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, name="file", index=IndexType.UNIQUE, description="the filename of the zone file")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, index=IndexType.UNIQUE, description="the filename of the zone file")
     public String getFile() {
         return file;
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, name="hostmaster", description="the email address of the person in charge of the domain")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, description="the email address of the person in charge of the domain")
     public DomainName getHostmaster() {
         return hostmaster;
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+4, name="serial", description="the ever-incrementing serial number for the file")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+4, description="the ever-incrementing serial number for the file")
     public long getSerial() {
         return serial;
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+5, name="ttl", description="the number of seconds before distributed caches are refreshed")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+5, description="the number of seconds before distributed caches are refreshed")
     public int getTtl() {
         return ttl;
     }

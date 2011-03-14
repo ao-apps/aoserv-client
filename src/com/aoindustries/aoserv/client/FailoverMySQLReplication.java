@@ -16,11 +16,9 @@ import java.rmi.RemoteException;
  */
 final public class FailoverMySQLReplication extends AOServObjectIntegerKey implements Comparable<FailoverMySQLReplication>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverMySQLReplication> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 6717356004076691856L;
+
     final private Integer aoServer;
     final private Integer replication;
     final private int mysqlServer;
@@ -55,11 +53,11 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     @Override
     public int compareTo(FailoverMySQLReplication other) {
         try {
-            int diff = mysqlServer==other.mysqlServer ? 0 : getMySQLServer().compareTo(other.getMySQLServer());
+            int diff = mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareTo(other.getMysqlServer());
             if(diff!=0) return diff;
-            diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
+            diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
             if(diff!=0) return diff;
-            return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+            return replication==other.replication ? 0 : getReplication().compareTo(other.getReplication());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -67,50 +65,50 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_AO_SERVER = "ao_server";
+    public static final MethodColumn COLUMN_AO_SERVER = getMethodColumn(FailoverMySQLReplication.class, "aoServer");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the ao_server that receives the replication")
-    public AOServer getAOServer() throws RemoteException {
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the ao_server that receives the replication")
+    public AOServer getAoServer() throws RemoteException {
         if(aoServer==null) return null;
         return getConnector().getAoServers().get(aoServer);
     }
 
-    static final String COLUMN_REPLICATION = "replication";
+    public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FailoverMySQLReplication.class, "replication");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the failover server that receives the replication")
-    public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the failover server that receives the replication")
+    public FailoverFileReplication getReplication() throws RemoteException {
         if(replication==null) return null;
         return getConnector().getFailoverFileReplications().get(replication);
     }
 
-    static final String COLUMN_MYSQL_SERVER = "mysql_server";
+    public static final MethodColumn COLUMN_MYSQL_SERVER = getMethodColumn(FailoverMySQLReplication.class, "mysqlServer");
     @DependencySingleton
-    @SchemaColumn(order=3, name=COLUMN_MYSQL_SERVER, index=IndexType.INDEXED, description="the MySQL Server that is being replicated")
-    public MySQLServer getMySQLServer() throws RemoteException {
+    @SchemaColumn(order=3, index=IndexType.INDEXED, description="the MySQL Server that is being replicated")
+    public MySQLServer getMysqlServer() throws RemoteException {
         return getConnector().getMysqlServers().get(mysqlServer);
     }
 
-    @SchemaColumn(order=4, name="monitoring_seconds_behind_low", description="the seconds behind where will trigger low alert level")
+    @SchemaColumn(order=4, description="the seconds behind where will trigger low alert level")
     public Integer getMonitoringSecondsBehindLow() {
         return monitoringSecondsBehindLow;
     }
 
-    @SchemaColumn(order=5, name="monitoring_seconds_behind_medium", description="the seconds behind where will trigger medium alert level")
+    @SchemaColumn(order=5, description="the seconds behind where will trigger medium alert level")
     public Integer getMonitoringSecondsBehindMedium() {
         return monitoringSecondsBehindMedium;
     }
 
-    @SchemaColumn(order=6, name="monitoring_seconds_behind_high", description="the seconds behind where will trigger high alert level")
+    @SchemaColumn(order=6, description="the seconds behind where will trigger high alert level")
     public Integer getMonitoringSecondsBehindHigh() {
         return monitoringSecondsBehindHigh;
     }
 
-    @SchemaColumn(order=7, name="monitoring_seconds_behind_critical", description="the seconds behind where will trigger critical alert level")
+    @SchemaColumn(order=7, description="the seconds behind where will trigger critical alert level")
     public Integer getMonitoringSecondsBehindCritical() {
         return monitoringSecondsBehindCritical;
     }
@@ -140,8 +138,8 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        if(aoServer!=null) return getMySQLServer().toStringImpl()+"->"+getAOServer().toStringImpl();
-        else return getMySQLServer().toStringImpl()+"->"+getFailoverFileReplication().toStringImpl();
+        if(aoServer!=null) return getMysqlServer().toStringImpl()+"->"+getAoServer().toStringImpl();
+        else return getMysqlServer().toStringImpl()+"->"+getReplication().toStringImpl();
     }
     // </editor-fold>
 }

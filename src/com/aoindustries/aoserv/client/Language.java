@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
 final public class Language extends AOServObjectStringKey implements Comparable<Language>, DtoFactory<com.aoindustries.aoserv.client.dto.Language> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         EN="en",
@@ -31,12 +31,12 @@ final public class Language extends AOServObjectStringKey implements Comparable<
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(Language other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="code", index=IndexType.PRIMARY_KEY, description="the language code")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the language code")
     public String getCode() {
         return getKey();
     }

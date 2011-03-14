@@ -26,7 +26,7 @@ import java.rmi.RemoteException;
 final public class MasterServer extends AOServObjectIntegerKey implements Comparable<MasterServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -69,21 +69,21 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_MASTER_USER = getMethodColumn(MasterServer.class, "masterUser");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the unique username of the user")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the unique username of the user")
     public MasterUser getMasterUser() throws RemoteException {
         return getConnector().getMasterUsers().get(username);
     }
 
-    static final String COLUMN_SERVER = "server";
+    public static final MethodColumn COLUMN_SERVER = getMethodColumn(MasterServer.class, "server");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server they may control")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the pkey of the server they may control")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(server);
     }

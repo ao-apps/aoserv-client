@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class Email implements Comparable<Email>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.Email>, Internable<Email> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1812494521843295031L;
 
     public static final int MAX_LENGTH = 254;
 
@@ -190,7 +190,7 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
         if(this==other) return 0;
         int diff = domain.compareTo(other.domain);
         if(diff!=0) return diff;
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(localPart, other.localPart);
+        return AOServObject.compareIgnoreCaseConsistentWithEquals(localPart, other.localPart);
     }
 
     @Override

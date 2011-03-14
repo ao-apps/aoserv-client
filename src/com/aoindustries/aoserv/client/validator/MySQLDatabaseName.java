@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabaseName>, Internable<MySQLDatabaseName> {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The longest name allowed for a MySQL database.

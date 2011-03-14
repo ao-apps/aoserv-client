@@ -8,20 +8,30 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class ServerFarm extends AOServObject {
+public class ServerFarm extends Resource {
 
     private DomainLabel name;
     private String description;
-    private AccountingCode owner;
     private boolean useRestrictedSmtpPort;
 
     public ServerFarm() {
     }
 
-    public ServerFarm(DomainLabel name, String description, AccountingCode owner, boolean useRestrictedSmtpPort) {
+    public ServerFarm(
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        DomainLabel name,
+        String description,
+        boolean useRestrictedSmtpPort
+    ) {
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
         this.name = name;
         this.description = description;
-        this.owner = owner;
         this.useRestrictedSmtpPort = useRestrictedSmtpPort;
     }
 
@@ -39,14 +49,6 @@ public class ServerFarm extends AOServObject {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public AccountingCode getOwner() {
-        return owner;
-    }
-
-    public void setOwner(AccountingCode owner) {
-        this.owner = owner;
     }
 
     public boolean isUseRestrictedSmtpPort() {

@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 final public class PostgresEncoding extends AOServObjectIntegerKey implements Comparable<PostgresEncoding>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresEncoding> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The supported encodings.
@@ -94,7 +94,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     @Override
     public int compareTo(PostgresEncoding other) {
         try {
-            int diff = AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(encoding, other.encoding);
+            int diff = compareIgnoreCaseConsistentWithEquals(encoding, other.encoding);
             if(diff!=0) return diff;
             return postgresVersion==other.postgresVersion ? 0 : getPostgresVersion().compareTo(other.getPostgresVersion());
         } catch(RemoteException err) {
@@ -104,19 +104,19 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated unique key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique key")
     public int getPkey() {
         return key;
     }
 
-    @SchemaColumn(order=1, name="encoding", description="the name of the encoding")
+    @SchemaColumn(order=1, description="the name of the encoding")
     public String getEncoding() {
         return encoding;
     }
 
-    static final String COLUMN_POSTGRES_VERSION = "postgres_version";
+    public static final MethodColumn COLUMN_POSTGRES_VERSION = getMethodColumn(PostgresEncoding.class, "postgresVersion");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_POSTGRES_VERSION, index=IndexType.INDEXED, description="the version of PostgreSQL")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the version of PostgreSQL")
     public PostgresVersion getPostgresVersion() throws RemoteException {
         return getConnector().getPostgresVersions().get(postgresVersion);
     }

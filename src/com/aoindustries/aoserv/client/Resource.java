@@ -24,11 +24,9 @@ import java.util.NoSuchElementException;
  */
 public abstract class Resource extends AOServObjectIntegerKey {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    // TODO: private static final long serialVersionUID = 1L;
+
     private String resourceType;
     private AccountingCode accounting;
     final protected long created;
@@ -89,7 +87,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
                 if(diff!=0) return diff;
                 diff = o1.resourceType==o2.resourceType ? 0 : o1.getResourceType().compareTo(o2.getResourceType()); // OK - interned
                 if(diff!=0) return diff;
-                return AOServObjectUtils.compare(o1.key, o2.key);
+                return AOServObject.compare(o1.key, o2.key);
             } catch(RemoteException err) {
                 throw new WrappedException(err);
             }
@@ -98,15 +96,15 @@ public abstract class Resource extends AOServObjectIntegerKey {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_PKEY = "pkey";
-    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="a generated unique pkey")
+    public static final MethodColumn COLUMN_PKEY = getMethodColumn(Resource.class, "pkey");
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique pkey")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_RESOURCE_TYPE = "resource_type";
+    public static final MethodColumn COLUMN_RESOURCE_TYPE = getMethodColumn(Resource.class, "resourceType");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_RESOURCE_TYPE, index=IndexType.INDEXED, description="the type of resource")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the type of resource")
     public ResourceType getResourceType() throws RemoteException {
         return getConnector().getResourceTypes().get(resourceType);
     }
@@ -115,9 +113,9 @@ public abstract class Resource extends AOServObjectIntegerKey {
      * Gets the business that is responsible for any charges caused by this resource.
      * This may be filtered.
      */
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(Resource.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business that owns this resource")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the business that owns this resource")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
@@ -125,7 +123,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
     /**
      * Gets the time this was initially created.
      */
-    @SchemaColumn(order=3, name="created", description="the time the resources was created")
+    @SchemaColumn(order=3, description="the time the resources was created")
     public Timestamp getCreated() {
     	return new Timestamp(created);
     }
@@ -133,9 +131,9 @@ public abstract class Resource extends AOServObjectIntegerKey {
     /**
      * May be filtered.
      */
-    static final String COLUMN_CREATED_BY = "created_by";
+    public static final MethodColumn COLUMN_CREATED_BY = getMethodColumn(Resource.class, "createdBy");
     @DependencySingleton
-    @SchemaColumn(order=4, name=COLUMN_CREATED_BY, index=IndexType.INDEXED, description="the administrator who created the resource")
+    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the administrator who created the resource")
     public BusinessAdministrator getCreatedBy() throws RemoteException {
         try {
             return getConnector().getBusinessAdministrators().get(createdBy);
@@ -145,9 +143,9 @@ public abstract class Resource extends AOServObjectIntegerKey {
         }
     }
 
-    static final String COLUMN_DISABLE_LOG = "disable_log";
+    public static final MethodColumn COLUMN_DISABLE_LOG = getMethodColumn(Resource.class, "disableLog");
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_DISABLE_LOG, index=IndexType.INDEXED, description="indicates the resource is disabled")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="indicates the resource is disabled")
     public DisableLog getDisableLog() throws RemoteException {
         if(disableLog==null) return null;
         return getConnector().getDisableLogs().get(disableLog);
@@ -160,11 +158,11 @@ public abstract class Resource extends AOServObjectIntegerKey {
      * Gets the time this resource was last enabled.  Initially this will be the
      * same as the created time.  This is used to pro-rate billing.
      */
-    @SchemaColumn(order=6, name="last_enabled", description="the time the resources was last enabled or the creation time if never disabled")
+    @SchemaColumn(order=6, description="the time the resources was last enabled or the creation time if never disabled")
     public Timestamp getLastEnabled() {
         return new Timestamp(lastEnabled);
     }
-    static final int RESOURCE_LAST_COLUMN = 6;
+    protected static final int RESOURCE_LAST_COLUMN = 6;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Dependencies">

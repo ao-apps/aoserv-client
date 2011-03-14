@@ -24,8 +24,6 @@ import java.rmi.RemoteException;
 final public class PostgresDatabase extends AOServerResource implements Comparable<PostgresDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresDatabase> /* TODO: , Dumpable, Removable*/, JdbcProvider {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     /**
      * Special databases.
      */
@@ -50,11 +48,13 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -5325299154750602717L;
+
     private PostgresDatabaseName name;
     final private int postgresServer;
     final private int datdba;
     final private int encoding;
-    final private boolean isTemplate;
+    final private boolean template;
     final private boolean allowConn;
     final private boolean enablePostgis;
 
@@ -73,7 +73,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
         int postgresServer,
         int datdba,
         int encoding,
-        boolean isTemplate,
+        boolean template,
         boolean allowConn,
         boolean enablePostgis
     ) {
@@ -82,7 +82,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
         this.postgresServer = postgresServer;
         this.datdba = datdba;
         this.encoding = encoding;
-        this.isTemplate = isTemplate;
+        this.template = template;
         this.allowConn = allowConn;
         this.enablePostgis = enablePostgis;
         intern();
@@ -112,30 +112,30 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_NAME = "name";
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NAME, index=IndexType.INDEXED, description="the name of the database")
+    public static final MethodColumn COLUMN_NAME = getMethodColumn(PostgresDatabase.class, "name");
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the name of the database")
     public PostgresDatabaseName getName() {
         return name;
     }
 
-    static final String COLUMN_POSTGRES_SERVER = "postgres_server";
+    public static final MethodColumn COLUMN_POSTGRES_SERVER = getMethodColumn(PostgresDatabase.class, "postgresServer");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
     public PostgresServer getPostgresServer() throws RemoteException {
         return getConnector().getPostgresServers().get(postgresServer);
     }
 
-    static final String COLUMN_DATDBA = "datdba";
+    public static final MethodColumn COLUMN_DATDBA = getMethodColumn(PostgresDatabase.class, "datDba");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_DATDBA, index=IndexType.INDEXED, description="the datdba for the database")
-    public PostgresUser getDatDBA() throws RemoteException {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the datdba for the database")
+    public PostgresUser getDatDba() throws RemoteException {
         return getConnector().getPostgresUsers().get(datdba);
     }
 
-    static final String COLUMN_ENCODING = "encoding";
+    public static final MethodColumn COLUMN_ENCODING = getMethodColumn(PostgresDatabase.class, "encoding");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name=COLUMN_ENCODING, index=IndexType.INDEXED, description="the pkey of the encoding system used for the database")
-    public PostgresEncoding getPostgresEncoding() throws RemoteException {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, index=IndexType.INDEXED, description="the pkey of the encoding system used for the database")
+    public PostgresEncoding getEncoding() throws RemoteException {
     	PostgresEncoding obj=getConnector().getPostgresEncodings().get(encoding);
         // Make sure the postgres encoding postgresql version matches the server this database is part of
 //        if(
@@ -147,17 +147,17 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
     	return obj;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="is_template", description="if true, this database is a template")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="if true, this database is a template")
     public boolean isTemplate() {
-    	return isTemplate;
+    	return template;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="allow_conn", description="if true, this database is accepting connections")
-    public boolean getAllowsConnections() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="if true, this database is accepting connections")
+    public boolean getAllowConn() {
         return allowConn;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="enable_postgis", description="indicates PostGIS is enabled on this database")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="indicates PostGIS is enabled on this database")
     public boolean getEnablePostgis() {
         return enablePostgis;
     }
@@ -180,7 +180,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
             dto.getPostgresServer(),
             dto.getDatdba(),
             dto.getEncoding(),
-            dto.isIsTemplate(),
+            dto.isTemplate(),
             dto.isAllowConn(),
             dto.isEnablePostgis()
         );
@@ -202,7 +202,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
             postgresServer,
             datdba,
             encoding,
-            isTemplate,
+            template,
             allowConn,
             enablePostgis
         );
@@ -233,7 +233,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
         return
             "jdbc:postgresql://"
             + (ipOnly
-               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID()).getPrimaryIPAddress().getIpAddress().toString()
+               ?ao.getServer().getNetDevice(ao.getDaemonDeviceId()).getPrimaryIPAddress().getIpAddress().toString()
                :ao.getHostname().toString()
             )
             + ':'
@@ -245,7 +245,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
 
     @Override
     public String getJdbcDocumentationUrl() throws RemoteException {
-        String version=getPostgresServer().getPostgresVersion().getTechnologyVersion().getVersion();
+        String version=getPostgresServer().getVersion().getVersion().getVersion();
         return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
     }
     // </editor-fold>
@@ -301,7 +301,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
         
         PostgresServer ps=getPostgresServer();
         if(!allowConn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
-        if(isTemplate) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+        if(template) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
         if(
             name==AOINDUSTRIES // OK - interned
             || name==AOSERV // OK - interned

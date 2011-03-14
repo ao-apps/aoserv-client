@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 final public class MajordomoVersion extends AOServObjectStringKey implements Comparable<MajordomoVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.MajordomoVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * The default Majordomo version.
@@ -41,17 +41,17 @@ final public class MajordomoVersion extends AOServObjectStringKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(MajordomoVersion other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="version", index=IndexType.PRIMARY_KEY, description="the version number")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the version number")
     public String getVersion() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="created", description="the time the version was added")
+    @SchemaColumn(order=1, description="the time the version was added")
     public Timestamp getCreated() {
         return new Timestamp(created);
     }

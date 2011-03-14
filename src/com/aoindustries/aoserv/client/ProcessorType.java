@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
 final public class ProcessorType extends AOServObjectStringKey implements Comparable<ProcessorType>, DtoFactory<com.aoindustries.aoserv.client.dto.ProcessorType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -31,17 +31,17 @@ final public class ProcessorType extends AOServObjectStringKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(ProcessorType other) {
-        return AOServObjectUtils.compare(sortOrder, other.sortOrder);
+        return compare(sortOrder, other.sortOrder);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="type", index=IndexType.PRIMARY_KEY, description="the unique name of the type of processor")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the type of processor")
     public String getType() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="sort_order", index=IndexType.UNIQUE, description="the sort order of the processor, those sorted higher may be substituted for those sorted lower")
+    @SchemaColumn(order=1, index=IndexType.UNIQUE, description="the sort order of the processor, those sorted higher may be substituted for those sorted lower")
     public short getSortOrder() {
         return sortOrder;
     }
@@ -60,8 +60,13 @@ final public class ProcessorType extends AOServObjectStringKey implements Compar
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
     @DependentObjectSet
-    public IndexedSet<VirtualServer> getVirtualServersByMinimumProcessorType() throws RemoteException {
+    public IndexedSet<VirtualServer> getVirtualServers() throws RemoteException {
         return getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_TYPE, this);
+    }
+
+    @DependentObjectSet
+    public IndexedSet<PhysicalServer> getPhysicalServers() throws RemoteException {
+        return getConnector().getPhysicalServers().filterIndexed(PhysicalServer.COLUMN_PROCESSOR_TYPE, this);
     }
     // </editor-fold>
 }

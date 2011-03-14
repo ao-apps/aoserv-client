@@ -1,10 +1,15 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2011 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @see  Server
@@ -12,7 +17,27 @@ package com.aoindustries.aoserv.client;
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.servers)
-public interface ServerService extends AOServService<Integer,Server> {
+final public class ServerService extends UnionService<Integer,Server> {
+
+    public ServerService(AOServConnector connector) {
+        super(connector, Integer.class, Server.class);
+    }
+
+    private final AtomicReference<List<AOServService<Integer, ? extends Server>>> subservices = new AtomicReference<List<AOServService<Integer, ? extends Server>>>();
+
+    @Override
+    protected List<AOServService<Integer, ? extends Server>> getSubServices() throws RemoteException {
+        List<AOServService<Integer, ? extends Server>> ss = subservices.get();
+        if(ss==null) {
+            ss = new ArrayList<AOServService<Integer, ? extends Server>>(3);
+            ss.add(connector.getBackupServers());
+            ss.add(connector.getPhysicalServers());
+            ss.add(connector.getVirtualServers());
+            ss = Collections.unmodifiableList(ss);
+            if(!subservices.compareAndSet(null, ss)) ss = subservices.get(); // Created by another thread
+        }
+        return ss;
+    }
 
     /* TODO
     public int addBackupServer(

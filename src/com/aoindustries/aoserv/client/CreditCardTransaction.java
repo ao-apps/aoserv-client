@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 final public class CreditCardTransaction extends AOServObjectIntegerKey implements Comparable<CreditCardTransaction>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardTransaction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -312,37 +312,37 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     public int compareTo(CreditCardTransaction other) {
         int diff = accounting.compareTo(other.accounting);
         if(diff!=0) return diff;
-        diff = AOServObjectUtils.compare(authorizationTime, other.authorizationTime);
+        diff = compare(authorizationTime, other.authorizationTime);
         if(diff!=0) return diff;
-        return AOServObjectUtils.compare(key, other.key);
+        return compare(key, other.key);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_PKEY = "pkey";
-    @SchemaColumn(order=0, name=COLUMN_PKEY, index=IndexType.PRIMARY_KEY, description="the unique ID of this transaction")
+    public static final MethodColumn COLUMN_PKEY = getMethodColumn(CreditCardTransaction.class, "pkey");
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique ID of this transaction")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_PROCESSOR_ID = "processor_id";
+    public static final MethodColumn COLUMN_PROCESSOR = getMethodColumn(CreditCardTransaction.class, "processor");
     /**
      * Gets the credit card processor used for this transaction.
      */
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_PROCESSOR_ID, index=IndexType.INDEXED, description="the name of the processor used for this transaction")
-    public CreditCardProcessor getCreditCardProcessor() throws RemoteException {
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the name of the processor used for this transaction")
+    public CreditCardProcessor getProcessor() throws RemoteException {
         return getConnector().getCreditCardProcessors().get(processorId);
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(CreditCardTransaction.class, "business");
     /**
      * For AOServ sub-account support, this is the business that is making the payment.
      * For application-only use (not a sub-account to parent-account payment), use the same business
      * as the owner of the credit card processor.
      */
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code for the source of this transaction")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the accounting code for the source of this transaction")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
     }
@@ -350,7 +350,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the group name for this transaction.  This is an arbitrary accounting name or grouping level.
      */
-    @SchemaColumn(order=3, name="group_name", description="the application-provided grouping for this transaction")
+    @SchemaColumn(order=3, description="the application-provided grouping for this transaction")
     public String getGroupName() {
         return groupName;
     }
@@ -358,15 +358,15 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the test mode flag.
      */
-    @SchemaColumn(order=4, name="test_mode", description="indicates this is a test transaction")
-    public boolean getTestMode() {
+    @SchemaColumn(order=4, description="indicates this is a test transaction")
+    public boolean isTestMode() {
         return testMode;
     }
 
     /**
      * Gets the duplicate detection window in seconds.
      */
-    @SchemaColumn(order=5, name="duplicate_window", description="the number of seconds for duplicate transaction detection")
+    @SchemaColumn(order=5, description="the number of seconds for duplicate transaction detection")
     public int getDuplicateWindow() {
         return duplicateWindow;
     }
@@ -374,7 +374,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the order number.
      */
-    @SchemaColumn(order=6, name="order_number", description="the merchant-provided order number for this transaction")
+    @SchemaColumn(order=6, description="the merchant-provided order number for this transaction")
     public String getOrderNumber() {
         return orderNumber;
     }
@@ -383,7 +383,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      * Gets the amount of the transaction.  This amount should not include any tax, shipping charges, or duty.
      * Thus the total amount of the transaction is the amount + taxAmount + shippingAmount + dutyAmount.
      */
-    @SchemaColumn(order=7, name="amount", description="the amount of the transaction")
+    @SchemaColumn(order=7, description="the amount of the transaction")
     public Money getAmount() {
         return amount;
     }
@@ -391,7 +391,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the tax amount of the transaction.
      */
-    @SchemaColumn(order=8, name="tax_amount", description="the tax amount of the transaction")
+    @SchemaColumn(order=8, description="the tax amount of the transaction")
     public Money getTaxAmount() {
         return taxAmount;
     }
@@ -399,7 +399,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the taxExempt flag for this transaction.
      */
-    @SchemaColumn(order=9, name="tax_exempt", description="the taxExempt flag for this transaction")
+    @SchemaColumn(order=9, description="the taxExempt flag for this transaction")
     public boolean getTaxExempt() {
         return taxExempt;
     }
@@ -407,7 +407,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the shipping amount for this transaction.
      */
-    @SchemaColumn(order=10, name="shipping_amount", description="the shipping amount for this transaction")
+    @SchemaColumn(order=10, description="the shipping amount for this transaction")
     public Money getShippingAmount() {
         return shippingAmount;
     }
@@ -415,92 +415,92 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the duty amount for this transaction.
      */
-    @SchemaColumn(order=11, name="duty_amount", description="the duty amount for this transaction")
+    @SchemaColumn(order=11, description="the duty amount for this transaction")
     public Money getDutyAmount() {
         return dutyAmount;
     }
 
-    @SchemaColumn(order=12, name="shipping_first_name", description="the shipping first name")
+    @SchemaColumn(order=12, description="the shipping first name")
     public String getShippingFirstName() {
         return shippingFirstName;
     }
 
-    @SchemaColumn(order=13, name="shipping_last_name", description="the shipping last name")
+    @SchemaColumn(order=13, description="the shipping last name")
     public String getShippingLastName() {
         return shippingLastName;
     }
 
-    @SchemaColumn(order=14, name="shipping_company_name", description="the shipping company name")
+    @SchemaColumn(order=14, description="the shipping company name")
     public String getShippingCompanyName() {
         return shippingCompanyName;
     }
 
-    @SchemaColumn(order=15, name="shipping_street_address1", description="the shipping address line 1")
+    @SchemaColumn(order=15, description="the shipping address line 1")
     public String getShippingStreetAddress1() {
         return shippingStreetAddress1;
     }
 
-    @SchemaColumn(order=16, name="shipping_street_address2", description="the shipping address line 2")
+    @SchemaColumn(order=16, description="the shipping address line 2")
     public String getShippingStreetAddress2() {
         return shippingStreetAddress2;
     }
 
-    @SchemaColumn(order=17, name="shipping_city", description="the shipping city")
+    @SchemaColumn(order=17, description="the shipping city")
     public String getShippingCity() {
         return shippingCity;
     }
 
-    @SchemaColumn(order=18, name="shipping_state", description="the shipping state")
+    @SchemaColumn(order=18, description="the shipping state")
     public String getShippingState() {
         return shippingState;
     }
 
-    @SchemaColumn(order=19, name="shipping_postal_code", description="the shipping postal code")
+    @SchemaColumn(order=19, description="the shipping postal code")
     public String getShippingPostalCode() {
         return shippingPostalCode;
     }
 
-    static final String COLUMN_SHIPPING_COUNTRY_CODE = "shipping_country_code";
+    public static final MethodColumn COLUMN_SHIPPING_COUNTRY_CODE = getMethodColumn(CreditCardTransaction.class, "shippingCountryCode");
     /**
      * Gets the shipping two-digit ISO 3166-1 alpha-2 country code.
      *
      * See <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2</a>
      */
     @DependencySingleton
-    @SchemaColumn(order=20, name=COLUMN_SHIPPING_COUNTRY_CODE, index=IndexType.INDEXED, description="the shipping two-digit ISO 3166-1 alpha-2 country code")
+    @SchemaColumn(order=20, index=IndexType.INDEXED, description="the shipping two-digit ISO 3166-1 alpha-2 country code")
     public CountryCode getShippingCountryCode() throws RemoteException {
         if(shippingCountryCode==null) return null;
         return getConnector().getCountryCodes().get(shippingCountryCode);
     }
 
-    @SchemaColumn(order=21, name="email_customer", description="the flag indicating the API should generate an email to the customer")
+    @SchemaColumn(order=21, description="the flag indicating the API should generate an email to the customer")
     public boolean getEmailCustomer() {
         return emailCustomer;
     }
 
-    @SchemaColumn(order=22, name="merchant_email", description="the email address of the merchant")
+    @SchemaColumn(order=22, description="the email address of the merchant")
     public Email getMerchantEmail() {
         return merchantEmail;
     }
 
-    @SchemaColumn(order=23, name="invoice_number", description="the merchant-provided invoice number")
+    @SchemaColumn(order=23, description="the merchant-provided invoice number")
     public String getInvoiceNumber() {
         return invoiceNumber;
     }
 
-    @SchemaColumn(order=24, name="purchase_order_number", description="the merchant-provided purchase order number")
+    @SchemaColumn(order=24, description="the merchant-provided purchase order number")
     public String getPurchaseOrderNumber() {
         return purchaseOrderNumber;
     }
 
-    @SchemaColumn(order=25, name="description", description="the merchant-provided description of this transaction")
+    @SchemaColumn(order=25, description="the merchant-provided description of this transaction")
     public String getDescription() {
         return description;
     }
 
-    static final String COLUMN_CREDIT_CARD_CREATED_BY = "credit_card_created_by";
+    public static final MethodColumn COLUMN_CREDIT_CARD_CREATED_BY = getMethodColumn(CreditCardTransaction.class, "creditCardCreatedBy");
     @DependencySingleton
-    @SchemaColumn(order=26, name=COLUMN_CREDIT_CARD_CREATED_BY, index=IndexType.INDEXED, description="the business administrator account that provided this credit card")
+    @SchemaColumn(order=26, index=IndexType.INDEXED, description="the business administrator account that provided this credit card")
     public BusinessAdministrator getCreditCardCreatedBy() throws RemoteException {
         return getConnector().getBusinessAdministrators().get(creditCardCreatedBy);
     }
@@ -508,106 +508,106 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the application-provided principal who added this credit card.
      */
-    @SchemaColumn(order=27, name="credit_card_principal_name", description="the application-provided principal who provided this credit card")
+    @SchemaColumn(order=27, description="the application-provided principal who provided this credit card")
     public String getCreditCardPrincipalName() {
         return creditCardPrincipalName;
     }
 
-    static final String COLUMN_CREDIT_CARD_ACCOUNTING = "credit_card_accounting";
+    public static final MethodColumn COLUMN_CREDIT_CARD_BUSINESS = getMethodColumn(CreditCardTransaction.class, "creditCardBusiness");
     @DependencySingleton
-    @SchemaColumn(order=28, name=COLUMN_CREDIT_CARD_ACCOUNTING, index=IndexType.INDEXED, description="the accounting code of the business that provided this credit card")
+    @SchemaColumn(order=28, index=IndexType.INDEXED, description="the accounting code of the business that provided this credit card")
     public Business getCreditCardBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(creditCardAccounting);
     }
 
-    @SchemaColumn(order=29, name="credit_card_group_name", description="any application-specific grouping")
+    @SchemaColumn(order=29, description="any application-specific grouping")
     public String getCreditCardGroupName() {
         return creditCardGroupName;
     }
 
-    @SchemaColumn(order=30, name="credit_card_provider_unique_id", description="the unique ID provided by the merchant services provider storage mechanism")
+    @SchemaColumn(order=30, description="the unique ID provided by the merchant services provider storage mechanism")
     public String getCreditCardProviderUniqueId() {
         return creditCardProviderUniqueId;
     }
 
-    @SchemaColumn(order=31, name="credit_card_masked_card_number", description="the masked card number")
+    @SchemaColumn(order=31, description="the masked card number")
     public String getCreditCardMaskedCardNumber() {
         return creditCardMaskedCardNumber;
     }
 
-    @SchemaColumn(order=32, name="credit_card_first_name", description="the first name of the card holder")
+    @SchemaColumn(order=32, description="the first name of the card holder")
     public String getCreditCardFirstName() {
         return creditCardFirstName;
     }
 
-    @SchemaColumn(order=33, name="credit_card_last_name", description="the last name of the card holder")
+    @SchemaColumn(order=33, description="the last name of the card holder")
     public String getCreditCardLastName() {
         return creditCardLastName;
     }
 
-    @SchemaColumn(order=34, name="credit_card_company_name", description="the company name for the credit card")
+    @SchemaColumn(order=34, description="the company name for the credit card")
     public String getCreditCardCompanyName() {
         return creditCardCompanyName;
     }
 
-    @SchemaColumn(order=35, name="credit_card_email", description="the email address of the card holder")
+    @SchemaColumn(order=35, description="the email address of the card holder")
     public Email getCreditCardEmail() {
         return creditCardEmail;
     }
 
-    @SchemaColumn(order=36, name="credit_card_phone", description="the phone number of the card holder")
+    @SchemaColumn(order=36, description="the phone number of the card holder")
     public String getCreditCardPhone() {
         return creditCardPhone;
     }
 
-    @SchemaColumn(order=37, name="credit_card_fax", description="the fax number of the card holder")
+    @SchemaColumn(order=37, description="the fax number of the card holder")
     public String getCreditCardFax() {
         return creditCardFax;
     }
 
-    @SchemaColumn(order=38, name="credit_card_customer_tax_id", description="the tax ID of the card holder")
+    @SchemaColumn(order=38, description="the tax ID of the card holder")
     public String getCreditCardCustomerTaxId() {
         return creditCardCustomerTaxId;
     }
 
-    @SchemaColumn(order=39, name="credit_card_street_address1", description="the street address of the card holder (line 1)")
+    @SchemaColumn(order=39, description="the street address of the card holder (line 1)")
     public String getCreditCardStreetAddress1() {
         return creditCardStreetAddress1;
     }
 
-    @SchemaColumn(order=40, name="credit_card_street_address2", description="the street address of the card holder (line 2)")
+    @SchemaColumn(order=40, description="the street address of the card holder (line 2)")
     public String getCreditCardStreetAddress2() {
         return creditCardStreetAddress2;
     }
 
-    @SchemaColumn(order=41, name="credit_card_city", description="the city of the card holder")
+    @SchemaColumn(order=41, description="the city of the card holder")
     public String getCreditCardCity() {
         return creditCardCity;
     }
 
-    @SchemaColumn(order=42, name="credit_card_state", description="the state/province/prefecture of the card holder")
+    @SchemaColumn(order=42, description="the state/province/prefecture of the card holder")
     public String getCreditCardState() {
         return creditCardState;
     }
 
-    @SchemaColumn(order=43, name="credit_card_postal_code", description="the postal code of the card holder")
+    @SchemaColumn(order=43, description="the postal code of the card holder")
     public String getCreditCardPostalCode() {
         return creditCardPostalCode;
     }
 
-    static final String COLUMN_CREDIT_CARD_COUNTRY_CODE = "credit_card_country_code";
+    public static final MethodColumn COLUMN_CREDIT_CARD_COUNTRY_CODE = getMethodColumn(CreditCardTransaction.class, "creditCardCountryCode");
     /**
      * Gets the credit card two-digit ISO 3166-1 alpha-2 country code.
      *
      * See <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2</a>
      */
     @DependencySingleton
-    @SchemaColumn(order=44, name=COLUMN_CREDIT_CARD_COUNTRY_CODE, index=IndexType.INDEXED, description="the two-digit ISO 3166-1 alpha-2 country code of the card holder")
+    @SchemaColumn(order=44, index=IndexType.INDEXED, description="the two-digit ISO 3166-1 alpha-2 country code of the card holder")
     public CountryCode getCreditCardCountryCode() throws RemoteException {
         return getConnector().getCountryCodes().get(creditCardCountryCode);
     }
 
-    @SchemaColumn(order=45, name="credit_card_comments", description="any comments associated with the credit card")
+    @SchemaColumn(order=45, description="any comments associated with the credit card")
     public String getCreditCardComments() {
         return creditCardComments;
     }
@@ -615,18 +615,18 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the time of the authorization.
      */
-    @SchemaColumn(order=46, name="authorization_time", description="the time the authorization was attempted")
+    @SchemaColumn(order=46, description="the time the authorization was attempted")
     public Timestamp getAuthorizationTime() {
         return new Timestamp(authorizationTime);
     }
 
-    static final String COLUMN_AUTHORIZATION_USERNAME = "authorization_username";
+    public static final MethodColumn COLUMN_AUTHORIZATION_ADMINISTRATOR = getMethodColumn(CreditCardTransaction.class, "authorizationAdministrator");
     /**
      * Gets the <code>BusinessAdministrator</code> who authorized this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
     @DependencySingleton
-    @SchemaColumn(order=47, name=COLUMN_AUTHORIZATION_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the transaction")
+    @SchemaColumn(order=47, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the transaction")
     public BusinessAdministrator getAuthorizationAdministrator() throws RemoteException {
         if(authorizationUsername==null) return null;
         return getConnector().getBusinessAdministrators().get(authorizationUsername);
@@ -636,87 +636,87 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      * Gets the application-specific username who authorized this transaction.  For pure-AOServ data, this
      * will contain the username of the <code>BusinessAdministrator</code> who was logged in and made the payment.
      */
-    @SchemaColumn(order=48, name="authorization_principal_name", description="an application-provided identity of the user who initiated the transaction")
+    @SchemaColumn(order=48, description="an application-provided identity of the user who initiated the transaction")
     public String getAuthorizationPrincipalName() {
         return authorizationPrincipalName;
     }
 
-    @SchemaColumn(order=49, name="authorization_communication_result", description="the authorization communication result")
+    @SchemaColumn(order=49, description="the authorization communication result")
     public String getAuthorizationCommunicationResult() {
         return authorizationCommunicationResult;
     }
 
-    @SchemaColumn(order=50, name="authorization_provider_error_code", description="the provider-specific error code")
+    @SchemaColumn(order=50, description="the provider-specific error code")
     public String getAuthorizationProviderErrorCode() {
         return authorizationProviderErrorCode;
     }
 
-    @SchemaColumn(order=51, name="authorization_error_code", description="the provider-neutral error code")
+    @SchemaColumn(order=51, description="the provider-neutral error code")
     public String getAuthorizationErrorCode() {
         return authorizationErrorCode;
     }
 
-    @SchemaColumn(order=52, name="authorization_provider_error_message", description="the provider-specific error message")
+    @SchemaColumn(order=52, description="the provider-specific error message")
     public String getAuthorizationProviderErrorMessage() {
         return authorizationProviderErrorMessage;
     }
 
-    @SchemaColumn(order=53, name="authorization_provider_unique_id", description="the per-provider unique ID")
+    @SchemaColumn(order=53, description="the per-provider unique ID")
     public String getAuthorizationProviderUniqueId() {
         return authorizationProviderUniqueId;
     }
 
-    @SchemaColumn(order=54, name="authorization_provider_approval_result", description="the provider-specific approval result")
+    @SchemaColumn(order=54, description="the provider-specific approval result")
     public String getAuthorizationProviderApprovalResult() {
         return authorizationProviderApprovalResult;
     }
 
-    @SchemaColumn(order=55, name="authorization_approval_result", description="the provider-neutral approval result")
+    @SchemaColumn(order=55, description="the provider-neutral approval result")
     public String getAuthorizationApprovalResult() {
         return authorizationApprovalResult;
     }
 
-    @SchemaColumn(order=56, name="authorization_provider_decline_reason", description="the provider-specific decline reason")
+    @SchemaColumn(order=56, description="the provider-specific decline reason")
     public String getAuthorizationProviderDeclineReason() {
         return authorizationProviderDeclineReason;
     }
 
-    @SchemaColumn(order=57, name="authorization_decline_reason", description="the provider-neutral decline reason")
+    @SchemaColumn(order=57, description="the provider-neutral decline reason")
     public String getAuthorizationDeclineReason() {
         return authorizationDeclineReason;
     }
 
-    @SchemaColumn(order=58, name="authorization_provider_review_reason", description="the provider-specific review reason")
+    @SchemaColumn(order=58, description="the provider-specific review reason")
     public String getAuthorizationProviderReviewReason() {
         return authorizationProviderReviewReason;
     }
 
-    @SchemaColumn(order=59, name="authorization_review_reason", description="the provider-neutral review reason")
+    @SchemaColumn(order=59, description="the provider-neutral review reason")
     public String getAuthorizationReviewReason() {
         return authorizationReviewReason;
     }
 
-    @SchemaColumn(order=60, name="authorization_provider_cvv_result", description="the provider-specific CVV result")
+    @SchemaColumn(order=60, description="the provider-specific CVV result")
     public String getAuthorizationProviderCvvResult() {
         return authorizationProviderCvvResult;
     }
 
-    @SchemaColumn(order=61, name="authorization_cvv_result", description="the provider-neutral CVV result")
+    @SchemaColumn(order=61, description="the provider-neutral CVV result")
     public String getAuthorizationCvvResult() {
         return authorizationCvvResult;
     }
 
-    @SchemaColumn(order=62, name="authorization_provider_avs_result", description="the provider-specific AVS result")
+    @SchemaColumn(order=62, description="the provider-specific AVS result")
     public String getAuthorizationProviderAvsResult() {
         return authorizationProviderAvsResult;
     }
 
-    @SchemaColumn(order=63, name="authorization_avs_result", description="the provider-neutral AVS result")
+    @SchemaColumn(order=63, description="the provider-neutral AVS result")
     public String getAuthorizationAvsResult() {
         return authorizationAvsResult;
     }
 
-    @SchemaColumn(order=64, name="authorization_approval_code", description="the approval code")
+    @SchemaColumn(order=64, description="the approval code")
     public String getAuthorizationApprovalCode() {
         return authorizationApprovalCode;
     }
@@ -724,18 +724,18 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the time of the capture.
      */
-    @SchemaColumn(order=65, name="capture_time", description="the time the capture was attempted")
+    @SchemaColumn(order=65, description="the time the capture was attempted")
     public Timestamp getCaptureTime() {
         return captureTime==null ? null : new Timestamp(captureTime);
     }
 
-    static final String COLUMN_CAPTURE_USERNAME = "capture_username";
+    public static final MethodColumn COLUMN_CAPTURE_ADMINISTRATOR = getMethodColumn(CreditCardTransaction.class, "captureAdministrator");
     /**
      * Gets the <code>BusinessAdministrator</code> who captured this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
     @DependencySingleton
-    @SchemaColumn(order=66, name=COLUMN_CAPTURE_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the capture")
+    @SchemaColumn(order=66, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the capture")
     public BusinessAdministrator getCaptureAdministrator() throws RemoteException {
         if(captureUsername==null) return null;
         return getConnector().getBusinessAdministrators().get(captureUsername);
@@ -745,32 +745,32 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      * Gets the application-specific username who captured this transaction.  For pure-AOServ data, this
      * will contain the username of the <code>BusinessAdministrator</code> who was logged in and initiated the capture.
      */
-    @SchemaColumn(order=67, name="capture_principal_name", description="an application-provided identity of the user who initiated the capture")
+    @SchemaColumn(order=67, description="an application-provided identity of the user who initiated the capture")
     public String getCapturePrincipalName() {
         return capturePrincipalName;
     }
 
-    @SchemaColumn(order=68, name="capture_communication_result", description="the capture communication result")
+    @SchemaColumn(order=68, description="the capture communication result")
     public String getCaptureCommunicationResult() {
         return captureCommunicationResult;
     }
 
-    @SchemaColumn(order=69, name="capture_provider_error_code", description="the provider-specific error code")
+    @SchemaColumn(order=69, description="the provider-specific error code")
     public String getCaptureProviderErrorCode() {
         return captureProviderErrorCode;
     }
 
-    @SchemaColumn(order=70, name="capture_error_code", description="the provider-neutral error code")
+    @SchemaColumn(order=70, description="the provider-neutral error code")
     public String getCaptureErrorCode() {
         return captureErrorCode;
     }
 
-    @SchemaColumn(order=71, name="capture_provider_error_message", description="the provider-specific error message")
+    @SchemaColumn(order=71, description="the provider-specific error message")
     public String getCaptureProviderErrorMessage() {
         return captureProviderErrorMessage;
     }
 
-    @SchemaColumn(order=72, name="capture_provider_unique_id", description="the per-provider unique ID")
+    @SchemaColumn(order=72, description="the per-provider unique ID")
     public String getCaptureProviderUniqueId() {
         return captureProviderUniqueId;
     }
@@ -778,18 +778,18 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     /**
      * Gets the time of the void.
      */
-    @SchemaColumn(order=73, name="void_time", description="the time the void was attempted")
+    @SchemaColumn(order=73, description="the time the void was attempted")
     public Timestamp getVoidTime() {
         return voidTime==null ? null : new Timestamp(voidTime);
     }
 
-    static final String COLUMN_VOID_USERNAME = "void_username";
+    public static final MethodColumn COLUMN_VOID_ADMINISTRATOR = getMethodColumn(CreditCardTransaction.class, "voidAdministrator");
     /**
      * Gets the <code>BusinessAdministrator</code> who voided this transactions.  This is the
      * username of the account that has access to control credit card transactions.
      */
     @DependencySingleton
-    @SchemaColumn(order=74, name=COLUMN_VOID_USERNAME, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the void")
+    @SchemaColumn(order=74, index=IndexType.INDEXED, description="the username of the business_administrator account that processed the void")
     public BusinessAdministrator getVoidAdministrator() throws RemoteException {
         if(voidUsername==null) return null;
         return getConnector().getBusinessAdministrators().get(voidUsername);
@@ -799,37 +799,37 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
      * Gets the application-specific username who voided this transaction.  For pure-AOServ data, this
      * will contain the username of the <code>BusinessAdministrator</code> who was logged in and caused the void.
      */
-    @SchemaColumn(order=75, name="void_principal_name", description="an application-provided identity of the user who initiated the void")
+    @SchemaColumn(order=75, description="an application-provided identity of the user who initiated the void")
     public String getVoidPrincipalName() {
         return voidPrincipalName;
     }
 
-    @SchemaColumn(order=76, name="void_communication_result", description="the void communication result")
+    @SchemaColumn(order=76, description="the void communication result")
     public String getVoidCommunicationResult() {
         return voidCommunicationResult;
     }
 
-    @SchemaColumn(order=77, name="void_provider_error_code", description="the provider-specific error code")
+    @SchemaColumn(order=77, description="the provider-specific error code")
     public String getVoidProviderErrorCode() {
         return voidProviderErrorCode;
     }
 
-    @SchemaColumn(order=78, name="void_error_code", description="the provider-neutral error code")
+    @SchemaColumn(order=78, description="the provider-neutral error code")
     public String getVoidErrorCode() {
         return voidErrorCode;
     }
 
-    @SchemaColumn(order=79, name="void_provider_error_message", description="the provider-specific error message")
+    @SchemaColumn(order=79, description="the provider-specific error message")
     public String getVoidProviderErrorMessage() {
         return voidProviderErrorMessage;
     }
 
-    @SchemaColumn(order=80, name="void_provider_unique_id", description="the per-provider unique ID")
+    @SchemaColumn(order=80, description="the per-provider unique ID")
     public String getVoidProviderUniqueId() {
         return voidProviderUniqueId;
     }
 
-    @SchemaColumn(order=81, name="status", description="the status of the transaction")
+    @SchemaColumn(order=81, description="the status of the transaction")
     public String getStatus() {
         return status;
     }

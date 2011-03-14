@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 final public class NetDevice extends AOServObjectIntegerKey implements Comparable<NetDevice>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDevice> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -98,71 +98,71 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a unique, generated pkey")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a unique, generated pkey")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_SERVER = "server";
+    public static final MethodColumn COLUMN_SERVER = getMethodColumn(NetDevice.class, "server");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the pkey of the server that contains the device")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the pkey of the server that contains the device")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(server);
     }
 
-    static final String COLUMN_DEVICE_ID = "device_id";
+    public static final MethodColumn COLUMN_DEVICE_ID = getMethodColumn(NetDevice.class, "deviceId");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_DEVICE_ID, index=IndexType.INDEXED, description="the name of the device")
-    public NetDeviceID getNetDeviceID() throws RemoteException {
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the name of the device")
+    public NetDeviceID getDeviceId() throws RemoteException {
         return getConnector().getNetDeviceIDs().get(deviceId);
     }
 
-    @SchemaColumn(order=3, name="description", description="a description of the device")
+    @SchemaColumn(order=3, description="a description of the device")
     public String getDescription() {
         return description;
     }
 
-    @SchemaColumn(order=4, name="gateway", description="the gateway IP address")
+    @SchemaColumn(order=4, description="the gateway IP address")
     public InetAddress getGateway() {
         return gateway;
     }
 
-    @SchemaColumn(order=5, name="network", description="the local network")
+    @SchemaColumn(order=5, description="the local network")
     public InetAddress getNetwork() {
         return network;
     }
 
-    @SchemaColumn(order=6, name="broadcast", description="the broadcast IP")
+    @SchemaColumn(order=6, description="the broadcast IP")
     public InetAddress getBroadcast() {
         return broadcast;
     }
 
-    @SchemaColumn(order=7, name="mac_address", index=IndexType.UNIQUE, description="the MAC address to be used on the device")
+    @SchemaColumn(order=7, index=IndexType.UNIQUE, description="the MAC address to be used on the device")
     public MacAddress getMacAddress() {
         return macAddress;
     }
 
-    @SchemaColumn(order=8, name="max_bit_rate", description="the maximum bits per second for this network device")
+    @SchemaColumn(order=8, description="the maximum bits per second for this network device")
     public Long getMaxBitRate() {
         return maxBitRate;
     }
 
-    @SchemaColumn(order=9, name="monitoring_bit_rate_low", description="the 5-minute average that will trigger a low-level alert")
+    @SchemaColumn(order=9, description="the 5-minute average that will trigger a low-level alert")
     public Long getMonitoringBitRateLow() {
         return monitoringBitRateLow;
     }
 
-    @SchemaColumn(order=10, name="monitoring_bit_rate_medium", description="the 5-minute average that will trigger a medium-level alert")
+    @SchemaColumn(order=10, description="the 5-minute average that will trigger a medium-level alert")
     public Long getMonitoringBitRateMedium() {
         return monitoringBitRateMedium;
     }
 
-    @SchemaColumn(order=11, name="monitoring_bit_rate_high", description="the 5-minute average that will trigger a high-level alert")
+    @SchemaColumn(order=11, description="the 5-minute average that will trigger a high-level alert")
     public Long getMonitoringBitRateHigh() {
         return monitoringBitRateHigh;
     }
 
-    @SchemaColumn(order=12, name="monitoring_bit_rate_critical", description="the 5-minute average that will trigger a critical-level alert")
+    @SchemaColumn(order=12, description="the 5-minute average that will trigger a critical-level alert")
     public Long getMonitoringBitRateCritical() {
         return monitoringBitRateCritical;
     }
@@ -227,7 +227,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     }
 
     public IPAddress getPrimaryIPAddress() throws RemoteException, NoSuchElementException {
-        IPAddress primaryIp = getIpAddresses().filterUnique(IPAddress.COLUMN_IS_ALIAS, false);
+        IPAddress primaryIp = getIpAddresses().filterUnique(IPAddress.COLUMN_ALIAS, false);
         if(primaryIp==null) throw new NoSuchElementException("Unable to find primary IP address for NetDevice: "+this);
         return primaryIp;
     }

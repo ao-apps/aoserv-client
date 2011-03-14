@@ -21,11 +21,9 @@ import java.rmi.RemoteException;
  */
 final public class PrivateFtpServer extends AOServerResource implements Comparable<PrivateFtpServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PrivateFtpServer> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 7026264201272779270L;
+
     final private int netBind;
     private UnixPath logfile;
     private DomainName hostname;
@@ -85,37 +83,37 @@ final public class PrivateFtpServer extends AOServerResource implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_NET_BIND = "net_bind";
+    public static final MethodColumn COLUMN_NET_BIND = getMethodColumn(PrivateFtpServer.class, "netBind");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_NET_BIND, index=IndexType.UNIQUE, description="the pkey of the net_bind that the FTP server is on")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.UNIQUE, description="the pkey of the net_bind that the FTP server is on")
     public NetBind getNetBind() throws RemoteException {
         return getConnector().getNetBinds().get(netBind);
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name="logfile", description="the file transfers are logged to")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, description="the file transfers are logged to")
     public UnixPath getLogfile() {
         return logfile;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="hostname", description="the hostname the server reports")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the hostname the server reports")
     public DomainName getHostname() {
         return hostname;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="email", description="the email address the server reports")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, description="the email address the server reports")
     public Email getEmail() {
         return email;
     }
 
-    static final String COLUMN_LINUX_ACCOUNT_GROUP = "linux_account_group";
+    public static final MethodColumn COLUMN_LINUX_ACCOUNT_GROUP = getMethodColumn(PrivateFtpServer.class, "linuxAccountGroup");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name=COLUMN_LINUX_ACCOUNT_GROUP, index=IndexType.INDEXED, description="the Linux account and group this FTP server runs as")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, index=IndexType.INDEXED, description="the Linux account and group this FTP server runs as")
     public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
         return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="allow_anonymous", description="enabled or disabled anonymous access to the server")
-    public boolean allowAnonymous() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="enabled or disabled anonymous access to the server")
+    public boolean getAllowAnonymous() {
         return allowAnonymous;
     }
     // </editor-fold>

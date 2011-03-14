@@ -25,18 +25,16 @@ import java.rmi.RemoteException;
  */
 final public class IPAddress extends ServerResource implements Comparable<IPAddress>, DtoFactory<com.aoindustries.aoserv.client.dto.IPAddress> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 5500928104479497136L;
+
     private InetAddress ipAddress;
     final private Integer netDevice;
-    final private boolean isAlias;
+    final private boolean alias;
     private DomainName hostname;
     final private boolean available;
-    final private boolean isOverflow;
-    final private boolean isDhcp;
+    final private boolean overflow;
+    final private boolean dhcp;
     final private boolean pingMonitorEnabled;
     private InetAddress externalIpAddress;
     final private short netmask;
@@ -54,11 +52,11 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
         int businessServer,
         InetAddress ipAddress,
         Integer netDevice,
-        boolean isAlias,
+        boolean alias,
         DomainName hostname,
         boolean available,
-        boolean isOverflow,
-        boolean isDhcp,
+        boolean overflow,
+        boolean dhcp,
         boolean pingMonitorEnabled,
         InetAddress externalIpAddress,
         short netmask
@@ -66,11 +64,11 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
         super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, server, businessServer);
         this.ipAddress = ipAddress;
         this.netDevice = netDevice;
-        this.isAlias = isAlias;
+        this.alias = alias;
         this.hostname = hostname;
         this.available = available;
-        this.isOverflow = isOverflow;
-        this.isDhcp = isDhcp;
+        this.overflow = overflow;
+        this.dhcp = dhcp;
         this.pingMonitorEnabled = pingMonitorEnabled;
         this.externalIpAddress = externalIpAddress;
         this.netmask = netmask;
@@ -96,7 +94,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
             if(key==other.key) return 0;
             int diff = ipAddress.compareTo(other.ipAddress);
             if(diff!=0) return diff;
-            return StringUtility.equals(netDevice, other.netDevice) ? 0 : AOServObjectUtils.compare(getNetDevice(), other.getNetDevice());
+            return StringUtility.equals(netDevice, other.netDevice) ? 0 : compare(getNetDevice(), other.getNetDevice());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -104,57 +102,57 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+1, name="ip_address", description="the IP address")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+1, description="the IP address")
     public InetAddress getIpAddress() {
         return ipAddress;
     }
 
-    static final String COLUMN_NET_DEVICE = "net_device";
+    public static final MethodColumn COLUMN_NET_DEVICE = getMethodColumn(IPAddress.class, "netDevice");
     @DependencySingleton
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_NET_DEVICE, index=IndexType.INDEXED, description="the network_device that this IP address is routed through, is null when unassigned")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the network_device that this IP address is routed through, is null when unassigned")
     public NetDevice getNetDevice() throws RemoteException {
         if(netDevice==null) return null;
         return getConnector().getNetDevices().get(netDevice);
     }
 
-    static final String COLUMN_IS_ALIAS = "is_alias";
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+3, name=COLUMN_IS_ALIAS, index=IndexType.INDEXED, description="indicates that the IP address is using IP aliasing on the network device")
+    public static final MethodColumn COLUMN_ALIAS = getMethodColumn(IPAddress.class, "alias");
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="indicates that the IP address is using IP aliasing on the network device")
     public boolean isAlias() {
-        return isAlias;
+        return alias;
     }
 
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+4, name="hostname", description="the reverse mapping for the hostname")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+4, description="the reverse mapping for the hostname")
     public DomainName getHostname() {
         return hostname;
     }
 
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+5, name="available", description="a flag if the IP address is available")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+5, description="a flag if the IP address is available")
     public boolean isAvailable() {
         return available;
     }
 
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+6, name="is_overflow", description="indicates that the IP address is shared by different accounts")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+6, description="indicates that the IP address is shared by different accounts")
     public boolean isOverflow() {
-        return isOverflow;
+        return overflow;
     }
 
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+7, name="is_dhcp", description="the IP address is obtained via DHCP")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+7, description="the IP address is obtained via DHCP")
     public boolean isDhcp() {
-        return isDhcp;
+        return dhcp;
     }
 
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+8, name="ping_monitor_enabled", description="indicates that ping (ICMP ECHO) is monitored")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+8, description="indicates that ping (ICMP ECHO) is monitored")
     public boolean isPingMonitorEnabled() {
         return pingMonitorEnabled;
     }
 
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+9, name="external_ip_address", description="the external IP address, if different than ip_address")
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+9, description="the external IP address, if different than ip_address")
     public InetAddress getExternalIpAddress() {
         return externalIpAddress;
     }
 
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+10, name="netmask", description="the netmask of the local network")
-    public short getNetMask() {
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+10, description="the netmask of the local network")
+    public short getNetmask() {
         return netmask;
     }
     // </editor-fold>
@@ -174,11 +172,11 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
             dto.getBusinessServer(),
             getInetAddress(dto.getIpAddress()),
             dto.getNetDevice(),
-            dto.isIsAlias(),
+            dto.isAlias(),
             getDomainName(dto.getHostname()),
             dto.isAvailable(),
-            dto.isIsOverflow(),
-            dto.isIsDhcp(),
+            dto.isOverflow(),
+            dto.isDhcp(),
             dto.isPingMonitorEnabled(),
             getInetAddress(dto.getExternalIpAddress()),
             dto.getNetmask()
@@ -199,11 +197,11 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
             businessServer,
             getDto(ipAddress),
             netDevice,
-            isAlias,
+            alias,
             getDto(hostname),
             available,
-            isOverflow,
-            isDhcp,
+            overflow,
+            dhcp,
             pingMonitorEnabled,
             getDto(externalIpAddress),
             netmask
@@ -224,11 +222,10 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
         return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_IP_ADDRESS, this);
     }
 
-    /* TODO
     @DependentObjectSet
-    public IndexedSet<DnsRecord> getDhcpDnsRecords() throws IOException, SQLException {
-        return getConnector().getDnsRecords().getIndexedRows(DnsRecord.COLUMN_DHCP_ADDRESS, pkey);
-    }*/
+    public IndexedSet<DnsRecord> getDhcpDnsRecords() throws RemoteException {
+        return getConnector().getDnsRecords().filterIndexed(DnsRecord.COLUMN_DHCP_ADDRESS, this);
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

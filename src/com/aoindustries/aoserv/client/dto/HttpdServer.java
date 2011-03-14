@@ -15,7 +15,7 @@ public class HttpdServer extends AOServerResource {
     private int linuxAccountGroup;
     private Integer modPhpVersion;
     private boolean useSuexec;
-    private boolean isShared;
+    private boolean shared;
     private boolean useModPerl;
     private int timeout;
 
@@ -37,7 +37,7 @@ public class HttpdServer extends AOServerResource {
         int linuxAccountGroup,
         Integer modPhpVersion,
         boolean useSuexec,
-        boolean isShared,
+        boolean shared,
         boolean useModPerl,
         int timeout
     ) {
@@ -47,7 +47,7 @@ public class HttpdServer extends AOServerResource {
         this.linuxAccountGroup = linuxAccountGroup;
         this.modPhpVersion = modPhpVersion;
         this.useSuexec = useSuexec;
-        this.isShared = isShared;
+        this.shared = shared;
         this.useModPerl = useModPerl;
         this.timeout = timeout;
     }
@@ -92,12 +92,12 @@ public class HttpdServer extends AOServerResource {
         this.useSuexec = useSuexec;
     }
 
-    public boolean isIsShared() {
-        return isShared;
+    public boolean isShared() {
+        return shared;
     }
 
-    public void setIsShared(boolean isShared) {
-        this.isShared = isShared;
+    public void setShared(boolean shared) {
+        this.shared = shared;
     }
 
     public boolean isUseModPerl() {

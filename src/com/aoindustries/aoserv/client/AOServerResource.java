@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 public abstract class AOServerResource extends Resource {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -50,16 +50,16 @@ public abstract class AOServerResource extends Resource {
     /**
      * Gets the resource that this represents.
      */
-    static final String COLUMN_AO_SERVER = "ao_server";
+    public static final MethodColumn COLUMN_AO_SERVER = getMethodColumn(AOServerResource.class, "aoServer");
     @DependencySingleton
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the server that this resource is on")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the server that this resource is on")
     public AOServer getAoServer() throws RemoteException {
         return getConnector().getAoServers().get(aoServer);
     }
 
-    static final String COLUMN_BUSINESS_SERVER = "business_server";
+    public static final MethodColumn COLUMN_BUSINESS_SERVER = getMethodColumn(AOServerResource.class, "businessServer");
     @DependencySingleton
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, name=COLUMN_BUSINESS_SERVER, index=IndexType.INDEXED, description="the business server that this resource depends on")
+    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the business server that this resource depends on")
     public BusinessServer getBusinessServer() throws RemoteException {
         return getConnector().getBusinessServers().get(businessServer);
     }

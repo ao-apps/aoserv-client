@@ -14,7 +14,7 @@ public class HttpdSite extends AOServerResource {
     private boolean listFirst;
     private int linuxAccountGroup;
     private Email serverAdmin;
-    private boolean isManualConfig;
+    private boolean manualConfig;
     private String awstatsSkipFiles;
 
     public HttpdSite() {
@@ -34,7 +34,7 @@ public class HttpdSite extends AOServerResource {
         boolean listFirst,
         int linuxAccountGroup,
         Email serverAdmin,
-        boolean isManualConfig,
+        boolean manualConfig,
         String awstatsSkipFiles
     ) {
         super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
@@ -42,7 +42,7 @@ public class HttpdSite extends AOServerResource {
         this.listFirst = listFirst;
         this.linuxAccountGroup = linuxAccountGroup;
         this.serverAdmin = serverAdmin;
-        this.isManualConfig = isManualConfig;
+        this.manualConfig = manualConfig;
         this.awstatsSkipFiles = awstatsSkipFiles;
     }
 
@@ -78,12 +78,12 @@ public class HttpdSite extends AOServerResource {
         this.serverAdmin = serverAdmin;
     }
 
-    public boolean isIsManualConfig() {
-        return isManualConfig;
+    public boolean isManualConfig() {
+        return manualConfig;
     }
 
-    public void setIsManualConfig(boolean isManualConfig) {
-        this.isManualConfig = isManualConfig;
+    public void setManualConfig(boolean manualConfig) {
+        this.manualConfig = manualConfig;
     }
 
     public String getAwstatsSkipFiles() {

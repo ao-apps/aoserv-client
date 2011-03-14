@@ -5,8 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
@@ -17,13 +19,11 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class VirtualServer extends AOServObjectIntegerKey implements Comparable<VirtualServer>, DtoFactory<com.aoindustries.aoserv.client.dto.VirtualServer> {
-
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-    // </editor-fold>
+final public class VirtualServer extends Server implements DtoFactory<com.aoindustries.aoserv.client.dto.VirtualServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 3405172634580756287L;
+
     final private int primaryRam;
     final private int primaryRamTarget;
     final private Integer secondaryRam;
@@ -43,7 +43,18 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
 
     public VirtualServer(
         AOServConnector connector,
-        int server,
+        int pkey,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int farm,
+        String description,
+        Integer operatingSystemVersion,
+        String name,
+        boolean monitoringEnabled,
         int primaryRam,
         int primaryRamTarget,
         Integer secondaryRam,
@@ -61,7 +72,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
         boolean requiresHvm,
         String vncPassword
     ) {
-        super(connector, server);
+        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, farm, description, operatingSystemVersion, name, monitoringEnabled);
         this.primaryRam = primaryRam;
         this.primaryRamTarget = primaryRamTarget;
         this.secondaryRam = secondaryRam;
@@ -92,31 +103,13 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(VirtualServer other) {
-        try {
-            return key==other.key? 0 : AOServObjectUtils.compare(getServer(), other.getServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_SERVER = "server";
-    @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_SERVER, index=IndexType.PRIMARY_KEY, description="the server that is virtualized")
-    public Server getServer() throws RemoteException {
-        return getConnector().getServers().get(key);
-    }
-
-    @SchemaColumn(order=1, name="primary_ram", description="the amount of RAM required in primary mode in megabytes")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+1, description="the amount of RAM required in primary mode in megabytes")
     public int getPrimaryRam() {
         return primaryRam;
     }
 
-    @SchemaColumn(order=2, name="primary_ram_target", description="the amount of RAM required in primary mode in megabytes")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+2, description="the amount of RAM required in primary mode in megabytes")
     public int getPrimaryRamTarget() {
         return primaryRamTarget;
     }
@@ -128,33 +121,30 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
      * other things like processor type, speed, architecture, processor cores and
      * processor weights will also not be allocated.
      */
-    @SchemaColumn(order=3, name="secondary_ram", description="the amount of RAM required in primary mode in megabytes or null if secondary not required")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+3, description="the amount of RAM required in primary mode in megabytes or null if secondary not required")
     public Integer getSecondaryRam() {
         return secondaryRam;
     }
 
-    @SchemaColumn(order=4, name="secondary_ram_target", description="the amount of RAM required in primary mode in megabytes or null if secondary not required")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+4, description="the amount of RAM required in primary mode in megabytes or null if secondary not required")
     public Integer getSecondaryRamTarget() {
         return secondaryRamTarget;
     }
 
-    static final String COLUMN_MINIMUM_PROCESSOR_TYPE = "minimum_processor_type";
+    public static final MethodColumn COLUMN_MINIMUM_PROCESSOR_TYPE = getMethodColumn(VirtualServer.class, "minimumProcessorType");
     /**
      * Gets the minimum processor type or <code>null</code> if none.
      */
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_MINIMUM_PROCESSOR_TYPE, index=IndexType.INDEXED, description="the minimum processor type")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+5, index=IndexType.INDEXED, description="the minimum processor type")
     public ProcessorType getMinimumProcessorType() throws RemoteException {
         if(minimumProcessorType==null) return null;
         return getConnector().getProcessorTypes().get(minimumProcessorType);
     }
 
-    static final String COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE = "minimum_processor_architecture";
-    /**
-     * Gets the minimum processor architecture.
-     */
+    public static final MethodColumn COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE = getMethodColumn(VirtualServer.class, "minimumProcessorArchitecture");
     @DependencySingleton
-    @SchemaColumn(order=6, name=COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, index=IndexType.INDEXED, description="the minimum processor architecture, compatible architectures may be substituted")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+6, index=IndexType.INDEXED, description="the minimum processor architecture, compatible architectures may be substituted")
     public Architecture getMinimumProcessorArchitecture() throws RemoteException {
         return getConnector().getArchitectures().get(minimumProcessorArchitecture);
     }
@@ -162,7 +152,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets the minimum processor speed or <code>null</code> for none.
      */
-    @SchemaColumn(order=7, name="minimum_processor_speed", description="the minimum processor speed in MHz")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+7, description="the minimum processor speed in MHz")
     public Integer getMinimumProcessorSpeed() {
         return minimumProcessorSpeed;
     }
@@ -170,7 +160,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets the minimum processor speed target or <code>null</code> for none.
      */
-    @SchemaColumn(order=8, name="minimum_processor_speed_target", description="the minimum processor speed in MHz")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+8, description="the minimum processor speed in MHz")
     public Integer getMinimumProcessorSpeedTarget() {
         return minimumProcessorSpeedTarget;
     }
@@ -178,12 +168,12 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets the processor cores.
      */
-    @SchemaColumn(order=9, name="processor_cores", description="the number of processor cores")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+9, description="the number of processor cores")
     public short getProcessorCores() {
         return processorCores;
     }
 
-    @SchemaColumn(order=10, name="processor_cores_target", description="the number of processor cores")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+10, description="the number of processor cores")
     public short getProcessorCoresTarget() {
         return processorCoresTarget;
     }
@@ -191,12 +181,12 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets the processor weight.
      */
-    @SchemaColumn(order=11, name="processor_weight", description="the processor allocation weight on a scale of 1-1024")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+11, description="the processor allocation weight on a scale of 1-1024")
     public short getProcessorWeight() {
         return processorWeight;
     }
 
-    @SchemaColumn(order=12, name="processor_weight_target", description="the processor allocation weight on a scale of 1-1024")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+12, description="the processor allocation weight on a scale of 1-1024")
     public short getProcessorWeightTarget() {
         return processorWeightTarget;
     }
@@ -204,7 +194,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets if the primary server is locked (manually set).
      */
-    @SchemaColumn(order=13, name="primary_physical_server_locked", description="indicates the primary server is locked and should not be moved by automated means")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+13, description="indicates the primary server is locked and should not be moved by automated means")
     public boolean isPrimaryPhysicalServerLocked() {
         return primaryPhysicalServerLocked;
     }
@@ -212,7 +202,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets if the secondary server is locked (manually set).
      */
-    @SchemaColumn(order=14, name="secondary_physical_server_locked", description="indicates the secondary server is locked and should not be moved by automated means")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+14, description="indicates the secondary server is locked and should not be moved by automated means")
     public boolean isSecondaryPhysicalServerLocked() {
         return secondaryPhysicalServerLocked;
     }
@@ -220,7 +210,7 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
     /**
      * Gets if this virtual requires full hardware virtualization support.
      */
-    @SchemaColumn(order=15, name="requires_hvm", description="indicates requires full hardware virtualization")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+15, description="indicates requires full hardware virtualization")
     public boolean getRequiresHvm() {
         return requiresHvm;
     }
@@ -230,17 +220,28 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
      * The password must be unique between virtual servers because the password is used
      * behind the scenes to resolve the actual IP and port for VNC proxying.
      */
-    @SchemaColumn(order=16, name="vnc_password", description="the password for VNC console access or null to disable VNC access")
+    @SchemaColumn(order=SERVER_LAST_COLUMN+16, description="the password for VNC console access or null to disable VNC access")
     public String getVncPassword() {
         return vncPassword;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
-    public VirtualServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.VirtualServer dto) {
+    public VirtualServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.VirtualServer dto) throws ValidationException {
         this(
             connector,
-            dto.getServer(),
+            dto.getPkey(),
+            dto.getResourceType(),
+            getAccountingCode(dto.getAccounting()),
+            getTimeMillis(dto.getCreated()),
+            getUserId(dto.getCreatedBy()),
+            dto.getDisableLog(),
+            getTimeMillis(dto.getLastEnabled()),
+            dto.getFarm(),
+            dto.getDescription(),
+            dto.getOperatingSystemVersion(),
+            dto.getName(),
+            dto.isMonitoringEnabled(),
             dto.getPrimaryRam(),
             dto.getPrimaryRamTarget(),
             dto.getSecondaryRam(),
@@ -262,14 +263,36 @@ final public class VirtualServer extends AOServObjectIntegerKey implements Compa
 
     @Override
     public com.aoindustries.aoserv.client.dto.VirtualServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.VirtualServer(key, primaryRam, primaryRamTarget, secondaryRam, secondaryRamTarget, minimumProcessorType, minimumProcessorArchitecture, minimumProcessorSpeed, minimumProcessorSpeedTarget, processorCores, processorCoresTarget, processorWeight, processorWeightTarget, primaryPhysicalServerLocked, secondaryPhysicalServerLocked, requiresHvm, vncPassword);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return getServer().toStringImpl();
+        return new com.aoindustries.aoserv.client.dto.VirtualServer(
+            key,
+            getResourceTypeName(),
+            getDto(getAccounting()),
+            created,
+            getDto(getCreatedByUsername()),
+            disableLog,
+            lastEnabled,
+            farm,
+            description,
+            operatingSystemVersion,
+            name,
+            monitoringEnabled,
+            primaryRam,
+            primaryRamTarget,
+            secondaryRam,
+            secondaryRamTarget,
+            minimumProcessorType,
+            minimumProcessorArchitecture,
+            minimumProcessorSpeed,
+            minimumProcessorSpeedTarget,
+            processorCores,
+            processorCoresTarget,
+            processorWeight,
+            processorWeightTarget,
+            primaryPhysicalServerLocked,
+            secondaryPhysicalServerLocked,
+            requiresHvm,
+            vncPassword
+        );
     }
     // </editor-fold>
 

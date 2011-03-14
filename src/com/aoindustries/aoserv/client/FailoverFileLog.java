@@ -20,7 +20,7 @@ import java.sql.Timestamp;
 final public class FailoverFileLog extends AOServObjectIntegerKey implements Comparable<FailoverFileLog>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileLog> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 2L;
+    // TODO: private static final long serialVersionUID = 2L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -30,7 +30,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     final private int scanned;
     final private int updated;
     final private long bytes;
-    final private boolean isSuccessful;
+    final private boolean successful;
 
     public FailoverFileLog(
         AOServConnector connector,
@@ -50,7 +50,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
         this.scanned = scanned;
         this.updated = updated;
         this.bytes = bytes;
-        this.isSuccessful = isSuccessful;
+        this.successful = isSuccessful;
     }
     // </editor-fold>
 
@@ -58,9 +58,9 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     @Override
     public int compareTo(FailoverFileLog other) {
         try {
-            int diff = AOServObjectUtils.compare(other.endTime, endTime); // Descending
+            int diff = compare(other.endTime, endTime); // Descending
             if(diff!=0) return diff;
-            return replication==other.replication ? 0 : getFailoverFileReplication().compareTo(other.getFailoverFileReplication());
+            return replication==other.replication ? 0 : getReplication().compareTo(other.getReplication());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -68,46 +68,46 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated, unique id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_REPLICATION = "replication";
+    public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FailoverFileLog.class, "replication");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the replication that was performed")
-    public FailoverFileReplication getFailoverFileReplication() throws RemoteException {
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the replication that was performed")
+    public FailoverFileReplication getReplication() throws RemoteException {
         return getConnector().getFailoverFileReplications().get(replication);
     }
 
-    @SchemaColumn(order=2, name="start_time", description="the time the replication started")
+    @SchemaColumn(order=2, description="the time the replication started")
     public Timestamp getStartTime() {
         return new Timestamp(startTime);
     }
 
-    @SchemaColumn(order=3, name="end_time", description="the time the replication finished")
+    @SchemaColumn(order=3, description="the time the replication finished")
     public Timestamp getEndTime() {
         return new Timestamp(endTime);
     }
 
-    @SchemaColumn(order=4, name="scanned", description="the number of files scanned")
+    @SchemaColumn(order=4, description="the number of files scanned")
     public int getScanned() {
     	return scanned;
     }
 
-    @SchemaColumn(order=5, name="updated", description="the number of files updated")
+    @SchemaColumn(order=5, description="the number of files updated")
     public int getUpdated() {
         return updated;
     }
 
-    @SchemaColumn(order=6, name="bytes", description="the number of bytes transferred")
+    @SchemaColumn(order=6, description="the number of bytes transferred")
     public long getBytes() {
         return bytes;
     }
 
-    @SchemaColumn(order=7, name="is_successful", description="keeps track of which passes completed successfully")
+    @SchemaColumn(order=7, description="keeps track of which passes completed successfully")
     public boolean isSuccessful() {
-        return isSuccessful;
+        return successful;
     }
     // </editor-fold>
 
@@ -122,7 +122,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
             dto.getScanned(),
             dto.getUpdated(),
             dto.getBytes(),
-            dto.isIsSuccessful()
+            dto.isSuccessful()
         );
     }
     @Override
@@ -135,7 +135,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
             scanned,
             updated,
             bytes,
-            isSuccessful
+            successful
         );
     }
     // </editor-fold>

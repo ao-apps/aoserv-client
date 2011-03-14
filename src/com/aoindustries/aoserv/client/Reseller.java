@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 final public class Reseller extends AOServObjectAccountingCodeKey implements Comparable<Reseller>, DtoFactory<com.aoindustries.aoserv.client.dto.Reseller> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -40,20 +40,20 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BRAND = getMethodColumn(Reseller.class, "brand");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_ACCOUNTING, index=IndexType.PRIMARY_KEY, description="the brand of this reseller")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the brand of this reseller")
     public Brand getBrand() throws RemoteException {
         return getConnector().getBrands().get(getKey());
     }
 
-    @SchemaColumn(order=1, name="ticket_auto_escalate", description="indicates this reseller does not handle tickets directly and that they are automatically escalated to the parent reseller")
+    @SchemaColumn(order=1, description="indicates this reseller does not handle tickets directly and that they are automatically escalated to the parent reseller")
     public boolean getTicketAutoEscalate() {
         return ticketAutoEscalate;
     }
 
-    static final String COLUMN_PARENT = "parent";
-    @SchemaColumn(order=2, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the immediate parent of this reseller or <code>null</code> if none available")
+    public static final MethodColumn COLUMN_PARENT_RESELLER = getMethodColumn(Reseller.class, "parentReseller");
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the immediate parent of this reseller or <code>null</code> if none available")
     public Reseller getParentReseller() throws RemoteException {
         Business bu = getBrand().getBusiness();
         if(bu==null) return null;
@@ -95,7 +95,7 @@ final public class Reseller extends AOServObjectAccountingCodeKey implements Com
      * business (that is a reseller) equal to this one.
      */
     public IndexedSet<Reseller> getChildResellers() throws RemoteException {
-        return getConnector().getResellers().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getResellers().filterIndexed(COLUMN_PARENT_RESELLER, this);
     }
 
     @DependentObjectSet

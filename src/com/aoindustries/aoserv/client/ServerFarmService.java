@@ -5,13 +5,11 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.*;
-
 /**
  * For AO Industries use only.
  *
  * @author  AO Industries, Inc.
  */
 @ServiceAnnotation(ServiceName.server_farms)
-public interface ServerFarmService extends AOServService<DomainLabel,ServerFarm> {
+public interface ServerFarmService extends AOServService<Integer,ServerFarm> {
 }

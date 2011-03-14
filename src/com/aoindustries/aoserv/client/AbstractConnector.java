@@ -99,4 +99,33 @@ abstract public class AbstractConnector implements AOServConnector {
         }
         return graph;
     }
+
+    // <editor-fold defaultstate="collapsed" desc="AOServerResourceService">
+    final AOServerResourceService aoserverResources = new AOServerResourceService(this);
+    @Override
+    final public AOServerResourceService getAoServerResources() {
+        return aoserverResources;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ResourceService">
+    final ResourceService resources = new ResourceService(this);
+    @Override
+    final public ResourceService getResources() {
+        return resources;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ServerResourceService">
+    final ServerResourceService serverResources = new ServerResourceService(this);
+    @Override
+    final public ServerResourceService getServerResources() {
+        return serverResources;
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="ServerService">
+    final ServerService servers = new ServerService(this);
+    @Override
+    final public ServerService getServers() {
+        return servers;
+    }
+    // </editor-fold>
 }

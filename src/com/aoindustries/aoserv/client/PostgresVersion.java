@@ -24,7 +24,7 @@ import java.util.List;
 final public class PostgresVersion extends AOServObjectIntegerKey implements Comparable<PostgresVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         VERSION_7_1="7.1",
@@ -85,7 +85,7 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     @Override
     public int compareTo(PostgresVersion other) {
         try {
-            return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+            return key==other.key ? 0 : getVersion().compareTo(other.getVersion());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -93,14 +93,14 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_VERSION = "version";
+    public static final MethodColumn COLUMN_VERSION = getMethodColumn(PostgresVersion.class, "version");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="a reference to the PostgreSQL details in the <code>technology_versions</code> table")
-    public TechnologyVersion getTechnologyVersion() throws RemoteException {
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a reference to the PostgreSQL details in the <code>technology_versions</code> table")
+    public TechnologyVersion getVersion() throws RemoteException {
         return getConnector().getTechnologyVersions().get(key);
     }
 
-    @SchemaColumn(order=1, name="minor_version", description="the minor version for this version")
+    @SchemaColumn(order=1, description="the minor version for this version")
     public String getMinorVersion() {
         return minorVersion;
     }
@@ -108,15 +108,15 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     /**
      * Gets the PostGIS version of <code>null</code> if not supported by this PostgreSQL version....
      */
-    static final String COLUMN_POSTGIS_VERSION = "postgis_version";
+    public static final MethodColumn COLUMN_POSTGIS_VERSION = getMethodColumn(PostgresVersion.class, "postgisVersion");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_POSTGIS_VERSION, index=IndexType.INDEXED, description="a reference to the PostGIS defails in the <code>technology_versions</code>")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="a reference to the PostGIS defails in the <code>technology_versions</code>")
     public TechnologyVersion getPostgisVersion() throws RemoteException {
         if(postgisVersion==null) return null;
         TechnologyVersion tv = getConnector().getTechnologyVersions().get(postgisVersion);
         if(
             tv.operatingSystemVersion
-            != getTechnologyVersion().operatingSystemVersion
+            != getVersion().operatingSystemVersion
         ) {
             throw new RemoteException("postgresql/postgis version mismatch on PostgresVersion: #"+key);
         }

@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  */
 final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxID> {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6222776271442175855L;
 
     public static void validate(int id) throws ValidationException {
         if(id<0) throw new ValidationException(ApplicationResources.accessor, "LinuxID.validate.lessThanZero", id);
@@ -97,7 +97,7 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
 
     @Override
     public int compareTo(LinuxID other) {
-        return this==other ? 0 : AOServObjectUtils.compare(id, other.id);
+        return this==other ? 0 : AOServObject.compare(id, other.id);
     }
 
     @Override

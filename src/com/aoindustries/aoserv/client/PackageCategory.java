@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class PackageCategory extends AOServObjectStringKey implements Comparable<PackageCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         AOSERV="aoserv",
@@ -44,7 +44,7 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(PackageCategory other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
@@ -52,7 +52,7 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     /**
      * Gets the unique name of this resource type.
      */
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the category name")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the category name")
     public String getName() {
         return getKey();
     }

@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comparable<NetTcpRedirect>, DtoFactory<com.aoindustries.aoserv.client.dto.NetTcpRedirect> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -65,29 +65,29 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_NET_BIND = "net_bind";
+    public static final MethodColumn COLUMN_NET_BIND = getMethodColumn(NetTcpRedirect.class, "netBind");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_NET_BIND, index=IndexType.PRIMARY_KEY, description="the pkey as found in net_binds")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the pkey as found in net_binds")
     public NetBind getNetBind() throws RemoteException {
         return getConnector().getNetBinds().get(key);
     }
 
-    @SchemaColumn(order=1, name="cps", description="the maximum number of connections per second before the redirect is temporarily disabled")
+    @SchemaColumn(order=1, description="the maximum number of connections per second before the redirect is temporarily disabled")
     public int getConnectionsPerSecond() {
         return cps;
     }
 
-    @SchemaColumn(order=2, name="cps_overload_sleep_time", description="the number of seconds the service will be disabled")
+    @SchemaColumn(order=2, description="the number of seconds the service will be disabled")
     public int getConnectionsPerSecondOverloadSleepTime() {
         return cpsOverloadSleepTime;
     }
 
-    @SchemaColumn(order=3, name="destination_host", description="the destination IP address or hostname, please note that hostnames are only resolved once on xinetd startup")
+    @SchemaColumn(order=3, description="the destination IP address or hostname, please note that hostnames are only resolved once on xinetd startup")
     public Hostname getDestinationHost() {
         return destinationHost;
     }
 
-    @SchemaColumn(order=4, name="destination_port", description="the remote port to connect to")
+    @SchemaColumn(order=4, description="the remote port to connect to")
     public NetPort getDestinationPort() {
         return destinationPort;
     }

@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
 final public class LinuxGroupType extends AOServObjectStringKey implements Comparable<LinuxGroupType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
 //    /**
 //     * The available group types.
@@ -55,14 +55,14 @@ final public class LinuxGroupType extends AOServObjectStringKey implements Compa
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(LinuxGroupType other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_RESOURCE_TYPE = "resource_type";
+    public static final MethodColumn COLUMN_RESOURCE_TYPE = getMethodColumn(LinuxGroupType.class, "resourceType");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_RESOURCE_TYPE, index=IndexType.PRIMARY_KEY, description="the resource type this represents")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the resource type this represents")
     public ResourceType getResourceType() throws RemoteException {
         return getConnector().getResourceTypes().get(getKey());
     }

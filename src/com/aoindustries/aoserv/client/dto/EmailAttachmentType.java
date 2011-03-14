@@ -11,14 +11,14 @@ package com.aoindustries.aoserv.client.dto;
 public class EmailAttachmentType extends AOServObject {
 
     private String extension;
-    private boolean isDefaultBlock;
+    private boolean defaultBlock;
 
     public EmailAttachmentType() {
     }
 
-    public EmailAttachmentType(String extension, boolean isDefaultBlock) {
+    public EmailAttachmentType(String extension, boolean defaultBlock) {
         this.extension = extension;
-        this.isDefaultBlock = isDefaultBlock;
+        this.defaultBlock = defaultBlock;
     }
 
     public String getExtension() {
@@ -29,11 +29,11 @@ public class EmailAttachmentType extends AOServObject {
         this.extension = extension;
     }
 
-    public boolean isIsDefaultBlock() {
-        return isDefaultBlock;
+    public boolean isDefaultBlock() {
+        return defaultBlock;
     }
 
-    public void setIsDefaultBlock(boolean isDefaultBlock) {
-        this.isDefaultBlock = isDefaultBlock;
+    public void setDefaultBlock(boolean defaultBlock) {
+        this.defaultBlock = defaultBlock;
     }
 }

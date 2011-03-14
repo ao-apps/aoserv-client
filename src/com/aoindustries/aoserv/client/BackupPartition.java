@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class BackupPartition extends AOServObjectIntegerKey implements Comparable<BackupPartition>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupPartition> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -54,7 +54,7 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     @Override
     public int compareTo(BackupPartition other) {
         try {
-            int diff = aoServer==other.aoServer ? 0 : getAOServer().compareTo(other.getAOServer());
+            int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
             if(diff!=0) return diff;
             return path.compareTo(other.path);
         } catch(RemoteException err) {
@@ -64,19 +64,19 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="the unique category id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique category id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_AO_SERVER = "ao_server";
+    public static final MethodColumn COLUMN_AO_SERVER = getMethodColumn(BackupPartition.class, "aoServer");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_AO_SERVER, index=IndexType.INDEXED, description="the pkey of the server that stores the backup data")
-    public AOServer getAOServer() throws RemoteException {
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the pkey of the server that stores the backup data")
+    public AOServer getAoServer() throws RemoteException {
         return getConnector().getAoServers().get(aoServer);
     }
 
-    @SchemaColumn(order=2, name="path", description="the full path to the root of the backup data")
+    @SchemaColumn(order=2, description="the full path to the root of the backup data")
     public UnixPath getPath() {
         return path;
     }
@@ -89,7 +89,7 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
      *
      * @return the enabled flag
      */
-    @SchemaColumn(order=3, name="quota_enabled", description="When quota is enabled, all replications/backups into the partition must have quota_gid set.")
+    @SchemaColumn(order=3, description="When quota is enabled, all replications/backups into the partition must have quota_gid set.")
     public boolean isQuotaEnabled() {
         return quotaEnabled;
     }
@@ -114,7 +114,7 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return getAOServer().getHostname()+":"+path;
+        return getAoServer().getHostname()+":"+path;
     }
     // </editor-fold>
 

@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class CommandResult<R> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     final private R result;
     final private Set<ServiceName> modifiedServiceNames;

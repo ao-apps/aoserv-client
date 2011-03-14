@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
 final public class FileBackupSetting extends AOServObjectIntegerKey implements Comparable<FileBackupSetting>, DtoFactory<com.aoindustries.aoserv.client.dto.FileBackupSetting> /*, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -55,7 +55,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
         try {
             int diff = replication==other.replication ? 0 : getReplication().compareTo(other.getReplication());
             if(diff!=0) return diff;
-            return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(path, other.path);
+            return compareIgnoreCaseConsistentWithEquals(path, other.path);
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -63,25 +63,25 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_REPLICATION = "replication";
+    public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FileBackupSetting.class, "replication");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_REPLICATION, index=IndexType.INDEXED, description="the pkey of the failover_file_replication configured")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the pkey of the failover_file_replication configured")
     public FailoverFileReplication getReplication() throws RemoteException {
         return getConnector().getFailoverFileReplications().get(replication);
     }
 
-    @SchemaColumn(order=2, name="path", description="the path to control")
+    @SchemaColumn(order=2, description="the path to control")
     public String getPath() {
         return path;
     }
 
-    @SchemaColumn(order=3, name="backup_enabled", description="the enabled flag for this prefix")
-    public boolean getBackupEnabled() {
+    @SchemaColumn(order=3, description="the enabled flag for this prefix")
+    public boolean isBackupEnabled() {
         return backupEnabled;
     }
     // </editor-fold>

@@ -29,7 +29,7 @@ import java.util.NoSuchElementException;
 final public class Transaction extends AOServObjectIntegerKey implements Comparable<Transaction>, DtoFactory<com.aoindustries.aoserv.client.dto.Transaction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * Payment confirmation.
@@ -111,43 +111,43 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(Transaction other) {
-        int diff = AOServObjectUtils.compare(time, other.time);
+        int diff = compare(time, other.time);
         if(diff!=0) return diff;
-        return AOServObjectUtils.compare(key, other.key);
+        return compare(key, other.key);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="transid", index=IndexType.PRIMARY_KEY, description="the unique identifier for this transaction")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier for this transaction")
     public int getTransid() {
     	return key;
     }
 
-    @SchemaColumn(order=1, name="time", description="the time the transaction occured")
+    @SchemaColumn(order=1, description="the time the transaction occured")
     public Timestamp getTime() {
     	return new Timestamp(time);
     }
 
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(Transaction.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the identifier for the business")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the identifier for the business")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(accounting);
     }
 
-    static final String COLUMN_SOURCE_ACCOUNTING = "source_accounting";
+    public static final MethodColumn COLUMN_SOURCE_BUSINESS = getMethodColumn(Transaction.class, "sourceBusiness");
     @DependencySingleton
-    @SchemaColumn(order=3, name=COLUMN_SOURCE_ACCOUNTING, index=IndexType.INDEXED, description="the source of the charge to this account")
+    @SchemaColumn(order=3, index=IndexType.INDEXED, description="the source of the charge to this account")
     public Business getSourceBusiness() throws RemoteException {
         return getConnector().getBusinesses().get(sourceAccounting);
     }
 
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_BUSINESS_ADMINISTRATOR = getMethodColumn(Transaction.class, "businessAdministrator");
     /**
      * May be filtered.
      */
     @DependencySingleton
-    @SchemaColumn(order=4, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the admin involved in the transaction")
+    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the admin involved in the transaction")
     public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
         try {
             return getConnector().getBusinessAdministrators().get(username);
@@ -156,62 +156,62 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
         }
     }
 
-    static final String COLUMN_TYPE = "type";
+    public static final MethodColumn COLUMN_TYPE = getMethodColumn(Transaction.class, "type");
     @DependencySingleton
-    @SchemaColumn(order=5, name=COLUMN_TYPE, index=IndexType.INDEXED, description="the type of transaction")
+    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the type of transaction")
     public TransactionType getType() throws RemoteException {
         return getConnector().getTransactionTypes().get(type);
     }
 
-    @SchemaColumn(order=6, name="description", description="description of the transaction")
+    @SchemaColumn(order=6, description="description of the transaction")
     synchronized public String getDescription() throws RemoteException {
         if(description==null) description = new GetTransactionDescriptionCommand(this).execute(getConnector());
         return description;
     }
 
-    @SchemaColumn(order=7, name="quantity", description="the quantity of the rate applied to the account")
+    @SchemaColumn(order=7, description="the quantity of the rate applied to the account")
     public BigDecimal getQuantity() {
     	return quantity;
     }
 
-    @SchemaColumn(order=8, name="rate", description="the amount per unit of quantity")
+    @SchemaColumn(order=8, description="the amount per unit of quantity")
     public Money getRate() {
     	return rate;
     }
 
-    static final String COLUMN_PAYMENT_TYPE = "payment_type";
+    public static final MethodColumn COLUMN_PAYMENT_TYPE = getMethodColumn(Transaction.class, "paymentType");
     @DependencySingleton
-    @SchemaColumn(order=9, name=COLUMN_PAYMENT_TYPE, index=IndexType.INDEXED, description="the type of payment made")
+    @SchemaColumn(order=9, index=IndexType.INDEXED, description="the type of payment made")
     public PaymentType getPaymentType() throws RemoteException {
         if (paymentType == null) return null;
         return getConnector().getPaymentTypes().get(paymentType);
     }
 
-    @SchemaColumn(order=10, name="payment_info", description="the payment info, such as last four of a credit card number or a check number")
+    @SchemaColumn(order=10, description="the payment info, such as last four of a credit card number or a check number")
     public String getPaymentInfo() {
     	return paymentInfo;
     }
 
-    static final String COLUMN_PROCESSOR = "processor";
+    public static final MethodColumn COLUMN_PROCESSOR = getMethodColumn(Transaction.class, "processor");
     @DependencySingleton
-    @SchemaColumn(order=11, name=COLUMN_PROCESSOR, index=IndexType.INDEXED, description="the credit card processor that handled the payment")
+    @SchemaColumn(order=11, index=IndexType.INDEXED, description="the credit card processor that handled the payment")
     public CreditCardProcessor getProcessor() throws RemoteException {
         if(processor==null) return null;
         return getConnector().getCreditCardProcessors().get(processor);
     }
 
-    static final String COLUMN_CREDIT_CARD_TRANSACTION = "credit_card_transaction";
+    public static final MethodColumn COLUMN_CREDIT_CARD_TRANSACTION = getMethodColumn(Transaction.class, "creditCardTransaction");
     /**
      * May be filtered.
      */
-    @SchemaColumn(order=12, name=COLUMN_CREDIT_CARD_TRANSACTION, index=IndexType.UNIQUE, description="the credit card transaction for this transaction")
+    @SchemaColumn(order=12, index=IndexType.UNIQUE, description="the credit card transaction for this transaction")
     @DependencySingleton
     public CreditCardTransaction getCreditCardTransaction() throws RemoteException {
         if(creditCardTransaction==null) return null;
         return getConnector().getCreditCardTransactions().filterUnique(CreditCardTransaction.COLUMN_PKEY, creditCardTransaction);
     }
 
-    @SchemaColumn(order=13, name="status", description="the status of the transaction")
+    @SchemaColumn(order=13, description="the status of the transaction")
     public Status getStatus() {
     	return status;
     }

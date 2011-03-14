@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
 final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements Comparable<HttpdTomcatVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdTomcatVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String TECHNOLOGY_NAME="jakarta-tomcat";
 
@@ -63,7 +63,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     @Override
     public int compareTo(HttpdTomcatVersion other) {
         try {
-            return key==other.key ? 0 : getTechnologyVersion().compareTo(other.getTechnologyVersion());
+            return key==other.key ? 0 : getVersion().compareTo(other.getVersion());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -71,20 +71,20 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_VERSION = "version";
+    public static final MethodColumn COLUMN_VERSION = getMethodColumn(HttpdTomcatVersion.class, "version");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_VERSION, index=IndexType.PRIMARY_KEY, description="a reference to the tomcat details in the technology_versions table")
-    public TechnologyVersion getTechnologyVersion() throws RemoteException {
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a reference to the tomcat details in the technology_versions table")
+    public TechnologyVersion getVersion() throws RemoteException {
         return getConnector().getTechnologyVersions().get(key);
     }
 
-    @SchemaColumn(order=1, name="install_dir", description="the directory the basic install files are located in")
-    public UnixPath getInstallDirectory() {
+    @SchemaColumn(order=1, description="the directory the basic install files are located in")
+    public UnixPath getInstallDir() {
         return installDir;
     }
 
-    @SchemaColumn(order=2, name="requires_mod_jk", description="indicates that this version of Tomcat requires the use of mod_jk")
-    public boolean requiresModJK() {
+    @SchemaColumn(order=2, description="indicates that this version of Tomcat requires the use of mod_jk")
+    public boolean getRequiresModJK() {
         return requiresModJk;
     }
     // </editor-fold>
@@ -127,27 +127,27 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     //}
 
     public boolean isTomcat3_1() throws RemoteException {
-        String version = getTechnologyVersion().getVersion();
+        String version = getVersion().getVersion();
         return version==VERSION_3_1; // OK - interned
     }
 
     public boolean isTomcat3_2_4() throws RemoteException {
-        String version = getTechnologyVersion().getVersion();
+        String version = getVersion().getVersion();
         return version==VERSION_3_2_4; // OK - interned
     }
 
     public boolean isTomcat4_1_X() throws RemoteException {
-        String version = getTechnologyVersion().getVersion();
+        String version = getVersion().getVersion();
         return version.startsWith(VERSION_4_1_PREFIX);
     }
 
     public boolean isTomcat5_5_X() throws RemoteException {
-        String version = getTechnologyVersion().getVersion();
+        String version = getVersion().getVersion();
         return version.startsWith(VERSION_5_5_PREFIX);
     }
 
     public boolean isTomcat6_0_X() throws RemoteException {
-        String version = getTechnologyVersion().getVersion();
+        String version = getVersion().getVersion();
         return version.startsWith(VERSION_6_0_PREFIX);
     }
     // </editor-fold>

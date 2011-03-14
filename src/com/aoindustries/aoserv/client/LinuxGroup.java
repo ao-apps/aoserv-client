@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 final public class LinuxGroup extends AOServerResource implements Comparable<LinuxGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroup> /* Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * Some commonly used system and application groups.
@@ -124,16 +124,16 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_LINUX_GROUP_TYPE = "linux_group_type";
+    public static final MethodColumn COLUMN_LINUX_GROUP_TYPE = getMethodColumn(LinuxGroup.class, "linuxGroupType");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_LINUX_GROUP_TYPE, index=IndexType.INDEXED, description="the type of group")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the type of group")
     public LinuxGroupType getLinuxGroupType() throws RemoteException {
         return getConnector().getLinuxGroupTypes().get(linuxGroupType);
     }
 
-    static final String COLUMN_GROUP_NAME = "group_name";
+    public static final MethodColumn COLUMN_GROUP_NAME = getMethodColumn(LinuxGroup.class, "groupName");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_GROUP_NAME, index=IndexType.INDEXED, description="the name of the group")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the name of the group")
     public GroupName getGroupName() throws RemoteException {
         return getConnector().getGroupNames().get(groupName);
     }
@@ -141,7 +141,7 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
         return groupName;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="gid", description="the gid of the group on the machine")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the gid of the group on the machine")
     public LinuxID getGid() {
         return gid;
     }

@@ -20,10 +20,16 @@ import java.util.NoSuchElementException;
 final public class AOServer extends AOServObjectIntegerKey implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServer>, Comparable<AOServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    /**
+     * The daemon key is only available to <code>MasterUser</code>s.  This value is used
+     * in place of the key when not accessible.
+     */
+    public static final String HIDDEN_PASSWORD="*";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -2739295664156776165L;
+
     private DomainName hostname;
     final private Integer daemonBind;
     final private HashedPassword daemonKey;
@@ -108,18 +114,19 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final String COLUMN_SERVER = "server";
+    public static final MethodColumn COLUMN_SERVER = getMethodColumn(AOServer.class, "server");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_SERVER, index=IndexType.PRIMARY_KEY, description="a reference to servers")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a reference to servers")
     public Server getServer() throws RemoteException {
         return getConnector().getServers().get(key);
     }
 
-    public static final String COLUMN_HOSTNAME = "hostname";
+    public static final MethodColumn COLUMN_HOSTNAME = getMethodColumn(AOServer.class, "hostname");
+
     /**
      * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
      */
-    @SchemaColumn(order=1, name=COLUMN_HOSTNAME, index=IndexType.UNIQUE, description="the unique hostname of the server")
+    @SchemaColumn(order=1, index=IndexType.UNIQUE, description="the unique hostname of the server")
     public DomainName getHostname() {
         return hostname;
     }
@@ -127,73 +134,73 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     /**
      * Gets the port information to bind to.
      */
-    static final String COLUMN_DAEMON_BIND = "daemon_bind";
+    public static final MethodColumn COLUMN_DAEMON_BIND = getMethodColumn(AOServer.class, "daemonBind");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_DAEMON_BIND, index=IndexType.UNIQUE, description="the network bind info for the AOServ Daemon")
+    @SchemaColumn(order=2, index=IndexType.UNIQUE, description="the network bind info for the AOServ Daemon")
     public NetBind getDaemonBind() throws RemoteException {
     	if(daemonBind==null) return null;
         return getConnector().getNetBinds().get(daemonBind);
     }
 
-    @SchemaColumn(order=3, name="daemon_key", description="the hashed key used to connect to this server")
+    @SchemaColumn(order=3, description="the hashed key used to connect to this server")
     public HashedPassword getDaemonKey() {
         return daemonKey;
     }
 
-    @SchemaColumn(order=4, name="pool_size", description="the recommended connection pool size for the AOServ Master")
+    @SchemaColumn(order=4, description="the recommended connection pool size for the AOServ Master")
     public int getPoolSize() {
         return poolSize;
     }
 
-    @SchemaColumn(order=5, name="distro_hour", description="the hour the distribution will occur, in server time zone")
+    @SchemaColumn(order=5, description="the hour the distribution will occur, in server time zone")
     public int getDistroHour() {
         return distroHour;
     }
 
-    @SchemaColumn(order=6, name="last_distro_time", description="the time the last distro check was started")
+    @SchemaColumn(order=6, description="the time the last distro check was started")
     public Timestamp getLastDistroTime() {
         return lastDistroTime==null ? null : new Timestamp(lastDistroTime);
     }
 
-    static final String COLUMN_FAILOVER_SERVER = "failover_server";
+    public static final MethodColumn COLUMN_FAILOVER_SERVER = getMethodColumn(AOServer.class, "failoverServer");
     @DependencySingleton
-    @SchemaColumn(order=7, name=COLUMN_FAILOVER_SERVER, index=IndexType.INDEXED, description="the server that is currently running this server")
+    @SchemaColumn(order=7, index=IndexType.INDEXED, description="the server that is currently running this server")
     public AOServer getFailoverServer() throws RemoteException {
         if(failoverServer==null) return null;
         return getConnector().getAoServers().get(failoverServer);
     }
 
-    static final String COLUMN_DAEMON_DEVICE_ID = "daemon_device_id";
+    public static final MethodColumn COLUMN_DAEMON_DEVICE_ID = getMethodColumn(AOServer.class, "daemonDeviceId");
     @DependencySingleton
-    @SchemaColumn(order=8, name=COLUMN_DAEMON_DEVICE_ID, index=IndexType.INDEXED, description="the device name the master connects to")
-    public NetDeviceID getDaemonDeviceID() throws RemoteException {
+    @SchemaColumn(order=8, index=IndexType.INDEXED, description="the device name the master connects to")
+    public NetDeviceID getDaemonDeviceId() throws RemoteException {
         return getConnector().getNetDeviceIDs().get(daemonDeviceId);
     }
 
-    static final String COLUMN_DAEMON_CONNECT_BIND = "daemon_connect_bind";
+    public static final MethodColumn COLUMN_DAEMON_CONNECT_BIND = getMethodColumn(AOServer.class, "daemonConnectBind");
     @DependencySingleton
-    @SchemaColumn(order=9, name=COLUMN_DAEMON_CONNECT_BIND, index=IndexType.UNIQUE, description="the bind to connect to")
+    @SchemaColumn(order=9, index=IndexType.UNIQUE, description="the bind to connect to")
     public NetBind getDaemonConnectBind() throws RemoteException {
         if(daemonConnectBind==null) return null;
         return getConnector().getNetBinds().get(daemonConnectBind);
     }
 
-    static final String COLUMN_TIME_ZONE = "time_zone";
+    public static final MethodColumn COLUMN_TIME_ZONE = getMethodColumn(AOServer.class, "timeZone");
     @DependencySingleton
-    @SchemaColumn(order=10, name=COLUMN_TIME_ZONE, index=IndexType.INDEXED, description="the time zone setting for the server")
+    @SchemaColumn(order=10, index=IndexType.INDEXED, description="the time zone setting for the server")
     public TimeZone getTimeZone() throws RemoteException {
         return getConnector().getTimeZones().get(timeZone);
     }
 
-    static final String COLUMN_JILTER_BIND = "jilter_bind";
+    public static final MethodColumn COLUMN_JILTER_BIND = getMethodColumn(AOServer.class, "jilterBind");
     @DependencySingleton
-    @SchemaColumn(order=11, name=COLUMN_JILTER_BIND, index=IndexType.UNIQUE, description="the bind that sendmail uses to connect to jilter")
+    @SchemaColumn(order=11, index=IndexType.UNIQUE, description="the bind that sendmail uses to connect to jilter")
     public NetBind getJilterBind() throws RemoteException {
     	if(jilterBind==null) return null;
         return getConnector().getNetBinds().get(jilterBind);
     }
 
-    @SchemaColumn(order=12, name="restrict_outbound_email", description="controls if outbound email may only come from address hosted on this machine")
+    @SchemaColumn(order=12, description="controls if outbound email may only come from address hosted on this machine")
     public boolean getRestrictOutboundEmail() {
         return restrictOutboundEmail;
     }
@@ -205,7 +212,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
      * @see  #getDaemonConnectBind
      * @see  #getDaemonBind
      */
-    @SchemaColumn(order=13, name="daemon_connect_address", description="provides a specific address to use for connecting to AOServDaemon")
+    @SchemaColumn(order=13, description="provides a specific address to use for connecting to AOServDaemon")
     public InetAddress getDaemonConnectAddress() {
         return daemonConnectAddress;
     }
@@ -213,7 +220,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     /**
      * Gets the number of filesystem entries sent per batch during failover replications.
      */
-    @SchemaColumn(order=14, name="failover_batch_size", description="the batch size used for failover replications coming from this server")
+    @SchemaColumn(order=14, description="the batch size used for failover replications coming from this server")
     public int getFailoverBatchSize() {
         return failoverBatchSize;
     }
@@ -222,7 +229,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
      * Gets the 5-minute load average that is considered a low-priority alert or
      * <code>NaN</code> if no alert allowed at this level.
      */
-    @SchemaColumn(order=15, name="monitoring_load_low", description="the 5-minute load average that will trigger a low-level alert")
+    @SchemaColumn(order=15, description="the 5-minute load average that will trigger a low-level alert")
     public Float getMonitoringLoadLow() {
         return monitoringLoadLow;
     }
@@ -231,7 +238,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
      * Gets the 5-minute load average that is considered a medium-priority alert or
      * <code>NaN</code> if no alert allowed at this level.
      */
-    @SchemaColumn(order=16, name="monitoring_load_medium", description="the 5-minute load average that will trigger a medium-level alert")
+    @SchemaColumn(order=16, description="the 5-minute load average that will trigger a medium-level alert")
     public Float getMonitoringLoadMedium() {
         return monitoringLoadMedium;
     }
@@ -240,7 +247,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
      * Gets the 5-minute load average that is considered a high-priority alert or
      * <code>NaN</code> if no alert allowed at this level.
      */
-    @SchemaColumn(order=17, name="monitoring_load_high", description="the 5-minute load average that will trigger a high-level alert")
+    @SchemaColumn(order=17, description="the 5-minute load average that will trigger a high-level alert")
     public Float getMonitoringLoadHigh() {
         return monitoringLoadHigh;
     }
@@ -250,7 +257,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
      * <code>NaN</code> if no alert allowed at this level.  This is the level
      * that will alert people 24x7.
      */
-    @SchemaColumn(order=18, name="monitoring_load_critical", description="the 5-minute load average that will trigger a critical-level alert")
+    @SchemaColumn(order=18, description="the 5-minute load average that will trigger a critical-level alert")
     public Float getMonitoringLoadCritical() {
         return monitoringLoadCritical;
     }
@@ -402,7 +409,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     }
 
     public IPAddress getPrimaryIPAddress() throws RemoteException {
-        NetDeviceID deviceId = getDaemonDeviceID();
+        NetDeviceID deviceId = getDaemonDeviceId();
         NetDevice nd=getServer().getNetDevice(deviceId);
         if(nd==null) throw new NoSuchElementException("Unable to find NetDevice: "+deviceId+" on "+this);
         return nd.getPrimaryIPAddress();
@@ -517,7 +524,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     // <editor-fold defaultstate="collapsed" desc="Daemon Access">
     public static class DaemonAccess implements Serializable, DtoFactory<com.aoindustries.aoserv.client.dto.DaemonAccess> {
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 8345459669465488959L;
 
         private final String protocol;
         private final Hostname host;

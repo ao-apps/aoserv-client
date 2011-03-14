@@ -9,6 +9,7 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
+import java.util.NoSuchElementException;
 
 /**
  * A <code>BusinessServer</code> grants a <code>Business</code> permission to
@@ -23,7 +24,7 @@ import java.rmi.RemoteException;
 final public class BusinessServer extends AOServObjectIntegerKey implements Comparable<BusinessServer>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessServer> /*, Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
@@ -72,7 +73,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="a generated primary key")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
         return key;
     }
@@ -80,26 +81,30 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     /**
      * May be filtered.
      */
-    static final String COLUMN_ACCOUNTING = "accounting";
+    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(BusinessServer.class, "business");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_ACCOUNTING, index=IndexType.INDEXED, description="the business")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the business")
     public Business getBusiness() throws RemoteException {
         return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
     }
 
-    static final String COLUMN_SERVER = "server";
+    public static final MethodColumn COLUMN_SERVER = getMethodColumn(BusinessServer.class, "server");
     @DependencySingleton
-    @SchemaColumn(order=2, name=COLUMN_SERVER, index=IndexType.INDEXED, description="the server")
+    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the server")
     public Server getServer() throws RemoteException {
-        return getConnector().getServers().get(server);
+        //try {
+            return getConnector().getServers().get(server);
+        //} catch(NoSuchElementException exc) {
+        //    throw exc;
+        //}
     }
 
-    @SchemaColumn(order=3, name="is_default", description="if <code>true</code>, this is the default server.")
+    @SchemaColumn(order=3, description="if <code>true</code>, this is the default server.")
     public boolean isDefault() {
         return isDefault;
     }
 
-    @SchemaColumn(order=4, name="can_vnc_console", description="grants VNC console access")
+    @SchemaColumn(order=4, description="grants VNC console access")
     public boolean getCanVncConsole() {
         return canVncConsole;
     }
@@ -112,7 +117,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
             dto.getPkey(),
             getAccountingCode(dto.getAccounting()),
             dto.getServer(),
-            dto.isIsDefault(),
+            dto.isDefault(),
             dto.isCanVncConsole()
         );
     }

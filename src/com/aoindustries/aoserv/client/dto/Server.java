@@ -8,13 +8,11 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class Server extends AOServObject {
+abstract public class Server extends Resource {
 
-    private int pkey;
-    private DomainLabel farm;
+    private int farm;
     private String description;
     private Integer operatingSystemVersion;
-    private AccountingCode accounting;
     private String name;
     private boolean monitoringEnabled;
 
@@ -23,35 +21,31 @@ public class Server extends AOServObject {
 
     public Server(
         int pkey,
-        DomainLabel farm,
+        String resourceType,
+        AccountingCode accounting,
+        long created,
+        UserId createdBy,
+        Integer disableLog,
+        long lastEnabled,
+        int farm,
         String description,
         Integer operatingSystemVersion,
-        AccountingCode accounting,
         String name,
         boolean monitoringEnabled
     ) {
-        this.pkey = pkey;
+        super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
         this.farm = farm;
         this.description = description;
         this.operatingSystemVersion = operatingSystemVersion;
-        this.accounting = accounting;
         this.name = name;
         this.monitoringEnabled = monitoringEnabled;
     }
 
-    public int getPkey() {
-        return pkey;
-    }
-
-    public void setPkey(int pkey) {
-        this.pkey = pkey;
-    }
-
-    public DomainLabel getFarm() {
+    public int getFarm() {
         return farm;
     }
 
-    public void setFarm(DomainLabel farm) {
+    public void setFarm(int farm) {
         this.farm = farm;
     }
 
@@ -69,14 +63,6 @@ public class Server extends AOServObject {
 
     public void setOperatingSystemVersion(Integer operatingSystemVersion) {
         this.operatingSystemVersion = operatingSystemVersion;
-    }
-
-    public AccountingCode getAccounting() {
-        return accounting;
-    }
-
-    public void setAccounting(AccountingCode accounting) {
-        this.accounting = accounting;
     }
 
     public String getName() {

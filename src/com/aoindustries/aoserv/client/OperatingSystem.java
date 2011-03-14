@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class OperatingSystem extends AOServObjectStringKey implements Comparable<OperatingSystem>, DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystem> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         CENTOS="centos",
@@ -35,12 +35,12 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private String display;
-    final private boolean isUnix;
+    final private boolean unix;
 
     public OperatingSystem(AOServConnector connector, String name, String display, boolean is_unix) {
         super(connector, name);
         this.display = display;
-        this.isUnix = is_unix;
+        this.unix = is_unix;
         intern();
     }
 
@@ -57,35 +57,35 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(OperatingSystem other) {
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="name", index=IndexType.PRIMARY_KEY, description="the unique name of the operating system")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the operating system")
     public String getName() {
         return getKey();
     }
 
-    @SchemaColumn(order=1, name="display", description="the display version of the name")
+    @SchemaColumn(order=1, description="the display version of the name")
     public String getDisplay() {
         return display;
     }
 
-    @SchemaColumn(order=2, name="is_unix", description="indicates that this is a Unix-based OS")
+    @SchemaColumn(order=2, description="indicates that this is a Unix-based OS")
     public boolean isUnix() {
-        return isUnix;
+        return unix;
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">
     public OperatingSystem(AOServConnector connector, com.aoindustries.aoserv.client.dto.OperatingSystem dto) {
-        this(connector, dto.getName(), dto.getDisplay(), dto.isIsUnix());
+        this(connector, dto.getName(), dto.getDisplay(), dto.isUnix());
     }
 
     @Override
     public com.aoindustries.aoserv.client.dto.OperatingSystem getDto() {
-        return new com.aoindustries.aoserv.client.dto.OperatingSystem(getKey(), display, isUnix);
+        return new com.aoindustries.aoserv.client.dto.OperatingSystem(getKey(), display, unix);
     }
     // </editor-fold>
 

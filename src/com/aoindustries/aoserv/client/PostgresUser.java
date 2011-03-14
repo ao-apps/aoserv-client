@@ -22,8 +22,6 @@ import java.util.List;
 final public class PostgresUser extends AOServerResource implements Comparable<PostgresUser>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser>, PasswordProtected /* TODO: Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
-
     /**
      * The username of the PostgreSQL special users.
      */
@@ -53,6 +51,8 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -7696474433400596295L;
+
     private PostgresUserId username;
     final private int postgresServer;
     final private boolean createdb;
@@ -116,9 +116,9 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_USERNAME = "username";
+    public static final MethodColumn COLUMN_USERNAME = getMethodColumn(PostgresUser.class, "username");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, name=COLUMN_USERNAME, index=IndexType.INDEXED, description="the username of the PostgreSQL user")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the username of the PostgreSQL user")
     public Username getUsername() throws RemoteException {
         return getConnector().getUsernames().get(username.getUserId());
     }
@@ -126,34 +126,34 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
         return username;
     }
 
-    static final String COLUMN_POSTGRES_SERVER = "postgres_server";
+    public static final MethodColumn COLUMN_POSTGRES_SERVER = getMethodColumn(PostgresUser.class, "postgresServer");
     @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, name=COLUMN_POSTGRES_SERVER, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
     public PostgresServer getPostgresServer() throws RemoteException {
         return getConnector().getPostgresServers().get(postgresServer);
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, name="createdb", description="usecreatedb flag")
-    public boolean canCreateDB() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="createdb flag")
+    public boolean getCreatedb() {
         return createdb;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, name="trace", description="usetrace flag")
-    public boolean canTrace() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, description="trace flag")
+    public boolean getTrace() {
         return trace;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, name="super", description="usesuper flag")
-    public boolean isDatabaseAdmin() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="super flag")
+    public boolean getSuper() {
         return superPriv;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, name="catupd", description="usecatupd flag")
-    public boolean canCatUPD() {
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="catupd flag")
+    public boolean getCatupd() {
         return catupd;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, name="predisable_password", description="the password that was on the account before it was disabled")
+    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="the password that was on the account before it was disabled")
     public String getPredisablePassword() {
         return predisablePassword;
     }

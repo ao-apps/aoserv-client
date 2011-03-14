@@ -18,7 +18,7 @@ import java.rmi.RemoteException;
 final public class TicketCategory extends AOServObjectIntegerKey implements Comparable<TicketCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     /**
      * Some conveniences constants for specific categories.
@@ -50,42 +50,42 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TicketCategory other) {
-        int diff = AOServObjectUtils.compare(parent, other.parent);
+        int diff = compare(parent, other.parent);
         if(diff!=0) return diff;
-        return AOServObjectUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+        return compareIgnoreCaseConsistentWithEquals(name, other.name);
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, name="pkey", index=IndexType.PRIMARY_KEY, description="the unique category id")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique category id")
     public int getPkey() {
         return key;
     }
 
-    static final String COLUMN_PARENT = "parent";
+    public static final MethodColumn COLUMN_PARENT = getMethodColumn(TicketCategory.class, "parent");
     @DependencySingleton
-    @SchemaColumn(order=1, name=COLUMN_PARENT, index=IndexType.INDEXED, description="the category id of its parent or null if this is a top-level category")
+    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the category id of its parent or null if this is a top-level category")
     public TicketCategory getParent() throws RemoteException {
         if(parent==null) return null;
         return getConnector().getTicketCategories().get(parent);
     }
 
-    @SchemaColumn(order=2, name="name", description="the name of this category, unique per parent")
+    @SchemaColumn(order=2, description="the name of this category, unique per parent")
     public String getName() {
         return name;
     }
 
-    static final String COLUMN_SLASH_PATH = "slash_path";
+    public static final MethodColumn COLUMN_SLASH_PATH = getMethodColumn(TicketCategory.class, "slashPath");
     private String slashPath = null;
-    @SchemaColumn(order=3, name=COLUMN_SLASH_PATH, index=IndexType.UNIQUE, description="the full path to the category, separated by slashes (/)")
+    @SchemaColumn(order=3, index=IndexType.UNIQUE, description="the full path to the category, separated by slashes (/)")
     synchronized public String getSlashPath() throws RemoteException {
         if(slashPath==null) slashPath = parent==null ? name : (getParent().getSlashPath()+'/'+name);
         return slashPath;
     }
 
-    public static final String COLUMN_DOT_PATH = "dot_path";
+    public static final MethodColumn COLUMN_DOT_PATH = getMethodColumn(TicketCategory.class, "dotPath");
     private String dotPath = null;
-    @SchemaColumn(order=4, name=COLUMN_DOT_PATH, index=IndexType.UNIQUE, description="the full path to the category, separated by periods (.)")
+    @SchemaColumn(order=4, index=IndexType.UNIQUE, description="the full path to the category, separated by periods (.)")
     synchronized public String getDotPath() throws RemoteException {
         if(dotPath==null) dotPath = parent==null ? name : (getParent().getDotPath()+'.'+name);
         return dotPath;

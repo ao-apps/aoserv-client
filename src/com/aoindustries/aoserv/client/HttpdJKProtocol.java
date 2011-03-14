@@ -23,7 +23,7 @@ import java.rmi.RemoteException;
 final public class HttpdJKProtocol extends AOServObjectStringKey implements Comparable<HttpdJKProtocol>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKProtocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    private static final long serialVersionUID = 1L;
+    // TODO: private static final long serialVersionUID = 1L;
 
     public static final String
         AJP12="ajp12",
@@ -49,9 +49,9 @@ final public class HttpdJKProtocol extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
-    static final String COLUMN_PROTOCOL = "protocol";
+    public static final MethodColumn COLUMN_PROTOCOL = getMethodColumn(HttpdJKProtocol.class, "protocol");
     @DependencySingleton
-    @SchemaColumn(order=0, name=COLUMN_PROTOCOL, index=IndexType.PRIMARY_KEY, description="the protocol used, as found in protocols.protocol")
+    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the protocol used, as found in protocols.protocol")
     public Protocol getProtocol() throws RemoteException {
         return getConnector().getProtocols().get(getKey());
     }
