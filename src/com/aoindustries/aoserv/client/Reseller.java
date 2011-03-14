@@ -19,11 +19,9 @@ import java.rmi.RemoteException;
  */
 final public class Reseller extends AOServObjectAccountingCodeKey implements Comparable<Reseller>, DtoFactory<com.aoindustries.aoserv.client.dto.Reseller> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -6437804526354910768L;
+
     final private boolean ticketAutoEscalate;
 
     public Reseller(AOServConnector connector, AccountingCode accounting, boolean ticketAutoEscalate) {

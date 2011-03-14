@@ -17,7 +17,7 @@ import java.util.Map;
  */
 final public class CancelBusinessCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3584457727135929794L;
 
     final private AccountingCode accounting;
     final private String cancelReason;

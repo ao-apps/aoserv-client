@@ -21,8 +21,6 @@ import java.rmi.RemoteException;
 final public class LinuxGroup extends AOServerResource implements Comparable<LinuxGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroup> /* Removable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * Some commonly used system and application groups.
      */
@@ -72,6 +70,8 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -6664240122878684478L;
+
     private String linuxGroupType;
     private GroupId groupName;
     final private LinuxID gid;

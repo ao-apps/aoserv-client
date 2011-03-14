@@ -17,11 +17,9 @@ import com.aoindustries.table.IndexType;
  */
 final public class EmailAttachmentType extends AOServObjectStringKey implements Comparable<EmailAttachmentType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailAttachmentType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1702955162008962360L;
+
     final private boolean defaultBlock;
 
     public EmailAttachmentType(AOServConnector connector, String extension, boolean defaultBlock) {

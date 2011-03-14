@@ -19,8 +19,6 @@ import java.rmi.RemoteException;
 final public class TechnologyClass extends AOServObjectStringKey implements Comparable<TechnologyClass>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyClass> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The possible <code>TechnologyClass</code>es.
      */
@@ -41,6 +39,8 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 8924692879673552444L;
+
     public TechnologyClass(AOServConnector connector, String name) {
         super(connector, name);
     }

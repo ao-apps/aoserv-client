@@ -15,11 +15,9 @@ import java.rmi.RemoteException;
  */
 final public class ProcessorType extends AOServObjectStringKey implements Comparable<ProcessorType>, DtoFactory<com.aoindustries.aoserv.client.dto.ProcessorType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 3398281682562550519L;
+
     final private short sortOrder;
 
     public ProcessorType(AOServConnector connector, String type, short sortOrder) {

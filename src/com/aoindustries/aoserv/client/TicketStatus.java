@@ -19,8 +19,6 @@ import java.rmi.RemoteException;
 final public class TicketStatus extends AOServObjectStringKey implements Comparable<TicketStatus>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketStatus> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The different ticket statuses.
      */
@@ -35,6 +33,8 @@ final public class TicketStatus extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -9187704401327170781L;
+
     final private short sortOrder;
 
     public TicketStatus(AOServConnector connector, String status, short sortOrder) {

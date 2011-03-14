@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 abstract public class Server extends Resource implements Comparable<Server> {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1755298381676239387L;
 
     final protected int farm;
     final protected String description;

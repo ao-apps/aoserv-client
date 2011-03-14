@@ -18,8 +18,6 @@ import java.rmi.RemoteException;
 final public class OperatingSystem extends AOServObjectStringKey implements Comparable<OperatingSystem>, DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystem> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         CENTOS="centos",
         DEBIAN="debian",
@@ -34,6 +32,8 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -8459253677810961241L;
+
     private String display;
     final private boolean unix;
 

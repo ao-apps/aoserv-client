@@ -24,11 +24,9 @@ import java.util.NoSuchElementException;
  */
 final public class Ticket extends AOServObjectIntegerKey implements Comparable<Ticket>, DtoFactory<com.aoindustries.aoserv.client.dto.Ticket> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 7714659546883325819L;
+
     private AccountingCode brand;
     private AccountingCode reseller;
     private AccountingCode accounting;

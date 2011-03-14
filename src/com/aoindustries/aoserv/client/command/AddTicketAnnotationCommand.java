@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class AddTicketAnnotationCommand extends RemoteCommand<Integer> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1858686888154569492L;
 
     final private int ticketId;
     final private String summary;

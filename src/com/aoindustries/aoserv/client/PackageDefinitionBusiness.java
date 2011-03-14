@@ -21,11 +21,9 @@ import java.rmi.RemoteException;
  */
 final public class PackageDefinitionBusiness extends AOServObjectIntegerKey implements Comparable<PackageDefinitionBusiness>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 6175564218523408872L;
+
     final private int packageDefinition;
     private AccountingCode accounting;
     final private String display;

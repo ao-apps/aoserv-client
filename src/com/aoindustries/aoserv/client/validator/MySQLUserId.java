@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUserId>, Internable<MySQLUserId> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2153769675565702888L;
 
     /**
      * The maximum length of a MySQL username.

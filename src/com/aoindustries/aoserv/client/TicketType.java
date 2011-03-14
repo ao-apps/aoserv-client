@@ -18,8 +18,6 @@ import java.rmi.RemoteException;
 final public class TicketType extends AOServObjectStringKey implements Comparable<TicketType>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The types of <code>Ticket</code>s.
      */
@@ -33,6 +31,8 @@ final public class TicketType extends AOServObjectStringKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -2716897618625919303L;
+
     public TicketType(AOServConnector connector, String type) {
         super(connector, type);
     }

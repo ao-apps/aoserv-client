@@ -31,8 +31,6 @@ import java.util.Set;
 final public class MySQLServer extends AOServerResource implements Comparable<MySQLServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServer> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The supported versions of MySQL.
      */
@@ -315,6 +313,8 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -8427215864386035005L;
+
     private MySQLServerName name;
     final private int version;
     final private int maxConnections;

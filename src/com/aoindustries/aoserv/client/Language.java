@@ -14,8 +14,6 @@ import java.rmi.RemoteException;
 final public class Language extends AOServObjectStringKey implements Comparable<Language>, DtoFactory<com.aoindustries.aoserv.client.dto.Language> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         EN="en",
         JA="ja"
@@ -23,6 +21,8 @@ final public class Language extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -3832472509484248793L;
+
     public Language(AOServConnector connector, String code) {
         super(connector, code);
     }

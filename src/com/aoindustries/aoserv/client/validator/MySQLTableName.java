@@ -26,7 +26,7 @@ import java.io.Serializable;
  */
 final public class MySQLTableName implements Comparable<MySQLTableName>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4427431696460618301L;
 
     /**
      * The longest name allowed for a MySQL table name.

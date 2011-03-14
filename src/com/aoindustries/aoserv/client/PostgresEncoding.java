@@ -21,8 +21,6 @@ import java.rmi.RemoteException;
 final public class PostgresEncoding extends AOServObjectIntegerKey implements Comparable<PostgresEncoding>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresEncoding> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The supported encodings.
      */
@@ -70,6 +68,8 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -5593267380694623834L;
+
     private String encoding;
     final private int postgresVersion;
 

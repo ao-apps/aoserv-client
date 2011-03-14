@@ -21,11 +21,9 @@ implements
     Comparable<BusinessAdministratorRole>,
     DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministratorRole> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 4378227373861308018L;
+
     private UserId username;
     final private int role;
 

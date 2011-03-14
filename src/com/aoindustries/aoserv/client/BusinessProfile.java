@@ -21,11 +21,9 @@ import java.util.List;
  */
 final public class BusinessProfile extends AOServObjectIntegerKey implements Comparable<BusinessProfile>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessProfile> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -3118229294208613743L;
+
     private AccountingCode accounting;
     final private int priority;
     final private String name;

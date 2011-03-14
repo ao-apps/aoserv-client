@@ -16,7 +16,7 @@ import java.rmi.RemoteException;
  */
 abstract public class AOServObjectIntegerKey extends AOServObject<Integer> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3845989034570461715L;
 
     final protected int key;
 

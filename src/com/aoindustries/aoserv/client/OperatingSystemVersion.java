@@ -18,8 +18,6 @@ import java.rmi.RemoteException;
 final public class OperatingSystemVersion extends AOServObjectIntegerKey implements Comparable<OperatingSystemVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystemVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         VERSION_5="5",
         VERSION_ES_4="ES 4"
@@ -34,6 +32,8 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -5236517725338031299L;
+
     private String operatingSystem;
     private String versionNumber;
     private String versionName;

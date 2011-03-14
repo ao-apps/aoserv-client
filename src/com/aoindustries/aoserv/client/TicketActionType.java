@@ -20,8 +20,6 @@ import java.rmi.RemoteException;
 final public class TicketActionType extends AOServObjectStringKey implements Comparable<TicketActionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketActionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         SET_BUSINESS="set_business",
         SET_CONTACT_EMAILS="set_contact_emails",
@@ -39,6 +37,8 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -4017127521966787365L;
+
     final private boolean visibleAdminOnly;
 
     public TicketActionType(AOServConnector connector, String type, boolean visibleAdminOnly) {

@@ -19,11 +19,9 @@ import java.util.NoSuchElementException;
  */
 final public class DisableLog extends AOServObjectIntegerKey implements Comparable<DisableLog>, DtoFactory<com.aoindustries.aoserv.client.dto.DisableLog> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1878947339845865532L;
+
     final private long time;
     private AccountingCode accounting;
     private UserId disabledBy;

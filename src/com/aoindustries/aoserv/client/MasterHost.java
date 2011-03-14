@@ -21,11 +21,9 @@ import java.rmi.RemoteException;
  */
 final public class MasterHost extends AOServObjectIntegerKey implements Comparable<MasterHost>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterHost> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 5745550350806339001L;
+
     private UserId username;
     private InetAddress host;
 

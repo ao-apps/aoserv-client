@@ -21,8 +21,6 @@ implements
     java.security.acl.Permission {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The possible permissions.
      */
@@ -85,6 +83,8 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -4386248786236481393L;
+
     final private short sortOrder;
 
     public AOServPermission(AOServConnector connector, String name, short sortOrder) {

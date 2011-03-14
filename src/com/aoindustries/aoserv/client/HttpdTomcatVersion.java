@@ -25,8 +25,6 @@ import java.rmi.RemoteException;
 final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements Comparable<HttpdTomcatVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdTomcatVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String TECHNOLOGY_NAME="jakarta-tomcat";
 
     public static final String
@@ -39,6 +37,8 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -6212104411644523461L;
+
     private UnixPath installDir;
     final private boolean requiresModJk;
 

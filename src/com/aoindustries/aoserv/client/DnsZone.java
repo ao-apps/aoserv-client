@@ -40,7 +40,7 @@ final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoF
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3538637378543711522L;
 
     private DomainName zone;
     private String file;

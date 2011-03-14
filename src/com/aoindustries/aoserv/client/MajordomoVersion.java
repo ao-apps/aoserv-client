@@ -21,8 +21,6 @@ import java.sql.Timestamp;
 final public class MajordomoVersion extends AOServObjectStringKey implements Comparable<MajordomoVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.MajordomoVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The default Majordomo version.
      */
@@ -30,6 +28,8 @@ final public class MajordomoVersion extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 2680067617200373570L;
+
     final private long created;
 
     public MajordomoVersion(AOServConnector connector, String version, long created) {

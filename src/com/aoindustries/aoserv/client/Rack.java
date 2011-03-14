@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 final public class Rack extends Resource implements Comparable<Rack>, DtoFactory<com.aoindustries.aoserv.client.dto.Rack>{
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2729086832214700368L;
 
     final private int farm;
     final private String name;

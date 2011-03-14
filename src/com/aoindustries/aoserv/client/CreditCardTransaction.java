@@ -20,11 +20,9 @@ import java.sql.Timestamp;
  */
 final public class CreditCardTransaction extends AOServObjectIntegerKey implements Comparable<CreditCardTransaction>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardTransaction> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1297169092765865451L;
+
     private String processorId;
     private AccountingCode accounting;
     final private String groupName;

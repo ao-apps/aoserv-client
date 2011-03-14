@@ -23,8 +23,6 @@ import java.rmi.RemoteException;
 final public class TransactionType extends AOServObjectStringKey implements Comparable<TransactionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TransactionType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         HTTPD="httpd",
         PAYMENT="payment",
@@ -33,6 +31,8 @@ final public class TransactionType extends AOServObjectStringKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1059222609721321377L;
+
     /**
      * If <code>true</code> this <code>TransactionType</code> represents a credit to
      * an account and will be listed in payments received reports.

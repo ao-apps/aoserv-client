@@ -25,11 +25,9 @@ import com.aoindustries.table.IndexType;
  */
 final public class DnsTld extends AOServObjectDomainNameKey implements Comparable<DnsTld>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsTld> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 465216010241131647L;
+
     public DnsTld(AOServConnector connector, DomainName domain) {
         super(connector, domain);
     }

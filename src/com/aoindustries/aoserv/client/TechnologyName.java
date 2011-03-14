@@ -17,13 +17,13 @@ import java.rmi.RemoteException;
 final public class TechnologyName extends AOServObjectStringKey implements Comparable<TechnologyName>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyName> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String MYSQL = "MySQL";
     public static final String POSTGRESQL = "postgresql";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -3142205408585822979L;
+
     public TechnologyName(AOServConnector connector, String name) {
         super(connector, name);
     }

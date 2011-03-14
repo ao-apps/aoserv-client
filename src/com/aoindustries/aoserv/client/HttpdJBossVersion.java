@@ -24,8 +24,6 @@ import java.rmi.RemoteException;
 final public class HttpdJBossVersion extends AOServObjectIntegerKey implements Comparable<HttpdJBossVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJBossVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String TECHNOLOGY_NAME="JBoss";
 
     public static final String
@@ -36,6 +34,8 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -2369128966548022532L;
+
     final private int tomcatVersion;
     private UnixPath templateDir;
 

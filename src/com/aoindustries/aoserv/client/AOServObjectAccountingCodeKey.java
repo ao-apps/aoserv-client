@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  */
 abstract public class AOServObjectAccountingCodeKey extends AOServObject<AccountingCode> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7495296868693523581L;
 
     private AccountingCode key;
 

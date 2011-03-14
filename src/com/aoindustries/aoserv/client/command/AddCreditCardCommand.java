@@ -17,7 +17,7 @@ import java.util.Map;
  */
 final public class AddCreditCardCommand extends RemoteCommand<Integer> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2179698645862993283L;
 
     final private String processorId;
     final private AccountingCode accounting;

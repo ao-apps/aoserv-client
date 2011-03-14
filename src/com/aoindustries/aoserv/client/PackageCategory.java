@@ -18,8 +18,6 @@ import java.rmi.RemoteException;
 final public class PackageCategory extends AOServObjectStringKey implements Comparable<PackageCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         AOSERV="aoserv",
         APPLICATION="application",
@@ -36,6 +34,8 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -4491752729211094927L;
+
     public PackageCategory(AOServConnector connector, String name) {
         super(connector, name);
     }

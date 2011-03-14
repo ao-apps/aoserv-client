@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class ApproveTransactionCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8551072416118614030L;
 
     final private int transid;
     final private int creditCardTransaction;

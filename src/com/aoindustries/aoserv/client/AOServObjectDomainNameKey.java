@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  */
 abstract public class AOServObjectDomainNameKey extends AOServObject<DomainName> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -883454643242421760L;
 
     private DomainName key;
 

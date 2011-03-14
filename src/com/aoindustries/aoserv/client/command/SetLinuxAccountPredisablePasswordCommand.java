@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class SetLinuxAccountPredisablePasswordCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -253120119915651742L;
 
     final private int linuxAccount;
     final private String encryptedPassword;

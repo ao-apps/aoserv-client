@@ -25,11 +25,9 @@ implements
     DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileReplication>,
     BitRateProvider {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -6782638845669603409L;
+
     final private int server;
     final private int backupPartition;
     final private Long maxBitRate;

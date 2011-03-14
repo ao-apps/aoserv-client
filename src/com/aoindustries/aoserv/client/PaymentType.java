@@ -18,8 +18,6 @@ import java.rmi.RemoteException;
 final public class PaymentType extends AOServObjectStringKey implements Comparable<PaymentType>, DtoFactory<com.aoindustries.aoserv.client.dto.PaymentType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The system supported payment types, not all of which can
      * be processed by AO Industries.
@@ -37,6 +35,8 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 7201466581627411205L;
+
     final private boolean active;
     final private boolean allowWeb;
 

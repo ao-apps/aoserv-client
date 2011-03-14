@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class AccountingCode implements Comparable<AccountingCode>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.AccountingCode>, Internable<AccountingCode> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4701364475901418693L;
 
     public static final int MIN_LENGTH = 2;
 

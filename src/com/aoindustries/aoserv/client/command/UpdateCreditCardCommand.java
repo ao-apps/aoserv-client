@@ -17,7 +17,7 @@ import java.util.Map;
  */
 final public class UpdateCreditCardCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 9052612984035504932L;
 
     final private int pkey;
     final private String firstName;

@@ -18,7 +18,7 @@ import java.util.Map;
  */
 final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1007319692371973247L;
 
     public static final String PARAM_MYSQL_USER = "mysqlUser";
     public static final String PARAM_PLAINTEXT = "plaintext";

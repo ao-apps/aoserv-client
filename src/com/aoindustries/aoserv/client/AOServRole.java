@@ -17,11 +17,9 @@ import java.rmi.RemoteException;
  */
 final public class AOServRole extends AOServObjectIntegerKey implements Comparable<AOServRole>, DtoFactory<com.aoindustries.aoserv.client.dto.AOServRole> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 6726180835761119511L;
+
     private AccountingCode accounting;
     private String name;
 

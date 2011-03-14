@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class SetPostgresUserPredisablePasswordCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 202981909240092697L;
 
     final private int postgresUser;
     final private String encryptedPassword;

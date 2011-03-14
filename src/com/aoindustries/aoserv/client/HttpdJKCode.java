@@ -18,11 +18,9 @@ import com.aoindustries.table.IndexType;
  */
 final public class HttpdJKCode extends AOServObjectStringKey implements Comparable<HttpdJKCode>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKCode> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 7573349870795185250L;
+
     public HttpdJKCode(AOServConnector connector, String code) {
         super(connector, code);
     }

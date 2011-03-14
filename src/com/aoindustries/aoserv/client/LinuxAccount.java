@@ -25,8 +25,6 @@ import java.util.List;
 final public class LinuxAccount extends AOServerResource implements Comparable<LinuxAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * Some commonly used system and application account usernames.
      */
@@ -70,6 +68,8 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -5105430320343636653L;
+
     private String linuxAccountType;
     private UserId username;
     final private LinuxID uid;

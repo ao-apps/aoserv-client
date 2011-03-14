@@ -30,8 +30,6 @@ import java.util.Set;
 final public class LinuxAccountType extends AOServObjectStringKey implements Comparable<LinuxAccountType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The different Linux account types.
      */
@@ -154,6 +152,8 @@ final public class LinuxAccountType extends AOServObjectStringKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 5024415957647230660L;
+
     public LinuxAccountType(AOServConnector connector, String resourceType) {
         super(connector, resourceType);
     }

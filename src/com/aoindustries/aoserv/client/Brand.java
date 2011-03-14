@@ -22,11 +22,9 @@ import java.util.NoSuchElementException;
  */
 final public class Brand extends AOServObjectAccountingCodeKey implements Comparable<Brand>, DtoFactory<com.aoindustries.aoserv.client.dto.Brand> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 5895791392180277529L;
+
     private DomainName nameserver1;
     private DomainName nameserver2;
     private DomainName nameserver3;

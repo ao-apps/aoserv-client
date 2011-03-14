@@ -20,8 +20,6 @@ import java.rmi.RemoteException;
 final public class CountryCode extends AOServObjectStringKey implements Comparable<CountryCode>, DtoFactory<com.aoindustries.aoserv.client.dto.CountryCode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * <code>CountryCode</code>s used as constants.
      */
@@ -29,6 +27,8 @@ final public class CountryCode extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 1075399431912675012L;
+
     private String name;
     final private boolean chargeComSupported;
     private String chargeComName;

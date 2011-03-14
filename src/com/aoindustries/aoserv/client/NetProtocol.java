@@ -19,8 +19,6 @@ import java.rmi.RemoteException;
 final public class NetProtocol extends AOServObjectStringKey implements Comparable<NetProtocol>, DtoFactory<com.aoindustries.aoserv.client.dto.NetProtocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         RAW="raw",
         UDP="udp",
@@ -29,6 +27,8 @@ final public class NetProtocol extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 8372444255896580426L;
+
     public NetProtocol(AOServConnector connector, String protocol) {
         super(connector, protocol);
     }

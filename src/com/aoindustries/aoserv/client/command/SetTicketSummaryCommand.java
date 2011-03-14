@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class SetTicketSummaryCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1561706547408516262L;
 
     final private int ticketId;
     final private String summary;

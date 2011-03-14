@@ -21,11 +21,9 @@ import java.rmi.RemoteException;
  */
 final public class PackageDefinitionLimit extends AOServObjectIntegerKey implements Comparable<PackageDefinitionLimit>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageDefinitionLimit> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -3103521249815283640L;
+
     final private int packageDefinition;
     private String resourceType;
     final private Integer softLimit;

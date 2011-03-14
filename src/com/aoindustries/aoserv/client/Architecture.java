@@ -19,8 +19,6 @@ import java.rmi.RemoteException;
 final public class Architecture extends AOServObjectStringKey implements Comparable<Architecture>, DtoFactory<com.aoindustries.aoserv.client.dto.Architecture> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         ALPHA="alpha",
         ARM="arm",
@@ -40,6 +38,8 @@ final public class Architecture extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -4934496731736918420L;
+
     final private int bits;
 
     public Architecture(AOServConnector connector, String name, int bits) {

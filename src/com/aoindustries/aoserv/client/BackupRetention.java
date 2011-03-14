@@ -15,11 +15,9 @@ import java.rmi.RemoteException;
  */
 final public class BackupRetention extends AOServObjectShortKey implements Comparable<BackupRetention>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupRetention> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -5203212089898102813L;
+
     public BackupRetention(AOServConnector connector, short days) {
         super(connector, days);
     }

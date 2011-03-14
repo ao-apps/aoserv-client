@@ -21,11 +21,9 @@ import java.rmi.RemoteException;
  */
 final public class MySQLDBUser extends AOServObjectIntegerKey implements Comparable<MySQLDBUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDBUser> /*, Removable*/ {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 7261009759252544752L;
+
     final private int mysqlDatabase;
     final private int mysqlUser;
     final private boolean selectPriv;

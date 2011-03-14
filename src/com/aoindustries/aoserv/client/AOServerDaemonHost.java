@@ -20,11 +20,9 @@ import java.rmi.RemoteException;
  */
 final public class AOServerDaemonHost extends AOServObjectIntegerKey implements Comparable<AOServerDaemonHost>, DtoFactory<com.aoindustries.aoserv.client.dto.AOServerDaemonHost> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -8101984254031889015L;
+
     final private int aoServer;
     private Hostname host;
 

@@ -35,11 +35,9 @@ implements
     Comparable<NetBind>,
     DtoFactory<com.aoindustries.aoserv.client.dto.NetBind> /*implements Removable*/ {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -800535749409504811L;
+
     final private int businessServer;
     final private Integer ipAddress;
     final private NetPort port;

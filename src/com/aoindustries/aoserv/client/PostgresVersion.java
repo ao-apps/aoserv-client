@@ -24,8 +24,6 @@ import java.util.List;
 final public class PostgresVersion extends AOServObjectIntegerKey implements Comparable<PostgresVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresVersion> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         VERSION_7_1="7.1",
         VERSION_7_2="7.2",
@@ -56,6 +54,8 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1799351801183642585L;
+
     private String minorVersion;
     final private Integer postgisVersion;
 

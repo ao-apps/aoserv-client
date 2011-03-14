@@ -29,11 +29,9 @@ final public class Username
 extends AOServObjectUserIdKey
 implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.Username>, PasswordProtected /* TODO: Removable, Disablable*/ {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -8089705761029052808L;
+
     private AccountingCode accounting;
     final private Integer disableLog;
 

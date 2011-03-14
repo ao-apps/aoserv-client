@@ -20,8 +20,6 @@ import java.rmi.RemoteException;
 final public class DnsType extends AOServObjectStringKey implements Comparable<DnsType>, DtoFactory<com.aoindustries.aoserv.client.dto.DnsType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The possible <code>DnsType</code>s.
      */
@@ -38,6 +36,8 @@ final public class DnsType extends AOServObjectStringKey implements Comparable<D
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1963924404851387331L;
+
     public DnsType(AOServConnector connector, String type) {
         super(connector, type);
     }

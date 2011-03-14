@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class SetTicketContactEmailsCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5406202727282642741L;
 
     final private int ticketId;
     final private String contactEmails;

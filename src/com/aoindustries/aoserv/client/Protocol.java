@@ -22,8 +22,6 @@ import java.rmi.RemoteException;
 final public class Protocol extends AOServObjectStringKey implements Comparable<Protocol>, DtoFactory<com.aoindustries.aoserv.client.dto.Protocol> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         AOSERV_DAEMON="aoserv-daemon",
         AOSERV_DAEMON_SSL="aoserv-daemon-ssl",
@@ -61,6 +59,8 @@ final public class Protocol extends AOServObjectStringKey implements Comparable<
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -8837153421233886350L;
+
     final private NetPort port;
     private String name;
     final private boolean userService;

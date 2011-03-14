@@ -23,11 +23,9 @@ import java.util.NoSuchElementException;
  */
 final public class TicketAction extends AOServObjectIntegerKey implements Comparable<TicketAction>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAction> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 3160353832522188019L;
+
     final private int ticket;
     private UserId administrator;
     final private long time;

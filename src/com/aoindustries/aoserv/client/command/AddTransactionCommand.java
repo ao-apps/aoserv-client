@@ -19,7 +19,7 @@ import java.util.Map;
  */
 final public class AddTransactionCommand extends RemoteCommand<Integer> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 57485445901879102L;
 
     final private AccountingCode accounting;
     final private AccountingCode sourceAccounting;

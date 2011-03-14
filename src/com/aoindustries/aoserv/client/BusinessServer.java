@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
 import java.rmi.RemoteException;
-import java.util.NoSuchElementException;
 
 /**
  * A <code>BusinessServer</code> grants a <code>Business</code> permission to
@@ -23,11 +22,9 @@ import java.util.NoSuchElementException;
  */
 final public class BusinessServer extends AOServObjectIntegerKey implements Comparable<BusinessServer>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessServer> /*, Removable*/ {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1199350130176995699L;
+
     private AccountingCode accounting;
     final private int server;
     final private boolean isDefault;

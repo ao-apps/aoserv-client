@@ -29,8 +29,6 @@ import java.util.NoSuchElementException;
 final public class Transaction extends AOServObjectIntegerKey implements Comparable<Transaction>, DtoFactory<com.aoindustries.aoserv.client.dto.Transaction> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * Payment confirmation.
      */
@@ -47,6 +45,8 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 6014476360859645789L;
+
     final private long time;
     private AccountingCode accounting;
     private AccountingCode sourceAccounting;

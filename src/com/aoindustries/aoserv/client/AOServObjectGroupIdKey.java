@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
  */
 abstract public class AOServObjectGroupIdKey extends AOServObject<GroupId> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6591039942836983359L;
 
     private GroupId key;
 

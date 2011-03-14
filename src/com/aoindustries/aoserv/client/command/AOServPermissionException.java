@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class AOServPermissionException extends SecurityException {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6731556196010571929L;
 
     final private AOServCommand<?> command;
     final private Map<AOServPermission.Permission,Boolean> permissions;

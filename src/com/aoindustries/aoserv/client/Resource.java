@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 public abstract class Resource extends AOServObjectIntegerKey {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4217224887608168109L;
 
     private String resourceType;
     private AccountingCode accounting;
@@ -183,6 +183,26 @@ public abstract class Resource extends AOServObjectIntegerKey {
         // TODO
         return Collections.emptyList();
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Accounting">
+    /* TODO
+    public static class ResourceAccounting implements Serializable {
+        private final ResourceType resourceType;
+        private final int count;
+        // TODO: Include package_definition_limit
+        // TODO: There should be foreign key constraints / triggers to make sure all resources are within their package definition limits.
+    }
+     */
+
+    /**
+     * Gets the set of all resources types and counts that this resource will add
+     * for accounting.  For instance, a httpd_tomcat_site is also a httpd_site.
+     */
+    /* TODO
+    public Set<ResourceAccounting> getAccountingResourceTypes() throws RemoteException {
+    }
+     */
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="TODO">

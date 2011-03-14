@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class SetTicketClientPriorityCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4439423227512622431L;
 
     final private int ticketId;
     final private String clientPriority;

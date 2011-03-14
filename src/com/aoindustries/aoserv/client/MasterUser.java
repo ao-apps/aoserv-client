@@ -23,11 +23,9 @@ import java.rmi.RemoteException;
  */
 final public class MasterUser extends AOServObjectUserIdKey implements Comparable<MasterUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterUser> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -4273739122344650408L;
+
     final private boolean active;
     final private boolean canAccessAccounting;
     final private boolean canAccessBankAccount;

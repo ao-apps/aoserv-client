@@ -41,8 +41,6 @@ implements
     Group /* TODO: implements Disablable*/ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The maximum depth of the business tree.
      */
@@ -85,6 +83,8 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -3769454441678529319L;
+
     private String contractVersion;
     final private long created;
     final private Long canceled;

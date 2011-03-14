@@ -21,11 +21,9 @@ import java.rmi.RemoteException;
  */
 final public class FtpGuestUser extends AOServObjectIntegerKey implements Comparable<FtpGuestUser>, DtoFactory<com.aoindustries.aoserv.client.dto.FtpGuestUser> /*, TODO: Removable */ {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 84516800635650293L;
+
     public FtpGuestUser(AOServConnector connector, int linuxAccount) {
         super(connector, linuxAccount);
     }

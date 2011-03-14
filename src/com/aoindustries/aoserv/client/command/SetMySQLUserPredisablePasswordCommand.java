@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class SetMySQLUserPredisablePasswordCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1414347757716958804L;
 
     final private int mysqlUser;
     final private String encryptedPassword;

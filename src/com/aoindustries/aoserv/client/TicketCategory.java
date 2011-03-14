@@ -18,8 +18,6 @@ import java.rmi.RemoteException;
 final public class TicketCategory extends AOServObjectIntegerKey implements Comparable<TicketCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketCategory> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * Some conveniences constants for specific categories.
      */
@@ -27,6 +25,8 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -9103008803104498590L;
+
     final private Integer parent;
     private String name;
 

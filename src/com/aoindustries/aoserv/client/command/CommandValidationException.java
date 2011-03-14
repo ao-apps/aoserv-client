@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class CommandValidationException extends RemoteException {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8360428233652528921L;
 
     private static final String eol = System.getProperty("line.separator");
 

@@ -18,7 +18,7 @@ import java.util.Map;
  */
 final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5094314822859543681L;
 
     public static final String PARAM_BUSINESS_ADMINISTRATOR = "businessAdministrator";
     public static final String PARAM_PLAINTEXT = "plaintext";

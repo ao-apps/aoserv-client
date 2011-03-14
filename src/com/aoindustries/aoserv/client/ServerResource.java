@@ -20,11 +20,9 @@ import java.rmi.RemoteException;
  */
 public abstract class ServerResource extends Resource {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 8351229155128688341L;
+
     final int server;
     final int businessServer;
 

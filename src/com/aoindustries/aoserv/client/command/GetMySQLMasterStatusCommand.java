@@ -19,7 +19,7 @@ final public class GetMySQLMasterStatusCommand extends RemoteCommand<GetMySQLMas
 
     final public static class MasterStatus implements Serializable {
 
-        // TODO: private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1214130854473981745L;
 
         final private String file;
         final private String position;
@@ -41,7 +41,7 @@ final public class GetMySQLMasterStatusCommand extends RemoteCommand<GetMySQLMas
         }
     }
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1214130854473981745L;
 
     final private int pkey;
 

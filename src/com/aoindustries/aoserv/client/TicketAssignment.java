@@ -17,11 +17,9 @@ import java.rmi.RemoteException;
  */
 final public class TicketAssignment extends AOServObjectIntegerKey implements Comparable<TicketAssignment>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAssignment> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 1426621734817219461L;
+
     final private int ticket;
     private AccountingCode reseller;
     private UserId administrator;

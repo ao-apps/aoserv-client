@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class MySQLServerName implements Comparable<MySQLServerName>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServerName>, Internable<MySQLServerName> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6148467549389988813L;
 
     public static final int MAX_LENGTH=255;
 

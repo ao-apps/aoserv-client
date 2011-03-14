@@ -25,11 +25,9 @@ import java.rmi.RemoteException;
  */
 final public class MasterServer extends AOServObjectIntegerKey implements Comparable<MasterServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterServer> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 8730731547197042299L;
+
     private UserId username;
     final private int server;
 

@@ -19,8 +19,6 @@ import java.rmi.RemoteException;
 final public class TicketPriority extends AOServObjectStringKey implements Comparable<TicketPriority>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketPriority> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The possible ticket priorities.
      */
@@ -33,6 +31,8 @@ final public class TicketPriority extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 3068599948005442526L;
+
     public TicketPriority(AOServConnector connector, String priority) {
         super(connector, priority);
     }

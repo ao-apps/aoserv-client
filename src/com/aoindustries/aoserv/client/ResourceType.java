@@ -52,7 +52,7 @@ final public class ResourceType extends AOServObjectStringKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1920780117817958169L;
 
     public ResourceType(AOServConnector connector, String name) {
         super(connector, name);

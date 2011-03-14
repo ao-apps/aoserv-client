@@ -17,11 +17,9 @@ import java.rmi.RemoteException;
  */
 final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comparable<NetTcpRedirect>, DtoFactory<com.aoindustries.aoserv.client.dto.NetTcpRedirect> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 3103910184331373575L;
+
     final private int cps;
     final private int cpsOverloadSleepTime;
     private Hostname destinationHost;

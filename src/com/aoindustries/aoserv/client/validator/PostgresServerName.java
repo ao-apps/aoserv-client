@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class PostgresServerName implements Comparable<PostgresServerName>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServerName>, Internable<PostgresServerName> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7935268259991524802L;
 
     public static final int MAX_LENGTH=255;
 

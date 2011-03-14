@@ -34,11 +34,9 @@ implements
     Principal,
     PasswordProtected /* TODO , Removable, Disablable, Comparable<BusinessAdministrator> */ {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 5717892875631277080L;
+
     final private HashedPassword password;
     private String fullName;
     private String title;

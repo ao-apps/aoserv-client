@@ -16,8 +16,6 @@ import com.aoindustries.table.IndexType;
 final public class NoticeType extends AOServObjectStringKey implements Comparable<NoticeType>, DtoFactory<com.aoindustries.aoserv.client.dto.NoticeType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         NONPAY="nonpay",
         BADCARD="badcard",
@@ -28,6 +26,8 @@ final public class NoticeType extends AOServObjectStringKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 1445397931590541727L;
+
     public NoticeType(AOServConnector connector, String type) {
         super(connector, type);
     }

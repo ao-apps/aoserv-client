@@ -16,7 +16,7 @@ import java.util.Map;
  */
 final public class RequestReplicationDaemonAccessCommand extends RemoteCommand<AOServer.DaemonAccess> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4054760416937318142L;
 
     final private int replication;
 

@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 public class ValidationException extends Exception {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 9113659436631669565L;
 
     private final ApplicationResourcesAccessor accessor;
     private final String key;

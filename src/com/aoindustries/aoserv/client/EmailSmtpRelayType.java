@@ -18,8 +18,6 @@ import com.aoindustries.table.IndexType;
 final public class EmailSmtpRelayType extends AOServObjectStringKey implements Comparable<EmailSmtpRelayType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailSmtpRelayType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The different relay types.
      */
@@ -32,6 +30,8 @@ final public class EmailSmtpRelayType extends AOServObjectStringKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1511533817785385711L;
+
     private String sendmailConfig;
 
     public EmailSmtpRelayType(AOServConnector connector, String name, String sendmailConfig) {

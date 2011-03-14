@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class GroupId implements Comparable<GroupId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.GroupId>, Internable<GroupId> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5758732021942097608L;
 
     public static final int MAX_LENGTH=255;
 

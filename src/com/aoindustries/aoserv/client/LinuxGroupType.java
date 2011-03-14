@@ -25,8 +25,6 @@ import java.rmi.RemoteException;
 final public class LinuxGroupType extends AOServObjectStringKey implements Comparable<LinuxGroupType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupType> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
 //    /**
 //     * The available group types.
 //     */
@@ -47,6 +45,8 @@ final public class LinuxGroupType extends AOServObjectStringKey implements Compa
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -3642089944255008378L;
+
     public LinuxGroupType(AOServConnector connector, String resourceType) {
         super(connector, resourceType);
     }

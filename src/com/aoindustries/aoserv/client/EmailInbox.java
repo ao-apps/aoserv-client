@@ -20,8 +20,6 @@ import java.rmi.RemoteException;
 final public class EmailInbox extends AOServObjectIntegerKey implements Comparable<EmailInbox>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailInbox> /* TODO , Removable, Disablable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The default number of days email messages will be kept in the "Trash" folder.
      */
@@ -44,6 +42,8 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -2197091795025597909L;
+
     final private Integer autoresponderFrom;
     private String autoresponderSubject;
     private UnixPath autoresponderPath;

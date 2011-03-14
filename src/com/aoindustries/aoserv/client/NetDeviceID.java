@@ -19,8 +19,6 @@ import java.rmi.RemoteException;
 final public class NetDeviceID extends AOServObjectStringKey implements Comparable<NetDeviceID>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDeviceID> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         BOND0="bond0",
         LO="lo",
@@ -35,6 +33,8 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1874738491073974795L;
+
     final private boolean loopback;
 
     public NetDeviceID(AOServConnector connector, String name, boolean loopback) {

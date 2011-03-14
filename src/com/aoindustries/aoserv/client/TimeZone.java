@@ -17,11 +17,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 final public class TimeZone extends AOServObjectStringKey implements Comparable<TimeZone>, DtoFactory<com.aoindustries.aoserv.client.dto.TimeZone> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 2601042049486907833L;
+
     public TimeZone(AOServConnector connector, String name) {
         super(connector, name);
     }

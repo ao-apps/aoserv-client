@@ -30,7 +30,7 @@ import java.security.NoSuchAlgorithmException;
  */
 final public class HashedPassword implements Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.HashedPassword> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6198625525641344394L;
 
     /**
      * Indicates that no password is set.

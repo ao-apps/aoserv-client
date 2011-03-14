@@ -25,8 +25,6 @@ import java.rmi.RemoteException;
 final public class LinuxAccountGroup extends AOServObjectIntegerKey implements Comparable<LinuxAccountGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountGroup> /*, Removable */ {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     /**
      * The maximum number of groups allowed for one account.
      */
@@ -34,6 +32,8 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -3048390113837358515L;
+
     private final int linuxAccount;
     private final int linuxGroup;
     private final boolean primary;

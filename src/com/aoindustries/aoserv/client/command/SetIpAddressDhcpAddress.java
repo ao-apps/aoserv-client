@@ -17,7 +17,7 @@ import java.util.Map;
  */
 final public class SetIpAddressDhcpAddress extends RemoteCommand<Void> {
 
-    // TODO: private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6587189699084066656L;
 
     final private int ipAddress;
     final private InetAddress newAddress;

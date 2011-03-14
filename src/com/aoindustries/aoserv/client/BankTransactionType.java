@@ -18,11 +18,9 @@ implements
     Comparable<BankTransactionType>,
     DtoFactory<com.aoindustries.aoserv.client.dto.BankTransactionType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-    // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = -1583852132726617012L;
+
     final private boolean isNegative;
 
     public BankTransactionType(AOServConnector connector, String name, boolean isNegative) {

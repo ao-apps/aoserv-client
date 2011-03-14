@@ -23,8 +23,6 @@ implements
     DtoFactory<com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode> {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
-    // TODO: private static final long serialVersionUID = 1L;
-
     public static final String
         NONE="none",
         POP3="pop3",
@@ -35,6 +33,8 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
+    private static final long serialVersionUID = 7333571682567593702L;
+
     final private short sortOrder;
 
     public EmailSpamAssassinIntegrationMode(AOServConnector connector, String name, short sortOrder) {
