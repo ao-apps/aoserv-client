@@ -6,6 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.AoCollections;
@@ -19,8 +21,6 @@ import java.beans.PropertyDescriptor;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -138,11 +138,11 @@ implements Row, Serializable, Cloneable {
         return serialVersionUID;
     }
 
-    protected void writeExternal(ObjectOutput out) throws IOException {
+    protected void writeExternal(FastObjectOutput fastOut) throws IOException {
         // Do nothing
     }
 
-    protected void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    protected void readExternal(FastObjectInput fastIn) throws IOException, ClassNotFoundException {
         // Do nothing
     }
     // </editor-fold>

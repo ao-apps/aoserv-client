@@ -7,8 +7,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.io.FastExternalizable;
-import com.aoindustries.io.FastExternalizableReadContext;
-import com.aoindustries.io.FastExternalizableWriteContext;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
@@ -135,58 +135,68 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        super.writeExternal(out);
-        out.writeInt(ticket);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, administrator==null ? null : administrator.toString());
-        out.writeLong(time);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, actionType);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, oldAccounting==null ? null : oldAccounting.toString());
-        FastExternalizableWriteContext.writeFastUTFInContext(out, newAccounting==null ? null : newAccounting.toString());
-        FastExternalizableWriteContext.writeFastUTFInContext(out, oldPriority);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, newPriority);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, oldType);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, newType);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, oldStatus);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, newStatus);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, oldAssignedTo==null ? null : oldAssignedTo.toString());
-        FastExternalizableWriteContext.writeFastUTFInContext(out, newAssignedTo==null ? null : newAssignedTo.toString());
-        writeNullInteger(out, oldCategory);
-        writeNullInteger(out, newCategory);
-        if(fromAddress!=null) {
-            out.writeBoolean(true);
-            out.writeUTF(fromAddress.getLocalPart());
-            out.writeUTF(fromAddress.getDomain().toString());
-        } else {
-            out.writeBoolean(false);
+        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+        try {
+            super.writeExternal(fastOut);
+            fastOut.writeInt(ticket);
+            fastOut.writeFastUTF(administrator==null ? null : administrator.toString());
+            fastOut.writeLong(time);
+            fastOut.writeFastUTF(actionType);
+            fastOut.writeFastUTF(oldAccounting==null ? null : oldAccounting.toString());
+            fastOut.writeFastUTF(newAccounting==null ? null : newAccounting.toString());
+            fastOut.writeFastUTF(oldPriority);
+            fastOut.writeFastUTF(newPriority);
+            fastOut.writeFastUTF(oldType);
+            fastOut.writeFastUTF(newType);
+            fastOut.writeFastUTF(oldStatus);
+            fastOut.writeFastUTF(newStatus);
+            fastOut.writeFastUTF(oldAssignedTo==null ? null : oldAssignedTo.toString());
+            fastOut.writeFastUTF(newAssignedTo==null ? null : newAssignedTo.toString());
+            writeNullInteger(fastOut, oldCategory);
+            writeNullInteger(fastOut, newCategory);
+            if(fromAddress!=null) {
+                fastOut.writeBoolean(true);
+                fastOut.writeUTF(fromAddress.getLocalPart());
+                fastOut.writeUTF(fromAddress.getDomain().toString());
+            } else {
+                fastOut.writeBoolean(false);
+            }
+            writeNullUTF(fastOut, summary);
+        } finally {
+            fastOut.unwrap();
         }
-        writeNullUTF(out, summary);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        super.readExternal(in);
+        FastObjectInput fastIn = FastObjectInput.wrap(in);
         try {
-            ticket = in.readInt();
-            administrator = UserId.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
-            time = in.readLong();
-            actionType = FastExternalizableReadContext.readFastUTFInContext(in);
-            oldAccounting = AccountingCode.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
-            newAccounting = AccountingCode.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
-            oldPriority = FastExternalizableReadContext.readFastUTFInContext(in);
-            newPriority = FastExternalizableReadContext.readFastUTFInContext(in);
-            oldType = FastExternalizableReadContext.readFastUTFInContext(in);
-            newType = FastExternalizableReadContext.readFastUTFInContext(in);
-            oldStatus = FastExternalizableReadContext.readFastUTFInContext(in);
-            newStatus = FastExternalizableReadContext.readFastUTFInContext(in);
-            oldAssignedTo = UserId.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
-            newAssignedTo = UserId.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
-            oldCategory = readNullInteger(in);
-            newCategory = readNullInteger(in);
-            fromAddress = in.readBoolean() ? Email.valueOf(in.readUTF(), DomainName.valueOf(in.readUTF())) : null;
-            summary = readNullUTF(in);
-            intern();
-        } catch(ValidationException exc) {
-            throw new IOException(exc);
+            super.readExternal(fastIn);
+            try {
+                ticket = fastIn.readInt();
+                administrator = UserId.valueOf(fastIn.readFastUTF());
+                time = fastIn.readLong();
+                actionType = fastIn.readFastUTF();
+                oldAccounting = AccountingCode.valueOf(fastIn.readFastUTF());
+                newAccounting = AccountingCode.valueOf(fastIn.readFastUTF());
+                oldPriority = fastIn.readFastUTF();
+                newPriority = fastIn.readFastUTF();
+                oldType = fastIn.readFastUTF();
+                newType = fastIn.readFastUTF();
+                oldStatus = fastIn.readFastUTF();
+                newStatus = fastIn.readFastUTF();
+                oldAssignedTo = UserId.valueOf(fastIn.readFastUTF());
+                newAssignedTo = UserId.valueOf(fastIn.readFastUTF());
+                oldCategory = readNullInteger(fastIn);
+                newCategory = readNullInteger(fastIn);
+                fromAddress = fastIn.readBoolean() ? Email.valueOf(fastIn.readUTF(), DomainName.valueOf(fastIn.readUTF())) : null;
+                summary = readNullUTF(fastIn);
+                intern();
+            } catch(ValidationException exc) {
+                throw new IOException(exc);
+            }
+        } finally {
+            fastIn.unwrap();
         }
     }
     // </editor-fold>

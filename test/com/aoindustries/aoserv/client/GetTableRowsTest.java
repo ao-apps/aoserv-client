@@ -55,7 +55,7 @@ public class GetTableRowsTest extends TestCase {
             for(int pass=0;pass<PASSES;pass++) {
                 if(pass<WARMUP_PASSES) System.out.println("        Warmup "+(pass+1)+" of "+WARMUP_PASSES+": ");
                 else System.out.println("        Pass "+(pass+1-WARMUP_PASSES)+" of "+(PASSES-WARMUP_PASSES)+": ");
-                int c = ServiceName.ticket_actions.ordinal();
+                int c = ServiceName.transactions.ordinal();
                 //for(int c=0;c<numTables;c++) {
                     ServiceName serviceName = ServiceName.values.get(c);
                     AOServService<?,?> service = conn.getServices().get(serviceName);

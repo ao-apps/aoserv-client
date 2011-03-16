@@ -5,9 +5,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.rmi.RemoteException;
 
 /**
@@ -38,15 +38,15 @@ abstract public class AOServObjectIntegerKey extends AOServObject<Integer> {
     }
 
     @Override
-    protected void writeExternal(ObjectOutput out) throws IOException {
-        super.writeExternal(out);
-        out.writeInt(key);
+    protected void writeExternal(FastObjectOutput fastOut) throws IOException {
+        super.writeExternal(fastOut);
+        fastOut.writeInt(key);
     }
 
     @Override
-    protected void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        super.readExternal(in);
-        key = in.readInt();
+    protected void readExternal(FastObjectInput fastIn) throws IOException, ClassNotFoundException {
+        super.readExternal(fastIn);
+        key = fastIn.readInt();
     }
     // </editor-fold>
 

@@ -8,8 +8,8 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.io.FastExternalizable;
-import com.aoindustries.io.FastExternalizableReadContext;
-import com.aoindustries.io.FastExternalizableWriteContext;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
@@ -139,40 +139,50 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        super.writeExternal(out);
-        out.writeLong(time);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, accounting.toString());
-        FastExternalizableWriteContext.writeFastUTFInContext(out, sourceAccounting.toString());
-        FastExternalizableWriteContext.writeFastUTFInContext(out, username.toString());
-        FastExternalizableWriteContext.writeFastUTFInContext(out, type);
-        out.writeLong(quantity);
-        FastExternalizableWriteContext.writeFastObjectInContext(out, rate);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, paymentType);
-        writeNullUTF(out, paymentInfo);
-        FastExternalizableWriteContext.writeFastUTFInContext(out, processor);
-        writeNullInteger(out, creditCardTransaction);
-        out.writeByte(status.byteValue);
+        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+        try {
+            super.writeExternal(fastOut);
+            fastOut.writeLong(time);
+            fastOut.writeFastUTF(accounting.toString());
+            fastOut.writeFastUTF(sourceAccounting.toString());
+            fastOut.writeFastUTF(username.toString());
+            fastOut.writeFastUTF(type);
+            fastOut.writeLong(quantity);
+            fastOut.writeObject(rate);
+            fastOut.writeFastUTF(paymentType);
+            writeNullUTF(fastOut, paymentInfo);
+            fastOut.writeFastUTF(processor);
+            writeNullInteger(fastOut, creditCardTransaction);
+            fastOut.writeByte(status.byteValue);
+        } finally {
+            fastOut.unwrap();
+        }
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        super.readExternal(in);
+        FastObjectInput fastIn = FastObjectInput.wrap(in);
         try {
-            time = in.readLong();
-            accounting = AccountingCode.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
-            sourceAccounting = AccountingCode.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
-            username = UserId.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
-            type = FastExternalizableReadContext.readFastUTFInContext(in);
-            quantity = in.readLong();
-            rate = (Money)FastExternalizableReadContext.readFastObjectInContext(in);
-            paymentType = FastExternalizableReadContext.readFastUTFInContext(in);
-            paymentInfo = readNullUTF(in);
-            processor = FastExternalizableReadContext.readFastUTFInContext(in);
-            creditCardTransaction = readNullInteger(in);
-            status = Status.valueOfByte(in.readByte());
-            intern();
-        } catch(ValidationException exc) {
-            throw new IOException(exc);
+            super.readExternal(fastIn);
+            try {
+                time = fastIn.readLong();
+                accounting = AccountingCode.valueOf(fastIn.readFastUTF());
+                sourceAccounting = AccountingCode.valueOf(fastIn.readFastUTF());
+                username = UserId.valueOf(fastIn.readFastUTF());
+                type = fastIn.readFastUTF();
+                quantity = fastIn.readLong();
+                rate = (Money)fastIn.readObject();
+                paymentType = fastIn.readFastUTF();
+                paymentInfo = readNullUTF(fastIn);
+                processor = fastIn.readFastUTF();
+                creditCardTransaction = readNullInteger(fastIn);
+                status = Status.valueOfByte(fastIn.readByte());
+                intern();
+            } catch(ValidationException exc) {
+                throw new IOException(exc);
+            }
+        } finally {
+            fastIn.unwrap();
         }
     }
     // </editor-fold>
