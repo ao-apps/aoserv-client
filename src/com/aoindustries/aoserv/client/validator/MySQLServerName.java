@@ -83,8 +83,8 @@ final public class MySQLServerName implements Comparable<MySQLServerName>, Seria
      * Perform same validation as constructor on readObject.
      */
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
         ois.defaultReadObject();
+        validateObject();
     }
 
     @Override
@@ -96,14 +96,6 @@ final public class MySQLServerName implements Comparable<MySQLServerName>, Seria
             newErr.initCause(err);
             throw newErr;
         }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        MySQLServerName existing = interned.get(name);
-        return existing!=null ? existing : this;
     }
 
     @Override

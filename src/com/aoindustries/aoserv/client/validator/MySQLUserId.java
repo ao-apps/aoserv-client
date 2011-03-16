@@ -88,8 +88,8 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
      * Perform same validation as constructor on readObject.
      */
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
         ois.defaultReadObject();
+        validateObject();
     }
 
     @Override
@@ -101,14 +101,6 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
             newErr.initCause(err);
             throw newErr;
         }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        MySQLUserId existing = interned.get(id);
-        return existing!=null ? existing : this;
     }
 
     @Override

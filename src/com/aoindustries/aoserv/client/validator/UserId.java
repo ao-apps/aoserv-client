@@ -6,12 +6,15 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.*;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
+import java.io.ObjectInput;
 import java.io.ObjectInputValidation;
-import java.io.Serializable;
+import java.io.ObjectOutput;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -34,9 +37,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserId implements Comparable<UserId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.UserId>, Internable<UserId> {
-
-    private static final long serialVersionUID = -837866431257794645L;
+final public class UserId implements Comparable<UserId>, FastExternalizable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.UserId>, Internable<UserId> {
 
     public static final int MAX_LENGTH=255;
 
@@ -103,7 +104,7 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
         return existing!=null ? existing : new UserId(id).intern();
     }*/
 
-    final private String id;
+    private String id;
 
     private UserId(String id) throws ValidationException {
         this.id = id;
@@ -112,33 +113,6 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
 
     private void validate() throws ValidationException {
         validate(id);
-    }
-
-    /**
-     * Perform same validation as constructor on readObject.
-     */
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
-        ois.defaultReadObject();
-    }
-
-    @Override
-    public void validateObject() throws InvalidObjectException {
-        try {
-            validate();
-        } catch(ValidationException err) {
-            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-            newErr.initCause(err);
-            throw newErr;
-        }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        UserId existing = interned.get(id);
-        return existing!=null ? existing : this;
     }
 
     @Override
@@ -191,4 +165,48 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
     public com.aoindustries.aoserv.client.dto.UserId getDto() {
         return new com.aoindustries.aoserv.client.dto.UserId(id);
     }
+
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = -837866431257794645L;
+
+    public UserId() {
+    }
+
+    @Override
+    public long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+        try {
+            fastOut.writeFastUTF(id);
+        } finally {
+            fastOut.unwrap();
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if(id!=null) throw new IllegalStateException();
+        FastObjectInput fastIn = FastObjectInput.wrap(in);
+        try {
+            id = fastIn.readFastUTF();
+        } finally {
+            fastIn.unwrap();
+        }
+    }
+
+    @Override
+    public void validateObject() throws InvalidObjectException {
+        try {
+            validate();
+        } catch(ValidationException err) {
+            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+            newErr.initCause(err);
+            throw newErr;
+        }
+    }
+    // </editor-fold>
 }

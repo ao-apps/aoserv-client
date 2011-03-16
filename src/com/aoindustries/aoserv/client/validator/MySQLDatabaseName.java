@@ -89,8 +89,8 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
      * Perform same validation as constructor on readObject.
      */
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
         ois.defaultReadObject();
+        validateObject();
     }
 
     @Override
@@ -102,14 +102,6 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
             newErr.initCause(err);
             throw newErr;
         }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        MySQLDatabaseName existing = interned.get(name);
-        return existing!=null ? existing : this;
     }
 
     @Override

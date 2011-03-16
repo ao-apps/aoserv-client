@@ -78,8 +78,8 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
      * Perform same validation as constructor on readObject.
      */
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
         ois.defaultReadObject();
+        validateObject();
     }
 
     @Override
@@ -91,14 +91,6 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
             newErr.initCause(err);
             throw newErr;
         }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        UnixPath existing = interned.get(path);
-        return existing!=null ? existing : this;
     }
 
     @Override

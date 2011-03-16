@@ -108,8 +108,8 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
     }
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
         ois.defaultReadObject();
+        validateObject();
     }
 
     @Override
@@ -121,14 +121,6 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
             newErr.initCause(err);
             throw newErr;
         }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        Hostname existing = domainName!=null ? internedByDomainName.get(domainName) : internedByInetAddress.get(inetAddress);
-        return existing!=null ? existing : this;
     }
 
     @Override

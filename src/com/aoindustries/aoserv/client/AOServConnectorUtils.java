@@ -77,17 +77,23 @@ final public class AOServConnectorUtils {
     public static <V extends AOServObject<?>> IndexedSet<V> setConnector(IndexedSet<V> objs, AOServConnector connector) throws RemoteException {
         int size = objs.size();
         if(size==0) return objs;
-        // Sample the first object to see if needs a new set.
-        Iterator<V> iter = objs.iterator();
-        V firstObject = iter.next();
-        V newObj = setConnector(firstObject, connector);
-        if(newObj==firstObject) return objs;
-        if(size==1) return IndexedSet.wrap(objs.getServiceName(), newObj);
-        ArrayList<V> elements = new ArrayList<V>(size);
-        elements.add(newObj);
-        while(iter.hasNext()) {
-            elements.add(setConnector(iter.next(), connector));
+        if(size==1) {
+            V oldObj = objs.iterator().next();
+            V newObj = setConnector(oldObj, connector);
+            return newObj==oldObj ? objs : IndexedSet.wrap(objs.getServiceName(), newObj);
         }
+        // Only create a new set when the first new object is created
+        boolean needsNewSet = false;
+        for(V oldObj : objs) {
+            V newObj = setConnector(oldObj, connector);
+            if(newObj!=oldObj) {
+                needsNewSet = true;
+                break;
+            }
+        }
+        if(!needsNewSet) return objs;
+        ArrayList<V> elements = new ArrayList<V>(size);
+        for(V oldObj : objs) elements.add(setConnector(oldObj, connector));
         return IndexedSet.wrap(objs.getServiceName(), elements);
     }
 

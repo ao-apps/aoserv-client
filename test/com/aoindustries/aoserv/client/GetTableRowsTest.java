@@ -45,8 +45,8 @@ public class GetTableRowsTest extends TestCase {
      * Test the getSize().size() method of each AOServTable.
      */
     public void testSetSizes() throws Exception {
-        final int WARMUP_PASSES = 10;
-        final int PASSES=WARMUP_PASSES + 30;
+        final int WARMUP_PASSES = 1;
+        final int PASSES=WARMUP_PASSES + 1;
         System.out.println("Testing getTable(tableID).size()");
         for(AOServConnector conn : conns) {
             System.out.println("    "+conn.getThisBusinessAdministrator());
@@ -55,8 +55,7 @@ public class GetTableRowsTest extends TestCase {
             for(int pass=0;pass<PASSES;pass++) {
                 if(pass<WARMUP_PASSES) System.out.println("        Warmup "+(pass+1)+" of "+WARMUP_PASSES+": ");
                 else System.out.println("        Pass "+(pass+1-WARMUP_PASSES)+" of "+(PASSES-WARMUP_PASSES)+": ");
-                int c = ServiceName.transactions.ordinal();
-                //for(int c=0;c<numTables;c++) {
+                for(int c=0;c<numTables;c++) {
                     ServiceName serviceName = ServiceName.values.get(c);
                     AOServService<?,?> service = conn.getServices().get(serviceName);
                     // Excluded for testing speed
@@ -67,14 +66,13 @@ public class GetTableRowsTest extends TestCase {
                         if(pass>WARMUP_PASSES) times.add(endTime - startTime);
                         System.out.println(service+": "+size+" in "+BigDecimal.valueOf(endTime - startTime, 3)+" ms");
                     }
-                //}
+                }
             }
             System.out.println("    Min...: " + BigDecimal.valueOf(Collections.min(times), 3));
             System.out.println("    Max...: " + BigDecimal.valueOf(Collections.max(times), 3));
             double mean = Statistics.mean(times);
             System.out.println("    Mean..: " + BigDecimal.valueOf((long)mean, 3));
             System.out.println("    StdDev: " + BigDecimal.valueOf((long)Statistics.standardDeviation(mean, times), 3));
-            break; // TODO: Remove this: Only test first connector
         }
     }
 }

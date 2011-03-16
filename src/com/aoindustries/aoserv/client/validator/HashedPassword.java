@@ -91,8 +91,8 @@ final public class HashedPassword implements Serializable, ObjectInputValidation
      * Perform same validation as constructor on readObject.
      */
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
         ois.defaultReadObject();
+        validateObject();
     }
 
     @Override

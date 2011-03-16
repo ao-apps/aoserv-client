@@ -246,14 +246,6 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         this.ip = ip;
     }
 
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        InetAddress existing = interned.get(ip);
-        return existing!=null ? existing : this;
-    }
-
     @Override
     public boolean equals(Object O) {
         return

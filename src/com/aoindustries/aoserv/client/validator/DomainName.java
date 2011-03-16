@@ -6,11 +6,16 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.*;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -35,12 +40,10 @@ import java.util.concurrent.ConcurrentMap;
 final public class DomainName
 implements
     Comparable<DomainName>,
-    Serializable,
+    FastExternalizable,
     ObjectInputValidation,
     DtoFactory<com.aoindustries.aoserv.client.dto.DomainName>,
     Internable<DomainName> {
-
-    private static final long serialVersionUID = 2384488670340662487L;
 
     public static final int MAX_LENGTH = 253;
 
@@ -104,7 +107,7 @@ implements
         return existing!=null ? existing : new DomainName(domain);
     }
 
-    final private String domain;
+    private String domain;
 
     private DomainName(String domain) throws ValidationException {
         this.domain = domain;
@@ -113,33 +116,6 @@ implements
 
     private void validate() throws ValidationException {
         validate(domain);
-    }
-
-    /**
-     * Perform same validation as constructor on readObject.
-     */
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
-        ois.defaultReadObject();
-    }
-
-    @Override
-    public void validateObject() throws InvalidObjectException {
-        try {
-            validate();
-        } catch(ValidationException err) {
-            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-            newErr.initCause(err);
-            throw newErr;
-        }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        DomainName existing = interned.get(domain);
-        return existing!=null ? existing : this;
     }
 
     @Override
@@ -223,4 +199,48 @@ implements
     public com.aoindustries.aoserv.client.dto.DomainName getDto() {
         return new com.aoindustries.aoserv.client.dto.DomainName(domain);
     }
+
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = 2384488670340662487L;
+
+    public DomainName() {
+    }
+
+    @Override
+    public long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+        try {
+            fastOut.writeFastUTF(domain);
+        } finally {
+            fastOut.unwrap();
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if(domain!=null) throw new IllegalStateException();
+        FastObjectInput fastIn = FastObjectInput.wrap(in);
+        try {
+            domain = fastIn.readFastUTF();
+        } finally {
+            fastIn.unwrap();
+        }
+    }
+
+    @Override
+    public void validateObject() throws InvalidObjectException {
+        try {
+            validate();
+        } catch(ValidationException err) {
+            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+            newErr.initCause(err);
+            throw newErr;
+        }
+    }
+    // </editor-fold>
 }

@@ -6,12 +6,15 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.*;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
+import java.io.ObjectInput;
 import java.io.ObjectInputValidation;
-import java.io.Serializable;
+import java.io.ObjectOutput;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -31,9 +34,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class AccountingCode implements Comparable<AccountingCode>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.AccountingCode>, Internable<AccountingCode> {
-
-    private static final long serialVersionUID = -4701364475901418693L;
+final public class AccountingCode implements Comparable<AccountingCode>, FastExternalizable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.AccountingCode>, Internable<AccountingCode> {
 
     public static final int MIN_LENGTH = 2;
 
@@ -86,7 +87,7 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
         return existing!=null ? existing : new AccountingCode(accounting).intern();
     }*/
 
-    final private String accounting;
+    private String accounting;
 
     private AccountingCode(String accounting) throws ValidationException {
         this.accounting = accounting;
@@ -95,33 +96,6 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
 
     private void validate() throws ValidationException {
         validate(accounting);
-    }
-
-    /**
-     * Perform same validation as constructor on readObject.
-     */
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
-        ois.defaultReadObject();
-    }
-
-    @Override
-    public void validateObject() throws InvalidObjectException {
-        try {
-            validate();
-        } catch(ValidationException err) {
-            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-            newErr.initCause(err);
-            throw newErr;
-        }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        AccountingCode existing = interned.get(accounting);
-        return existing!=null ? existing : this;
     }
 
     @Override
@@ -174,4 +148,48 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
     public com.aoindustries.aoserv.client.dto.AccountingCode getDto() {
         return new com.aoindustries.aoserv.client.dto.AccountingCode(accounting);
     }
+
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = -4701364475901418693L;
+
+    public AccountingCode() {
+    }
+
+    @Override
+    public long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+        try {
+            fastOut.writeFastUTF(accounting);
+        } finally {
+            fastOut.unwrap();
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if(accounting!=null) throw new IllegalStateException();
+        FastObjectInput fastIn = FastObjectInput.wrap(in);
+        try {
+            accounting = fastIn.readFastUTF();
+        } finally {
+            fastIn.unwrap();
+        }
+    }
+
+    @Override
+    public void validateObject() throws InvalidObjectException {
+        try {
+            validate();
+        } catch(ValidationException err) {
+            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+            newErr.initCause(err);
+            throw newErr;
+        }
+    }
+    // </editor-fold>
 }

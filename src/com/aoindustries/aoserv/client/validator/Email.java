@@ -6,12 +6,15 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.*;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
+import java.io.ObjectInput;
 import java.io.ObjectInputValidation;
-import java.io.Serializable;
+import java.io.ObjectOutput;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -26,9 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * @author  AO Industries, Inc.
  */
-final public class Email implements Comparable<Email>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.Email>, Internable<Email> {
-
-    private static final long serialVersionUID = 1812494521843295031L;
+final public class Email implements Comparable<Email>, FastExternalizable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.Email>, Internable<Email> {
 
     public static final int MAX_LENGTH = 254;
 
@@ -124,8 +125,8 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
         return new Email(localPart, domain);
     }
 
-    final private String localPart;
-    final private DomainName domain;
+    private String localPart;
+    private DomainName domain;
 
     private Email(String localPart, DomainName domain) throws ValidationException {
         this.localPart = localPart;
@@ -135,37 +136,6 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
 
     private void validate() throws ValidationException {
         validate(localPart, domain);
-    }
-
-    /**
-     * Perform same validation as constructor on readObject.
-     */
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.registerValidation(this, 0);
-        ois.defaultReadObject();
-    }
-
-    @Override
-    public void validateObject() throws InvalidObjectException {
-        try {
-            validate();
-        } catch(ValidationException err) {
-            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-            newErr.initCause(err);
-            throw newErr;
-        }
-    }
-
-    /**
-     * Automatically uses previously interned values on deserialization.
-     */
-    private Object readResolve() throws InvalidObjectException {
-        ConcurrentMap<String,Email> domainInterned = interned.get(domain);
-        if(domainInterned!=null) {
-            Email existing = domainInterned.get(localPart);
-            if(existing!=null) return existing;
-        }
-        return this;
     }
 
     @Override
@@ -245,4 +215,50 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
     public com.aoindustries.aoserv.client.dto.Email getDto() {
         return new com.aoindustries.aoserv.client.dto.Email(localPart, domain.getDto());
     }
+
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = 1812494521843295031L;
+
+    public Email() {
+    }
+
+    @Override
+    public long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+        try {
+            fastOut.writeFastUTF(localPart);
+            fastOut.writeObject(domain);
+        } finally {
+            fastOut.unwrap();
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if(localPart!=null) throw new IllegalStateException();
+        FastObjectInput fastIn = FastObjectInput.wrap(in);
+        try {
+            localPart = fastIn.readFastUTF();
+            domain = (DomainName)fastIn.readObject();
+        } finally {
+            fastIn.unwrap();
+        }
+    }
+
+    @Override
+    public void validateObject() throws InvalidObjectException {
+        try {
+            validate();
+        } catch(ValidationException err) {
+            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+            newErr.initCause(err);
+            throw newErr;
+        }
+    }
+    // </editor-fold>
 }

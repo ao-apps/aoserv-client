@@ -5,8 +5,14 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 
@@ -17,18 +23,16 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileLog extends AOServObjectIntegerKey implements Comparable<FailoverFileLog>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileLog> {
+final public class FailoverFileLog extends AOServObjectIntegerKey implements Comparable<FailoverFileLog>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileLog>, FastExternalizable {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -4289674682220613055L;
-
-    final private int replication;
-    final private long startTime;
-    final private long endTime;
-    final private int scanned;
-    final private int updated;
-    final private long bytes;
-    final private boolean successful;
+    private int replication;
+    private long startTime;
+    private long endTime;
+    private int scanned;
+    private int updated;
+    private long bytes;
+    private boolean successful;
 
     public FailoverFileLog(
         AOServConnector connector,
@@ -49,6 +53,54 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
         this.updated = updated;
         this.bytes = bytes;
         this.successful = isSuccessful;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = -4289674682220613055L;
+
+    public FailoverFileLog() {
+        replication = Integer.MIN_VALUE;
+    }
+
+    @Override
+    public long getSerialVersionUID() {
+        return super.getSerialVersionUID() ^ serialVersionUID;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+        try {
+            super.writeExternal(fastOut);
+            fastOut.writeInt(replication);
+            fastOut.writeLong(startTime);
+            fastOut.writeLong(endTime);
+            fastOut.writeInt(scanned);
+            fastOut.writeInt(updated);
+            fastOut.writeLong(bytes);
+            fastOut.writeBoolean(successful);
+        } finally {
+            fastOut.unwrap();
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if(replication!=Integer.MIN_VALUE) throw new IllegalStateException();
+        FastObjectInput fastIn = FastObjectInput.wrap(in);
+        try {
+            super.readExternal(fastIn);
+            replication = fastIn.readInt();
+            startTime = fastIn.readLong();
+            endTime = fastIn.readLong();
+            scanned = fastIn.readInt();
+            updated = fastIn.readInt();
+            bytes = fastIn.readLong();
+            successful = fastIn.readBoolean();
+        } finally {
+            fastIn.unwrap();
+        }
     }
     // </editor-fold>
 

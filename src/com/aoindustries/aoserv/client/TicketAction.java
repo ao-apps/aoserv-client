@@ -139,28 +139,22 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
         try {
             super.writeExternal(fastOut);
             fastOut.writeInt(ticket);
-            fastOut.writeFastUTF(administrator==null ? null : administrator.toString());
+            fastOut.writeObject(administrator);
             fastOut.writeLong(time);
             fastOut.writeFastUTF(actionType);
-            fastOut.writeFastUTF(oldAccounting==null ? null : oldAccounting.toString());
-            fastOut.writeFastUTF(newAccounting==null ? null : newAccounting.toString());
+            fastOut.writeObject(oldAccounting);
+            fastOut.writeObject(newAccounting);
             fastOut.writeFastUTF(oldPriority);
             fastOut.writeFastUTF(newPriority);
             fastOut.writeFastUTF(oldType);
             fastOut.writeFastUTF(newType);
             fastOut.writeFastUTF(oldStatus);
             fastOut.writeFastUTF(newStatus);
-            fastOut.writeFastUTF(oldAssignedTo==null ? null : oldAssignedTo.toString());
-            fastOut.writeFastUTF(newAssignedTo==null ? null : newAssignedTo.toString());
+            fastOut.writeObject(oldAssignedTo);
+            fastOut.writeObject(newAssignedTo);
             writeNullInteger(fastOut, oldCategory);
             writeNullInteger(fastOut, newCategory);
-            if(fromAddress!=null) {
-                fastOut.writeBoolean(true);
-                fastOut.writeUTF(fromAddress.getLocalPart());
-                fastOut.writeUTF(fromAddress.getDomain().toString());
-            } else {
-                fastOut.writeBoolean(false);
-            }
+            fastOut.writeObject(fromAddress);
             writeNullUTF(fastOut, summary);
         } finally {
             fastOut.unwrap();
@@ -169,32 +163,29 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if(actionType!=null) throw new IllegalStateException();
         FastObjectInput fastIn = FastObjectInput.wrap(in);
         try {
             super.readExternal(fastIn);
-            try {
-                ticket = fastIn.readInt();
-                administrator = UserId.valueOf(fastIn.readFastUTF());
-                time = fastIn.readLong();
-                actionType = fastIn.readFastUTF();
-                oldAccounting = AccountingCode.valueOf(fastIn.readFastUTF());
-                newAccounting = AccountingCode.valueOf(fastIn.readFastUTF());
-                oldPriority = fastIn.readFastUTF();
-                newPriority = fastIn.readFastUTF();
-                oldType = fastIn.readFastUTF();
-                newType = fastIn.readFastUTF();
-                oldStatus = fastIn.readFastUTF();
-                newStatus = fastIn.readFastUTF();
-                oldAssignedTo = UserId.valueOf(fastIn.readFastUTF());
-                newAssignedTo = UserId.valueOf(fastIn.readFastUTF());
-                oldCategory = readNullInteger(fastIn);
-                newCategory = readNullInteger(fastIn);
-                fromAddress = fastIn.readBoolean() ? Email.valueOf(fastIn.readUTF(), DomainName.valueOf(fastIn.readUTF())) : null;
-                summary = readNullUTF(fastIn);
-                intern();
-            } catch(ValidationException exc) {
-                throw new IOException(exc);
-            }
+            ticket = fastIn.readInt();
+            administrator = (UserId)fastIn.readObject();
+            time = fastIn.readLong();
+            actionType = fastIn.readFastUTF();
+            oldAccounting = (AccountingCode)fastIn.readObject();
+            newAccounting = (AccountingCode)fastIn.readObject();
+            oldPriority = fastIn.readFastUTF();
+            newPriority = fastIn.readFastUTF();
+            oldType = fastIn.readFastUTF();
+            newType = fastIn.readFastUTF();
+            oldStatus = fastIn.readFastUTF();
+            newStatus = fastIn.readFastUTF();
+            oldAssignedTo = (UserId)fastIn.readObject();
+            newAssignedTo = (UserId)fastIn.readObject();
+            oldCategory = readNullInteger(fastIn);
+            newCategory = readNullInteger(fastIn);
+            fromAddress = (Email)fastIn.readObject();
+            summary = readNullUTF(fastIn);
+            intern();
         } finally {
             fastIn.unwrap();
         }
