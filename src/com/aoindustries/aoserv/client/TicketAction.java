@@ -6,8 +6,14 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastExternalizableReadContext;
+import com.aoindustries.io.FastExternalizableWriteContext;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
@@ -21,14 +27,12 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketAction extends AOServObjectIntegerKey implements Comparable<TicketAction>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAction> {
+final public class TicketAction extends AOServObjectIntegerKey implements Comparable<TicketAction>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAction>, FastExternalizable {
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 3160353832522188019L;
-
-    final private int ticket;
+    private int ticket;
     private UserId administrator;
-    final private long time;
+    private long time;
     private String actionType;
     private AccountingCode oldAccounting;
     private AccountingCode newAccounting;
@@ -40,14 +44,14 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     private String newStatus;
     private UserId oldAssignedTo;
     private UserId newAssignedTo;
-    final private Integer oldCategory;
-    final private Integer newCategory;
+    private Integer oldCategory;
+    private Integer newCategory;
     transient private boolean oldValueLoaded;
     transient private String oldValue;
     transient private boolean newValueLoaded;
     transient private String newValue;
-    final private Email fromAddress;
-    final private String summary;
+    private Email fromAddress;
+    private String summary;
     transient private boolean detailsLoaded;
     transient private String details;
     transient private boolean rawEmailLoaded;
@@ -118,6 +122,75 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = 1131056974029566850L;
+
+    public TicketAction() {
+    }
+
+    @Override
+    public long getSerialVersionUID() {
+        return super.getSerialVersionUID() ^ serialVersionUID;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        super.writeExternal(out);
+        out.writeInt(ticket);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, administrator==null ? null : administrator.toString());
+        out.writeLong(time);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, actionType);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, oldAccounting==null ? null : oldAccounting.toString());
+        FastExternalizableWriteContext.writeFastUTFInContext(out, newAccounting==null ? null : newAccounting.toString());
+        FastExternalizableWriteContext.writeFastUTFInContext(out, oldPriority);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, newPriority);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, oldType);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, newType);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, oldStatus);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, newStatus);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, oldAssignedTo==null ? null : oldAssignedTo.toString());
+        FastExternalizableWriteContext.writeFastUTFInContext(out, newAssignedTo==null ? null : newAssignedTo.toString());
+        writeNullInteger(out, oldCategory);
+        writeNullInteger(out, newCategory);
+        if(fromAddress!=null) {
+            out.writeBoolean(true);
+            out.writeUTF(fromAddress.getLocalPart());
+            out.writeUTF(fromAddress.getDomain().toString());
+        } else {
+            out.writeBoolean(false);
+        }
+        writeNullUTF(out, summary);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super.readExternal(in);
+        try {
+            ticket = in.readInt();
+            administrator = UserId.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
+            time = in.readLong();
+            actionType = FastExternalizableReadContext.readFastUTFInContext(in);
+            oldAccounting = AccountingCode.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
+            newAccounting = AccountingCode.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
+            oldPriority = FastExternalizableReadContext.readFastUTFInContext(in);
+            newPriority = FastExternalizableReadContext.readFastUTFInContext(in);
+            oldType = FastExternalizableReadContext.readFastUTFInContext(in);
+            newType = FastExternalizableReadContext.readFastUTFInContext(in);
+            oldStatus = FastExternalizableReadContext.readFastUTFInContext(in);
+            newStatus = FastExternalizableReadContext.readFastUTFInContext(in);
+            oldAssignedTo = UserId.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
+            newAssignedTo = UserId.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
+            oldCategory = readNullInteger(in);
+            newCategory = readNullInteger(in);
+            fromAddress = in.readBoolean() ? Email.valueOf(in.readUTF(), DomainName.valueOf(in.readUTF())) : null;
+            summary = readNullUTF(in);
+            intern();
+        } catch(ValidationException exc) {
+            throw new IOException(exc);
+        }
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(TicketAction other) {
@@ -126,7 +199,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
             if(diff!=0) return diff;
             diff = compare(time, other.time);
             if(diff!=0) return diff;
-            return compare(key, other.key);
+            return compare(getKeyInt(), other.getKeyInt());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -136,7 +209,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_TICKET = getMethodColumn(TicketAction.class, "ticket");
@@ -444,7 +517,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     @Override
     public com.aoindustries.aoserv.client.dto.TicketAction getDto() {
         return new com.aoindustries.aoserv.client.dto.TicketAction(
-            key,
+            getKeyInt(),
             ticket,
             getDto(administrator),
             time,
@@ -470,7 +543,7 @@ final public class TicketAction extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
-        return ticket+"|"+key+'|'+actionType+'|'+administrator;
+        return ticket+"|"+getKeyInt()+'|'+actionType+'|'+administrator;
     }
     // </editor-fold>
 }

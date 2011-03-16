@@ -110,7 +110,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a unique primary key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(BusinessProfile.class, "business");
@@ -248,7 +248,7 @@ final public class BusinessProfile extends AOServObjectIntegerKey implements Com
     }
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessProfile getDto() {
-        return new com.aoindustries.aoserv.client.dto.BusinessProfile(key, getDto(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
+        return new com.aoindustries.aoserv.client.dto.BusinessProfile(getKeyInt(), getDto(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
     }
     // </editor-fold>
 

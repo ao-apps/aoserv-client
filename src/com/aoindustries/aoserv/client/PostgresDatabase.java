@@ -189,7 +189,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresDatabase getDto() {
         return new com.aoindustries.aoserv.client.dto.PostgresDatabase(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

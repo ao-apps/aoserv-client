@@ -65,7 +65,7 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_TICKET = getMethodColumn(TicketAssignment.class, "ticket");
@@ -103,14 +103,14 @@ final public class TicketAssignment extends AOServObjectIntegerKey implements Co
 
     @Override
     public com.aoindustries.aoserv.client.dto.TicketAssignment getDto() {
-        return new com.aoindustries.aoserv.client.dto.TicketAssignment(key, ticket, getDto(reseller), getDto(administrator));
+        return new com.aoindustries.aoserv.client.dto.TicketAssignment(getKeyInt(), ticket, getDto(reseller), getDto(administrator));
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
-        return ticket+"|"+key+'|'+reseller+'|'+administrator;
+        return ticket+"|"+getKeyInt()+'|'+reseller+'|'+administrator;
     }
     // </editor-fold>
 }

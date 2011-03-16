@@ -78,7 +78,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier for this limit")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_PACKAGE_DEFINITION = getMethodColumn(PackageDefinitionLimit.class, "packageDefinition");
@@ -139,7 +139,7 @@ final public class PackageDefinitionLimit extends AOServObjectIntegerKey impleme
     @Override
     public com.aoindustries.aoserv.client.dto.PackageDefinitionLimit getDto() {
         return new com.aoindustries.aoserv.client.dto.PackageDefinitionLimit(
-            key,
+            getKeyInt(),
             packageDefinition,
             resourceType,
             softLimit,

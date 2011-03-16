@@ -25,7 +25,7 @@ final public class SetPostgresUserPredisablePasswordCommand extends RemoteComman
         @Param(name="postgresUser") PostgresUser postgresUser,
         @Param(name="encryptedPassword") String encryptedPassword
     ) {
-        this.postgresUser = postgresUser.getKey();
+        this.postgresUser = postgresUser.getPkey();
         this.encryptedPassword = encryptedPassword;
     }
 

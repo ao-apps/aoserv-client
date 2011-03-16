@@ -115,14 +115,14 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     public int compareTo(Ticket other) {
         int diff = compare(other.openDate, openDate); // Descending
         if(diff!=0) return diff;
-        return compare(other.key, key); // Descending
+        return compare(other.getKeyInt(), getKeyInt()); // Descending
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getTicketId() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_BRAND = getMethodColumn(Ticket.class, "brand");
@@ -294,7 +294,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     @Override
     public com.aoindustries.aoserv.client.dto.Ticket getDto() {
         return new com.aoindustries.aoserv.client.dto.Ticket(
-            key,
+            getKeyInt(),
             getDto(brand),
             getDto(reseller),
             getDto(accounting),
@@ -318,7 +318,7 @@ final public class Ticket extends AOServObjectIntegerKey implements Comparable<T
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
-        return key+"|"+brand+'/'+accounting+'|'+status+"->"+reseller;
+        return getKeyInt()+"|"+brand+'/'+accounting+'|'+status+"->"+reseller;
     }
     // </editor-fold>
 

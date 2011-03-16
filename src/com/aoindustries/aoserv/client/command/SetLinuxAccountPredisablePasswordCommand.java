@@ -25,7 +25,7 @@ final public class SetLinuxAccountPredisablePasswordCommand extends RemoteComman
         @Param(name="linuxAccount") LinuxAccount linuxAccount,
         @Param(name="encryptedPassword") String encryptedPassword
     ) {
-        this.linuxAccount = linuxAccount.getKey();
+        this.linuxAccount = linuxAccount.getPkey();
         this.encryptedPassword = encryptedPassword;
     }
 

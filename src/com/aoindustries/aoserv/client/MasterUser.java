@@ -120,12 +120,11 @@ final public class MasterUser extends AOServObjectUserIdKey implements Comparabl
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
     @DependentObjectSet
-    public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
-        return getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_ADMINISTRATOR, pkey);
+    public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
+        return getConnector().getBankTransactions().filterIndexed(BankTransaction.COLUMN_ADMINISTRATOR, this);
     }
-     */
+
     @DependentObjectSet
     public IndexedSet<MasterHost> getMasterHosts() throws RemoteException {
         return getConnector().getMasterHosts().filterIndexed(MasterHost.COLUMN_MASTER_USER, this);

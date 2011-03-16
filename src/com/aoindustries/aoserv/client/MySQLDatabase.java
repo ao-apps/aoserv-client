@@ -145,7 +145,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLDatabase getDto() {
         return new com.aoindustries.aoserv.client.dto.MySQLDatabase(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

@@ -99,7 +99,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     @Override
     public int compareTo(EmailInbox other) {
         try {
-            return key==other.key ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
+            return getKeyInt()==other.getKeyInt() ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -110,7 +110,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     @DependencySingleton
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the Linux account that supports this inbox")
     public LinuxAccount getLinuxAccount() throws RemoteException {
-        return getConnector().getLinuxAccounts().get(key);
+        return getConnector().getLinuxAccounts().get(getKey());
     }
 
     /* TODO
@@ -194,7 +194,7 @@ final public class EmailInbox extends AOServObjectIntegerKey implements Comparab
     }
     @Override
     public com.aoindustries.aoserv.client.dto.EmailInbox getDto() {
-        return new com.aoindustries.aoserv.client.dto.EmailInbox(key, autoresponderFrom, autoresponderSubject, getDto(autoresponderPath), isAutoresponderEnabled, useInbox, trashEmailRetention, junkEmailRetention, saIntegrationMode, saRequiredScore, saDiscardScore);
+        return new com.aoindustries.aoserv.client.dto.EmailInbox(getKeyInt(), autoresponderFrom, autoresponderSubject, getDto(autoresponderPath), isAutoresponderEnabled, useInbox, trashEmailRetention, junkEmailRetention, saIntegrationMode, saRequiredScore, saDiscardScore);
     }
     // </editor-fold>
 

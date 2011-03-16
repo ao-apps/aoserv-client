@@ -44,10 +44,11 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
 
     /**
      * Parses either an IPv4 or IPv6 address.
+     *
+     * If address is null, returns null.
      */
     public static InetAddress valueOf(String address) throws ValidationException {
-        // Be non-null
-        if(address==null) throw new ValidationException(ApplicationResources.accessor, "InetAddress.validate.isNull");
+        if(address==null) return null;
         // If found in interned, it is valid
         InetAddress existing = internedByAddress.get(address);
         return existing!=null ? existing : valueOf(parse(address));
@@ -55,6 +56,8 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
 
     /**
      * Gets an IPv6 address from its numerical representation.
+     *
+     * If ip is null, returns null.
      */
     public static InetAddress valueOf(LongLong ip) {
         InetAddress existing = interned.get(ip);

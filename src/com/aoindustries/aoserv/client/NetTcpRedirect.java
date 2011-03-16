@@ -55,7 +55,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     @Override
     public int compareTo(NetTcpRedirect other) {
         try {
-            return key==other.key ? 0 : getNetBind().compareTo(other.getNetBind());
+            return getKeyInt()==other.getKeyInt() ? 0 : getNetBind().compareTo(other.getNetBind());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -67,7 +67,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
     @DependencySingleton
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the pkey as found in net_binds")
     public NetBind getNetBind() throws RemoteException {
-        return getConnector().getNetBinds().get(key);
+        return getConnector().getNetBinds().get(getKey());
     }
 
     @SchemaColumn(order=1, description="the maximum number of connections per second before the redirect is temporarily disabled")
@@ -105,7 +105,7 @@ final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comp
 
     @Override
     public com.aoindustries.aoserv.client.dto.NetTcpRedirect getDto() {
-        return new com.aoindustries.aoserv.client.dto.NetTcpRedirect(key, cps, cpsOverloadSleepTime, getDto(destinationHost), getDto(destinationPort));
+        return new com.aoindustries.aoserv.client.dto.NetTcpRedirect(getKeyInt(), cps, cpsOverloadSleepTime, getDto(destinationHost), getDto(destinationPort));
     }
     // </editor-fold>
 

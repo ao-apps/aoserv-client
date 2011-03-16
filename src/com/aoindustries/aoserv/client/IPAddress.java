@@ -91,7 +91,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     @Override
     public int compareTo(IPAddress other) {
         try {
-            if(key==other.key) return 0;
+            if(getKeyInt()==other.getKeyInt()) return 0;
             int diff = ipAddress.compareTo(other.ipAddress);
             if(diff!=0) return diff;
             return StringUtility.equals(netDevice, other.netDevice) ? 0 : compare(getNetDevice(), other.getNetDevice());
@@ -186,7 +186,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     @Override
     public com.aoindustries.aoserv.client.dto.IPAddress getDto() {
         return new com.aoindustries.aoserv.client.dto.IPAddress(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

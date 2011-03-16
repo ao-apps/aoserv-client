@@ -71,7 +71,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_NAME = getMethodColumn(TechnologyVersion.class, "technologyName");
@@ -122,7 +122,7 @@ final public class TechnologyVersion extends AOServObjectIntegerKey implements C
 
     @Override
     public com.aoindustries.aoserv.client.dto.TechnologyVersion getDto() {
-        return new com.aoindustries.aoserv.client.dto.TechnologyVersion(key, name, version, updated, getDto(owner), operatingSystemVersion);
+        return new com.aoindustries.aoserv.client.dto.TechnologyVersion(getKeyInt(), name, version, updated, getDto(owner), operatingSystemVersion);
     }
     // </editor-fold>
 

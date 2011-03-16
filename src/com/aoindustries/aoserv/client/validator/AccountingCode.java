@@ -71,10 +71,20 @@ final public class AccountingCode implements Comparable<AccountingCode>, Seriali
 
     private static final ConcurrentMap<String,AccountingCode> interned = new ConcurrentHashMap<String,AccountingCode>();
 
+    /**
+     * If accounting is null, then returns is null.
+     */
     public static AccountingCode valueOf(String accounting) throws ValidationException {
+        if(accounting==null) return null;
         AccountingCode existing = interned.get(accounting);
         return existing!=null ? existing : new AccountingCode(accounting);
     }
+
+    /*
+    public static AccountingCode valueOfInterned(String accounting) throws ValidationException {
+        AccountingCode existing = interned.get(accounting);
+        return existing!=null ? existing : new AccountingCode(accounting).intern();
+    }*/
 
     final private String accounting;
 

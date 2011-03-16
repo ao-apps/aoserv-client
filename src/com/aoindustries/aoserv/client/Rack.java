@@ -107,7 +107,7 @@ final public class Rack extends Resource implements Comparable<Rack>, DtoFactory
     @Override
     public com.aoindustries.aoserv.client.dto.Rack getDto() {
         return new com.aoindustries.aoserv.client.dto.Rack(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

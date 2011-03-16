@@ -264,7 +264,7 @@ final public class VirtualServer extends Server implements DtoFactory<com.aoindu
     @Override
     public com.aoindustries.aoserv.client.dto.VirtualServer getDto() {
         return new com.aoindustries.aoserv.client.dto.VirtualServer(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

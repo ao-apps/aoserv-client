@@ -59,7 +59,7 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FailoverFileSchedule.class, "replication");
@@ -99,7 +99,7 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
 
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverFileSchedule getDto() {
-        return new com.aoindustries.aoserv.client.dto.FailoverFileSchedule(key, replication, hour, minute, enabled);
+        return new com.aoindustries.aoserv.client.dto.FailoverFileSchedule(getKeyInt(), replication, hour, minute, enabled);
     }
     // </editor-fold>
 

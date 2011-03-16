@@ -60,7 +60,7 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_TECHNOLOGY_NAME = getMethodColumn(Technology.class, "technologyName");
@@ -85,7 +85,7 @@ final public class Technology extends AOServObjectIntegerKey implements Comparab
 
     @Override
     public com.aoindustries.aoserv.client.dto.Technology getDto() {
-        return new com.aoindustries.aoserv.client.dto.Technology(key, name, technologyClass);
+        return new com.aoindustries.aoserv.client.dto.Technology(getKeyInt(), name, technologyClass);
     }
     // </editor-fold>
 }

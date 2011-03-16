@@ -33,7 +33,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     @Override
     public int compareTo(FtpGuestUser other) {
         try {
-            return key==other.key ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
+            return getKeyInt()==other.getKeyInt() ? 0 : getLinuxAccount().compareTo(other.getLinuxAccount());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -45,7 +45,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
     @DependencySingleton
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the resource id of the Linux account")
     public LinuxAccount getLinuxAccount() throws RemoteException {
-        return getConnector().getLinuxAccounts().get(key);
+        return getConnector().getLinuxAccounts().get(getKey());
     }
     // </editor-fold>
 
@@ -56,7 +56,7 @@ final public class FtpGuestUser extends AOServObjectIntegerKey implements Compar
 
     @Override
     public com.aoindustries.aoserv.client.dto.FtpGuestUser getDto() {
-        return new com.aoindustries.aoserv.client.dto.FtpGuestUser(key);
+        return new com.aoindustries.aoserv.client.dto.FtpGuestUser(getKeyInt());
     }
     // </editor-fold>
 

@@ -37,10 +37,10 @@ final public class CachedConnector extends AbstractConnector {
         backupPartitions = new CachedBackupPartitionService(this, wrapped.getBackupPartitions());
         backupRetentions = new CachedBackupRetentionService(this, wrapped.getBackupRetentions());
         backupServers = new CachedBackupServerService(this, wrapped.getBackupServers());
-        // TODO: bankAccounts = new CachedBankAccountService(this, wrapped.getBankAccounts());
+        bankAccounts = new CachedBankAccountService(this, wrapped.getBankAccounts());
         bankTransactionTypes = new CachedBankTransactionTypeService(this, wrapped.getBankTransactionTypes());
-        // TODO: bankTransactions = new CachedBankTransactionService(this, wrapped.getBankTransactions());
-        // TODO: banks = new CachedBankService(this, wrapped.getBanks());
+        bankTransactions = new CachedBankTransactionService(this, wrapped.getBankTransactions());
+        banks = new CachedBankService(this, wrapped.getBanks());
         brands = new CachedBrandService(this, wrapped.getBrands());
         businessAdministrators = new CachedBusinessAdministratorService(this, wrapped.getBusinessAdministrators());
         businessAdministratorRoles = new CachedBusinessAdministratorRoleService(this, wrapped.getBusinessAdministratorRoles());
@@ -326,8 +326,16 @@ final public class CachedConnector extends AbstractConnector {
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankAccountService">
-    // TODO: final CachedBankAccountService bankAccounts;
-    // TODO: public BankAccountService getBankAccounts();
+    static class CachedBankAccountService extends CachedService<String,BankAccount> implements BankAccountService {
+        CachedBankAccountService(CachedConnector connector, BankAccountService wrapped) {
+            super(connector, String.class, BankAccount.class, wrapped);
+        }
+    }
+    final CachedBankAccountService bankAccounts;
+    @Override
+    public BankAccountService getBankAccounts() {
+        return bankAccounts;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionTypeService">
     static class CachedBankTransactionTypeService extends CachedService<String,BankTransactionType> implements BankTransactionTypeService {
@@ -342,12 +350,28 @@ final public class CachedConnector extends AbstractConnector {
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionService">
-    // TODO: final CachedBankTransactionService bankTransactions;
-    // TODO: public BankTransactionService getBankTransactions();
+    static class CachedBankTransactionService extends CachedService<Integer,BankTransaction> implements BankTransactionService {
+        CachedBankTransactionService(CachedConnector connector, BankTransactionService wrapped) {
+            super(connector, Integer.class, BankTransaction.class, wrapped);
+        }
+    }
+    final CachedBankTransactionService bankTransactions;
+    @Override
+    public BankTransactionService getBankTransactions() {
+        return bankTransactions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankService">
-    // TODO: final CachedBankService banks;
-    // TODO: public BankService getBanks();
+    static class CachedBankService extends CachedService<String,Bank> implements BankService {
+        CachedBankService(CachedConnector connector, BankService wrapped) {
+            super(connector, String.class, Bank.class, wrapped);
+        }
+    }
+    final CachedBankService banks;
+    @Override
+    public BankService getBanks() {
+        return banks;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BrandService">
     static class CachedBrandService extends CachedService<AccountingCode,Brand> implements BrandService {

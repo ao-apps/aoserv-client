@@ -66,7 +66,7 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_MASTER_USER = getMethodColumn(MasterHost.class, "masterUser");
@@ -94,7 +94,7 @@ final public class MasterHost extends AOServObjectIntegerKey implements Comparab
 
     @Override
     public com.aoindustries.aoserv.client.dto.MasterHost getDto() {
-        return new com.aoindustries.aoserv.client.dto.MasterHost(key, getDto(username), getDto(host));
+        return new com.aoindustries.aoserv.client.dto.MasterHost(getKeyInt(), getDto(username), getDto(host));
     }
     // </editor-fold>
 }

@@ -155,7 +155,7 @@ final public class PhysicalServer extends Server implements DtoFactory<com.aoind
     @Override
     public com.aoindustries.aoserv.client.dto.PhysicalServer getDto() {
         return new com.aoindustries.aoserv.client.dto.PhysicalServer(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

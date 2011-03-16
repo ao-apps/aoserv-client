@@ -5,6 +5,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.rmi.RemoteException;
 
 /**
@@ -16,20 +19,45 @@ import java.rmi.RemoteException;
  */
 abstract public class AOServObjectIntegerKey extends AOServObject<Integer> {
 
-    private static final long serialVersionUID = -3845989034570461715L;
-
-    final protected int key;
+    private int key;
 
     protected AOServObjectIntegerKey(AOServConnector connector, int key) {
         super(connector);
         this.key = key;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = -1856816259667938811L;
+
+    protected AOServObjectIntegerKey() {
+    }
+
+    @Override
+    protected long getSerialVersionUID() {
+        return super.getSerialVersionUID() ^ serialVersionUID;
+    }
+
+    @Override
+    protected void writeExternal(ObjectOutput out) throws IOException {
+        super.writeExternal(out);
+        out.writeInt(key);
+    }
+
+    @Override
+    protected void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super.readExternal(in);
+        key = in.readInt();
+    }
+    // </editor-fold>
+
     /**
      * Gets the key value for this object.
      */
     @Override
     final public Integer getKey() {
+        return key;
+    }
+    final protected int getKeyInt() {
         return key;
     }
 

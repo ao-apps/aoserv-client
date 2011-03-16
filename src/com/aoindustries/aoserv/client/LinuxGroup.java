@@ -113,7 +113,7 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
     @Override
     public int compareTo(LinuxGroup other) {
         try {
-            if(key==other.key) return 0;
+            if(getKeyInt()==other.getKeyInt()) return 0;
             int diff = groupName==other.groupName ? 0 : getGroupName().compareTo(other.getGroupName());
             if(diff!=0) return diff;
             return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
@@ -169,7 +169,7 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxGroup getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxGroup(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

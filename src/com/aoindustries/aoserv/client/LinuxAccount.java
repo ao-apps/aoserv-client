@@ -139,7 +139,7 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     @Override
     public int compareTo(LinuxAccount other) {
         try {
-            if(key==other.key) return 0;
+            if(getKeyInt()==other.getKeyInt()) return 0;
             int diff = username==other.username ? 0 : getUsername().compareTo(other.getUsername()); // OK - interned
             if(diff!=0) return diff;
             return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
@@ -240,7 +240,7 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxAccount getDto() {
         return new com.aoindustries.aoserv.client.dto.LinuxAccount(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,
@@ -274,7 +274,7 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     @DependentObjectSingleton
     public EmailInbox getEmailInbox() throws RemoteException {
         if(linuxAccountType!=ResourceType.EMAIL_INBOX && linuxAccountType!=ResourceType.SHELL_ACCOUNT) return null; // OK - interned
-        return getConnector().getEmailInboxes().get(key);
+        return getConnector().getEmailInboxes().get(getKey());
     }
 
     @DependentObjectSingleton

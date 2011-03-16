@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import java.rmi.RemoteException;
 
 /**
  * For AO Industries use only.
@@ -75,11 +76,9 @@ implements
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
     @DependentObjectSet
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+        return getConnector().getBankTransactions().filterIndexed(BankTransaction.COLUMN_TYPE, this);
     }
-     */
     // </editor-fold>
 }

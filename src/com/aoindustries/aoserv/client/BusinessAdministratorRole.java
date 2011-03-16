@@ -48,7 +48,7 @@ implements
     @Override
     public int compareTo(BusinessAdministratorRole other) {
         try {
-            if(key==other.key) return 0;
+            if(getKeyInt()==other.getKeyInt()) return 0;
             int diff = username==other.username ? 0 : getBusinessAdministrator().compareTo(other.getBusinessAdministrator());
             if(diff!=0) return diff;
             return role==other.role ? 0 : getRole().compareTo(other.getRole());
@@ -61,7 +61,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_BUSINESS_ADMINISTRATOR = getMethodColumn(BusinessAdministratorRole.class, "businessAdministrator");
@@ -91,7 +91,7 @@ implements
 
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessAdministratorRole getDto() {
-        return new com.aoindustries.aoserv.client.dto.BusinessAdministratorRole(key, getDto(username), role);
+        return new com.aoindustries.aoserv.client.dto.BusinessAdministratorRole(getKeyInt(), getDto(username), role);
     }
     // </editor-fold>
 

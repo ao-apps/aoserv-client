@@ -67,7 +67,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_AO_SERVER = getMethodColumn(FailoverMySQLReplication.class, "aoServer");
@@ -131,7 +131,7 @@ final public class FailoverMySQLReplication extends AOServObjectIntegerKey imple
 
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverMySQLReplication getDto() {
-        return new com.aoindustries.aoserv.client.dto.FailoverMySQLReplication(key, aoServer, replication, mysqlServer, monitoringSecondsBehindLow, monitoringSecondsBehindMedium, monitoringSecondsBehindHigh, monitoringSecondsBehindCritical);
+        return new com.aoindustries.aoserv.client.dto.FailoverMySQLReplication(getKeyInt(), aoServer, replication, mysqlServer, monitoringSecondsBehindLow, monitoringSecondsBehindMedium, monitoringSecondsBehindHigh, monitoringSecondsBehindCritical);
     }
     // </editor-fold>
 

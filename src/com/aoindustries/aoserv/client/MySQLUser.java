@@ -470,7 +470,7 @@ final public class MySQLUser extends AOServerResource implements Comparable<MySQ
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLUser getDto() {
         return new com.aoindustries.aoserv.client.dto.MySQLUser(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

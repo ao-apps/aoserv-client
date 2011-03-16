@@ -26,14 +26,10 @@ public enum ServiceName {
     backup_partitions,
     backup_retentions,
     backup_servers,
-    /* TODO
     bank_accounts,
-     */
     bank_transaction_types,
-    /* TODO
     bank_transactions,
     banks,
-     */
     brands,
     business_administrators,
     business_administrator_roles,

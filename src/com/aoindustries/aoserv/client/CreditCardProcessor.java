@@ -199,12 +199,12 @@ final public class CreditCardProcessor extends AOServObjectStringKey implements 
     public IndexedSet<Transaction> getTransactions() throws RemoteException {
         return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PROCESSOR, this);
     }
-    /* TODO
+
     @DependentObjectSet
     public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getConnector().getBankTransactions().getIndexedRows(BankTransaction.COLUMN_PROCESSOR, pkey);
+        return getConnector().getBankTransactions().filterIndexed(BankTransaction.COLUMN_PROCESSOR, this);
     }
-    */
+
     @DependentObjectSet
     public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
         return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_PROCESSOR, this);

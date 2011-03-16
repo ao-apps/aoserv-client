@@ -117,12 +117,10 @@ public interface AOServConnector extends Remote {
     BackupPartitionService getBackupPartitions() throws RemoteException;
     BackupRetentionService getBackupRetentions() throws RemoteException;
     BackupServerService getBackupServers() throws RemoteException;
-    // TODO: BankAccountService getBankAccounts() throws RemoteException;
+    BankAccountService getBankAccounts() throws RemoteException;
     BankTransactionTypeService getBankTransactionTypes() throws RemoteException;
-    /* TODO
     BankTransactionService getBankTransactions() throws RemoteException;
     BankService getBanks() throws RemoteException;
-     */
     BrandService getBrands() throws RemoteException;
     BusinessAdministratorService getBusinessAdministrators() throws RemoteException;
     BusinessAdministratorRoleService getBusinessAdministratorRoles() throws RemoteException;

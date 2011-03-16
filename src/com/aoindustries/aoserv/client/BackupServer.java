@@ -62,7 +62,7 @@ final public class BackupServer extends Server implements DtoFactory<com.aoindus
     @Override
     public com.aoindustries.aoserv.client.dto.BackupServer getDto() {
         return new com.aoindustries.aoserv.client.dto.BackupServer(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

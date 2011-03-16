@@ -82,7 +82,7 @@ final public class CvsRepository extends AOServerResource implements Comparable<
     @Override
     public int compareTo(CvsRepository other) {
         try {
-            if(key==other.key) return 0;
+            if(getKeyInt()==other.getKeyInt()) return 0;
             int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
             if(diff!=0) return 0;
             return path.compareTo(other.path);
@@ -133,7 +133,7 @@ final public class CvsRepository extends AOServerResource implements Comparable<
     @Override
     public com.aoindustries.aoserv.client.dto.CvsRepository getDto() {
         return new com.aoindustries.aoserv.client.dto.CvsRepository(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

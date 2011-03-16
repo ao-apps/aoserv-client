@@ -30,7 +30,7 @@ final public class SetMySQLUserPasswordCommand extends RemoteCommand<Void> {
         @Param(name=PARAM_MYSQL_USER) MySQLUser mysqlUser,
         @Param(name=PARAM_PLAINTEXT) String plaintext
     ) {
-        this.mysqlUser = mysqlUser.getKey();
+        this.mysqlUser = mysqlUser.getPkey();
         this.plaintext = plaintext;
     }
 

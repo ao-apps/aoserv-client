@@ -173,7 +173,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdSite getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdSite(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

@@ -60,7 +60,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     @Override
     public int compareTo(HttpdJBossVersion other) {
         try {
-            return key==other.key ? 0 : getVersion().compareTo(other.getVersion());
+            return getKeyInt()==other.getKeyInt() ? 0 : getVersion().compareTo(other.getVersion());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -72,7 +72,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
     @DependencySingleton
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="jboss version designator")
     public TechnologyVersion getVersion() throws RemoteException {
-        return getConnector().getTechnologyVersions().get(key);
+        return getConnector().getTechnologyVersions().get(getKey());
     }
 
     public static final MethodColumn COLUMN_TOMCAT_VERSION = getMethodColumn(HttpdJBossVersion.class, "tomcatVersion");
@@ -100,7 +100,7 @@ final public class HttpdJBossVersion extends AOServObjectIntegerKey implements C
 
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdJBossVersion getDto() {
-        return new com.aoindustries.aoserv.client.dto.HttpdJBossVersion(key, tomcatVersion, getDto(templateDir));
+        return new com.aoindustries.aoserv.client.dto.HttpdJBossVersion(getKeyInt(), tomcatVersion, getDto(templateDir));
     }
     // </editor-fold>
 

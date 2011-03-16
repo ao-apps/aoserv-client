@@ -59,7 +59,7 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique category id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_PARENT = getMethodColumn(TicketCategory.class, "parent");
@@ -99,7 +99,7 @@ final public class TicketCategory extends AOServObjectIntegerKey implements Comp
 
     @Override
     public com.aoindustries.aoserv.client.dto.TicketCategory getDto() {
-        return new com.aoindustries.aoserv.client.dto.TicketCategory(key, parent, name);
+        return new com.aoindustries.aoserv.client.dto.TicketCategory(getKeyInt(), parent, name);
     }
     // </editor-fold>
 

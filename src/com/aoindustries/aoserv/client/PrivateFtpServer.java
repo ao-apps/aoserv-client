@@ -143,7 +143,7 @@ final public class PrivateFtpServer extends AOServerResource implements Comparab
     @Override
     public com.aoindustries.aoserv.client.dto.PrivateFtpServer getDto() {
         return new com.aoindustries.aoserv.client.dto.PrivateFtpServer(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

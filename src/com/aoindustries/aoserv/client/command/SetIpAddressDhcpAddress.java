@@ -26,7 +26,7 @@ final public class SetIpAddressDhcpAddress extends RemoteCommand<Void> {
         @Param(name="ipAddress") IPAddress ipAddress,
         @Param(name="newAddress") InetAddress newAddress
     ) {
-        this.ipAddress = ipAddress.getKey();
+        this.ipAddress = ipAddress.getPkey();
         this.newAddress = newAddress;
     }
 

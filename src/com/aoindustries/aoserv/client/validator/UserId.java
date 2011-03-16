@@ -88,10 +88,20 @@ final public class UserId implements Comparable<UserId>, Serializable, ObjectInp
 
     private static final ConcurrentMap<String,UserId> interned = new ConcurrentHashMap<String,UserId>();
 
+    /**
+     * If id is null, returns null.
+     */
     public static UserId valueOf(String id) throws ValidationException {
+        if(id==null) return null;
         UserId existing = interned.get(id);
         return existing!=null ? existing : new UserId(id);
     }
+
+    /*
+    public static UserId valueOfInterned(String id) throws ValidationException {
+        UserId existing = interned.get(id);
+        return existing!=null ? existing : new UserId(id).intern();
+    }*/
 
     final private String id;
 

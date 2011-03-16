@@ -227,7 +227,7 @@ final public class PostgresServer extends AOServerResource implements Comparable
     @Override
     public int compareTo(PostgresServer other) {
         try {
-            if(key==other.key) return 0;
+            if(getKeyInt()==other.getKeyInt()) return 0;
             int diff = name.compareTo(other.name);
             if(diff!=0) return diff;
             return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
@@ -250,7 +250,7 @@ final public class PostgresServer extends AOServerResource implements Comparable
     public PostgresVersion getVersion() throws RemoteException {
         PostgresVersion obj=getConnector().getPostgresVersions().get(version);
         if(!StringUtility.equals(obj.getVersion().operatingSystemVersion, getAoServer().getServer().operatingSystemVersion)) {
-            throw new RemoteException("resource/operating system version mismatch on PostgresServer: #"+key);
+            throw new RemoteException("resource/operating system version mismatch on PostgresServer: #"+getKeyInt());
         }
     	return obj;
     }
@@ -309,7 +309,7 @@ final public class PostgresServer extends AOServerResource implements Comparable
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresServer getDto() {
         return new com.aoindustries.aoserv.client.dto.PostgresServer(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

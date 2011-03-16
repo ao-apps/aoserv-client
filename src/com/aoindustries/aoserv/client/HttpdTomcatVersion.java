@@ -63,7 +63,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     @Override
     public int compareTo(HttpdTomcatVersion other) {
         try {
-            return key==other.key ? 0 : getVersion().compareTo(other.getVersion());
+            return getKeyInt()==other.getKeyInt() ? 0 : getVersion().compareTo(other.getVersion());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -75,7 +75,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
     @DependencySingleton
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a reference to the tomcat details in the technology_versions table")
     public TechnologyVersion getVersion() throws RemoteException {
-        return getConnector().getTechnologyVersions().get(key);
+        return getConnector().getTechnologyVersions().get(getKey());
     }
 
     @SchemaColumn(order=1, description="the directory the basic install files are located in")
@@ -101,7 +101,7 @@ final public class HttpdTomcatVersion extends AOServObjectIntegerKey implements 
 
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdTomcatVersion getDto() {
-        return new com.aoindustries.aoserv.client.dto.HttpdTomcatVersion(key, getDto(installDir), requiresModJk);
+        return new com.aoindustries.aoserv.client.dto.HttpdTomcatVersion(getKeyInt(), getDto(installDir), requiresModJk);
     }
     // </editor-fold>
 

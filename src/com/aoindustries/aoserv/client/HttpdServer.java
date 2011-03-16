@@ -81,7 +81,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     @Override
     public int compareTo(HttpdServer other) {
         try {
-            if(key==other.key) return 0;
+            if(getKeyInt()==other.getKeyInt()) return 0;
             int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
             if(diff!=0) return diff;
             return compare(number, other.number);
@@ -118,7 +118,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     public TechnologyVersion getModPhpVersion() throws RemoteException {
         if(modPhpVersion==null) return null;
         TechnologyVersion tv=getConnector().getTechnologyVersions().get(modPhpVersion);
-        if(tv.operatingSystemVersion!=getAoServer().getServer().operatingSystemVersion) throw new RemoteException("mod_php/operating system version mismatch on HttpdServer: #"+key);
+        if(tv.operatingSystemVersion!=getAoServer().getServer().operatingSystemVersion) throw new RemoteException("mod_php/operating system version mismatch on HttpdServer: #"+getKey());
         return tv;
     }
 
@@ -170,7 +170,7 @@ final public class HttpdServer extends AOServerResource implements Comparable<Ht
     @Override
     public com.aoindustries.aoserv.client.dto.HttpdServer getDto() {
         return new com.aoindustries.aoserv.client.dto.HttpdServer(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

@@ -57,7 +57,7 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(AOServRole.class, "business");
@@ -88,7 +88,7 @@ final public class AOServRole extends AOServObjectIntegerKey implements Comparab
 
     @Override
     public com.aoindustries.aoserv.client.dto.AOServRole getDto() {
-        return new com.aoindustries.aoserv.client.dto.AOServRole(key, getDto(accounting), name);
+        return new com.aoindustries.aoserv.client.dto.AOServRole(getKeyInt(), getDto(accounting), name);
     }
     // </editor-fold>
 

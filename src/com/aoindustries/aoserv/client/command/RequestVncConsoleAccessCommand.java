@@ -23,7 +23,7 @@ final public class RequestVncConsoleAccessCommand extends RemoteCommand<AOServer
     public RequestVncConsoleAccessCommand(
         @Param(name="virtualServer") VirtualServer virtualServer
     ) {
-        this.virtualServer = virtualServer.getKey();
+        this.virtualServer = virtualServer.getPkey();
     }
 
     public int getVirtualServer() {

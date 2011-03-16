@@ -118,7 +118,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     @DependencySingleton
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a reference to servers")
     public Server getServer() throws RemoteException {
-        return getConnector().getServers().get(key);
+        return getConnector().getServers().get(getKey());
     }
 
     public static final MethodColumn COLUMN_HOSTNAME = getMethodColumn(AOServer.class, "hostname");
@@ -290,7 +290,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     }
     @Override
     public com.aoindustries.aoserv.client.dto.AOServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.AOServer(key, getDto(hostname), daemonBind, getDto(daemonKey), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getDto(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
+        return new com.aoindustries.aoserv.client.dto.AOServer(getKeyInt(), getDto(hostname), daemonBind, getDto(daemonKey), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getDto(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
     }
     // </editor-fold>
 

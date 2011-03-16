@@ -26,7 +26,7 @@ final public class CheckLinuxAccountPasswordCommand extends AOServCommand<List<P
         @Param(name=PARAM_LINUX_ACCOUNT) LinuxAccount linuxAccount,
         @Param(name="password") String password
     ) {
-        this.linuxAccount = linuxAccount.getKey();
+        this.linuxAccount = linuxAccount.getPkey();
         this.password = password;
     }
 

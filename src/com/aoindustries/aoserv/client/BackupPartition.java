@@ -64,7 +64,7 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique category id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_AO_SERVER = getMethodColumn(BackupPartition.class, "aoServer");
@@ -105,7 +105,7 @@ final public class BackupPartition extends AOServObjectIntegerKey implements Com
     }
     @Override
     public com.aoindustries.aoserv.client.dto.BackupPartition getDto() {
-        return new com.aoindustries.aoserv.client.dto.BackupPartition(key, aoServer, getDto(path), quotaEnabled);
+        return new com.aoindustries.aoserv.client.dto.BackupPartition(getKeyInt(), aoServer, getDto(path), quotaEnabled);
     }
     // </editor-fold>
 

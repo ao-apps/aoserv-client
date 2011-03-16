@@ -7,10 +7,14 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastExternalizableReadContext;
+import com.aoindustries.io.FastExternalizableWriteContext;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.rmi.RemoteException;
@@ -26,16 +30,32 @@ import java.util.NoSuchElementException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Transaction extends AOServObjectIntegerKey implements Comparable<Transaction>, DtoFactory<com.aoindustries.aoserv.client.dto.Transaction> {
+final public class Transaction extends AOServObjectIntegerKey implements Comparable<Transaction>, DtoFactory<com.aoindustries.aoserv.client.dto.Transaction>, FastExternalizable {
 
     // <editor-fold defaultstate="collapsed" desc="Constants">
+    // The scale of the quantity value.
+    private static final int QUANTITY_SCALE = 3;
+
     /**
      * Payment confirmation.
      */
     public enum Status {
-        W,
-        Y,
-        N;
+        W(0),
+        Y(1),
+        N(2);
+
+        static final Status valueOfByte(int val) {
+            if(val==0) return W;
+            if(val==1) return Y;
+            if(val==2) return N;
+            throw new IllegalArgumentException("Unexpected value: "+val);
+        }
+
+        final int byteValue;
+
+        private Status(int byteValue) {
+            this.byteValue = byteValue;
+        }
 
         @Override
         public String toString() {
@@ -45,21 +65,19 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 6014476360859645789L;
-
-    final private long time;
+    private long time;
     private AccountingCode accounting;
     private AccountingCode sourceAccounting;
     private UserId username;
     private String type;
     transient private String description;
-    final private BigDecimal quantity;
-    final private Money rate;
+    private long quantity; // Always has scale = 3
+    private Money rate;
     private String paymentType;
-    final private String paymentInfo;
+    private String paymentInfo;
     private String processor;
-    final private Integer creditCardTransaction;
-    final private Status status;
+    private Integer creditCardTransaction;
+    private Status status;
 
     public Transaction(
         AOServConnector connector,
@@ -69,7 +87,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
         AccountingCode sourceAccounting,
         UserId username,
         String type,
-        BigDecimal quantity,
+        long quantity,
         Money rate,
         String paymentType,
         String paymentInfo,
@@ -93,10 +111,10 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
         intern();
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
+    //private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    //    in.defaultReadObject();
+    //    intern();
+    //}
 
     private void intern() {
         accounting = intern(accounting);
@@ -108,19 +126,70 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = 337047955181031340L;
+
+    public Transaction() {
+    }
+
+    @Override
+    public long getSerialVersionUID() {
+        return super.getSerialVersionUID() ^ serialVersionUID;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        super.writeExternal(out);
+        out.writeLong(time);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, accounting.toString());
+        FastExternalizableWriteContext.writeFastUTFInContext(out, sourceAccounting.toString());
+        FastExternalizableWriteContext.writeFastUTFInContext(out, username.toString());
+        FastExternalizableWriteContext.writeFastUTFInContext(out, type);
+        out.writeLong(quantity);
+        FastExternalizableWriteContext.writeFastObjectInContext(out, rate);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, paymentType);
+        writeNullUTF(out, paymentInfo);
+        FastExternalizableWriteContext.writeFastUTFInContext(out, processor);
+        writeNullInteger(out, creditCardTransaction);
+        out.writeByte(status.byteValue);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super.readExternal(in);
+        try {
+            time = in.readLong();
+            accounting = AccountingCode.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
+            sourceAccounting = AccountingCode.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
+            username = UserId.valueOf(FastExternalizableReadContext.readFastUTFInContext(in));
+            type = FastExternalizableReadContext.readFastUTFInContext(in);
+            quantity = in.readLong();
+            rate = (Money)FastExternalizableReadContext.readFastObjectInContext(in);
+            paymentType = FastExternalizableReadContext.readFastUTFInContext(in);
+            paymentInfo = readNullUTF(in);
+            processor = FastExternalizableReadContext.readFastUTFInContext(in);
+            creditCardTransaction = readNullInteger(in);
+            status = Status.valueOfByte(in.readByte());
+            intern();
+        } catch(ValidationException exc) {
+            throw new IOException(exc);
+        }
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
     public int compareTo(Transaction other) {
         int diff = compare(time, other.time);
         if(diff!=0) return diff;
-        return compare(key, other.key);
+        return compare(getKeyInt(), other.getKeyInt());
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier for this transaction")
     public int getTransid() {
-    	return key;
+    	return getKeyInt();
     }
 
     @SchemaColumn(order=1, description="the time the transaction occured")
@@ -171,7 +240,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
 
     @SchemaColumn(order=7, description="the quantity of the rate applied to the account")
     public BigDecimal getQuantity() {
-    	return quantity;
+    	return BigDecimal.valueOf(quantity, QUANTITY_SCALE);
     }
 
     @SchemaColumn(order=8, description="the amount per unit of quantity")
@@ -227,7 +296,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
             getAccountingCode(dto.getSourceAccounting()),
             getUserId(dto.getUsername()),
             dto.getType(),
-            dto.getQuantity(),
+            dto.getQuantity().movePointRight(QUANTITY_SCALE).longValueExact(),
             getMoney(dto.getRate()),
             dto.getPaymentType(),
             dto.getPaymentInfo(),
@@ -240,13 +309,13 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     @Override
     public com.aoindustries.aoserv.client.dto.Transaction getDto() {
         return new com.aoindustries.aoserv.client.dto.Transaction(
-            key,
+            getKeyInt(),
             time,
             getDto(accounting),
             getDto(sourceAccounting),
             getDto(username),
             type,
-            quantity,
+            getQuantity(),
             getDto(rate),
             paymentType,
             paymentInfo,
@@ -261,7 +330,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
     @Override
     String toStringImpl() throws RemoteException {
         return
-            key
+            getKeyInt()
             + "|"
             + accounting
             + '|'
@@ -269,7 +338,7 @@ final public class Transaction extends AOServObjectIntegerKey implements Compara
             + '|'
             + type
             + '|'
-            + quantity
+            + getQuantity()
             + 'x'
             + rate
             + '|'

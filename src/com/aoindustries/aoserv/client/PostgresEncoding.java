@@ -106,7 +106,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     @SchemaColumn(order=1, description="the name of the encoding")
@@ -134,7 +134,7 @@ final public class PostgresEncoding extends AOServObjectIntegerKey implements Co
 
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresEncoding getDto() {
-        return new com.aoindustries.aoserv.client.dto.PostgresEncoding(key, encoding, postgresVersion);
+        return new com.aoindustries.aoserv.client.dto.PostgresEncoding(getKeyInt(), encoding, postgresVersion);
     }
     // </editor-fold>
 

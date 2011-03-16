@@ -102,11 +102,12 @@ final public class Email implements Comparable<Email>, Serializable, ObjectInput
     private static final ConcurrentMap<DomainName,ConcurrentMap<String,Email>> interned = new ConcurrentHashMap<DomainName,ConcurrentMap<String,Email>>();
 
     /**
+     * If email is null, then returns is null.
+     *
      * @see #valueOf(java.lang.String, com.aoindustries.aoserv.client.validator.DomainName)
      */
     public static Email valueOf(String email) throws ValidationException {
-        // Be non-null
-        if(email==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.isNull");
+        if(email==null) return null;
         // Be non-empty
         if(email.length()==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.empty");
         int atPos = email.indexOf('@');

@@ -112,7 +112,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_MYSQL_DATABASE = getMethodColumn(MySQLDBUser.class, "mysqlDatabase");
@@ -256,7 +256,7 @@ final public class MySQLDBUser extends AOServObjectIntegerKey implements Compara
 
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLDBUser getDto() {
-        return new com.aoindustries.aoserv.client.dto.MySQLDBUser(key, mysqlDatabase, mysqlUser, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, grantPriv, referencesPriv, indexPriv, alterPriv, createTmpTablePriv, lockTablesPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, executePriv, eventPriv, triggerPriv);
+        return new com.aoindustries.aoserv.client.dto.MySQLDBUser(getKeyInt(), mysqlDatabase, mysqlUser, selectPriv, insertPriv, updatePriv, deletePriv, createPriv, dropPriv, grantPriv, referencesPriv, indexPriv, alterPriv, createTmpTablePriv, lockTablesPriv, createViewPriv, showViewPriv, createRoutinePriv, alterRoutinePriv, executePriv, eventPriv, triggerPriv);
     }
     // </editor-fold>
 

@@ -358,7 +358,7 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     @Override
     public int compareTo(MySQLServer other) {
         try {
-            if(key==other.key) return 0;
+            if(getKeyInt()==other.getKeyInt()) return 0;
             int diff = name.compareTo(other.name);
             if(diff!=0) return diff;
             return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
@@ -384,7 +384,7 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
             obj.getOperatingSystemVersion().getPkey()
             != getAoServer().getServer().getOperatingSystemVersion().getPkey()
         ) {
-            throw new RemoteException("resource/operating system version mismatch on MySQLServer: #"+key);
+            throw new RemoteException("resource/operating system version mismatch on MySQLServer: #"+getPkey());
         }
     	return obj;
     }
@@ -425,7 +425,7 @@ final public class MySQLServer extends AOServerResource implements Comparable<My
     @Override
     public com.aoindustries.aoserv.client.dto.MySQLServer getDto() {
         return new com.aoindustries.aoserv.client.dto.MySQLServer(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

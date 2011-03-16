@@ -64,7 +64,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_AO_SERVER = getMethodColumn(AOServerDaemonHost.class, "aoServer");
@@ -91,7 +91,7 @@ final public class AOServerDaemonHost extends AOServObjectIntegerKey implements 
     }
     @Override
     public com.aoindustries.aoserv.client.dto.AOServerDaemonHost getDto() {
-        return new com.aoindustries.aoserv.client.dto.AOServerDaemonHost(key, aoServer, getDto(host));
+        return new com.aoindustries.aoserv.client.dto.AOServerDaemonHost(getKeyInt(), aoServer, getDto(host));
     }
     // </editor-fold>
 

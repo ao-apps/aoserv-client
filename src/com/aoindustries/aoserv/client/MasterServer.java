@@ -69,7 +69,7 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_MASTER_USER = getMethodColumn(MasterServer.class, "masterUser");
@@ -99,7 +99,7 @@ final public class MasterServer extends AOServObjectIntegerKey implements Compar
 
     @Override
     public com.aoindustries.aoserv.client.dto.MasterServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.MasterServer(key, getDto(username), server);
+        return new com.aoindustries.aoserv.client.dto.MasterServer(getKeyInt(), getDto(username), server);
     }
     // </editor-fold>
 }

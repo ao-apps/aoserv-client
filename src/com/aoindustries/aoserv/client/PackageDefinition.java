@@ -88,7 +88,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     public static final MethodColumn COLUMN_PKEY = getMethodColumn(PackageDefinition.class, "pkey");
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique ID of the package definition")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_CATEGORY = getMethodColumn(PackageDefinition.class, "category");
@@ -162,7 +162,7 @@ final public class PackageDefinition extends AOServObjectIntegerKey implements C
     @Override
     public com.aoindustries.aoserv.client.dto.PackageDefinition getDto() {
         return new com.aoindustries.aoserv.client.dto.PackageDefinition(
-            key,
+            getKeyInt(),
             category,
             name,
             version,

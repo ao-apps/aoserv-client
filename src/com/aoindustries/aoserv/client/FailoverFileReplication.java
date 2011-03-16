@@ -91,7 +91,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_SERVER = getMethodColumn(FailoverFileReplication.class, "server");
@@ -192,7 +192,7 @@ implements
 
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverFileReplication getDto() {
-        return new com.aoindustries.aoserv.client.dto.FailoverFileReplication(key, server, backupPartition, maxBitRate, useCompression, retention, getDto(connectAddress), getDto(connectFrom), enabled, getDto(quotaGid));
+        return new com.aoindustries.aoserv.client.dto.FailoverFileReplication(getKeyInt(), server, backupPartition, maxBitRate, useCompression, retention, getDto(connectAddress), getDto(connectFrom), enabled, getDto(quotaGid));
     }
     // </editor-fold>
 

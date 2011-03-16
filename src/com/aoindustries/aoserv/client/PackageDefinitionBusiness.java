@@ -74,7 +74,7 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey impl
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique identifier")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_PACKAGE_DEFINITION = getMethodColumn(PackageDefinitionBusiness.class, "packageDefinition");
@@ -123,7 +123,7 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey impl
     @Override
     public com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness getDto() {
         return new com.aoindustries.aoserv.client.dto.PackageDefinitionBusiness(
-            key,
+            getKeyInt(),
             packageDefinition,
             getDto(accounting),
             display,

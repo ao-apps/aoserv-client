@@ -29,7 +29,7 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
         @Param(name=PARAM_LINUX_ACCOUNT) LinuxAccount linuxAccount,
         @Param(name=PARAM_PLAINTEXT) String plaintext
     ) {
-        this.linuxAccount = linuxAccount.getKey();
+        this.linuxAccount = linuxAccount.getPkey();
         this.plaintext = plaintext;
     }
 

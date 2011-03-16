@@ -185,7 +185,7 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
     @Override
     public com.aoindustries.aoserv.client.dto.PostgresUser getDto() {
         return new com.aoindustries.aoserv.client.dto.PostgresUser(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

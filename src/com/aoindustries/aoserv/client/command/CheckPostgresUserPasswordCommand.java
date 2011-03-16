@@ -27,7 +27,7 @@ final public class CheckPostgresUserPasswordCommand extends AOServCommand<List<P
         @Param(name=PARAM_POSTGRES_USER) PostgresUser postgresUser,
         @Param(name="password") String password
     ) {
-        this.postgresUser = postgresUser.getKey();
+        this.postgresUser = postgresUser.getPkey();
         this.password = password;
     }
 

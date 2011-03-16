@@ -98,7 +98,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a unique, generated pkey")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_SERVER = getMethodColumn(NetDevice.class, "server");
@@ -189,7 +189,7 @@ final public class NetDevice extends AOServObjectIntegerKey implements Comparabl
     @Override
     public com.aoindustries.aoserv.client.dto.NetDevice getDto() {
         return new com.aoindustries.aoserv.client.dto.NetDevice(
-            key,
+            getKeyInt(),
             server,
             deviceId,
             description,

@@ -39,10 +39,10 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
         backupPartitions = new WrappedBackupPartitionService<C,F>(this);
         backupRetentions = new WrappedBackupRetentionService<C,F>(this);
         backupServers = new WrappedBackupServerService<C,F>(this);
-        // TODO: bankAccounts = new WrappedBankAccountService<C,F>(this);
+        bankAccounts = new WrappedBankAccountService<C,F>(this);
         bankTransactionTypes = new WrappedBankTransactionTypeService<C,F>(this);
-        // TODO: bankTransactions = new WrappedBankTransactionService<C,F>(this);
-        // TODO: banks = new WrappedBankService<C,F>(this);
+        bankTransactions = new WrappedBankTransactionService<C,F>(this);
+        banks = new WrappedBankService<C,F>(this);
         brands = new WrappedBrandService<C,F>(this);
         businessAdministrators = new WrappedBusinessAdministratorService<C,F>(this);
         businessAdministratorRoles = new WrappedBusinessAdministratorRoleService<C,F>(this);
@@ -391,8 +391,16 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankAccountService">
-    // TODO: final WrappedBankAccountService<C,F> bankAccounts;
-    // TODO: final public BankAccountService getBankAccounts();
+    static class WrappedBankAccountService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,BankAccount> implements BankAccountService {
+        WrappedBankAccountService(WrappedConnector<C,F> connector) {
+            super(connector, String.class, BankAccount.class);
+        }
+    }
+    final WrappedBankAccountService<C,F> bankAccounts;
+    @Override
+    final public BankAccountService getBankAccounts() {
+        return bankAccounts;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionTypeService">
     static class WrappedBankTransactionTypeService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,BankTransactionType> implements BankTransactionTypeService {
@@ -407,12 +415,28 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankTransactionService">
-    // TODO: final WrappedBankTransactionService<C,F> bankTransactions;
-    // TODO: final public BankTransactionService getBankTransactions();
+    static class WrappedBankTransactionService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,Integer,BankTransaction> implements BankTransactionService {
+        WrappedBankTransactionService(WrappedConnector<C,F> connector) {
+            super(connector, Integer.class, BankTransaction.class);
+        }
+    }
+    final WrappedBankTransactionService<C,F> bankTransactions;
+    @Override
+    final public BankTransactionService getBankTransactions() {
+        return bankTransactions;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BankService">
-    // TODO: final WrappedBankService<C,F> banks;
-    // TODO: final public BankService getBanks();
+    static class WrappedBankService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,String,Bank> implements BankService {
+        WrappedBankService(WrappedConnector<C,F> connector) {
+            super(connector, String.class, Bank.class);
+        }
+    }
+    final WrappedBankService<C,F> banks;
+    @Override
+    final public BankService getBanks() {
+        return banks;
+    }
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="BrandService">
     static class WrappedBrandService<C extends WrappedConnector<C,F>, F extends WrappedConnectorFactory<C,F>> extends WrappedService<C,F,AccountingCode,Brand> implements BrandService {

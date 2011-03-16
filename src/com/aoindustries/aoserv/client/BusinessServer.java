@@ -72,7 +72,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     /**
@@ -120,7 +120,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     }
     @Override
     public com.aoindustries.aoserv.client.dto.BusinessServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.BusinessServer(key, getDto(accounting), server, isDefault, canVncConsole);
+        return new com.aoindustries.aoserv.client.dto.BusinessServer(getKeyInt(), getDto(accounting), server, isDefault, canVncConsole);
     }
     // </editor-fold>
 

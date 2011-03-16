@@ -312,7 +312,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
         if(diff!=0) return diff;
         diff = compare(authorizationTime, other.authorizationTime);
         if(diff!=0) return diff;
-        return compare(key, other.key);
+        return compare(getKeyInt(), other.getKeyInt());
     }
     // </editor-fold>
 
@@ -320,7 +320,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     public static final MethodColumn COLUMN_PKEY = getMethodColumn(CreditCardTransaction.class, "pkey");
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique ID of this transaction")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_PROCESSOR = getMethodColumn(CreditCardTransaction.class, "processor");
@@ -925,7 +925,7 @@ final public class CreditCardTransaction extends AOServObjectIntegerKey implemen
     @Override
     public com.aoindustries.aoserv.client.dto.CreditCardTransaction getDto() {
         return new com.aoindustries.aoserv.client.dto.CreditCardTransaction(
-            key,
+            getKeyInt(),
             processorId,
             getDto(accounting),
             groupName,

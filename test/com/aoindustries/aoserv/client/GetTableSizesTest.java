@@ -5,6 +5,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import java.math.BigDecimal;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -53,19 +54,23 @@ public class GetTableSizesTest extends TestCase {
                 for(int c=0;c<numTables;c++) {
                     AOServService<?,?> service = conn.getServices().get(ServiceName.values.get(c));
                     // Excluded for testing speed
-                    /* TODOif(
-                        (table instanceof DistroFileTable...c==SchemaTable.TableID.DISTRO_FILES.ordinal()
-                        || c==SchemaTable.TableID.TRANSACTIONS.ordinal()
-                        || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
-                    ) continue;*/
-                    //long startTime = System.currentTimeMillis();
-                    int size=service.getSize();
-                    //long endTime = System.currentTimeMillis();
-                    if(d==0) System.out.println(service+": "+size); //+" in "+(endTime-startTime)+" ms");
-                    else System.out.print('.');
-                    //if(c==SchemaTable.TableID.AO_SERVER_RESOURCES.ordinal()) System.out.println("\nao_server_resources.size="+size);
-                    if(size<0) fail("Table size < 0 for table "+service.getTable().getTableName()+": "+size);
-                    counts[d][c]=size;
+                    if(!(service instanceof UnionService)) {
+                        /* TODOif(
+                            (table instanceof DistroFileTable...c==SchemaTable.TableID.DISTRO_FILES.ordinal()
+                            || c==SchemaTable.TableID.TRANSACTIONS.ordinal()
+                            || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+                        ) continue;*/
+                        //long startTime = System.currentTimeMillis();
+                        long startTime = System.currentTimeMillis();
+                        int size=service.getSize();
+                        long endTime = System.currentTimeMillis();
+                        //long endTime = System.currentTimeMillis();
+                        if(d==0) System.out.println(service+": "+size+" in "+BigDecimal.valueOf(endTime - startTime, 3)+" ms"); //+" in "+(endTime-startTime)+" ms");
+                        else System.out.print('.');
+                        //if(c==SchemaTable.TableID.AO_SERVER_RESOURCES.ordinal()) System.out.println("\nao_server_resources.size="+size);
+                        if(size<0) fail("Table size < 0 for table "+service.getTable().getTableName()+": "+size);
+                        counts[d][c]=size;
+                    }
                 }
                 System.out.println(" Done");
             }

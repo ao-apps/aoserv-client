@@ -59,7 +59,11 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
 
     private static final ConcurrentMap<InetAddress,Hostname> internedByInetAddress = new ConcurrentHashMap<InetAddress,Hostname>();
 
+    /**
+     * If hostname is null, returns null.
+     */
     public static Hostname valueOf(String hostname) throws ValidationException {
+        if(hostname==null) return null;
         return
             isIp(hostname)
             ? valueOf(InetAddress.valueOf(hostname))
@@ -67,12 +71,20 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
         ;
     }
 
+    /**
+     * If domainName is null, returns null.
+     */
     public static Hostname valueOf(DomainName domainName) {
+        if(domainName==null) return null;
         Hostname existing = internedByDomainName.get(domainName);
         return existing!=null ? existing : new Hostname(domainName);
     }
 
+    /**
+     * If ip is null, returns null.
+     */
     public static Hostname valueOf(InetAddress ip) {
+        if(ip==null) return null;
         Hostname existing = internedByInetAddress.get(ip);
         return existing!=null ? existing : new Hostname(ip);
     }

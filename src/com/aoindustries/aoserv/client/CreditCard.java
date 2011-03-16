@@ -158,7 +158,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="primary key value")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_PROCESSOR = getMethodColumn(CreditCard.class, "processor");
@@ -395,7 +395,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     @Override
     public com.aoindustries.aoserv.client.dto.CreditCard getDto() {
         return new com.aoindustries.aoserv.client.dto.CreditCard(
-            key,
+            getKeyInt(),
             processorId,
             getDto(accounting),
             groupName,

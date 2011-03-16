@@ -27,7 +27,7 @@ final public class CheckMySQLUserPasswordCommand extends AOServCommand<List<Pass
         @Param(name=PARAM_MYSQL_USER) MySQLUser mysqlUser,
         @Param(name="password") String password
     ) {
-        this.mysqlUser = mysqlUser.getKey();
+        this.mysqlUser = mysqlUser.getPkey();
         this.password = password;
     }
 

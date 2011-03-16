@@ -182,7 +182,7 @@ final public class DnsRecord extends Resource implements Comparable<DnsRecord>, 
     @Override
     public com.aoindustries.aoserv.client.dto.DnsRecord getDto() {
         return new com.aoindustries.aoserv.client.dto.DnsRecord(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

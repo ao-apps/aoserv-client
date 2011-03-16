@@ -98,7 +98,7 @@ final public class ServerFarm extends Resource implements Comparable<ServerFarm>
     @Override
     public com.aoindustries.aoserv.client.dto.ServerFarm getDto() {
         return new com.aoindustries.aoserv.client.dto.ServerFarm(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

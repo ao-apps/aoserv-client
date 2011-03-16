@@ -87,7 +87,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
                 if(diff!=0) return diff;
                 diff = o1.resourceType==o2.resourceType ? 0 : o1.getResourceType().compareTo(o2.getResourceType()); // OK - interned
                 if(diff!=0) return diff;
-                return AOServObject.compare(o1.key, o2.key);
+                return AOServObject.compare(o1.getKeyInt(), o2.getKeyInt());
             } catch(RemoteException err) {
                 throw new WrappedException(err);
             }
@@ -99,7 +99,7 @@ public abstract class Resource extends AOServObjectIntegerKey {
     public static final MethodColumn COLUMN_PKEY = getMethodColumn(Resource.class, "pkey");
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique pkey")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_RESOURCE_TYPE = getMethodColumn(Resource.class, "resourceType");

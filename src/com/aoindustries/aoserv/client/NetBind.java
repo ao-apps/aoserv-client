@@ -103,7 +103,7 @@ implements
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated pkey")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_BUSINESS_SERVER = getMethodColumn(NetBind.class, "businessServer");
@@ -190,7 +190,7 @@ implements
     @Override
     public com.aoindustries.aoserv.client.dto.NetBind getDto() {
         return new com.aoindustries.aoserv.client.dto.NetBind(
-            key,
+            getKeyInt(),
             businessServer,
             ipAddress,
             getDto(port),

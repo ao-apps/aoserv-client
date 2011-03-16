@@ -140,7 +140,7 @@ final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoF
     @Override
     public com.aoindustries.aoserv.client.dto.DnsZone getDto() {
         return new com.aoindustries.aoserv.client.dto.DnsZone(
-            key,
+            getKeyInt(),
             getResourceTypeName(),
             getDto(getAccounting()),
             created,

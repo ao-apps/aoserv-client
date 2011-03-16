@@ -25,7 +25,7 @@ final public class SetMySQLUserPredisablePasswordCommand extends RemoteCommand<V
         @Param(name="mysqlUser") MySQLUser mysqlUser,
         @Param(name="encryptedPassword") String encryptedPassword
     ) {
-        this.mysqlUser = mysqlUser.getKey();
+        this.mysqlUser = mysqlUser.getPkey();
         this.encryptedPassword = encryptedPassword;
     }
 

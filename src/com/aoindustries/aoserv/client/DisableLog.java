@@ -63,7 +63,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
             if(diff!=0) return diff;
             diff = accounting==other.accounting ? 0 : getBusiness().compareTo(other.getBusiness()); // OK - interned
             if(diff!=0) return diff;
-            return compare(key, other.key);
+            return compare(getKeyInt(), other.getKeyInt());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }
@@ -73,7 +73,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     @SchemaColumn(order=1, description="the time the stuff was disabled")
@@ -123,7 +123,7 @@ final public class DisableLog extends AOServObjectIntegerKey implements Comparab
 
     @Override
     public com.aoindustries.aoserv.client.dto.DisableLog getDto() {
-        return new com.aoindustries.aoserv.client.dto.DisableLog(key, time, getDto(accounting), getDto(disabledBy), disableReason);
+        return new com.aoindustries.aoserv.client.dto.DisableLog(getKeyInt(), time, getDto(accounting), getDto(disabledBy), disableReason);
     }
     // </editor-fold>
 

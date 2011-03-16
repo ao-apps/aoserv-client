@@ -88,7 +88,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique ID")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_OPERATING_SYSTEM = getMethodColumn(OperatingSystemVersion.class, "operatingSystem");
@@ -148,7 +148,7 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
 
     @Override
     public com.aoindustries.aoserv.client.dto.OperatingSystemVersion getDto() {
-        return new com.aoindustries.aoserv.client.dto.OperatingSystemVersion(key, operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);
+        return new com.aoindustries.aoserv.client.dto.OperatingSystemVersion(getKeyInt(), operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);
     }
     // </editor-fold>
 

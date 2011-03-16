@@ -68,7 +68,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FailoverFileLog.class, "replication");
@@ -126,7 +126,7 @@ final public class FailoverFileLog extends AOServObjectIntegerKey implements Com
     @Override
     public com.aoindustries.aoserv.client.dto.FailoverFileLog getDto() {
         return new com.aoindustries.aoserv.client.dto.FailoverFileLog(
-            key,
+            getKeyInt(),
             replication,
             startTime,
             endTime,

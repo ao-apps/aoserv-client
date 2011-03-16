@@ -63,7 +63,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     public static final MethodColumn COLUMN_PKEY = getMethodColumn(LinuxAccountGroup.class, "pkey");
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_LINUX_ACCOUNT = getMethodColumn(LinuxAccountGroup.class, "linuxAccount");
@@ -100,7 +100,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
 
     @Override
     public com.aoindustries.aoserv.client.dto.LinuxAccountGroup getDto() {
-        return new com.aoindustries.aoserv.client.dto.LinuxAccountGroup(key, linuxAccount, linuxGroup, primary);
+        return new com.aoindustries.aoserv.client.dto.LinuxAccountGroup(getKeyInt(), linuxAccount, linuxGroup, primary);
     }
     // </editor-fold>
 

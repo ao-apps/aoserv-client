@@ -48,7 +48,7 @@ final public class GetMySQLMasterStatusCommand extends RemoteCommand<GetMySQLMas
     public GetMySQLMasterStatusCommand(
         @Param(name="mysqlServer") MySQLServer mysqlServer
     ) {
-        this.pkey = mysqlServer.getKey();
+        this.pkey = mysqlServer.getPkey();
     }
 
     public int getPkey() {

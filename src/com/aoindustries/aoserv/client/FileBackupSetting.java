@@ -63,7 +63,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
     public int getPkey() {
-        return key;
+        return getKeyInt();
     }
 
     public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FileBackupSetting.class, "replication");
@@ -97,7 +97,7 @@ final public class FileBackupSetting extends AOServObjectIntegerKey implements C
 
     @Override
     public com.aoindustries.aoserv.client.dto.FileBackupSetting getDto() {
-        return new com.aoindustries.aoserv.client.dto.FileBackupSetting(key, replication, path, backupEnabled);
+        return new com.aoindustries.aoserv.client.dto.FileBackupSetting(getKeyInt(), replication, path, backupEnabled);
     }
     // </editor-fold>
 
