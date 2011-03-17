@@ -66,6 +66,37 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
         validateImpl(localPart, domain==null ? null : domain.toString());
     }
 
+    private static final boolean[] validChars = new boolean[128];
+    static {
+        for(int ch=0; ch<128; ch++) {
+            validChars[ch] =
+                (ch>='A' && ch<='Z')
+                || (ch>='a' && ch<='z')
+                || (ch>='0' && ch<='9')
+                || ch=='!'
+                || ch=='#'
+                || ch=='$'
+                || ch=='%'
+                || ch=='&'
+                || ch=='\''
+                || ch=='*'
+                || ch=='+'
+                || ch=='-'
+                || ch=='/'
+                || ch=='='
+                || ch=='?'
+                || ch=='^'
+                || ch=='_'
+                || ch=='`'
+                || ch=='{'
+                || ch=='|'
+                || ch=='}'
+                || ch=='~'
+                || ch=='.' // Dot here for completeness, but algorithm below will not use it
+            ;
+        }
+    }
+    
     /**
      * Validates the local part of the email address (before the @ symbol), as well as additional domain rules.
      */
@@ -89,30 +120,7 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
                     if(pos==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.startsDot");
                     if(pos==(len-1)) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.endsDot");
                     if(localPart.charAt(pos-1)=='.') throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.doubleDot", pos-1);
-                } else if(
-                    (ch<'A' || ch>'Z')
-                    && (ch<'a' || ch>'z')
-                    && (ch<'0' || ch>'9')
-                    && ch!='!'
-                    && ch!='#'
-                    && ch!='$'
-                    && ch!='%'
-                    && ch!='&'
-                    && ch!='\''
-                    && ch!='*'
-                    && ch!='+'
-                    && ch!='-'
-                    && ch!='/'
-                    && ch!='='
-                    && ch!='?'
-                    && ch!='^'
-                    && ch!='_'
-                    && ch!='`'
-                    && ch!='{'
-                    && ch!='|'
-                    && ch!='}'
-                    && ch!='~'
-                ) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.invalidCharacter", ch, pos);
+                } else if(ch>=128 || !validChars[ch]) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.invalidCharacter", ch, pos);
             }
         //}
     }
