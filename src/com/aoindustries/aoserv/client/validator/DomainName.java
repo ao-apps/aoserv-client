@@ -13,10 +13,10 @@ import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
 import java.io.ObjectOutput;
-import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -45,6 +45,355 @@ implements
     DtoFactory<com.aoindustries.aoserv.client.dto.DomainName>,
     Internable<DomainName> {
 
+    public enum TopLevelDomain {
+        AC,
+        AD,
+        AE,
+        AERO,
+        AF,
+        AG,
+        AI,
+        AL,
+        AM,
+        AN,
+        AO,
+        AQ,
+        AR,
+        ARPA,
+        AS,
+        ASIA,
+        AT,
+        AU,
+        AW,
+        AX,
+        AZ,
+        BA,
+        BB,
+        BD,
+        BE,
+        BF,
+        BG,
+        BH,
+        BI,
+        BIZ,
+        BJ,
+        BM,
+        BN,
+        BO,
+        BR,
+        BS,
+        BT,
+        BV,
+        BW,
+        BY,
+        BZ,
+        CA,
+        CAT,
+        CC,
+        CD,
+        CF,
+        CG,
+        CH,
+        CI,
+        CK,
+        CL,
+        CM,
+        CN,
+        CO,
+        COM,
+        COOP,
+        CR,
+        CU,
+        CV,
+        CX,
+        CY,
+        CZ,
+        DE,
+        DJ,
+        DK,
+        DM,
+        DO,
+        DZ,
+        EC,
+        EDU,
+        EE,
+        EG,
+        ER,
+        ES,
+        ET,
+        EU,
+        FI,
+        FJ,
+        FK,
+        FM,
+        FO,
+        FR,
+        GA,
+        GB,
+        GD,
+        GE,
+        GF,
+        GG,
+        GH,
+        GI,
+        GL,
+        GM,
+        GN,
+        GOV,
+        GP,
+        GQ,
+        GR,
+        GS,
+        GT,
+        GU,
+        GW,
+        GY,
+        HK,
+        HM,
+        HN,
+        HR,
+        HT,
+        HU,
+        ID,
+        IE,
+        IL,
+        IM,
+        IN,
+        INFO,
+        INT,
+        IO,
+        IQ,
+        IR,
+        IS,
+        IT,
+        JE,
+        JM,
+        JO,
+        JOBS,
+        JP,
+        KE,
+        KG,
+        KH,
+        KI,
+        KM,
+        KN,
+        KP,
+        KR,
+        KW,
+        KY,
+        KZ,
+        LA,
+        LB,
+        LC,
+        LI,
+        LK,
+        LR,
+        LS,
+        LT,
+        LU,
+        LV,
+        LY,
+        MA,
+        MC,
+        MD,
+        ME,
+        MG,
+        MH,
+        MIL,
+        MK,
+        ML,
+        MM,
+        MN,
+        MO,
+        MOBI,
+        MP,
+        MQ,
+        MR,
+        MS,
+        MT,
+        MU,
+        MUSEUM,
+        MV,
+        MW,
+        MX,
+        MY,
+        MZ,
+        NA,
+        NAME,
+        NC,
+        NE,
+        NET,
+        NF,
+        NG,
+        NI,
+        NL,
+        NO,
+        NP,
+        NR,
+        NU,
+        NZ,
+        OM,
+        ORG,
+        PA,
+        PE,
+        PF,
+        PG,
+        PH,
+        PK,
+        PL,
+        PM,
+        PN,
+        PR,
+        PRO,
+        PS,
+        PT,
+        PW,
+        PY,
+        QA,
+        RE,
+        RO,
+        RS,
+        RU,
+        RW,
+        SA,
+        SB,
+        SC,
+        SD,
+        SE,
+        SG,
+        SH,
+        SI,
+        SJ,
+        SK,
+        SL,
+        SM,
+        SN,
+        SO,
+        SR,
+        ST,
+        SU,
+        SV,
+        SY,
+        SZ,
+        TC,
+        TD,
+        TEL,
+        TF,
+        TG,
+        TH,
+        TJ,
+        TK,
+        TL,
+        TM,
+        TN,
+        TO,
+        TP,
+        TR,
+        TRAVEL,
+        TT,
+        TV,
+        TW,
+        TZ,
+        UA,
+        UG,
+        UK,
+        US,
+        UY,
+        UZ,
+        VA,
+        VC,
+        VE,
+        VG,
+        VI,
+        VN,
+        VU,
+        WF,
+        WS,
+        XN__0ZWM56D,
+        XN__11B5BS3A9AJ6G,
+        XN__3E0B707E,
+        XN__45BRJ9C,
+        XN__80AKHBYKNJ4F,
+        XN__9T4B11YI5A,
+        XN__CLCHC0EA0B2G2A9GCD,
+        XN__DEBA0AD,
+        XN__FIQS8S,
+        XN__FIQZ9S,
+        XN__FPCRJ9C3D,
+        XN__FZC2C9E2C,
+        XN__G6W251D,
+        XN__GECRJ9C,
+        XN__H2BRJ9C,
+        XN__HGBK6AJ7F53BBA,
+        XN__HLCJ6AYA9ESC7A,
+        XN__J6W193G,
+        XN__JXALPDLP,
+        XN__KGBECHTV,
+        XN__KPRW13D,
+        XN__KPRY57D,
+        XN__MGBAAM7A8H,
+        XN__MGBAYH7GPA,
+        XN__MGBBH1A71E,
+        XN__MGBERP4A5D4AR,
+        XN__O3CW4H,
+        XN__OGBPF8FL,
+        XN__P1AI,
+        XN__PGBS0DH,
+        XN__S9BRJ9C,
+        XN__WGBH1C,
+        XN__WGBL6A,
+        XN__XKC2AL3HYE2A,
+        XN__XKC2DL3A5EE0H,
+        XN__YFRO4I67O,
+        XN__YGBI2AMMX,
+        XN__ZCKZAH,
+        YE,
+        YT,
+        ZA,
+        ZM,
+        ZW;
+
+        public static final String SOURCE_URL = "http://data.iana.org/TLD/tlds-alpha-by-domain.txt";
+        public static final Timestamp LAST_DOWNLOADED = new Timestamp(1300332279678L); // 2011-03-16
+
+        private final DomainLabel label;
+
+        private TopLevelDomain() {
+            try {
+                label = DomainLabel.valueOf(name().toLowerCase(Locale.ENGLISH).replace('_', '-')).intern();
+            } catch(ValidationException exc) {
+                throw new AssertionError(exc);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return label.toString();
+        }
+
+        public DomainLabel getLabel() {
+            return label;
+        }
+
+        /**
+         * Provides a way to get the top level domain based on label (case insensitive).
+         * Since the enum identifiers cannot contain hyphens (-), they have been replaced
+         * with underscores.  This also converts them back.
+         */
+        public static TopLevelDomain valueOfLabel(String label) throws IllegalArgumentException {
+            return valueOf(label.replace('-', '_').toUpperCase(Locale.ENGLISH));
+        }
+
+        /**
+         * Gets the top level domain for the provided label.
+         *
+         * @see #valueOfLabel(java.lang.String)
+         */
+        public static TopLevelDomain valueOfLabel(DomainLabel label) throws IllegalArgumentException {
+            return valueOfLabel(label.toString());
+        }
+    }
+
     public static final int MAX_LENGTH = 253;
 
     private static boolean isNumeric(String label) {
@@ -69,6 +418,10 @@ implements
         ;
     }
 
+    private static boolean isArpa(String domain) {
+        return domain.toLowerCase(Locale.ENGLISH).endsWith(".in-addr.arpa");
+    }
+
     /**
      * Validates a domain name, but doesn't allow an ending period.
      *
@@ -80,7 +433,7 @@ implements
         if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.empty");
         if("default".equalsIgnoreCase(domain)) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.isDefault");
         if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.tooLong", MAX_LENGTH, len);
-        boolean isArpa = domain.endsWith(".in-addr.arpa");
+        boolean isArpa = isArpa(domain);
         int labelStart = 0;
         for(int pos=0; pos<len; pos++) {
             if(domain.charAt(pos)=='.') {
@@ -94,6 +447,12 @@ implements
         DomainLabel.validate(lastLabel);
         // Last domain label must be alphabetic (not be all numeric)
         if(isNumeric(lastLabel)) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.lastLabelAllDigits");
+        // Last label must be a valid top level domain
+        try {
+            TopLevelDomain.valueOfLabel(lastLabel);
+        } catch(IllegalArgumentException exc) {
+            throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.notEndTopLevelDomain");
+        }
     }
 
     private static final ConcurrentMap<String,DomainName> interned = new ConcurrentHashMap<String,DomainName>();
@@ -171,6 +530,10 @@ implements
     @Override
     public String toString() {
         return domain;
+    }
+
+    public boolean isArpa() {
+        return isArpa(domain);
     }
 
     /**
