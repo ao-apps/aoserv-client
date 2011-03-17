@@ -20,7 +20,8 @@ import java.util.concurrent.ConcurrentMap;
  * <ul>
  *   <li>Be non-null</li>
  *   <li>Be non-empty</li>
- *   <li>Confirm to definition in {@link http://en.wikipedia.org/wiki/DNS_label#Parts_of_a_domain_name}</li>
+ *   <li>Conforms to definition in {@link http://en.wikipedia.org/wiki/DNS_label#Parts_of_a_domain_name}</li>
+ *   <li>Conforms to rfc2181: {@link http://tools.ietf.org/html/rfc2181#section-11}</li>
  *   <li>And allow all numeric as described in {@link http://tools.ietf.org/html/rfc1123#page-13}</li>
  * </ul>
  *
