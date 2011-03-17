@@ -500,6 +500,42 @@ implements
         String lastLabel = domain.substring(labelStart, len);
         if(TopLevelDomain.getByLabel(lastLabel)==null) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.notEndTopLevelDomain");
     }
+    public static boolean isValid(String domain) {
+        if(domain==null) return false;
+        int len = domain.length();
+        if(len==0) return false;
+        char ch;
+        if(
+            // "default".equalsIgnoreCase(domain)
+            domain.length()==7
+            && ((ch=domain.charAt(0))=='d' || ch=='D')
+            && ((ch=domain.charAt(1))=='e' || ch=='E')
+            && ((ch=domain.charAt(2))=='f' || ch=='F')
+            && ((ch=domain.charAt(3))=='a' || ch=='A')
+            && ((ch=domain.charAt(4))=='u' || ch=='U')
+            && ((ch=domain.charAt(5))=='l' || ch=='L')
+            && ((ch=domain.charAt(6))=='t' || ch=='T')
+        ) return false;
+        if(len>MAX_LENGTH) return false;
+        boolean isArpa = isArpa(domain);
+        int labelStart = 0;
+        for(int pos=0; pos<len; pos++) {
+            if(domain.charAt(pos)=='.') {
+                // For reverse IP address delegation, if the domain ends with ".in-addr.arpa", the first label may also be in the format "##/##".
+                if(!isArpa || labelStart!=0 || !isArpaDelegationFirstLabel(domain, labelStart, pos)) {
+                    if(!DomainLabel.isValid(domain, labelStart, pos)) return false;
+                }
+                labelStart = pos+1;
+            }
+        }
+        if(!DomainLabel.isValid(domain, labelStart, len)) return false;
+        // Last domain label must be alphabetic (not be all numeric)
+        if(isNumeric(domain, labelStart, len)) return false;
+        // Last label must be a valid top level domain
+        String lastLabel = domain.substring(labelStart, len);
+        if(TopLevelDomain.getByLabel(lastLabel)==null) return false;
+        return true;
+    }
 
     private static final ConcurrentMap<String,DomainName> interned = new ConcurrentHashMap<String,DomainName>();
 
