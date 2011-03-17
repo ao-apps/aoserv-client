@@ -97,7 +97,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     }
 
     @SchemaColumn(order=3, description="if <code>true</code>, this is the default server.")
-    public boolean isDefault() {
+    public boolean getIsDefault() {
         return isDefault;
     }
 
@@ -114,7 +114,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
             dto.getPkey(),
             getAccountingCode(dto.getAccounting()),
             dto.getServer(),
-            dto.isDefault(),
+            dto.getIsDefault(),
             dto.isCanVncConsole()
         );
     }

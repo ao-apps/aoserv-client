@@ -51,11 +51,11 @@ public class BusinessServer extends AOServObject {
         this.server = server;
     }
 
-    public boolean isDefault() {
+    public boolean getIsDefault() {
         return isDefault;
     }
 
-    public void setDefault(boolean isDefault) {
+    public void setIsDefault(boolean isDefault) {
         this.isDefault = isDefault;
     }
 
