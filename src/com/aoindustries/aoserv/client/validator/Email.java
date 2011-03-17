@@ -103,8 +103,8 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
     private static void validateImpl(String localPart, String domain) throws ValidationException {
         if(localPart==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.isNull");
         if(domain==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isNull");
-        if(DomainName.isArpa(domain)) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isArpa");
         if(domain.lastIndexOf('.')==-1) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.noDot");
+        if(DomainName.isArpa(domain)) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isArpa");
         int len = localPart.length();
         int totalLen = len + 1 + domain.length();
         if(totalLen>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Email.validate.tooLong", MAX_LENGTH, totalLen);

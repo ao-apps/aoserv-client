@@ -38,25 +38,42 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
      * Validates a domain name label.
      */
     public static void validate(String label) throws ValidationException {
+        /*
         if(label==null) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.isNull");
         int len = label.length();
         if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.empty");
         if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.tooLong", MAX_LENGTH, len);
-        // boolean foundNonDigit = false;
         for(int pos=0; pos<len; pos++) {
             char ch = label.charAt(pos);
             if(ch=='-') {
-                // foundNonDigit = true;
                 if(pos==0) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.startsDash");
                 if(pos==(len-1)) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.endsDash");
             } else if(
-                (ch>='a' && ch<='z')
-                || (ch>='A' && ch<='Z')
-            ) {
-                // foundNonDigit = true;
-            } else if(ch<'0' || ch>'9') throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.invalidCharacter", ch, pos);
+                (ch<'a' || ch>'z')
+                && (ch<'A' || ch>'Z')
+                && (ch<'0' || ch>'9')
+            ) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.invalidCharacter", ch, pos);
+        }*/
+        if(label==null) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.isNull");
+        validate(label, 0, label.length());
+    }
+
+    public static void validate(String label, int beginIndex, int endIndex) throws ValidationException {
+        if(label==null) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.isNull");
+        int len = endIndex-beginIndex;
+        if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.empty");
+        if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.tooLong", MAX_LENGTH, len);
+        for(int pos=beginIndex; pos<endIndex; pos++) {
+            char ch = label.charAt(pos);
+            if(ch=='-') {
+                if(pos==beginIndex) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.startsDash");
+                if(pos==(endIndex-1)) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.endsDash");
+            } else if(
+                (ch<'a' || ch>'z')
+                && (ch<'A' || ch>'Z')
+                && (ch<'0' || ch>'9')
+            ) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.invalidCharacter", ch, pos-beginIndex);
         }
-        // if(!foundNonDigit) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.allDigits");
     }
 
     private static final ConcurrentMap<String,DomainLabel> interned = new ConcurrentHashMap<String,DomainLabel>();
