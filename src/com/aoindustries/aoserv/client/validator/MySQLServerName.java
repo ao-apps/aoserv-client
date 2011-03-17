@@ -64,8 +64,9 @@ final public class MySQLServerName implements Comparable<MySQLServerName>, Seria
     private static final ConcurrentMap<String,MySQLServerName> interned = new ConcurrentHashMap<String,MySQLServerName>();
 
     public static MySQLServerName valueOf(String name) throws ValidationException {
-        MySQLServerName existing = interned.get(name);
-        return existing!=null ? existing : new MySQLServerName(name);
+        //MySQLServerName existing = interned.get(name);
+        //return existing!=null ? existing : new MySQLServerName(name);
+        return new MySQLServerName(name);
     }
 
     final private String name;

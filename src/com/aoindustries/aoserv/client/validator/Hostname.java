@@ -76,8 +76,9 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
      */
     public static Hostname valueOf(DomainName domainName) {
         if(domainName==null) return null;
-        Hostname existing = internedByDomainName.get(domainName);
-        return existing!=null ? existing : new Hostname(domainName);
+        //Hostname existing = internedByDomainName.get(domainName);
+        //return existing!=null ? existing : new Hostname(domainName);
+        return new Hostname(domainName);
     }
 
     /**
@@ -85,8 +86,9 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
      */
     public static Hostname valueOf(InetAddress ip) {
         if(ip==null) return null;
-        Hostname existing = internedByInetAddress.get(ip);
-        return existing!=null ? existing : new Hostname(ip);
+        //Hostname existing = internedByInetAddress.get(ip);
+        //return existing!=null ? existing : new Hostname(ip);
+        return new Hostname(ip);
     }
 
     final private DomainName domainName;

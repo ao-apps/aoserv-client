@@ -64,8 +64,9 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
     private static final ConcurrentMap<String,PostgresServerName> interned = new ConcurrentHashMap<String,PostgresServerName>();
 
     public static PostgresServerName valueOf(String name) throws ValidationException {
-        PostgresServerName existing = interned.get(name);
-        return existing!=null ? existing : new PostgresServerName(name);
+        //PostgresServerName existing = interned.get(name);
+        //return existing!=null ? existing : new PostgresServerName(name);
+        return new PostgresServerName(name);
     }
 
     final private String name;

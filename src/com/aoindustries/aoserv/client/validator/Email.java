@@ -48,24 +48,39 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
         if(email.length()==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.empty");
         int atPos = email.indexOf('@');
         if(atPos==-1) throw new ValidationException(ApplicationResources.accessor, "Email.validate.noAt");
-        validate(email.substring(0, atPos), DomainName.valueOf(email.substring(atPos+1)));
+        validate(email.substring(0, atPos), email.substring(atPos+1));
     }
 
     /**
-     * Validates the local part of the email address (before the @ symbol).
+     * Validates the local part of the email address (before the @ symbol), as well as additional domain rules.
+     */
+    public static void validate(String localPart, String domain) throws ValidationException {
+        if(domain!=null) DomainName.validate(domain);
+        validateImpl(localPart, domain);
+    }
+
+    /**
+     * Validates the local part of the email address (before the @ symbol), as well as additional domain rules.
      */
     public static void validate(String localPart, DomainName domain) throws ValidationException {
+        validateImpl(localPart, domain==null ? null : domain.toString());
+    }
+
+    /**
+     * Validates the local part of the email address (before the @ symbol), as well as additional domain rules.
+     */
+    private static void validateImpl(String localPart, String domain) throws ValidationException {
         if(localPart==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.isNull");
         if(domain==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isNull");
-        if(domain.isArpa()) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isArpa");
-        if(domain.toString().indexOf('.')==-1) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.noDot");
+        if(DomainName.isArpa(domain)) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isArpa");
+        if(domain.lastIndexOf('.')==-1) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.noDot");
         int len = localPart.length();
-        int totalLen = len + domain.toString().length();
+        int totalLen = len + 1 + domain.length();
         if(totalLen>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Email.validate.tooLong", MAX_LENGTH, totalLen);
 
         // If found in interned, it is valid
-        ConcurrentMap<String,Email> domainMap = interned.get(domain);
-        if(domainMap==null || !domainMap.containsKey(localPart)) {
+        //ConcurrentMap<String,Email> domainMap = interned.get(domain);
+        //if(domainMap==null || !domainMap.containsKey(localPart)) {
             if(len==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.empty");
             if(len>MAX_LOCAL_PART_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.tooLong", MAX_LOCAL_PART_LENGTH, len);
             for(int pos=0; pos<len; pos++) {
@@ -99,7 +114,7 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
                     && ch!='~'
                 ) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.invalidCharacter", ch, pos);
             }
-        }
+        //}
     }
 
     private static final ConcurrentMap<DomainName,ConcurrentMap<String,Email>> interned = new ConcurrentHashMap<DomainName,ConcurrentMap<String,Email>>();
@@ -119,11 +134,11 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
     }
 
     public static Email valueOf(String localPart, DomainName domain) throws ValidationException {
-        ConcurrentMap<String,Email> domainMap = interned.get(domain);
-        if(domainMap!=null) {
-            Email existing = domainMap.get(localPart);
-            if(existing!=null) return existing;
-        }
+        //ConcurrentMap<String,Email> domainMap = interned.get(domain);
+        //if(domainMap!=null) {
+        //    Email existing = domainMap.get(localPart);
+        //    if(existing!=null) return existing;
+        //}
         return new Email(localPart, domain);
     }
 
@@ -137,7 +152,7 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
     }
 
     private void validate() throws ValidationException {
-        validate(localPart, domain);
+        validate(localPart, domain.toString());
     }
 
     @Override

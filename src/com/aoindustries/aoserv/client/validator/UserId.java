@@ -94,8 +94,9 @@ final public class UserId implements Comparable<UserId>, FastExternalizable, Obj
      */
     public static UserId valueOf(String id) throws ValidationException {
         if(id==null) return null;
-        UserId existing = interned.get(id);
-        return existing!=null ? existing : new UserId(id);
+        //UserId existing = interned.get(id);
+        //return existing!=null ? existing : new UserId(id);
+        return new UserId(id);
     }
 
     /*

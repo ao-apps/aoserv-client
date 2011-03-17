@@ -77,8 +77,9 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
      */
     public static AccountingCode valueOf(String accounting) throws ValidationException {
         if(accounting==null) return null;
-        AccountingCode existing = interned.get(accounting);
-        return existing!=null ? existing : new AccountingCode(accounting);
+        //AccountingCode existing = interned.get(accounting);
+        //return existing!=null ? existing : new AccountingCode(accounting);
+        return new AccountingCode(accounting);
     }
 
     /*

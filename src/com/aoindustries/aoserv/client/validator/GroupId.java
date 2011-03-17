@@ -38,7 +38,7 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
      */
     public static void validate(String id) throws ValidationException {
         if(id==null) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.isNull");
-        if(!interned.containsKey(id)) { // Is valid if already interned
+        //if(!interned.containsKey(id)) { // Is valid if already interned
             int len = id.length();
             if(len==0) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.isEmpty");
             if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.tooLong", MAX_LENGTH, len);
@@ -70,14 +70,15 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
                     case '@' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.at");
                 }
             }
-        }
+        //}
     }
 
     private static final ConcurrentMap<String,GroupId> interned = new ConcurrentHashMap<String,GroupId>();
 
     public static GroupId valueOf(String id) throws ValidationException {
-        GroupId existing = interned.get(id);
-        return existing!=null ? existing : new GroupId(id);
+        //GroupId existing = interned.get(id);
+        //return existing!=null ? existing : new GroupId(id);
+        return new GroupId(id);
     }
 
     final private String id;

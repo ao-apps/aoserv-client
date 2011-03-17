@@ -62,8 +62,9 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
     private static final ConcurrentMap<String,DomainLabel> interned = new ConcurrentHashMap<String,DomainLabel>();
 
     public static DomainLabel valueOf(String label) throws ValidationException {
-        DomainLabel existing = interned.get(label);
-        return existing!=null ? existing : new DomainLabel(label);
+        //DomainLabel existing = interned.get(label);
+        //return existing!=null ? existing : new DomainLabel(label);
+        return new DomainLabel(label);
     }
 
     final private String label;

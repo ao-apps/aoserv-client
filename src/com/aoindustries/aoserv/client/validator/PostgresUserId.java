@@ -74,8 +74,9 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
     private static final ConcurrentMap<String,PostgresUserId> interned = new ConcurrentHashMap<String,PostgresUserId>();
 
     public static PostgresUserId valueOf(String id) throws ValidationException {
-        PostgresUserId existing = interned.get(id);
-        return existing!=null ? existing : new PostgresUserId(id);
+        //PostgresUserId existing = interned.get(id);
+        //return existing!=null ? existing : new PostgresUserId(id);
+        return new PostgresUserId(id);
     }
 
     final private String id;

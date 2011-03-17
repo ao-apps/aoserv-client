@@ -70,8 +70,9 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
     private static final ConcurrentMap<String,PostgresDatabaseName> interned = new ConcurrentHashMap<String,PostgresDatabaseName>();
 
     public static PostgresDatabaseName valueOf(String name) throws ValidationException {
-        PostgresDatabaseName existing = interned.get(name);
-        return existing!=null ? existing : new PostgresDatabaseName(name);
+        //PostgresDatabaseName existing = interned.get(name);
+        //return existing!=null ? existing : new PostgresDatabaseName(name);
+        return new PostgresDatabaseName(name);
     }
 
     final private String name;

@@ -23,31 +23,36 @@ public class ValidationException extends Exception {
     private final Serializable[] args;
 
     public ValidationException(ApplicationResourcesAccessor accessor, String key) {
-        super(accessor.getMessage(key));
+        super(key);
         this.accessor = accessor;
         this.key = key;
         this.args = AoArrays.EMPTY_SERIALIZABLE_ARRAY;
     }
 
     public ValidationException(ApplicationResourcesAccessor accessor, String key, Serializable... args) {
-        super(accessor.getMessage(key, (Object[])args));
+        super(key);
         this.accessor = accessor;
         this.key = key;
         this.args = args;
     }
 
     public ValidationException(Throwable cause, ApplicationResourcesAccessor accessor, String key) {
-        super(accessor.getMessage(key), cause);
+        super(key, cause);
         this.accessor = accessor;
         this.key = key;
         this.args = AoArrays.EMPTY_SERIALIZABLE_ARRAY;
     }
 
     public ValidationException(Throwable cause, ApplicationResourcesAccessor accessor, String key, Serializable... args) {
-        super(accessor.getMessage(key, (Object[])args), cause);
+        super(key, cause);
         this.accessor = accessor;
         this.key = key;
         this.args = args;
+    }
+
+    @Override
+    public String getMessage() {
+        return getLocalizedMessage();
     }
 
     @Override

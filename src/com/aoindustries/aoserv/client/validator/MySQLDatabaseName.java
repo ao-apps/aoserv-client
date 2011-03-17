@@ -70,8 +70,9 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
     private static final ConcurrentMap<String,MySQLDatabaseName> interned = new ConcurrentHashMap<String,MySQLDatabaseName>();
 
     public static MySQLDatabaseName valueOf(String name) throws ValidationException {
-        MySQLDatabaseName existing = interned.get(name);
-        return existing!=null ? existing : new MySQLDatabaseName(name);
+        //MySQLDatabaseName existing = interned.get(name);
+        //return existing!=null ? existing : new MySQLDatabaseName(name);
+        return new MySQLDatabaseName(name);
     }
 
     final private String name;

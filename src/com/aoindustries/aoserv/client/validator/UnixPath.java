@@ -36,7 +36,7 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
         // Be non-null
         if(path==null) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.isNull");
         // If found in interned, it is valid
-        if(!interned.containsKey(path)) {
+        //if(!interned.containsKey(path)) {
             // Be non-empty
             if(path.length()==0) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.empty");
             // Start with a /
@@ -53,14 +53,15 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
             if(path.endsWith("/..")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDotDot");
             // Not contain any // in the path
             if(path.indexOf("//")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDoubleSlash", path.indexOf("//"));
-        }
+        //}
     }
 
     private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<String, UnixPath>();
 
     public static UnixPath valueOf(String path) throws ValidationException {
-        UnixPath existing = interned.get(path);
-        return existing!=null ? existing : new UnixPath(path);
+        //UnixPath existing = interned.get(path);
+        //return existing!=null ? existing : new UnixPath(path);
+        return new UnixPath(path);
     }
 
     final private String path;

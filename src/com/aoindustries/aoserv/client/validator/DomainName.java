@@ -397,9 +397,12 @@ implements
     public static final int MAX_LENGTH = 253;
 
     private static boolean isNumeric(String label) {
-        int len = label.length();
-        if(len==0) throw new IllegalArgumentException("label.length()==0");
-        for(int i=0; i<len; i++) {
+        return isNumeric(label, 0, label.length());
+    }
+
+    private static boolean isNumeric(String label, int start, int end) {
+        if((end-start)<=0) throw new IllegalArgumentException("empty label");
+        for(int i=start; i<end; i++) {
             char ch = label.charAt(i);
             if(ch<'0' || ch>'9') return false;
         }
@@ -413,13 +416,35 @@ implements
         int slashPos = label.indexOf('/');
         return
             slashPos!=-1
-            && isNumeric(label.substring(0, slashPos))
-            && isNumeric(label.substring(slashPos+1))
+            && isNumeric(label, 0, slashPos)
+            && isNumeric(label, slashPos+1, label.length())
         ;
     }
 
-    private static boolean isArpa(String domain) {
-        return domain.toLowerCase(Locale.ENGLISH).endsWith(".in-addr.arpa");
+    /**
+     * Checks if ends with .in-addr.arpa (case insensitive)
+     */
+    public static boolean isArpa(String domain) {
+        // Stupid fast implementation - performance vs. complexity gone too far?
+        int pos = domain.length()-13;
+        char ch;
+        return
+            pos>=0
+            &&      domain.charAt(pos++) =='.'
+            && ((ch=domain.charAt(pos++))=='i' || ch=='I')
+            && ((ch=domain.charAt(pos++))=='n' || ch=='N')
+            &&      domain.charAt(pos++) =='-'
+            && ((ch=domain.charAt(pos++))=='a' || ch=='A')
+            && ((ch=domain.charAt(pos++))=='d' || ch=='D')
+            && ((ch=domain.charAt(pos++))=='d' || ch=='D')
+            && ((ch=domain.charAt(pos++))=='r' || ch=='R')
+            &&      domain.charAt(pos++) =='.'
+            && ((ch=domain.charAt(pos++))=='a' || ch=='A')
+            && ((ch=domain.charAt(pos++))=='r' || ch=='R')
+            && ((ch=domain.charAt(pos++))=='p' || ch=='P')
+            && ((ch=domain.charAt(pos  ))=='a' || ch=='A')
+        ;
+        //return domain.toLowerCase(Locale.ENGLISH).endsWith(".in-addr.arpa");
     }
 
     /**
@@ -462,8 +487,9 @@ implements
      */
     public static DomainName valueOf(String domain) throws ValidationException {
         if(domain==null) return null;
-        DomainName existing = interned.get(domain);
-        return existing!=null ? existing : new DomainName(domain);
+        //DomainName existing = interned.get(domain);
+        //return existing!=null ? existing : new DomainName(domain);
+        return new DomainName(domain);
     }
 
     private String domain;

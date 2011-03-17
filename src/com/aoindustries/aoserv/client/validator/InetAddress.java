@@ -36,7 +36,7 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         // Be non-null
         if(address==null) throw new ValidationException(ApplicationResources.accessor, "InetAddress.validate.isNull");
         // If found in interned, it is valid
-        if(!internedByAddress.containsKey(address)) parse(address);
+        /*if(!internedByAddress.containsKey(address))*/ parse(address);
     }
 
     private static final ConcurrentMap<LongLong,InetAddress> interned = new ConcurrentHashMap<LongLong,InetAddress>();
@@ -50,8 +50,9 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
     public static InetAddress valueOf(String address) throws ValidationException {
         if(address==null) return null;
         // If found in interned, it is valid
-        InetAddress existing = internedByAddress.get(address);
-        return existing!=null ? existing : valueOf(parse(address));
+        //InetAddress existing = internedByAddress.get(address);
+        //return existing!=null ? existing : valueOf(parse(address));
+        return valueOf(parse(address));
     }
 
     /**
@@ -60,8 +61,10 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
      * If ip is null, returns null.
      */
     public static InetAddress valueOf(LongLong ip) {
-        InetAddress existing = interned.get(ip);
-        return existing!=null ? existing : new InetAddress(ip);
+        if(ip==null) return null;
+        //InetAddress existing = interned.get(ip);
+        //return existing!=null ? existing : new InetAddress(ip);
+        return new InetAddress(ip);
     }
 
     private static int parseOctet(String address, int start, int end) throws ValidationException {

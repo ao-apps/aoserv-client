@@ -33,12 +33,12 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
 
     public static NetPort valueOf(int port) throws ValidationException {
         validate(port);
-        while(true) {
-            NetPort existing = cache.get(port);
-            if(existing!=null) return existing;
-            NetPort newObj = new NetPort(port);
-            if(cache.compareAndSet(port, null, newObj)) return newObj;
+        NetPort np = cache.get(port);
+        if(np==null) {
+            np = new NetPort(port);
+            if(!cache.compareAndSet(port, null, np)) np = cache.get(port);
         }
+        return np;
     }
 
     final private int port;

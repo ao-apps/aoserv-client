@@ -39,7 +39,7 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
     public static void validate(String value) throws ValidationException {
         // Be non-null
         if(value==null) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isNull");
-        if(!interned.containsKey(value)) { // Is valid if already interned
+        //if(!interned.containsKey(value)) { // Is valid if already interned
             int len = value.length();
             if(len==0) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isEmpty");
             if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.tooLong", MAX_LENGTH, len);
@@ -70,14 +70,15 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
                     && ch != '+'
                 ) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.invalidCharacter", ch);
             }
-        }
+        //}
     }
 
     private static final ConcurrentMap<String,Gecos> interned = new ConcurrentHashMap<String,Gecos>();
 
     public static Gecos valueOf(String value) throws ValidationException {
-        Gecos existing = interned.get(value);
-        return existing!=null ? existing : new Gecos(value);
+        //Gecos existing = interned.get(value);
+        //return existing!=null ? existing : new Gecos(value);
+        return new Gecos(value);
     }
 
     final private String value;

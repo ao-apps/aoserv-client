@@ -33,12 +33,12 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
 
     public static LinuxID valueOf(int id) throws ValidationException {
         validate(id);
-        while(true) {
-            LinuxID existing = cache.get(id);
-            if(existing!=null) return existing;
-            LinuxID newObj = new LinuxID(id);
-            if(cache.compareAndSet(id, null, newObj)) return newObj;
+        LinuxID linuxId = cache.get(id);
+        if(linuxId==null) {
+            linuxId = new LinuxID(id);
+            if(!cache.compareAndSet(id, null, linuxId)) linuxId = cache.get(id);
         }
+        return linuxId;
     }
 
     final private int id;

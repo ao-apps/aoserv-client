@@ -69,8 +69,9 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
     private static final ConcurrentMap<String,MySQLUserId> interned = new ConcurrentHashMap<String,MySQLUserId>();
 
     public static MySQLUserId valueOf(String id) throws ValidationException {
-        MySQLUserId existing = interned.get(id);
-        return existing!=null ? existing : new MySQLUserId(id);
+        //MySQLUserId existing = interned.get(id);
+        //return existing!=null ? existing : new MySQLUserId(id);
+        return new MySQLUserId(id);
     }
 
     final private String id;

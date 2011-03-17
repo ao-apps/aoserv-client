@@ -41,10 +41,10 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
         // Be non-null
         if(address==null) throw new ValidationException(ApplicationResources.accessor, "MacAddress.validate.isNull");
         // If found in interned, it is valid
-        if(!interned.containsKey(address)) {
-        // Be non-empty
-        int len = address.length();
-        if(len!=17) throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.incorrectLength", len);
+        //if(!interned.containsKey(address)) {
+            // Be non-empty
+            int len = address.length();
+            if(len!=17) throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.incorrectLength", len);
             checkHexValue(address.charAt(0));
             checkHexValue(address.charAt(1));
             if(address.charAt(2)!=':') throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.notColon", 2);
@@ -62,14 +62,15 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
             if(address.charAt(14)!=':') throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.notColon", 14);
             checkHexValue(address.charAt(15));
             checkHexValue(address.charAt(16));
-        }
+        //}
     }
 
     private static final ConcurrentMap<String,MacAddress> interned = new ConcurrentHashMap<String,MacAddress>();
 
     public static MacAddress valueOf(String address) throws ValidationException {
-        MacAddress existing = interned.get(address);
-        return existing!=null ? existing : new MacAddress(address);
+        //MacAddress existing = interned.get(address);
+        //return existing!=null ? existing : new MacAddress(address);
+        return new MacAddress(address);
     }
 
     final private String address;
