@@ -36,18 +36,18 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
     /**
      * Validates a PostgreSQL server name.
      */
-    public static void validate(String name) throws ValidationException {
-        if(name==null) throw new ValidationException(ApplicationResources.accessor, "PostgresServerName.validate.isNull");
+    public static ValidationResult validate(String name) {
+        if(name==null) return new InvalidResult(ApplicationResources.accessor, "PostgresServerName.validate.isNull");
     	int len = name.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "PostgresServerName.validate.isEmpty");
-        if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "PostgresServerName.validate.tooLong", MAX_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "PostgresServerName.validate.isEmpty");
+        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "PostgresServerName.validate.tooLong", MAX_LENGTH, len);
 
         // The first character must be [a-z] or [0-9]
         char ch = name.charAt(0);
         if(
             (ch < 'a' || ch > 'z')
             && (ch<'0' || ch>'9')
-        ) throw new ValidationException(ApplicationResources.accessor, "PostgresServerName.validate.startAtoZor0to9");
+        ) return new InvalidResult(ApplicationResources.accessor, "PostgresServerName.validate.startAtoZor0to9");
 
         // The rest may have additional characters
         for (int c = 1; c < len; c++) {
@@ -57,8 +57,9 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
                 && (ch<'0' || ch>'9')
                 && ch!='.'
                 && ch!='_'
-            ) throw new ValidationException(ApplicationResources.accessor, "PostgresServerName.validate.illegalCharacter");
+            ) return new InvalidResult(ApplicationResources.accessor, "PostgresServerName.validate.illegalCharacter");
     	}
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,PostgresServerName> interned = new ConcurrentHashMap<String,PostgresServerName>();
@@ -77,7 +78,8 @@ final public class PostgresServerName implements Comparable<PostgresServerName>,
     }
 
     private void validate() throws ValidationException {
-        validate(name);
+        ValidationResult result = validate(name);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

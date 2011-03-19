@@ -9,7 +9,6 @@ import com.aoindustries.aoserv.client.*;
 import com.aoindustries.math.LongLong;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.persistent.PersistentCollections;
-import java.io.InvalidObjectException;
 import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -32,11 +31,15 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
      *
      * @see  #parse(String)
      */
-    public static void validate(String address) throws ValidationException {
+    public static ValidationResult validate(String address) {
         // Be non-null
-        if(address==null) throw new ValidationException(ApplicationResources.accessor, "InetAddress.validate.isNull");
-        // If found in interned, it is valid
-        /*if(!internedByAddress.containsKey(address))*/ parse(address);
+        if(address==null) return new InvalidResult(ApplicationResources.accessor, "InetAddress.validate.isNull");
+        try {
+            parse(address);
+            return ValidResult.getInstance();
+        } catch(ValidationException exc) {
+            return exc.result;
+        }
     }
 
     private static final ConcurrentMap<LongLong,InetAddress> interned = new ConcurrentHashMap<LongLong,InetAddress>();
@@ -83,19 +86,19 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
             ch2 = '0';
             ch3 = address.charAt(start);
         } else {
-            if(len==0) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parseOctet.empty");
-            else throw new ValidationException(ApplicationResources.accessor, "InetAddress.parseOctet.tooLong");
+            if(len==0) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseOctet.empty"));
+            else throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseOctet.tooLong"));
         }
         // Must each be 0-9
-        if(ch1<'0' || ch1>'9') throw new ValidationException(ApplicationResources.accessor, "InetAddress.parseOctet.nonDecimal", ch1);
-        if(ch2<'0' || ch2>'9') throw new ValidationException(ApplicationResources.accessor, "InetAddress.parseOctet.nonDecimal", ch2);
-        if(ch3<'0' || ch3>'9') throw new ValidationException(ApplicationResources.accessor, "InetAddress.parseOctet.nonDecimal", ch3);
+        if(ch1<'0' || ch1>'9') throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseOctet.nonDecimal", ch1));
+        if(ch2<'0' || ch2>'9') throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseOctet.nonDecimal", ch2));
+        if(ch3<'0' || ch3>'9') throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseOctet.nonDecimal", ch3));
         int octet =
             (ch1-'0')*100
             + (ch2-'0')*10
             + (ch3-'0')
         ;
-        if(octet>255) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parseOctet.tooBig");
+        if(octet>255) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseOctet.tooBig"));
         return octet;
     }
 
@@ -103,7 +106,7 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         if(ch>='0' && ch<='9') return ch-'0';
         if(ch>='a' && ch<='f') return ch-'a'+10;
         if(ch>='A' && ch<='F') return ch-'A'+10;
-        throw new ValidationException(ApplicationResources.accessor, "InetAddress.getHexValue.badCharacter", ch);
+        throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.getHexValue.badCharacter", ch));
     }
 
     private static int parseHexWord(String address, int start, int end) throws ValidationException {
@@ -130,8 +133,8 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
             ch3 = '0';
             ch4 = address.charAt(start);
         } else {
-            if(len==0) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parseHexWord.empty");
-            else throw new ValidationException(ApplicationResources.accessor, "InetAddress.parseHexWord.tooLong");
+            if(len==0) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseHexWord.empty"));
+            else throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseHexWord.tooLong"));
         }
         // Must each be 0-9 or a-z or A-Z
         return
@@ -153,8 +156,8 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
     private static LongLong parse(String address) throws ValidationException {
         // Be non-empty
         int len = address.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parse.empty");
-        if(len>45) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parse.tooLong");
+        if(len==0) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.empty"));
+        if(len>45) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.tooLong"));
         // Look for any dot, stopping at a colon
         int dot3Pos = -1;
         for(int c=len-1; c>=0; c--) {
@@ -171,9 +174,9 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         if(dot3Pos!=-1) {
             // May be either IPv4 or IPv6 with : and . mix
             int dot2Pos = address.lastIndexOf('.', dot3Pos-1);
-            if(dot2Pos==-1) new ValidationException(ApplicationResources.accessor, "InetAddress.parse.oneDot");
+            if(dot2Pos==-1) new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.oneDot"));
             int dot1Pos = address.lastIndexOf('.', dot2Pos-1);
-            if(dot1Pos==-1) new ValidationException(ApplicationResources.accessor, "InetAddress.parse.twoDots");
+            if(dot1Pos==-1) new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.twoDots"));
             rightColonPos = address.lastIndexOf(':', dot1Pos-1);
             // Must be all [0-9] between dots and beginning/colon
             ipLow =
@@ -199,9 +202,9 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         while(rightWord>0) {
             int prevColonPos = address.lastIndexOf(':', rightColonPos-1);
             if(prevColonPos==-1) {
-                if(rightWord!=1) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parse.notEnoughColons");
+                if(rightWord!=1) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.notEnoughColons"));
             } else {
-                if(rightWord==1) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parse.tooManyColons");
+                if(rightWord==1) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.tooManyColons"));
             }
             // Check for shortcut
             if(prevColonPos==(rightColonPos-1)) {
@@ -220,13 +223,13 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         int leftColonPos = -1;
         int leftWord = 0;
         while(leftColonPos<rightColonPos) {
-            if(leftWord>=rightWord) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parse.tooManyColons");
+            if(leftWord>=rightWord) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.tooManyColons"));
             int nextColonPos = address.indexOf(':', leftColonPos+1);
             if(nextColonPos==-1) {
-                if(leftWord!=7) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parse.notEnoughColons");
+                if(leftWord!=7) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.notEnoughColons"));
                 nextColonPos = len;
             } else {
-                if(leftWord==7) throw new ValidationException(ApplicationResources.accessor, "InetAddress.parse.tooManyColons");
+                if(leftWord==7) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.tooManyColons"));
             }
             int wordValue = parseHexWord(address, leftColonPos+1, nextColonPos);
             if(leftWord<4) {

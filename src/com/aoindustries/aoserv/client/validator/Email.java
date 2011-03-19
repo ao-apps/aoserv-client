@@ -41,45 +41,32 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
      *
      * @see #validate(java.lang.String, com.aoindustries.aoserv.client.validator.DomainName)
      */
-    public static void validate(String email) throws ValidationException {
+    public static ValidationResult validate(String email) {
         // Be non-null
-        if(email==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.isNull");
+        if(email==null) return new InvalidResult(ApplicationResources.accessor, "Email.validate.isNull");
         // Be non-empty
-        if(email.length()==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.empty");
+        if(email.length()==0) return new InvalidResult(ApplicationResources.accessor, "Email.validate.empty");
         int atPos = email.indexOf('@');
-        if(atPos==-1) throw new ValidationException(ApplicationResources.accessor, "Email.validate.noAt");
-        validate(email.substring(0, atPos), email.substring(atPos+1));
-    }
-    public static boolean isValid(String email) {
-        // Be non-null
-        if(email==null) return false;
-        // Be non-empty
-        if(email.length()==0) return false;
-        int atPos = email.indexOf('@');
-        if(atPos==-1) return false;
-        return isValid(email.substring(0, atPos), email.substring(atPos+1));
+        if(atPos==-1) return new InvalidResult(ApplicationResources.accessor, "Email.validate.noAt");
+        return validate(email.substring(0, atPos), email.substring(atPos+1));
     }
 
     /**
      * Validates the local part of the email address (before the @ symbol), as well as additional domain rules.
      */
-    public static void validate(String localPart, String domain) throws ValidationException {
-        if(domain!=null) DomainName.validate(domain);
-        validateImpl(localPart, domain);
-    }
-    public static boolean isValid(String localPart, String domain) {
-        if(domain!=null && !DomainName.isValid(domain)) return false;
-        return isValidImpl(localPart, domain);
+    public static ValidationResult validate(String localPart, String domain) {
+        if(domain!=null) {
+            ValidationResult result = DomainName.validate(domain);
+            if(!result.isValid()) return result;
+        }
+        return validateImpl(localPart, domain);
     }
 
     /**
      * Validates the local part of the email address (before the @ symbol), as well as additional domain rules.
      */
-    public static void validate(String localPart, DomainName domain) throws ValidationException {
-        validateImpl(localPart, domain==null ? null : domain.toString());
-    }
-    public static boolean isValid(String localPart, DomainName domain) {
-        return isValidImpl(localPart, domain==null ? null : domain.toString());
+    public static ValidationResult validate(String localPart, DomainName domain) {
+        return validateImpl(localPart, domain==null ? null : domain.toString());
     }
 
     private static final boolean[] validChars = new boolean[128];
@@ -116,46 +103,26 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
     /**
      * Validates the local part of the email address (before the @ symbol), as well as additional domain rules.
      */
-    private static void validateImpl(String localPart, String domain) throws ValidationException {
-        if(localPart==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.isNull");
-        if(domain==null) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isNull");
-        if(domain.lastIndexOf('.')==-1) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.noDot");
-        if(DomainName.isArpa(domain)) throw new ValidationException(ApplicationResources.accessor, "Email.validate.domain.isArpa");
+    private static ValidationResult validateImpl(String localPart, String domain) {
+        if(localPart==null) return new InvalidResult(ApplicationResources.accessor, "Email.validate.localePart.isNull");
+        if(domain==null) return new InvalidResult(ApplicationResources.accessor, "Email.validate.domain.isNull");
+        if(domain.lastIndexOf('.')==-1) return new InvalidResult(ApplicationResources.accessor, "Email.validate.domain.noDot");
+        if(DomainName.isArpa(domain)) return new InvalidResult(ApplicationResources.accessor, "Email.validate.domain.isArpa");
         int len = localPart.length();
         int totalLen = len + 1 + domain.length();
-        if(totalLen>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Email.validate.tooLong", MAX_LENGTH, totalLen);
+        if(totalLen>MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "Email.validate.tooLong", MAX_LENGTH, totalLen);
 
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.empty");
-        if(len>MAX_LOCAL_PART_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.tooLong", MAX_LOCAL_PART_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "Email.validate.localePart.empty");
+        if(len>MAX_LOCAL_PART_LENGTH) return new InvalidResult(ApplicationResources.accessor, "Email.validate.localePart.tooLong", MAX_LOCAL_PART_LENGTH, len);
         for(int pos=0; pos<len; pos++) {
             char ch = localPart.charAt(pos);
             if(ch=='.') {
-                if(pos==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.startsDot");
-                if(pos==(len-1)) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.endsDot");
-                if(localPart.charAt(pos-1)=='.') throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.doubleDot", pos-1);
-            } else if(ch>=128 || !validChars[ch]) throw new ValidationException(ApplicationResources.accessor, "Email.validate.localePart.invalidCharacter", ch, pos);
+                if(pos==0) return new InvalidResult(ApplicationResources.accessor, "Email.validate.localePart.startsDot");
+                if(pos==(len-1)) return new InvalidResult(ApplicationResources.accessor, "Email.validate.localePart.endsDot");
+                if(localPart.charAt(pos-1)=='.') return new InvalidResult(ApplicationResources.accessor, "Email.validate.localePart.doubleDot", pos-1);
+            } else if(ch>=128 || !validChars[ch]) return new InvalidResult(ApplicationResources.accessor, "Email.validate.localePart.invalidCharacter", ch, pos);
         }
-    }
-    private static boolean isValidImpl(String localPart, String domain) {
-        if(localPart==null) return false;
-        if(domain==null) return false;
-        if(domain.lastIndexOf('.')==-1) return false;
-        if(DomainName.isArpa(domain)) return false;
-        int len = localPart.length();
-        int totalLen = len + 1 + domain.length();
-        if(totalLen>MAX_LENGTH) return false;
-
-        if(len==0) return false;
-        if(len>MAX_LOCAL_PART_LENGTH) return false;
-        for(int pos=0; pos<len; pos++) {
-            char ch = localPart.charAt(pos);
-            if(ch=='.') {
-                if(pos==0) return false;
-                if(pos==(len-1)) return false;
-                if(localPart.charAt(pos-1)=='.') return false;
-            } else if(ch>=128 || !validChars[ch]) return false;
-        }
-        return true;
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<DomainName,ConcurrentMap<String,Email>> interned = new ConcurrentHashMap<DomainName,ConcurrentMap<String,Email>>();
@@ -168,9 +135,9 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
     public static Email valueOf(String email) throws ValidationException {
         if(email==null) return null;
         // Be non-empty
-        if(email.length()==0) throw new ValidationException(ApplicationResources.accessor, "Email.validate.empty");
+        if(email.length()==0) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "Email.validate.empty"));
         int atPos = email.indexOf('@');
-        if(atPos==-1) throw new ValidationException(ApplicationResources.accessor, "Email.validate.noAt");
+        if(atPos==-1) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "Email.validate.noAt"));
         return valueOf(email.substring(0, atPos), DomainName.valueOf(email.substring(atPos+1)));
     }
 
@@ -193,7 +160,8 @@ final public class Email implements Comparable<Email>, FastExternalizable, Objec
     }
 
     private void validate() throws ValidationException {
-        validate(localPart, domain.toString());
+        ValidationResult result = validate(localPart, domain.toString());
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     @Override

@@ -42,18 +42,18 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
     /**
      * Validates a PostgreSQL database name.
      */
-    public static void validate(String name) throws ValidationException {
-        if(name==null) throw new ValidationException(ApplicationResources.accessor, "PostgresDatabaseName.validate.isNull");
+    public static ValidationResult validate(String name) {
+        if(name==null) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.isNull");
     	int len = name.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "PostgresDatabaseName.validate.isEmpty");
-        if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "PostgresDatabaseName.validate.tooLong", MAX_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.isEmpty");
+        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.tooLong", MAX_LENGTH, len);
 
         // The first character must be [a-z] or [0-9]
         char ch = name.charAt(0);
         if(
             (ch < 'a' || ch > 'z')
             && (ch<'0' || ch>'9')
-        ) throw new ValidationException(ApplicationResources.accessor, "PostgresDatabaseName.validate.startAtoZor0to9");
+        ) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.startAtoZor0to9");
 
         // The rest may have additional characters
         for (int c = 1; c < len; c++) {
@@ -62,9 +62,10 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
                 (ch<'a' || ch>'z')
                 && (ch<'0' || ch>'9')
                 && ch!='_'
-            ) throw new ValidationException(ApplicationResources.accessor, "PostgresDatabaseName.validate.illegalCharacter");
+            ) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.illegalCharacter");
     	}
-        if(PostgresServer.ReservedWord.isReservedWord(name)) throw new ValidationException(ApplicationResources.accessor, "PostgresDatabaseName.validate.reservedWord");
+        if(PostgresServer.ReservedWord.isReservedWord(name)) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.reservedWord");
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,PostgresDatabaseName> interned = new ConcurrentHashMap<String,PostgresDatabaseName>();
@@ -83,7 +84,8 @@ final public class PostgresDatabaseName implements Comparable<PostgresDatabaseNa
     }
 
     private void validate() throws ValidationException {
-        validate(name);
+        ValidationResult result = validate(name);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

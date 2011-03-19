@@ -40,11 +40,11 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
     /**
      * Validates a MySQL database name.
      */
-    public static void validate(String name) throws ValidationException {
-        if(name==null) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.isNull");
+    public static ValidationResult validate(String name) {
+        if(name==null) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.isNull");
     	int len = name.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.isEmpty");
-        if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.tooLong", MAX_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.isEmpty");
+        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.tooLong", MAX_LENGTH, len);
 
         // The first character must be [a-z],  or [0-9]
         char ch = name.charAt(0);
@@ -52,7 +52,7 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
             (ch < 'a' || ch > 'z')
             && (ch < 'A' || ch > 'Z')
             && (ch < '0' || ch > '9')
-        ) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.startAtoZor0to9");
+        ) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.startAtoZor0to9");
 
         // The rest may have additional characters
         for (int c = 1; c < len; c++) {
@@ -62,9 +62,10 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
                 && (ch < 'A' || ch > 'Z')
                 && (ch < '0' || ch > '9')
                 && ch != '_'
-            ) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.illegalCharacter");
+            ) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.illegalCharacter");
     	}
-        if(MySQLServer.ReservedWord.isReservedWord(name)) throw new ValidationException(ApplicationResources.accessor, "MySQLDatabaseName.validate.reservedWord");
+        if(MySQLServer.ReservedWord.isReservedWord(name)) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.reservedWord");
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,MySQLDatabaseName> interned = new ConcurrentHashMap<String,MySQLDatabaseName>();
@@ -83,7 +84,8 @@ final public class MySQLDatabaseName implements Comparable<MySQLDatabaseName>, S
     }
 
     private void validate() throws ValidationException {
-        validate(name);
+        ValidationResult result = validate(name);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

@@ -5,9 +5,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.util.AoArrays;
-import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
-import java.io.Serializable;
+import com.aoindustries.lang.LocalizedIllegalArgumentException;
 
 /**
  * Thrown when internal object validation fails.
@@ -16,47 +14,24 @@ import java.io.Serializable;
  */
 public class ValidationException extends Exception {
 
-    private static final long serialVersionUID = 9113659436631669565L;
+    private static final long serialVersionUID = -1153407618428602416L;
 
-    private final ApplicationResourcesAccessor accessor;
-    private final String key;
-    private final Serializable[] args;
+    final ValidationResult result;
 
-    public ValidationException(ApplicationResourcesAccessor accessor, String key) {
-        super(key);
-        this.accessor = accessor;
-        this.key = key;
-        this.args = AoArrays.EMPTY_SERIALIZABLE_ARRAY;
+    public ValidationException(ValidationResult result) {
+        super(result.toString()); // Conversion done in server
+        if(result.isValid()) throw new LocalizedIllegalArgumentException(ApplicationResources.accessor, "ValidationException.init.validResult");
+        this.result = result;
     }
 
-    public ValidationException(ApplicationResourcesAccessor accessor, String key, Serializable... args) {
-        super(key);
-        this.accessor = accessor;
-        this.key = key;
-        this.args = args;
-    }
-
-    public ValidationException(Throwable cause, ApplicationResourcesAccessor accessor, String key) {
-        super(key, cause);
-        this.accessor = accessor;
-        this.key = key;
-        this.args = AoArrays.EMPTY_SERIALIZABLE_ARRAY;
-    }
-
-    public ValidationException(Throwable cause, ApplicationResourcesAccessor accessor, String key, Serializable... args) {
-        super(key, cause);
-        this.accessor = accessor;
-        this.key = key;
-        this.args = args;
-    }
-
-    @Override
-    public String getMessage() {
-        return getLocalizedMessage();
+    public ValidationException(Throwable cause, ValidationResult result) {
+        super(result.toString(), cause); // Conversion done in server
+        if(result.isValid()) throw new LocalizedIllegalArgumentException(ApplicationResources.accessor, "ValidationException.init.validResult");
+        this.result = result;
     }
 
     @Override
     public String getLocalizedMessage() {
-        return accessor.getMessage(key, (Object[])args);
+        return result.toString(); // Conversion done in client
     }
 }

@@ -43,31 +43,32 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
     /**
      * Validates an accounting code.
      */
-    public static void validate(String accounting) throws ValidationException {
-        if(accounting==null) throw new ValidationException(ApplicationResources.accessor, "AccountingCode.validate.isNull");
+    public static ValidationResult validate(String accounting) {
+        if(accounting==null) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.isNull");
         int len=accounting.length();
 
-        if(len<MIN_LENGTH) throw new ValidationException(ApplicationResources.accessor, "AccountingCode.validate.tooShort", MIN_LENGTH, len);
-        if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "AccountingCode.validate.tooLong", MAX_LENGTH, len);
+        if(len<MIN_LENGTH) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.tooShort", MIN_LENGTH, len);
+        if(len>MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.tooLong", MAX_LENGTH, len);
 
         char ch=accounting.charAt(0);
-        if(ch<'A' || ch>'Z') throw new ValidationException(ApplicationResources.accessor, "AccountingCode.validate.mustStartAlpha");
+        if(ch<'A' || ch>'Z') return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.mustStartAlpha");
 
         ch=accounting.charAt(len-1);
         if(
             (ch<'A' || ch>'Z')
             && (ch<'0' || ch>'9')
-    	) throw new ValidationException(ApplicationResources.accessor, "AccountingCode.validate.mustEndAlphanumeric");
+    	) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.mustEndAlphanumeric");
 
         for(int pos=1;pos<(len-1);pos++) {
             ch=accounting.charAt(pos);
             if(ch=='_') {
-                if(accounting.charAt(pos-1)=='_') throw new ValidationException(ApplicationResources.accessor, "AccountingCode.validate.consecutiveUnderscores", pos-1);
+                if(accounting.charAt(pos-1)=='_') return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.consecutiveUnderscores", pos-1);
             } else if(
                 (ch<'A' || ch>'Z')
                 && (ch<'0' || ch>'9')
-            ) throw new ValidationException(ApplicationResources.accessor, "AccountingCode.validate.invalidCharacter", ch, pos);
+            ) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.invalidCharacter", ch, pos);
         }
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,AccountingCode> interned = new ConcurrentHashMap<String,AccountingCode>();
@@ -96,7 +97,8 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
     }
 
     private void validate() throws ValidationException {
-        validate(accounting);
+        ValidationResult result = validate(accounting);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     @Override

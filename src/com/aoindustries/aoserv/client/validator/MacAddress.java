@@ -26,43 +26,54 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
 
     private static final long serialVersionUID = 893218935616001329L;
 
-    private static void checkHexValue(char ch) throws ValidationException {
+    private static ValidationResult checkHexValue(char ch) {
         if(
             (ch<'0' || ch>'9')
             && (ch<'A' || ch>'F')
             && (ch<'a' || ch>'f')
-        ) throw new ValidationException(ApplicationResources.accessor, "MacAddress.checkHexValue.badCharacter", ch);
+        ) return new InvalidResult(ApplicationResources.accessor, "MacAddress.checkHexValue.badCharacter", ch);
+        return ValidResult.getInstance();
     }
 
     /**
      * Checks if the address is valid.
      */
-    public static void validate(String address) throws ValidationException {
+    public static ValidationResult validate(String address) {
         // Be non-null
-        if(address==null) throw new ValidationException(ApplicationResources.accessor, "MacAddress.validate.isNull");
-        // If found in interned, it is valid
-        //if(!interned.containsKey(address)) {
-            // Be non-empty
-            int len = address.length();
-            if(len!=17) throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.incorrectLength", len);
-            checkHexValue(address.charAt(0));
-            checkHexValue(address.charAt(1));
-            if(address.charAt(2)!=':') throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.notColon", 2);
-            checkHexValue(address.charAt(3));
-            checkHexValue(address.charAt(4));
-            if(address.charAt(5)!=':') throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.notColon", 5);
-            checkHexValue(address.charAt(6));
-            checkHexValue(address.charAt(7));
-            if(address.charAt(8)!=':') throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.notColon", 8);
-            checkHexValue(address.charAt(9));
-            checkHexValue(address.charAt(10));
-            if(address.charAt(11)!=':') throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.notColon", 11);
-            checkHexValue(address.charAt(12));
-            checkHexValue(address.charAt(13));
-            if(address.charAt(14)!=':') throw new ValidationException(ApplicationResources.accessor, "MacAddress.parse.notColon", 14);
-            checkHexValue(address.charAt(15));
-            checkHexValue(address.charAt(16));
-        //}
+        if(address==null) return new InvalidResult(ApplicationResources.accessor, "MacAddress.validate.isNull");
+        // Be non-empty
+        int len = address.length();
+        if(len!=17) return new InvalidResult(ApplicationResources.accessor, "MacAddress.parse.incorrectLength", len);
+        ValidationResult result = checkHexValue(address.charAt(0));
+        if(!result.isValid()) return result;
+        result = checkHexValue(address.charAt(1));
+        if(!result.isValid()) return result;
+        if(address.charAt(2)!=':') return new InvalidResult(ApplicationResources.accessor, "MacAddress.parse.notColon", 2);
+        result = checkHexValue(address.charAt(3));
+        if(!result.isValid()) return result;
+        result = checkHexValue(address.charAt(4));
+        if(!result.isValid()) return result;
+        if(address.charAt(5)!=':') return new InvalidResult(ApplicationResources.accessor, "MacAddress.parse.notColon", 5);
+        result = checkHexValue(address.charAt(6));
+        if(!result.isValid()) return result;
+        result = checkHexValue(address.charAt(7));
+        if(!result.isValid()) return result;
+        if(address.charAt(8)!=':') return new InvalidResult(ApplicationResources.accessor, "MacAddress.parse.notColon", 8);
+        result = checkHexValue(address.charAt(9));
+        if(!result.isValid()) return result;
+        result = checkHexValue(address.charAt(10));
+        if(!result.isValid()) return result;
+        if(address.charAt(11)!=':') return new InvalidResult(ApplicationResources.accessor, "MacAddress.parse.notColon", 11);
+        result = checkHexValue(address.charAt(12));
+        if(!result.isValid()) return result;
+        result = checkHexValue(address.charAt(13));
+        if(!result.isValid()) return result;
+        if(address.charAt(14)!=':') return new InvalidResult(ApplicationResources.accessor, "MacAddress.parse.notColon", 14);
+        result = checkHexValue(address.charAt(15));
+        if(!result.isValid()) return result;
+        result = checkHexValue(address.charAt(16));
+        if(!result.isValid()) return result;
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,MacAddress> interned = new ConcurrentHashMap<String,MacAddress>();
@@ -81,7 +92,8 @@ final public class MacAddress implements Comparable<MacAddress>, Serializable, O
     }
 
     private void validate() throws ValidationException {
-        validate(address);
+        ValidationResult result = validate(address);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

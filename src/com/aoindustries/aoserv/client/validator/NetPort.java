@@ -24,15 +24,17 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
 
     private static final long serialVersionUID = -29372775620060200L;
 
-    public static void validate(int port) throws ValidationException {
-        if(port<1) throw new ValidationException(ApplicationResources.accessor, "NetPort.validate.lessThanOne", port);
-        if(port>65535) throw new ValidationException(ApplicationResources.accessor, "NetPort.validate.greaterThan64k", port);
+    public static ValidationResult validate(int port) {
+        if(port<1) return new InvalidResult(ApplicationResources.accessor, "NetPort.validate.lessThanOne", port);
+        if(port>65535) return new InvalidResult(ApplicationResources.accessor, "NetPort.validate.greaterThan64k", port);
+        return ValidResult.getInstance();
     }
 
     private static final AtomicReferenceArray<NetPort> cache = new AtomicReferenceArray<NetPort>(65536);
 
     public static NetPort valueOf(int port) throws ValidationException {
-        validate(port);
+        ValidationResult result = validate(port);
+        if(!result.isValid()) throw new ValidationException(result);
         NetPort np = cache.get(port);
         if(np==null) {
             np = new NetPort(port);
@@ -49,7 +51,8 @@ final public class NetPort implements Comparable<NetPort>, Serializable, ObjectI
     }
 
     private void validate() throws ValidationException {
-        validate(port);
+        ValidationResult result = validate(port);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

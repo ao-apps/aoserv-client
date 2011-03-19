@@ -41,18 +41,18 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
     /**
      * Validates a user id.
      */
-    public static void validate(String id) throws ValidationException {
-        if(id==null) throw new ValidationException(ApplicationResources.accessor, "MySQLUserId.validate.isNull");
+    public static ValidationResult validate(String id) {
+        if(id==null) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.isNull");
     	int len = id.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "MySQLUserId.validate.isEmpty");
-        if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "MySQLUserId.validate.tooLong", MAX_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.isEmpty");
+        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.tooLong", MAX_LENGTH, len);
 
         // The first character must be [a-z] or [0-9]
         char ch = id.charAt(0);
         if(
             (ch < 'a' || ch > 'z')
             && (ch<'0' || ch>'9')
-        ) throw new ValidationException(ApplicationResources.accessor, "MySQLUserId.validate.startAtoZor0to9");
+        ) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.startAtoZor0to9");
 
         // The rest may have additional characters
         for (int c = 1; c < len; c++) {
@@ -61,9 +61,10 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
                 (ch<'a' || ch>'z')
                 && (ch<'0' || ch>'9')
                 && ch!='_'
-            ) throw new ValidationException(ApplicationResources.accessor, "MySQLUserId.validate.illegalCharacter");
+            ) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.illegalCharacter");
     	}
-        if(MySQLServer.ReservedWord.isReservedWord(id)) throw new ValidationException(ApplicationResources.accessor, "MySQLUserId.validate.reservedWord");
+        if(MySQLServer.ReservedWord.isReservedWord(id)) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.reservedWord");
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,MySQLUserId> interned = new ConcurrentHashMap<String,MySQLUserId>();
@@ -82,7 +83,8 @@ final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable,
     }
 
     private void validate() throws ValidationException {
-        validate(id);
+        ValidationResult result = validate(id);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

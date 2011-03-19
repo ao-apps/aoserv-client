@@ -37,48 +37,27 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
     /**
      * Validates a domain name label.
      */
-    public static void validate(String label) throws ValidationException {
-        if(label==null) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.isNull");
-        validate(label, 0, label.length());
+    public static ValidationResult validate(String label) {
+        if(label==null) return new InvalidResult(ApplicationResources.accessor, "DomainLabel.validate.isNull");
+        return validate(label, 0, label.length());
     }
-    public static void validate(String label, int beginIndex, int endIndex) throws ValidationException {
-        if(label==null) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.isNull");
+    public static ValidationResult validate(String label, int beginIndex, int endIndex) {
+        if(label==null) return new InvalidResult(ApplicationResources.accessor, "DomainLabel.validate.isNull");
         int len = endIndex-beginIndex;
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.empty");
-        if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.tooLong", MAX_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "DomainLabel.validate.empty");
+        if(len>MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "DomainLabel.validate.tooLong", MAX_LENGTH, len);
         for(int pos=beginIndex; pos<endIndex; pos++) {
             char ch = label.charAt(pos);
             if(ch=='-') {
-                if(pos==beginIndex) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.startsDash");
-                if(pos==(endIndex-1)) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.endsDash");
+                if(pos==beginIndex) return new InvalidResult(ApplicationResources.accessor, "DomainLabel.validate.startsDash");
+                if(pos==(endIndex-1)) return new InvalidResult(ApplicationResources.accessor, "DomainLabel.validate.endsDash");
             } else if(
                 (ch<'a' || ch>'z')
                 && (ch<'A' || ch>'Z')
                 && (ch<'0' || ch>'9')
-            ) throw new ValidationException(ApplicationResources.accessor, "DomainLabel.validate.invalidCharacter", ch, pos-beginIndex);
+            ) return new InvalidResult(ApplicationResources.accessor, "DomainLabel.validate.invalidCharacter", ch, pos-beginIndex);
         }
-    }
-    public static boolean isValid(String label) {
-        if(label==null) return false;
-        return isValid(label, 0, label.length());
-    }
-    public static boolean isValid(String label, int beginIndex, int endIndex) {
-        if(label==null) return false;
-        int len = endIndex-beginIndex;
-        if(len==0) return false;
-        if(len>MAX_LENGTH) return false;
-        for(int pos=beginIndex; pos<endIndex; pos++) {
-            char ch = label.charAt(pos);
-            if(ch=='-') {
-                if(pos==beginIndex) return false;
-                if(pos==(endIndex-1)) return false;
-            } else if(
-                (ch<'a' || ch>'z')
-                && (ch<'A' || ch>'Z')
-                && (ch<'0' || ch>'9')
-            ) return false;
-        }
-        return true;
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,DomainLabel> interned = new ConcurrentHashMap<String,DomainLabel>();
@@ -97,7 +76,8 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
     }
 
     private void validate() throws ValidationException {
-        validate(label);
+        ValidationResult result = validate(label);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

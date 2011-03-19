@@ -36,41 +36,40 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
      * <br>
      * Refer to <code>man 5 passwd</code>
      */
-    public static void validate(String value) throws ValidationException {
+    public static ValidationResult validate(String value) {
         // Be non-null
-        if(value==null) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isNull");
-        //if(!interned.containsKey(value)) { // Is valid if already interned
-            int len = value.length();
-            if(len==0) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.isEmpty");
-            if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.tooLong", MAX_LENGTH, len);
+        if(value==null) return new InvalidResult(ApplicationResources.accessor, "Gecos.validate.isNull");
+        int len = value.length();
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "Gecos.validate.isEmpty");
+        if(len>MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "Gecos.validate.tooLong", MAX_LENGTH, len);
 
-            for (int c = 0; c < len; c++) {
-                char ch = value.charAt(c);
-                if (
-                    (ch < 'a' || ch > 'z')
-                    && (ch<'A' || ch>'Z')
-                    && (ch < '0' || ch > '9')
-                    && ch != '-'
-                    && ch != '_'
-                    && ch != '@'
-                    && ch != ' '
-                    && ch != '.'
-                    && ch != '#'
-                    && ch != '='
-                    && ch != '/'
-                    && ch != '$'
-                    && ch != '%'
-                    && ch != '^'
-                    && ch != '&'
-                    && ch != '*'
-                    && ch != '('
-                    && ch != ')'
-                    && ch != '?'
-                    && ch != '\''
-                    && ch != '+'
-                ) throw new ValidationException(ApplicationResources.accessor, "Gecos.validate.invalidCharacter", ch);
-            }
-        //}
+        for (int c = 0; c < len; c++) {
+            char ch = value.charAt(c);
+            if (
+                (ch < 'a' || ch > 'z')
+                && (ch<'A' || ch>'Z')
+                && (ch < '0' || ch > '9')
+                && ch != '-'
+                && ch != '_'
+                && ch != '@'
+                && ch != ' '
+                && ch != '.'
+                && ch != '#'
+                && ch != '='
+                && ch != '/'
+                && ch != '$'
+                && ch != '%'
+                && ch != '^'
+                && ch != '&'
+                && ch != '*'
+                && ch != '('
+                && ch != ')'
+                && ch != '?'
+                && ch != '\''
+                && ch != '+'
+            ) return new InvalidResult(ApplicationResources.accessor, "Gecos.validate.invalidCharacter", ch);
+        }
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,Gecos> interned = new ConcurrentHashMap<String,Gecos>();
@@ -89,7 +88,8 @@ final public class Gecos implements Comparable<Gecos>, Serializable, ObjectInput
     }
 
     private void validate() throws ValidationException {
-        validate(value);
+        ValidationResult result = validate(value);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

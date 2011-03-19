@@ -36,41 +36,40 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
     /**
      * Validates a group id.
      */
-    public static void validate(String id) throws ValidationException {
-        if(id==null) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.isNull");
-        //if(!interned.containsKey(id)) { // Is valid if already interned
-            int len = id.length();
-            if(len==0) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.isEmpty");
-            if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.tooLong", MAX_LENGTH, len);
+    public static ValidationResult validate(String id) {
+        if(id==null) return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.isNull");
+        int len = id.length();
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.isEmpty");
+        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.tooLong", MAX_LENGTH, len);
 
-            // The first character must be [a-z]
-            char ch = id.charAt(0);
-            if(ch < 'a' || ch > 'z') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.startAToZ");
+        // The first character must be [a-z]
+        char ch = id.charAt(0);
+        if(ch < 'a' || ch > 'z') return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.startAToZ");
 
-            // The rest may have additional characters
-            for (int c = 1; c < len; c++) {
-                ch = id.charAt(c);
-                if(ch==' ') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.noSpace");
-                if(ch<=0x21 || ch>0x7f) throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.specialCharacter");
-                if(ch>='A' && ch<='Z') throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.noCapital");
-                switch(ch) {
-                    case ',' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.comma");
-                    case ':' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.colon");
-                    case '(' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.leftParen");
-                    case ')' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.rightParen");
-                    case '[' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.leftSquare");
-                    case ']' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.rightSquare");
-                    case '\'' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.apostrophe");
-                    case '"' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.quote");
-                    case '|' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.verticalBar");
-                    case '&' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.ampersand");
-                    case ';' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.semicolon");
-                    case '\\' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.backslash");
-                    case '/' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.slash");
-                    case '@' : throw new ValidationException(ApplicationResources.accessor, "GroupId.validate.at");
-                }
+        // The rest may have additional characters
+        for (int c = 1; c < len; c++) {
+            ch = id.charAt(c);
+            if(ch==' ') return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.noSpace");
+            if(ch<=0x21 || ch>0x7f) return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.specialCharacter");
+            if(ch>='A' && ch<='Z') return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.noCapital");
+            switch(ch) {
+                case ',' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.comma");
+                case ':' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.colon");
+                case '(' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.leftParen");
+                case ')' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.rightParen");
+                case '[' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.leftSquare");
+                case ']' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.rightSquare");
+                case '\'' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.apostrophe");
+                case '"' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.quote");
+                case '|' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.verticalBar");
+                case '&' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.ampersand");
+                case ';' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.semicolon");
+                case '\\' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.backslash");
+                case '/' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.slash");
+                case '@' : return new InvalidResult(ApplicationResources.accessor, "GroupId.validate.at");
             }
-        //}
+        }
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,GroupId> interned = new ConcurrentHashMap<String,GroupId>();
@@ -89,7 +88,8 @@ final public class GroupId implements Comparable<GroupId>, Serializable, ObjectI
     }
 
     private void validate() throws ValidationException {
-        validate(id);
+        ValidationResult result = validate(id);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

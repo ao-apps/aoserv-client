@@ -44,37 +44,37 @@ final public class UserId implements Comparable<UserId>, FastExternalizable, Obj
     /**
      * Validates a user id.
      */
-    public static void validate(String id) throws ValidationException {
-        if(id==null) throw new ValidationException(ApplicationResources.accessor, "UserId.validate.isNull");
+    public static ValidationResult validate(String id) {
+        if(id==null) return new InvalidResult(ApplicationResources.accessor, "UserId.validate.isNull");
     	int len = id.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "UserId.validate.isEmpty");
-        if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "UserId.validate.tooLong", MAX_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "UserId.validate.isEmpty");
+        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "UserId.validate.tooLong", MAX_LENGTH, len);
 
         // The first character must be [a-z]
         char ch = id.charAt(0);
-        if(ch < 'a' || ch > 'z') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.startAToZ");
+        if(ch < 'a' || ch > 'z') return new InvalidResult(ApplicationResources.accessor, "UserId.validate.startAToZ");
 
         // The rest may have additional characters
         boolean hasAt = false;
         for (int c = 1; c < len; c++) {
             ch = id.charAt(c);
-            if(ch==' ') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.noSpace");
-            if(ch<=0x21 || ch>0x7f) throw new ValidationException(ApplicationResources.accessor, "UserId.validate.specialCharacter");
-            if(ch>='A' && ch<='Z') throw new ValidationException(ApplicationResources.accessor, "UserId.validate.noCapital");
+            if(ch==' ') return new InvalidResult(ApplicationResources.accessor, "UserId.validate.noSpace");
+            if(ch<=0x21 || ch>0x7f) return new InvalidResult(ApplicationResources.accessor, "UserId.validate.specialCharacter");
+            if(ch>='A' && ch<='Z') return new InvalidResult(ApplicationResources.accessor, "UserId.validate.noCapital");
             switch(ch) {
-                case ',' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.comma");
-                case ':' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.colon");
-                case '(' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.leftParen");
-                case ')' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.rightParen");
-                case '[' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.leftSquare");
-                case ']' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.rightSquare");
-                case '\'' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.apostrophe");
-                case '"' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.quote");
-                case '|' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.verticalBar");
-                case '&' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.ampersand");
-                case ';' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.semicolon");
-                case '\\' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.backslash");
-                case '/' : throw new ValidationException(ApplicationResources.accessor, "UserId.validate.slash");
+                case ',' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.comma");
+                case ':' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.colon");
+                case '(' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.leftParen");
+                case ')' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.rightParen");
+                case '[' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.leftSquare");
+                case ']' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.rightSquare");
+                case '\'' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.apostrophe");
+                case '"' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.quote");
+                case '|' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.verticalBar");
+                case '&' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.ampersand");
+                case ';' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.semicolon");
+                case '\\' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.backslash");
+                case '/' : return new InvalidResult(ApplicationResources.accessor, "UserId.validate.slash");
                 case '@' : hasAt = true; break;
             }
     	}
@@ -82,9 +82,11 @@ final public class UserId implements Comparable<UserId>, FastExternalizable, Obj
         // More strict at sign control is required for user@domain structure in Cyrus virtdomains.
         if(hasAt) {
             // Must also be a valid email address
-            Email.validate(id);
-            if(id.startsWith("cyrus@")) throw new ValidationException(ApplicationResources.accessor, "UserId.validate.startWithCyrusAt");
+            ValidationResult result = Email.validate(id);
+            if(!result.isValid()) return result;
+            if(id.startsWith("cyrus@")) return new InvalidResult(ApplicationResources.accessor, "UserId.validate.startWithCyrusAt");
         }
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,UserId> interned = new ConcurrentHashMap<String,UserId>();
@@ -113,7 +115,8 @@ final public class UserId implements Comparable<UserId>, FastExternalizable, Obj
     }
 
     private void validate() throws ValidationException {
-        validate(id);
+        ValidationResult result = validate(id);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     @Override

@@ -467,10 +467,10 @@ implements
      *
      * @see DomainLabel#validate(java.lang.String)
      */
-    public static void validate(String domain) throws ValidationException {
-        if(domain==null) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.isNull");
+    public static ValidationResult validate(String domain) {
+        if(domain==null) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.isNull");
         int len = domain.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.empty");
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.empty");
         char ch;
         if(
             // "default".equalsIgnoreCase(domain)
@@ -482,59 +482,28 @@ implements
             && ((ch=domain.charAt(4))=='u' || ch=='U')
             && ((ch=domain.charAt(5))=='l' || ch=='L')
             && ((ch=domain.charAt(6))=='t' || ch=='T')
-        ) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.isDefault");
-        if(len>MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.tooLong", MAX_LENGTH, len);
-        boolean isArpa = isArpa(domain);
-        int labelStart = 0;
-        for(int pos=0; pos<len; pos++) {
-            if(domain.charAt(pos)=='.') {
-                // For reverse IP address delegation, if the domain ends with ".in-addr.arpa", the first label may also be in the format "##/##".
-                if(!isArpa || labelStart!=0 || !isArpaDelegationFirstLabel(domain, labelStart, pos)) DomainLabel.validate(domain, labelStart, pos);
-                labelStart = pos+1;
-            }
-        }
-        DomainLabel.validate(domain, labelStart, len);
-        // Last domain label must be alphabetic (not be all numeric)
-        if(isNumeric(domain, labelStart, len)) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.lastLabelAllDigits");
-        // Last label must be a valid top level domain
-        String lastLabel = domain.substring(labelStart, len);
-        if(TopLevelDomain.getByLabel(lastLabel)==null) throw new ValidationException(ApplicationResources.accessor, "DomainName.validate.notEndTopLevelDomain");
-    }
-    public static boolean isValid(String domain) {
-        if(domain==null) return false;
-        int len = domain.length();
-        if(len==0) return false;
-        char ch;
-        if(
-            // "default".equalsIgnoreCase(domain)
-            domain.length()==7
-            && ((ch=domain.charAt(0))=='d' || ch=='D')
-            && ((ch=domain.charAt(1))=='e' || ch=='E')
-            && ((ch=domain.charAt(2))=='f' || ch=='F')
-            && ((ch=domain.charAt(3))=='a' || ch=='A')
-            && ((ch=domain.charAt(4))=='u' || ch=='U')
-            && ((ch=domain.charAt(5))=='l' || ch=='L')
-            && ((ch=domain.charAt(6))=='t' || ch=='T')
-        ) return false;
-        if(len>MAX_LENGTH) return false;
+        ) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.isDefault");
+        if(len>MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.tooLong", MAX_LENGTH, len);
         boolean isArpa = isArpa(domain);
         int labelStart = 0;
         for(int pos=0; pos<len; pos++) {
             if(domain.charAt(pos)=='.') {
                 // For reverse IP address delegation, if the domain ends with ".in-addr.arpa", the first label may also be in the format "##/##".
                 if(!isArpa || labelStart!=0 || !isArpaDelegationFirstLabel(domain, labelStart, pos)) {
-                    if(!DomainLabel.isValid(domain, labelStart, pos)) return false;
+                    ValidationResult result = DomainLabel.validate(domain, labelStart, pos);
+                    if(!result.isValid()) return result;
                 }
                 labelStart = pos+1;
             }
         }
-        if(!DomainLabel.isValid(domain, labelStart, len)) return false;
+        ValidationResult result = DomainLabel.validate(domain, labelStart, len);
+        if(!result.isValid()) return result;
         // Last domain label must be alphabetic (not be all numeric)
-        if(isNumeric(domain, labelStart, len)) return false;
+        if(isNumeric(domain, labelStart, len)) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.lastLabelAllDigits");
         // Last label must be a valid top level domain
         String lastLabel = domain.substring(labelStart, len);
-        if(TopLevelDomain.getByLabel(lastLabel)==null) return false;
-        return true;
+        if(TopLevelDomain.getByLabel(lastLabel)==null) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.notEndTopLevelDomain");
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,DomainName> interned = new ConcurrentHashMap<String,DomainName>();
@@ -557,7 +526,8 @@ implements
     }
 
     private void validate() throws ValidationException {
-        validate(domain);
+        ValidationResult result = validate(domain);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     @Override

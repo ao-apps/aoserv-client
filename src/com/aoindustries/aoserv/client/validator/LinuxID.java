@@ -24,15 +24,17 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
 
     private static final long serialVersionUID = -6222776271442175855L;
 
-    public static void validate(int id) throws ValidationException {
-        if(id<0) throw new ValidationException(ApplicationResources.accessor, "LinuxID.validate.lessThanZero", id);
-        if(id>65535) throw new ValidationException(ApplicationResources.accessor, "LinuxID.validate.greaterThan64k", id);
+    public static ValidationResult validate(int id) {
+        if(id<0) return new InvalidResult(ApplicationResources.accessor, "LinuxID.validate.lessThanZero", id);
+        if(id>65535) return new InvalidResult(ApplicationResources.accessor, "LinuxID.validate.greaterThan64k", id);
+        return ValidResult.getInstance();
     }
 
     private static final AtomicReferenceArray<LinuxID> cache = new AtomicReferenceArray<LinuxID>(65536);
 
     public static LinuxID valueOf(int id) throws ValidationException {
-        validate(id);
+        ValidationResult result = validate(id);
+        if(!result.isValid()) throw new ValidationException(result);
         LinuxID linuxId = cache.get(id);
         if(linuxId==null) {
             linuxId = new LinuxID(id);
@@ -49,7 +51,8 @@ final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectI
     }
 
     private void validate() throws ValidationException {
-        validate(id);
+        ValidationResult result = validate(id);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

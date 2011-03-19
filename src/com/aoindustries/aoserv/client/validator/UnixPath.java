@@ -32,28 +32,26 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
 
     private static final long serialVersionUID = -4832121065303689152L;
 
-    public static void validate(String path) throws ValidationException {
+    public static ValidationResult validate(String path) {
         // Be non-null
-        if(path==null) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.isNull");
-        // If found in interned, it is valid
-        //if(!interned.containsKey(path)) {
-            // Be non-empty
-            if(path.length()==0) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.empty");
-            // Start with a /
-            if(path.charAt(0)!='/') throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.startWithNonSlash", path.charAt(0));
-            // Not contain any null characters
-            if(path.indexOf('\0')!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsNullCharacter", path.indexOf('\0'));
-            // Not contain any /../ or /./ path elements
-            if(path.indexOf("/../")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDotDot", path.indexOf("/../"));
-            if(path.indexOf("/./")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDot", path.indexOf("/./"));
-            // Not end with / unless "/"
-            if(path.length()>1 && path.endsWith("/")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlash");
-            // Not end with /.. or /.
-            if(path.endsWith("/.")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDot");
-            if(path.endsWith("/..")) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.endsSlashDotDot");
-            // Not contain any // in the path
-            if(path.indexOf("//")!=-1) throw new ValidationException(ApplicationResources.accessor, "UnixPath.validate.containsDoubleSlash", path.indexOf("//"));
-        //}
+        if(path==null) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.isNull");
+        // Be non-empty
+        if(path.length()==0) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.empty");
+        // Start with a /
+        if(path.charAt(0)!='/') return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.startWithNonSlash", path.charAt(0));
+        // Not contain any null characters
+        if(path.indexOf('\0')!=-1) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.containsNullCharacter", path.indexOf('\0'));
+        // Not contain any /../ or /./ path elements
+        if(path.indexOf("/../")!=-1) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.containsDotDot", path.indexOf("/../"));
+        if(path.indexOf("/./")!=-1) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.containsDot", path.indexOf("/./"));
+        // Not end with / unless "/"
+        if(path.length()>1 && path.endsWith("/")) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.endsSlash");
+        // Not end with /.. or /.
+        if(path.endsWith("/.")) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.endsSlashDot");
+        if(path.endsWith("/..")) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.endsSlashDotDot");
+        // Not contain any // in the path
+        if(path.indexOf("//")!=-1) return new InvalidResult(ApplicationResources.accessor, "UnixPath.validate.containsDoubleSlash", path.indexOf("//"));
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<String, UnixPath>();
@@ -72,7 +70,8 @@ final public class UnixPath implements Comparable<UnixPath>, Serializable, Objec
     }
 
     private void validate() throws ValidationException {
-        validate(path);
+        ValidationResult result = validate(path);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

@@ -27,10 +27,10 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
 
     private static final long serialVersionUID = -6323326583709666966L;
 
-    private static boolean isIp(String hostname) throws ValidationException {
-        if(hostname==null) throw new ValidationException(ApplicationResources.accessor, "Hostname.isIp.isNull");
+    private static boolean isIp(String hostname) {
+        if(hostname==null) return false;
         int len = hostname.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "Hostname.isIp.empty");
+        if(len==0) return false;
         // If contains all digits and periods, or contains any colon, then is an IP
         boolean allDigitsAndPeriods = true;
         for(int c=0;c<len;c++) {
@@ -50,9 +50,9 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
     /**
      * Validates a hostname, must be either a valid domain name or a valid IP address.
      */
-    public static void validate(String hostname) throws ValidationException {
-        if(isIp(hostname)) InetAddress.validate(hostname);
-        else DomainName.validate(hostname);
+    public static ValidationResult validate(String hostname) {
+        if(isIp(hostname)) return InetAddress.validate(hostname);
+        else return DomainName.validate(hostname);
     }
 
     private static final ConcurrentMap<DomainName,Hostname> internedByDomainName = new ConcurrentHashMap<DomainName,Hostname>();
@@ -105,8 +105,8 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
     }
 
     private void validate() throws ValidationException {
-        if(domainName==null && inetAddress==null) throw new ValidationException(ApplicationResources.accessor, "Hostname.validate.bothNull");
-        if(domainName!=null && inetAddress!=null) throw new ValidationException(ApplicationResources.accessor, "Hostname.validate.bothNonNull");
+        if(domainName==null && inetAddress==null) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "Hostname.validate.bothNull"));
+        if(domainName!=null && inetAddress!=null) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "Hostname.validate.bothNonNull"));
     }
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {

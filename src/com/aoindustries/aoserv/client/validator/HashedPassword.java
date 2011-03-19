@@ -37,22 +37,23 @@ final public class HashedPassword implements Serializable, ObjectInputValidation
      */
     public static final String NO_PASSWORD = "*";
 
-    public static void validate(String hashedPassword) throws ValidationException {
+    public static ValidationResult validate(String hashedPassword) {
         // May be null
-        if(hashedPassword==null) throw new ValidationException(ApplicationResources.accessor, "HashedPassword.validate.isNull");
+        if(hashedPassword==null) return new InvalidResult(ApplicationResources.accessor, "HashedPassword.validate.isNull");
         // Be non-empty
         int len = hashedPassword.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "HashedPassword.validate.empty");
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "HashedPassword.validate.empty");
         // May be *
         if(!NO_PASSWORD.equals(hashedPassword)) {
             // SHA1
             if(len!=28) {
                 // Crypt
                 if(len!=13) {
-                    throw new ValidationException(ApplicationResources.accessor, "HashedPassword.validate.wrongLength");
+                    return new InvalidResult(ApplicationResources.accessor, "HashedPassword.validate.wrongLength");
                 }
             }
         }
+        return ValidResult.getInstance();
     }
 
     /**
@@ -84,7 +85,8 @@ final public class HashedPassword implements Serializable, ObjectInputValidation
     }
 
     private void validate() throws ValidationException {
-        validate(hashedPassword);
+        ValidationResult result = validate(hashedPassword);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

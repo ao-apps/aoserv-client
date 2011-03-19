@@ -41,18 +41,18 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
     /**
      * Validates a user id.
      */
-    public static void validate(String id) throws ValidationException {
-        if(id==null) throw new ValidationException(ApplicationResources.accessor, "PostgresUserId.validate.isNull");
+    public static ValidationResult validate(String id) {
+        if(id==null) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.isNull");
     	int len = id.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "PostgresUserId.validate.isEmpty");
-        if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "PostgresUserId.validate.tooLong", MAX_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.isEmpty");
+        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.tooLong", MAX_LENGTH, len);
 
         // The first character must be [a-z] or [0-9]
         char ch = id.charAt(0);
         if(
             (ch < 'a' || ch > 'z')
             && (ch<'0' || ch>'9')
-        ) throw new ValidationException(ApplicationResources.accessor, "PostgresUserId.validate.startAtoZor0to9");
+        ) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.startAtoZor0to9");
 
         // The rest may have additional characters
         for (int c = 1; c < len; c++) {
@@ -61,14 +61,15 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
                 (ch<'a' || ch>'z')
                 && (ch<'0' || ch>'9')
                 && ch!='_'
-            ) throw new ValidationException(ApplicationResources.accessor, "PostgresUserId.validate.illegalCharacter");
+            ) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.illegalCharacter");
     	}
         if(
             id.equals("sameuser")
             || id.equals("samegroup")
             || id.equals("all")
             || PostgresServer.ReservedWord.isReservedWord(id)
-        ) throw new ValidationException(ApplicationResources.accessor, "PostgresUserId.validate.reservedWord");
+        ) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.reservedWord");
+        return ValidResult.getInstance();
     }
 
     private static final ConcurrentMap<String,PostgresUserId> interned = new ConcurrentHashMap<String,PostgresUserId>();
@@ -87,7 +88,8 @@ final public class PostgresUserId implements Comparable<PostgresUserId>, Seriali
     }
 
     private void validate() throws ValidationException {
-        validate(id);
+        ValidationResult result = validate(id);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**

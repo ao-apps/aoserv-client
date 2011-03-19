@@ -36,11 +36,11 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
     /**
      * Validates a MySQL table name.
      */
-    public static void validate(String name) throws ValidationException {
-        if(name==null) throw new ValidationException(ApplicationResources.accessor, "MySQLTableName.validate.isNull");
+    public static ValidationResult validate(String name) {
+        if(name==null) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.isNull");
     	int len = name.length();
-        if(len==0) throw new ValidationException(ApplicationResources.accessor, "MySQLTableName.validate.isEmpty");
-        if(len > MAX_LENGTH) throw new ValidationException(ApplicationResources.accessor, "MySQLTableName.validate.tooLong", MAX_LENGTH, len);
+        if(len==0) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.isEmpty");
+        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.tooLong", MAX_LENGTH, len);
 
         // The first character must be [a-z], [A-Z], [0-9], or _
         char ch = name.charAt(0);
@@ -49,7 +49,7 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
             && (ch < 'A' || ch > 'Z')
             && (ch < '0' || ch > '9')
             && ch != '_'
-        ) throw new ValidationException(ApplicationResources.accessor, "MySQLTableName.validate.badFirstCharacter");
+        ) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.badFirstCharacter");
 
         // The rest may have additional characters
         for (int c = 1; c < len; c++) {
@@ -60,8 +60,9 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
                 && (ch<'0' || ch>'9')
                 && ch != '_'
                 && ch != '-'
-            ) throw new ValidationException(ApplicationResources.accessor, "MySQLTableName.validate.illegalCharacter");
+            ) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.illegalCharacter");
     	}
+        return ValidResult.getInstance();
     }
 
     public static MySQLTableName valueOf(String name) throws ValidationException {
@@ -76,7 +77,8 @@ final public class MySQLTableName implements Comparable<MySQLTableName>, Seriali
     }
 
     private void validate() throws ValidationException {
-        validate(name);
+        ValidationResult result = validate(name);
+        if(!result.isValid()) throw new ValidationException(result);
     }
 
     /**
