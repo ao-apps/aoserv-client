@@ -63,7 +63,7 @@ public class GetTableRowsTest extends TestCase {
                         long startTime = System.currentTimeMillis();
                         int size=service.getSet().size();
                         long endTime = System.currentTimeMillis();
-                        if(pass>WARMUP_PASSES) times.add(endTime - startTime);
+                        if(pass>=WARMUP_PASSES) times.add(endTime - startTime);
                         System.out.println(service+": "+size+" in "+BigDecimal.valueOf(endTime - startTime, 3)+" ms");
                     }
                 }
