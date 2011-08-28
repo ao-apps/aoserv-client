@@ -22,8 +22,8 @@ import java.util.concurrent.Callable;
  */
 final public class TraceConnector extends WrappedConnector<TraceConnector,TraceConnectorFactory> {
 
-    TraceConnector(TraceConnectorFactory factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
-        super(factory, locale, connectAs, authenticateAs, password, daemonServer);
+    TraceConnector(TraceConnectorFactory factory, Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException {
+        super(factory, locale, username, password, switchUser, daemonServer, readOnly);
     }
 
     @Override

@@ -31,6 +31,11 @@ final public class CheckMySQLUserPasswordCommand extends AOServCommand<List<Pass
         this.password = password;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public int getMysqlUser() {
         return mysqlUser;
     }
@@ -40,15 +45,15 @@ final public class CheckMySQLUserPasswordCommand extends AOServCommand<List<Pass
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        MySQLUser mu = connectedUser.getConnector().getMysqlUsers().get(mysqlUser);
-        if(!connectedUser.canAccessMySQLUser(mu)) {
+        MySQLUser rootMu = rootConn.getMysqlUsers().get(mysqlUser);
+        if(!rootUser.canAccessMySQLUser(rootMu)) {
             errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // No setting root password
-            MySQLUserId username = mu.getUserId();
+            MySQLUserId username = rootMu.getUserId();
             if(
                 username==MySQLUser.ROOT // OK - interned
             ) errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "SetMySQLUserPasswordCommand.validate.noSetRoot");

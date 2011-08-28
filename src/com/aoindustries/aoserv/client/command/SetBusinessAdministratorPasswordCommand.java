@@ -34,6 +34,11 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
         this.plaintext = plaintext;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public UserId getUsername() {
         return username;
     }
@@ -43,15 +48,15 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        BusinessAdministrator other = connectedUser.getConnector().getBusinessAdministrators().get(username);
-        if(!connectedUser.canAccessBusinessAdministrator(other)) {
+        BusinessAdministrator other = rootConn.getBusinessAdministrators().get(username);
+        if(!rootUser.canAccessBusinessAdministrator(other)) {
             errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // Make sure not disabled
-            if(other.getDisableLog()!=null) errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "SetBusinessAdministratorPasswordCommand.validate.disabled");
+            if(other.isDisabled()) errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "SetBusinessAdministratorPasswordCommand.validate.disabled");
             else {
                 // Check password strength
                 try {

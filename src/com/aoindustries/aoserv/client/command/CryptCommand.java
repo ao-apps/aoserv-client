@@ -27,6 +27,11 @@ final public class CryptCommand extends AOServCommand<String> {
         this.salt = nullIfEmpty(salt);
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -36,9 +41,10 @@ final public class CryptCommand extends AOServCommand<String> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 
     @Override

@@ -26,13 +26,19 @@ final public class RequestReplicationDaemonAccessCommand extends RemoteCommand<A
         this.replication = replication.getPkey();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public int getReplication() {
         return replication;
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

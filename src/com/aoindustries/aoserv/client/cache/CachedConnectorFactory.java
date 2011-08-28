@@ -28,35 +28,21 @@ final public class CachedConnectorFactory implements AOServConnectorFactory {
     private final AOServConnectorFactoryCache<CachedConnector> connectors = new AOServConnectorFactoryCache<CachedConnector>();
 
     @Override
-    public CachedConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    public CachedConnector getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
-            CachedConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
-            if(connector!=null) {
-                connector.setLocale(locale);
-            } else {
-                connector = newConnector(
+            CachedConnector connector = connectors.get(locale, username, password, switchUser, daemonServer, readOnly);
+            if(connector==null) {
+                connector = new CachedConnector(this, wrapped.getConnector(locale, username, password, switchUser, daemonServer, readOnly));
+                connectors.put(
                     locale,
-                    connectAs,
-                    authenticateAs,
+                    username,
                     password,
-                    daemonServer
+                    switchUser,
+                    daemonServer,
+                    readOnly,
+                    connector
                 );
             }
-            return connector;
-        }
-    }
-
-    //@Override
-    private CachedConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-        synchronized(connectors) {
-            CachedConnector connector = new CachedConnector(this, wrapped.getConnector(locale, connectAs, authenticateAs, password, daemonServer));
-            connectors.put(
-                connectAs,
-                authenticateAs,
-                password,
-                daemonServer,
-                connector
-            );
             return connector;
         }
     }

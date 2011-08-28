@@ -26,10 +26,10 @@ final public class TraceConnectorFactory extends WrappedConnectorFactory<TraceCo
     }
 
     @Override
-    protected TraceConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    protected TraceConnector newWrappedConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         long startNanos = System.nanoTime();
         try {
-            return new TraceConnector(this, locale, connectAs, authenticateAs, password, daemonServer);
+            return new TraceConnector(this, locale, username, password, switchUser, daemonServer, readOnly);
         } finally {
             long nanos = System.nanoTime() - startNanos;
             ErrorPrinter.printStackTraces(new Throwable(BigDecimal.valueOf(nanos / 1000, 3)+"ms"), System.err);

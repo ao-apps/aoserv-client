@@ -46,7 +46,7 @@ abstract public class AOServObjectDomainNameKey extends AOServObject<DomainName>
     final public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
         AOServObjectDomainNameKey other = (AOServObjectDomainNameKey)o;
-        return key==other.key; // OK because interned
+        return key.toLowerCase()==other.key.toLowerCase(); // OK because interned
     }
 
     /**

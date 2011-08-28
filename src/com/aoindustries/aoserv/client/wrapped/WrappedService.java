@@ -58,7 +58,7 @@ abstract public class WrappedService<
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServConnectorUtils.setConnector(getWrapped().getSet(), connector);
+                    return AOServConnectorUtils.setConnector(valueClass, getWrapped().getSet(), connector);
                 }
             }
         );
@@ -118,7 +118,7 @@ abstract public class WrappedService<
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServConnectorUtils.setConnector(getWrapped().filterUniqueSet(column, values), connector);
+                    return AOServConnectorUtils.setConnector(valueClass, getWrapped().filterUniqueSet(column, values), connector);
                 }
             }
         );
@@ -130,7 +130,7 @@ abstract public class WrappedService<
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServConnectorUtils.setConnector(getWrapped().filterIndexed(column, value), connector);
+                    return AOServConnectorUtils.setConnector(valueClass, getWrapped().filterIndexed(column, value), connector);
                 }
             }
         );
@@ -142,7 +142,7 @@ abstract public class WrappedService<
             new Callable<IndexedSet<V>>() {
                 @Override
                 public IndexedSet<V> call() throws RemoteException {
-                    return AOServConnectorUtils.setConnector(getWrapped().filterIndexedSet(column, values), connector);
+                    return AOServConnectorUtils.setConnector(valueClass, getWrapped().filterIndexedSet(column, values), connector);
                 }
             }
         );

@@ -174,9 +174,9 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         if(dot3Pos!=-1) {
             // May be either IPv4 or IPv6 with : and . mix
             int dot2Pos = address.lastIndexOf('.', dot3Pos-1);
-            if(dot2Pos==-1) new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.oneDot"));
+            if(dot2Pos==-1) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.oneDot"));
             int dot1Pos = address.lastIndexOf('.', dot2Pos-1);
-            if(dot1Pos==-1) new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.twoDots"));
+            if(dot1Pos==-1) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.twoDots"));
             rightColonPos = address.lastIndexOf(':', dot1Pos-1);
             // Must be all [0-9] between dots and beginning/colon
             ipLow =
@@ -310,7 +310,7 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
         }
         // Find the longest string of zeros
         byte[] bytes = new byte[16];
-        PersistentCollections.longToBuffer(hi, bytes, 0);
+        PersistentCollections.longToBuffer(hi, bytes);
         PersistentCollections.longToBuffer(lo, bytes, 8);
         int longestFirstZero = -1;
         int longestNumZeros = 0;
@@ -435,8 +435,8 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
             (ip.getHigh()&0xf000000000000000L)==0xf000000000000000L
             || (
                 ip.getHigh()==0 && (
-                       (ip.getLow()&0xffffffffc0000000L)==0x00000000e0000000L // 224.0.0.0/4
-                    || (ip.getLow()&0xffffffffc0000000L)==0x0000ffffe0000000L // 224.0.0.0/4
+                       (ip.getLow()&0xffffffffe0000000L)==0x00000000e0000000L // 224.0.0.0/4
+                    || (ip.getLow()&0xffffffffe0000000L)==0x0000ffffe0000000L // 224.0.0.0/4
                 )
             )
         ;

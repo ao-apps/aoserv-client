@@ -60,7 +60,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     @Override
     public int compareTo(BusinessServer other) {
         try {
-            int diff = accounting.compareTo(other.accounting);
+            int diff = accounting.toUpperCase().compareTo(other.accounting.toUpperCase());
             if(diff!=0) return diff;
             return server==other.server ? 0 : getServer().compareTo(other.getServer());
         } catch(RemoteException err) {

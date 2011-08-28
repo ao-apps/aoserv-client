@@ -72,6 +72,9 @@ final public class RmiServerConnectorFactory implements AOServConnectorFactory {
             }
         }
 
+        this.port = port;
+        this.wrapped = wrapped;
+
         Registry registry = RegistryManager.createRegistry(port.getPort(), csf, ssf);
         Remote stub = UnicastRemoteObject.exportObject(this, port.getPort(), csf, ssf);
         //try {
@@ -80,49 +83,33 @@ final public class RmiServerConnectorFactory implements AOServConnectorFactory {
             //throw new RemoteException(err.getMessage(), err);
             registry.rebind(AOServConnectorFactory.class.getName()+"_Stub", stub);
         //}
-        this.port = port;
-        this.wrapped = wrapped;
     }
 
     private final AOServConnectorFactoryCache<AOServConnector> connectors = new AOServConnectorFactoryCache<AOServConnector>();
 
-    @Override
-    public AOServConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-        synchronized(connectors) {
-            AOServConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
-            if(connector!=null) {
-                connector.setLocale(locale);
-            } else {
-                connector = newConnector(
-                    locale,
-                    connectAs,
-                    authenticateAs,
-                    password,
-                    daemonServer
-                );
-            }
-            return connector;
-        }
-    }
-
     /**
      * Connectors are exported as they are created.
      */
-    //@Override
-    private AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    @Override
+    public AOServConnector getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
-            AOServConnector connector = wrapped.getConnector(locale, connectAs, authenticateAs, password, daemonServer);
-            UnicastRemoteObject.exportObject(connector, port.getPort(), csf, ssf);
-            for(AOServService<?,?> service : connector.getServices().values()) {
-                UnicastRemoteObject.exportObject(service, port.getPort(), csf, ssf);
+            AOServConnector connector = connectors.get(locale, username, password, switchUser, daemonServer, readOnly);
+            if(connector==null) {
+                connector = wrapped.getConnector(locale, username, password, switchUser, daemonServer, readOnly);
+                UnicastRemoteObject.exportObject(connector, port.getPort(), csf, ssf);
+                for(AOServService<?,?> service : connector.getServices().values()) {
+                    UnicastRemoteObject.exportObject(service, port.getPort(), csf, ssf);
+                }
+                connectors.put(
+                    locale,
+                    username,
+                    password,
+                    switchUser,
+                    daemonServer,
+                    readOnly,
+                    connector
+                );
             }
-            connectors.put(
-                connectAs,
-                authenticateAs,
-                password,
-                daemonServer,
-                connector
-            );
             return connector;
         }
     }

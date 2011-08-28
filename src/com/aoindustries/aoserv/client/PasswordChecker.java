@@ -5,8 +5,8 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.util.BufferManager;
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.io.IoUtils;
 import com.aoindustries.util.EncodingUtils;
 import com.aoindustries.util.zip.CorrectedGZIPInputStream;
 import java.io.ByteArrayOutputStream;
@@ -250,18 +250,12 @@ final public class PasswordChecker {
 */
 
     private synchronized static byte[] getDictionary() throws IOException {
-	if(cachedWords==null) {
+        if(cachedWords==null) {
             InputStream in=new CorrectedGZIPInputStream(PasswordChecker.class.getResourceAsStream("linux.words.gz"));
             try {
                 ByteArrayOutputStream bout=new ByteArrayOutputStream();
                 try {
-                    byte[] buff=BufferManager.getBytes();
-                    try {
-                        int ret;
-                        while((ret=in.read(buff, 0, BufferManager.BUFFER_SIZE))!=-1) bout.write(buff, 0, ret);
-                    } finally {
-                        BufferManager.release(buff);
-                    }
+                    IoUtils.copy(in, bout);
                 } finally {
                     bout.flush();
                     bout.close();
@@ -270,8 +264,8 @@ final public class PasswordChecker {
             } finally {
                 in.close();
             }
-	}
-	return cachedWords;
+        }
+        return cachedWords;
     }
 
     public static boolean hasResults(List<Result> results) {

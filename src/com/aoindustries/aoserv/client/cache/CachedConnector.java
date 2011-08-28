@@ -10,7 +10,6 @@ import com.aoindustries.aoserv.client.command.*;
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.security.LoginException;
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -25,7 +24,7 @@ final public class CachedConnector extends AbstractConnector {
     final AOServConnector wrapped;
 
     CachedConnector(CachedConnectorFactory factory, AOServConnector wrapped) throws RemoteException, LoginException {
-        super(wrapped.getLocale(), wrapped.getConnectAs(), wrapped.getAuthenticateAs(), wrapped.getPassword(), wrapped.getDaemonServer());
+        super(wrapped.getLocale(), wrapped.getUsername(), wrapped.getPassword(), wrapped.getSwitchUser(), wrapped.getDaemonServer(), wrapped.isReadOnly());
         this.factory = factory;
         this.wrapped = wrapped;
         aoserverDaemonHosts = new CachedAOServerDaemonHostService(this, wrapped.getAoServerDaemonHosts());
@@ -202,18 +201,10 @@ final public class CachedConnector extends AbstractConnector {
     }
 
     @Override
-    public void setLocale(Locale locale) throws RemoteException {
-        if(!getLocale().equals(locale)) {
-            wrapped.setLocale(locale);
-            super.setLocale(locale);
-        }
-    }
-
-    @Override
-    public <R> CommandResult<R> executeCommand(RemoteCommand<R> command, boolean isInteractive) throws RemoteException {
-        CommandResult<R> result = wrapped.executeCommand(command, isInteractive);
+    public <R> CommandResult<R> execute(RemoteCommand<R> command, boolean isInteractive) throws RemoteException {
+        CommandResult<R> result = wrapped.execute(command, isInteractive);
         Map<ServiceName,AOServService<?,?>> services = getServices();
-        for(ServiceName service : result.getModifiedServiceNames()) ((CachedService)services.get(service)).clearCache();
+        for(ServiceName service : result.getModifiedServiceNames()) ((CachedService<?,?>)services.get(service)).clearCache();
         return result;
     }
 

@@ -146,7 +146,7 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
     @Override
     public int compareTo(CreditCard other) {
         try {
-            int diff = accounting==other.accounting ? 0 : compare(getBusiness(), other.getBusiness());
+            int diff = accounting==other.accounting ? 0 : compare(getBusiness(), other.getBusiness()); // OK - interned
             if(diff!=0) return diff;
             return compare(created, other.created);
         } catch(RemoteException err) {
@@ -475,94 +475,6 @@ final public class CreditCard extends AOServObjectIntegerKey implements Comparab
             }
         }
         return nums;
-    }
-
-    public void remove() throws IOException, SQLException {
-    	getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
-    }
-    */
-    /**
-     * Updates the credit card number and expiration, including the masked card number.
-     * Encrypts the data if the processors has been configured to store card encrypted
-     * in the master database.
-     */
-    /* TODO
-    public void updateCardNumberAndExpiration(
-        final String maskedCardNumber,
-        String cardNumber,
-        byte expirationMonth,
-        short expirationYear
-    ) throws IOException, SQLException {
-        CreditCardProcessor processor = getCreditCardProcessor();
-        final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
-        final EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
-        final String encryptedCardNumber;
-        final String encryptedExpiration;
-        if(encryptionFrom!=null && encryptionRecipient!=null) {
-            // Encrypt the card number and expiration
-            encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, randomize(cardNumber));
-            encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
-        } else {
-            encryptedCardNumber = null;
-            encryptedExpiration = null;
-        }
-
-        getConnector().requestUpdate(
-            true,
-            new AOServConnector.UpdateRequest() {
-                IntList invalidateList;
-
-                public void writeRequest(CompressedDataOutputStream out) throws IOException {
-                    out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION.ordinal());
-                    out.writeCompressedInt(pkey);
-                    out.writeUTF(maskedCardNumber);
-                    out.writeNullUTF(encryptedCardNumber);
-                    out.writeNullUTF(encryptedExpiration);
-                    out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
-                    out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
-                }
-
-                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-                    int code=in.readByte();
-                    if(code==AOServProtocol.DONE) {
-                        invalidateList=AOServConnector.readInvalidateList(in);
-                    } else {
-                        AOServProtocol.checkResult(code, in);
-                        throw new IOException("Unknown response code: "+code);
-                    }
-                }
-
-                public void afterRelease() {
-                    getConnector().tablesUpdated(invalidateList);
-                }
-            }
-        );
-    }
-    */
-    /**
-     * Updates the credit card expiration.  Encrypts the data if the processors
-     * has been configured to store card encrypted in the master database.
-     */
-    /* TODO
-    public void updateCardExpiration(
-        byte expirationMonth,
-        short expirationYear
-    ) throws IOException, SQLException {
-        CreditCardProcessor processor = getCreditCardProcessor();
-        EncryptionKey encryptionFrom = processor.getEncryptionFrom();
-        EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
-        if(encryptionFrom!=null && encryptionRecipient!=null) {
-            // Encrypt the expiration
-            String encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
-            getConnector().requestUpdateIL(
-                true,
-                AOServProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
-                pkey,
-                encryptedExpiration,
-                encryptionFrom.getPkey(),
-                encryptionRecipient.getPkey()
-            );
-        }
     }
     */
     /* TODO

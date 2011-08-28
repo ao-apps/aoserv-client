@@ -39,6 +39,13 @@ public enum CommandName {
     add_credit_card(AddCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.add_credit_card),
     update_credit_card(UpdateCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.edit_credit_card),
     reactivate_credit_card(ReactivateCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.edit_credit_card),
+    remove_credit_card(RemoveCreditCardCommand.class, ServiceName.credit_cards, AOServPermission.Permission.delete_credit_card),
+    update_card_expiration(UpdateCardExpirationCommand.class, ServiceName.credit_cards, AOServPermission.Permission.edit_credit_card),
+    update_card_number_and_expiration(UpdateCardNumberAndExpirationCommand.class, ServiceName.credit_cards, AOServPermission.Permission.edit_credit_card),
+    // credit_card_transactions
+    add_credit_card_transaction(AddCreditCardTransactionCommand.class, ServiceName.credit_card_transactions, AOServPermission.Permission.add_credit_card_transaction),
+    authorize_completed(AuthorizeCompletedCommand.class, ServiceName.credit_card_transactions, AOServPermission.Permission.credit_card_transaction_authorize_completed),
+    sale_completed(SaleCompletedCommand.class, ServiceName.credit_card_transactions, AOServPermission.Permission.credit_card_transaction_sale_completed),
     // failover_file_logs
     add_failover_file_log(AddFailoverFileLogCommand.class, ServiceName.failover_file_log, AOServPermission.Permission.add_failover_file_log),
     // failover_file_replications
@@ -46,7 +53,7 @@ public enum CommandName {
     // failover_mysql_replications
     get_mysql_slave_status(GetMySQLSlaveStatusCommand.class, ServiceName.failover_mysql_replications, AOServPermission.Permission.get_mysql_slave_status),
     // ip_addresses
-    set_ip_address_dhcp_address(SetIpAddressDhcpAddress.class, ServiceName.ip_addresses, AOServPermission.Permission.set_ip_address_dhcp_address),
+    set_ip_address_dhcp_address(SetIpAddressDhcpAddressCommand.class, ServiceName.ip_addresses, AOServPermission.Permission.set_ip_address_dhcp_address),
     // linux_accounts
     check_linux_account_password(CheckLinuxAccountPasswordCommand.class, ServiceName.linux_accounts),
     set_linux_account_password(SetLinuxAccountPasswordCommand.class, ServiceName.linux_accounts, AOServPermission.Permission.set_linux_account_password),
@@ -377,11 +384,11 @@ public enum CommandName {
         )
     );
 
-    private final Class<? extends AOServCommand> commandClass;
+    private final Class<? extends AOServCommand<?>> commandClass;
     private final ServiceName serviceName;
     private final Set<AOServPermission.Permission> permissions;
 
-    private CommandName(Class<? extends AOServCommand> commandClass, ServiceName serviceName, AOServPermission.Permission... permissions) {
+    private CommandName(Class<? extends AOServCommand<?>> commandClass, ServiceName serviceName, AOServPermission.Permission... permissions) {
         this.commandClass = commandClass;
         this.serviceName = serviceName;
         if(permissions.length==0) this.permissions = Collections.emptySet();
@@ -389,7 +396,7 @@ public enum CommandName {
         else this.permissions = Collections.unmodifiableSet(EnumSet.of(permissions[0], permissions));
     }
 
-    public Class<? extends AOServCommand> getCommandClass() {
+    public Class<? extends AOServCommand<?>> getCommandClass() {
         return commandClass;
     }
 

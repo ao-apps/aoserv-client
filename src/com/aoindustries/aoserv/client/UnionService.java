@@ -6,6 +6,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoArrays;
+import com.aoindustries.util.HashCodeComparator;
 import com.aoindustries.util.UnionClassSet;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -54,16 +56,17 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
 
     @Override
     final public IndexedSet<V> getSet() throws RemoteException {
-        List<AOServService<K,? extends V>> subservices = getSubServices();
-        List<IndexedSet<? extends V>> sets = new ArrayList<IndexedSet<? extends V>>(subservices.size());
-        for(AOServService<K,? extends V> subservice : subservices) sets.add(subservice.getSet());
+        final List<AOServService<K,? extends V>> subservices = getSubServices();
+        final int numSets = subservices.size();
+        @SuppressWarnings("unchecked")
+        final List<IndexedSet<? extends V>> sets = new ArrayList<IndexedSet<? extends V>>(numSets);
+        for(int i=0; i<numSets; i++) sets.add(subservices.get(i).getSet());
         synchronized(cachedSetLock) {
             // Reuse cache if no underlying set has changed
             if(combinedSet!=null) {
-                int size = cachedSets.size();
-                assert size==sets.size() : "size!=sets.size(): "+size+"!="+sets.size();
+                assert cachedSets.size()==numSets : "cachedSets.size()!=numSets: "+cachedSets.size()+"!="+numSets;
                 boolean setChanged = false;
-                for(int i=0; i<size; i++) {
+                for(int i=0; i<numSets; i++) {
                     if(sets.get(i)!=cachedSets.get(i)) {
                         setChanged = true;
                         break;
@@ -74,13 +77,13 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
             if(USE_UNION_CLASS_SET) {
                 UnionClassSet<V> unionSet = new UnionClassSet<V>();
                 for(IndexedSet<? extends V> set : sets) unionSet.addAll(set);
-                combinedSet = IndexedSet.wrap(getServiceName(), unionSet);
+                combinedSet = IndexedSet.wrap(getServiceName(), valueClass, unionSet);
             } else {
-                int totalSize = 0;
-                for(IndexedSet<? extends V> set : sets) totalSize += set.size();
-                ArrayList<V> list = new ArrayList<V>(totalSize);
-                for(IndexedSet<? extends V> set : sets) list.addAll(set);
-                combinedSet = IndexedSet.wrap(getServiceName(), list);
+                combinedSet = IndexedSet.wrapAlreadySorted(
+                    getServiceName(),
+                    valueClass,
+                    AoArrays.merge(valueClass, sets, HashCodeComparator.getInstance())
+                );
             }
             cachedSets = sets;
             return combinedSet;
@@ -135,7 +138,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
             for(AOServService<K,? extends V> subservice : getSubServices()) {
                 unionSet.addAll(subservice.filterUniqueSet(column, values));
             }
-            return IndexedSet.wrap(getServiceName(), unionSet);
+            return IndexedSet.wrap(getServiceName(), valueClass, unionSet);
         } else {
             return getSet().filterUniqueSet(column, values);
         }
@@ -149,7 +152,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
             for(AOServService<K,? extends V> subservice : getSubServices()) {
                 unionSet.addAll(subservice.filterIndexed(column, value));
             }
-            return IndexedSet.wrap(getServiceName(), unionSet);
+            return IndexedSet.wrap(getServiceName(), valueClass, unionSet);
         } else {
             return getSet().filterIndexed(column, value);
         }
@@ -163,7 +166,7 @@ abstract public class UnionService<K extends Comparable<K>, V extends AOServObje
             for(AOServService<K,? extends V> subservice : getSubServices()) {
                 unionSet.addAll(subservice.filterIndexedSet(column, values));
             }
-            return IndexedSet.wrap(getServiceName(), unionSet);
+            return IndexedSet.wrap(getServiceName(), valueClass, unionSet);
         } else {
             return getSet().filterIndexedSet(column, values);
         }

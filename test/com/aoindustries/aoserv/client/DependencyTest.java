@@ -36,7 +36,7 @@ public class DependencyTest extends TestCase {
 
     @Override
     protected void setUp() throws IOException, LoginException, ValidationException {
-        conns = AOServConnectorTest.getTestConnectors();
+        conns = AOServConnectorTest.getTestConnectors(true);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DependencyTest extends TestCase {
      */
     private void doTestGetDependencies(boolean isForward) throws RemoteException {
         for(final AOServConnector conn : conns) {
-            System.out.println("    "+conn.getConnectAs()+":");
+            System.out.println("    "+conn.getSwitchUser()+":");
             //System.out.print("        ");
             //for(ServiceName serviceName : ServiceName.values) System.out.print(serviceName.name().charAt(0));
             //System.out.println();
@@ -109,7 +109,7 @@ public class DependencyTest extends TestCase {
 
     private void doTestTopologicalSort(boolean isForward) throws RemoteException {
         for(final AOServConnector conn : conns) {
-            System.out.println("    "+conn.getConnectAs()+":");
+            System.out.println("    "+conn.getSwitchUser()+":");
             //System.out.print("        ");
             //for(ServiceName serviceName : ServiceName.values) System.out.print(serviceName.name().charAt(0));
             //System.out.println();
@@ -153,7 +153,7 @@ public class DependencyTest extends TestCase {
 
     private void doTestDependencyGraphIterateVerticesTime() throws RemoteException {
         for(final AOServConnector conn : conns) {
-            System.out.print("    "+conn.getConnectAs()+": ");
+            System.out.print("    "+conn.getSwitchUser()+": ");
             Set<AOServObject<?>> vertices = conn.getDependencyGraph().getVertices();
             int count = 0;
             for(AOServObject<?> vertex : vertices) count++;

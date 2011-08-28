@@ -106,7 +106,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
                         TicketStatus.OPEN==status // OK - interned
                         || TicketStatus.HOLD==status // OK - interned
                         || TicketStatus.BOUNCED==status // OK - interned
-                    ) && brand==ticket.getBrand() // OK - interned
+                    ) && brand.equals(ticket.getBrand())
                     && business.equals(ticket.getBusiness())
                     && language.equals(ticket.getLanguage())
                     && ticketType.equals(ticket.getTicketType())
@@ -151,7 +151,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
         }
     }
 
-    public static final String generateActionSummary(Formatter formatter, LogRecord record) {
+    public static String generateActionSummary(Formatter formatter, LogRecord record) {
         // Generate the annotation summary as localized message + thrown
         StringBuilder tempSB = new StringBuilder();
         String message = formatter.formatMessage(record);

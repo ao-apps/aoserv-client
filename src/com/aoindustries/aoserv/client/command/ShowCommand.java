@@ -28,30 +28,35 @@ final public class ShowCommand extends AOServCommand<String> {
         this.object = object;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public String getObject() {
         return object;
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // Must be able to find the command name
         if(object==null) {
-            return Collections.singletonMap(
+            errors = addValidationError(
+                errors,
                 PARAM_OBJECT,
-                Collections.singletonList(
-                    ApplicationResources.accessor.getMessage("AOServCommand.validate.paramRequired", PARAM_OBJECT)
-                )
+                "AOServCommand.validate.paramRequired",
+                PARAM_OBJECT
+            );
+        } else if(!"tables".equals(object)) {
+            errors = addValidationError(
+                errors,
+                PARAM_OBJECT,
+                "AOServCommand.validate.unknownObject",
+                object
             );
         }
-        if(!"tables".equals(object)) {
-            return Collections.singletonMap(
-                PARAM_OBJECT,
-                Collections.singletonList(
-                    ApplicationResources.accessor.getMessage("AOServCommand.validate.unknownObject", object)
-                )
-            );
-        }
-        return Collections.emptyMap();
+        return errors;
     }
 
     @Override

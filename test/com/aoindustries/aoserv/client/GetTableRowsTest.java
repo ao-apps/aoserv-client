@@ -29,7 +29,7 @@ public class GetTableRowsTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conns = AOServConnectorTest.getTestConnectors();
+        conns = AOServConnectorTest.getTestConnectors(true);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class GetTableRowsTest extends TestCase {
                     ServiceName serviceName = ServiceName.values.get(c);
                     AOServService<?,?> service = conn.getServices().get(serviceName);
                     // Excluded for testing speed
-                    if(!(service instanceof UnionService)) {
+                    if(!(service instanceof UnionService<?,?>)) {
                         long startTime = System.currentTimeMillis();
                         int size=service.getSet().size();
                         long endTime = System.currentTimeMillis();

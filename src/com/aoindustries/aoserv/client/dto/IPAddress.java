@@ -10,7 +10,7 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class IPAddress extends ServerResource {
 
-    private InetAddress ipAddress;
+    private InetAddress inetAddress;
     private Integer netDevice;
     private boolean alias;
     private DomainName hostname;
@@ -18,7 +18,7 @@ public class IPAddress extends ServerResource {
     private boolean overflow;
     private boolean dhcp;
     private boolean pingMonitorEnabled;
-    private InetAddress externalIpAddress;
+    private InetAddress externalInetAddress;
     private short netmask;
 
     public IPAddress() {
@@ -34,7 +34,7 @@ public class IPAddress extends ServerResource {
         long lastEnabled,
         int server,
         int businessServer,
-        InetAddress ipAddress,
+        InetAddress inetAddress,
         Integer netDevice,
         boolean alias,
         DomainName hostname,
@@ -42,11 +42,11 @@ public class IPAddress extends ServerResource {
         boolean overflow,
         boolean dhcp,
         boolean pingMonitorEnabled,
-        InetAddress externalIpAddress,
+        InetAddress externalInetAddress,
         short netmask
     ) {
         super(pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, server, businessServer);
-        this.ipAddress = ipAddress;
+        this.inetAddress = inetAddress;
         this.netDevice = netDevice;
         this.alias = alias;
         this.hostname = hostname;
@@ -54,16 +54,16 @@ public class IPAddress extends ServerResource {
         this.overflow = overflow;
         this.dhcp = dhcp;
         this.pingMonitorEnabled = pingMonitorEnabled;
-        this.externalIpAddress = externalIpAddress;
+        this.externalInetAddress = externalInetAddress;
         this.netmask = netmask;
     }
 
-    public InetAddress getIpAddress() {
-        return ipAddress;
+    public InetAddress getInetAddress() {
+        return inetAddress;
     }
 
-    public void setIpAddress(InetAddress ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setInetAddress(InetAddress inetAddress) {
+        this.inetAddress = inetAddress;
     }
 
     public Integer getNetDevice() {
@@ -122,12 +122,12 @@ public class IPAddress extends ServerResource {
         this.pingMonitorEnabled = pingMonitorEnabled;
     }
 
-    public InetAddress getExternalIpAddress() {
-        return externalIpAddress;
+    public InetAddress getExternalInetAddress() {
+        return externalInetAddress;
     }
 
-    public void setExternalIpAddress(InetAddress externalIpAddress) {
-        this.externalIpAddress = externalIpAddress;
+    public void setExternalInetAddress(InetAddress externalInetAddress) {
+        this.externalInetAddress = externalInetAddress;
     }
 
     public short getNetmask() {

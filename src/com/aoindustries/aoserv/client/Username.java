@@ -80,6 +80,9 @@ implements Comparable<Username>, DtoFactory<com.aoindustries.aoserv.client.dto.U
         if(disableLog==null) return null;
         return getConnector().getDisableLogs().get(disableLog);
     }
+    public boolean isDisabled() {
+        return disableLog!=null;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">

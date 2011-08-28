@@ -64,7 +64,7 @@ final public class PackageDefinitionBusiness extends AOServObjectIntegerKey impl
         try {
             int diff = packageDefinition==other.packageDefinition ? 0 : getPackageDefinition().compareTo(other.getPackageDefinition());
             if(diff!=0) return diff;
-            return accounting==other.accounting ? 0 : getBusiness().compareTo(other.getBusiness());
+            return accounting.toUpperCase()==other.accounting.toUpperCase() ? 0 : getBusiness().compareTo(other.getBusiness());
         } catch(RemoteException err) {
             throw new WrappedException(err);
         }

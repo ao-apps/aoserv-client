@@ -85,7 +85,7 @@ implements Row, Serializable, Cloneable {
         return value==null ? null : value.intern();
     }
 
-    private volatile transient AOServConnector connector;
+    private transient AOServConnector connector; // volatile?
 
     protected AOServObject(AOServConnector connector) {
         this.connector = connector;
@@ -693,7 +693,8 @@ implements Row, Serializable, Cloneable {
     @Override
     public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
-        AOServObject other = (AOServObject)o;
+        @SuppressWarnings("unchecked")
+        AOServObject<K> other = (AOServObject<K>)o;
         return getKey().equals(other.getKey());
     }
 

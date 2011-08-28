@@ -33,6 +33,11 @@ final public class SetTicketBusinessCommand extends RemoteCommand<Boolean> {
         this.newAccounting = newBusiness==null ? null : newBusiness.getAccounting();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getTicketId() {
         return ticketId;
     }
@@ -46,8 +51,9 @@ final public class SetTicketBusinessCommand extends RemoteCommand<Boolean> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

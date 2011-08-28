@@ -29,7 +29,7 @@ public class TableNameTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conns = AOServConnectorTest.getTestConnectors();
+        conns = AOServConnectorTest.getTestConnectors(true);
     }
 
     @Override

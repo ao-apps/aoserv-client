@@ -9,12 +9,13 @@ import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.graph.Edge;
 import com.aoindustries.util.graph.SymmetricGraph;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.rmi.RemoteException;
 import java.util.AbstractSet;
-import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -74,27 +75,27 @@ final public class AOServConnectorUtils {
     /**
      * Sets the connector on an entire collection, and returns an unmodifiable set.
      */
-    public static <V extends AOServObject<?>> IndexedSet<V> setConnector(IndexedSet<V> objs, AOServConnector connector) throws RemoteException {
+    public static <V extends AOServObject<?>> IndexedSet<V> setConnector(Class<V> valueClass, IndexedSet<V> objs, AOServConnector connector) throws RemoteException {
         int size = objs.size();
         if(size==0) return objs;
         if(size==1) {
             V oldObj = objs.iterator().next();
             V newObj = setConnector(oldObj, connector);
-            return newObj==oldObj ? objs : IndexedSet.wrap(objs.getServiceName(), newObj);
+            return newObj==oldObj ? objs : IndexedSet.wrap(objs.getServiceName(), valueClass, newObj);
         }
         // Only create a new set when the first new object is created
+        @SuppressWarnings("unchecked")
+        V[] array = (V[])Array.newInstance(valueClass, size); // Because iteration of objs is in sort order, resulting array is in sort order, too
+        int pos = 0;
         boolean needsNewSet = false;
         for(V oldObj : objs) {
             V newObj = setConnector(oldObj, connector);
-            if(newObj!=oldObj) {
-                needsNewSet = true;
-                break;
-            }
+            array[pos++] = newObj;
+            if(newObj!=oldObj) needsNewSet = true;
         }
+        if(pos!=size) throw new ConcurrentModificationException();
         if(!needsNewSet) return objs;
-        ArrayList<V> elements = new ArrayList<V>(size);
-        for(V oldObj : objs) elements.add(setConnector(oldObj, connector));
-        return IndexedSet.wrap(objs.getServiceName(), elements);
+        return IndexedSet.wrapAlreadySorted(objs.getServiceName(), valueClass, array);
     }
 
     /**

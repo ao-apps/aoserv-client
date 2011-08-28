@@ -30,6 +30,11 @@ final public class CheckLinuxAccountPasswordCommand extends AOServCommand<List<P
         this.password = password;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public int getLinuxAccount() {
         return linuxAccount;
     }
@@ -39,16 +44,16 @@ final public class CheckLinuxAccountPasswordCommand extends AOServCommand<List<P
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        LinuxAccount la = connectedUser.getConnector().getLinuxAccounts().get(linuxAccount);
-        if(!connectedUser.canAccessLinuxAccount(la)) {
-            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "Common.validate.accessDenied");
+        LinuxAccount la = rootConn.getLinuxAccounts().get(linuxAccount);
+        if(!rootUser.canAccessLinuxAccount(la)) {
+            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "Common.validate.accessDenied");
         } else {
             // Enforce can't set password type
             LinuxAccountType lat = la.getLinuxAccountType();
-            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "CheckLinuxAccountPasswordCommand.validate.typeNotAllowed");
+            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "CheckLinuxAccountPasswordCommand.validate.typeNotAllowed");
         }
         return errors;
     }

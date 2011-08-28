@@ -45,6 +45,11 @@ final public class AddFailoverFileLogCommand extends RemoteCommand<Integer> {
         this.isSuccessful = isSuccessful;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getReplication() {
         return replication;
     }
@@ -74,8 +79,9 @@ final public class AddFailoverFileLogCommand extends RemoteCommand<Integer> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

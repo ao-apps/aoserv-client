@@ -6,8 +6,10 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
+import com.aoindustries.util.StringUtility;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -20,21 +22,27 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector> implem
 
     static class CacheKey {
 
-        final UserId connectAs;
-        final UserId authenticateAs;
+        final Locale locale;
+        final UserId username;
         final String password;
+        final UserId switchUser;
         final DomainName daemonServer;
+        final boolean readOnly;
 
         CacheKey(
-            UserId connectAs,
-            UserId authenticateAs,
+            Locale locale,
+            UserId username,
             String password,
-            DomainName daemonServer
+            UserId switchUser,
+            DomainName daemonServer,
+            boolean readOnly
         ) {
-            this.connectAs = connectAs.intern();
-            this.authenticateAs = authenticateAs.intern();
+            this.locale = locale;
+            this.username = username.intern();
             this.password = password.intern();
+            this.switchUser = switchUser.intern();
             this.daemonServer = daemonServer==null ? null : daemonServer.intern();
+            this.readOnly = readOnly;
         }
 
         @Override
@@ -42,20 +50,24 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector> implem
             if(o==null || !(o instanceof CacheKey)) return false;
             CacheKey other = (CacheKey)o;
             return
-                connectAs==connectAs
-                && authenticateAs==other.authenticateAs
+                locale.equals(other.locale)
+                && username==other.username // interned - OK
                 && password==other.password // interned - OK
-                && daemonServer==other.daemonServer // interned - OK
+                && switchUser==switchUser   // interned - OK
+                && StringUtility.equals(daemonServer, other.daemonServer)
+                && readOnly==other.readOnly
             ;
         }
 
         @Override
         public int hashCode() {
             int hash = 7;
-            hash = 29 * hash + connectAs.hashCode();
-            hash = 29 * hash + authenticateAs.hashCode();
+            hash = 29 * hash + locale.hashCode();
+            hash = 29 * hash + username.hashCode();
             hash = 29 * hash + password.hashCode();
+            hash = 29 * hash + switchUser.hashCode();
             hash = 29 * hash + (daemonServer!=null ? daemonServer.hashCode() : 0);
+            hash ^= Boolean.valueOf(readOnly).hashCode();
             return hash;
         }
     }
@@ -63,22 +75,26 @@ final public class AOServConnectorFactoryCache<C extends AOServConnector> implem
     private final Map<CacheKey,C> connectors = new HashMap<CacheKey,C>();
 
     public C get(
-        UserId connectAs,
-        UserId authenticateAs,
+        Locale locale,
+        UserId username,
         String password,
-        DomainName daemonServer
+        UserId switchUser,
+        DomainName daemonServer,
+        boolean readOnly
     ) {
-        return connectors.get(new CacheKey(connectAs, authenticateAs, password, daemonServer));
+        return connectors.get(new CacheKey(locale, username, password, switchUser, daemonServer, readOnly));
     }
 
     public void put(
-        UserId connectAs,
-        UserId authenticateAs,
+        Locale locale,
+        UserId username,
         String password,
+        UserId switchUser,
         DomainName daemonServer,
+        boolean readOnly,
         C connector
     ) {
-        connectors.put(new CacheKey(connectAs, authenticateAs, password, daemonServer), connector);
+        connectors.put(new CacheKey(locale, username, password, switchUser, daemonServer, readOnly), connector);
     }
 
     @Override

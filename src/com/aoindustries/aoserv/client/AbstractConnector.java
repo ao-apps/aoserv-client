@@ -15,24 +15,26 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A base implementation of AOServConnector to avoid repetative implementation details.
+ * A base implementation of AOServConnector to avoid repetitive implementation details.
  *
  * @author  AO Industries, Inc.
  */
 abstract public class AbstractConnector implements AOServConnector {
 
-    private Locale locale;
-    private final UserId connectAs;
-    private final UserId authenticateAs;
+    private final Locale locale;
+    private final UserId username;
     private final String password;
+    private final UserId switchUser;
     private final DomainName daemonServer;
+    private final boolean readOnly;
 
-    protected AbstractConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) {
+    protected AbstractConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) {
         this.locale = locale;
-        this.connectAs = connectAs;
-        this.authenticateAs = authenticateAs;
+        this.username = username;
         this.password = password;
+        this.switchUser = switchUser;
         this.daemonServer = daemonServer;
+        this.readOnly = readOnly;
     }
 
     /**
@@ -49,23 +51,8 @@ abstract public class AbstractConnector implements AOServConnector {
     }
 
     @Override
-    public void setLocale(Locale locale) throws RemoteException {
-        this.locale = locale;
-    }
-
-    @Override
-    final public UserId getConnectAs() {
-        return connectAs;
-    }
-
-    @Override
-    final public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
-        return getBusinessAdministrators().get(connectAs);
-    }
-
-    @Override
-    final public UserId getAuthenticateAs() {
-        return authenticateAs;
+    final public UserId getUsername() {
+        return username;
     }
 
     @Override
@@ -74,8 +61,23 @@ abstract public class AbstractConnector implements AOServConnector {
     }
 
     @Override
+    final public UserId getSwitchUser() {
+        return switchUser;
+    }
+
+    @Override
+    final public BusinessAdministrator getThisBusinessAdministrator() throws RemoteException {
+        return getBusinessAdministrators().get(switchUser);
+    }
+
+    @Override
     final public DomainName getDaemonServer() {
         return daemonServer;
+    }
+
+    @Override
+    final public boolean isReadOnly() {
+        return readOnly;
     }
 
     private final AtomicReference<Map<ServiceName,AOServService<?,?>>> tables = new AtomicReference<Map<ServiceName,AOServService<?,?>>>();

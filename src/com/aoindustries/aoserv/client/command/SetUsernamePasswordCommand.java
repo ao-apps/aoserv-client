@@ -33,6 +33,11 @@ final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
         this.plaintext = plaintext;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public UserId getUsername() {
         return username;
     }
@@ -42,22 +47,22 @@ final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        Username un = connectedUser.getConnector().getUsernames().get(username);
-        if(!connectedUser.canAccessUsername(un)) {
+        Username rootUn = rootConn.getUsernames().get(username);
+        if(!rootUser.canAccessUsername(rootUn)) {
             errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // Make sure not disabled
-            if(un.getDisableLog()!=null) errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "SetUsernamePasswordCommand.validate.disabled");
+            if(rootUn.isDisabled()) errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "SetUsernamePasswordCommand.validate.disabled");
             else {
                 // Make sure passes other command validations
-                for(AOServObject<?> dependent : un.getDependentObjects()) {
-                    if(dependent instanceof PasswordProtected) {
+                for(AOServObject<?> rootDependent : rootUn.getDependentObjects()) {
+                    if(rootDependent instanceof PasswordProtected) {
                         errors = addValidationErrors(
                             errors,
-                            ((PasswordProtected)dependent).getSetPasswordCommand(plaintext).validate(connectedUser)
+                            ((PasswordProtected)rootDependent).getSetPasswordCommand(plaintext).checkExecute(userConn, rootConn, rootUser)
                         );
                     }
                 }

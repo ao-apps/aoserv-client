@@ -43,28 +43,32 @@ public interface AOServConnector extends Remote {
     boolean isAoServObjectConnectorSettable() throws RemoteException;
 
     /**
-     * Gets the user's locale for this connector.  Defaults to the locale
-     * provided to the factory getConnector method.
-     *
-     * @see  #setLocale
+     * Gets the user's locale for this connector.  The remains unchanged for the
+     * lifetime of the connector.  If a different locale is requested, it will
+     * result in the creation of a separate connector.
      */
     Locale getLocale() throws RemoteException;
 
     /**
-     * Sets the user's locale for this connector.
+     * Gets the username they logged-in as.
      */
-    void setLocale(Locale locale) throws RemoteException;
+    UserId getUsername() throws RemoteException;
+
+    /**
+     * Gets the password used to login.
+     */
+    String getPassword() throws RemoteException;
 
     /**
      * Gets the username they are behaving as.
      */
-    // TODO: Make be a UserId
-    UserId getConnectAs() throws RemoteException;
+    UserId getSwitchUser() throws RemoteException;
 
     /**
-     * Gets the <code>BusinessAdministrator</code> who is logged in using
-     * this <code>AOServConnector</code>.  Each username and password pair
-     * resolves to an always-accessible <code>BusinessAdministrator</code>.
+     * Gets the <code>BusinessAdministrator</code> who is logged-in using
+     * this <code>AOServConnector</code>.  This represents the switched-to
+     * user when switchUser is different than username.  Each username and password
+     * pair resolves to an always-accessible <code>BusinessAdministrator</code>.
      * Details about permissions and capabilities may be obtained from the
      * <code>BusinessAdministrator</code>.
      *
@@ -73,25 +77,21 @@ public interface AOServConnector extends Remote {
     BusinessAdministrator getThisBusinessAdministrator() throws RemoteException;
 
     /**
-     * Gets the username they logged-in as.
-     */
-    UserId getAuthenticateAs() throws RemoteException;
-
-    /**
-     * Gets the password used to login.
-     */
-    String getPassword() throws RemoteException;
-
-    /**
      * Gets the name of the server this connection represents.
      */
     DomainName getDaemonServer() throws RemoteException;
 
     /**
+     * Gets the read-only flag of this connector.  A read-only connector may only execute read-only
+     * commands.
+     */
+    boolean isReadOnly() throws RemoteException;
+
+    /**
      * Executes the command and retrieves the result.  If the command return
      * value is void, returns a CommandResult containing <code>null</code>.
      */
-    <R> CommandResult<R> executeCommand(RemoteCommand<R> command, boolean isInteractive) throws RemoteException;
+    <R> CommandResult<R> execute(RemoteCommand<R> command, boolean isInteractive) throws RemoteException;
 
     /**
      * Gets an unmodifiable map of all of the services in the system.
@@ -342,7 +342,7 @@ public interface AOServConnector extends Remote {
 
     @Override
     final public String toString() {
-        return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&local_ip="+local_ip+"&port="+port+"&connectAs="+connectAs+"&authenticateAs="+authenticateAs;
+        return getClass().getName()+"?protocol="+getProtocol()+"&hostname="+hostname+"&local_ip="+local_ip+"&port="+port+"&username="+username+"&switchUser="+switchUser;
     }
     */
     /**

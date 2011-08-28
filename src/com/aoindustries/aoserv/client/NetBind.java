@@ -208,7 +208,7 @@ implements
     String toStringImpl() throws RemoteException {
         IPAddress ip = getIpAddress();
         if(ip==null) return "*:"+getPort()+'/'+getNetProtocol();
-        String address = ip.getIpAddress().toString();
+        String address = ip.getInetAddress().toString();
         if(address.indexOf(':')==-1) return address+':'+getPort()+'/'+getNetProtocol();
         else return '['+address+"]:"+getPort()+'/'+getNetProtocol();
     }

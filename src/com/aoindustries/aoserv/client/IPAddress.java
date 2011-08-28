@@ -28,7 +28,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private static final long serialVersionUID = 5500928104479497136L;
 
-    private InetAddress ipAddress;
+    private InetAddress inetAddress;
     final private Integer netDevice;
     final private boolean alias;
     private DomainName hostname;
@@ -36,7 +36,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     final private boolean overflow;
     final private boolean dhcp;
     final private boolean pingMonitorEnabled;
-    private InetAddress externalIpAddress;
+    private InetAddress externalInetAddress;
     final private short netmask;
 
     public IPAddress(
@@ -50,7 +50,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
         long lastEnabled,
         int server,
         int businessServer,
-        InetAddress ipAddress,
+        InetAddress inetAddress,
         Integer netDevice,
         boolean alias,
         DomainName hostname,
@@ -58,11 +58,11 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
         boolean overflow,
         boolean dhcp,
         boolean pingMonitorEnabled,
-        InetAddress externalIpAddress,
+        InetAddress externalInetAddress,
         short netmask
     ) {
         super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, server, businessServer);
-        this.ipAddress = ipAddress;
+        this.inetAddress = inetAddress;
         this.netDevice = netDevice;
         this.alias = alias;
         this.hostname = hostname;
@@ -70,7 +70,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
         this.overflow = overflow;
         this.dhcp = dhcp;
         this.pingMonitorEnabled = pingMonitorEnabled;
-        this.externalIpAddress = externalIpAddress;
+        this.externalInetAddress = externalInetAddress;
         this.netmask = netmask;
         intern();
     }
@@ -81,9 +81,9 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     }
 
     private void intern() {
-        ipAddress = intern(ipAddress);
+        inetAddress = intern(inetAddress);
         hostname = intern(hostname);
-        externalIpAddress = intern(externalIpAddress);
+        externalInetAddress = intern(externalInetAddress);
     }
     // </editor-fold>
 
@@ -92,7 +92,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     public int compareTo(IPAddress other) {
         try {
             if(getKeyInt()==other.getKeyInt()) return 0;
-            int diff = ipAddress.compareTo(other.ipAddress);
+            int diff = inetAddress.compareTo(other.inetAddress);
             if(diff!=0) return diff;
             return StringUtility.equals(netDevice, other.netDevice) ? 0 : compare(getNetDevice(), other.getNetDevice());
         } catch(RemoteException err) {
@@ -103,8 +103,8 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+1, description="the IP address")
-    public InetAddress getIpAddress() {
-        return ipAddress;
+    public InetAddress getInetAddress() {
+        return inetAddress;
     }
 
     public static final MethodColumn COLUMN_NET_DEVICE = getMethodColumn(IPAddress.class, "netDevice");
@@ -146,9 +146,9 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
         return pingMonitorEnabled;
     }
 
-    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+9, description="the external IP address, if different than ip_address")
-    public InetAddress getExternalIpAddress() {
-        return externalIpAddress;
+    @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+9, description="the external IP address, if different than inetAddress")
+    public InetAddress getExternalInetAddress() {
+        return externalInetAddress;
     }
 
     @SchemaColumn(order=SERVER_RESOURCE_LAST_COLUMN+10, description="the netmask of the local network")
@@ -170,7 +170,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
             getTimeMillis(dto.getLastEnabled()),
             dto.getServer(),
             dto.getBusinessServer(),
-            getInetAddress(dto.getIpAddress()),
+            getInetAddress(dto.getInetAddress()),
             dto.getNetDevice(),
             dto.isAlias(),
             getDomainName(dto.getHostname()),
@@ -178,7 +178,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
             dto.isOverflow(),
             dto.isDhcp(),
             dto.isPingMonitorEnabled(),
-            getInetAddress(dto.getExternalIpAddress()),
+            getInetAddress(dto.getExternalInetAddress()),
             dto.getNetmask()
         );
     }
@@ -195,7 +195,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
             lastEnabled,
             server,
             businessServer,
-            getDto(ipAddress),
+            getDto(inetAddress),
             netDevice,
             alias,
             getDto(hostname),
@@ -203,7 +203,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
             overflow,
             dhcp,
             pingMonitorEnabled,
-            getDto(externalIpAddress),
+            getDto(externalInetAddress),
             netmask
         );
     }
@@ -212,7 +212,7 @@ final public class IPAddress extends ServerResource implements Comparable<IPAddr
     // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() throws RemoteException {
-        return getIpAddress().toString();
+        return getInetAddress().toString();
     }
     // </editor-fold>
 

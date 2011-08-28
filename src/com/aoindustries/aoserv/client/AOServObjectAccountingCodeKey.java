@@ -46,7 +46,7 @@ abstract public class AOServObjectAccountingCodeKey extends AOServObject<Account
     final public boolean equals(Object o) {
         if(o==null || getClass()!=o.getClass()) return false;
         AOServObjectAccountingCodeKey other = (AOServObjectAccountingCodeKey)o;
-        return key==other.key; // OK because interned
+        return key.toUpperCase()==other.key.toUpperCase(); // OK because interned
     }
 
     /**

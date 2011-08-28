@@ -235,6 +235,9 @@ implements
         if(disableLog==null) return null;
         return getConnector().getDisableLogs().get(disableLog);
     }
+    public boolean isDisabled() {
+        return disableLog!=null;
+    }
 
     @SchemaColumn(order=10, description="a reason why we should not disable the account")
     public String getDoNotDisableReason() {
@@ -693,111 +696,6 @@ implements
         return getConnector().getBusinessServers().addBusinessServer(this, server);
     }
     */
-
-    /**
-     * Adds a transaction in the pending state.
-     */
-    /* TODO
-    public int addCreditCardTransaction(
-        CreditCardProcessor processor,
-        String groupName,
-        boolean testMode,
-        int duplicateWindow,
-        String orderNumber,
-        String currencyCode,
-        BigDecimal amount,
-        BigDecimal taxAmount,
-        boolean taxExempt,
-        BigDecimal shippingAmount,
-        BigDecimal dutyAmount,
-        String shippingFirstName,
-        String shippingLastName,
-        String shippingCompanyName,
-        String shippingStreetAddress1,
-        String shippingStreetAddress2,
-        String shippingCity,
-        String shippingState,
-        String shippingPostalCode,
-        String shippingCountryCode,
-        boolean emailCustomer,
-        String merchantEmail,
-        String invoiceNumber,
-        String purchaseOrderNumber,
-        String description,
-        BusinessAdministrator creditCardCreatedBy,
-        String creditCardPrincipalName,
-        Business creditCardAccounting,
-        String creditCardGroupName,
-        String creditCardProviderUniqueId,
-        String creditCardMaskedCardNumber,
-        String creditCardFirstName,
-        String creditCardLastName,
-        String creditCardCompanyName,
-        String creditCardEmail,
-        String creditCardPhone,
-        String creditCardFax,
-        String creditCardCustomerTaxId,
-        String creditCardStreetAddress1,
-        String creditCardStreetAddress2,
-        String creditCardCity,
-        String creditCardState,
-        String creditCardPostalCode,
-        String creditCardCountryCode,
-        String creditCardComments,
-        long authorizationTime,
-        String authorizationPrincipalName
-    ) throws IOException, SQLException {
-        return getConnector().getCreditCardTransactions().addCreditCardTransaction(
-            processor,
-            this,
-            groupName,
-            testMode,
-            duplicateWindow,
-            orderNumber,
-            currencyCode,
-            amount,
-            taxAmount,
-            taxExempt,
-            shippingAmount,
-            dutyAmount,
-            shippingFirstName,
-            shippingLastName,
-            shippingCompanyName,
-            shippingStreetAddress1,
-            shippingStreetAddress2,
-            shippingCity,
-            shippingState,
-            shippingPostalCode,
-            shippingCountryCode,
-            emailCustomer,
-            merchantEmail,
-            invoiceNumber,
-            purchaseOrderNumber,
-            description,
-            creditCardCreatedBy,
-            creditCardPrincipalName,
-            creditCardAccounting,
-            creditCardGroupName,
-            creditCardProviderUniqueId,
-            creditCardMaskedCardNumber,
-            creditCardFirstName,
-            creditCardLastName,
-            creditCardCompanyName,
-            creditCardEmail,
-            creditCardPhone,
-            creditCardFax,
-            creditCardCustomerTaxId,
-            creditCardStreetAddress1,
-            creditCardStreetAddress2,
-            creditCardCity,
-            creditCardState,
-            creditCardPostalCode,
-            creditCardCountryCode,
-            creditCardComments,
-            authorizationTime,
-            authorizationPrincipalName
-        );
-    }*/
 
     /* TODO
     public int addDisableLog(

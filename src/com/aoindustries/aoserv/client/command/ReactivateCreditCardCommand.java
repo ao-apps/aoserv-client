@@ -26,13 +26,19 @@ final public class ReactivateCreditCardCommand extends RemoteCommand<Void> {
         this.pkey = creditCard.getPkey();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getPkey() {
         return pkey;
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

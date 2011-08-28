@@ -45,3 +45,7 @@ aoserv.client.switchUser=
 # The server that this connection represents.  This is used to allow clients to synchronously
 # wait for specific server-side events.  For use by AOServDaemon accounts only.
 aoserv.client.daemon.server=
+
+# When true the connection will be read-only.  A read-only connection is only allowed
+# to execute read-only commands.  Defaults to false.
+aoserv.client.readOnly=false

@@ -6,12 +6,16 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.*;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
+import java.io.ObjectInput;
 import java.io.ObjectInputValidation;
-import java.io.Serializable;
+import java.io.ObjectOutput;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -28,9 +32,7 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * @author  AO Industries, Inc.
  */
-final public class DomainLabel implements Comparable<DomainLabel>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.DomainLabel>, Internable<DomainLabel> {
-
-    private static final long serialVersionUID = -3692661338685551188L;
+final public class DomainLabel implements Comparable<DomainLabel>, FastExternalizable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.DomainLabel>, Internable<DomainLabel> {
 
     public static final int MAX_LENGTH = 63;
 
@@ -68,10 +70,16 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
         return new DomainLabel(label);
     }
 
-    final private String label;
+    private String label;
+    private String lowerLabel;
 
     private DomainLabel(String label) throws ValidationException {
+        this(label, label.toLowerCase(Locale.ENGLISH));
+    }
+
+    private DomainLabel(String label, String lowerLabel) throws ValidationException {
         this.label = label;
+        this.lowerLabel = lowerLabel;
         validate();
     }
 
@@ -80,37 +88,18 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
         if(!result.isValid()) throw new ValidationException(result);
     }
 
-    /**
-     * Perform same validation as constructor on readObject.
-     */
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.defaultReadObject();
-        validateObject();
-    }
-
-    @Override
-    public void validateObject() throws InvalidObjectException {
-        try {
-            validate();
-        } catch(ValidationException err) {
-            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-            newErr.initCause(err);
-            throw newErr;
-        }
-    }
-
     @Override
     public boolean equals(Object O) {
     	return
             O!=null
             && O instanceof DomainLabel
-            && label.equals(((DomainLabel)O).label)
+            && lowerLabel.equals(((DomainLabel)O).lowerLabel)
     	;
     }
 
     @Override
     public int hashCode() {
-        return label.hashCode();
+        return lowerLabel.hashCode();
     }
 
     @Override
@@ -124,6 +113,15 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
     }
 
     /**
+     * Gets the lower-case form of the label.  If two different domain labels are
+     * interned and their toLowerCase is the same String instance, then they are
+     * equal in case-insensitive manner.
+     */
+    public String toLowerCase() {
+        return lowerLabel;
+    }
+
+    /**
      * Interns this label much in the same fashion as <code>String.intern()</code>.
      *
      * @see  String#intern()
@@ -134,7 +132,8 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
             DomainLabel existing = interned.get(label);
             if(existing==null) {
                 String internedLabel = label.intern();
-                DomainLabel addMe = label==internedLabel ? this : new DomainLabel(internedLabel);
+                String internedLowerLabel = lowerLabel.intern();
+                DomainLabel addMe = label==internedLabel && lowerLabel==internedLowerLabel ? this : new DomainLabel(internedLabel, lowerLabel);
                 existing = interned.putIfAbsent(internedLabel, addMe);
                 if(existing==null) existing = addMe;
             }
@@ -149,4 +148,49 @@ final public class DomainLabel implements Comparable<DomainLabel>, Serializable,
     public com.aoindustries.aoserv.client.dto.DomainLabel getDto() {
         return new com.aoindustries.aoserv.client.dto.DomainLabel(label);
     }
+
+    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+    private static final long serialVersionUID = -3692661338685551188L;
+
+    public DomainLabel() {
+    }
+
+    @Override
+    public long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+        try {
+            fastOut.writeFastUTF(label);
+        } finally {
+            fastOut.unwrap();
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if(label!=null) throw new IllegalStateException();
+        FastObjectInput fastIn = FastObjectInput.wrap(in);
+        try {
+            label = fastIn.readFastUTF();
+            lowerLabel = label.toLowerCase(Locale.ENGLISH);
+        } finally {
+            fastIn.unwrap();
+        }
+    }
+
+    @Override
+    public void validateObject() throws InvalidObjectException {
+        try {
+            validate();
+        } catch(ValidationException err) {
+            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+            newErr.initCause(err);
+            throw newErr;
+        }
+    }
+    // </editor-fold>
 }

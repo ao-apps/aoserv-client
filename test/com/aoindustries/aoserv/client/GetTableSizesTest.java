@@ -26,7 +26,7 @@ public class GetTableSizesTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conns = AOServConnectorTest.getTestConnectors();
+        conns = AOServConnectorTest.getTestConnectors(true);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class GetTableSizesTest extends TestCase {
                 for(int c=0;c<numTables;c++) {
                     AOServService<?,?> service = conn.getServices().get(ServiceName.values.get(c));
                     // Excluded for testing speed
-                    if(!(service instanceof UnionService)) {
+                    if(!(service instanceof UnionService<?,?>)) {
                         /* TODOif(
                             (table instanceof DistroFileTable...c==SchemaTable.TableID.DISTRO_FILES.ordinal()
                             || c==SchemaTable.TableID.TRANSACTIONS.ordinal()

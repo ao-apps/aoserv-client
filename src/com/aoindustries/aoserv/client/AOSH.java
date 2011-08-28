@@ -163,14 +163,14 @@ final public class AOSH extends ShellInterpreter {
 
     final private AOServConnector connector;
 
-    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err) {
-    	super(in, out, err);
-        this.connector=connector;
+    public AOSH(UserId username, String password, Reader in, TerminalWriter out, TerminalWriter err, String ... args) throws RemoteException, LoginException {
+    	super(in, out, err, args);
+        this.connector = AOServClientConfiguration.getConnector(username, password, isReadOnly());
     }
 
-    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
-    	super(in, out, err, args);
-        this.connector=connector;
+    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String ... args) {
+        super(in, out, err, args);
+        this.connector = connector;
     }
 
     /* TODO
@@ -225,7 +225,7 @@ final public class AOSH extends ShellInterpreter {
 
     @Override
     protected String getPrompt() throws IOException {
-        return ApplicationResources.accessor.getMessage("AOSH.prompt", connector.getConnectAs());
+        return ApplicationResources.accessor.getMessage("AOSH.prompt", connector.getSwitchUser());
     }
 
     /**
@@ -292,8 +292,8 @@ final public class AOSH extends ShellInterpreter {
                                     Set<AOServPermission.Permission> permissions = aoservCommand.getCommandName().getPermissions();
                                     BusinessAdministrator thisBa = connector.getThisBusinessAdministrator();
                                     if(permissions.isEmpty() || thisBa.hasPermissions(permissions)) {
-                                        // Validate
-                                        Map<String,List<String>> errors = aoservCommand.validate(connector);
+                                        // Check locally before executing
+                                        Map<String,List<String>> errors = aoservCommand.checkExecute(connector, connector, thisBa);
                                         if(!errors.isEmpty()) throw new CommandValidationException(aoservCommand, errors);
 
                                         displayCommandResult(aoservCommand.execute(connector, isInteractive()));
@@ -315,11 +315,6 @@ final public class AOSH extends ShellInterpreter {
                                     err.flush();
                                 } catch(InvocationTargetException exc) {
                                     err.println(ApplicationResources.accessor.getMessage("AOSH.InvocationTargetException", command, exc.getMessage()));
-                                    if(STACK_TRACES) exc.printStackTrace(err);
-                                    err.flush();
-                                } catch(AOServPermissionException exc) {
-                                    err.println("TODO: AOServPermission: "+exc.getMessage());
-                                    // TODO
                                     if(STACK_TRACES) exc.printStackTrace(err);
                                     err.flush();
                                 } catch(CommandValidationException exc) {
@@ -379,9 +374,9 @@ final public class AOSH extends ShellInterpreter {
 
     private void displayCommandResult(Object result) throws IOException {
         if(result!=null) {
-            if(result instanceof Collection) {
+            if(result instanceof Collection<?>) {
                 int num=1;
-                for(Object obj : (Collection)result) {
+                for(Object obj : (Collection<?>)result) {
                     String s = (num++) + ": " +(obj==null ? "null" : obj.toString());
                     if(isInteractive()) {
                         printBoldItalic(s, out);
@@ -708,10 +703,14 @@ final public class AOSH extends ShellInterpreter {
         TerminalWriter out = new TerminalWriter(new OutputStreamWriter(System.out));
         TerminalWriter err = new TerminalWriter(new OutputStreamWriter(System.err));
         try {
-            UserId username = getConfigUsername(in, err);
-            String password = getConfigPassword(in, err);
-            AOServConnector connector = AOServClientConfiguration.getConnector(username, password);
-            AOSH aosh = new AOSH(connector, in, out, err, args);
+            AOSH aosh = new AOSH(
+                getConfigUsername(in, err),
+                getConfigPassword(in, err),
+                in,
+                out,
+                err,
+                args
+            );
             aosh.run();
             if(aosh.isInteractive()) {
                 out.println();
@@ -735,10 +734,8 @@ final public class AOSH extends ShellInterpreter {
         UserId username;
         try {
             username=AOServClientConfiguration.getUsername();
-        } catch(com.aoindustries.aoserv.client.validator.ValidationException exc) {
-            IOException ioErr = new IOException(exc.getMessage());
-            ioErr.initCause(exc);
-            throw ioErr;
+        } catch(com.aoindustries.aoserv.client.validator.ValidationException e) {
+            throw new IOException(e);
         }
         while(username==null) {
             // Prompt for the username
@@ -898,16 +895,18 @@ final public class AOSH extends ShellInterpreter {
         while((ch=in.read())!=-1 && ch!='\n') if(ch!='\r') SB.append((char)ch);
     }
 
-    private static int longestCommand;
+    private static final int longestCommand;
     static {
+        int longest = 0;
         for(BuiltIn buildIn : BuiltIn.values) {
             int len = buildIn.name().length();
-            if(len>longestCommand) longestCommand = len;
+            if(len>longest) longest = len;
         }
         for(CommandName commandName : CommandName.values) {
             int len = commandName.name().length();
-            if(len>longestCommand) longestCommand = len;
+            if(len>longest) longest = len;
         }
+        longestCommand = longest;
     }
 
     private static String getNoHTML(String S) throws IOException {
@@ -1227,19 +1226,25 @@ final public class AOSH extends ShellInterpreter {
     private void su(String[] args) throws IOException {
         int argCount=args.length;
         if(argCount>=2) {
-            String[] newArgs=new String[argCount+(isInteractive()?0:-1)];
+            String[] newArgs=new String[
+                argCount
+                + (isInteractive() ? 0 : 1)
+                + (isReadOnly() ? 0 : 1)
+            ];
             int pos=0;
-            if(isInteractive()) newArgs[pos++]="-i";
+            if(isInteractive()) newArgs[pos++] = "-i";
+            if(isReadOnly())    newArgs[pos++] = "-r";
             newArgs[pos++]="--";
             System.arraycopy(args, 2, newArgs, pos, argCount-2);
             try {
                 new AOSH(
                     connector.getFactory().getConnector(
                         connector.getLocale(),
-                        UserId.valueOf(args[1]),
-                        connector.getAuthenticateAs(),
+                        connector.getUsername(),
                         connector.getPassword(),
-                        null
+                        UserId.valueOf(args[1]),
+                        connector.getDaemonServer(),
+                        connector.isReadOnly()
                     ),
                     in,
                     out,
@@ -1287,7 +1292,7 @@ final public class AOSH extends ShellInterpreter {
 
     private void whoami(String[] args) throws IOException {
         if(args.length==1) {
-            out.println(connector.getConnectAs());
+            out.println(connector.getSwitchUser());
             out.flush();
         } else {
             err.println(ApplicationResources.accessor.getMessage("AOSH.notEnoughParameters", BuiltIn.whoami));

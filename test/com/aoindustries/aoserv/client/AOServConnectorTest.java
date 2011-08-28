@@ -1,9 +1,9 @@
-package com.aoindustries.aoserv.client;
 /*
  * Copyright 2006-2011 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.*;
 import com.aoindustries.security.LoginException;
@@ -30,12 +30,12 @@ public class AOServConnectorTest extends TestCase {
      * filter modes.  Regular user (testuser), unrestritected master (aoweb_app), and a single server
      * (test_svr).
      */
-    static List<AOServConnector> getTestConnectors() throws IOException, RemoteException, LoginException, ValidationException {
+    static List<AOServConnector> getTestConnectors(boolean readOnly) throws IOException, RemoteException, LoginException, ValidationException {
         List<AOServConnector> conns = new ArrayList<AOServConnector>();
         // conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("aoweb_app"), "changeme", true));
-        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("orion"), "T3st1234"));
-        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf(REGULAR_USER_USERNAME), REGULAR_USER_PASSWORD));
-        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("suspendo_svr"), "68OrfulSkuza"));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("orion"), "T3st1234", readOnly));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf(REGULAR_USER_USERNAME), REGULAR_USER_PASSWORD, readOnly));
+        conns.add(AOServClientConfiguration.getConnector(UserId.valueOf("suspendo_svr"), "68OrfulSkuza", readOnly));
         return conns;
     }
 
@@ -47,7 +47,7 @@ public class AOServConnectorTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conns = getTestConnectors();
+        conns = getTestConnectors(true);
     }
 
     @Override
@@ -223,7 +223,7 @@ public class AOServConnectorTest extends TestCase {
             System.out.println("    "+conn.getThisBusinessAdministrator());
             int numTables = ServiceName.values.size();
             for(int c=0;c<numTables;c++) {
-                AOServService table=conn.getServices().get(ServiceName.values.get(c));
+                AOServService<?,?> table=conn.getServices().get(ServiceName.values.get(c));
                 if(c>0) {
                     // Make sure not a duplicate
                     for(int d=0;d<c;d++) assertNotSame(table, conn.getServices().get(ServiceName.values.get(d)));

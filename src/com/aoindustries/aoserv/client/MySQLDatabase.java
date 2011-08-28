@@ -235,15 +235,16 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
                 public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
                     Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8");
                     try {
-                        char[] chars=BufferManager.getChars();
-                        try {
-                            int len;
-                            while((len=nestedIn.read(chars, 0, BufferManager.BUFFER_SIZE))!=-1) {
-                                out.write(chars, 0, len);
-                            }
-                        } finally {
-                            BufferManager.release(chars);
-                        }
+                        IoUtils.copy(nestedIn, out);
+                        //char[] chars=BufferManager.getChars();
+                        //try {
+                        //    int len;
+                        //    while((len=nestedIn.read(chars, 0, BufferManager.BUFFER_SIZE))!=-1) {
+                        //        out.write(chars, 0, len);
+                        //    }
+                        //} finally {
+                        //    BufferManager.release(chars);
+                        //}
                     } finally {
                         nestedIn.close();
                     }

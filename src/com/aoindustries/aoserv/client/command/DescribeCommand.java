@@ -32,32 +32,40 @@ final public class DescribeCommand extends AOServCommand<String> {
         this.tableName = tableName;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public String getTableName() {
         return tableName;
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // Must be able to find the command name
         if(tableName==null) {
-            return Collections.singletonMap(
+            errors = addValidationError(
+                errors,
                 PARAM_TABLE_NAME,
-                Collections.singletonList(
-                    ApplicationResources.accessor.getMessage("AOServCommand.validate.paramRequired", PARAM_TABLE_NAME)
-                )
+                "AOServCommand.validate.paramRequired",
+                PARAM_TABLE_NAME
             );
+        } else {
+            try {
+                ServiceName.valueOf(tableName);
+                // No problem - fall-through to return
+            } catch(IllegalArgumentException err) {
+                errors = addValidationError(
+                    errors,
+                    PARAM_TABLE_NAME,
+                    "DescribeCommand.validate.tableNotFound",
+                    tableName
+                );
+            }
         }
-        try {
-            ServiceName.valueOf(tableName);
-            return Collections.emptyMap();
-        } catch(IllegalArgumentException err) {
-            return Collections.singletonMap(
-                PARAM_TABLE_NAME,
-                Collections.singletonList(
-                    ApplicationResources.accessor.getMessage("DescribeCommand.validate.tableNotFound", tableName)
-                )
-            );
-        }
+        return errors;
     }
 
     private static String getReturnType(Method method) {

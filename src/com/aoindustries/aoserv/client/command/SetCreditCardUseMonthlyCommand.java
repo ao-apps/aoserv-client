@@ -33,6 +33,11 @@ final public class SetCreditCardUseMonthlyCommand extends RemoteCommand<Void> {
         this.creditCard = creditCard==null ? null : creditCard.getKey();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public AccountingCode getAccounting() {
         return accounting;
     }
@@ -42,8 +47,9 @@ final public class SetCreditCardUseMonthlyCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

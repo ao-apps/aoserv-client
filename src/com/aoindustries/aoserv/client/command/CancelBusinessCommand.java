@@ -30,6 +30,11 @@ final public class CancelBusinessCommand extends RemoteCommand<Void> {
         this.cancelReason = nullIfEmpty(cancelReason);
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public AccountingCode getAccounting() {
         return accounting;
     }
@@ -39,7 +44,8 @@ final public class CancelBusinessCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO: Validate: return canceled==null && !isRootBusiness();
 
         // Automatically disable if not already disabled
@@ -64,6 +70,6 @@ final public class CancelBusinessCommand extends RemoteCommand<Void> {
 
         // All children must be canceled
         
-        return Collections.emptyMap();
+        return errors;
     }
 }

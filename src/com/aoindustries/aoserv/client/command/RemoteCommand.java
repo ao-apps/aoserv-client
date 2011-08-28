@@ -107,6 +107,6 @@ abstract public class RemoteCommand<R> extends AOServCommand<R> implements Seria
      */
     @Override
     public R execute(AOServConnector connector, boolean isInteractive) throws RemoteException {
-        return connector.executeCommand(this, isInteractive).getResult();
+        return connector.execute(this, isInteractive).getResult();
     }
 }

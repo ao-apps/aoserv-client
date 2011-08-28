@@ -15,19 +15,24 @@ import java.util.Map;
 /**
  * @author  AO Industries, Inc.
  */
-final public class SetIpAddressDhcpAddress extends RemoteCommand<Void> {
+final public class SetIpAddressDhcpAddressCommand extends RemoteCommand<Void> {
 
     private static final long serialVersionUID = -6587189699084066656L;
 
     final private int ipAddress;
     final private InetAddress newAddress;
 
-    public SetIpAddressDhcpAddress(
+    public SetIpAddressDhcpAddressCommand(
         @Param(name="ipAddress") IPAddress ipAddress,
         @Param(name="newAddress") InetAddress newAddress
     ) {
         this.ipAddress = ipAddress.getPkey();
         this.newAddress = newAddress;
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return false;
     }
 
     public int getIpAddress() {
@@ -39,8 +44,9 @@ final public class SetIpAddressDhcpAddress extends RemoteCommand<Void> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

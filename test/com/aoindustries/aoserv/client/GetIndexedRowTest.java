@@ -30,7 +30,7 @@ public class GetIndexedRowTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conns = AOServConnectorTest.getTestConnectors();
+        conns = AOServConnectorTest.getTestConnectors(true);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class GetIndexedRowTest extends TestCase {
         System.out.println("+ means supported");
         System.out.println("- means unsupported");
         for(AOServConnector conn : conns) {
-            System.out.println("    "+conn.getConnectAs());
+            System.out.println("    "+conn.getSwitchUser());
             for(ServiceName serviceName : ServiceName.values) {
                 AOServService<?,?> service=conn.getServices().get(serviceName);
                 System.out.print("        "+serviceName.name()+": ");

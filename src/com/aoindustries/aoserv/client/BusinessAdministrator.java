@@ -252,6 +252,9 @@ implements
         if(disableLog==null) return null;
         return getConnector().getDisableLogs().get(disableLog);
     }
+    public boolean isDisabled() {
+        return disableLog!=null;
+    }
 
     @SchemaColumn(order=20, description="allows this person to switch users to any subaccounts")
     public boolean getCanSwitchUsers() {
@@ -397,6 +400,7 @@ implements
 
     /**
      * Checks if this business administrator has the provided permission.
+     * A user has a permission when any of their roles grants the permission.
      */
     public boolean hasPermission(AOServPermission permission) throws RemoteException {
         for(BusinessAdministratorRole role : getBusinessAdministratorRoles()) {
@@ -407,6 +411,7 @@ implements
 
     /**
      * Checks if this business administrator has the provided permission.
+     * A user has a permission when any of their roles grants the permission.
      */
     public boolean hasPermission(AOServPermission.Permission permission) throws RemoteException {
         return hasPermission(getConnector().getAoservPermissions().get(permission.name()));
@@ -414,6 +419,7 @@ implements
 
     /**
      * Checks if this business administrator has all of the permissions.
+     * A user has a permission when any of their roles grants the permission.
      *
      * @param permissions a non-null, non-empty set of permissions.
      */

@@ -73,6 +73,9 @@ final public class GroupName extends AOServObjectGroupIdKey implements Comparabl
         if(disableLog==null) return null;
         return getConnector().getDisableLogs().get(disableLog);
     }
+    public boolean isDisabled() {
+        return disableLog!=null;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="DTO">

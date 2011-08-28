@@ -23,8 +23,8 @@ import java.util.concurrent.TimeoutException;
  */
 final public class TimeoutConnector extends WrappedConnector<TimeoutConnector,TimeoutConnectorFactory> {
 
-    TimeoutConnector(TimeoutConnectorFactory factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
-        super(factory, locale, connectAs, authenticateAs, password, daemonServer);
+    TimeoutConnector(TimeoutConnectorFactory factory, Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException {
+        super(factory, locale, username, password, switchUser, daemonServer, readOnly);
     }
 
     @Override

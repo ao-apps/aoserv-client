@@ -27,35 +27,21 @@ abstract public class WrappedConnectorFactory<C extends WrappedConnector<C,F>, F
     private final AOServConnectorFactoryCache<C> connectors = new AOServConnectorFactoryCache<C>();
 
     @Override
-    final public C getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+    final public C getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
         synchronized(connectors) {
-            C connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
-            if(connector!=null) {
-                connector.setLocale(locale);
-            } else {
-                connector = newConnector(
+            C connector = connectors.get(locale, username, password, switchUser, daemonServer, readOnly);
+            if(connector==null) {
+                connector = newWrappedConnector(locale, username, password, switchUser, daemonServer, readOnly);
+                connectors.put(
                     locale,
-                    connectAs,
-                    authenticateAs,
+                    username,
                     password,
-                    daemonServer
+                    switchUser,
+                    daemonServer,
+                    readOnly,
+                    connector
                 );
             }
-            return connector;
-        }
-    }
-
-    //@Override
-    final private C newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-        synchronized(connectors) {
-            C connector = newWrappedConnector(locale, connectAs, authenticateAs, password, daemonServer);
-            connectors.put(
-                connectAs,
-                authenticateAs,
-                password,
-                daemonServer,
-                connector
-            );
             return connector;
         }
     }
@@ -63,5 +49,5 @@ abstract public class WrappedConnectorFactory<C extends WrappedConnector<C,F>, F
     /**
      * Creates a new connector for this factory.
      */
-    abstract protected C newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException;
+    abstract protected C newWrappedConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException;
 }

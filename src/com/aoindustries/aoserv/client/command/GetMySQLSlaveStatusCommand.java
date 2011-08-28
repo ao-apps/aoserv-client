@@ -137,13 +137,19 @@ final public class GetMySQLSlaveStatusCommand extends RemoteCommand<GetMySQLSlav
         this.pkey = mysqlReplication.getPkey();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public int getPkey() {
         return pkey;
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

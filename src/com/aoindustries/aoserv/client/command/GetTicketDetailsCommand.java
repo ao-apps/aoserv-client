@@ -26,13 +26,19 @@ final public class GetTicketDetailsCommand extends RemoteCommand<String> {
         this.ticketId = ticket.getTicketId();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public int getTicketId() {
         return ticketId;
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

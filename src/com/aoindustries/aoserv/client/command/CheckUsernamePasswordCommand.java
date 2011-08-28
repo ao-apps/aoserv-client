@@ -31,6 +31,11 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
         this.password = password;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public UserId getUsername() {
         return username;
     }
@@ -40,11 +45,11 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        Username un = connectedUser.getConnector().getUsernames().get(username);
-        if(!connectedUser.canAccessUsername(un)) {
+        Username un = rootConn.getUsernames().get(username);
+        if(!rootUser.canAccessUsername(un)) {
             errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // Make sure passes other command validations
@@ -52,7 +57,7 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
                 if(dependent instanceof PasswordProtected) {
                     errors = addValidationErrors(
                         errors,
-                        ((PasswordProtected)dependent).getCheckPasswordCommand(password).validate(connectedUser)
+                        ((PasswordProtected)dependent).getCheckPasswordCommand(password).checkExecute(userConn, rootConn, rootUser)
                     );
                 }
             }

@@ -6,25 +6,31 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.table.IndexType;
+import com.aoindustries.util.AoArrays;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.HashCodeComparator;
 import com.aoindustries.util.UnionClassSet;
 import com.aoindustries.util.UnmodifiableArraySet;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * An unmodifiable set that is also indexed.
+ *
+ * The sets are always internally maintained in hashCode ordering.
  *
  * @author  AO Industries, Inc.
  *
@@ -39,13 +45,13 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
         Map<ServiceName,IndexedSet> emptyIndexedSets = new EnumMap<ServiceName,IndexedSet>(ServiceName.class);
         for(ServiceName serviceName : ServiceName.values) {
             Set<AOServObject> emptySet = Collections.emptySet();
-            emptyIndexedSets.put(serviceName, new IndexedSet<AOServObject>(serviceName, emptySet));
+            emptyIndexedSets.put(serviceName, new IndexedSet<AOServObject>(serviceName, null, emptySet));
         }
         EMPTY_INDEXED_SETS = AoCollections.optimalUnmodifiableMap(emptyIndexedSets);
     }
 
     @SuppressWarnings("unchecked")
-    public static final <T extends AOServObject> IndexedSet<T> emptyIndexedSet(ServiceName serviceName) {
+    public static <T extends AOServObject> IndexedSet<T> emptyIndexedSet(ServiceName serviceName) {
         return (IndexedSet<T>) EMPTY_INDEXED_SETS.get(serviceName);
     }
 
@@ -64,8 +70,8 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
     /**
      * Wraps a single object.
      */
-    public static <T extends AOServObject> IndexedSet<T> wrap(ServiceName serviceName, T singleton) {
-        return new IndexedSet<T>(serviceName, singleton);
+    public static <T extends AOServObject<?>> IndexedSet<T> wrap(ServiceName serviceName, Class<T> valueClass, T singleton) {
+        return new IndexedSet<T>(serviceName, valueClass, singleton);
     }
 
     /**
@@ -98,29 +104,76 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
      */
 
     /**
-     * Wraps an unsorted ArrayList.  The list will be sorted in-place.
+     * Wraps an unsorted array.  For efficiency the array is used directly - no defensive copies are made.
+     * Do not modify the array directly after wrapping.
      */
-    public static <T extends AOServObject<?>> IndexedSet<T> wrap(ServiceName serviceName, ArrayList<T> wrapped) {
+    public static <T extends AOServObject<?>> IndexedSet<T> wrap(ServiceName serviceName, Class<T> valueClass, T[] array) {
+        int size = array.length;
+        // Empty
+        if(size==0) return emptyIndexedSet(serviceName);
+        // Singleton
+        if(size==1) return wrap(serviceName, valueClass, array[0]);
+        // Sort and then wrap
+        Arrays.sort(array, HashCodeComparator.getInstance());
+        return new IndexedSet<T>(serviceName, valueClass, new UnmodifiableArraySet<T>(array));
+    }
+
+    /**
+     * Wraps an already-sorted array.  The array must be sorted in hashCode order.
+     * For efficiency the array is used directly - no defensive copies are made.
+     * Do not modify the array directly after wrapping.
+     *
+     * @see HashCodeComparator
+     */
+    public static <T extends AOServObject<?>> IndexedSet<T> wrapAlreadySorted(ServiceName serviceName, Class<T> valueClass, T[] array) {
+        int size = array.length;
+        // Empty
+        if(size==0) return emptyIndexedSet(serviceName);
+        // Singleton
+        if(size==1) return wrap(serviceName, valueClass, array[0]);
+        // Wrap without sort
+        return new IndexedSet<T>(serviceName, valueClass, new UnmodifiableArraySet<T>(array));
+    }
+
+    /**
+     * Wraps an unsorted List.  The list is not modified.
+     */
+    public static <T extends AOServObject<?>> IndexedSet<T> wrap(ServiceName serviceName, Class<T> valueClass, List<T> wrapped) {
         int size = wrapped.size();
         // Empty
         if(size==0) return emptyIndexedSet(serviceName);
         // Singleton
-        if(size==1) return wrap(serviceName, wrapped.get(0));
-        wrapped.trimToSize();
-        Collections.sort(wrapped, HashCodeComparator.getInstance());
-        return new IndexedSet<T>(serviceName, new UnmodifiableArraySet<T>(wrapped));
+        if(size==1) return wrap(serviceName, valueClass, wrapped.get(0));
+        // Convert to array and then sort to avoid modifying wrapped list directory
+        @SuppressWarnings("unchecked")
+        T[] array = wrapped.toArray((T[])Array.newInstance(valueClass, size));
+        Arrays.sort(array, HashCodeComparator.getInstance());
+        return new IndexedSet<T>(serviceName, valueClass, new UnmodifiableArraySet<T>(array));
+    }
+
+    /**
+     * Wraps an already-sorted List.  The list is not modified.
+     */
+    public static <T extends AOServObject<?>> IndexedSet<T> wrapAlreadySorted(ServiceName serviceName, Class<T> valueClass, List<T> wrapped) {
+        int size = wrapped.size();
+        // Empty
+        if(size==0) return emptyIndexedSet(serviceName);
+        // Singleton
+        if(size==1) return wrap(serviceName, valueClass, wrapped.get(0));
+        // Wrap without sorting
+        return new IndexedSet<T>(serviceName, valueClass, new UnmodifiableArraySet<T>(wrapped));
     }
 
     /**
      * Wraps a UnionClassSet.
      */
-    public static <T extends AOServObject<?>> IndexedSet<T> wrap(ServiceName serviceName, UnionClassSet<T> wrapped) {
+    public static <T extends AOServObject<?>> IndexedSet<T> wrap(ServiceName serviceName, Class<T> valueClass, UnionClassSet<T> wrapped) {
         int size = wrapped.size(); // Size is fast for this type of UnionSet - this is OK
         // Empty
         if(size==0) return emptyIndexedSet(serviceName);
         // Singleton
-        if(size==1) return wrap(serviceName, wrapped.iterator().next());
-        return new IndexedSet<T>(serviceName, wrapped);
+        if(size==1) return wrap(serviceName, valueClass, wrapped.iterator().next());
+        return new IndexedSet<T>(serviceName, valueClass, wrapped);
     }
 
     /**
@@ -163,7 +216,8 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
     }*/
 
     private final ServiceName serviceName;
-    private final Set<E> wrapped;
+    private final Class<E> valueClass;
+    private final Set<E> wrapped; // Will be empty, singleton, or arrayset
 
     /**
      * The unique column objects are hashed on the method return value when first needed.
@@ -175,27 +229,30 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
      */
     private transient Map<MethodColumn,Map<Object,IndexedSet<E>>> indexedHashes;
 
-    private IndexedSet(ServiceName serviceName) {
+    private IndexedSet(ServiceName serviceName, Class<E> valueClass) {
         this.serviceName = serviceName;
+        this.valueClass = valueClass;
         this.wrapped = Collections.emptySet();
     }
 
-    private IndexedSet(ServiceName serviceName, E value) {
+    private IndexedSet(ServiceName serviceName, Class<E> valueClass, E value) {
         this.serviceName = serviceName;
+        this.valueClass = valueClass;
         this.wrapped = Collections.singleton(value);
     }
 
     /**
      * The wrapped set should not change underneath this set.
      */
-    private IndexedSet(ServiceName serviceName, Set<E> wrapped) {
+    private IndexedSet(ServiceName serviceName, Class<E> valueClass, Set<E> wrapped) {
         if(wrapped==null) throw new IllegalArgumentException("wrapped==null");
         this.serviceName = serviceName;
+        this.valueClass = valueClass;
         this.wrapped = wrapped;
     }
 
     /**
-     * Use the singletons for any empty set.
+     * Restore the empty sets on read object.
      */
     private Object readResolve() {
         return wrapped.isEmpty() ? EMPTY_INDEXED_SETS.get(serviceName) : this;
@@ -344,7 +401,7 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
     public IndexedSet<E> filterUniqueSet(MethodColumn column, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet(serviceName);
         synchronized(wrapped) {
-            ArrayList<E> results;
+            List<E> results;
             Map<Object,E> uniqueHash = getUniqueHash(column, null);
             if(values.size()<uniqueHash.size()) {
                 results = new ArrayList<E>(values.size());
@@ -363,25 +420,25 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
                     }
                 }
             }
-            return wrap(serviceName, results);
+            return wrap(serviceName, valueClass, results);
         }
     }
 
-    private Map<Object,IndexedSet<E>> getIndexHash(MethodColumn column, Class<?> valueClass) throws RemoteException {
+    private Map<Object,IndexedSet<E>> getIndexHash(MethodColumn column, Class<?> returnTypeClass) throws RemoteException {
         assert Thread.holdsLock(wrapped);
         if(indexedHashes==null) indexedHashes = new HashMap<MethodColumn,Map<Object,IndexedSet<E>>>();
         Map<Object,IndexedSet<E>> indexedHash = indexedHashes.get(column);
         if(indexedHash==null) {
-            Map<Object,ArrayList<E>> listByValue = new HashMap<Object,ArrayList<E>>(wrapped.size()*4/3+1); // Error on the side of avoiding rehash
+            Map<Object,List<E>> listByValue = new HashMap<Object,List<E>>(wrapped.size()*4/3+1); // Error on the side of avoiding rehash
             try {
                 if(column.getIndexType()!=IndexType.INDEXED) throw new IllegalArgumentException("Column not indexed: "+column);
                 final Method method = column.getMethod();
-                assert valueClass==null || AOServServiceUtils.classesMatch(valueClass, method.getReturnType()) : "value class and return type mismatch: "+valueClass.getName()+"!="+method.getReturnType().getName();
+                assert returnTypeClass==null || AOServServiceUtils.classesMatch(returnTypeClass, method.getReturnType()) : "value class and return type mismatch: "+returnTypeClass.getName()+"!="+method.getReturnType().getName();
                 for(E obj : wrapped) {
                     if(obj!=null) {
                         Object columnValue = method.invoke(obj);
                         if(columnValue!=null) {
-                            ArrayList<E> results = listByValue.get(columnValue);
+                            List<E> results = listByValue.get(columnValue);
                             if(results==null) listByValue.put(columnValue, results = new ArrayList<E>());
                             results.add(obj);
                         }
@@ -395,9 +452,8 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
             }
             // Make each list indexed
             indexedHash = new HashMap<Object,IndexedSet<E>>(listByValue.size()*4/3+1);
-            for(Map.Entry<Object,ArrayList<E>> entry : listByValue.entrySet()) {
-                ArrayList<E> list = entry.getValue();
-                indexedHash.put(entry.getKey(), wrap(serviceName, list));
+            for(Map.Entry<Object,List<E>> entry : listByValue.entrySet()) {
+                indexedHash.put(entry.getKey(), wrapAlreadySorted(serviceName, this.valueClass, entry.getValue()));
             }
             indexedHashes.put(column, indexedHash);
         }
@@ -418,24 +474,29 @@ final public class IndexedSet<E extends AOServObject> implements Set<E>, Indexed
     public IndexedSet<E> filterIndexedSet(MethodColumn column, Set<?> values) throws RemoteException {
         if(values==null || values.isEmpty() || wrapped.isEmpty()) return emptyIndexedSet(serviceName);
         synchronized(wrapped) {
-            ArrayList<E> results;
+            List<IndexedSet<E>> results;
             Map<Object,IndexedSet<E>> indexHash = getIndexHash(column, null);
             if(values.size()<indexHash.size()) {
-                results = new ArrayList<E>(values.size());
+                results = new ArrayList<IndexedSet<E>>(values.size());
                 for(Object value : values) {
                     if(value!=null) {
                         IndexedSet<E> objs = indexHash.get(value);
-                        if(objs!=null) results.addAll(objs);
+                        if(objs!=null) results.add(objs);
                     }
                 }
             } else {
-                results = new ArrayList<E>(indexHash.size());
+                results = new ArrayList<IndexedSet<E>>(indexHash.size());
                 for(Map.Entry<Object,IndexedSet<E>> entry : indexHash.entrySet()) {
                     Object value = entry.getKey();
-                    if(values.contains(value)) results.addAll(entry.getValue());
+                    assert value!=null;
+                    if(values.contains(value)) results.add(entry.getValue());
                 }
             }
-            return wrap(serviceName, results);
+            return wrapAlreadySorted(
+                serviceName,
+                valueClass,
+                AoArrays.merge(valueClass, results, HashCodeComparator.getInstance())
+            );
         }
     }
 }

@@ -31,6 +31,11 @@ final public class CheckPostgresUserPasswordCommand extends AOServCommand<List<P
         this.password = password;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public int getPostgresUser() {
         return postgresUser;
     }
@@ -40,15 +45,15 @@ final public class CheckPostgresUserPasswordCommand extends AOServCommand<List<P
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        PostgresUser pu = connectedUser.getConnector().getPostgresUsers().get(postgresUser);
-        if(!connectedUser.canAccessPostgresUser(pu)) {
+        PostgresUser rootPu = rootConn.getPostgresUsers().get(postgresUser);
+        if(!rootUser.canAccessPostgresUser(rootPu)) {
             errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // No setting root password
-            PostgresUserId username = pu.getUserId();
+            PostgresUserId username = rootPu.getUserId();
             if(
                 username==PostgresUser.POSTGRES // OK - interned
             ) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.noSetPostgres");

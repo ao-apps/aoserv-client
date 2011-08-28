@@ -15,22 +15,21 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInput;
 import java.io.ObjectInputValidation;
 import java.io.ObjectOutput;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * The unique identifier for a business.  Accounting codes must:
+ * The unique, case-insensitive identifier for a business.  Accounting codes must:
  * <ul>
  *   <li>Be non-null</li>
  *   <li>Be non-empty</li>
  *   <li>Be between 2 and 32 characters</li>
- *   <li>Must start with <code>[A-Z]</code></li>
- *   <li>Must end with <code>[A-Z] [0-9]</code></li>
- *   <li>Must contain only <code>[A-Z] [0-9] and underscore(_)</code></li>
+ *   <li>Must start with <code>[A-Z,a-z]</code></li>
+ *   <li>Must end with <code>[A-Z,a-z,0-9]</code></li>
+ *   <li>Must contain only <code>[A-Z,a-z,0-9] and underscore(_)</code></li>
  *   <li>May not have consecutive underscores</li>
  * </ul>
- *
- * @see Email#validate(java.lang.String)
  *
  * @author  AO Industries, Inc.
  */
@@ -51,11 +50,15 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
         if(len>MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.tooLong", MAX_LENGTH, len);
 
         char ch=accounting.charAt(0);
-        if(ch<'A' || ch>'Z') return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.mustStartAlpha");
+        if(
+            (ch<'A' || ch>'Z')
+            && (ch<'a' || ch>'z')
+        ) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.mustStartAlpha");
 
         ch=accounting.charAt(len-1);
         if(
             (ch<'A' || ch>'Z')
+            && (ch<'a' || ch>'z')
             && (ch<'0' || ch>'9')
     	) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.mustEndAlphanumeric");
 
@@ -65,6 +68,7 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
                 if(accounting.charAt(pos-1)=='_') return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.consecutiveUnderscores", pos-1);
             } else if(
                 (ch<'A' || ch>'Z')
+                && (ch<'a' || ch>'z')
                 && (ch<'0' || ch>'9')
             ) return new InvalidResult(ApplicationResources.accessor, "AccountingCode.validate.invalidCharacter", ch, pos);
         }
@@ -90,9 +94,15 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
     }*/
 
     private String accounting;
+    private String upperAccounting;
 
     private AccountingCode(String accounting) throws ValidationException {
+        this(accounting, accounting.toUpperCase(Locale.ENGLISH));
+    }
+
+    private AccountingCode(String accounting, String upperAccounting) throws ValidationException {
         this.accounting = accounting;
+        this.upperAccounting = upperAccounting;
         validate();
     }
 
@@ -106,23 +116,32 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
     	return
             O!=null
             && O instanceof AccountingCode
-            && accounting.equals(((AccountingCode)O).accounting)
+            && upperAccounting.equals(((AccountingCode)O).upperAccounting)
     	;
     }
 
     @Override
     public int hashCode() {
-        return accounting.hashCode();
+        return upperAccounting.hashCode();
     }
 
     @Override
     public int compareTo(AccountingCode other) {
-        return this==other ? 0 : accounting.compareTo(other.accounting);
+        return this==other ? 0 : AOServObject.compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
     }
 
     @Override
     public String toString() {
         return accounting;
+    }
+
+    /**
+     * Gets the upper-case form of the code.  If two different accounting codes are
+     * interned and their toUpperCase is the same String instance, then they are
+     * equal in case-insensitive manner.
+     */
+    public String toUpperCase() {
+        return upperAccounting;
     }
 
     /**
@@ -136,7 +155,8 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
             AccountingCode existing = interned.get(accounting);
             if(existing==null) {
                 String internedAccounting = accounting.intern();
-                AccountingCode addMe = accounting==internedAccounting ? this : new AccountingCode(internedAccounting);
+                String internedUpperAccounting = upperAccounting.intern();
+                AccountingCode addMe = accounting==internedAccounting && upperAccounting==internedUpperAccounting ? this : new AccountingCode(internedAccounting, upperAccounting);
                 existing = interned.putIfAbsent(internedAccounting, addMe);
                 if(existing==null) existing = addMe;
             }
@@ -179,6 +199,7 @@ final public class AccountingCode implements Comparable<AccountingCode>, FastExt
         FastObjectInput fastIn = FastObjectInput.wrap(in);
         try {
             accounting = fastIn.readFastUTF();
+            upperAccounting = accounting.toUpperCase(Locale.ENGLISH);
         } finally {
             fastIn.unwrap();
         }

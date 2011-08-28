@@ -33,6 +33,11 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
         this.plaintext = plaintext;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getLinuxAccount() {
         return linuxAccount;
     }
@@ -42,11 +47,11 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        LinuxAccount la = connectedUser.getConnector().getLinuxAccounts().get(linuxAccount);
-        if(!connectedUser.canAccessLinuxAccount(la)) {
+        LinuxAccount la = rootConn.getLinuxAccounts().get(linuxAccount);
+        if(!rootUser.canAccessLinuxAccount(la)) {
             errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // Enforce can't set password type

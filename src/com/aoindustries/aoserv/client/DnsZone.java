@@ -176,10 +176,6 @@ final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoF
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Zone File Creation">
-    public boolean isArpa() {
-        return zone.toString().endsWith(".in-addr.arpa");
-    }
-
     private static void printRecord(Appendable out, String domain, int ttl, Integer recordTtl, String type, Integer mx, String destination) throws IOException {
         out.append(domain);
         int count=Math.max(1, 24-domain.length());
@@ -237,7 +233,7 @@ final public class DnsZone extends Resource implements Comparable<DnsZone>, DtoF
     	out.append("$TTL    ");
         out.append(Integer.toString(ttl));
         out.append('\n');
-    	if(!isArpa()) {
+    	if(!zone.isArpa()) {
             out.append("$ORIGIN ");
             out.append(zone.toString());
             out.append(".\n");

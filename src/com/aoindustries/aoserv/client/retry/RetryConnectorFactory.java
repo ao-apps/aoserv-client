@@ -25,11 +25,11 @@ final public class RetryConnectorFactory extends WrappedConnectorFactory<RetryCo
     }
 
     @Override
-    protected RetryConnector newWrappedConnector(final Locale locale, final UserId connectAs, final UserId authenticateAs, final String password, final DomainName daemonServer) throws LoginException, RemoteException {
+    protected RetryConnector newWrappedConnector(final Locale locale, final UserId username, final String password, final UserId switchUser, final DomainName daemonServer, final boolean readOnly) throws LoginException, RemoteException {
         int attempt = 1;
         while(!Thread.interrupted()) {
             try {
-                return new RetryConnector(RetryConnectorFactory.this, locale, connectAs, authenticateAs, password, daemonServer);
+                return new RetryConnector(RetryConnectorFactory.this, locale, username, password, switchUser, daemonServer, readOnly);
             } catch(LoginException err) {
                 throw err;
             } catch(RemoteException err) {

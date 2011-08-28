@@ -33,7 +33,7 @@ public class GetUniqueRowTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conns = AOServConnectorTest.getTestConnectors();
+        conns = AOServConnectorTest.getTestConnectors(true);
     }
 
     @Override
@@ -51,8 +51,8 @@ public class GetUniqueRowTest extends TestCase {
     public void testGetUniqueRows() throws Exception {
         System.out.println("Testing all unique rows:");
         for(AOServConnector conn : conns) {
-            System.out.println("    "+conn.getConnectAs());
-            Map<Object,AOServObject> uniqueMap=new HashMap<Object,AOServObject>();
+            System.out.println("    "+conn.getSwitchUser());
+            Map<Object,AOServObject<?>> uniqueMap=new HashMap<Object,AOServObject<?>>();
             for(ServiceName serviceName : ServiceName.values) {
                 // Excluded for testing speed
                 // TODO: if(serviceName==ServiceName.distro_files) continue;
@@ -71,7 +71,7 @@ public class GetUniqueRowTest extends TestCase {
                     uniqueMap.clear();
                     IndexType indexType = column.getIndexType();
                     if(indexType==IndexType.PRIMARY_KEY || indexType==IndexType.UNIQUE) {
-                        for(AOServObject row : rows) {
+                        for(AOServObject<?> row : rows) {
                             Object uniqueValue=row.getColumn(col);
                             // Multiple rows may have null values even when the column is otherwise unique
                             if(uniqueValue!=null) {
@@ -79,7 +79,7 @@ public class GetUniqueRowTest extends TestCase {
                                 if(uniqueMap.containsKey(uniqueValue)) fail("Column is flagged as unique but has a duplicate value.  Table="+serviceName+", Column="+column.getName()+", Value="+uniqueValue);
                                 uniqueMap.put(uniqueValue, row);
                                 // Check that the object returned from the get unique row call matches the row that provides the unique value
-                                AOServObject fromUniqueCall=service.filterUnique(column, uniqueValue);
+                                AOServObject<?> fromUniqueCall=service.filterUnique(column, uniqueValue);
                                 assertEquals("Table="+serviceName+", Column="+column.getName(), row, fromUniqueCall);
                             } else {
                                 // Make sure is nullable
@@ -95,7 +95,7 @@ public class GetUniqueRowTest extends TestCase {
     public void testGetLinuxAccounts() throws RemoteException {
         System.out.println("Testing AOServer.getLinuxAccounts:");
         for(AOServConnector conn : conns) {
-            System.out.println("    "+conn.getConnectAs());
+            System.out.println("    "+conn.getSwitchUser());
             for(AOServer ao : conn.getAoServers().getSet()) {
                 System.out.println("        "+ao);
                 for(LinuxAccount la : new TreeSet<LinuxAccount>(ao.getLinuxAccounts())) {

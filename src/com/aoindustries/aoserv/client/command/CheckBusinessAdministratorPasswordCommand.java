@@ -31,6 +31,11 @@ final public class CheckBusinessAdministratorPasswordCommand extends AOServComma
         this.password = password;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public UserId getUsername() {
         return username;
     }
@@ -40,12 +45,12 @@ final public class CheckBusinessAdministratorPasswordCommand extends AOServComma
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        BusinessAdministrator other = connectedUser.getConnector().getBusinessAdministrators().get(username);
-        if(!connectedUser.canAccessBusinessAdministrator(other)) {
-            errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "Common.validate.accessDenied");
+        BusinessAdministrator other = rootConn.getBusinessAdministrators().get(username);
+        if(!rootUser.canAccessBusinessAdministrator(other)) {
+            errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, "Common.validate.accessDenied");
         }
         return errors;
     }

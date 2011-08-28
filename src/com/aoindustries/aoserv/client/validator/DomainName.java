@@ -399,15 +399,16 @@ implements
          * @see #valueOfLabel(java.lang.String)
          */
         public static TopLevelDomain getByLabel(DomainLabel label) {
-            return getByLabel(label.toString());
+            return getByLabel(label.toLowerCase());
         }
     }
 
     public static final int MAX_LENGTH = 253;
 
+    /*
     private static boolean isNumeric(String label) {
         return isNumeric(label, 0, label.length());
-    }
+    }*/
 
     private static boolean isNumeric(String label, int start, int end) {
         if((end-start)<=0) throw new IllegalArgumentException("empty label");
@@ -437,10 +438,24 @@ implements
     }
 
     /**
-     * Checks if ends with .in-addr.arpa (case insensitive)
+     * Checks if ends with .in-addr.arpa (case insensitive).
+     *
+     * Performance measurement of new implementation versus old (10,000,000 iterations):
+     *     "This is not an arpa"
+     *         Old: 2911.130028 ms
+     *         New: 37.805258 ms
+     *         Improvement: 77.0 times
+     *     "this is not an arpa"
+     *         Old: 1746.381520 ms
+     *         New: 50.407891 ms
+     *         Improvement: 34.7 times
+     *     "subnet0.144.71.64.in-addr.arpa"
+     *         Old: 2712.463721 ms
+     *         New: 284.561373 ms
+     *         Improvement: 9.5 times
      */
     public static boolean isArpa(String domain) {
-        // Stupid fast implementation - performance vs. complexity gone too far?
+        // Stupid-fast implementation - performance vs. complexity gone too far?
         int pos = domain.length()-13;
         char ch;
         return
@@ -461,6 +476,28 @@ implements
         ;
         //return domain.toLowerCase(Locale.ENGLISH).endsWith(".in-addr.arpa");
     }
+    /*
+    private static boolean isArpaBenchmark(String domain) {
+        return domain.toLowerCase(Locale.ENGLISH).endsWith(".in-addr.arpa");
+    }
+
+    private static void benchmark() {
+        final int iterations = 10000000;
+        long startTime = System.nanoTime();
+        for(int i=0; i<iterations; i++) {
+            isArpa("subnet0.144.71.64.in-addr.arpa");
+        }
+        long midTime = System.nanoTime();
+        for(int i=0; i<iterations; i++) {
+            isArpaBenchmark("subnet0.144.71.64.in-addr.arpa");
+        }
+        long endTime = System.nanoTime();
+        System.out.println("Old: "+BigDecimal.valueOf(endTime-midTime, 6)+" ms");
+        System.out.println("New: "+BigDecimal.valueOf(midTime-startTime, 6)+" ms");
+    }
+    public static void main(String[] args) {
+        for(int c=0; c<100; c++) benchmark();
+    }*/
 
     /**
      * Validates a domain name, but doesn't allow an ending period.
@@ -519,9 +556,15 @@ implements
     }
 
     private String domain;
+    private String lowerDomain;
 
     private DomainName(String domain) throws ValidationException {
+        this(domain, domain.toLowerCase(Locale.ENGLISH));
+    }
+
+    private DomainName(String domain, String lowerDomain) throws ValidationException {
         this.domain = domain;
+        this.lowerDomain = lowerDomain;
         validate();
     }
 
@@ -535,13 +578,13 @@ implements
     	return
             O!=null
             && O instanceof DomainName
-            && domain.equals(((DomainName)O).domain)
+            && lowerDomain.equals(((DomainName)O).lowerDomain)
     	;
     }
 
     @Override
     public int hashCode() {
-        return domain.hashCode();
+        return lowerDomain.hashCode();
     }
 
     /**
@@ -585,6 +628,15 @@ implements
         return domain;
     }
 
+    /**
+     * Gets the lower-case form of the domain.  If two different domains are
+     * interned and their toLowerCase is the same String instance, then they are
+     * equal in case-insensitive manner.
+     */
+    public String toLowerCase() {
+        return lowerDomain;
+    }
+
     public boolean isArpa() {
         return isArpa(domain);
     }
@@ -600,7 +652,8 @@ implements
             DomainName existing = interned.get(domain);
             if(existing==null) {
                 String internedDomain = domain.intern();
-                DomainName addMe = domain==internedDomain ? this : new DomainName(internedDomain);
+                String internedLowerDomain = lowerDomain.intern();
+                DomainName addMe = domain==internedDomain && lowerDomain==internedLowerDomain ? this : new DomainName(internedDomain);
                 existing = interned.putIfAbsent(internedDomain, addMe);
                 if(existing==null) existing = addMe;
             }
@@ -643,6 +696,7 @@ implements
         FastObjectInput fastIn = FastObjectInput.wrap(in);
         try {
             domain = fastIn.readFastUTF();
+            lowerDomain = domain.toLowerCase(Locale.ENGLISH);
         } finally {
             fastIn.unwrap();
         }

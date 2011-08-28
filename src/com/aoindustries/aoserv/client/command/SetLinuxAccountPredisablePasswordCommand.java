@@ -29,6 +29,11 @@ final public class SetLinuxAccountPredisablePasswordCommand extends RemoteComman
         this.encryptedPassword = encryptedPassword;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getLinuxAccount() {
         return linuxAccount;
     }
@@ -38,8 +43,9 @@ final public class SetLinuxAccountPredisablePasswordCommand extends RemoteComman
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

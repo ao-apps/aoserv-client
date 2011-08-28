@@ -70,43 +70,29 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
         }
 
         @Override
-        public AOServConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
+        public AOServConnector getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
             synchronized(connectors) {
-                AOServConnector connector = connectors.get(connectAs, authenticateAs, password, daemonServer);
-                if(connector!=null) {
-                    connector.setLocale(locale);
-                } else {
-                    connector = newConnector(
-                        locale,
-                        connectAs,
-                        authenticateAs,
-                        password,
-                        daemonServer
-                    );
+                AOServConnector connector = connectors.get(locale, username, password, switchUser, daemonServer, readOnly);
+                if(connector==null) {
+                    try {
+                        // Connect to the remote registry and get each of the stubs
+                        Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
+                        AOServConnectorFactory serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
+                        connector = serverFactory.getConnector(locale, username, password, switchUser, daemonServer, readOnly);
+                        connectors.put(
+                            locale,
+                            username,
+                            password,
+                            switchUser,
+                            daemonServer,
+                            readOnly,
+                            connector
+                        );
+                    } catch(NotBoundException err) {
+                        throw new RemoteException(err.getMessage(), err);
+                    }
                 }
                 return connector;
-            }
-        }
-
-        //@Override
-        private AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-            try {
-                // Connect to the remote registry and get each of the stubs
-                Registry remoteRegistry = LocateRegistry.getRegistry(serverAddress, serverPort, csf);
-                AOServConnectorFactory serverFactory = (AOServConnectorFactory)remoteRegistry.lookup(AOServConnectorFactory.class.getName()+"_Stub");
-                synchronized(connectors) {
-                    AOServConnector connector = serverFactory.getConnector(locale, connectAs, authenticateAs, password, daemonServer);
-                    connectors.put(
-                        connectAs,
-                        authenticateAs,
-                        password,
-                        daemonServer,
-                        connector
-                    );
-                    return connector;
-                }
-            } catch(NotBoundException err) {
-                throw new RemoteException(err.getMessage(), err);
             }
         }
     }
@@ -121,7 +107,7 @@ final public class RmiClientConnectorFactory extends WrappedConnectorFactory<Rmi
     }
 
     @Override
-    protected RmiClientConnector newWrappedConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws LoginException, RemoteException {
-        return new RmiClientConnector(this, locale, connectAs, authenticateAs, password, daemonServer);
+    protected RmiClientConnector newWrappedConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws LoginException, RemoteException {
+        return new RmiClientConnector(this, locale, username, password, switchUser, daemonServer, readOnly);
     }
 }

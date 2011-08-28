@@ -26,8 +26,8 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     final Object connectionLock = new Object();
     private AOServConnector wrapped;
 
-    protected WrappedConnector(F factory, Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException {
-        super(locale, connectAs, authenticateAs, password, daemonServer);
+    protected WrappedConnector(F factory, Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException {
+        super(locale, username, password, switchUser, daemonServer, readOnly);
         this.factory = factory;
         // TODO: If possible (construction order OK), instantiate where declared
         aoserverDaemonHosts = new WrappedAOServerDaemonHostService<C,F>(this);
@@ -212,7 +212,7 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     final protected AOServConnector getWrapped() throws RemoteException, LoginException {
         synchronized(connectionLock) {
             // (Re)connects to the wrapped factory
-            if(wrapped==null) wrapped = factory.wrapped.getConnector(getLocale(), getConnectAs(), getAuthenticateAs(), getPassword(), getDaemonServer());
+            if(wrapped==null) wrapped = factory.wrapped.getConnector(getLocale(), getUsername(), getPassword(), getSwitchUser(), getDaemonServer(), isReadOnly());
             return wrapped;
         }
     }
@@ -246,33 +246,13 @@ abstract public class WrappedConnector<C extends WrappedConnector<C,F>, F extend
     }
 
     @Override
-    final public void setLocale(final Locale locale) throws RemoteException {
-        if(!getLocale().equals(locale)) {
-            call(
-                new Callable<Void>() {
-                    @Override
-                    public Void call() throws RemoteException {
-                        try {
-                            getWrapped().setLocale(locale);
-                            return null;
-                        } catch(LoginException err) {
-                            throw new RemoteException(err.getMessage(), err);
-                        }
-                    }
-                }
-            );
-            super.setLocale(locale);
-        }
-    }
-
-    @Override
-    final public <R> CommandResult<R> executeCommand(final RemoteCommand<R> command, final boolean isInteractive) throws RemoteException {
+    final public <R> CommandResult<R> execute(final RemoteCommand<R> command, final boolean isInteractive) throws RemoteException {
         return call(
             new Callable<CommandResult<R>>() {
                 @Override
                 public CommandResult<R> call() throws RemoteException {
                     try {
-                        return getWrapped().executeCommand(command, isInteractive);
+                        return getWrapped().execute(command, isInteractive);
                     } catch(LoginException err) {
                         throw new RemoteException(err.getMessage(), err);
                     }

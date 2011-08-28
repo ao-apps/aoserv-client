@@ -418,8 +418,8 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
     public InetAddress getDaemonConnectorIP() throws RemoteException {
         InetAddress address = getDaemonConnectAddress();
         if(address!=null) return address;
-        address = getDaemonConnectBind().getIpAddress().getIpAddress();
-        if(address.isUnspecified()) address = getPrimaryIPAddress().getIpAddress();
+        address = getDaemonConnectBind().getIpAddress().getInetAddress();
+        if(address.isUnspecified()) address = getPrimaryIPAddress().getInetAddress();
         return address;
     }
 

@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2011 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.aoserv.client.cache.*;
 import com.aoindustries.aoserv.client.noswing.*;
 import com.aoindustries.aoserv.client.retry.*;
@@ -165,6 +165,13 @@ final public class AOServClientConfiguration {
     }
 
     /**
+     * Gets the read-only flag.  Defaults to false.
+     */
+    static boolean isReadOnly() throws IOException {
+        return "true".equals(getProperty("aoserv.client.readOnly"));
+    }
+
+    /**
      * Gets the optional default username.
      */
     static UserId getUsername() throws IOException, ValidationException {
@@ -277,17 +284,21 @@ final public class AOServClientConfiguration {
     /**
      * Gets the default <code>AOServConnector</code> as defined in the
      * <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
-     * resource, in the thread locale.  Only one instance will
-     * be created and its locale will be reset back to the thread locale.
+     * resource, in the thread locale.  One instance is created per locale.
      */
     public static AOServConnector getConnector() throws RemoteException, LoginException {
         try {
             UserId username = getUsername();
-            String password = getPassword();
             UserId switchUser = getSwitchUser();
             if(switchUser==null) switchUser = username;
-            DomainName daemonServer = getDaemonServer();
-            return getConnector(ThreadLocale.get(), username, password, switchUser, daemonServer);
+            return getConnector(
+                ThreadLocale.get(),
+                username,
+                getPassword(),
+                switchUser,
+                getDaemonServer(),
+                isReadOnly()
+            );
         } catch(IOException err) {
             throw new RemoteException(err.getMessage(), err);
         } catch(ValidationException err) {
@@ -299,32 +310,36 @@ final public class AOServClientConfiguration {
      * Gets the <code>AOServConnector</code> with the provided authentication
      * information.  The <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
      * resource determines the connection parameters.  Uses the thread locale.
-     * Only one instance will be created for each username/password pair and its
-     * locale will be reset back to the thread locale.
+     * One instance is created for each locale, username, password, readOnly combination.
      *
      * @param  username  the username to connect as
      * @param  password  the password to connect with
      */
-    public static AOServConnector getConnector(UserId username, String password) throws RemoteException, LoginException {
-        return getConnector(ThreadLocale.get(), username, password, username, null);
+    public static AOServConnector getConnector(UserId username, String password, boolean readOnly) throws RemoteException, LoginException {
+        return getConnector(ThreadLocale.get(), username, password, username, null, readOnly);
     }
 
     /**
      * Gets the <code>AOServConnector</code> with the provided authentication
      * information.  The <code>com/aoindustries/aoserv/client/aoserv-client.properties</code>
-     * resource determines the connection parameters.  Only one instance will be created for
-     * each unique set of authentication parameters and its locale will be reset back to the provided locale.
+     * resource determines the connection parameters.
+     * One instance is created for each locale, username, password, switchUser, daemonServer, readOnly combination.
      *
-     * @param  username  the username to connect as
-     * @param  password  the password to connect with
+     * @param  username      the username to connect as
+     * @param  password      the password to connect with
+     * @param  switchUser    the user to become after authentication, most often the same as username
+     * @param  daemonServer  the server this connection represents - this causes some master server interactions to become synchronous
+     *                       to avoid race conditions between data modification and wait calls.
+     * @param  readOnly      when read-only only read-only commands are allowed
      */
-    public static AOServConnector getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer) throws RemoteException, LoginException {
+    public static AOServConnector getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException {
         return getAOServConnectorFactory().getConnector(
             locale,
-            switchUser,
             username,
             password,
-            daemonServer
+            switchUser,
+            daemonServer,
+            readOnly
         );
     }
 }

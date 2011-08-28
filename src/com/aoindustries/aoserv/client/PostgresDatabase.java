@@ -233,7 +233,7 @@ final public class PostgresDatabase extends AOServerResource implements Comparab
         return
             "jdbc:postgresql://"
             + (ipOnly
-               ?ao.getServer().getNetDevice(ao.getDaemonDeviceId()).getPrimaryIPAddress().getIpAddress().toString()
+               ?ao.getServer().getNetDevice(ao.getDaemonDeviceId()).getPrimaryIPAddress().getInetAddress().toString()
                :ao.getHostname().toString()
             )
             + ':'

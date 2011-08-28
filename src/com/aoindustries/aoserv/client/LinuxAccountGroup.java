@@ -28,7 +28,7 @@ final public class LinuxAccountGroup extends AOServObjectIntegerKey implements C
     /**
      * The maximum number of groups allowed for one account.
      */
-    public static final int MAX_GROUPS=31;
+    public static final int MAX_GROUPS = 65535; // Previously 31 before CentOS 5: one less than that defined in /usr/includes/linux/limits.h: NGROUPS_MAX
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">

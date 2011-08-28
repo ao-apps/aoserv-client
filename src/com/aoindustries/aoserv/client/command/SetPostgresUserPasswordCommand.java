@@ -34,6 +34,11 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
         this.plaintext = plaintext;
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getPostgresUser() {
         return postgresUser;
     }
@@ -43,25 +48,25 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
         Map<String,List<String>> errors = Collections.emptyMap();
         // Check access
-        PostgresUser pu = connectedUser.getConnector().getPostgresUsers().get(postgresUser);
-        if(!connectedUser.canAccessPostgresUser(pu)) {
+        PostgresUser rootPu = rootConn.getPostgresUsers().get(postgresUser);
+        if(!rootUser.canAccessPostgresUser(rootPu)) {
             errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
         } else {
             // No setting root password
-            PostgresUserId username = pu.getUserId();
+            PostgresUserId username = rootPu.getUserId();
             if(
                 username==PostgresUser.POSTGRES // OK - interned
             ) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
             else {
                 // Make sure not disabled
-                if(pu.isDisabled()) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.disabled");
+                if(rootPu.isDisabled()) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.disabled");
                 else {
                     // Check password strength
                     try {
-                        if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, CheckPostgresUserPasswordCommand.checkPassword(pu, plaintext));
+                        if(plaintext!=null && plaintext.length()>0) errors = addValidationError(errors, PARAM_PLAINTEXT, CheckPostgresUserPasswordCommand.checkPassword(rootPu, plaintext));
                     } catch(IOException err) {
                         throw new RemoteException(err.getMessage(), err);
                     }

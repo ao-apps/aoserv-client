@@ -55,7 +55,7 @@ abstract class CachedService<K extends Comparable<K>, V extends AOServObject<K>>
     @Override
     final public IndexedSet<V> getSet() throws RemoteException {
         synchronized(cachedSetLock) {
-            if(cachedSet==null) cachedSet = AOServConnectorUtils.setConnector(wrapped.getSet(), connector);
+            if(cachedSet==null) cachedSet = AOServConnectorUtils.setConnector(valueClass, wrapped.getSet(), connector);
             return cachedSet;
         }
     }

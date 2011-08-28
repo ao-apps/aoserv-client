@@ -26,13 +26,19 @@ final public class GetTransactionDescriptionCommand extends RemoteCommand<String
         this.transid = transaction.getTransid();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return true;
+    }
+
     public int getTransid() {
         return transid;
     }
 
     @Override
-    public Map<String, List<String>> validate(BusinessAdministrator connectedUser) throws RemoteException {
+    protected Map<String,List<String>> checkCommand(AOServConnector userConn, AOServConnector rootConn, BusinessAdministrator rootUser) throws RemoteException {
+        Map<String,List<String>> errors = Collections.emptyMap();
         // TODO
-        return Collections.emptyMap();
+        return errors;
     }
 }

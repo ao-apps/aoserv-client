@@ -14,7 +14,7 @@ import java.util.Locale;
 /**
  * <p>
  * An <code>AOServConnectorFactory</code> obtains instances of <code>AOServConnector</code>
- * for the provided connectAs, authenticateAs, and password values.
+ * for the provided locale, username, password, switchUser, daemonServer, and readOnly values.
  * </p>
  *
  * @author  AO Industries, Inc.
@@ -24,10 +24,5 @@ public interface AOServConnectorFactory extends Remote {
     /**
      * Gets an existing <code>AOServConnector</code> or creates a new one if does not yet exist.
      */
-    AOServConnector getConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException;
-
-    /**
-     * Creates a new <code>AOServConnector</code> for the provided connectAs, authenticateAs, and password.
-     */
-    //AOServConnector newConnector(Locale locale, UserId connectAs, UserId authenticateAs, String password, DomainName daemonServer) throws RemoteException, LoginException;
+    AOServConnector getConnector(Locale locale, UserId username, String password, UserId switchUser, DomainName daemonServer, boolean readOnly) throws RemoteException, LoginException;
 }
