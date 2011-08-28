@@ -53,7 +53,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     // <editor-fold defaultstate="collapsed" desc="Fields">
     private static final long serialVersionUID = -2644853941410100318L;
 
-    private DomainName siteName;
+    private DomainLabels siteName;
     final private boolean listFirst;
     final private int linuxAccountGroup;
     private Email serverAdmin;
@@ -71,7 +71,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
         long lastEnabled,
         int aoServer,
         int businessServer,
-        DomainName siteName,
+        DomainLabels siteName,
         boolean listFirst,
         int linuxAccountGroup,
         Email serverAdmin,
@@ -116,7 +116,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
 
     // <editor-fold defaultstate="collapsed" desc="Columns">
     @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, description="the name of the site, as used in the /www directory.")
-    public DomainName getSiteName() {
+    public DomainLabels getSiteName() {
         return siteName;
     }
 
@@ -161,7 +161,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
             getTimeMillis(dto.getLastEnabled()),
             dto.getAoServer(),
             dto.getBusinessServer(),
-            getDomainName(dto.getSiteName()),
+            getDomainLabels(dto.getSiteName()),
             dto.isListFirst(),
             dto.getLinuxAccountGroup(),
             getEmail(dto.getServerAdmin()),

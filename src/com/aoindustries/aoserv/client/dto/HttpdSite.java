@@ -10,7 +10,7 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class HttpdSite extends AOServerResource {
 
-    private DomainName siteName;
+    private DomainLabels siteName;
     private boolean listFirst;
     private int linuxAccountGroup;
     private Email serverAdmin;
@@ -30,7 +30,7 @@ public class HttpdSite extends AOServerResource {
         long lastEnabled,
         int aoServer,
         int businessServer,
-        DomainName siteName,
+        DomainLabels siteName,
         boolean listFirst,
         int linuxAccountGroup,
         Email serverAdmin,
@@ -46,11 +46,11 @@ public class HttpdSite extends AOServerResource {
         this.awstatsSkipFiles = awstatsSkipFiles;
     }
 
-    public DomainName getSiteName() {
+    public DomainLabels getSiteName() {
         return siteName;
     }
 
-    public void setSiteName(DomainName siteName) {
+    public void setSiteName(DomainLabels siteName) {
         this.siteName = siteName;
     }
 

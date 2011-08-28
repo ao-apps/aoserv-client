@@ -133,10 +133,14 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
             ch3 = '0';
             ch4 = address.charAt(start);
         } else {
-            if(len==0) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseHexWord.empty"));
-            else throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseHexWord.tooLong"));
+            if(len==0) {
+                throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseHexWord.empty"));
+            }
+            else {
+                throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseHexWord.tooLong"));
+            }
         }
-        // Must each be 0-9 or a-z or A-Z
+        // Must each be 0-9 or a-f or A-F
         return
             (getHexValue(ch1)<<12)
             | (getHexValue(ch2)<<8)
@@ -206,19 +210,30 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
             } else {
                 if(rightWord==1) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.tooManyColons"));
             }
-            // Check for shortcut
-            if(prevColonPos==(rightColonPos-1)) {
-                rightColonPos = prevColonPos;
-                break;
-            }
-            int wordValue = parseHexWord(address, prevColonPos+1, rightColonPos);
-            rightWord--;
-            if(rightWord<4) {
-                ipHigh |= (long)wordValue << ((3-rightWord)<<4);
+            // This address ends with :: - don't confuse with shortcut, just leave as zero
+            if(prevColonPos==(len-1)) {
+                if(len>=2 && address.charAt(len-2)==':') {
+                    rightColonPos = len-2;
+                    break;
+                } else {
+                    // Ends in : but doesn't end in ::
+                    throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseHexWord.empty"));
+                }
             } else {
-                ipLow |= (long)wordValue << ((7-rightWord)<<4);
+                // Check for shortcut
+                if(prevColonPos==(rightColonPos-1)) {
+                    rightColonPos = prevColonPos;
+                    break;
+                }
+                int wordValue = parseHexWord(address, prevColonPos+1, rightColonPos);
+                rightWord--;
+                if(rightWord<4) {
+                    ipHigh |= (long)wordValue << ((3-rightWord)<<4);
+                } else {
+                    ipLow |= (long)wordValue << ((7-rightWord)<<4);
+                }
+                rightColonPos = prevColonPos;
             }
-            rightColonPos = prevColonPos;
         }
         int leftColonPos = -1;
         int leftWord = 0;
@@ -231,14 +246,25 @@ final public class InetAddress implements Comparable<InetAddress>, Serializable,
             } else {
                 if(leftWord==7) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parse.tooManyColons"));
             }
-            int wordValue = parseHexWord(address, leftColonPos+1, nextColonPos);
-            if(leftWord<4) {
-                ipHigh |= (long)wordValue << ((3-leftWord)<<4);
+            // Handle beginning ::
+            if(nextColonPos==0) {
+                // should have been caught be pass from right above and should align
+                if(rightColonPos==0) {
+                    // OK - we match the scan from right
+                    break;
+                } else {
+                    throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "InetAddress.parseHexWord.empty"));
+                }
             } else {
-                ipLow |= (long)wordValue << ((7-leftWord)<<4);
+                int wordValue = parseHexWord(address, leftColonPos+1, nextColonPos);
+                if(leftWord<4) {
+                    ipHigh |= (long)wordValue << ((3-leftWord)<<4);
+                } else {
+                    ipLow |= (long)wordValue << ((7-leftWord)<<4);
+                }
+                leftWord++;
+                leftColonPos = nextColonPos;
             }
-            leftWord++;
-            leftColonPos = nextColonPos;
         }
         return LongLong.valueOf(ipHigh, ipLow);
     }

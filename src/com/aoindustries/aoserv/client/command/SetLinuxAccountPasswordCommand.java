@@ -52,13 +52,13 @@ final public class SetLinuxAccountPasswordCommand extends RemoteCommand<Void> {
         // Check access
         LinuxAccount la = rootConn.getLinuxAccounts().get(linuxAccount);
         if(!rootUser.canAccessLinuxAccount(la)) {
-            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "Common.validate.accessDenied");
+            errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "Common.validate.accessDenied");
         } else {
             // Enforce can't set password type
             LinuxAccountType lat = la.getLinuxAccountType();
-            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
+            if(!lat.isSetPasswordAllowed()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.typeNotAllowed");
             // Make sure not disabled
-            if(la.isDisabled()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, ApplicationResources.accessor, "SetLinuxAccountPasswordCommand.validate.disabled");
+            if(la.isDisabled()) errors = addValidationError(errors, PARAM_LINUX_ACCOUNT, "SetLinuxAccountPasswordCommand.validate.disabled");
             else {
                 // Check password strength
                 try {

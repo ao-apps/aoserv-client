@@ -448,6 +448,14 @@ implements Row, Serializable, Cloneable {
     }*/
 
     /**
+     * null-safe domain labels conversion.
+     */
+    protected static DomainLabels getDomainLabels(com.aoindustries.aoserv.client.dto.DomainLabels domainLabels) throws ValidationException {
+        if(domainLabels==null) return null;
+        return DomainLabels.valueOf(domainLabels.getLabels());
+    }
+
+    /**
      * null-safe domain name conversion.
      */
     protected static DomainName getDomainName(com.aoindustries.aoserv.client.dto.DomainName domainName) throws ValidationException {

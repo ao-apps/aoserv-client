@@ -53,10 +53,10 @@ final public class SetBusinessAdministratorPasswordCommand extends RemoteCommand
         // Check access
         BusinessAdministrator other = rootConn.getBusinessAdministrators().get(username);
         if(!rootUser.canAccessBusinessAdministrator(other)) {
-            errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "Common.validate.accessDenied");
+            errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, "Common.validate.accessDenied");
         } else {
             // Make sure not disabled
-            if(other.isDisabled()) errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, ApplicationResources.accessor, "SetBusinessAdministratorPasswordCommand.validate.disabled");
+            if(other.isDisabled()) errors = addValidationError(errors, PARAM_BUSINESS_ADMINISTRATOR, "SetBusinessAdministratorPasswordCommand.validate.disabled");
             else {
                 // Check password strength
                 try {

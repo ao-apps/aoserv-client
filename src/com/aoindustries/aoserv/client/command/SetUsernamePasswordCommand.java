@@ -52,10 +52,10 @@ final public class SetUsernamePasswordCommand extends RemoteCommand<Void> {
         // Check access
         Username rootUn = rootConn.getUsernames().get(username);
         if(!rootUser.canAccessUsername(rootUn)) {
-            errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
+            errors = addValidationError(errors, PARAM_USERNAME, "Common.validate.accessDenied");
         } else {
             // Make sure not disabled
-            if(rootUn.isDisabled()) errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "SetUsernamePasswordCommand.validate.disabled");
+            if(rootUn.isDisabled()) errors = addValidationError(errors, PARAM_USERNAME, "SetUsernamePasswordCommand.validate.disabled");
             else {
                 // Make sure passes other command validations
                 for(AOServObject<?> rootDependent : rootUn.getDependentObjects()) {

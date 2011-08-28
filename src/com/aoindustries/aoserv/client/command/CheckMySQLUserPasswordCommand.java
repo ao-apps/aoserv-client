@@ -50,13 +50,13 @@ final public class CheckMySQLUserPasswordCommand extends AOServCommand<List<Pass
         // Check access
         MySQLUser rootMu = rootConn.getMysqlUsers().get(mysqlUser);
         if(!rootUser.canAccessMySQLUser(rootMu)) {
-            errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
+            errors = addValidationError(errors, PARAM_MYSQL_USER, "Common.validate.accessDenied");
         } else {
             // No setting root password
             MySQLUserId username = rootMu.getUserId();
             if(
                 username==MySQLUser.ROOT // OK - interned
-            ) errors = addValidationError(errors, PARAM_MYSQL_USER, ApplicationResources.accessor, "SetMySQLUserPasswordCommand.validate.noSetRoot");
+            ) errors = addValidationError(errors, PARAM_MYSQL_USER, "SetMySQLUserPasswordCommand.validate.noSetRoot");
         }
         return errors;
     }

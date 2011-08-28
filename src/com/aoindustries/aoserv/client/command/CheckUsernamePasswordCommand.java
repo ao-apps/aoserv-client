@@ -50,7 +50,7 @@ final public class CheckUsernamePasswordCommand extends AOServCommand<List<Passw
         // Check access
         Username un = rootConn.getUsernames().get(username);
         if(!rootUser.canAccessUsername(un)) {
-            errors = addValidationError(errors, PARAM_USERNAME, ApplicationResources.accessor, "Common.validate.accessDenied");
+            errors = addValidationError(errors, PARAM_USERNAME, "Common.validate.accessDenied");
         } else {
             // Make sure passes other command validations
             for(AOServObject<?> dependent : un.getDependentObjects()) {

@@ -32,11 +32,13 @@ import java.util.concurrent.ConcurrentMap;
  *     Confirm to definition in {@link http://en.wikipedia.org/wiki/Hostname#Internet_hostnames}
  *     and {@link http://en.wikipedia.org/wiki/DNS_label#Parts_of_a_domain_name}
  *   </li>
+ *   <li>May be "localhost" or "localhost.localdomain" - other checks that conflict with this are skipped.</li>
  *   <li>Last domain label must be alphabetic (not be all numeric)</li>
+ *   <li>Last label must be a valid top level domain.</li>
  *   <li>For reverse IP address delegation, if the domain ends with ".in-addr.arpa", the first label may also be in the format "##/##".</li>
  *   <li>Not end with a period (.)</li>
  * </ul>
- * 
+ *
  * @author  AO Industries, Inc.
  */
 final public class DomainName
@@ -499,6 +501,32 @@ implements
         for(int c=0; c<100; c++) benchmark();
     }*/
 
+    private static final char[] localhostCharsLower = "localhost".toCharArray();
+    private static final char[] localhostCharsUpper = "LOCALHOST".toCharArray();
+    private static boolean isLocalhost(String domain) {
+        assert localhostCharsLower.length == localhostCharsUpper.length;
+        int len = localhostCharsUpper.length;
+        if(domain.length()!=len) return false;
+        for(int i=0; i<len; i++) {
+            char ch = domain.charAt(i);
+            if(ch!=localhostCharsLower[i] && ch!=localhostCharsUpper[i]) return false;
+        }
+        return true;
+    }
+
+    private static final char[] localhostLocaldomainCharsLower = "localhost.localdomain".toCharArray();
+    private static final char[] localhostLocaldomainCharsUpper = "LOCALHOST.LOCALDOMAIN".toCharArray();
+    private static boolean isLocalhostLocaldomain(String domain) {
+        assert localhostLocaldomainCharsLower.length == localhostLocaldomainCharsUpper.length;
+        int len = localhostLocaldomainCharsUpper.length;
+        if(domain.length()!=len) return false;
+        for(int i=0; i<len; i++) {
+            char ch = domain.charAt(i);
+            if(ch!=localhostLocaldomainCharsLower[i] && ch!=localhostLocaldomainCharsUpper[i]) return false;
+        }
+        return true;
+    }
+
     /**
      * Validates a domain name, but doesn't allow an ending period.
      *
@@ -508,38 +536,43 @@ implements
         if(domain==null) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.isNull");
         int len = domain.length();
         if(len==0) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.empty");
-        char ch;
         if(
-            // "default".equalsIgnoreCase(domain)
-            domain.length()==7
-            && ((ch=domain.charAt(0))=='d' || ch=='D')
-            && ((ch=domain.charAt(1))=='e' || ch=='E')
-            && ((ch=domain.charAt(2))=='f' || ch=='F')
-            && ((ch=domain.charAt(3))=='a' || ch=='A')
-            && ((ch=domain.charAt(4))=='u' || ch=='U')
-            && ((ch=domain.charAt(5))=='l' || ch=='L')
-            && ((ch=domain.charAt(6))=='t' || ch=='T')
-        ) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.isDefault");
-        if(len>MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.tooLong", MAX_LENGTH, len);
-        boolean isArpa = isArpa(domain);
-        int labelStart = 0;
-        for(int pos=0; pos<len; pos++) {
-            if(domain.charAt(pos)=='.') {
-                // For reverse IP address delegation, if the domain ends with ".in-addr.arpa", the first label may also be in the format "##/##".
-                if(!isArpa || labelStart!=0 || !isArpaDelegationFirstLabel(domain, labelStart, pos)) {
-                    ValidationResult result = DomainLabel.validate(domain, labelStart, pos);
-                    if(!result.isValid()) return result;
+            !isLocalhost(domain)
+            && !isLocalhostLocaldomain(domain)
+        ) {
+            char ch;
+            if(
+                // "default".equalsIgnoreCase(domain)
+                domain.length()==7
+                && ((ch=domain.charAt(0))=='d' || ch=='D')
+                && ((ch=domain.charAt(1))=='e' || ch=='E')
+                && ((ch=domain.charAt(2))=='f' || ch=='F')
+                && ((ch=domain.charAt(3))=='a' || ch=='A')
+                && ((ch=domain.charAt(4))=='u' || ch=='U')
+                && ((ch=domain.charAt(5))=='l' || ch=='L')
+                && ((ch=domain.charAt(6))=='t' || ch=='T')
+            ) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.isDefault");
+            if(len>MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.tooLong", MAX_LENGTH, len);
+            boolean isArpa = isArpa(domain);
+            int labelStart = 0;
+            for(int pos=0; pos<len; pos++) {
+                if(domain.charAt(pos)=='.') {
+                    // For reverse IP address delegation, if the domain ends with ".in-addr.arpa", the first label may also be in the format "##/##".
+                    if(!isArpa || labelStart!=0 || !isArpaDelegationFirstLabel(domain, labelStart, pos)) {
+                        ValidationResult result = DomainLabel.validate(domain, labelStart, pos);
+                        if(!result.isValid()) return result;
+                    }
+                    labelStart = pos+1;
                 }
-                labelStart = pos+1;
             }
+            ValidationResult result = DomainLabel.validate(domain, labelStart, len);
+            if(!result.isValid()) return result;
+            // Last domain label must be alphabetic (not be all numeric)
+            if(isNumeric(domain, labelStart, len)) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.lastLabelAllDigits");
+            // Last label must be a valid top level domain
+            String lastLabel = domain.substring(labelStart, len);
+            if(TopLevelDomain.getByLabel(lastLabel)==null) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.notEndTopLevelDomain", lastLabel);
         }
-        ValidationResult result = DomainLabel.validate(domain, labelStart, len);
-        if(!result.isValid()) return result;
-        // Last domain label must be alphabetic (not be all numeric)
-        if(isNumeric(domain, labelStart, len)) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.lastLabelAllDigits");
-        // Last label must be a valid top level domain
-        String lastLabel = domain.substring(labelStart, len);
-        if(TopLevelDomain.getByLabel(lastLabel)==null) return new InvalidResult(ApplicationResources.accessor, "DomainName.validate.notEndTopLevelDomain");
         return ValidResult.getInstance();
     }
 
@@ -587,40 +620,42 @@ implements
         return lowerDomain.hashCode();
     }
 
+    static int compareLabels(String labels1, String labels2) {
+        if(labels1==labels2) return 0; // Shortcut for interned
+        while(labels1.length()>0 && labels2.length()>0) {
+            int pos=labels1.lastIndexOf('.');
+            String section1;
+            if(pos==-1) {
+                section1=labels1;
+                labels1="";
+            } else {
+                section1=labels1.substring(pos+1);
+                labels1=labels1.substring(0, pos);
+            }
+
+            pos=labels2.lastIndexOf('.');
+            String section2;
+            if(pos==-1) {
+                section2=labels2;
+                labels2="";
+            } else {
+                section2=labels2.substring(pos+1);
+                labels2=labels2.substring(0, pos);
+            }
+
+            int diff=AOServObject.compareIgnoreCaseConsistentWithEquals(section1, section2);
+            if(diff!=0) return diff;
+        }
+        return AOServObject.compareIgnoreCaseConsistentWithEquals(labels1, labels2);
+    }
+
     /**
      * Sorts by top level domain, then subdomain, then sub-subdomain, ...
      */
     @Override
     public int compareTo(DomainName other) {
         if(this==other) return 0;
-        String domain1 = domain;
-        String domain2 = other.domain;
-        if(domain1==domain2) return 0; // Shortcut for interned
-        while(domain1.length()>0 && domain2.length()>0) {
-            int pos=domain1.lastIndexOf('.');
-            String section1;
-            if(pos==-1) {
-                section1=domain1;
-                domain1="";
-            } else {
-                section1=domain1.substring(pos+1);
-                domain1=domain1.substring(0, pos);
-            }
-
-            pos=domain2.lastIndexOf('.');
-            String section2;
-            if(pos==-1) {
-                section2=domain2;
-                domain2="";
-            } else {
-                section2=domain2.substring(pos+1);
-                domain2=domain2.substring(0, pos);
-            }
-
-            int diff=AOServObject.compareIgnoreCaseConsistentWithEquals(section1, section2);
-            if(diff!=0) return diff;
-        }
-        return AOServObject.compareIgnoreCaseConsistentWithEquals(domain1, domain2);
+        return compareLabels(domain, other.domain);
     }
 
     @Override

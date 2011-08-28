@@ -53,16 +53,16 @@ final public class SetPostgresUserPasswordCommand extends RemoteCommand<Void> {
         // Check access
         PostgresUser rootPu = rootConn.getPostgresUsers().get(postgresUser);
         if(!rootUser.canAccessPostgresUser(rootPu)) {
-            errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
+            errors = addValidationError(errors, PARAM_POSTGRES_USER, "Common.validate.accessDenied");
         } else {
             // No setting root password
             PostgresUserId username = rootPu.getUserId();
             if(
                 username==PostgresUser.POSTGRES // OK - interned
-            ) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
+            ) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
             else {
                 // Make sure not disabled
-                if(rootPu.isDisabled()) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.disabled");
+                if(rootPu.isDisabled()) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.disabled");
                 else {
                     // Check password strength
                     try {

@@ -50,13 +50,13 @@ final public class CheckPostgresUserPasswordCommand extends AOServCommand<List<P
         // Check access
         PostgresUser rootPu = rootConn.getPostgresUsers().get(postgresUser);
         if(!rootUser.canAccessPostgresUser(rootPu)) {
-            errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "Common.validate.accessDenied");
+            errors = addValidationError(errors, PARAM_POSTGRES_USER, "Common.validate.accessDenied");
         } else {
             // No setting root password
             PostgresUserId username = rootPu.getUserId();
             if(
                 username==PostgresUser.POSTGRES // OK - interned
-            ) errors = addValidationError(errors, PARAM_POSTGRES_USER, ApplicationResources.accessor, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
+            ) errors = addValidationError(errors, PARAM_POSTGRES_USER, "SetPostgresUserPasswordCommand.validate.noSetPostgres");
         }
         return errors;
     }
