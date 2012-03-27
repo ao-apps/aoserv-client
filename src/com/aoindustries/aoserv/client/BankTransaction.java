@@ -1,188 +1,199 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.aoserv.client.validator.ValidationException;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.i18n.Money;
-import java.rmi.RemoteException;
-import java.sql.Date;
+import com.aoindustries.io.*;
+import com.aoindustries.sql.*;
+import com.aoindustries.util.StringUtility;
+import java.io.*;
+import java.sql.*;
 
 /**
  * For AO Industries use only.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class BankTransaction extends AOServObjectIntegerKey implements Comparable<BankTransaction>, DtoFactory<com.aoindustries.aoserv.client.dto.BankTransaction> {
+final public class BankTransaction extends AOServObject<Integer,BankTransaction> implements SingleTableObject<Integer,BankTransaction> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -1135821486666616828L;
+    static final String COLUMN_TIME_name = "time";
+    static final String COLUMN_TRANSID_name = "transid";
 
-    final private long date;
-    private String bankAccount;
-    private String processor;
-    private UserId administrator;
-    private String type;
-    private String expenseCode;
-    final private String description;
-    final private String checkNo;
-    final private Money amount;
+    protected AOServTable<Integer,BankTransaction> table;
+    private long time;
+    private int transID;
+    private String
+        bankAccount,
+        processor,
+        administrator,
+        type,
+        expenseCode,
+        description,
+        checkNo
+    ;
+    private int amount;
+    private boolean confirmed;
 
-    public BankTransaction(
-        AOServConnector connector,
-        long date,
-        int transid,
-        String bankAccount,
-        String processor,
-        UserId administrator,
-        String type,
-        String expenseCode,
-        String description,
-        String checkNo,
-        Money amount
-    ) {
-        super(connector, transid);
-        this.date = date;
-        this.bankAccount = bankAccount;
-        this.processor = processor;
-        this.administrator = administrator;
-        this.type = type;
-        this.expenseCode = expenseCode;
-        this.description = description;
-        this.checkNo = checkNo;
-        this.amount = amount;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        bankAccount = intern(bankAccount);
-        processor = intern(processor);
-        administrator = intern(administrator);
-        type = intern(type);
-        expenseCode = intern(expenseCode);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    public int compareTo(BankTransaction other) {
-        int diff = compare(date, other.date);
-        if(diff!=0) return diff;
-        return compare(getKeyInt(), other.getKeyInt());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, description="the date the transaction occured")
-    public Date getDate() {
-    	return new Date(date);
+    boolean equalsImpl(Object O) {
+	return
+            O instanceof BankTransaction
+            && ((BankTransaction)O).transID==transID
+	;
     }
 
-    @SchemaColumn(order=1, index=IndexType.PRIMARY_KEY, description="a unique identifier for the transaction")
-    public int getTransid() {
-    	return getKeyInt();
+    public MasterUser getAdministrator() throws SQLException, IOException {
+	MasterUser obj = table.connector.getMasterUsers().get(administrator);
+	if (obj == null) throw new SQLException("Unable to find MasterUser: " + administrator);
+	return obj;
     }
 
-    public static final MethodColumn COLUMN_BANK_ACCOUNT = getMethodColumn(BankTransaction.class, "bankAccount");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the account the transaction is for")
-    public BankAccount getBankAccount() throws RemoteException {
-    	return getConnector().getBankAccounts().get(bankAccount);
+    public int getAmount() {
+	return amount;
     }
 
-    public static final MethodColumn COLUMN_PROCESSOR = getMethodColumn(BankTransaction.class, "processor");
-    @DependencySingleton
-    @SchemaColumn(order=3, index=IndexType.INDEXED, description="the credit card processor used by this transaction")
-    public CreditCardProcessor getProcessor() throws RemoteException {
-        if (processor == null) return null;
-        return getConnector().getCreditCardProcessors().get(processor);
+    public BankAccount getBankAccount() throws SQLException, IOException {
+	BankAccount bankAccountObject = table.connector.getBankAccounts().get(bankAccount);
+        if (bankAccountObject == null) throw new SQLException("BankAccount not found: " + bankAccount);
+        return bankAccountObject;
     }
 
-    public static final MethodColumn COLUMN_ADMINISTRATOR = getMethodColumn(BankTransaction.class, "administrator");
-    @DependencySingleton
-    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the business_administrator who made this transaction")
-    public MasterUser getAdministrator() throws RemoteException {
-    	return getConnector().getMasterUsers().get(administrator);
+    public BankTransactionType getBankTransactionType() throws SQLException, IOException {
+        BankTransactionType typeObject = table.connector.getBankTransactionTypes().get(type);
+        if (typeObject == null) throw new SQLException("BankTransactionType not found: " + type);
+        return typeObject;
     }
 
-    public static final MethodColumn COLUMN_TYPE = getMethodColumn(BankTransaction.class, "type");
-    @DependencySingleton
-    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the type of transaction")
-    public BankTransactionType getType() throws RemoteException {
-        return getConnector().getBankTransactionTypes().get(type);
-    }
-
-    public static final MethodColumn COLUMN_EXPENSE_CODE = getMethodColumn(BankTransaction.class, "expenseCode");
-    @DependencySingleton
-    @SchemaColumn(order=6, index=IndexType.INDEXED, description="the category in which this expense belongs")
-    public ExpenseCategory getExpenseCode() throws RemoteException {
-        if(expenseCode==null) return null;
-        return getConnector().getExpenseCategories().get(expenseCode);
-    }
-
-    @SchemaColumn(order=7, description="a description of the transaction")
-    public String getDescription() {
-    	return description;
-    }
-
-    @SchemaColumn(order=8, description="the check number (if available)")
     public String getCheckNo() {
-    	return checkNo;
+	return checkNo;
     }
 
-    @SchemaColumn(order=9, description="the amount (negative for withdrawal)")
-    public Money getAmount() {
-    	return amount;
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case 0: return new java.sql.Date(time);
+            case 1: return Integer.valueOf(transID);
+            case 2: return bankAccount;
+            case 3: return processor;
+            case 4: return administrator;
+            case 5: return type;
+            case 6: return expenseCode;
+            case 7: return description;
+            case 8: return checkNo;
+            case 9: return Integer.valueOf(amount);
+            case 10: return confirmed?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public BankTransaction(AOServConnector connector, com.aoindustries.aoserv.client.dto.BankTransaction dto) throws ValidationException {
-        this(
-            connector,
-            getTimeMillis(dto.getDate()),
-            dto.getTransid(),
-            dto.getBankAccount(),
-            dto.getProcessor(),
-            getUserId(dto.getAdministrator()),
-            dto.getType(),
-            dto.getExpenseCode(),
-            dto.getDescription(),
-            dto.getCheckNo(),
-            getMoney(dto.getAmount())
-        );
+    public String getDescription() {
+	return description;
+    }
+
+    public ExpenseCategory getExpenseCategory() throws SQLException, IOException {
+	if(expenseCode==null) return null;
+	ExpenseCategory cat=table.connector.getExpenseCategories().get(expenseCode);
+	if (cat == null) throw new SQLException("ExpenseCategory not found: " + expenseCode);
+	return cat;
+    }
+
+    public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
+        if (processor == null) return null;
+        CreditCardProcessor ccProcessor = table.connector.getCreditCardProcessors().get(processor);
+        if (ccProcessor == null) throw new SQLException("CreditCardProcessor not found: " + processor);
+        return ccProcessor;
+    }
+
+    public Integer getKey() {
+	return transID;
+    }
+
+    /**
+     * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
+     *
+     * @return  the <code>AOServTable</code>.
+     */
+    final public AOServTable<Integer,BankTransaction> getTable() {
+        return table;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANK_TRANSACTIONS;
+    }
+
+    public long getTime() {
+	return time;
+    }
+
+    public int getTransID() {
+	return transID;
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.BankTransaction getDto() {
-        return new com.aoindustries.aoserv.client.dto.BankTransaction(
-            date,
-            getKeyInt(),
-            bankAccount,
-            processor,
-            getDto(administrator),
-            type,
-            expenseCode,
-            description,
-            checkNo,
-            getDto(amount)
-        );
+    int hashCodeImpl() {
+	return transID;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public void init(ResultSet result) throws SQLException {
+	time = result.getTimestamp(1).getTime();
+	transID = result.getInt(2);
+	bankAccount = result.getString(3);
+	processor = result.getString(4);
+	administrator = result.getString(5);
+	type = result.getString(6);
+	expenseCode = result.getString(7);
+	description = result.getString(8);
+	checkNo = result.getString(9);
+	amount = SQLUtility.getPennies(result.getString(10));
+	confirmed = result.getBoolean(11);
+    }
+
+    public boolean isConfirmed() {
+	return confirmed;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	time = in.readLong();
+	transID = in.readCompressedInt();
+	bankAccount = in.readUTF().intern();
+	processor = StringUtility.intern(in.readNullUTF());
+	administrator = in.readUTF().intern();
+	type = in.readUTF().intern();
+	expenseCode = StringUtility.intern(in.readNullUTF());
+	description = in.readUTF();
+	checkNo = in.readNullUTF();
+	amount = in.readCompressedInt();
+	confirmed = in.readBoolean();
+    }
+
+    public void setTable(AOServTable<Integer,BankTransaction> table) {
+	if(this.table!=null) throw new IllegalStateException("table already set");
+	this.table=table;
+    }
+
     @Override
     String toStringImpl() {
-    	return getKeyInt()+"|"+administrator+'|'+type+'|'+amount;
+	return transID+"|"+administrator+'|'+type+'|'+SQLUtility.getDecimal(amount);
     }
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeLong(time);
+	out.writeCompressedInt(transID);
+	out.writeUTF(bankAccount);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
+            out.writeNullUTF(null);
+        } else {
+            out.writeNullUTF(processor);
+        }
+	out.writeUTF(administrator);
+	out.writeUTF(type);
+	out.writeNullUTF(expenseCode);
+	out.writeUTF(description);
+	out.writeNullUTF(checkNo);
+	out.writeCompressedInt(amount);
+	out.writeBoolean(confirmed);
+    }
 }

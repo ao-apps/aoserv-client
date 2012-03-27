@@ -1,113 +1,91 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2003-2011 by AO Industries, Inc.,
+ * Copyright 2003-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.sql.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * A <code>FailoverFileSchedule</code> controls which time of day (in server
  * time zone) the failover file replications will occur.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileSchedule extends AOServObjectIntegerKey implements Comparable<FailoverFileSchedule>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileSchedule> {
+final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverFileSchedule> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 3128236449184268134L;
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_REPLICATION=1
+    ;
+    static final String COLUMN_REPLICATION_name = "replication";
+    static final String COLUMN_HOUR_name = "hour";
+    static final String COLUMN_MINUTE_name = "minute";
 
-    final private int replication;
-    final private short hour;
-    final private short minute;
-    final private boolean enabled;
+    int replication;
+    private short hour;
+    private short minute;
+    private boolean enabled;
 
-    public FailoverFileSchedule(
-        AOServConnector connector,
-        int pkey,
-        int replication,
-        short hour,
-        short minute,
-        boolean enabled
-    ) {
-        super(connector, pkey);
-        this.replication = replication;
-        this.hour = hour;
-        this.minute = minute;
-        this.enabled = enabled;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(FailoverFileSchedule other) {
-        try {
-            int diff = replication==other.replication ? 0 : getReplication().compareTo(other.getReplication());
-            if(diff!=0) return diff;
-            diff = compare(hour, other.hour);
-            if(diff!=0) return diff;
-            return compare(minute, other.minute);
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_REPLICATION: return Integer.valueOf(replication);
+            case 2: return hour;
+            case 3: return minute;
+            case 4: return enabled;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
-    public int getPkey() {
-        return getKeyInt();
+    public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
+        FailoverFileReplication ffr=table.connector.getFailoverFileReplications().get(replication);
+        if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
+        return ffr;
     }
 
-    public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FailoverFileSchedule.class, "replication");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the replication that will be started")
-    public FailoverFileReplication getReplication() throws RemoteException {
-        return getConnector().getFailoverFileReplications().get(replication);
-    }
-
-    @SchemaColumn(order=2, description="the hour of day (in server timezone)")
     public short getHour() {
         return hour;
     }
-
-    @SchemaColumn(order=3, description="the minute (in server timezone)")
+    
     public short getMinute() {
         return minute;
     }
 
-    @SchemaColumn(order=4, description="indicates this schedule is enabled")
     public boolean isEnabled() {
         return enabled;
     }
-    // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public FailoverFileSchedule(AOServConnector connector, com.aoindustries.aoserv.client.dto.FailoverFileSchedule dto) {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getReplication(),
-            dto.getHour(),
-            dto.getMinute(),
-            dto.isEnabled()
-        );
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_FILE_SCHEDULE;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        replication=result.getInt(2);
+        hour=result.getShort(3);
+        minute=result.getShort(4);
+        enabled=result.getBoolean(5);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        replication=in.readCompressedInt();
+        hour=in.readShort();
+        minute=in.readShort();
+        enabled=in.readBoolean();
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.FailoverFileSchedule getDto() {
-        return new com.aoindustries.aoserv.client.dto.FailoverFileSchedule(getKeyInt(), replication, hour, minute, enabled);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
+    String toStringImpl() throws SQLException, IOException {
         StringBuilder SB = new StringBuilder();
-        SB.append(getReplication().toStringImpl());
+        SB.append(getFailoverFileReplication().toStringImpl());
         SB.append('@');
         if(hour<10) SB.append('0');
         SB.append(hour);
@@ -116,5 +94,12 @@ final public class FailoverFileSchedule extends AOServObjectIntegerKey implement
         SB.append(minute);
         return SB.toString();
     }
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(replication);
+        out.writeShort(hour);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeShort(minute);
+        out.writeBoolean(enabled);
+    }
 }

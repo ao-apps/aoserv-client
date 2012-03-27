@@ -1,84 +1,87 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.StringUtility;
+import java.io.*;
+import java.sql.*;
 
 /**
  * For AO Industries use only.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class BankTransactionType
-extends AOServObjectStringKey
-implements
-    Comparable<BankTransactionType>,
-    DtoFactory<com.aoindustries.aoserv.client.dto.BankTransactionType> {
+final public class BankTransactionType extends CachedObjectStringKey<BankTransactionType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -1583852132726617012L;
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_DISPLAY_name = "display";
 
-    final private boolean isNegative;
+    private String
+        display,
+        description
+    ;
 
-    public BankTransactionType(AOServConnector connector, String name, boolean isNegative) {
-        super(connector, name);
-        this.isNegative = isNegative;
-    }
-    // </editor-fold>
+    private boolean isNegative;
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(BankTransactionType other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the name of the type")
-    public String getName() {
-        return getKey();
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case 1: return display;
+            case 2: return description;
+            case 3: return isNegative?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
-    @SchemaColumn(order=1, description="when true the amount must be negative")
-    public boolean isNegative() {
-        return isNegative;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public BankTransactionType(AOServConnector connector, com.aoindustries.aoserv.client.dto.BankTransactionType dto) {
-        this(connector, dto.getName(), dto.isIsNegative());
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.BankTransactionType getDto() {
-        return new com.aoindustries.aoserv.client.dto.BankTransactionType(getKey(), isNegative);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
-        return ApplicationResources.accessor.getMessage("BankTransactionType."+getKey()+".description");
+	return description;
     }
 
     public String getDisplay() {
-        return ApplicationResources.accessor.getMessage("BankTransactionType."+getKey()+".display");
+	return display;
+    }
+
+    public String getName() {
+	return pkey;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANK_TRANSACTION_TYPES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	display = result.getString(2);
+	description = result.getString(3);
+	isNegative = result.getBoolean(4);
+    }
+
+    public boolean isNegative() {
+	return isNegative;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	display=in.readUTF();
+	description=in.readUTF();
+	isNegative=in.readBoolean();
     }
 
     @Override
     String toStringImpl() {
-        return getDisplay();
+	return display;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getConnector().getBankTransactions().filterIndexed(BankTransaction.COLUMN_TYPE, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(display);
+	out.writeUTF(description);
+	out.writeBoolean(isNegative);
     }
-    // </editor-fold>
 }

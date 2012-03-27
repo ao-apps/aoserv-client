@@ -1,191 +1,174 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2003-2011 by AO Industries, Inc.,
+ * Copyright 2003-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * One version of a operating system.
  *
  * @see OperatingSystem
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystemVersion extends AOServObjectIntegerKey implements Comparable<OperatingSystemVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystemVersion> {
+final public class OperatingSystemVersion extends GlobalObjectIntegerKey<OperatingSystemVersion> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_PKEY=0;
+    static final String COLUMN_SORT_ORDER_name = "sort_order";
+
     public static final String
+        //VERSION_1_4="1.4",
+        //VERSION_7_2="7.2",
+        //VERSION_9_2="9.2",
         VERSION_5="5",
+        VERSION_2006_0="2006.0",
         VERSION_ES_4="ES 4"
     ;
     
+    /**
+     * @deprecated  Mandrake 10.1 no longer used.
+     */
+    @Deprecated
+    public static final String VERSION_10_1="10.1";
+
+    /**
+     * @deprecated  What is this used for?
+     */
+    @Deprecated
+    public static final String DEFAULT_OPERATING_SYSTEM_VERSION=VERSION_2006_0;
+
     public static final int
         CENTOS_5DOM0_X86_64 = 63,
         CENTOS_5DOM0_I686 = 64,
         CENTOS_5_I686_AND_X86_64 = 67,
-        REDHAT_ES_4_X86_64 = 47
+        //GENTOO_1_4_I686=5,
+        //MANDRAKE_9_2_I586=12,
+        //REDHAT_7_2_I686=27
+        MANDRIVA_2006_0_I586=45,
+        REDHAT_ES_4_X86_64=47
     ;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -5236517725338031299L;
+    /**
+     * @deprecated  Mandrake 10.1 no longer used.
+     */
+    @Deprecated
+    public static final int MANDRAKE_10_1_I586=14;
 
-    private String operatingSystem;
-    private String versionNumber;
-    private String versionName;
-    private String architecture;
+    private String operating_system;
+    String version_number;
+    String version_name;
+    String architecture;
     private String display;
-    final private boolean isAoservDaemonSupported;
-    final private short sortOrder;
+    private boolean is_aoserv_daemon_supported;
+    private short sort_order;
 
-    public OperatingSystemVersion(
-        AOServConnector connector,
-        int pkey,
-        String operatingSystem,
-        String versionNumber,
-        String versionName,
-        String architecture,
-        String display,
-        boolean isAoservDaemonSupported,
-        short sortOrder
-    ) {
-        super(connector, pkey);
-        this.operatingSystem = operatingSystem;
-        this.versionNumber = versionNumber;
-        this.versionName = versionName;
-        this.architecture = architecture;
-        this.display = display;
-        this.isAoservDaemonSupported = isAoservDaemonSupported;
-        this.sortOrder = sortOrder;
-        intern();
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return operating_system;
+            case 2: return version_number;
+            case 3: return version_name;
+            case 4: return architecture;
+            case 5: return display;
+            case 6: return is_aoserv_daemon_supported?Boolean.TRUE:Boolean.FALSE;
+            case 7: return Short.valueOf(sort_order);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
+    public OperatingSystem getOperatingSystem(AOServConnector conn) throws IOException, SQLException {
+        return conn.getOperatingSystems().get(operating_system);
     }
 
-    private void intern() {
-        operatingSystem = intern(operatingSystem);
-        versionNumber = intern(versionNumber);
-        versionName = intern(versionName);
-        architecture = intern(architecture);
-        display = intern(display);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(OperatingSystemVersion other) {
-        return compare(sortOrder, other.sortOrder);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique ID")
-    public int getPkey() {
-        return getKeyInt();
-    }
-
-    public static final MethodColumn COLUMN_OPERATING_SYSTEM = getMethodColumn(OperatingSystemVersion.class, "operatingSystem");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the name of the OS")
-    public OperatingSystem getOperatingSystem() throws RemoteException {
-        return getConnector().getOperatingSystems().get(operatingSystem);
-    }
-
-    @SchemaColumn(order=2, description="the number of OS version")
     public String getVersionNumber() {
-        return versionNumber;
+        return version_number;
     }
 
-    @SchemaColumn(order=3, description="the name of this OS release")
     public String getVersionName() {
-        return versionName;
+        return version_name;
     }
 
-    public static final MethodColumn COLUMN_ARCHITECTURE = getMethodColumn(OperatingSystemVersion.class, "architecture");
-    @DependencySingleton
-    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the name of the architecture")
-    public Architecture getArchitecture() throws RemoteException {
-        return getConnector().getArchitectures().get(architecture);
+    public Architecture getArchitecture(AOServConnector connector) throws SQLException, IOException {
+        Architecture ar=connector.getArchitectures().get(architecture);
+        if(ar==null) throw new SQLException("Unable to find Architecture: "+architecture);
+        return ar;
     }
 
-    @SchemaColumn(order=5, index=IndexType.UNIQUE, description="the full display name for this version")
     public String getDisplay() {
         return display;
     }
 
-    @SchemaColumn(order=6, description="can AOServ Daemon be ran on this OS")
-    public boolean isAoservDaemonSupported() {
-        return isAoservDaemonSupported;
+    public boolean isAOServDaemonSupported() {
+        return is_aoserv_daemon_supported;
     }
-
-    @SchemaColumn(order=7, index=IndexType.UNIQUE, description="the default sort order")
+    
     public short getSortOrder() {
-        return sortOrder;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public OperatingSystemVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.OperatingSystemVersion dto) {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getOperatingSystem(),
-            dto.getVersionNumber(),
-            dto.getVersionName(),
-            dto.getArchitecture(),
-            dto.getDisplay(),
-            dto.isIsAoservDaemonSupported(),
-            dto.getSortOrder()
-        );
+        return sort_order;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.OperatingSystemVersion getDto() {
-        return new com.aoindustries.aoserv.client.dto.OperatingSystemVersion(getKeyInt(), operatingSystem, versionNumber, versionName, architecture, display, isAoservDaemonSupported, sortOrder);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<Server> getServers() throws RemoteException {
-        return getConnector().getServers().filterIndexed(Server.COLUMN_OPERATING_SYSTEM_VERSION, this);
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.OPERATING_SYSTEM_VERSIONS;
     }
 
-    @DependentObjectSet
-    public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
-        return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OPERATING_SYSTEM_VERSION, this);
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        operating_system=result.getString(2);
+        version_number=result.getString(3);
+        version_name=result.getString(4);
+        architecture=result.getString(5);
+        display=result.getString(6);
+        is_aoserv_daemon_supported=result.getBoolean(7);
+        sort_order=result.getShort(8);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        operating_system=in.readUTF().intern();
+        version_number=in.readUTF();
+        version_name=in.readUTF();
+        architecture=in.readUTF().intern();
+        display=in.readUTF();
+        is_aoserv_daemon_supported=in.readBoolean();
+        sort_order=in.readShort();
+    }
+
     @Override
     String toStringImpl() {
         return display;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="TODO">
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(operating_system);
+        out.writeUTF(version_number);
+        out.writeUTF(version_name);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeUTF(architecture);
+        out.writeUTF(display);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_3)>=0) out.writeShort(sort_order);
+    }
+    
     /**
      * Gets the directory that stores websites for this operating system or <code>null</code>
      * if this OS doesn't support web sites.
      */
-    /* TODO
     public String getHttpdSitesDirectory() {
         return getHttpdSitesDirectory(pkey);
     }
-    */
+
     /**
      * Gets the directory that stores websites for this operating system or <code>null</code>
      * if this OS doesn't support web sites.
      */
-    /* TODO
     public static String getHttpdSitesDirectory(int osv) {
         switch(osv) {
             case MANDRAKE_10_1_I586 :
@@ -199,22 +182,20 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
             default :
                 throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
         }
-    }*/
+    }
 
     /**
      * Gets the directory that contains the shared tomcat directories or <code>null</code>
      * if this OS doesn't support shared tomcats.
      */
-    /* TODO
     public String getHttpdSharedTomcatsDirectory() {
         return getHttpdSharedTomcatsDirectory(pkey);
     }
-    */
+
     /**
      * Gets the directory that contains the shared tomcat directories or <code>null</code>
      * if this OS doesn't support shared tomcats.
      */
-    /* TODO
     public static String getHttpdSharedTomcatsDirectory(int osv) {
         switch(osv) {
             case MANDRAKE_10_1_I586 :
@@ -229,6 +210,4 @@ final public class OperatingSystemVersion extends AOServObjectIntegerKey impleme
                 throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
         }
     }
-     */
-    // </editor-fold>
 }

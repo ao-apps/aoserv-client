@@ -1,12 +1,14 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.StringUtility;
+import java.io.*;
+import java.sql.*;
 
 /**
  * Each <code>LinuxGroup</code>'s use is limited by which
@@ -20,76 +22,64 @@ import java.rmi.RemoteException;
  * @see  LinuxAccount
  * @see  LinuxGroupAccount
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroupType extends AOServObjectStringKey implements Comparable<LinuxGroupType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupType> {
+final public class LinuxGroupType extends GlobalObjectStringKey<LinuxGroupType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-//    /**
-//     * The available group types.
-//     */
-//    public static final String
-//        SHELL_GROUP = ResourceType.SHELL_GROUP,
-//        system_group(ResourceType.Constant.system_group);
-//
-//        private final ResourceType.Constant resourceType;
-//
-//        private Constant(ResourceType.Constant resourceType) {
-//            this.resourceType = resourceType;
-//        }
-//
-//        public ResourceType.Constant getResourceType() {
-//            return resourceType;
-//        }
-//    }
-    // </editor-fold>
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_DESCRIPTION_name = "description";
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -3642089944255008378L;
+    private String description;
 
-    public LinuxGroupType(AOServConnector connector, String resourceType) {
-        super(connector, resourceType);
-    }
-    // </editor-fold>
+    /**
+     * The available group types.
+     */
+    public static final String
+        USER="user",
+        EMAIL="email",
+        FTPONLY="ftponly",
+        SYSTEM="system",
+        BACKUP="backup",
+        APPLICATION="application"
+    ;
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(LinuxGroupType other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_RESOURCE_TYPE = getMethodColumn(LinuxGroupType.class, "resourceType");
-    @DependencySingleton
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the resource type this represents")
-    public ResourceType getResourceType() throws RemoteException {
-        return getConnector().getResourceTypes().get(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public LinuxGroupType(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxGroupType dto) {
-        this(connector, dto.getResourceType());
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_NAME) return pkey;
+	if(i==1) return description;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.LinuxGroupType getDto() {
-        return new com.aoindustries.aoserv.client.dto.LinuxGroupType (getKey());
+    public String getDescription() {
+	return description;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public String getName() {
+	return pkey;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_GROUP_TYPES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	description = result.getString(2);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	description=in.readUTF();
+    }
+
     @Override
     String toStringImpl() {
-        return ApplicationResources.accessor.getMessage("LinuxGroupType."+getKey()+".toString");
+	return description;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<LinuxGroup> getLinuxGroups() throws RemoteException {
-        return getConnector().getLinuxGroups().filterIndexed(LinuxGroup.COLUMN_LINUX_GROUP_TYPE, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(description);
     }
-    // </editor-fold>
 }

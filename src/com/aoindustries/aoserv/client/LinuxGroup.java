@@ -1,14 +1,14 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
 
 /**
  * A <code>LinuxGroup</code> may exist on multiple <code>Server</code>s.
@@ -16,212 +16,147 @@ import java.rmi.RemoteException;
  *
  * @see  LinuxServerGroup
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroup extends AOServerResource implements Comparable<LinuxGroup>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroup> /* Removable*/ {
+final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implements Removable {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int
+        COLUMN_NAME=0,
+        COLUMN_PACKAGE=1
+    ;
+    static final String COLUMN_NAME_name = "name";
+
     /**
      * Some commonly used system and application groups.
      */
-    public static final GroupId
-        ADM,
-        APACHE,
-        AWSTATS,
-        BIN,
-        DAEMON,
-        FTP,
-        MAIL,
-        MAILONLY,
-        NAMED,
-        NOGROUP,
-        POSTGRES,
-        ROOT,
-        SYS,
-        TTY
+    public static final String
+        ADM="adm",
+        APACHE="apache",
+        AWSTATS="awstats",
+        BIN="bin",
+        DAEMON="daemon",
+        FTP="ftp",
+        FTPONLY="ftponly",
+        MAIL="mail",
+        MAILONLY="mailonly",
+        NAMED="named",
+        NOGROUP="nogroup",
+        POSTGRES="postgres",
+        PROFTPD_JAILED="proftpd_jailed",
+        ROOT="root",
+        SYS="sys",
+        TTY="tty"
     ;
-
-    static {
-        try {
-            ADM = GroupId.valueOf("adm").intern();
-            APACHE = GroupId.valueOf("apache").intern();
-            AWSTATS = GroupId.valueOf("awstats").intern();
-            BIN = GroupId.valueOf("bin").intern();
-            DAEMON = GroupId.valueOf("daemon").intern();
-            FTP = GroupId.valueOf("ftp").intern();
-            MAIL = GroupId.valueOf("mail").intern();
-            MAILONLY = GroupId.valueOf("mailonly").intern();
-            NAMED = GroupId.valueOf("named").intern();
-            NOGROUP = GroupId.valueOf("nogroup").intern();
-            POSTGRES = GroupId.valueOf("postgres").intern();
-            ROOT = GroupId.valueOf("root").intern();
-            SYS = GroupId.valueOf("sys").intern();
-            TTY = GroupId.valueOf("tty").intern();
-        } catch(ValidationException err) {
-            throw new AssertionError(err.getMessage());
-        }
-    }
-
     /**
      * @deprecated  Group httpd no longer used.
      */
     @Deprecated
     public static final String HTTPD="httpd";
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -6664240122878684478L;
+    String packageName;
+    private String type;
+    public static final int MAX_LENGTH=255;
 
-    private String linuxGroupType;
-    private GroupId groupName;
-    final private LinuxID gid;
-
-    public LinuxGroup(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int aoServer,
-        int businessServer,
-        String linuxGroupType,
-        GroupId groupName,
-        LinuxID gid
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
-        this.linuxGroupType = linuxGroupType;
-        this.groupName = groupName;
-        this.gid = gid;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        linuxGroupType = intern(linuxGroupType);
-        groupName = intern(groupName);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(LinuxGroup other) {
-        try {
-            if(getKeyInt()==other.getKeyInt()) return 0;
-            int diff = groupName==other.groupName ? 0 : getGroupName().compareTo(other.getGroupName());
-            if(diff!=0) return diff;
-            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_LINUX_GROUP_TYPE = getMethodColumn(LinuxGroup.class, "linuxGroupType");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the type of group")
-    public LinuxGroupType getLinuxGroupType() throws RemoteException {
-        return getConnector().getLinuxGroupTypes().get(linuxGroupType);
-    }
-
-    public static final MethodColumn COLUMN_GROUP_NAME = getMethodColumn(LinuxGroup.class, "groupName");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the name of the group")
-    public GroupName getGroupName() throws RemoteException {
-        return getConnector().getGroupNames().get(groupName);
-    }
-    public GroupId getGroupId() {
-        return groupName;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the gid of the group on the machine")
-    public LinuxID getGid() {
-        return gid;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public LinuxGroup(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxGroup dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getAoServer(),
-            dto.getBusinessServer(),
-            dto.getLinuxGroupType(),
-            getGroupId(dto.getGroupName()),
-            getLinuxID(dto.getGid())
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.LinuxGroup getDto() {
-        return new com.aoindustries.aoserv.client.dto.LinuxGroup(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            aoServer,
-            businessServer,
-            linuxGroupType,
-            getDto(groupName),
-            getDto(gid)
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("LinuxGroup.toString", groupName, getAoServer().getHostname());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
-        return getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_GROUP, this);
-    }
-
-    public IndexedSet<LinuxAccountGroup> getAlternateLinuxAccountGroups() throws RemoteException {
-        return getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_IS_PRIMARY, false);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public int addLinuxAccount(LinuxAccount account) throws IOException, SQLException {
-        return getConnector().getLinuxGroupAccounts().addLinuxGroupAccount(this, account);
+        return table.connector.getLinuxGroupAccounts().addLinuxGroupAccount(this, account);
     }
 
     public int addLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-        return getConnector().getLinuxServerGroups().addLinuxServerGroup(this, aoServer);
+        return table.connector.getLinuxServerGroups().addLinuxServerGroup(this, aoServer);
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case COLUMN_PACKAGE: return packageName;
+            case 2: return type;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public LinuxGroupType getLinuxGroupType() throws SQLException, IOException {
+        LinuxGroupType typeObject = table.connector.getLinuxGroupTypes().get(type);
+        if (typeObject == null) throw new SQLException("Unable to find LinuxGroupType: " + type);
+        return typeObject;
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-        return getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
+        return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
+    }
+
+    public List<LinuxServerGroup> getLinuxServerGroups() throws IOException, SQLException {
+        return table.connector.getLinuxServerGroups().getLinuxServerGroups(this);
+    }
+
+    public String getName() {
+        return pkey;
+    }
+
+    public Package getPackage() throws IOException, SQLException {
+        // null OK because data may be filtered at this point, like the linux group 'mail'
+        return table.connector.getPackages().get(packageName);
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_GROUPS;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        packageName = result.getString(2);
+        type = result.getString(3);
+    }
+
+    /**
+     * Determines if a name can be used as a group name.  A name is valid if
+     * it is between 1 and 255 characters in length and uses only ASCII 0x21
+     * through 0x7f, excluding the following characters:
+     * <code>space , : ( ) [ ] ' " | & ; A-Z</code>
+     */
+    public static boolean isValidGroupname(String name) {
+        int len = name.length();
+        if (len == 0 || len > MAX_LENGTH)
+                return false;
+        // The first character must be [a-z]
+        char ch = name.charAt(0);
+        if (ch < 'a' || ch > 'z')
+                return false;
+        // The rest may have additional characters
+        for (int c = 1; c < len; c++) {
+            ch = name.charAt(c);
+            if(
+                ch<0x21
+                || ch>0x7f
+                || (ch>='A' && ch<='Z')
+                || ch==','
+                || ch==':'
+                || ch=='('
+                || ch==')'
+                || ch=='['
+                || ch==']'
+                || ch=='\''
+                || ch=='"'
+                || ch=='|'
+                || ch=='&'
+                || ch==';'
+            ) return false;
+        }
+        return true;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        packageName=in.readUTF().intern();
+        type=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
         // Cannot be the primary group for any linux accounts
-        for(LinuxGroupAccount lga : getConnector().getLinuxGroupAccounts().getRows()) {
+        for(LinuxGroupAccount lga : table.connector.getLinuxGroupAccounts().getRows()) {
             if(lga.isPrimary() && equals(lga.getLinuxGroup())) {
                 reasons.add(new CannotRemoveReason<LinuxGroupAccount>("Used as primary group for Linux account "+lga.getLinuxAccount().getUsername().getUsername(), lga));
             }
@@ -234,85 +169,17 @@ final public class LinuxGroup extends AOServerResource implements Comparable<Lin
     }
 
     public void remove() throws IOException, SQLException {
-        getConnector().requestUpdateIL(
+        table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_GROUPS,
             pkey
         );
     }
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-        List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServer ao=getAOServer();
-
-        for(CvsRepository cr : ao.getCvsRepositories()) {
-            if(cr.linux_server_group==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
-        }
-
-        for(EmailList el : getConnector().getEmailLists().getRows()) {
-            if(el.linux_server_group==pkey) reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
-        }
-
-        for(HttpdServer hs : ao.getHttpdServers()) {
-            if(hs.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdServer>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hs));
-        }
-
-        for(HttpdSharedTomcat hst : ao.getHttpdSharedTomcats()) {
-            if(hst.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
-        }
-
-        // httpd_sites
-        for(HttpdSite site : ao.getHttpdSites()) {
-            if(site.linux_server_group==pkey) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
-        }
-
-        for(MajordomoServer ms : ao.getMajordomoServers()) {
-            if(ms.linux_server_group==pkey) {
-                EmailDomain ed=ms.getDomain();
-                reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
-            }
-        }
-
-        //for(PrivateFtpServer pfs : ao.getPrivateFtpServers()) {
-        //    if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFtpServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
-        //}
-
-        return reasons;
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(packageName);
+        out.writeUTF(type);
     }
-
-    public void remove() throws IOException, SQLException {
-        getConnector().requestUpdateIL(
-            true,
-            AOServProtocol.CommandID.REMOVE,
-            SchemaTable.TableID.LINUX_SERVER_GROUPS,
-            pkey
-        );
-    }
-
-    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-        return getConnector().getCvsRepositories().getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_GROUP, pkey);
-    }
-
-    public List<EmailList> getEmailLists() throws IOException, SQLException {
-        return getConnector().getEmailLists().getIndexedRows(EmailList.COLUMN_LINUX_SERVER_GROUP, pkey);
-    }
-
-    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
-        return getConnector().getHttpdServers().getIndexedRows(HttpdServer.COLUMN_LINUX_SERVER_GROUP, pkey);
-    }
-
-    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return getConnector().getHttpdSites().getIndexedRows(HttpdSite.COLUMN_LINUX_SERVER_GROUP, pkey);
-    }
-
-    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_LINUX_SERVER_GROUP, pkey);
-    }
-
-    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
-        return getConnector().getMajordomoServers().getIndexedRows(MajordomoServer.COLUMN_LINUX_SERVER_GROUP, pkey);
-    }
-    */
-    // </editor-fold>
 }

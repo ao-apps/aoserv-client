@@ -1,26 +1,29 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2007-2011 by AO Industries, Inc.,
+ * Copyright 2007-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * All of the permissions within the system.
  *
+ * @version  1.0
+ *
  * @author  AO Industries, Inc.
  */
-final public class AOServPermission
-extends AOServObjectStringKey
-implements
-    Comparable<AOServPermission>,
-    DtoFactory<com.aoindustries.aoserv.client.dto.AOServPermission>,
-    java.security.acl.Permission {
+final public class AOServPermission extends GlobalObjectStringKey<AOServPermission> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_SORT_ORDER_name = "sort_order";
+
     /**
      * The possible permissions.
      */
@@ -41,106 +44,77 @@ implements
         add_credit_card,
         delete_credit_card,
         edit_credit_card,
-        // failover_file_logs
-        add_failover_file_log,
-        // failover_file_replications
-        request_replication_daemon_access,
-        // ip_addresses
-        set_ip_address_dhcp_address,
-        // linux_accounts
-        set_linux_account_password,
-        set_linux_account_predisable_password,
+        // linux_server_accounts
+        set_linux_server_account_password,
         // mysql_databases
         check_mysql_tables,
         get_mysql_table_status,
+        // mysql_server_users
+        set_mysql_server_user_password,
         // mysql_servers
         get_mysql_master_status,
         get_mysql_slave_status,
-        // mysql_users
-        set_mysql_user_password,
-        set_mysql_user_predisable_password,
         // postgres_server_users
-        set_postgres_user_password,
-        set_postgres_user_predisable_password,
-        // ticket_actions
-        add_ticket_annotation,
+        set_postgres_server_user_password,
         // tickets
         add_ticket,
         edit_ticket,
-        get_ticket_details,
-        // transactions
-        add_transaction,
-        get_transaction_description,
         // virtual_servers
         vnc_console
         ;
 
+        /**
+         * Gets the permission display value in the thread locale.
+         */
         @Override
         public String toString() {
-            return ApplicationResources.accessor.getMessage("AOServPermission."+name()+".toString");
+            return accessor.getMessage("AOServPermission."+name()+".toString");
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -4386248786236481393L;
+    // From database
+    private short sort_order;
 
-    final private short sortOrder;
-
-    public AOServPermission(AOServConnector connector, String name, short sortOrder) {
-        super(connector, name);
-        this.sortOrder = sortOrder;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(AOServPermission other) {
-        return compare(sortOrder, other.sortOrder);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the permission")
-    public String getName() {
-        return getKey();
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case 1: return sort_order;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
-    @SchemaColumn(order=1, index=IndexType.UNIQUE, description="the sort order for the permission")
-    public short getSortOrder() {
-        return sortOrder;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public AOServPermission(AOServConnector connector, com.aoindustries.aoserv.client.dto.AOServPermission dto) {
-        this(connector, dto.getName(), dto.getSortOrder());
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.AOServPermission getDto() {
-        return new com.aoindustries.aoserv.client.dto.AOServPermission(getKey(), sortOrder);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
-        return ApplicationResources.accessor.getMessage("AOServPermission."+getKey()+".toString");
+        return accessor.getMessage("AOServPermission."+pkey+".toString");
     }
 
     /**
      * Gets the locale-specific description of this permission.
      */
     public String getDescription() {
-        return ApplicationResources.accessor.getMessage("AOServPermission."+getKey()+".description");
+        return accessor.getMessage("AOServPermission."+pkey+".description");
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<AOServRolePermission> getAoservRolePermissions() throws RemoteException {
-        return getConnector().getAoservRolePermissions().filterIndexed(AOServRolePermission.COLUMN_PERMISSION, this);
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.AOSERV_PERMISSIONS;
     }
-    // </editor-fold>
+
+    public String getName() {
+        return pkey;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        sort_order = result.getShort(2);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        sort_order = in.readShort();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeShort(sort_order);
+    }
 }

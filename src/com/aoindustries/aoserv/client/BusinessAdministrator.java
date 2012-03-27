@@ -1,625 +1,92 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.command.AOServCommand;
-import com.aoindustries.aoserv.client.command.CheckBusinessAdministratorPasswordCommand;
-import com.aoindustries.aoserv.client.command.SetBusinessAdministratorPasswordCommand;
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
-import java.security.Principal;
-import java.sql.Date;
-import java.sql.Timestamp;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.Base64Coder;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A <code>BusinessAdministrator</code> is a username and password pair, usually
  * representing an individual or an application, that has administrative control
  * over all resources in a <code>Business</code> or any any of its child businesses.
  *
+ *
  * @see  Business
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator
-extends AOServObjectUserIdKey
-implements
-    Comparable<BusinessAdministrator>,
-    DtoFactory<com.aoindustries.aoserv.client.dto.BusinessAdministrator>,
-    Principal,
-    PasswordProtected /* TODO , Removable, Disablable, Comparable<BusinessAdministrator> */ {
+final public class BusinessAdministrator extends CachedObjectStringKey<BusinessAdministrator> implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 5717892875631277080L;
-
-    final private HashedPassword password;
-    private String fullName;
-    private String title;
-    final private Long birthday;
-    final private boolean isPreferred;
-    final private boolean isPrivate;
-    final private long created;
-    private String workPhone;
-    private String homePhone;
-    private String cellPhone;
-    private String fax;
-    private Email email;
-    private String address1;
-    private String address2;
-    private String city;
-    private String state;
-    private String country;
-    private String zip;
-    final private Integer disableLog;
-    final private boolean canSwitchUsers;
-    private String supportCode;
-
-    public BusinessAdministrator(
-        AOServConnector connector,
-        UserId username,
-        HashedPassword password,
-        String fullName,
-        String title,
-        Long birthday,
-        boolean isPreferred,
-        boolean isPrivate,
-        long created,
-        String workPhone,
-        String homePhone,
-        String cellPhone,
-        String fax,
-        Email email,
-        String address1,
-        String address2,
-        String city,
-        String state,
-        String country,
-        String zip,
-        Integer disableLog,
-        boolean canSwitchUsers,
-        String supportCode
-    ) {
-        super(connector, username);
-        this.password = password;
-        this.fullName = fullName;
-        this.title = title;
-        this.birthday = birthday;
-        this.isPreferred = isPreferred;
-        this.isPrivate = isPrivate;
-        this.created = created;
-        this.workPhone = workPhone;
-        this.homePhone = homePhone;
-        this.cellPhone = cellPhone;
-        this.fax = fax;
-        this.email = email;
-        this.address1 = address1;
-        this.address2 = address2;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.zip = zip;
-        this.disableLog = disableLog;
-        this.canSwitchUsers = canSwitchUsers;
-        this.supportCode = supportCode;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        fullName = intern(fullName);
-        title = intern(title);
-        workPhone = intern(workPhone);
-        homePhone = intern(homePhone);
-        cellPhone = intern(cellPhone);
-        fax = intern(fax);
-        email = intern(email);
-        address1 = intern(address1);
-        address2 = intern(address2);
-        city = intern(city);
-        state = intern(state);
-        country = intern(country);
-        zip = intern(zip);
-        supportCode = intern(supportCode);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(BusinessAdministrator other) {
-        return getKey().compareTo(other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_USERNAME = getMethodColumn(BusinessAdministrator.class, "username");
-    @DependencySingleton
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier for this admin")
-    public Username getUsername() throws RemoteException {
-        return getConnector().getUsernames().get(getKey());
-    }
-    public UserId getUserId() {
-        return getKey();
-    }
-
-    @SchemaColumn(order=1, description="the encrypted password for this admin")
-    public HashedPassword getPassword() {
-    	return password;
-    }
-
-    @SchemaColumn(order=2, description="the name of this admin")
-    public String getFullName() {
-    	return fullName;
-    }
-
-    @SchemaColumn(order=3, description="the admins title within their organization")
-    public String getTitle() {
-        return title;
-    }
-
-    @SchemaColumn(order=4, description="the admins birthday")
-    public Date getBirthday() {
-    	return new Date(birthday);
-    }
-
-    @SchemaColumn(order=5, description="if true, customers is preferred")
-    public boolean isPreferred() {
-    	return isPreferred;
-    }
-
-    @SchemaColumn(order=6, description="indicates if the admin should not be listed in publicly available lists")
-    public boolean isPrivate() {
-        return isPrivate;
-    }
-
-    @SchemaColumn(order=7, description="the time the admin entry was created")
-    public Timestamp getCreated() {
-    	return new Timestamp(created);
-    }
-
-    @SchemaColumn(order=8, description="the work phone number (if different than business)")
-    public String getWorkPhone() {
-    	return workPhone;
-    }
-
-    @SchemaColumn(order=9, description="the home phone number")
-    public String getHomePhone() {
-    	return homePhone;
-    }
-
-    @SchemaColumn(order=10, description="the cellular phone number")
-    public String getCellPhone() {
-    	return cellPhone;
-    }
-
-    @SchemaColumn(order=11, description="the fax number (if different than business)")
-    public String getFax() {
-    	return fax;
-    }
-
-    @SchemaColumn(order=12, description="the email address")
-    public Email getEmail() {
-    	return email;
-    }
-
-    @SchemaColumn(order=13, description="the street address (if different than business)")
-    public String getAddress1() {
-        return address1;
-    }
-
-    @SchemaColumn(order=14, description="the street address (if different than business)")
-    public String getAddress2() {
-    	return address2;
-    }
-
-    @SchemaColumn(order=15, description="the city (if different than business)")
-    public String getCity() {
-    	return city;
-    }
-
-    @SchemaColumn(order=16, description="the state (if different than business)")
-    public String getState() {
-    	return state;
-    }
-
-    public static final MethodColumn COLUMN_COUNTRY = getMethodColumn(BusinessAdministrator.class, "country");
-    @DependencySingleton
-    @SchemaColumn(order=17, index=IndexType.INDEXED, description="the country (if different than business)")
-    public CountryCode getCountry() throws RemoteException {
-        if(country == null) return null;
-        CountryCode countryCode=getConnector().getCountryCodes().get(country);
-        if(countryCode == null) throw new RemoteException("CountryCode not found: " + country);
-        return countryCode;
-    }
-
-    @SchemaColumn(order=18, description="the zip code (if different than business)")
-    public String getZip() {
-        return zip;
-    }
-
-    public static final MethodColumn COLUMN_DISABLE_LOG = getMethodColumn(BusinessAdministrator.class, "disableLog");
-    @DependencySingleton
-    @SchemaColumn(order=19, index=IndexType.INDEXED, description="indicates that this account is disabled")
-    public DisableLog getDisableLog() throws RemoteException {
-        if(disableLog==null) return null;
-        return getConnector().getDisableLogs().get(disableLog);
-    }
-    public boolean isDisabled() {
-        return disableLog!=null;
-    }
-
-    @SchemaColumn(order=20, description="allows this person to switch users to any subaccounts")
-    public boolean getCanSwitchUsers() {
-        return canSwitchUsers;
-    }
-
-    @SchemaColumn(order=21, index=IndexType.UNIQUE, description="used to authenticate for email-based supprt")
-    public String getSupportCode() {
-        return supportCode;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public BusinessAdministrator(AOServConnector connector, com.aoindustries.aoserv.client.dto.BusinessAdministrator dto) throws ValidationException {
-        this(
-            connector,
-            getUserId(dto.getUsername()),
-            getHashedPassword(dto.getPassword()),
-            dto.getFullName(),
-            dto.getTitle(),
-            getTimeMillis(dto.getBirthday()),
-            dto.isIsPreferred(),
-            dto.isIsPrivate(),
-            getTimeMillis(dto.getCreated()),
-            dto.getWorkPhone(),
-            dto.getHomePhone(),
-            dto.getCellPhone(),
-            dto.getFax(),
-            getEmail(dto.getEmail()),
-            dto.getAddress1(),
-            dto.getAddress2(),
-            dto.getCity(),
-            dto.getState(),
-            dto.getCountry(),
-            dto.getZip(),
-            dto.getDisableLog(),
-            dto.isCanSwitchUsers(),
-            dto.getSupportCode()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.BusinessAdministrator getDto() {
-        return new com.aoindustries.aoserv.client.dto.BusinessAdministrator(getDto(getKey()), getDto(password), fullName, title, birthday, isPreferred, isPrivate, created, workPhone, homePhone, cellPhone, fax, getDto(email), address1, address2, city, state, country, zip, disableLog, canSwitchUsers, supportCode);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<Business> getBusinessesByCreatedBy() throws RemoteException {
-        return getConnector().getBusinesses().filterIndexed(Business.COLUMN_CREATED_BY, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<BusinessAdministratorRole> getBusinessAdministratorRoles() throws RemoteException {
-        return getConnector().getBusinessAdministratorRoles().filterIndexed(BusinessAdministratorRole.COLUMN_BUSINESS_ADMINISTRATOR, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCard> getCreditCardsByCreatedBy() throws RemoteException {
-        return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_CREATED_BY, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardCreatedBy() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_CREATED_BY, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByAuthorizationUsername() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_AUTHORIZATION_ADMINISTRATOR, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCaptureUsername() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CAPTURE_ADMINISTRATOR, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByVoidUsername() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_VOID_ADMINISTRATOR, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
-        return getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_DISABLED_BY, this);
-    }
-
-    @DependentObjectSingleton
-    public MasterUser getMasterUser() throws RemoteException {
-    	return getConnector().getMasterUsers().filterUnique(MasterUser.COLUMN_BUSINESS_ADMINISTRATOR, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Resource> getResources() throws RemoteException {
-        return getConnector().getResources().filterIndexed(Resource.COLUMN_CREATED_BY, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_ADMINISTRATOR, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActionsByOldAssignedTo() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_ASSIGNED_TO, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActionsByNewAssignedTo() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_ASSIGNED_TO, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<TicketAssignment> getTicketAssignments() throws RemoteException {
-        return getConnector().getTicketAssignments().filterIndexed(TicketAssignment.COLUMN_ADMINISTRATOR, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Ticket> getTicketsByCreatedBy() throws RemoteException {
-        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_CREATED_BY, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_BUSINESS_ADMINISTRATOR, this);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Permissions">
-    /**
-     * A ticket administrator is part of a business that is also a reseller
-     * and has the edit_ticket permission.
-     */
-    public boolean isTicketAdmin() throws RemoteException {
-        Brand br = getUsername().getBusiness().getBrand();
-        if(br==null) return false;
-        return
-            br.getReseller()!=null
-            && hasPermission(AOServPermission.Permission.edit_ticket)
-        ;
-    }
+    static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
 
     /**
-     * Checks if this business administrator has the provided permission.
-     * A user has a permission when any of their roles grants the permission.
+     * Value representing no password.
      */
-    public boolean hasPermission(AOServPermission permission) throws RemoteException {
-        for(BusinessAdministratorRole role : getBusinessAdministratorRoles()) {
-            if(role.getRole().getAoservRolePermissions().filterUnique(AOServRolePermission.COLUMN_PERMISSION, permission)!=null) return true;
-        }
-        return false;
-    }
+    public static final String NO_PASSWORD = "*";
 
-    /**
-     * Checks if this business administrator has the provided permission.
-     * A user has a permission when any of their roles grants the permission.
-     */
-    public boolean hasPermission(AOServPermission.Permission permission) throws RemoteException {
-        return hasPermission(getConnector().getAoservPermissions().get(permission.name()));
-    }
+    private String
+        password,
+        name,
+        title
+    ;
+    private long birthday;
+    private boolean isPreferred;
+    private boolean isPrivate;
+    private long created;
+    private String
+        work_phone,
+        home_phone,
+        cell_phone,
+        fax,
+        email,
+        address1,
+        address2,
+        city,
+        state,
+        country,
+        zip
+    ;
+    int disable_log;
+    boolean can_switch_users;
+    private String support_code;
 
-    /**
-     * Checks if this business administrator has all of the permissions.
-     * A user has a permission when any of their roles grants the permission.
-     *
-     * @param permissions a non-null, non-empty set of permissions.
-     */
-    public boolean hasPermissions(Set<AOServPermission.Permission> permissions) throws RemoteException {
-        if(permissions==null) throw new IllegalArgumentException("permissions==null");
-        if(permissions.isEmpty()) throw new IllegalArgumentException("permissions is empty");
-        for(AOServPermission.Permission permission : permissions) {
-            if(!hasPermission(permission)) return false;
-        }
-        return true;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Principal">
-    /**
-     * Gets the unique name of this Principal.
-     */
-    @Override
-    public String getName() {
-        return getKey().toString();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Access Control">
-    public boolean canAccessAoServer(AOServer server) throws RemoteException {
-        if(server==null) return false;
-        // Check access using own connector
-        if(server.getConnector()!=getConnector()) {
-            server = getConnector().getAoServers().get(server.getKey());
-            if(server==null) return false;
-        }
-        return canAccessServer(server.getServer());
-    }
-
-    public boolean canAccessBusiness(Business business) throws RemoteException {
-        if(business==null) return false;
-        // Check access using own connector
-        if(business.getConnector()!=getConnector()) {
-            business = getConnector().getBusinesses().get(business.getKey());
-            if(business==null) return false;
-        }
-        MasterUser mu = getMasterUser();
-        if(mu!=null) {
-            IndexedSet<MasterServer> mss = mu.getMasterServers();
-            if(mss.isEmpty()) {
-                // Unrestricted master
-                return true;
-            } else {
-                // Restricted by server
-                IndexedSet<Server> businessServers = business.getServers();
-                // There is usually only one MasterServer - iterate by it first
-                for(MasterServer ms : mss) if(businessServers.contains(ms.getServer())) return true;
-                return false;
-            }
-        } else {
-            // Regular user
-            return getUsername().getBusiness().isBusinessOrParentOf(business);
-        }
-    }
-
-    public boolean canAccessBusinessAdministrator(BusinessAdministrator ba) throws RemoteException {
-        if(ba==null) return false;
-        // Check access using own connector
-        if(ba.getConnector()!=getConnector()) {
-            ba = getConnector().getBusinessAdministrators().get(ba.getKey());
-            if(ba==null) return false;
-        }
-        return canAccessUsername(ba.getUsername());
-    }
-
-    public boolean canAccessLinuxAccount(LinuxAccount linuxAccount) throws RemoteException {
-        if(linuxAccount==null) return false;
-        // Check access using own connector
-        if(linuxAccount.getConnector()!=getConnector()) {
-            linuxAccount = getConnector().getLinuxAccounts().get(linuxAccount.getKey());
-            if(linuxAccount==null) return false;
-        }
-        MasterUser mu = getMasterUser();
-        if(mu!=null) {
-            IndexedSet<MasterServer> mss = mu.getMasterServers();
-            if(mss.isEmpty()) {
-                // Unrestricted master
-                return true;
-            } else {
-                // Restricted by server
-                return canAccessAoServer(linuxAccount.getAoServer());
-            }
-        } else {
-            // Regular user
-            return canAccessUsername(linuxAccount.getUsername());
-        }
-    }
-
-    public boolean canAccessMySQLUser(MySQLUser mysqlUser) throws RemoteException {
-        if(mysqlUser==null) return false;
-        // Check access using own connector
-        if(mysqlUser.getConnector()!=getConnector()) {
-            mysqlUser = getConnector().getMysqlUsers().get(mysqlUser.getKey());
-            if(mysqlUser==null) return false;
-        }
-        MasterUser mu = getMasterUser();
-        if(mu!=null) {
-            IndexedSet<MasterServer> mss = mu.getMasterServers();
-            if(mss.isEmpty()) {
-                // Unrestricted master
-                return true;
-            } else {
-                // Restricted by server
-                return canAccessAoServer(mysqlUser.getAoServer());
-            }
-        } else {
-            // Regular user
-            return canAccessUsername(mysqlUser.getUsername());
-        }
-    }
-
-    public boolean canAccessPostgresUser(PostgresUser postgresUser) throws RemoteException {
-        if(postgresUser==null) return false;
-        // Check access using own connector
-        if(postgresUser.getConnector()!=getConnector()) {
-            postgresUser = getConnector().getPostgresUsers().get(postgresUser.getKey());
-            if(postgresUser==null) return false;
-        }
-        MasterUser mu = getMasterUser();
-        if(mu!=null) {
-            IndexedSet<MasterServer> mss = mu.getMasterServers();
-            if(mss.isEmpty()) {
-                // Unrestricted master
-                return true;
-            } else {
-                // Restricted by server
-                return canAccessAoServer(postgresUser.getAoServer());
-            }
-        } else {
-            // Regular user
-            return canAccessUsername(postgresUser.getUsername());
-        }
-    }
-
-    public boolean canAccessServer(Server server) throws RemoteException {
-        if(server==null) return false;
-        // Check access using own connector
-        if(server.getConnector()!=getConnector()) {
-            server = getConnector().getServers().get(server.getKey());
-            if(server==null) return false;
-        }
-        MasterUser mu = getMasterUser();
-        if(mu!=null) {
-            IndexedSet<MasterServer> mss = mu.getMasterServers();
-            if(mss.isEmpty()) {
-                // Unrestricted master
-                return true;
-            } else {
-                // Restricted by server
-                for(MasterServer ms : mss) if(ms.getServer().equals(server)) return true;
-                return false;
-            }
-        } else {
-            // Regular user
-            return getUsername().getBusiness().getServers().contains(server);
-        }
-    }
-
-    public boolean canAccessUsername(Username username) throws RemoteException {
-        if(username==null) return false;
-        // Check access using own connector
-        if(username.getConnector()!=getConnector()) {
-            username = getConnector().getUsernames().get(username.getKey());
-            if(username==null) return false;
-        }
-        return canAccessBusiness(username.getBusiness());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Password Protected">
-    @Override
-    public AOServCommand<List<PasswordChecker.Result>> getCheckPasswordCommand(String password) {
-        return new CheckBusinessAdministratorPasswordCommand(this, password);
-    }
-
-    @Override
-    public AOServCommand<Void> getSetPasswordCommand(String plaintext) {
-        return new SetBusinessAdministratorPasswordCommand(this, plaintext);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public int arePasswordsSet() throws IOException, SQLException {
-        return service.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+        return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
     }
 
     public boolean canDisable() throws SQLException, IOException {
-        return disableLog==null && !equals(getConnector().getThisBusinessAdministrator());
+        return disable_log==-1 && !equals(table.connector.getThisBusinessAdministrator());
+    }
+    
+    public boolean canSwitchUsers() {
+        return can_switch_users;
+    }
+
+    public String getSupportCode() {
+        return support_code;
     }
 
     public boolean canSwitchUser(BusinessAdministrator other) throws SQLException, IOException {
         if(isDisabled() || other.isDisabled()) return false;
-        Business business=getUsername().getBusiness();
-        Business otherBusiness=other.getUsername().getBusiness();
+        Business business=getUsername().getPackage().getBusiness();
+        Business otherBusiness=other.getUsername().getPackage().getBusiness();
         return !business.equals(otherBusiness) && business.isBusinessOrParentOf(otherBusiness);
     }
 
@@ -629,25 +96,221 @@ implements
         else return dl.canEnable();
     }
 
-    public void disable(DisableLog dl) throws IOException, SQLException {
-        service.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
+    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
+        return checkPassword(pkey, password);
     }
 
+    /**
+     * Validates a password and returns a description of the problem.  If the
+     * password is valid, then <code>null</code> is returned.
+     */
+    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
+	return PasswordChecker.checkPassword(username, password, true, false);
+    }
+
+    /**
+     * Validates a password and returns a description of the problem.  If the
+     * password is valid, then <code>null</code> is returned.
+     */
+    /*public String checkPasswordDescribe(String password) {
+	return checkPasswordDescribe(pkey, password);
+    }*/
+
+    /**
+     * Validates a password and returns a description of the problem.  If the
+     * password is valid, then <code>null</code> is returned.
+     */
+    /*public static String checkPasswordDescribe(String username, String password) {
+	return PasswordChecker.checkPasswordDescribe(username, password, true, false);
+    }*/
+
+    /**
+     * Encrypts a password.  If the password is <code>null</code>, returns <code>NO_PASSWORD</code>.
+     * If the salt is <code>null</code>, a random salt will be generated.
+     * 
+     * @deprecated  Please use hash instead
+     * @see #hash(String)
+     */
+    public static String crypt(String password, String salt) {
+	if(password==null || password.length()==0) return BusinessAdministrator.NO_PASSWORD;
+	return salt==null || salt.length()==0?com.aoindustries.util.UnixCrypt.crypt(password):com.aoindustries.util.UnixCrypt.crypt(password, salt);
+    }
+
+    /**
+     * Performs a one-way hash of the plaintext value using SHA-1.
+     *
+     * @exception  WrappedException  if any problem occurs.
+     */
+    public static String hash(String plaintext) throws WrappedException {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            md.update(plaintext.getBytes("UTF-8"));
+            return new String(Base64Coder.encode(md.digest()));
+        } catch(NoSuchAlgorithmException err) {
+            throw new WrappedException(err);
+        } catch(UnsupportedEncodingException err) {
+            throw new WrappedException(err);
+        }
+    }
+
+    public void disable(DisableLog dl) throws IOException, SQLException {
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
+    }
+    
     public void enable() throws IOException, SQLException {
-        service.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, pkey);
+    }
+
+    public List<TicketAction> getTicketActions() throws IOException, SQLException {
+        return table.connector.getTicketActions().getActions(this);
+    }
+
+    public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
+        return table.connector.getTicketAssignments().getTicketAssignments(this);
+    }
+
+    public String getAddress1() {
+        return address1;
+    }
+
+    public String getAddress2() {
+	return address2;
+    }
+
+    public long getBirthday() {
+	return birthday;
+    }
+
+    public String getCellPhone() {
+	return cell_phone;
+    }
+
+    public String getCity() {
+	return city;
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_USERNAME: return pkey;
+            case 1: return password;
+            case 2: return name;
+            case 3: return title;
+            case 4: return birthday==-1?null:new java.sql.Date(birthday);
+            case 5: return isPreferred?Boolean.TRUE:Boolean.FALSE;
+            case 6: return isPrivate?Boolean.TRUE:Boolean.FALSE;
+            case 7: return new java.sql.Date(created);
+            case 8: return work_phone;
+            case 9: return home_phone;
+            case 10: return cell_phone;
+            case 11: return fax;
+            case 12: return email;
+            case 13: return address1;
+            case 14: return address2;
+            case 15: return city;
+            case 16: return state;
+            case 17: return country;
+            case 18: return zip;
+            case 19: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 20: return can_switch_users?Boolean.TRUE:Boolean.FALSE;
+            case 21: return support_code;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public CountryCode getCountry() throws SQLException, IOException {
+        if(country == null) return null;
+        CountryCode countryCode=table.connector.getCountryCodes().get(country);
+        if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
+        return countryCode;
+    }
+
+    public long getCreated() {
+	return created;
+    }
+
+    public List<Ticket> getCreatedTickets() throws IOException, SQLException {
+        return table.connector.getTickets().getCreatedTickets(this);
     }
 
     public boolean isDisabled() {
-        return disableLog!=null;
+        return disable_log!=-1;
+    }
+
+    public DisableLog getDisableLog() throws SQLException, IOException {
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+        return obj;
+    }
+
+    public String getEmail() {
+	return email;
+    }
+
+    public String getFax() {
+	return fax;
+    }
+
+    public String getHomePhone() {
+	return home_phone;
+    }
+
+    public MasterUser getMasterUser() throws IOException, SQLException {
+	return table.connector.getMasterUsers().get(pkey);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
-    	return getConnector().getMonthlyCharges().getMonthlyCharges(this);
+	return table.connector.getMonthlyCharges().getMonthlyCharges(this, null);
+    }
+
+    public String getName() {
+	return name;
+    }
+
+    /**
+     * Gets the hashed password for this business_administrator.  This information is only
+     * available if all communication has been over secure connections.  Otherwise,
+     * all passwords will be changed to <code>NO_PASSWORD</code>.
+     *
+     * @see  AOServConnector#isSecure
+     */
+    public String getPassword() {
+	return password;
+    }
+
+    public String getState() {
+	return state;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_ADMINISTRATORS;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public List<Transaction> getTransactions() throws IOException, SQLException {
+        return table.connector.getTransactions().getTransactions(this);
+    }
+
+     public Username getUsername() throws SQLException, IOException {
+        Username usernameObject = table.connector.getUsernames().get(pkey);
+        if (usernameObject == null) throw new SQLException("Username not found: " + pkey);
+        return usernameObject;
+    }
+
+    public String getWorkPhone() {
+	return work_phone;
+    }
+
+    public String getZIP() {
+	return zip;
     }
 
     public boolean isActiveAccounting() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
-	return
+	return 
             user!=null
             && user.isActive()
             && user.canAccessAccounting()
@@ -656,7 +319,7 @@ implements
 
     public boolean isActiveBankAccounting() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
-	return
+	return 
             user!=null
             && user.isActive()
             && user.canAccessBankAccount()
@@ -665,7 +328,7 @@ implements
 
     public boolean isActiveDNSAdmin() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
-	return
+	return 
             user!=null
             && user.isActive()
             && user.isDNSAdmin()
@@ -674,7 +337,7 @@ implements
 
     public boolean isActiveTableInvalidator() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
-	return
+	return 
             user!=null
             && user.isActive()
             && user.canInvalidateTables()
@@ -683,26 +346,106 @@ implements
 
     public boolean isActiveWebAdmin() throws IOException, SQLException {
 	MasterUser user=getMasterUser();
-	return
+	return 
             user!=null
             && user.isActive()
             && user.isWebAdmin()
 	;
     }
 
+    public boolean isPreferred() {
+	return isPreferred;
+    }
+
+    public boolean isPrivate() {
+	return isPrivate;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static boolean passwordMatches(String plaintext, String ciphertext) {
+        if(!NO_PASSWORD.equals(ciphertext)) {
+            // Try hash first
+            String hashed = hash(plaintext);
+            if(hashed.equals(ciphertext)) return true;
+            // Try old crypt next
+            if(ciphertext.length()>=2) {
+                String salt=ciphertext.substring(0,2);
+                String crypted=com.aoindustries.util.UnixCrypt.crypt(plaintext, salt);
+                return crypted.equals(ciphertext);
+            }
+        }
+	return false;
+    }
+
+    public boolean passwordMatches(String plaintext) {
+        return passwordMatches(plaintext, password);
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        password = result.getString(2).trim();
+        name = result.getString(3);
+        title = result.getString(4);
+        String S=result.getString(5);
+        birthday = S==null?-1:SQLUtility.getDate(S.substring(0,10)).getTime();
+        isPreferred = result.getBoolean(6);
+        isPrivate = result.getBoolean(7);
+        created = result.getTimestamp(8).getTime();
+        work_phone = result.getString(9);
+        home_phone = result.getString(10);
+        cell_phone = result.getString(11);
+        fax = result.getString(12);
+        email = result.getString(13);
+        address1 = result.getString(14);
+        address2 = result.getString(15);
+        city = result.getString(16);
+        state = result.getString(17);
+        country = result.getString(18);
+        zip = result.getString(19);
+        disable_log=result.getInt(20);
+        if(result.wasNull()) disable_log=-1;
+        can_switch_users=result.getBoolean(21);
+        support_code = result.getString(22);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        password=in.readUTF();
+        name=in.readUTF();
+        title=in.readNullUTF();
+        birthday=in.readLong();
+        isPreferred=in.readBoolean();
+        isPrivate=in.readBoolean();
+        created=in.readLong();
+        work_phone=in.readUTF();
+        home_phone=in.readNullUTF();
+        cell_phone=in.readNullUTF();
+        fax=in.readNullUTF();
+        email=in.readUTF();
+        address1=in.readNullUTF();
+        address2=in.readNullUTF();
+        city=in.readNullUTF();
+        state=StringUtility.intern(in.readNullUTF());
+        country=StringUtility.intern(in.readNullUTF());
+        zip=in.readNullUTF();
+        disable_log=in.readCompressedInt();
+        can_switch_users=in.readBoolean();
+        support_code = in.readNullUTF();
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServConnector conn=getConnector();
+        AOServConnector conn=table.connector;
 
         if(equals(conn.getThisBusinessAdministrator())) reasons.add(new CannotRemoveReason<BusinessAdministrator>("Not allowed to remove self", this));
-
+        
         List<TicketAction> actions=getTicketActions();
         if(!actions.isEmpty()) reasons.add(new CannotRemoveReason<TicketAction>("Author of "+actions.size()+" ticket "+(actions.size()==1?"action":"actions"), actions));
 
         List<Ticket> tickets=getCreatedTickets();
         if(!tickets.isEmpty()) reasons.add(new CannotRemoveReason<Ticket>("Author of "+tickets.size()+' '+(tickets.size()==1?"ticket":"tickets"), tickets));
-
+        
         List<Transaction> trs=getTransactions();
         if(!trs.isEmpty()) reasons.add(new CannotRemoveReason<Transaction>("Created "+trs.size()+' '+(trs.size()==1?"transaction":"transactions"), trs));
 
@@ -710,12 +453,23 @@ implements
     }
 
     public void remove() throws IOException, SQLException {
-        getConnector().requestUpdateIL(
+        table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.BUSINESS_ADMINISTRATORS,
             pkey
         );
+    }
+
+    /**
+     * Sets the password for this <code>BusinessAdministrator</code>.  All connections must
+     * be over secure protocols for this method to work.  If the connections
+     * are not secure, an <code>IOException</code> is thrown.
+     */
+    public void setPassword(String plaintext) throws IOException, SQLException {
+        AOServConnector connector=table.connector;
+        if(!connector.isSecure()) throw new IOException("Passwords for business_administrators may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
+    	connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PASSWORD, pkey, plaintext);
     }
 
     public void setProfile(
@@ -755,7 +509,7 @@ implements
         final String finalCountry = country;
         if(zip!=null && zip.length()==0) zip=null;
         final String finalZip = zip;
-        getConnector().requestUpdate(
+        table.connector.requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
@@ -790,12 +544,36 @@ implements
                 }
 
                 public void afterRelease() {
-                    getConnector().tablesUpdated(invalidateList);
+                    table.connector.tablesUpdated(invalidateList);
                 }
             }
         );
     }
-    */
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(password);
+        out.writeUTF(name);
+        out.writeNullUTF(title);
+        out.writeLong(birthday);
+        out.writeBoolean(isPreferred);
+        out.writeBoolean(isPrivate);
+        out.writeLong(created);
+        out.writeUTF(work_phone);
+        out.writeNullUTF(home_phone);
+        out.writeNullUTF(cell_phone);
+        out.writeNullUTF(fax);
+        out.writeUTF(email);
+        out.writeNullUTF(address1);
+        out.writeNullUTF(address2);
+        out.writeNullUTF(city);
+        out.writeNullUTF(state);
+        out.writeNullUTF(country);
+        out.writeNullUTF(zip);
+        out.writeCompressedInt(disable_log);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)>=0) out.writeBoolean(can_switch_users);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(support_code);
+    }
 
     /**
      * Determines if a name can be used as a username.  The same rules apply as for
@@ -803,25 +581,60 @@ implements
      *
      * @see  Username#checkUsername
      */
-    /* TODO
     public static String checkUsername(String name) {
         return Username.checkUsername(name);
-    }*/
+    }
+    
+    /**
+     * Determines if a name can be used as a username.  The same rules apply as for
+     * Username.
+     *
+     * @deprecated  Please use <code>checkUsername(String)</code> to give users more details when the check fails.
+     *
+     * @see  Username#isValidUsername
+     */
+    public static boolean isValidUsername(String name) {
+        return Username.isValidUsername(name);
+    }
+
+    public boolean canSetPassword() {
+        return disable_log==-1;
+    }
+
+    public List<BusinessAdministratorPermission> getPermissions() throws IOException, SQLException {
+        return table.connector.getBusinessAdministratorPermissions().getPermissions(this);
+    }
+    
+    /**
+     * Checks if this business administrator has the provided permission.
+     */
+    public boolean hasPermission(AOServPermission permission) throws IOException, SQLException {
+        return hasPermission(permission.getName());
+    }
 
     /**
      * Checks if this business administrator has the provided permission.
      */
-    /* TODO
+    public boolean hasPermission(AOServPermission.Permission permission) throws IOException, SQLException {
+        return hasPermission(permission.name());
+    }
+
+    /**
+     * Checks if this business administrator has the provided permission.
+     */
     public boolean hasPermission(String permission) throws IOException, SQLException {
-        return getConnector().getBusinessAdministratorPermissions().hasPermission(this, permission);
+        return table.connector.getBusinessAdministratorPermissions().hasPermission(this, permission);
     }
 
-    public List<MonthlyCharge> getMonthlyChargesByCreatedBy() throws IOException, SQLException {
-        return getConnector().getMonthlyCharges().getMonthlyChargesByCreatedBy(this);
+    /**
+     * Sorts by username.
+     *
+     * TODO: Consider handling comparisons at the AOServTable and making all
+     * AOServObject's comparable.  We could then return things as sets where
+     * appropriate.  Maybe have getMap, getList, getSet, and getSortedSet
+     * as appropriate?
+     */
+    public int compareTo(BusinessAdministrator o) {
+        return pkey.compareToIgnoreCase(o.pkey);
     }
-
-    public List<SignupRequest> getCompletedSignupRequests() throws IOException, SQLException {
-        return getConnector().getSignupRequests().getIndexedRows(SignupRequest.COLUMN_COMPLETED_BY, pkey);
-    }*/
-    // </editor-fold>
 }

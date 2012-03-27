@@ -1,12 +1,14 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * A <code>CountryCode</code> is a simple wrapper for country
@@ -17,127 +19,74 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class CountryCode extends AOServObjectStringKey implements Comparable<CountryCode>, DtoFactory<com.aoindustries.aoserv.client.dto.CountryCode> {
+final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_CODE=0;
+    static final String COLUMN_NAME_name = "name";
+
     /**
      * <code>CountryCode</code>s used as constants.
      */
     public static final String US="US";
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 1075399431912675012L;
 
     private String name;
-    final private boolean chargeComSupported;
-    private String chargeComName;
+    private boolean charge_com_supported;
+    private String charge_com_name;
 
-    public CountryCode(
-        AOServConnector connector,
-        String code,
-        String name,
-        boolean chargeComSupported,
-        String chargeComName
-    ) {
-        super(connector, code);
-        this.name = name;
-        this.chargeComSupported = chargeComSupported;
-        this.chargeComName = chargeComName;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        name = intern(name);
-        chargeComName = intern(chargeComName);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(CountryCode other) {
-        return compareIgnoreCaseConsistentWithEquals(name, other.name);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
     /**
      * Gets the two-character unique code for this country.
      */
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the two-character code for the country")
     public String getCode() {
-        return getKey();
+	return pkey;
     }
 
-    @SchemaColumn(order=1, description="the name of the country")
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_CODE) return pkey;
+	if(i==1) return name;
+        if(i==2) return charge_com_supported?Boolean.TRUE:Boolean.FALSE;
+        if(i==3) return charge_com_name;
+	throw new IllegalArgumentException("Invalid index: "+i);
+    }
+
     public String getName() {
-    	return name;
+	return name;
     }
 
-    @SchemaColumn(order=2, description="if the country is supported by Charge.Com")
     public boolean getChargeComSupported() {
-        return chargeComSupported;
+	return charge_com_supported;
     }
 
-    @SchemaColumn(order=3, description="the Charge.Com specific name")
     public String getChargeComName() {
-    	return chargeComName==null?name:chargeComName;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public CountryCode(AOServConnector connector, com.aoindustries.aoserv.client.dto.CountryCode dto) {
-        this(
-            connector,
-            dto.getCode(),
-            dto.getName(),
-            dto.isChargeComSupported(),
-            dto.getChargeComName()
-        );
+	return charge_com_name==null?name:charge_com_name;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.CountryCode getDto() {
-        return new com.aoindustries.aoserv.client.dto.CountryCode(getKey(), name, chargeComSupported, chargeComName);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
-        return getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_COUNTRY, this);
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.COUNTRY_CODES;
     }
 
-    @DependentObjectSet
-    public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
-        return getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_COUNTRY, this);
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	name = result.getString(2);
+        charge_com_supported = result.getBoolean(3);
+        charge_com_name = result.getString(4);
     }
 
-    @DependentObjectSet
-    public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-        return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_COUNTRY_CODE, this);
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	name=in.readUTF();
+        charge_com_supported = in.readBoolean();
+        charge_com_name = in.readNullUTF();
     }
 
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByShippingCountryCode() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_SHIPPING_COUNTRY_CODE, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardCountryCode() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_COUNTRY_CODE, this);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
     String toStringImpl() {
-    	return name;
+	return name;
     }
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(name);
+        out.writeBoolean(charge_com_supported);
+        out.writeBoolean(charge_com_name!=null);
+        if (charge_com_name!=null) out.writeUTF(charge_com_name);
+    }
 }

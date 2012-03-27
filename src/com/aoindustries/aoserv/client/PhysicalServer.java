@@ -1,181 +1,178 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2008-2011 by AO Industries, Inc.,
+ * Copyright 2008-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.aoserv.client.validator.ValidationException;
-import com.aoindustries.table.IndexType;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.StringUtility;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.rmi.RemoteException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>PhysicalServer</code> consumes space and electricity in a rack
- * and provides resources either directly or through virtual servers.
+ * and provides resources.
+ *
+ * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
-final public class PhysicalServer extends Server implements DtoFactory<com.aoindustries.aoserv.client.dto.PhysicalServer> {
+final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -3610976367634402976L;
+    static final int COLUMN_SERVER = 0;
+    
+    static final String COLUMN_SERVER_name = "server";
 
-    final private int rack;
-    final private Short rackUnits;
-    final private Integer ram;
+    private int rack;
+    private short rackUnits;
+    private int ram;
     private String processorType;
-    final private Integer processorSpeed;
-    final private Integer processorCores;
-    final private Float maxPower;
-    final private Boolean supportsHvm;
+    private int processorSpeed;
+    private int processorCores;
+    private float maxPower;
+    private Boolean supports_hvm;
 
-    public PhysicalServer(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int farm,
-        String description,
-        Integer operatingSystemVersion,
-        String name,
-        boolean monitoringEnabled,
-        int rack,
-        Short rackUnits,
-        Integer ram,
-        String processorType,
-        Integer processorSpeed,
-        Integer processorCores,
-        Float maxPower,
-        Boolean supportsHvm
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, farm, description, operatingSystemVersion, name, monitoringEnabled);
-        this.rack = rack;
-        this.rackUnits = rackUnits;
-        this.ram = ram;
-        this.processorType = processorType;
-        this.processorSpeed = processorSpeed;
-        this.processorCores = processorCores;
-        this.maxPower = maxPower;
-        this.supportsHvm = supportsHvm;
-        intern();
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_SERVER: return Integer.valueOf(pkey);
+            case 1: return rack==-1 ? null : Integer.valueOf(rack);
+            case 2: return rackUnits==-1 ? null : Short.valueOf(rackUnits);
+            case 3: return ram==-1 ? null : Integer.valueOf(ram);
+            case 4: return processorType;
+            case 5: return processorSpeed==-1 ? null : Integer.valueOf(processorSpeed);
+            case 6: return processorCores==-1 ? null : Integer.valueOf(processorCores);
+            case 7: return Float.isNaN(maxPower) ? null : Float.valueOf(maxPower);
+            case 8: return supports_hvm;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
+    public Server getServer() throws SQLException, IOException {
+        Server se=table.connector.getServers().get(pkey);
+        if(se==null) throw new SQLException("Unable to find Server: "+pkey);
+        return se;
     }
 
-    private void intern() {
-        processorType = intern(processorType);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_RACK = getMethodColumn(PhysicalServer.class, "rack");
-    @DependencySingleton
-    @SchemaColumn(order=SERVER_LAST_COLUMN+1, index=IndexType.INDEXED, description="the rack that houses this server")
-    public Rack getRack() throws RemoteException {
-        return getConnector().getRacks().get(rack);
+    /**
+     * Gets the rack this server is part of or <code>null</code> if not in a rack.
+     */
+    public Rack getRack() throws SQLException, IOException {
+        if(rack==-1) return null;
+        Rack ra = table.connector.getRacks().get(rack);
+        if(ra==null) throw new SQLException("Unable to find Rack: "+rack);
+        return ra;
     }
 
-    @SchemaColumn(order=SERVER_LAST_COLUMN+2, description="the number of rack units")
-    public Short getRackUnits() {
+    /**
+     * Gets the number of rack units used by this server or <code>-1</code> if unknown
+     * or not applicable.
+     */
+    public short getRackUnits() {
         return rackUnits;
     }
 
-    @SchemaColumn(order=SERVER_LAST_COLUMN+3, description="the total number of megabytes of RAM in this server")
-    public Integer getRam() {
+    /**
+     * Gets the number of megabytes of RAM in this server or <code>-1</code> if not applicable.
+     */
+    public int getRam() {
         return ram;
     }
 
-    public static final MethodColumn COLUMN_PROCESSOR_TYPE = getMethodColumn(PhysicalServer.class, "processorType");
-    @DependencySingleton
-    @SchemaColumn(order=SERVER_LAST_COLUMN+4, index=IndexType.INDEXED, description="the processor type")
-    public ProcessorType getProcessorType() throws RemoteException {
+    /**
+     * Gets the processor type or <code>null</code> if not applicable.
+     */
+    public ProcessorType getProcessorType() throws SQLException, IOException {
         if(processorType==null) return null;
-        return getConnector().getProcessorTypes().get(processorType);
+        ProcessorType pt = table.connector.getProcessorTypes().get(processorType);
+        if(pt==null) throw new SQLException("Unable to find ProcessorType: "+processorType);
+        return pt;
     }
 
-    @SchemaColumn(order=SERVER_LAST_COLUMN+5, description="the processor speed in MHz")
-    public Integer getProcessorSpeed() {
+    /**
+     * Gets the processor speed in MHz or <code>-1</code> if not applicable.
+     */
+    public int getProcessorSpeed() {
         return processorSpeed;
     }
 
-    @SchemaColumn(order=SERVER_LAST_COLUMN+6, description="the total number of processor cores, hyperthreads are counted as different cores")
-    public Integer getProcessorCores() {
+    /**
+     * Gets the total number of processor cores or <code>-1</code> if not applicable,
+     * different hyperthreads are counted as separate cores.
+     */
+    public int getProcessorCores() {
         return processorCores;
     }
-
-    @SchemaColumn(order=SERVER_LAST_COLUMN+7, description="the number of amps this server consumes under peak load")
-    public Float getMaxPower() {
+    
+    /**
+     * Gets the maximum electricity current or <code>Float.NaN</code> if not known.
+     */
+    public float getMaxPower() {
         return maxPower;
     }
-
-    @SchemaColumn(order=SERVER_LAST_COLUMN+8, description="indicates supports full hardware virtualization")
+    
+    /**
+     * Gets if this supports HVM or <code>null</code> if not applicable.
+     */
     public Boolean getSupportsHvm() {
-        return supportsHvm;
+        return supports_hvm;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public PhysicalServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.PhysicalServer dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getFarm(),
-            dto.getDescription(),
-            dto.getOperatingSystemVersion(),
-            dto.getName(),
-            dto.isMonitoringEnabled(),
-            dto.getRack(),
-            dto.getRackUnits(),
-            dto.getRam(),
-            dto.getProcessorType(),
-            dto.getProcessorSpeed(),
-            dto.getProcessorCores(),
-            dto.getMaxPower(),
-            dto.getSupportsHvm()
-        );
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PHYSICAL_SERVERS;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        int pos = 1;
+        pkey = result.getInt(pos++);
+        rack = result.getInt(pos++);
+        if(result.wasNull()) rack = -1;
+        rackUnits = result.getShort(pos++);
+        if(result.wasNull()) rackUnits = -1;
+        ram = result.getInt(pos++);
+        if(result.wasNull()) ram = -1;
+        processorType = result.getString(pos++);
+        processorSpeed = result.getInt(pos++);
+        if(result.wasNull()) processorSpeed = -1;
+        processorCores = result.getInt(pos++);
+        if(result.wasNull()) processorCores = -1;
+        maxPower = result.getFloat(pos++);
+        if(result.wasNull()) maxPower = Float.NaN;
+        supports_hvm = result.getBoolean(pos++);
+        if(result.wasNull()) supports_hvm = null;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey = in.readCompressedInt();
+        rack = in.readCompressedInt();
+        rackUnits = in.readShort();
+        ram = in.readCompressedInt();
+        processorType = StringUtility.intern(in.readNullUTF());
+        processorSpeed = in.readCompressedInt();
+        processorCores = in.readCompressedInt();
+        maxPower = in.readFloat();
+        supports_hvm = in.readBoolean() ? in.readBoolean() : null;
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.PhysicalServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.PhysicalServer(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            farm,
-            description,
-            operatingSystemVersion,
-            name,
-            monitoringEnabled,
-            rack,
-            rackUnits,
-            ram,
-            processorType,
-            processorSpeed,
-            processorCores,
-            maxPower,
-            supportsHvm
-        );
+    protected String toStringImpl() throws SQLException, IOException {
+        return getServer().toStringImpl();
     }
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(rack);
+        out.writeShort(rackUnits);
+        out.writeCompressedInt(ram);
+        out.writeNullUTF(processorType);
+        out.writeCompressedInt(processorSpeed);
+        out.writeCompressedInt(processorCores);
+        out.writeFloat(maxPower);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) {
+            out.writeBoolean(supports_hvm!=null);
+            if(supports_hvm!=null) out.writeBoolean(supports_hvm);
+        }
+    }
 }

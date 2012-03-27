@@ -1,74 +1,83 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2003-2011 by AO Industries, Inc.,
+ * Copyright 2003-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * The possible backup retention values allowed in the system.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class BackupRetention extends AOServObjectShortKey implements Comparable<BackupRetention>, DtoFactory<com.aoindustries.aoserv.client.dto.BackupRetention> {
+final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -5203212089898102813L;
+    static final int COLUMN_DAYS=0;
+    static final String COLUMN_DAYS_name = "days";
 
-    public BackupRetention(AOServConnector connector, short days) {
-        super(connector, days);
-    }
-    // </editor-fold>
+    // public static final short DEFAULT_BACKUP_RETENTION=7;
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    short days;
+    private String display;
+
     @Override
-    public int compareTo(BackupRetention other) {
-        return compare(key, other.key);
+    boolean equalsImpl(Object O) {
+	return
+            O instanceof BackupRetention
+            && ((BackupRetention)O).days==days
+	;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the number of days to keep the backup data")
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_DAYS) return Short.valueOf(days);
+	if(i==1) return display;
+	throw new IllegalArgumentException("Invalid index: "+i);
+    }
+
     public short getDays() {
-        return key;
+	return days;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public BackupRetention(AOServConnector connector, com.aoindustries.aoserv.client.dto.BackupRetention dto) {
-        this(connector, dto.getDays());
+    public String getDisplay() {
+	return display;
+    }
+
+    public Short getKey() {
+	return days;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BACKUP_RETENTIONS;
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.BackupRetention getDto() {
-        return new com.aoindustries.aoserv.client.dto.BackupRetention(key);
+    int hashCodeImpl() {
+	return days;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public void init(ResultSet result) throws SQLException {
+	days=result.getShort(1);
+	display=result.getString(2);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	days=in.readShort();
+	display=in.readUTF();
+    }
+
     @Override
     String toStringImpl() {
-        return ApplicationResources.accessor.getMessage("BackupRetention."+key+".toString");
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<EmailInbox> getEmailInboxesByTrashEmailRetention() throws RemoteException {
-        return getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_TRASH_EMAIL_RETENTION, this);
+	return display;
     }
 
-    @DependentObjectSet
-    public IndexedSet<EmailInbox> getEmailInboxesByJunkEmailRetention() throws RemoteException {
-        return getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_JUNK_EMAIL_RETENTION, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeShort(days);
+	out.writeUTF(display);
     }
-
-    @DependentObjectSet
-    public IndexedSet<FailoverFileReplication> getFailoverFileReplications() throws RemoteException {
-        return getConnector().getFailoverFileReplications().filterIndexed(FailoverFileReplication.COLUMN_RETENTION, this);
-    }
-    // </editor-fold>
 }

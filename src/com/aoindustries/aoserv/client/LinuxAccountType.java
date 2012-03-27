@@ -1,20 +1,18 @@
+
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.AoCollections;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The <code>LinuxAccountType</code> of a <code>LinuxAccount</code>
@@ -25,225 +23,184 @@ import java.util.Set;
  * @see  LinuxAccount
  * @see  LinuxServerAccount
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccountType extends AOServObjectStringKey implements Comparable<LinuxAccountType>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccountType> {
+final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_DESCRIPTION_name = "description";
+
+    private String description;
+    private boolean is_email;
+
     /**
      * The different Linux account types.
      */
-    private enum Constant {
-        shell_account(
-            ResourceType.SHELL_ACCOUNT,
-            true,
-            true,
-            true,
-            PasswordChecker.PasswordStrength.STRICT,
-            Shell.NOLOGIN,
-            Shell.BASH,
-            Shell.KSH,
-            Shell.SH,
-            Shell.TCSH
-        ),
-        email_inbox(
-            ResourceType.EMAIL_INBOX,
-            true,
-            false,
-            true,
-            PasswordChecker.PasswordStrength.SUPER_LAX,
-            Shell.NOLOGIN,
-            Shell.PASSWD
-        ),
-        ftponly_account(
-            ResourceType.FTPONLY_ACCOUNT,
-            false,
-            true,
-            true,
-            PasswordChecker.PasswordStrength.MODERATE,
-            Shell.NOLOGIN,
-            Shell.FTPPASSWD
-        ),
-        system_account(
-            ResourceType.SYSTEM_ACCOUNT,
-            false,
-            false,
-            false,
-            PasswordChecker.PasswordStrength.STRICT,
-            Shell.NOLOGIN,
-            Shell.BASH,
-            Shell.SYNC,
-            Shell.HALT,
-            Shell.SHUTDOWN
-        );
+    public static final String
+        BACKUP="backup",
+        EMAIL="email",
+        FTPONLY="ftponly",
+        USER="user",
+        MERCENARY="mercenary",
+        SYSTEM="system",
+        APPLICATION="application"
+    ;
 
-        private final String resourceType;
-        private final boolean emailAllowed;
-        private final boolean ftpAllowed;
-        private final boolean setPasswordAllowed;
-        private final PasswordChecker.PasswordStrength passwordStrength;
-        private final Set<UnixPath> allowedShells;
+    private static final String[] backupShells={
+        Shell.BASH
+    };
 
-        private Constant(
-            String resourceType,
-            boolean emailAllowed,
-            boolean ftpAllowed,
-            boolean setPasswordAllowed,
-            PasswordChecker.PasswordStrength passwordStrength,
-            UnixPath... allowedShells
-        ) {
-            this.resourceType = resourceType;
-            this.emailAllowed = emailAllowed;
-            this.ftpAllowed = ftpAllowed;
-            this.setPasswordAllowed = setPasswordAllowed;
-            this.passwordStrength = passwordStrength;
-            if(allowedShells.length==1) this.allowedShells = Collections.singleton(allowedShells[0]);
-            else this.allowedShells = AoCollections.optimalUnmodifiableSet(new HashSet<UnixPath>(Arrays.asList(allowedShells)));
-        }
-        /*
-        public String getResourceType() {
-            return resourceType;
-        }
+    private static final String[] emailShells={
+        Shell.PASSWD
+    };
 
-        public boolean isEmailAllowed() {
-            return emailAllowed;
-        }
+    private static final String[] ftpShells={
+        Shell.FTPONLY,
+        Shell.FTPPASSWD
+    };
 
-        public boolean isFtpAllowed() {
-            return ftpAllowed;
-        }
+    private static final String[] mercenaryShells={
+        Shell.BASH
+    };
 
-        public boolean isSetPasswordAllowed() {
-            return setPasswordAllowed;
-        }
+    private static final String[] systemShells={
+        Shell.BASH,
+        Shell.FALSE,
+        Shell.NOLOGIN,
+        Shell.SYNC,
+        Shell.HALT,
+        Shell.SHUTDOWN//,
+        //Shell.TRUE
+    };
 
-        public PasswordChecker.PasswordStrength getPasswordStrength() {
-            return passwordStrength;
-        }
+    private static final String[] applicationShells={
+        Shell.BASH,
+        Shell.FALSE//,
+        //Shell.NULL,
+        //Shell.TRUE
+    };
 
-        public Set<UnixPath> getAllowedShells() {
-            return allowedShells;
-        }
-        */
+    private static final String[] userShells={
+        //Shell.ASH,
+        Shell.BASH,
+        //Shell.BASH2,
+        //Shell.BSH,
+        //Shell.CSH,
+        Shell.FALSE,
+        Shell.KSH,
+        Shell.SH,
+        Shell.TCSH//,
+        //Shell.TRUE
+    };
+
+    public boolean enforceStrongPassword() {
+	return enforceStrongPassword(pkey);
     }
 
-    public boolean isEmailAllowed() {
-        return Constant.valueOf(getKey()).emailAllowed;
+    public static boolean enforceStrongPassword(String type) {
+	return !type.equals(EMAIL);
     }
 
-    public boolean isFtpAllowed() {
-        return Constant.valueOf(getKey()).ftpAllowed;
-    }
-
-    public boolean isSetPasswordAllowed() {
-        return Constant.valueOf(getKey()).setPasswordAllowed;
-    }
-
-    public PasswordChecker.PasswordStrength getPasswordStrength() {
-        return Constant.valueOf(getKey()).passwordStrength;
-    }
-
-    /**
-     * This matches that enforced by the linux_accounts table.
-     */
-    public Set<UnixPath> getAllowedShells() {
-        return Constant.valueOf(getKey()).allowedShells;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 5024415957647230660L;
-
-    public LinuxAccountType(AOServConnector connector, String resourceType) {
-        super(connector, resourceType);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(LinuxAccountType other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_RESOURCE_TYPE = getMethodColumn(LinuxAccountType.class, "resourceType");
-    @DependencySingleton
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the resource type this represents")
-    public ResourceType getResourceType() throws RemoteException {
-        return getConnector().getResourceTypes().get(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public LinuxAccountType(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxAccountType dto) {
-        this(connector, dto.getResourceType());
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.LinuxAccountType getDto() {
-        return new com.aoindustries.aoserv.client.dto.LinuxAccountType(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() {
-        return ApplicationResources.accessor.getMessage("LinuxAccountType."+getKey()+".toString");
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getConnector().getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_LINUX_ACCOUNT_TYPE, this);
-    }
-    // </editor-fold>
-
-    /**
-     * Checks the strength of a password as required for this type of
-     * <code>LinuxAccount</code>.
-     *
-     * @see PasswordChecker
-     */
-    public List<PasswordChecker.Result> checkPassword(UserId username, String password) throws IOException {
-        return PasswordChecker.checkPassword(username, password, getPasswordStrength());
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
-        String[] paths=getShellList(pkey);
+	String[] paths=getShellList(pkey);
 
-        ShellService shellTable=connector.getShells();
-        int len=paths.length;
-        List<Shell> shells=new ArrayList<Shell>(len);
-        for(int c=0;c<len;c++) {
-            shells.add(shellTable.get(paths[c]));
-        }
-        return shells;
+	ShellTable shellTable=connector.getShells();
+	int len=paths.length;
+	List<Shell> shells=new ArrayList<Shell>(len);
+	for(int c=0;c<len;c++) {
+            Shell shell=shellTable.get(paths[c]);
+            if(shell==null) throw new SQLException("Unable to find Shell: "+paths[c]);
+            shells.add(shell);
+	}
+	return shells;
+    }
+
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_NAME) return pkey;
+	if(i==1) return description;
+	if(i==2) return is_email?Boolean.TRUE:Boolean.FALSE;
+	throw new IllegalArgumentException("Invalid index: "+i);
+    }
+
+    public String getDescription() {
+	return description;
+    }
+
+    public String getName() {
+	return pkey;
+    }
+
+    private static String[] getShellList(String type) throws SQLException {
+	if(type.equals(BACKUP)) return backupShells;
+	if(type.equals(EMAIL)) return emailShells;
+	if(type.equals(FTPONLY)) return ftpShells;
+	if(type.equals(USER)) return userShells;
+	if(type.equals(MERCENARY)) return mercenaryShells;
+	if(type.equals(SYSTEM)) return systemShells;
+	if(type.equals(APPLICATION)) return applicationShells;
+	throw new SQLException("Unknown type: "+type);
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.LINUX_ACCOUNT_TYPES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	description = result.getString(2);
+	is_email = result.getBoolean(3);
     }
 
     public boolean isAllowedShell(Shell shell) throws SQLException {
-        return isAllowedShell(shell.pkey);
+	return isAllowedShell(shell.pkey);
     }
 
     public boolean isAllowedShell(String path) throws SQLException {
-        return isAllowedShell(pkey, path);
+	return isAllowedShell(pkey, path);
     }
 
     public static boolean isAllowedShell(String type, String path) throws SQLException {
-        String[] paths=getShellList(type);
-        int len=paths.length;
-        for(int c=0;c<len;c++) {
+	String[] paths=getShellList(type);
+	int len=paths.length;
+	for(int c=0;c<len;c++) {
             if(paths[c].equals(path)) return true;
-        }
-        return false;
+	}
+	return false;
     }
 
     public boolean isEmail() {
-        return is_email;
+	return is_email;
     }
-     */
-    // </editor-fold>
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	description=in.readUTF();
+	is_email=in.readBoolean();
+    }
+
+    @Override
+    String toStringImpl() {
+	return description;
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(description);
+	out.writeBoolean(is_email);
+    }
+
+    public static boolean canSetPassword(String type) {
+        return
+            APPLICATION.equals(type)
+            || EMAIL.equals(type)
+            || FTPONLY.equals(type)
+            || USER.equals(type)
+        ;
+    }
+    
+    public boolean canSetPassword() {
+        return canSetPassword(pkey);
+    }
 }

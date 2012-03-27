@@ -1,120 +1,97 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2004-2011 by AO Industries, Inc.,
+ * Copyright 2004-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.sql.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * Each server may perform TCP redirects via xinetd.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class NetTcpRedirect extends AOServObjectIntegerKey implements Comparable<NetTcpRedirect>, DtoFactory<com.aoindustries.aoserv.client.dto.NetTcpRedirect> {
+public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 3103910184331373575L;
+    static final int COLUMN_NET_BIND=0;
+    static final String COLUMN_NET_BIND_name = "net_bind";
 
-    final private int cps;
-    final private int cpsOverloadSleepTime;
-    private Hostname destinationHost;
-    final private NetPort destinationPort;
+    private int cps;
+    private int cps_overload_sleep_time;
+    private String destination_host;
+    private int destination_port;
 
-    public NetTcpRedirect(
-        AOServConnector connector,
-        int netBind,
-        int cps,
-        int cpsOverloadSleepTime,
-        Hostname destinationHost,
-        NetPort destinationPort
-    ) {
-        super(connector, netBind);
-        this.cps = cps;
-        this.cpsOverloadSleepTime = cpsOverloadSleepTime;
-        this.destinationHost = destinationHost;
-        this.destinationPort = destinationPort;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        destinationHost = intern(destinationHost);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(NetTcpRedirect other) {
-        try {
-            return getKeyInt()==other.getKeyInt() ? 0 : getNetBind().compareTo(other.getNetBind());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NET_BIND: return Integer.valueOf(pkey);
+            case 1: return Integer.valueOf(cps);
+            case 2: return Integer.valueOf(cps_overload_sleep_time);
+            case 3: return destination_host;
+            case 4: return Integer.valueOf(destination_port);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_NET_BIND = getMethodColumn(NetTcpRedirect.class, "netBind");
-    @DependencySingleton
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the pkey as found in net_binds")
-    public NetBind getNetBind() throws RemoteException {
-        return getConnector().getNetBinds().get(getKey());
+    public NetBind getNetBind() throws IOException, SQLException {
+        NetBind nb=table.connector.getNetBinds().get(pkey);
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+pkey);
+        return nb;
     }
 
-    @SchemaColumn(order=1, description="the maximum number of connections per second before the redirect is temporarily disabled")
     public int getConnectionsPerSecond() {
         return cps;
     }
-
-    @SchemaColumn(order=2, description="the number of seconds the service will be disabled")
+    
     public int getConnectionsPerSecondOverloadSleepTime() {
-        return cpsOverloadSleepTime;
+        return cps_overload_sleep_time;
+    }
+    
+    public String getDestinationHost() {
+        return destination_host;
+    }
+    
+    public NetPort getDestinationPort() throws SQLException {
+        NetPort np=table.connector.getNetPorts().get(destination_port);
+        if(np==null) throw new SQLException("Unable to find NetPort: "+destination_port);
+        return np;
     }
 
-    @SchemaColumn(order=3, description="the destination IP address or hostname, please note that hostnames are only resolved once on xinetd startup")
-    public Hostname getDestinationHost() {
-        return destinationHost;
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_TCP_REDIRECTS;
     }
 
-    @SchemaColumn(order=4, description="the remote port to connect to")
-    public NetPort getDestinationPort() {
-        return destinationPort;
-    }
-    // </editor-fold>
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        cps=result.getInt(2);
+        cps_overload_sleep_time=result.getInt(3);
+        destination_host=result.getString(4);
+        destination_port=result.getInt(5);
+   }
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public NetTcpRedirect(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetTcpRedirect dto) throws ValidationException {
-        this(
-            connector,
-            dto.getNetBind(),
-            dto.getCps(),
-            dto.getCpsOverloadSleepTime(),
-            getHostname(dto.getDestinationHost()),
-            getNetPort(dto.getDestinationPort())
-        );
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        cps=in.readCompressedInt();
+        cps_overload_sleep_time=in.readCompressedInt();
+        destination_host=in.readUTF().intern();
+        destination_port=in.readCompressedInt();
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.NetTcpRedirect getDto() {
-        return new com.aoindustries.aoserv.client.dto.NetTcpRedirect(getKeyInt(), cps, cpsOverloadSleepTime, getDto(destinationHost), getDto(destinationPort));
+    String toStringImpl() throws SQLException, IOException {
+        return getNetBind().toStringImpl()+"->"+destination_host+':'+destination_port;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        String address = destinationHost.toString();
-        if(address.indexOf(':')==-1) return getNetBind().toStringImpl()+"->"+destinationHost+':'+destinationPort;
-        else return getNetBind().toStringImpl()+"->["+destinationHost+"]:"+destinationPort;
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(cps);
+        out.writeCompressedInt(cps_overload_sleep_time);
+        out.writeUTF(destination_host);
+        out.writeCompressedInt(destination_port);
     }
-    // </editor-fold>
 }

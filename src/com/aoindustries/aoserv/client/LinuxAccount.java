@@ -1,17 +1,16 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.command.AOServCommand;
-import com.aoindustries.aoserv.client.command.CheckLinuxAccountPasswordCommand;
-import com.aoindustries.aoserv.client.command.SetLinuxAccountPasswordCommand;
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,302 +19,61 @@ import java.util.List;
  * all machines, and that set of information is contained in a
  * <code>LinuxAccount</code>.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccount extends AOServerResource implements Comparable<LinuxAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxAccount>, PasswordProtected /* TODO , Removable, Disablable*/ {
+final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> implements PasswordProtected, Removable, Disablable {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
+
     /**
      * Some commonly used system and application account usernames.
      */
-    public static final UserId
-        APACHE,
-        AWSTATS,
-        BIN,
-        CYRUS,
-        EMAILMON,
-        FTP,
-        FTPMON,
-        MAIL,
-        NOBODY,
-        OPERATOR,
-        POSTGRES,
-        ROOT
+    public static final String
+        APACHE="apache",
+        AWSTATS="awstats",
+        BIN="bin",
+        CYRUS="cyrus",
+        EMAILMON="emailmon",
+        FTP="ftp",
+        FTPMON="ftpmon",
+        INTERBASE="interbase",
+        MAIL="mail",
+        NOBODY="nobody",
+        OPERATOR="operator",
+        POSTGRES="postgres",
+        ROOT="root"
     ;
-    static {
-        try {
-            APACHE=UserId.valueOf("apache").intern();
-            AWSTATS=UserId.valueOf("awstats").intern();
-            BIN=UserId.valueOf("bin").intern();
-            CYRUS=UserId.valueOf("cyrus").intern();
-            EMAILMON=UserId.valueOf("emailmon").intern();
-            FTP=UserId.valueOf("ftp").intern();
-            FTPMON=UserId.valueOf("ftpmon").intern();
-            MAIL=UserId.valueOf("mail").intern();
-            NOBODY=UserId.valueOf("nobody").intern();
-            OPERATOR=UserId.valueOf("operator").intern();
-            POSTGRES=UserId.valueOf("postgres").intern();
-            ROOT=UserId.valueOf("root").intern();
-        } catch(ValidationException err) {
-            throw new AssertionError(err.getMessage());
-        }
-    }
-
+    
     /**
-     * The value used in <code>/etc/shadow</code> when no password is set.
+     * @deprecated  User httpd no longer used.
      */
+    @Deprecated
+    public static final String HTTPD="httpd";
+
     public static final String NO_PASSWORD_CONFIG_VALUE="!!";
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -5105430320343636653L;
+    private String name;
+    private String office_location;
+    private String office_phone;
+    private String home_phone;
+    private String type;
+    private String shell;
+    private long created;
+    int disable_log;
 
-    private String linuxAccountType;
-    private UserId username;
-    final private LinuxID uid;
-    private UnixPath home;
-    private Gecos name;
-    private Gecos officeLocation;
-    private Gecos officePhone;
-    private Gecos homePhone;
-    private UnixPath shell;
-    private String predisablePassword;
-
-    public LinuxAccount(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int aoServer,
-        int businessServer,
-        String linuxAccountType,
-        UserId username,
-        LinuxID uid,
-        UnixPath home,
-        Gecos name,
-        Gecos officeLocation,
-        Gecos officePhone,
-        Gecos homePhone,
-        UnixPath shell,
-        String predisablePassword
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
-        this.linuxAccountType = linuxAccountType;
-        this.username = username;
-        this.uid = uid;
-        this.home = home;
-        this.name = name;
-        this.officeLocation = officeLocation;
-        this.officePhone = officePhone;
-        this.homePhone = homePhone;
-        this.shell = shell;
-        this.predisablePassword = predisablePassword;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        linuxAccountType = intern(linuxAccountType);
-        username = intern(username);
-        home = intern(home);
-        name = intern(name);
-        officeLocation = intern(officeLocation);
-        officePhone = intern(officePhone);
-        homePhone = intern(homePhone);
-        shell = intern(shell);
-        predisablePassword = intern(predisablePassword);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(LinuxAccount other) {
-        try {
-            if(getKeyInt()==other.getKeyInt()) return 0;
-            int diff = username==other.username ? 0 : getUsername().compareTo(other.getUsername()); // OK - interned
-            if(diff!=0) return diff;
-            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_LINUX_ACCOUNT_TYPE = getMethodColumn(LinuxAccount.class, "linuxAccountType");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the type of account")
-    public LinuxAccountType getLinuxAccountType() throws RemoteException {
-        return getConnector().getLinuxAccountTypes().get(linuxAccountType);
-    }
-
-    public static final MethodColumn COLUMN_USERNAME = getMethodColumn(LinuxAccount.class, "username");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the username of the user")
-    public Username getUsername() throws RemoteException {
-        return getConnector().getUsernames().get(username);
-    }
-    public UserId getUserId() {
-        return username;
-    }
-
-    public static final MethodColumn COLUMN_UID = getMethodColumn(LinuxAccount.class, "uid");
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the uid of the user on the machine")
-    public LinuxID getUid() {
-        return uid;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, description="the home directory of the user on this machine")
-    public UnixPath getHome() {
-        return home;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="the full name of the user")
-    public Gecos getName() {
-        return name;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="the location of the user")
-    public Gecos getOfficeLocation() {
-        return officeLocation;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="the work phone number of the user")
-    public Gecos getOfficePhone() {
-        return officePhone;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, description="the home phone number of the user")
-    public Gecos getHomePhone() {
-        return homePhone;
-    }
-
-    public static final MethodColumn COLUMN_SHELL = getMethodColumn(LinuxAccount.class, "shell");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+9, index=IndexType.INDEXED, description="the users shell preference")
-    public Shell getShell() throws RemoteException {
-        return getConnector().getShells().get(shell);
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+10, description="stores the password that was used before the account was disabled")
-    public String getPredisablePassword() {
-        return predisablePassword;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public LinuxAccount(AOServConnector connector, com.aoindustries.aoserv.client.dto.LinuxAccount dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getAoServer(),
-            dto.getBusinessServer(),
-            dto.getLinuxAccountType(),
-            getUserId(dto.getUsername()),
-            getLinuxID(dto.getUid()),
-            getUnixPath(dto.getHome()),
-            getGecos(dto.getName()),
-            getGecos(dto.getOfficeLocation()),
-            getGecos(dto.getOfficePhone()),
-            getGecos(dto.getHomePhone()),
-            getUnixPath(dto.getShell()),
-            dto.getPredisablePassword()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.LinuxAccount getDto() {
-        return new com.aoindustries.aoserv.client.dto.LinuxAccount(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            aoServer,
-            businessServer,
-            linuxAccountType,
-            getDto(username),
-            getDto(uid),
-            getDto(home),
-            getDto(name),
-            getDto(officeLocation),
-            getDto(officePhone),
-            getDto(homePhone),
-            getDto(shell),
-            predisablePassword
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return username+"@"+getAoServer().toStringImpl();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSingleton
-    public EmailInbox getEmailInbox() throws RemoteException {
-        if(linuxAccountType!=ResourceType.EMAIL_INBOX && linuxAccountType!=ResourceType.SHELL_ACCOUNT) return null; // OK - interned
-        return getConnector().getEmailInboxes().get(getKey());
-    }
-
-    @DependentObjectSingleton
-    public FtpGuestUser getFtpGuestUser() throws RemoteException {
-        return getConnector().getFtpGuestUsers().filterUnique(FtpGuestUser.COLUMN_LINUX_ACCOUNT, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<LinuxAccountGroup> getLinuxAccountGroups() throws RemoteException {
-        return getConnector().getLinuxAccountGroups().filterIndexed(LinuxAccountGroup.COLUMN_LINUX_ACCOUNT, this);
-    }
-
-    public LinuxGroup getPrimaryLinuxGroup() throws RemoteException {
-        return getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_IS_PRIMARY, true).getLinuxGroup();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Password Protected">
-    @Override
-    public AOServCommand<List<PasswordChecker.Result>> getCheckPasswordCommand(String password) {
-        return new CheckLinuxAccountPasswordCommand(this, password);
-    }
-
-    @Override
-    public AOServCommand<Void> getSetPasswordCommand(String plaintext) {
-        return new SetLinuxAccountPasswordCommand(this, plaintext);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
-    public void addFtpGuestUser() throws IOException, SQLException {
-        getConnector().getFtpGuestUsers().addFtpGuestUser(pkey);
+    public void addFTPGuestUser() throws IOException, SQLException {
+        table.connector.getFtpGuestUsers().addFTPGuestUser(pkey);
     }
 
     public void addLinuxGroup(LinuxGroup group) throws IOException, SQLException {
-        getConnector().getLinuxGroupAccounts().addLinuxGroupAccount(group, this);
+        table.connector.getLinuxGroupAccounts().addLinuxGroupAccount(group, this);
     }
 
     public int addLinuxServerAccount(AOServer aoServer, String home) throws IOException, SQLException {
-        return getConnector().getLinuxServerAccounts().addLinuxServerAccount(this, aoServer, home);
+        return table.connector.getLinuxServerAccounts().addLinuxServerAccount(this, aoServer, home);
     }
 
     public int arePasswordsSet() throws IOException, SQLException {
@@ -338,23 +96,119 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
+    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
+        return checkPassword(pkey, type, password);
+    }
+
+    /**
+     * Checks the strength of a password as required for this
+     * <code>LinuxAccount</code>.  The strength requirement
+     * depends on the <code>LinuxAccountType</code>.
+     *
+     * @see  LinuxAccountType#enforceStrongPassword(String)
+     * @see  PasswordChecker#checkPassword(String,String,boolean,boolean)
+     */
+    public static PasswordChecker.Result[] checkPassword(String username, String type, String password) throws IOException {
+        boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
+        return PasswordChecker.checkPassword(username, password, enforceStrong, !enforceStrong);
+    }
+
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_ACCOUNTS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_ACCOUNTS, pkey);
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_USERNAME: return pkey;
+            case 1: return name;
+            case 2: return office_location;
+            case 3: return office_phone;
+            case 4: return home_phone;
+            case 5: return type;
+            case 6: return shell;
+            case 7: return new java.sql.Date(created);
+            case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public long getCreated() {
+        return created;
+    }
+
+    public boolean isDisabled() {
+        return disable_log!=-1;
+    }
+
+    public DisableLog getDisableLog() throws SQLException, IOException {
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+        return obj;
+    }
+
+    public FTPGuestUser getFTPGuestUser() throws IOException, SQLException {
+        return table.connector.getFtpGuestUsers().get(pkey);
+    }
+
+    public String getHomePhone() {
+        return home_phone;
     }
 
     public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
-        return getConnector().getLinuxGroupAccounts().getLinuxGroups(this);
+        return table.connector.getLinuxGroupAccounts().getLinuxGroups(this);
+    }
+
+    public LinuxServerAccount getLinuxServerAccount(AOServer aoServer) throws IOException, SQLException {
+        return table.connector.getLinuxServerAccounts().getLinuxServerAccount(aoServer, pkey);
+    }
+
+    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
+        return table.connector.getLinuxServerAccounts().getLinuxServerAccounts(this);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getOfficeLocation() {
+        return office_location;
+    }
+
+    public String getOfficePhone() {
+        return office_phone;
     }
 
     public LinuxGroup getPrimaryGroup() throws IOException, SQLException {
-        return getConnector().getLinuxGroupAccounts().getPrimaryGroup(this);
+        return table.connector.getLinuxGroupAccounts().getPrimaryGroup(this);
     }
 
-    /* TODO
+    public Shell getShell() throws SQLException, IOException {
+        Shell shellObject = table.connector.getShells().get(shell);
+        if (shellObject == null) throw new SQLException("Unable to find Shell: " + shell);
+        return shellObject;
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.LINUX_ACCOUNTS;
+    }
+
+    public LinuxAccountType getType() throws IOException, SQLException {
+        LinuxAccountType typeObject = table.connector.getLinuxAccountTypes().get(type);
+        if (typeObject == null) throw new IllegalArgumentException(new SQLException("Unable to find LinuxAccountType: " + type));
+        return typeObject;
+    }
+
+    public Username getUsername() throws SQLException, IOException {
+        Username usernameObject = table.connector.getUsernames().get(pkey);
+        if (usernameObject == null) throw new SQLException("Unable to find Username: " + pkey);
+        return usernameObject;
+    }
+
     public List<String> getValidHomeDirectories(AOServer ao) throws SQLException, IOException {
         return getValidHomeDirectories(pkey, ao);
     }
@@ -381,6 +235,78 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
         return dirs;
     }
 
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        name = result.getString(2);
+        office_location = result.getString(3);
+        office_phone = result.getString(4);
+        home_phone = result.getString(5);
+        type = result.getString(6);
+        shell = result.getString(7);
+        created = result.getTimestamp(8).getTime();
+        disable_log=result.getInt(9);
+        if(result.wasNull()) disable_log=-1;
+    }
+
+    /**
+     * Determines if a name can be used as a GECOS field.  A GECOS field
+     * is valid if it is between 1 and 100 characters in length and uses only
+     * <code>[a-z,A-Z,0-9,-,_,@, ,.,#,=,/,$,%,^,&,*,(,),?,']</code> for each
+     * character.<br>
+     * <br>
+     * Refer to <code>man 5 passwd</code>
+     * @see  #setName
+     * @see  #setOfficeLocation
+     * @see  #setOfficePhone
+     * @see  #setHomePhone
+     */
+    public static String checkGECOS(String name, String display) {
+        if(name!=null) {
+            int len = name.length();
+            if (len == 0 || len > 100) return "The "+display+" must be between 1 and 100 characters long.";
+
+            for (int c = 0; c < len; c++) {
+                char ch = name.charAt(c);
+                if (
+                    (ch < 'a' || ch > 'z')
+                    && (ch<'A' || ch>'Z')
+                    && (ch < '0' || ch > '9')
+                    && ch != '-'
+                    && ch != '_'
+                    && ch != '@'
+                    && ch != ' '
+                    && ch != '.'
+                    && ch != '#'
+                    && ch != '='
+                    && ch != '/'
+                    && ch != '$'
+                    && ch != '%'
+                    && ch != '^'
+                    && ch != '&'
+                    && ch != '*'
+                    && ch != '('
+                    && ch != ')'
+                    && ch != '?'
+                    && ch != '\''
+                    && ch != '+'
+                ) return "Invalid character found in "+display+": "+ch;
+            }
+        }
+        return null;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        name=in.readUTF();
+        office_location=in.readBoolean()?in.readUTF():null;
+        office_phone=in.readBoolean()?in.readUTF():null;
+        home_phone=in.readBoolean()?in.readUTF():null;
+        type=in.readUTF().intern();
+        shell=in.readUTF().intern();
+        created=in.readLong();
+        disable_log=in.readCompressedInt();
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
@@ -393,7 +319,7 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     }
 
     public void remove() throws IOException, SQLException {
-        getConnector().requestUpdateIL(
+        table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.LINUX_ACCOUNTS,
@@ -402,23 +328,23 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     }
 
     public void removeLinuxGroup(LinuxGroup group) throws IOException, SQLException {
-        getConnector().getLinuxGroupAccounts().getLinuxGroupAccount(group.pkey, pkey).remove();
+        table.connector.getLinuxGroupAccounts().getLinuxGroupAccount(group.pkey, pkey).remove();
     }
 
     public void setHomePhone(String phone) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
     }
 
     public void setName(String name) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
     }
 
     public void setOfficeLocation(String location) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
     }
 
     public void setOfficePhone(String phone) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
     }
 
     public void setPassword(String password) throws SQLException, IOException {
@@ -428,12 +354,47 @@ final public class LinuxAccount extends AOServerResource implements Comparable<L
     }
 
     public void setShell(Shell shell) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_SHELL, pkey, shell.pkey);
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(name);
+        out.writeNullUTF(office_location);
+        out.writeNullUTF(office_phone);
+        out.writeNullUTF(home_phone);
+        out.writeUTF(type);
+        out.writeUTF(shell);
+        out.writeLong(created);
+        out.writeCompressedInt(disable_log);
+    }
+
+    /**
+     * Determines if a name can be used as a username.  The username restrictions are
+     * inherited from <code>Username</code>, with the addition of not allowing
+     * <code>postmaster</code> and <code>mailer-daemon</code>.  This is to prevent a
+     * user from interfering with the delivery of system messages in qmail.
+     *
+     * @see  Username#isValidUsername
+     */
+    public static boolean isValidUsername(String username) {
+        return
+            Username.checkUsername(username)==null
+            && !"bin".equals(username)
+            && !"etc".equals(username)
+            && !"lib".equals(username)
+            && !"postmaster".equals(username)
+            && !"mailer-daemon".equals(username)
+        ;
+    }
+    
+    public boolean canSetPassword() throws IOException, SQLException {
+        return disable_log==-1 && getType().canSetPassword();
     }
 
     public void setPrimaryLinuxGroup(LinuxGroup group) throws SQLException, IOException {
-        getConnector().getLinuxGroupAccounts().getLinuxGroupAccount(group.getName(), pkey).setAsPrimary();
+        LinuxGroupAccount lga=table.connector.getLinuxGroupAccounts().getLinuxGroupAccount(group.getName(), pkey);
+        if(lga==null) throw new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName());
+        lga.setAsPrimary();
     }
-    */
-    // </editor-fold>
 }

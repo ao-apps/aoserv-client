@@ -1,12 +1,16 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2005-2011 by AO Industries, Inc.,
+ * Copyright 2005-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>PackageCategory</code> represents one type of service
@@ -15,9 +19,11 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class PackageCategory extends AOServObjectStringKey implements Comparable<PackageCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.PackageCategory> {
+public final class PackageCategory extends GlobalObjectStringKey<PackageCategory> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
+
     public static final String
         AOSERV="aoserv",
         APPLICATION="application",
@@ -31,55 +37,37 @@ final public class PackageCategory extends AOServObjectStringKey implements Comp
         VIRTUAL_DEDICATED="virtual_dedicated",
         VIRTUAL_MANAGED="virtual_managed"
     ;
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -4491752729211094927L;
 
-    public PackageCategory(AOServConnector connector, String name) {
-        super(connector, name);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(PackageCategory other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    /**
-     * Gets the unique name of this resource type.
-     */
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the category name")
     public String getName() {
-        return getKey();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public PackageCategory(AOServConnector connector, com.aoindustries.aoserv.client.dto.PackageCategory dto) {
-        this(connector, dto.getName());
+        return pkey;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.PackageCategory getDto() {
-        return new com.aoindustries.aoserv.client.dto.PackageCategory(getKey());
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.PACKAGE_CATEGORIES;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public void init(ResultSet results) throws SQLException {
+        pkey = results.getString(1);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey = in.readUTF().intern();
+    }
+
     @Override
     String toStringImpl() {
-        return ApplicationResources.accessor.getMessage("PackageCategory."+getKey()+".toString");
+        return accessor.getMessage("PackageCategory."+pkey+".toString");
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<PackageDefinition> getPackageDefinitions() throws RemoteException {
-        return getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_CATEGORY, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // display
     }
-    // </editor-fold>
 }

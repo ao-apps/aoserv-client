@@ -1,105 +1,96 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
+import java.util.List;
 
 /**
  * For AO Industries use only.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class BankAccount extends AOServObjectStringKey implements Comparable<BankAccount>, DtoFactory<com.aoindustries.aoserv.client.dto.BankAccount> {
+final public class BankAccount extends CachedObjectStringKey<BankAccount> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -7502808387336724934L;
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
-    final private String display;
-    private String bank;
+    private String display, bank;
 
-    public BankAccount(
-        AOServConnector connector,
-        String name,
-        String display,
-        String bank
-    ) {
-        super(connector, name);
-        this.display = display;
-        this.bank = bank;
-        intern();
+    private int depositDelay, withdrawalDelay;
+
+    public Bank getBank(long maximumCacheAge) throws SQLException, IOException {
+        Bank bankObject = table.connector.getBanks().get(bank);
+        if (bankObject == null) throw new SQLException("Bank not found: " + bank);
+        return bankObject;
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
+    public List<BankTransaction> getBankTransactions() throws IOException, SQLException {
+	return table.connector.getBankTransactions().getBankTransactions(this);
     }
 
-    private void intern() {
-        bank = intern(bank);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(BankAccount other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of this account")
-    public String getName() {
-        return getKey();
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_NAME) return pkey;
+	if(i==1) return display;
+	if(i==2) return bank;
+	if(i==3) return Integer.valueOf(depositDelay);
+	if(i==4) return Integer.valueOf(withdrawalDelay);
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    @SchemaColumn(order=1, description="the display name of this account")
+    public int getDepositDelay() {
+	return depositDelay;
+    }
+
     public String getDisplay() {
-        return display;
+	return display;
     }
 
-    public static final MethodColumn COLUMN_BANK = getMethodColumn(BankAccount.class, "bank");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the bank the account is with")
-    public Bank getBank() throws RemoteException {
-        return getConnector().getBanks().get(bank);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public BankAccount(AOServConnector connector, com.aoindustries.aoserv.client.dto.BankAccount dto) {
-        this(
-            connector,
-            dto.getName(),
-            dto.getDisplay(),
-            dto.getBank()
-        );
+    public String getName() {
+	return pkey;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.BankAccount getDto() {
-        return new com.aoindustries.aoserv.client.dto.BankAccount(
-            getKey(),
-            display,
-            bank
-        );
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BANK_ACCOUNTS;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public int getWithdrawalDelay() {
+	return withdrawalDelay;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	display = result.getString(2);
+	bank = result.getString(3);
+	depositDelay = result.getInt(4);
+	withdrawalDelay = result.getInt(5);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF();
+	display=in.readUTF();
+	bank=in.readUTF();
+	depositDelay=in.readCompressedInt();
+	withdrawalDelay=in.readCompressedInt();
+    }
+
     @Override
     String toStringImpl() {
-    	return display;
+	return display;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-    	return getConnector().getBankTransactions().filterIndexed(BankTransaction.COLUMN_BANK_ACCOUNT, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(display);
+	out.writeUTF(bank);
+	out.writeCompressedInt(depositDelay);
+	out.writeCompressedInt(withdrawalDelay);
     }
-    // </editor-fold>
 }

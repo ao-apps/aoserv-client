@@ -1,163 +1,83 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2002-2011 by AO Industries, Inc.,
+ * Copyright 2002-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
-import java.util.Arrays;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * A <code>CvsRepository</code> represents one repository directory for the CVS pserver.
+ * A <code>CvsRepository</code> represents on repository directory for the CVS pserver.
  *
  * @author  AO Industries, Inc.
  */
-final public class CvsRepository extends AOServerResource implements Comparable<CvsRepository>, DtoFactory<com.aoindustries.aoserv.client.dto.CvsRepository> /*, Removable, Disablable */ {
+final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> implements Removable, Disablable {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_LINUX_SERVER_ACCOUNT=2
+    ;
+    static final String COLUMN_LINUX_SERVER_ACCOUNT_name = "linux_server_account";
+    static final String COLUMN_PATH_name = "path";
+
     /**
      * The default permissions for a CVS repository.
      */
     public static final long DEFAULT_MODE=0770;
 
-    public static final List<Long> VALID_MODES = AoCollections.optimalUnmodifiableList(
-        Arrays.asList(
-            Long.valueOf(0700),
-            Long.valueOf(0750),
-            Long.valueOf(DEFAULT_MODE),
-            Long.valueOf(0755),
-            Long.valueOf(0775),
-            Long.valueOf(02770),
-            Long.valueOf(03770)
-        )
-    );
-    // </editor-fold>
+    private static final long[] validModes={
+        0700,
+        0750,
+        DEFAULT_MODE,
+        0755,
+        0775,
+        02770,
+        03770
+    };
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -3803350565017511267L;
-
-    private UnixPath path;
-    final private int linuxAccountGroup;
-    final private long mode;
-
-    public CvsRepository(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int aoServer,
-        int businessServer,
-        UnixPath path,
-        int linuxAccountGroup,
-        long mode
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
-        this.path = path;
-        this.linuxAccountGroup = linuxAccountGroup;
-        this.mode = mode;
-        intern();
+    public static long[] getValidModes() {
+        return validModes;
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        path = intern(path);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(CvsRepository other) {
-        try {
-            if(getKeyInt()==other.getKeyInt()) return 0;
-            int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
-            if(diff!=0) return 0;
-            return path.compareTo(other.path);
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    public static boolean isValidPath(String path) {
+        if(
+            path==null
+            || path.length()<=1
+            || path.charAt(0)!='/'
+            || path.indexOf("//")!=-1
+            || path.indexOf("..")!=-1
+        ) return false;
+        int len=path.length();
+        for(int c=1;c<len;c++) {
+            char ch=path.charAt(c);
+            if(
+                (ch<'a' || ch>'z')
+                && (ch<'A' || ch>'Z')
+                && (ch<'0' || ch>'9')
+                && ch!='_'
+                && ch!='.'
+                && ch!='-'
+                && ch!='/'
+            ) return false;
         }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, description="the full path to the repository")
-    public UnixPath getPath() {
-        return path;
+        if(path.charAt(path.length()-1)=='/') return false;
+        return true;
     }
 
-    public static final MethodColumn COLUMN_LINUX_ACCOUNT_GROUP = getMethodColumn(CvsRepository.class, "linuxAccountGroup");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the directory owner")
-    public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
-        return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
-    }
+    String path;
+    int linux_server_account;
+    int linux_server_group;
+    private long mode;
+    private long created;
+    int disable_log;
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the directory permissions")
-    public long getMode() {
-        return mode;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public CvsRepository(AOServConnector connector, com.aoindustries.aoserv.client.dto.CvsRepository dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getAoServer(),
-            dto.getBusinessServer(),
-            getUnixPath(dto.getPath()),
-            dto.getLinuxAccountGroup(),
-            dto.getMode()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.CvsRepository getDto() {
-        return new com.aoindustries.aoserv.client.dto.CvsRepository(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            aoServer,
-            businessServer,
-            getDto(path),
-            linuxAccountGroup,
-            mode
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return getAoServer().getHostname()+":"+path.toString();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public boolean canDisable() {
         return disable_log==-1;
     }
@@ -169,11 +89,84 @@ final public class CvsRepository extends AOServerResource implements Comparable<
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return path;
+            case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
+            case 3: return Integer.valueOf(linux_server_group);
+            case 4: return Long.valueOf(mode);
+            case 5: return new java.sql.Date(created);
+            case 6: return disable_log==-1?null:Integer.valueOf(disable_log);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public boolean isDisabled() {
+        return disable_log!=-1;
+    }
+
+    public DisableLog getDisableLog() throws SQLException, IOException {
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+        return obj;
+    }
+
+    public String getPath() {
+        return path;
+    }
+    
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
+        LinuxServerAccount lsa=table.connector.getLinuxServerAccounts().get(linux_server_account);
+        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
+        return lsa;
+    }
+
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
+        LinuxServerGroup lsg=table.connector.getLinuxServerGroups().get(linux_server_group);
+        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
+        return lsg;
+    }
+    
+    public long getMode() {
+        return mode;
+    }
+    
+    public long getCreated() {
+        return created;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.CVS_REPOSITORIES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        path=result.getString(2);
+        linux_server_account=result.getInt(3);
+        linux_server_group=result.getInt(4);
+        mode=result.getLong(5);
+        created=result.getTimestamp(6).getTime();
+        disable_log=result.getInt(7);
+        if(result.wasNull()) disable_log=-1;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        path=in.readUTF();
+        linux_server_account=in.readCompressedInt();
+        linux_server_group=in.readCompressedInt();
+        mode=in.readLong();
+        created=in.readLong();
+        disable_log=in.readCompressedInt();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() {
@@ -181,12 +174,24 @@ final public class CvsRepository extends AOServerResource implements Comparable<
     }
 
     public void remove() throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
     }
 
     public void setMode(long mode) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
     }
-     */
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(path);
+        out.writeCompressedInt(linux_server_account);
+        out.writeCompressedInt(linux_server_group);
+        out.writeLong(mode);
+        out.writeLong(created);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+        }
+        out.writeCompressedInt(disable_log);
+    }
 }

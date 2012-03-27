@@ -1,23 +1,28 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2003-2011 by AO Industries, Inc.,
+ * Copyright 2003-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * One type of operating system.
  *
  * @see Server
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class OperatingSystem extends AOServObjectStringKey implements Comparable<OperatingSystem>, DtoFactory<com.aoindustries.aoserv.client.dto.OperatingSystem> {
+final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
+
     public static final String
         CENTOS="centos",
         DEBIAN="debian",
@@ -28,85 +33,60 @@ final public class OperatingSystem extends AOServObjectStringKey implements Comp
         WINDOWS="windows"
     ;
     
-    public static final String DEFAULT_OPERATING_SYSTEM=CENTOS;
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -8459253677810961241L;
+    public static final String DEFAULT_OPERATING_SYSTEM=MANDRAKE;
 
     private String display;
-    final private boolean unix;
+    private boolean is_unix;
 
-    public OperatingSystem(AOServConnector connector, String name, String display, boolean is_unix) {
-        super(connector, name);
-        this.display = display;
-        this.unix = is_unix;
-        intern();
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case 1: return display;
+            case 2: return is_unix?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        display = intern(display);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(OperatingSystem other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the operating system")
     public String getName() {
-        return getKey();
+        return pkey;
     }
 
-    @SchemaColumn(order=1, description="the display version of the name")
     public String getDisplay() {
         return display;
     }
 
-    @SchemaColumn(order=2, description="indicates that this is a Unix-based OS")
     public boolean isUnix() {
-        return unix;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public OperatingSystem(AOServConnector connector, com.aoindustries.aoserv.client.dto.OperatingSystem dto) {
-        this(connector, dto.getName(), dto.getDisplay(), dto.isUnix());
+        return is_unix;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.OperatingSystem getDto() {
-        return new com.aoindustries.aoserv.client.dto.OperatingSystem(getKey(), display, unix);
+    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
+        return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
-        return getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_OPERATING_SYSTEM, this);
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.OPERATING_SYSTEMS;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getString(1);
+        display=result.getString(2);
+        is_unix=result.getBoolean(3);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        display=in.readUTF();
+        is_unix=in.readBoolean();
+    }
+
     @Override
     String toStringImpl() {
         return display;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
-    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
-        return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
-    }*/
-    // </editor-fold>
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(display);
+        out.writeBoolean(is_unix);
+    }
 }

@@ -1,23 +1,23 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.io.IoUtils;
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.EncodingUtils;
 import com.aoindustries.util.zip.CorrectedGZIPInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Performs password checking for all password protected
  * services.
+ *
+ * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -62,7 +62,7 @@ final public class PasswordChecker {
 
         private Result(String category) {
             this.category = category;
-            this.result = ApplicationResources.accessor.getMessage(GOOD_KEY);
+            this.result = accessor.getMessage(GOOD_KEY);
         }
 
         public String getCategory() {
@@ -72,30 +72,18 @@ final public class PasswordChecker {
         public String getResult() {
             return result;
         }
-
-        @Override
-        public String toString() {
-            return category+": "+result;
-        }
     }
 
     private PasswordChecker() {}
 
-    public static List<Result> getAllGoodResults() {
-        List<Result> results = new ArrayList<Result>(NUM_CATEGORIES);
-        for(int c=0;c<NUM_CATEGORIES;c++) results.add(new Result(ApplicationResources.accessor.getMessage(categoryKeys[c])));
+    public static Result[] getAllGoodResults() {
+        Result[] results = new Result[NUM_CATEGORIES];
+        for(int c=0;c<NUM_CATEGORIES;c++) results[c]=new Result(accessor.getMessage(categoryKeys[c]));
         return results;
     }
 
-    public enum PasswordStrength {
-        SUPER_LAX,
-        MODERATE,
-        STRICT
-    }
-
-    public static List<Result> checkPassword(UserId username, String password, PasswordStrength strength) throws IOException {
-        if(strength==null) throw new IllegalArgumentException("strength==null");
-        List<Result> results = getAllGoodResults();
+    public static Result[] checkPassword(String username, String password, boolean strict, boolean superLax) throws IOException {
+        Result[] results = getAllGoodResults();
         int passwordLen = password.length();
         if (passwordLen > 0) {
             /*
@@ -103,7 +91,7 @@ final public class PasswordChecker {
              *
              * Must be at least eight characters
              */
-            if (passwordLen < (strength==PasswordStrength.SUPER_LAX?6:8)) results.get(0).result = ApplicationResources.accessor.getMessage(strength==PasswordStrength.SUPER_LAX ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
+            if (passwordLen < (superLax?6:8)) results[0].result = accessor.getMessage(superLax ? "PasswordChecker.length.atLeastSix" : "PasswordChecker.length.atLeastEight");
 
             /*
              * Gather password stats
@@ -127,9 +115,9 @@ final public class PasswordChecker {
              * 2) Must not be all numbers
              * 3) Must not contain a space
              */
-            if ((numbercount + specialcount) == passwordLen) results.get(1).result = ApplicationResources.accessor.getMessage("PasswordChecker.characters.notOnlyNumbers");
-            else if (strength!=PasswordStrength.SUPER_LAX && (lowercount + uppercount + specialcount) == passwordLen) results.get(1).result = ApplicationResources.accessor.getMessage("PasswordChecker.characters.numbersAndPunctuation");
-            else if (password.indexOf(' ')!=-1) results.get(1).result = ApplicationResources.accessor.getMessage("PasswordChecker.characters.notContainSpace");
+            if ((numbercount + specialcount) == passwordLen) results[1].result = accessor.getMessage("PasswordChecker.characters.notOnlyNumbers");
+            else if (!superLax && (lowercount + uppercount + specialcount) == passwordLen) results[1].result = accessor.getMessage("PasswordChecker.characters.numbersAndPunctuation");
+            else if (password.indexOf(' ')!=-1) results[1].result = accessor.getMessage("PasswordChecker.characters.notContainSpace");
 
             /*
              * Must use different cases
@@ -137,13 +125,13 @@ final public class PasswordChecker {
              * If more than one letter exists, force different case
              */
             if (
-                strength!=PasswordStrength.SUPER_LAX
+                !superLax
                 && (
                     (lowercount > 1 && uppercount == 0)
                     || (uppercount > 1 && lowercount == 0)
                     || (lowercount == 0 && uppercount == 0)
                 )
-            ) results.get(2).result = ApplicationResources.accessor.getMessage("PasswordChecker.case.capitalAndLower");
+            ) results[2].result = accessor.getMessage("PasswordChecker.case.capitalAndLower");
 
             /*
              * Generate the backwards version of the password
@@ -158,8 +146,8 @@ final public class PasswordChecker {
             /*
              * Must not be the same as your username
              */
-            if(username!=null && username.toString().equalsIgnoreCase(password)) {
-                results.get(4).result = ApplicationResources.accessor.getMessage("PasswordChecker.dictionary.notSameAsUsername");
+            if(username!=null && username.equalsIgnoreCase(password)) {
+                results[4].result = accessor.getMessage("PasswordChecker.dictionary.notSameAsUsername");
             }
 
             /*
@@ -169,7 +157,7 @@ final public class PasswordChecker {
              * Removed -> Does not contain the two digit representation of the current year, last year, or
              * Removed -> next year, and a month 1-12 (strict mode only)
              */
-            if (strength!=PasswordStrength.SUPER_LAX) {
+            if (!superLax) {
                 String lowerf = password.toLowerCase();
                 String lowerb = backwards.toLowerCase();
                 boolean goodb = true;
@@ -181,9 +169,9 @@ final public class PasswordChecker {
                         break;
                     }
                 }
-                if (!goodb) results.get(3).result = ApplicationResources.accessor.getMessage("PasswordChecker.dates.noDate");
+                if (!goodb) results[3].result = accessor.getMessage("PasswordChecker.dates.noDate");
 
-                if(results.get(4).result.equals(ApplicationResources.accessor.getMessage(GOOD_KEY))) {
+                if(results[4].result.equals(accessor.getMessage(GOOD_KEY))) {
                     /*
                      * Dictionary check
                      *
@@ -192,7 +180,7 @@ final public class PasswordChecker {
                      */
                     byte[] words = getDictionary();
 
-                    int max_allowed_dict_len = strength==PasswordStrength.STRICT ? 3 : (passwordLen / 2);
+                    int max_allowed_dict_len = strict ? 3 : (passwordLen / 2);
 
                     // Search through each dictionary word
                     int wordslen = words.length;
@@ -225,11 +213,11 @@ final public class PasswordChecker {
                         }
                     }
                     if (longest.length() > 0) {
-                        results.get(4).result = ApplicationResources.accessor.getMessage("PasswordChecker.dictionary.basedOnWord", longest);
+                        results[4].result = accessor.getMessage("PasswordChecker.dictionary.basedOnWord", longest);
                     }
                 }
             }
-        } else results.get(0).result = ApplicationResources.accessor.getMessage("PasswordChecker.length.noPassword");
+        } else results[0].result = accessor.getMessage("PasswordChecker.length.noPassword");
         return results;
     }
 /**
@@ -250,12 +238,18 @@ final public class PasswordChecker {
 */
 
     private synchronized static byte[] getDictionary() throws IOException {
-        if(cachedWords==null) {
+	if(cachedWords==null) {
             InputStream in=new CorrectedGZIPInputStream(PasswordChecker.class.getResourceAsStream("linux.words.gz"));
             try {
                 ByteArrayOutputStream bout=new ByteArrayOutputStream();
                 try {
-                    IoUtils.copy(in, bout);
+                    byte[] buff=BufferManager.getBytes();
+                    try {
+                        int ret;
+                        while((ret=in.read(buff, 0, BufferManager.BUFFER_SIZE))!=-1) bout.write(buff, 0, ret);
+                    } finally {
+                        BufferManager.release(buff);
+                    }
                 } finally {
                     bout.flush();
                     bout.close();
@@ -264,17 +258,17 @@ final public class PasswordChecker {
             } finally {
                 in.close();
             }
-        }
-        return cachedWords;
+	}
+	return cachedWords;
     }
 
-    public static boolean hasResults(List<Result> results) {
+    public static boolean hasResults(Result[] results) {
         if(results==null) return false;
-        String good = ApplicationResources.accessor.getMessage(GOOD_KEY);
-    	for(Result result : results) {
-            if(!result.result.equals(good)) return true;
-    	}
-    	return false;
+        String good = accessor.getMessage(GOOD_KEY);
+	for(int c=0;c<NUM_CATEGORIES;c++) {
+            if(!results[c].result.equals(good)) return true;
+	}
+	return false;
     }
 
     public static int indexOfIgnoreCase(String string,byte[] buffer,int wordstart,int wordlen) {
@@ -303,36 +297,36 @@ final public class PasswordChecker {
     private static final String EOL = System.getProperty("line.separator");
 
     /**
-     * Prints the results.
+     * Prints the results in the provided locale.
      */
-    public static void printResults(List<Result> results, Appendable out) throws IOException {
-        for(Result result : results) {
-            out.append(result.getCategory());
+    public static void printResults(Result[] results, Appendable out) throws IOException {
+        for(int c=0;c<NUM_CATEGORIES;c++) {
+            out.append(results[c].getCategory());
             out.append(": ");
-            out.append(result.getResult());
+            out.append(results[c].getResult());
             out.append(EOL);
         }
     }
 
     /**
-     * Prints the results in HTML format.
+     * Prints the results in the provided locale in HTML format.
      */
-    public static void printResultsHtml(List<Result> results, Appendable out) throws IOException {
+    public static void printResultsHtml(Result[] results, Appendable out) throws IOException {
         out.append("    <table style='border:0px;' cellspacing='0' cellpadding='4'>\n");
-        for(Result result : results) {
+        for(int c=0;c<NUM_CATEGORIES;c++) {
             out.append("      <tr><td style='white-space:nowrap'>");
-            EncodingUtils.encodeHtml(result.getCategory(), out);
+            EncodingUtils.encodeHtml(results[c].getCategory(), out);
             out.append(":</td><td style='white-space:nowrap'>");
-            EncodingUtils.encodeHtml(result.getResult(), out);
+            EncodingUtils.encodeHtml(results[c].getResult(), out);
             out.append("</td></tr>\n");
         }
         out.append("    </table>\n");
     }
 
     /**
-     * Gets the results in HTML format.
+     * Gets the results in the provided locale in HTML format.
      */
-    public static String getResultsHtml(List<Result> results) throws IOException {
+    public static String getResultsHtml(Result[] results) throws IOException {
         StringBuilder out = new StringBuilder();
         printResultsHtml(results, out);
         return out.toString();
@@ -341,13 +335,13 @@ final public class PasswordChecker {
     /**
      * Gets the results as a String.
      */
-    public static String getResultsString(List<Result> results) {
+    public static String getResultsString(Result[] results) {
         StringBuilder SB = new StringBuilder();
-        for(Result result : results) {
+        for(int c=0;c<NUM_CATEGORIES;c++) {
             SB
-                .append(result.getCategory())
+                .append(results[c].getCategory())
                 .append(": ")
-                .append(result.getResult())
+                .append(results[c].getResult())
                 .append('\n');
         }
         return SB.toString();

@@ -1,14 +1,16 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.BufferManager;
+import java.io.*;
+import java.sql.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * An <code>HttpdSite</code> is one unique set of web content and resides in
@@ -28,11 +30,20 @@ import java.rmi.RemoteException;
  * @see  HttpdStaticSite
  * @see  HttpdTomcatSite
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class HttpdSite extends AOServerResource implements Comparable<HttpdSite>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdSite> /*, Disablable, Removable */ {
+final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implements Disablable, Removable {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_AO_SERVER=1,
+        COLUMN_PACKAGE=4
+    ;
+    static final String COLUMN_SITE_NAME_name = "site_name";
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+
     public static final int MAX_SITE_NAME_LENGTH=255;
 
     /**
@@ -48,183 +59,21 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
      * The site name used when an account is disabled.
      */
     public static final String DISABLED="disabled";
-    // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -2644853941410100318L;
-
-    private DomainLabels siteName;
-    final private boolean listFirst;
-    final private int linuxAccountGroup;
-    private Email serverAdmin;
-    final private boolean manualConfig;
+    int ao_server;
+    String site_name;
+    private boolean list_first;
+    String packageName;
+    String linuxAccount;
+    String linuxGroup;
+    private String
+        serverAdmin,
+        contentSrc
+    ;
+    int disable_log;
+    private boolean isManual;
     private String awstatsSkipFiles;
 
-    public HttpdSite(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int aoServer,
-        int businessServer,
-        DomainLabels siteName,
-        boolean listFirst,
-        int linuxAccountGroup,
-        Email serverAdmin,
-        boolean isManualConfig,
-        String awstatsSkipFiles
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
-        this.siteName = siteName;
-        this.listFirst = listFirst;
-        this.linuxAccountGroup = linuxAccountGroup;
-        this.serverAdmin = serverAdmin;
-        this.manualConfig = isManualConfig;
-        this.awstatsSkipFiles = awstatsSkipFiles;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        siteName = intern(siteName);
-        serverAdmin = intern(serverAdmin);
-        awstatsSkipFiles = intern(awstatsSkipFiles);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(HttpdSite other) {
-        try {
-            if(this==other) return 0;
-            int diff = siteName.compareTo(other.siteName);
-            if(diff!=0) return diff;
-            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, description="the name of the site, as used in the /www directory.")
-    public DomainLabels getSiteName() {
-        return siteName;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, description="if <code>true</code>, this site will be listed first in the Apache configs.  This is normally used only for the \"not found\" site for each httpd_server.")
-    public boolean isListFirst() {
-        return listFirst;
-    }
-
-    public static final MethodColumn COLUMN_LINUX_ACCOUNT_GROUP = getMethodColumn(HttpdSite.class, "linuxAccountGroup");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the user the site \"runs as\"")
-    public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
-        return getConnector().getLinuxAccountGroups().get(linuxAccountGroup);
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, description="the email address of the server administrator.  This address is provided when an error occurs.  The value is most often <code>webmaster@<i>domain.com</i></code>")
-    public Email getServerAdmin() {
-        return serverAdmin;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="configuration of this site config file is performed manually")
-    public boolean isManualConfig() {
-        return manualConfig;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="the SkipFiles setting for AWStats")
-    public String getAwstatsSkipFiles() {
-        return awstatsSkipFiles;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public HttpdSite(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdSite dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getAoServer(),
-            dto.getBusinessServer(),
-            getDomainLabels(dto.getSiteName()),
-            dto.isListFirst(),
-            dto.getLinuxAccountGroup(),
-            getEmail(dto.getServerAdmin()),
-            dto.isManualConfig(),
-            dto.getAwstatsSkipFiles()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.HttpdSite getDto() {
-        return new com.aoindustries.aoserv.client.dto.HttpdSite(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            aoServer,
-            businessServer,
-            getDto(siteName),
-            listFirst,
-            linuxAccountGroup,
-            getDto(serverAdmin),
-            manualConfig,
-            awstatsSkipFiles
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("HttpdSite.toString", siteName, getAoServer().getHostname());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    @DependentObjectSet
-    public List<HttpdSiteAuthenticatedLocation> getHttpdSiteAuthenticatedLocations() throws IOException, SQLException {
-        return getConnector().getHttpdSiteAuthenticatedLocationTable().getHttpdSiteAuthenticatedLocations(this);
-    }
-
-    @DependentObjectSet
-    public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
-        return getConnector().getHttpdSiteBinds().getHttpdSiteBinds(this);
-    }
-
-    @DependentObjectSet
-    public HttpdStaticSite getHttpdStaticSite() throws IOException, SQLException {
-        return getConnector().getHttpdStaticSites().get(pkey);
-    }
-
-    @DependentObjectSet
-    public HttpdTomcatSite getHttpdTomcatSite() throws IOException, SQLException {
-        return getConnector().getHttpdTomcatSites().get(pkey);
-    }
-     */
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public int addHttpdSiteAuthenticatedLocation(
         String path,
         boolean isRegularExpression,
@@ -233,7 +82,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
         String authUserFile,
         String require
     ) throws IOException, SQLException {
-        return getConnector().getHttpdSiteAuthenticatedLocationTable().addHttpdSiteAuthenticatedLocation(
+        return table.connector.getHttpdSiteAuthenticatedLocationTable().addHttpdSiteAuthenticatedLocation(
             this,
             path,
             isRegularExpression,
@@ -255,7 +104,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
         if(dl==null) return false;
         else return
             dl.canEnable()
-            && getBusiness().disable_log==-1
+            && getPackage().disable_log==-1
             && getLinuxServerAccount().disable_log==-1
         ;
     }
@@ -265,27 +114,95 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SITES, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
-    */
+
     /**
      * Gets the directory where this site is installed.
      */
-    /* TODO
     public String getInstallDirectory() throws SQLException, IOException {
         return getAOServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory()+'/'+site_name;
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
+            case 2: return site_name;
+            case 3: return list_first?Boolean.TRUE:Boolean.FALSE;
+            case COLUMN_PACKAGE: return packageName;
+            case 5: return linuxAccount;
+            case 6: return linuxGroup;
+            case 7: return serverAdmin;
+            case 8: return contentSrc;
+            case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 10: return isManual?Boolean.TRUE:Boolean.FALSE;
+            case 11: return awstatsSkipFiles;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public String getContentSrc() {
+        return contentSrc;
     }
 
     public boolean isDisabled() {
         return disable_log!=-1;
     }
 
+    public DisableLog getDisableLog() throws SQLException, IOException {
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+        return obj;
+    }
+
+    public List<HttpdSiteAuthenticatedLocation> getHttpdSiteAuthenticatedLocations() throws IOException, SQLException {
+        return table.connector.getHttpdSiteAuthenticatedLocationTable().getHttpdSiteAuthenticatedLocations(this);
+    }
+
+    public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
+        return table.connector.getHttpdSiteBinds().getHttpdSiteBinds(this);
+    }
+
     public List<HttpdSiteBind> getHttpdSiteBinds(HttpdServer server) throws SQLException, IOException {
-        return getConnector().getHttpdSiteBinds().getHttpdSiteBinds(this, server);
+        return table.connector.getHttpdSiteBinds().getHttpdSiteBinds(this, server);
+    }
+
+    public HttpdStaticSite getHttpdStaticSite() throws IOException, SQLException {
+        return table.connector.getHttpdStaticSites().get(pkey);
+    }
+
+    public HttpdTomcatSite getHttpdTomcatSite() throws IOException, SQLException {
+        return table.connector.getHttpdTomcatSites().get(pkey);
+    }
+
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
+        // May be filtered
+        LinuxAccount obj=table.connector.getLinuxAccounts().get(linuxAccount);
+        if(obj==null) return null;
+
+        LinuxServerAccount lsa = obj.getLinuxServerAccount(getAOServer());
+        if (lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linuxAccount+" on "+ao_server);
+        return lsa;
+    }
+
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
+        LinuxGroup obj=table.connector.getLinuxGroups().get(linuxGroup);
+        if(obj==null) throw new SQLException("Unable to find LinuxGroup: "+linuxGroup);
+        LinuxServerGroup lsg = obj.getLinuxServerGroup(getAOServer());
+        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup+" on "+ao_server);
+        return lsg;
+    }
+
+    public Package getPackage() throws SQLException, IOException {
+        Package obj=table.connector.getPackages().get(packageName);
+        if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
+        return obj;
     }
 
     public HttpdSiteURL getPrimaryHttpdSiteURL() throws SQLException, IOException {
@@ -293,7 +210,7 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
         if(binds.isEmpty()) return null;
 
         // Find the first one that binds to the default HTTP port, if one exists
-        NetPort httpPort=getConnector().getProtocols().get(Protocol.HTTP).getPort(getConnector());
+        NetPort httpPort=table.connector.getProtocols().get(Protocol.HTTP).getPort(table.connector);
 
         int index=-1;
         for(int c=0;c<binds.size();c++) {
@@ -307,28 +224,154 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
 
         return binds.get(index).getPrimaryHttpdSiteURL();
     }
-    */
+
+    public AOServer getAOServer() throws SQLException, IOException {
+        AOServer obj=table.connector.getAoServers().get(ao_server);
+        if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+        return obj;
+    }
+
+    public String getServerAdmin() {
+        return serverAdmin;
+    }
+
+    public String getSiteName() {
+        return site_name;
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.HTTPD_SITES;
+    }
+
+    //public void initializePasswdFile(String username, String password) {
+    //    table.connector.requestUpdate(AOServProtocol.INITIALIZE_HTTPD_SITE_PASSWD_FILE, pkey, username, UnixCrypt.crypt(username, password));
+    //}
+
+    public void init(ResultSet result) throws SQLException {
+        int pos = 1;
+        pkey=result.getInt(pos++);
+        ao_server=result.getInt(pos++);
+        site_name=result.getString(pos++);
+        list_first=result.getBoolean(pos++);
+        packageName=result.getString(pos++);
+        linuxAccount=result.getString(pos++);
+        linuxGroup=result.getString(pos++);
+        serverAdmin=result.getString(pos++);
+        contentSrc=result.getString(pos++);
+        disable_log=result.getInt(pos++);
+        if(result.wasNull()) disable_log=-1;
+        isManual=result.getBoolean(pos++);
+        awstatsSkipFiles=result.getString(pos++);
+    }
+
+    public boolean isManual() {
+        return isManual;
+    }
+
+    public String getAwstatsSkipFiles() {
+        return awstatsSkipFiles;
+    }
+
     /**
      * Checks the format of the name of the site, as used in the <code>/www</code>
      * directory.  The site name must be 255 characters or less, and comprised of
      * only <code>a-z</code>, <code>0-9</code>, <code>.</code> or <code>-</code>.  The first
      * character must be <code>a-z</code> or <code>0-9</code>.
      */
-    /* TODO
+    public static boolean isValidSiteName(String name) {
+        // These are the other files/directories that may exist under /www.  To avoid
+        // potential conflicts, these may not be used as site names.
+        if(
+            "lost+found".equals(name)
+            || ".backup".equals(name)
+            || "aquota.user".equals(name)
+        ) return false;
+
+        int len = name.length();
+        if (len == 0 || len > MAX_SITE_NAME_LENGTH)
+                return false;
+        // The first character must be [a-z] or [0-9]
+        char ch = name.charAt(0);
+        if (
+            (ch < 'a' || ch > 'z')
+            && (ch<'0' || ch>'9')
+        ) return false;
+        // The rest may have additional characters
+        for (int c = 1; c < len; c++) {
+            ch = name.charAt(c);
+            if(
+                (ch < 'a' || ch > 'z')
+                && (ch < '0' || ch > '9')
+                && ch != '.'
+                && ch != '-'
+            ) return false;
+        }
+        return true;
+    }
+
+    public boolean listFirst() {
+        return list_first;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        ao_server=in.readCompressedInt();
+        site_name=in.readUTF();
+        list_first=in.readBoolean();
+        packageName=in.readUTF().intern();
+        linuxAccount=in.readUTF().intern();
+        linuxGroup=in.readUTF().intern();
+        serverAdmin=in.readUTF();
+        contentSrc=in.readNullUTF();
+        disable_log=in.readCompressedInt();
+        isManual=in.readBoolean();
+        awstatsSkipFiles=in.readNullUTF();
+    }
+
     public void remove() throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SITES, pkey);
     }
 
     public void setIsManual(boolean isManual) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
     }
 
     public void setServerAdmin(String address) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
+    }
+
+    @Override
+    String toStringImpl() throws SQLException, IOException {
+        return site_name+" on "+getAOServer().getHostname();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(ao_server);
+        out.writeUTF(site_name);
+        out.writeBoolean(list_first);
+        out.writeUTF(packageName);
+        out.writeUTF(linuxAccount);
+        out.writeUTF(linuxGroup);
+        out.writeUTF(serverAdmin);
+        out.writeNullUTF(contentSrc);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+            out.writeShort(0);
+            out.writeShort(7);
+            out.writeShort(0);
+            out.writeShort(7);
+            out.writeShort(0);
+            out.writeShort(7);
+        }
+        out.writeCompressedInt(disable_log);
+        out.writeBoolean(isManual);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_129)>=0) out.writeNullUTF(awstatsSkipFiles);
     }
 
     public void getAWStatsFile(final String path, final String queryString, final OutputStream out) throws IOException, SQLException {
-        getConnector().requestUpdate(
+        table.connector.requestUpdate(
             false,
             new AOServConnector.UpdateRequest() {
                 public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
@@ -358,6 +401,4 @@ final public class HttpdSite extends AOServerResource implements Comparable<Http
             }
         );
     }
-     */
-    // </editor-fold>
 }

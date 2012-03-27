@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.client;
 
 /*
- * Copyright 2007-2011 by AO Industries, Inc.,
+ * Copyright 2007-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -23,7 +23,7 @@ public final class ApplicationResources extends EditableResourceBundle {
     static final EditableResourceBundleSet bundleSet = new EditableResourceBundleSet(
         ApplicationResources.class.getName(),
         Arrays.asList(
-            Locale.ROOT,
+            new Locale(""), // Locale.ROOT in Java 1.6
             Locale.JAPANESE
         )
     );
@@ -33,7 +33,7 @@ public final class ApplicationResources extends EditableResourceBundle {
      */
     public ApplicationResources() {
         super(
-            Locale.ROOT,
+            new Locale(""),
             bundleSet,
             new File(System.getProperty("user.home")+"/common/ao/cvswork/aoserv-client/src/com/aoindustries/aoserv/client/ApplicationResources.properties")
         );

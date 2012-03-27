@@ -1,23 +1,29 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.StringUtility;
+import java.io.*;
+import java.sql.*;
 
 /**
  * The system can process several different <code>PaymentType</code>s.
  * Once processed, the amount paid is subtracted from the
  * <code>Business</code>' account as a new <code>Transaction</code>.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class PaymentType extends AOServObjectStringKey implements Comparable<PaymentType>, DtoFactory<com.aoindustries.aoserv.client.dto.PaymentType> {
+final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
+
     /**
      * The system supported payment types, not all of which can
      * be processed by AO Industries.
@@ -32,71 +38,63 @@ final public class PaymentType extends AOServObjectStringKey implements Comparab
         VISA="visa",
         WIRE="wire"
     ;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 7201466581627411205L;
+    String description;
 
-    final private boolean active;
-    final private boolean allowWeb;
+    private boolean isActive;
 
-    public PaymentType(AOServConnector connector, String name, boolean active, boolean allowWeb) {
-        super(connector, name);
-        this.active = active;
-        this.allowWeb = allowWeb;
-    }
-    // </editor-fold>
+    private boolean allowWeb;
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(PaymentType other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the name of the type")
-    public String getName() {
-    	return getKey();
+    public boolean allowWeb() {
+	return allowWeb;
     }
 
-    @SchemaColumn(order=1, description="indicates if payment is currently accepted via this method")
-    public boolean isActive() {
-        return active;
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_NAME) return pkey;
+	if(i==1) return description;
+	if(i==2) return isActive?Boolean.TRUE:Boolean.FALSE;
+	if(i==3) return allowWeb?Boolean.TRUE:Boolean.FALSE;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    @SchemaColumn(order=2, description="indicates if payment is allowed via a web form")
-    public boolean getAllowWeb() {
-    	return allowWeb;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public PaymentType(AOServConnector connector, com.aoindustries.aoserv.client.dto.PaymentType dto) {
-        this(connector, dto.getName(), dto.isActive(), dto.isAllowWeb());
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.PaymentType getDto() {
-        return new com.aoindustries.aoserv.client.dto.PaymentType(getKey(), active, allowWeb);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
-        return ApplicationResources.accessor.getMessage("PaymentType."+getKey()+".description");
+	return description;
     }
 
-    @Override
+    public String getName() {
+	return pkey;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.PAYMENT_TYPES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	description = result.getString(2);
+	isActive = result.getBoolean(3);
+	allowWeb = result.getBoolean(4);
+    }
+
+    public boolean isActive() {
+	return isActive;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	description=in.readUTF();
+	isActive=in.readBoolean();
+	allowWeb=in.readBoolean();
+    }
+
     String toStringImpl() {
-        return getDescription();
+	return description;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PAYMENT_TYPE, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(description);
+	out.writeBoolean(isActive);
+	out.writeBoolean(allowWeb);
     }
-    // </editor-fold>
 }

@@ -1,261 +1,232 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
+import com.aoindustries.io.*;
 import com.aoindustries.util.StringUtility;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
 
 /**
  * Contact information associated with a <code>Business</code>.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class BusinessProfile extends AOServObjectIntegerKey implements Comparable<BusinessProfile>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessProfile> {
+final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfile> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -3118229294208613743L;
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_ACCOUNTING=1
+    ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_PRIORITY_name = "priority";
 
-    private AccountingCode accounting;
-    final private int priority;
-    final private String name;
-    final private boolean isPrivate;
-    final private String phone;
-    final private String fax;
-    final private String address1;
-    final private String address2;
-    final private String city;
-    final private String state;
-    private String country;
-    final private String zip;
-    final private boolean sendInvoice;
-    final private long created;
-    final private String billingContact;
-    final private String billingEmail;
-    final private String technicalContact;
-    final private String technicalEmail;
+    String accounting;
+    private int priority;
 
-    public BusinessProfile(
-        AOServConnector connector,
-        int pkey,
-        AccountingCode accounting,
-        int priority,
-        String name,
-        boolean isPrivate,
-        String phone,
-        String fax,
-        String address1,
-        String address2,
-        String city,
-        String state,
-        String country,
-        String zip,
-        boolean sendInvoice,
-        long created,
-        String billingContact,
-        String billingEmail,
-        String technicalContact,
-        String technicalEmail
-    ) {
-        super(connector, pkey);
-        this.accounting = accounting;
-        this.priority = priority;
-        this.name = name;
-        this.isPrivate = isPrivate;
-        this.phone = phone;
-        this.fax = fax;
-        this.address1 = address1;
-        this.address2 = address2;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.zip = zip;
-        this.sendInvoice = sendInvoice;
-        this.created = created;
-        this.billingContact = billingContact;
-        this.billingEmail = billingEmail;
-        this.technicalContact = technicalContact;
-        this.technicalEmail = technicalEmail;
-        intern();
-    }
+    private String name;
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
+    private boolean isPrivate;
+    private String phone, fax, address1, address2, city, state;
+    String country;
+    private String zip;
 
-    private void intern() {
-        accounting = intern(accounting);
-        country = intern(country);
-    }
-    // </editor-fold>
+    private boolean sendInvoice;
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(BusinessProfile other) {
-        int diff = accounting.compareTo(other.accounting);
-        if(diff!=0) return diff;
-        return -compare(priority, other.priority);
-    }
-    // </editor-fold>
+    private long created;
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a unique primary key")
-    public int getPkey() {
-        return getKeyInt();
-    }
+    private String billingContact, billingEmail, technicalContact, technicalEmail;
 
-    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(BusinessProfile.class, "business");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the accounting code of the business")
-    public Business getBusiness() throws RemoteException {
-        return getConnector().getBusinesses().get(accounting);
-    }
-
-    @SchemaColumn(order=2, description="the highest priority profile is used")
-    public int getPriority() {
-        return priority;
-    }
-
-    @SchemaColumn(order=3, description="the name of the business")
-    public String getName() {
-        return name;
-    }
-
-    @SchemaColumn(order=4, description="indicates if the business should not be listed in publicly available lists")
-    public boolean isPrivate() {
-        return isPrivate;
-    }
-
-    @SchemaColumn(order=5, description="the phone number")
-    public String getPhone() {
-        return phone;
-    }
-
-    @SchemaColumn(order=6, description="the fax number")
-    public String getFax() {
-        return fax;
-    }
-
-    @SchemaColumn(order=7, description="the street address of the business")
     public String getAddress1() {
-        return address1;
+	return address1;
     }
 
-    @SchemaColumn(order=8, description="the street address of the business")
     public String getAddress2() {
-        return address2;
+	return address2;
     }
 
-    @SchemaColumn(order=9, description="the city")
-    public String getCity() {
-        return city;
-    }
-
-    @SchemaColumn(order=10, description="the state or providence")
-    public String getState() {
-        return state;
-    }
-
-    public static final MethodColumn COLUMN_COUNTRY = getMethodColumn(BusinessProfile.class, "country");
-    @DependencySingleton
-    @SchemaColumn(order=11, index=IndexType.INDEXED, description="the two-character country code")
-    public CountryCode getCountry() throws RemoteException {
-        return getConnector().getCountryCodes().get(country);
-    }
-
-    @SchemaColumn(order=12, description="the zip code")
-    public String getZip() {
-        return zip;
-    }
-
-    @SchemaColumn(order=13, description="indicates to send a monthly invoice via regular mail")
-    public boolean getSendInvoice() {
-    	return sendInvoice;
-    }
-
-    @SchemaColumn(order=14, description="the time this entry was created")
-    public Timestamp getCreated() {
-        return new Timestamp(created);
-    }
-
-    @SchemaColumn(order=15, description="the name to contact for billing information")
     public String getBillingContact() {
-        return billingContact;
+	return billingContact;
     }
 
-    /**
-     * Gets an unmodifiable list of the emails.
-     */
-    private static List<Email> getEmailList(String emails) throws ValidationException {
-        List<String> strings = StringUtility.splitStringCommaSpace(emails);
-        int size = strings.size();
-        if(size==0) return Collections.emptyList();
-        if(size==1) return Collections.singletonList(Email.valueOf(strings.get(0)));
-        List<Email> results = new ArrayList<Email>(size);
-        for(String string : strings) results.add(Email.valueOf(string));
-        return Collections.unmodifiableList(results);
+    public List<String> getBillingEmail() {
+	return StringUtility.splitStringCommaSpace(billingEmail);
     }
 
-    @SchemaColumn(order=16, description="the email address to notify for billing")
-    public List<Email> getBillingEmail() throws ValidationException {
-        return getEmailList(billingEmail);
+    public Business getBusiness() throws SQLException, IOException {
+	Business business=table.connector.getBusinesses().get(accounting);
+        if (business == null) throw new SQLException("Unable to find Business: " + accounting);
+        return business;
     }
 
-    @SchemaColumn(order=17, description="the name to contact for technical information")
+    public String getCity() {
+	return city;
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_ACCOUNTING: return accounting;
+            case 2: return Integer.valueOf(priority);
+            case 3: return name;
+            case 4: return isPrivate?Boolean.TRUE:Boolean.FALSE;
+            case 5: return phone;
+            case 6: return fax;
+            case 7: return address1;
+            case 8: return address2;
+            case 9: return city;
+            case 10: return state;
+            case 11: return country;
+            case 12: return zip;
+            case 13: return sendInvoice?Boolean.TRUE:Boolean.FALSE;
+            case 14: return new java.sql.Date(created);
+            case 15: return billingContact;
+            case 16: return billingEmail;
+            case 17: return technicalContact;
+            case 18: return technicalEmail;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public CountryCode getCountry() throws SQLException, IOException {
+        CountryCode countryCode = table.connector.getCountryCodes().get(country);
+        if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
+        return countryCode;
+    }
+
+    public long getCreated() {
+	return created;
+    }
+
+    public String getFax() {
+	return fax;
+    }
+
+    public String getName() {
+	return name;
+    }
+
+    public String getPhone() {
+	return phone;
+    }
+
+    public int getPriority() {
+	return priority;
+    }
+
+    public String getState() {
+	return state;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_PROFILES;
+    }
+
     public String getTechnicalContact() {
-        return technicalContact;
+	return technicalContact;
     }
 
-    @SchemaColumn(order=18, description="the email address to notify for technical")
-    public List<Email> getTechnicalEmail() throws ValidationException {
-        return getEmailList(technicalEmail);
+    public List<String> getTechnicalEmail() {
+	return StringUtility.splitStringCommaSpace(technicalEmail);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public BusinessProfile(AOServConnector connector, com.aoindustries.aoserv.client.dto.BusinessProfile dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            getAccountingCode(dto.getAccounting()),
-            dto.getPriority(),
-            dto.getName(),
-            dto.isIsPrivate(),
-            dto.getPhone(),
-            dto.getFax(),
-            dto.getAddress1(),
-            dto.getAddress2(),
-            dto.getCity(),
-            dto.getState(),
-            dto.getCountry(),
-            dto.getZip(),
-            dto.isSendInvoice(),
-            getTimeMillis(dto.getCreated()),
-            dto.getBillingContact(),
-            dto.getBillingEmail(),
-            dto.getTechnicalContact(),
-            dto.getTechnicalEmail()
-        );
+    public String getZIP() {
+	return zip;
     }
-    @Override
-    public com.aoindustries.aoserv.client.dto.BusinessProfile getDto() {
-        return new com.aoindustries.aoserv.client.dto.BusinessProfile(getKeyInt(), getDto(accounting), priority, name, isPrivate, phone, fax, address1, address2, city, state, country, zip, sendInvoice, created, billingContact, billingEmail, technicalContact, technicalEmail);
-    }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getInt(1);
+	accounting = result.getString(2);
+	priority = result.getInt(3);
+	name = result.getString(4);
+	isPrivate = result.getBoolean(5);
+	phone = result.getString(6);
+	fax = result.getString(7);
+	address1 = result.getString(8);
+	address2 = result.getString(9);
+	city = result.getString(10);
+	state = result.getString(11);
+	country = result.getString(12);
+	zip = result.getString(13);
+	sendInvoice = result.getBoolean(14);
+	created = result.getTimestamp(15).getTime();
+	billingContact = result.getString(16);
+	billingEmail = result.getString(17);
+	technicalContact = result.getString(18);
+	technicalEmail = result.getString(19);
+    }
+
+    public boolean isPrivate() {
+	return isPrivate;
+    }
+
+    /*
+    private static String makeEmailList(String[] addresses) {
+	StringBuilder SB=new StringBuilder();
+	int len=addresses.length;
+	for(int c=0;c<len;c++) {
+            if(c>0) SB.append(' ');
+            SB.append(addresses[c]);
+	}
+	return SB.toString();
+    }*/
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readCompressedInt();
+	accounting=in.readUTF().intern();
+	priority=in.readCompressedInt();
+	name=in.readUTF();
+	isPrivate=in.readBoolean();
+	phone=in.readUTF();
+	fax=in.readNullUTF();
+	address1=in.readUTF();
+	address2=in.readNullUTF();
+	city=in.readUTF();
+	state=StringUtility.intern(in.readNullUTF());
+	country=in.readUTF().intern();
+	zip=in.readNullUTF();
+	sendInvoice=in.readBoolean();
+	created=in.readLong();
+	billingContact=in.readUTF();
+	billingEmail=in.readUTF();
+	technicalContact=in.readUTF();
+	technicalEmail=in.readUTF();
+    }
+
+    public boolean sendInvoice() {
+	return sendInvoice;
+    }
+
     @Override
     String toStringImpl() {
-        return accounting + " (" + priority + ')';
+	return name + " ("+priority+')';
     }
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeCompressedInt(pkey);
+	out.writeUTF(accounting);
+	out.writeCompressedInt(priority);
+	out.writeUTF(name);
+	out.writeBoolean(isPrivate);
+	out.writeUTF(phone);
+	out.writeNullUTF(fax);
+	out.writeUTF(address1);
+	out.writeNullUTF(address2);
+	out.writeUTF(city);
+	out.writeNullUTF(state);
+	out.writeUTF(country);
+	out.writeNullUTF(zip);
+	out.writeBoolean(sendInvoice);
+	out.writeLong(created);
+	out.writeUTF(billingContact);
+	out.writeUTF(billingEmail);
+	out.writeUTF(technicalContact);
+	out.writeUTF(technicalEmail);
+    }
 }

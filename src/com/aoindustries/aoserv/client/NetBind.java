@@ -1,21 +1,24 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.AoCollections;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.rmi.RemoteException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,289 +30,307 @@ import java.util.concurrent.ConcurrentMap;
  * or a network port is listening that should not, monitoring personnel are notified
  * to remove the discrepancy.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class NetBind
-extends AOServObjectIntegerKey
-implements
-    Comparable<NetBind>,
-    DtoFactory<com.aoindustries.aoserv.client.dto.NetBind> /*implements Removable*/ {
+final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Removable {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -800535749409504811L;
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_PACKAGE=1,
+        COLUMN_SERVER=2,
+        COLUMN_IP_ADDRESS=3
+    ;
+    static final String COLUMN_SERVER_name = "server";
+    static final String COLUMN_IP_ADDRESS_name = "ip_address";
+    static final String COLUMN_PORT_name = "port";
+    static final String COLUMN_NET_PROTOCOL_name = "net_protocol";
 
-    final private int businessServer;
-    final private Integer ipAddress;
-    final private NetPort port;
-    private String netProtocol;
-    private String appProtocol;
-    final private boolean openFirewall;
-    final private boolean monitoringEnabled;
-    private String monitoringParameters;
+    String packageName;
+    int server;
+    int ip_address;
+    int port;
+    String net_protocol;
+    String app_protocol;
+    private boolean open_firewall;
+    private boolean monitoring_enabled;
+    private String monitoring_parameters;
 
-    public NetBind(
-        AOServConnector connector,
-        int pkey,
-        int businessServer,
-        Integer ipAddress,
-        NetPort port,
-        String netProtocol,
-        String appProtocol,
-        boolean openFirewall,
-        boolean monitoringEnabled,
-        String monitoringParameters
-    ) {
-        super(connector, pkey);
-        this.businessServer = businessServer;
-        this.ipAddress = ipAddress;
-        this.port = port;
-        this.netProtocol = netProtocol;
-        this.appProtocol = appProtocol;
-        this.openFirewall = openFirewall;
-        this.monitoringEnabled = monitoringEnabled;
-        this.monitoringParameters = monitoringParameters;
-        intern();
+    public Protocol getAppProtocol() throws SQLException, IOException {
+	Protocol obj=table.connector.getProtocols().get(app_protocol);
+	if(obj==null) throw new SQLException("Unable to find Protocol: "+app_protocol);
+	return obj;
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_PACKAGE: return packageName;
+            case COLUMN_SERVER: return Integer.valueOf(server);
+            case COLUMN_IP_ADDRESS: return Integer.valueOf(ip_address);
+            case 4: return Integer.valueOf(port);
+            case 5: return net_protocol;
+            case 6: return app_protocol;
+            case 7: return open_firewall?Boolean.TRUE:Boolean.FALSE;
+            case 8: return monitoring_enabled?Boolean.TRUE:Boolean.FALSE;
+            case 9: return monitoring_parameters;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
-    private void intern() {
-        netProtocol = intern(netProtocol);
-        appProtocol = intern(appProtocol);
-        monitoringParameters = intern(monitoringParameters);
-    }
-    // </editor-fold>
+    public String getDetails() throws SQLException, IOException {
+        AOServer aoServer=getAOServerByDaemonNetBind();
+        if(aoServer!=null) return "AOServDaemon";
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(NetBind other) {
+        AOServer jilterServer=getAOServerByJilterNetBind();
+        if(jilterServer!=null) return "AOServDaemon.JilterManager";
+        
+        PostgresServer ps=getPostgresServer();
+        if(ps!=null) return "PostgreSQL version "+ps.getPostgresVersion().getTechnologyVersion(table.connector).getVersion()+" in "+ps.getDataDirectory();
+
+        HttpdWorker hw=getHttpdWorker();
+        if(hw!=null) {
+            HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
+            if(hst!=null) {
+                return
+                    hw.getHttpdJKProtocol(table.connector).getProtocol(table.connector).getProtocol()
+                    + " connector for Multi-Site Tomcat JVM version "
+                    + hst.getHttpdTomcatVersion().getTechnologyVersion(table.connector).getVersion()
+                    + " in "
+                    + hst.getInstallDirectory()
+                ;
+            }
+            HttpdTomcatSite hts=hw.getHttpdTomcatSite();
+            if(hts!=null) {
+                return
+                    hw.getHttpdJKProtocol(table.connector).getProtocol(table.connector).getProtocol()
+                    + " connector for Single-Site Tomcat JVM version "
+                    + hts.getHttpdTomcatVersion().getTechnologyVersion(table.connector).getVersion()
+                    + " in "
+                    + hts.getHttpdSite().getInstallDirectory()
+                ;
+            }
+        }
+
+        HttpdSharedTomcat hst=getHttpdSharedTomcatByShutdownPort();
+        if(hst!=null) {
+            return
+                "Shutdown port for Multi-Site Tomcat JVM version "
+                + hst.getHttpdTomcatVersion().getTechnologyVersion(table.connector).getVersion()
+                + " in "
+                + hst.getInstallDirectory()
+            ;
+        }
+
+        HttpdTomcatStdSite htss=getHttpdTomcatStdSiteByShutdownPort();
+        if(htss!=null) {
+            return
+                "Shutdown port for Single-Site Tomcat JVM version "
+                + htss.getHttpdTomcatSite().getHttpdTomcatVersion().getTechnologyVersion(table.connector).getVersion()
+                + " in "
+                + htss.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
+            ;
+        }
+
+        HttpdBind hb=getHttpdBind();
+        if(hb!=null) {
+            HttpdServer hs=hb.getHttpdServer();
+            return
+                "Apache server #"
+                + hs.getNumber()
+                + " configured in /etc/httpd/conf/httpd"
+                + hs.getNumber()
+                + ".conf"
+            ;
+        }
+
+        HttpdJBossSite hjs=getHttpdJBossSiteByJNPPort();
+        if(hjs!=null) {
+            return
+                "JNP port for JBoss version "
+                + hjs.getHttpdJBossVersion().getTechnologyVersion(table.connector).getVersion()
+                + " in "
+                + hjs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
+            ;
+        }
+
+        HttpdJBossSite hjbs=getHttpdJBossSiteByWebserverPort();
+        if(hjbs!=null) {
+            return
+                "Webserver port for JBoss version "
+                + hjbs.getHttpdJBossVersion().getTechnologyVersion(table.connector).getVersion()
+                + " in "
+                + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
+            ;
+        }
+
+        hjbs=getHttpdJBossSiteByRMIPort();
+        if(hjbs!=null) {
+            return
+                "RMI port for JBoss version "
+                + hjbs.getHttpdJBossVersion().getTechnologyVersion(table.connector).getVersion()
+                + " in "
+                + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
+            ;
+        }
+
+        hjbs=getHttpdJBossSiteByHypersonicPort();
+        if(hjbs!=null) {
+            return
+                "Hypersonic port for JBoss version "
+                + hjbs.getHttpdJBossVersion().getTechnologyVersion(table.connector).getVersion()
+                + " in "
+                + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
+            ;
+        }
+
+        hjbs=getHttpdJBossSiteByJMXPort();
+        if(hjbs!=null) {
+            return
+                "JMX port for JBoss version "
+                + hjbs.getHttpdJBossVersion().getTechnologyVersion(table.connector).getVersion()
+                + " in "
+                + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
+            ;
+        }
+
+        NetTcpRedirect ntr=getNetTcpRedirect();
+        if(ntr!=null) return "Port redirected to "+ntr.getDestinationHost()+':'+ntr.getDestinationPort().getPort();
+
+        PrivateFTPServer pfs=getPrivateFTPServer();
+        if(pfs!=null) return "Private FTP server in "+pfs.getLinuxServerAccount().getHome();
+
+        return null;
+    }
+    
+    public AOServer getAOServerByDaemonNetBind() throws IOException, SQLException {
+        return table.connector.getAoServers().getAOServerByDaemonNetBind(this);
+    }
+
+    public AOServer getAOServerByJilterNetBind() throws IOException, SQLException {
+        return table.connector.getAoServers().getAOServerByJilterNetBind(this);
+    }
+
+    public HttpdBind getHttpdBind() throws IOException, SQLException {
+        return table.connector.getHttpdBinds().get(pkey);
+    }
+
+    public HttpdJBossSite getHttpdJBossSiteByJNPPort() throws IOException, SQLException {
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByJNPPort(this);
+    }
+
+    public HttpdJBossSite getHttpdJBossSiteByWebserverPort() throws IOException, SQLException {
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByWebserverPort(this);
+    }
+
+    public HttpdJBossSite getHttpdJBossSiteByRMIPort() throws IOException, SQLException {
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByRMIPort(this);
+    }
+
+    public HttpdJBossSite getHttpdJBossSiteByHypersonicPort() throws IOException, SQLException {
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByHypersonicPort(this);
+    }
+
+    public HttpdJBossSite getHttpdJBossSiteByJMXPort() throws IOException, SQLException {
+        return table.connector.getHttpdJBossSites().getHttpdJBossSiteByJMXPort(this);
+    }
+
+    public HttpdWorker getHttpdWorker() throws IOException, SQLException {
+        return table.connector.getHttpdWorkers().getHttpdWorker(this);
+    }
+
+    public HttpdSharedTomcat getHttpdSharedTomcatByShutdownPort() throws SQLException, IOException {
+        return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcatByShutdownPort(this);
+    }
+    
+    public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
+        return table.connector.getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
+    }
+
+    public IPAddress getIPAddress() throws SQLException, IOException {
+        IPAddress obj=table.connector.getIpAddresses().get(ip_address);
+        if(obj==null) throw new SQLException("Unable to find IPAddress: "+ip_address);
+        return obj;
+    }
+
+    public boolean isMonitoringEnabled() {
+        return monitoring_enabled;
+    }
+
+    public NetProtocol getNetProtocol() throws SQLException, IOException {
+        NetProtocol obj=table.connector.getNetProtocols().get(net_protocol);
+        if(obj==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
+        return obj;
+    }
+
+    public NetTcpRedirect getNetTcpRedirect() throws IOException, SQLException {
+        return table.connector.getNetTcpRedirects().get(pkey);
+    }
+
+    public Package getPackage() throws IOException, SQLException {
+        // May be filtered
+        return table.connector.getPackages().get(packageName);
+    }
+    
+    public PostgresServer getPostgresServer() throws IOException, SQLException {
+        return table.connector.getPostgresServers().getPostgresServer(this);
+    }
+
+    public PrivateFTPServer getPrivateFTPServer() throws IOException, SQLException {
+        return table.connector.getPrivateFTPServers().get(pkey);
+    }
+
+    public NetPort getPort() throws SQLException {
+        NetPort obj=table.connector.getNetPorts().get(port);
+        if(obj==null) throw new SQLException("Unable to find NetPort: "+port);
+        return obj;
+    }
+
+    public Server getServer() throws SQLException, IOException {
+        Server obj=table.connector.getServers().get(server);
+        if(obj==null) throw new SQLException("Unable to find Server: "+server);
+        return obj;
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.NET_BINDS;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        packageName=result.getString(2);
+        server=result.getInt(3);
+        ip_address=result.getInt(4);
+        port=result.getInt(5);
+        net_protocol=result.getString(6);
+        app_protocol=result.getString(7);
+        open_firewall=result.getBoolean(8);
+        monitoring_enabled=result.getBoolean(9);
+        monitoring_parameters=result.getString(10);
+    }
+
+    public boolean isFirewallOpen() {
+        return open_firewall;
+    }
+
+    /**
+     * Encodes the parameters.  Will not return null.
+     */
+    public static String encodeParameters(Map<String,String> monitoringParameters) {
         try {
-            int diff = businessServer==other.businessServer ? 0 : getBusinessServer().compareTo(other.getBusinessServer());
-            if(diff!=0) return diff;
-            diff = StringUtility.equals(ipAddress, other.ipAddress) ? 0 : compare(getIpAddress(), other.getIpAddress());
-            if(diff!=0) return diff;
-            diff = port.compareTo(other.port);
-            if(diff!=0) return diff;
-            return netProtocol==other.netProtocol ? 0 : getNetProtocol().compareTo(other.getNetProtocol()); // OK - interned
-        } catch(RemoteException err) {
+            StringBuilder SB = new StringBuilder();
+            for(Map.Entry<String,String> entry : monitoringParameters.entrySet()) {
+                String name = entry.getKey();
+                String value = entry.getValue();
+                if(SB.length()>0) SB.append('&');
+                SB.append(URLEncoder.encode(name, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
+            }
+            return SB.toString();
+        } catch(UnsupportedEncodingException err) {
             throw new WrappedException(err);
         }
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated pkey")
-    public int getPkey() {
-        return getKeyInt();
-    }
-
-    public static final MethodColumn COLUMN_BUSINESS_SERVER = getMethodColumn(NetBind.class, "businessServer");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the business and server this bind is on")
-    public BusinessServer getBusinessServer() throws RemoteException {
-        return getConnector().getBusinessServers().get(businessServer);
-    }
-
-    public static final MethodColumn COLUMN_IP_ADDRESS = getMethodColumn(NetBind.class, "ipAddress");
-    /**
-     * Gets the IP address this bind is on or <code>null</code> if should listen to all available
-     * addresses on the server.
-     */
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the pkey of the IP address that is bound to")
-    public IPAddress getIpAddress() throws RemoteException {
-        if(ipAddress==null) return null;
-        return getConnector().getIpAddresses().get(ipAddress);
-    }
-
-    @SchemaColumn(order=3, description="the port number that is bound")
-    public NetPort getPort() {
-        return port;
-    }
-
-    public static final MethodColumn COLUMN_NET_PROTOCOL = getMethodColumn(NetBind.class, "netProtocol");
-    @DependencySingleton
-    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the network protocol (<code>net_protocols</code>)")
-    public NetProtocol getNetProtocol() throws RemoteException {
-        return getConnector().getNetProtocols().get(netProtocol);
-    }
-
-    public static final MethodColumn COLUMN_APP_PROTOCOL = getMethodColumn(NetBind.class, "appProtocol");
-    @DependencySingleton
-    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the application protocol (<code>protocols</code>)")
-    public Protocol getAppProtocol() throws RemoteException {
-        return getConnector().getProtocols().get(appProtocol);
-    }
-
-    @SchemaColumn(order=6, description="flags if the firewall should be opened for this port")
-    public boolean isOpenFirewall() {
-        return openFirewall;
-    }
-
-    @SchemaColumn(order=7, description="turns on monitoring of the port")
-    public boolean isMonitoringEnabled() {
-        return monitoringEnabled;
-    }
-
-    /**
-     * Gets the unmodifiable map of parameters for this bind.
-     */
-    @SchemaColumn(order=8, description="the URL-encoded name=value pairs of monitoring parameters")
-    public Map<String,String> getMonitoringParameters() {
-        String myParamString = monitoringParameters;
-        if(myParamString==null) return Collections.emptyMap();
-        Map<String,String> params = getMonitoringParametersCache.get(myParamString);
-        if(params==null) {
-            params = AoCollections.optimalUnmodifiableMap(decodeParameters(myParamString));
-            Map<String,String> previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
-            if(previous!=null) params = previous;
-        }
-        return params;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public NetBind(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetBind dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getBusinessServer(),
-            dto.getIpAddress(),
-            getNetPort(dto.getPort()),
-            dto.getNetProtocol(),
-            dto.getAppProtocol(),
-            dto.isOpenFirewall(),
-            dto.isMonitoringEnabled(),
-            dto.getMonitoringParameters()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.NetBind getDto() {
-        return new com.aoindustries.aoserv.client.dto.NetBind(
-            getKeyInt(),
-            businessServer,
-            ipAddress,
-            getDto(port),
-            netProtocol,
-            appProtocol,
-            openFirewall,
-            monitoringEnabled,
-            monitoringParameters
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        IPAddress ip = getIpAddress();
-        if(ip==null) return "*:"+getPort()+'/'+getNetProtocol();
-        String address = ip.getInetAddress().toString();
-        if(address.indexOf(':')==-1) return address+':'+getPort()+'/'+getNetProtocol();
-        else return '['+address+"]:"+getPort()+'/'+getNetProtocol();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSingleton
-    public AOServer getAOServerByDaemonNetBind() throws RemoteException {
-        return getConnector().getAoServers().filterUnique(AOServer.COLUMN_DAEMON_BIND, this);
-    }
-
-    @DependentObjectSingleton
-    public AOServer getAOServerByDaemonConnectNetBind() throws RemoteException {
-        return getConnector().getAoServers().filterUnique(AOServer.COLUMN_DAEMON_CONNECT_BIND, this);
-    }
-
-    @DependentObjectSingleton
-    public AOServer getAOServerByJilterNetBind() throws RemoteException {
-        return getConnector().getAoServers().filterUnique(AOServer.COLUMN_JILTER_BIND, this);
-    }
-
-    @DependentObjectSingleton
-    public Brand getBrandByAowebStrutsVncBind() throws RemoteException {
-        return getConnector().getBrands().filterUnique(Brand.COLUMN_AOWEB_STRUTS_VNC_BIND, this);
-    }
-
-    @DependentObjectSingleton
-    public MySQLServer getMySQLServer() throws RemoteException {
-        return getConnector().getMysqlServers().filterUnique(MySQLServer.COLUMN_NET_BIND, this);
-    }
-
-    @DependentObjectSingleton
-    public NetTcpRedirect getNetTcpRedirect() throws RemoteException {
-        return getConnector().getNetTcpRedirects().filterUnique(NetTcpRedirect.COLUMN_NET_BIND, this);
-    }
-
-    @DependentObjectSingleton
-    public PostgresServer getPostgresServer() throws RemoteException {
-        return getConnector().getPostgresServers().filterUnique(PostgresServer.COLUMN_NET_BIND, this);
-    }
-
-    @DependentObjectSingleton
-    public PrivateFtpServer getPrivateFtpServer() throws RemoteException {
-        return getConnector().getPrivateFtpServers().filterUnique(PrivateFtpServer.COLUMN_NET_BIND, this);
-    }
-
-    /* TODO
-    @DependentObjectSingleton
-    public HttpdBind getHttpdBind() throws IOException, SQLException {
-        return getConnector().getHttpdBinds().get(pkey);
-    }
-
-    @DependentObjectSingleton
-    public HttpdJBossSite getHttpdJBossSiteByJNPPort() throws IOException, SQLException {
-        return getConnector().getHttpdJBossSites().getHttpdJBossSiteByJNPPort(this);
-    }
-
-    @DependentObjectSingleton
-    public HttpdJBossSite getHttpdJBossSiteByWebserverPort() throws IOException, SQLException {
-        return getConnector().getHttpdJBossSites().getHttpdJBossSiteByWebserverPort(this);
-    }
-
-    @DependentObjectSingleton
-    public HttpdJBossSite getHttpdJBossSiteByRMIPort() throws IOException, SQLException {
-        return getConnector().getHttpdJBossSites().getHttpdJBossSiteByRMIPort(this);
-    }
-
-    @DependentObjectSingleton
-    public HttpdJBossSite getHttpdJBossSiteByHypersonicPort() throws IOException, SQLException {
-        return getConnector().getHttpdJBossSites().getHttpdJBossSiteByHypersonicPort(this);
-    }
-
-    @DependentObjectSingleton
-    public HttpdJBossSite getHttpdJBossSiteByJMXPort() throws IOException, SQLException {
-        return getConnector().getHttpdJBossSites().getHttpdJBossSiteByJMXPort(this);
-    }
-
-    @DependentObjectSingleton
-    public HttpdWorker getHttpdWorker() throws IOException, SQLException {
-        return getConnector().getHttpdWorkers().getHttpdWorker(this);
-    }
-
-    @DependentObjectSingleton
-    public HttpdSharedTomcat getHttpdSharedTomcatByShutdownPort() throws SQLException, IOException {
-        return getConnector().getHttpdSharedTomcats().getHttpdSharedTomcatByShutdownPort(this);
-    }
-
-    @DependentObjectSingleton
-    public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
-        return getConnector().getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
-    }
-
-    @DependentObjectSingleton
-    public EmailSmtpSmartHost getEmailSmartHost() throws IOException, SQLException {
-        return getConnector().getEmailSmtpSmartHosts().getUniqueRow(EmailSmtpSmartHost.COLUMN_NET_BIND, pkey);
-    }
-     */
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Parameter Encoding">
-    private static final ConcurrentMap<String,Map<String,String>> getMonitoringParametersCache = new ConcurrentHashMap<String,Map<String,String>>();
 
     public static Map<String,String> decodeParameters(String monitoringParameters) {
         if(monitoringParameters==null) return Collections.emptyMap();
@@ -337,161 +358,43 @@ implements
         }
     }
 
+    private static final ConcurrentMap<String,Map<String,String>> getMonitoringParametersCache = new ConcurrentHashMap<String,Map<String,String>>();
+
     /**
-     * Encodes the parameters.  Will not return null.
+     * Gets the unmodifiable map of parameters for this bind.
      */
-    public static String encodeParameters(Map<String,String> monitoringParameters) {
-        try {
-            StringBuilder SB = new StringBuilder();
-            for(Map.Entry<String,String> entry : monitoringParameters.entrySet()) {
-                String name = entry.getKey();
-                String value = entry.getValue();
-                if(SB.length()>0) SB.append('&');
-                SB.append(URLEncoder.encode(name, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
-            }
-            return SB.toString();
-        } catch(UnsupportedEncodingException err) {
-            throw new WrappedException(err);
+    public Map<String,String> getMonitoringParameters() {
+        String myParamString = monitoring_parameters;
+        if(myParamString==null) return Collections.emptyMap();
+        Map<String,String> params = getMonitoringParametersCache.get(myParamString);
+        if(params==null) {
+            params = Collections.unmodifiableMap(decodeParameters(myParamString));
+            Map<String,String> previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
+            if(previous!=null) params = previous;
         }
+        return params;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
-    public String getDetails() throws SQLException, IOException {
-        AOServer aoServer=getAOServerByDaemonNetBind();
-        if(aoServer!=null) return "AOServDaemon";
-
-        AOServer jilterServer=getAOServerByJilterNetBind();
-        if(jilterServer!=null) return "AOServDaemon.JilterManager";
-
-        PostgresServer ps=getPostgresServer();
-        if(ps!=null) return "PostgreSQL version "+ps.getPostgresVersion().getTechnologyVersion(getConnector()).getVersion()+" in "+ps.getDataDirectory();
-
-        HttpdWorker hw=getHttpdWorker();
-        if(hw!=null) {
-            HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
-            if(hst!=null) {
-                return
-                    hw.getHttpdJKProtocol(getConnector()).getProtocol(getConnector()).getProtocol()
-                    + " connector for Multi-Site Tomcat JVM version "
-                    + hst.getHttpdTomcatVersion().getTechnologyVersion(getConnector()).getVersion()
-                    + " in "
-                    + hst.getInstallDirectory()
-                ;
-            }
-            HttpdTomcatSite hts=hw.getHttpdTomcatSite();
-            if(hts!=null) {
-                return
-                    hw.getHttpdJKProtocol(getConnector()).getProtocol(getConnector()).getProtocol()
-                    + " connector for Single-Site Tomcat JVM version "
-                    + hts.getHttpdTomcatVersion().getTechnologyVersion(getConnector()).getVersion()
-                    + " in "
-                    + hts.getHttpdSite().getInstallDirectory()
-                ;
-            }
-        }
-
-        HttpdSharedTomcat hst=getHttpdSharedTomcatByShutdownPort();
-        if(hst!=null) {
-            return
-                "Shutdown port for Multi-Site Tomcat JVM version "
-                + hst.getHttpdTomcatVersion().getTechnologyVersion(getConnector()).getVersion()
-                + " in "
-                + hst.getInstallDirectory()
-            ;
-        }
-
-        HttpdTomcatStdSite htss=getHttpdTomcatStdSiteByShutdownPort();
-        if(htss!=null) {
-            return
-                "Shutdown port for Single-Site Tomcat JVM version "
-                + htss.getHttpdTomcatSite().getHttpdTomcatVersion().getTechnologyVersion(getConnector()).getVersion()
-                + " in "
-                + htss.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-            ;
-        }
-
-        HttpdBind hb=getHttpdBind();
-        if(hb!=null) {
-            HttpdServer hs=hb.getHttpdServer();
-            return
-                "Apache server #"
-                + hs.getNumber()
-                + " configured in /etc/httpd/conf/httpd"
-                + hs.getNumber()
-                + ".conf"
-            ;
-        }
-
-        HttpdJBossSite hjs=getHttpdJBossSiteByJNPPort();
-        if(hjs!=null) {
-            return
-                "JNP port for JBoss version "
-                + hjs.getHttpdJBossVersion().getTechnologyVersion(getConnector()).getVersion()
-                + " in "
-                + hjs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-            ;
-        }
-
-        HttpdJBossSite hjbs=getHttpdJBossSiteByWebserverPort();
-        if(hjbs!=null) {
-            return
-                "Webserver port for JBoss version "
-                + hjbs.getHttpdJBossVersion().getTechnologyVersion(getConnector()).getVersion()
-                + " in "
-                + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-            ;
-        }
-
-        hjbs=getHttpdJBossSiteByRMIPort();
-        if(hjbs!=null) {
-            return
-                "RMI port for JBoss version "
-                + hjbs.getHttpdJBossVersion().getTechnologyVersion(getConnector()).getVersion()
-                + " in "
-                + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-            ;
-        }
-
-        hjbs=getHttpdJBossSiteByHypersonicPort();
-        if(hjbs!=null) {
-            return
-                "Hypersonic port for JBoss version "
-                + hjbs.getHttpdJBossVersion().getTechnologyVersion(getConnector()).getVersion()
-                + " in "
-                + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-            ;
-        }
-
-        hjbs=getHttpdJBossSiteByJMXPort();
-        if(hjbs!=null) {
-            return
-                "JMX port for JBoss version "
-                + hjbs.getHttpdJBossVersion().getTechnologyVersion(getConnector()).getVersion()
-                + " in "
-                + hjbs.getHttpdTomcatSite().getHttpdSite().getInstallDirectory()
-            ;
-        }
-
-        NetTcpRedirect ntr=getNetTcpRedirect();
-        if(ntr!=null) return "Port redirected to "+ntr.getDestinationHost()+':'+ntr.getDestinationPort().getPort();
-
-        PrivateFtpServer pfs=getPrivateFtpServer();
-        if(pfs!=null) return "Private FTP server in "+pfs.getLinuxServerAccount().getHome();
-
-        return null;
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        packageName=in.readUTF().intern();
+        server=in.readCompressedInt();
+        ip_address=in.readCompressedInt();
+        port=in.readCompressedInt();
+        net_protocol=in.readUTF().intern();
+        app_protocol=in.readUTF().intern();
+        open_firewall=in.readBoolean();
+        monitoring_enabled=in.readBoolean();
+        monitoring_parameters=in.readNullUTF();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-        AOServConnector conn=getConnector();
+        AOServConnector conn=table.connector;
 
-        // Must be able to access business
-        BusinessServer bs = getBusinessServer();
-        if(bs==null) reasons.add(new CannotRemoveReason<Business>("Unable to access business_server: "+business_server));
-        else if(bs.getBusiness()==null) reasons.add(new CannotRemoveReason<Business>("Unable to access business: "+bs.accounting));
+        // Must be able to access package
+        if(getPackage()==null) reasons.add(new CannotRemoveReason<Package>("Unable to access package: "+packageName));
 
         // ao_servers
         for(AOServer ao : conn.getAoServers().getRows()) {
@@ -519,12 +422,12 @@ implements
             if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
             if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
         }
-
+        
         // httpd_shared_tomcats
         for(HttpdSharedTomcat hst : conn.getHttpdSharedTomcats().getRows()) {
             if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
         }
-
+        
         // httpd_tomcat_std_sites
         for(HttpdTomcatStdSite hts : conn.getHttpdTomcatStdSites().getRows()) {
             HttpdSite hs=hts.getHttpdTomcatSite().getHttpdSite();
@@ -536,7 +439,7 @@ implements
             if(equals(hw.getNetBind())) {
                 HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
                 if(hst!=null) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
-
+                
                 HttpdTomcatSite hts=hw.getHttpdTomcatSite();
                 if(hts!=null) {
                     HttpdSite hs=hts.getHttpdSite();
@@ -544,10 +447,10 @@ implements
                 }
             }
         }
-
+        
         // mysql_servers
         for(MySQLServer ms : conn.getMysqlServers().getRows()) {
-            if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<MySQLServer>("Used for MySQL server "+ms.getName()+" on "+ms.getAoServer().getHostname(), ms));
+            if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<MySQLServer>("Used for MySQL server "+ms.getName()+" on "+ms.getAOServer().getHostname(), ms));
         }
 
         // postgres_servers
@@ -559,7 +462,7 @@ implements
     }
 
     public void remove() throws IOException, SQLException {
-        getConnector().requestUpdateIL(
+        table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.NET_BINDS,
@@ -568,7 +471,7 @@ implements
     }
 
     public void setMonitoringEnabled(boolean monitoring_enabled) throws IOException, SQLException {
-        getConnector().requestUpdateIL(
+        table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.SET_NET_BIND_MONITORING,
             pkey,
@@ -577,13 +480,31 @@ implements
     }
 
     public void setOpenFirewall(boolean open_firewall) throws IOException, SQLException {
-        getConnector().requestUpdateIL(
+        table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.SET_NET_BIND_OPEN_FIREWALL,
             pkey,
             open_firewall
         );
     }
-     */
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(packageName);
+        out.writeCompressedInt(server);
+        out.writeCompressedInt(ip_address);
+        out.writeCompressedInt(port);
+        out.writeUTF(net_protocol);
+        out.writeUTF(app_protocol);
+        out.writeBoolean(open_firewall);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
+            out.writeBoolean(monitoring_enabled);
+        } else {
+            out.writeCompressedInt(monitoring_enabled?300000:-1);
+            out.writeNullUTF(null);
+            out.writeNullUTF(null);
+            out.writeNullUTF(null);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_58)>=0) out.writeNullUTF(monitoring_parameters);
+    }
 }

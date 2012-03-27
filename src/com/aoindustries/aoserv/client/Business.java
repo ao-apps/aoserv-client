@@ -1,46 +1,44 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.WrappedException;
-import com.aoindustries.util.i18n.CurrencyComparator;
-import com.aoindustries.util.i18n.Money;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.IntList;
+import com.aoindustries.util.SortedArrayList;
+import com.aoindustries.util.StringUtility;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
-import java.security.Principal;
-import java.security.acl.Group;
+import java.math.RoundingMode;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Currency;
-import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 
 /**
- * A <code>Business</code> is one distinct set of resources and permissions.
+ * A <code>Business</code> is one distinct set of packages, resources, and permissions.
 * Some businesses may have child businesses associated with them.  When that is the
  * case, the top level business is ultimately responsible for all actions taken and
  * resources used by itself and all child businesses.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class Business
-extends AOServObjectAccountingCodeKey
-implements
-    Comparable<Business>,
-    DtoFactory<com.aoindustries.aoserv.client.dto.Business>,
-    Group /* TODO: implements Disablable*/ {
+final public class Business extends CachedObjectStringKey<Business> implements Disablable, Comparable<Business> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_ACCOUNTING=0;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+
     /**
      * The maximum depth of the business tree.
      */
@@ -49,610 +47,26 @@ implements
     /**
      * The minimum payment for auto-enabling accounts, in pennies.
      */
-    // TODO: Currencies: public static final BigDecimal MINIMUM_PAYMENT = BigDecimal.valueOf(3000, 2);
+    public static final BigDecimal MINIMUM_PAYMENT = BigDecimal.valueOf(3000, 2);
 
-    /**
-     * The default inbound email burst before rate limiting.
-     */
-    public static final int DEFAULT_EMAIL_IN_BURST = 1000;
+    String contractVersion;
+    private long created;
 
-    /**
-     * The default sustained inbound email rate in emails/second.
-     */
-    public static final float DEFAULT_EMAIL_IN_RATE = 10f;
+    private long canceled;
 
-    /**
-     * The default outbound email burst before rate limiting.
-     */
-    public static final int DEFAULT_EMAIL_OUT_BURST = 200;
-
-    /**
-     * The default sustained outbound email rate in emails/second.
-     */
-    public static final float DEFAULT_EMAIL_OUT_RATE = .2f;
-
-    /**
-     * The default relay email burst before rate limiting.
-     */
-    public static final int DEFAULT_EMAIL_RELAY_BURST = 100;
-
-    /**
-     * The default sustained relay email rate in emails/second.
-     */
-    public static final float DEFAULT_EMAIL_RELAY_RATE = .1f;
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -3769454441678529319L;
-
-    private String contractVersion;
-    final private long created;
-    final private Long canceled;
     private String cancelReason;
-    private AccountingCode parent;
-    final private boolean canAddBackupServer;
-    final private boolean canAddBusinesses;
-    final private boolean canSeePrices;
-    final private Integer disableLog;
-    private String doNotDisableReason;
-    final private boolean autoEnable;
-    final private boolean billParent;
-    final private int packageDefinition;
-    private UserId createdBy;
-    final private Integer emailInBurst;
-    final private Float emailInRate;
-    final private Integer emailOutBurst;
-    final private Float emailOutRate;
-    final private Integer emailRelayBurst;
-    final private Float emailRelayRate;
 
-    public Business(
-        AOServConnector connector,
-        AccountingCode accounting,
-        String contractVersion,
-        long created,
-        Long canceled,
-        String cancelReason,
-        AccountingCode parent,
-        boolean canAddBackupServer,
-        boolean canAddBusinesses,
-        boolean canSeePrices,
-        Integer disableLog,
-        String doNotDisableReason,
-        boolean autoEnable,
-        boolean billParent,
-        int packageDefinition,
-        UserId createdBy,
-        Integer emailInBurst,
-        Float emailInRate,
-        Integer emailOutBurst,
-        Float emailOutRate,
-        Integer emailRelayBurst,
-        Float emailRelayRate
-    ) {
-        super(connector, accounting);
-        this.contractVersion = contractVersion;
-        this.created = created;
-        this.canceled = canceled;
-        this.cancelReason = cancelReason;
-        this.parent = parent;
-        this.canAddBackupServer = canAddBackupServer;
-        this.canAddBusinesses = canAddBusinesses;
-        this.canSeePrices = canSeePrices;
-        this.disableLog = disableLog;
-        this.doNotDisableReason = doNotDisableReason;
-        this.autoEnable = autoEnable;
-        this.billParent = billParent;
-        this.packageDefinition = packageDefinition;
-        this.createdBy = createdBy;
-        this.emailInBurst = emailInBurst;
-        this.emailInRate = emailInRate;
-        this.emailOutBurst = emailOutBurst;
-        this.emailOutRate = emailOutRate;
-        this.emailRelayBurst = emailRelayBurst;
-        this.emailRelayRate = emailRelayRate;
-        intern();
-    }
+    String parent;
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
+    private boolean can_add_backup_server;
+    private boolean can_add_businesses;
+    private boolean can_see_prices;
 
-    private void intern() {
-        contractVersion = intern(contractVersion);
-        cancelReason = intern(cancelReason);
-        parent = intern(parent);
-        doNotDisableReason = intern(doNotDisableReason);
-        createdBy = intern(createdBy);
-    }
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(Business other) {
-        return getKey().compareTo(other.getKey());
-    }
-    // </editor-fold>
+    int disable_log;
+    private String do_not_disable_reason;
+    private boolean auto_enable;
+    private boolean bill_parent;
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_ACCOUNTING = getMethodColumn(Business.class, "accounting");
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier for this business.")
-    public AccountingCode getAccounting() {
-        return getKey();
-    }
-
-    @SchemaColumn(order=1, description="the version number of the contract")
-    public String getContractVersion() {
-    	return contractVersion;
-    }
-
-    @SchemaColumn(order=2, description="the time the account was created")
-    public Timestamp getCreated() {
-    	return new Timestamp(created);
-    }
-
-    @SchemaColumn(order=3, description="the time the account was deactivated")
-    public Timestamp getCanceled() {
-    	return canceled==null ? null : new Timestamp(canceled);
-    }
-
-    @SchemaColumn(order=4, description="the reason the account was canceled")
-    public String getCancelReason() {
-        return cancelReason;
-    }
-
-    public static final MethodColumn COLUMN_PARENT_BUSINESS = getMethodColumn(Business.class, "parentBusiness");
-    /**
-     * Gets the parent of this business or <code>null</code> if filtered or is top-level business.
-     */
-    @DependencySingleton
-    @SchemaColumn(order=5, index=IndexType.INDEXED, description="the parent business to this one")
-    public Business getParentBusiness() throws RemoteException {
-        if(parent==null) return null;
-        return getConnector().getBusinesses().filterUnique(COLUMN_ACCOUNTING, parent);
-    }
-
-    @SchemaColumn(order=6, description="the business may add servers to the backup system")
-    public boolean getCanAddBackupServer() {
-        return canAddBackupServer;
-    }
-
-    @SchemaColumn(order=7, description="if <code>true</code> this business can create and be the parent of other businesses")
-    public boolean getCanAddBusinesses() {
-    	return canAddBusinesses;
-    }
-
-    @SchemaColumn(order=8, description="control whether prices will be visible or filtered")
-    public boolean getCanSeePrices() {
-        return canSeePrices;
-    }
-
-    public static final MethodColumn COLUMN_DISABLE_LOG = getMethodColumn(Business.class, "disableLog");
-    // Caused cycle in dependency DAG: @DependencySingleton
-    @SchemaColumn(order=9, index=IndexType.INDEXED, description="indicates the business is disabled")
-    public DisableLog getDisableLog() throws RemoteException {
-        if(disableLog==null) return null;
-        return getConnector().getDisableLogs().get(disableLog);
-    }
-    public boolean isDisabled() {
-        return disableLog!=null;
-    }
-
-    @SchemaColumn(order=10, description="a reason why we should not disable the account")
-    public String getDoNotDisableReason() {
-        return doNotDisableReason;
-    }
-
-    @SchemaColumn(order=11, description="allows the account to be automatically reenabled on payment")
-    public boolean isAutoEnable() {
-        return autoEnable;
-    }
-
-    @SchemaColumn(order=12, description="if <code>true</code>, the parent business will be charged for all resources used by this account")
-    public boolean getBillParent() {
-        return billParent;
-    }
-
-    /**
-     * May be filtered.
-     */
-    public static final MethodColumn COLUMN_PACKAGE_DEFINITION = getMethodColumn(Business.class, "packageDefinition");
-    @DependencySingleton
-    @SchemaColumn(order=13, index=IndexType.INDEXED, description="the definition of the package")
-    public PackageDefinition getPackageDefinition() throws RemoteException {
-        return getConnector().getPackageDefinitions().filterUnique(PackageDefinition.COLUMN_PKEY, packageDefinition);
-    }
-
-    /**
-     * May be filtered.  May also be null for the root business only.
-     */
-    public static final MethodColumn COLUMN_CREATED_BY = getMethodColumn(Business.class, "createdBy");
-    @DependencySingleton
-    @SchemaColumn(order=14, index=IndexType.INDEXED, description="the user who added this business")
-    public BusinessAdministrator getCreatedBy() throws RemoteException {
-        if(createdBy==null) return null;
-        try {
-            return getConnector().getBusinessAdministrators().get(createdBy);
-        } catch(NoSuchElementException err) {
-            // Filtered
-            return null;
-        }
-    }
-
-    /**
-     * Gets the inbound burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>null</code> indicates unlimited.
-     */
-    @SchemaColumn(order=15, description="the maximum burst of inbound email before limiting begins")
-    public Integer getEmailInBurst() {
-        return emailInBurst;
-    }
-
-    /**
-     * Gets the inbound sustained email rate in emails/second.
-     * A value of <code>null</code> indicates unlimited.
-     */
-    @SchemaColumn(order=16, description="the number of sustained inbound emails per second")
-    public Float getEmailInRate() {
-        return emailInRate;
-    }
-
-    /**
-     * Gets the outbound burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>null</code> indicates unlimited.
-     */
-    @SchemaColumn(order=17, description="the maximum burst of outbound email before limiting begins")
-    public Integer getEmailOutBurst() {
-        return emailOutBurst;
-    }
-
-    /**
-     * Gets the outbound sustained email rate in emails/second.
-     * A value of <code>null</code> indicates unlimited.
-     */
-    @SchemaColumn(order=18, description="the number of sustained outbound emails per second")
-    public Float getEmailOutRate() {
-        return emailOutRate;
-    }
-
-    /**
-     * Gets the relay burst limit for emails, the number of emails that may be sent before limiting occurs.
-     * A value of <code>null</code> indicates unlimited.
-     */
-    @SchemaColumn(order=19, description="the maximum burst of relay email before limiting begins")
-    public Integer getEmailRelayBurst() {
-        return emailRelayBurst;
-    }
-
-    /**
-     * Gets the relay sustained email rate in emails/second.
-     * A value of <code>null</code> indicates unlimited.
-     */
-    @SchemaColumn(order=20, description="the number of sustained relay emails per second")
-    public Float getEmailRelayRate() {
-        return emailRelayRate;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public Business(AOServConnector connector, com.aoindustries.aoserv.client.dto.Business dto) throws ValidationException {
-        this(
-            connector,
-            getAccountingCode(dto.getAccounting()),
-            dto.getContractVersion(),
-            getTimeMillis(dto.getCreated()),
-            getTimeMillis(dto.getCanceled()),
-            dto.getCancelReason(),
-            getAccountingCode(dto.getParent()),
-            dto.isCanAddBackupServer(),
-            dto.isCanAddBusinesses(),
-            dto.isCanSeePrices(),
-            dto.getDisableLog(),
-            dto.getDoNotDisableReason(),
-            dto.isAutoEnable(),
-            dto.isBillParent(),
-            dto.getPackageDefinition(),
-            getUserId(dto.getCreatedBy()),
-            dto.getEmailInBurst(),
-            dto.getEmailInRate(),
-            dto.getEmailOutBurst(),
-            dto.getEmailOutRate(),
-            dto.getEmailRelayBurst(),
-            dto.getEmailRelayRate()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.Business getDto() {
-        return new com.aoindustries.aoserv.client.dto.Business(getDto(getKey()), contractVersion, created, canceled, cancelReason, getDto(parent), canAddBackupServer, canAddBusinesses, canSeePrices, disableLog, doNotDisableReason, autoEnable, billParent, packageDefinition, getDto(createdBy), emailInBurst, emailInRate, emailOutBurst, emailOutRate, emailRelayBurst, emailRelayRate);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    /**
-     * Gets the Brand for this business or <code>null</code> if not a brand.
-     */
-    @DependentObjectSet
-    public IndexedSet<AOServRole> getAoservRoles() throws RemoteException {
-        return getConnector().getAoservRoles().filterIndexed(AOServRole.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSingleton
-    public Brand getBrand() throws RemoteException {
-        return getConnector().getBrands().filterUnique(Brand.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Business> getChildBusinesses() throws RemoteException {
-        return getConnector().getBusinesses().filterIndexed(COLUMN_PARENT_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<BusinessServer> getBusinessServers() throws RemoteException {
-        return getConnector().getBusinessServers().filterIndexed(BusinessServer.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<DisableLog> getDisableLogs() throws RemoteException {
-        return getConnector().getDisableLogs().filterIndexed(DisableLog.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<GroupName> getGroupNames() throws RemoteException {
-        return getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Resource> getResources() throws RemoteException {
-        return getConnector().getResources().filterIndexed(Resource.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<PackageDefinitionBusiness> getPackageDefinitionBusinesses() throws RemoteException {
-        return getConnector().getPackageDefinitionBusinesses().filterIndexed(PackageDefinitionBusiness.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Server> getServers() throws RemoteException {
-        return getConnector().getServers().filterIndexed(Server.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Username> getUsernames() throws RemoteException {
-        return getConnector().getUsernames().filterIndexed(Username.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCardProcessor> getCreditCardProcessors() throws RemoteException {
-    	return getConnector().getCreditCardProcessors().filterIndexed(CreditCardProcessor.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-    	return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
-    	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactionsByCreditCardAccounting() throws RemoteException {
-    	return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_CREDIT_CARD_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActionsByOldBusiness() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActionsByNewBusiness() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_BUSINESS, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Transaction> getTransactionsBySourceAccounting() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_SOURCE_BUSINESS, this);
-    }
-
-    /**
-     * Determines if this <code>Business</code> is the other business
-     * or a parent of it.  This is often used for access control between
-     * accounts.
-     */
-    public boolean isBusinessOrParentOf(Business other) throws RemoteException {
-        while(other!=null) {
-            if(equals(other)) return true;
-            other = other.getParentBusiness();
-        }
-        return false;
-    }
-
-    /**
-     * Gets all of the <code>BusinessProfile</code>s for this <code>Business</code>.
-     */
-    @DependentObjectSet
-    public IndexedSet<BusinessProfile> getBusinessProfiles() throws RemoteException {
-        return getConnector().getBusinessProfiles().filterIndexed(BusinessProfile.COLUMN_BUSINESS, this);
-    }
-
-    /**
-     * Gets the <code>BusinessProfile</code> with the highest priority or <code>null</code> if there
-     * are no business profiles for this <code>Business</code>.
-     */
-    public BusinessProfile getBusinessProfile() throws RemoteException {
-        return Collections.min(getBusinessProfiles());
-    }
-
-    /**
-     * Gets all active package definitions for this business.
-     */
-    /* TODO
-    public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
-        // Determine the active packages per category
-        List<PackageCategory> allCategories = getConnector().getPackageCategories().getRows();
-        Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<PackageCategory,List<PackageDefinition>>(allCategories.size()*4/3+1);
-        for(PackageCategory category : allCategories) {
-            List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
-            List<PackageDefinition> definitions = new ArrayList<PackageDefinition>(allDefinitions.size());
-            for(PackageDefinition definition : allDefinitions) {
-                if(definition.isActive()) definitions.add(definition);
-            }
-            if(!definitions.isEmpty()) categories.put(category, Collections.unmodifiableList(definitions));
-        }
-        return Collections.unmodifiableMap(categories);
-    }*/
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Group">
-    /**
-     * A group contains all users of its own business plus all parent businesses.
-     */
-    @Override
-    public boolean addMember(Principal user) {
-        if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
-        try {
-            Business userBusiness = ((BusinessAdministrator)user).getUsername().getBusiness();
-            Business thisBusiness = this;
-            do {
-                if(userBusiness.equals(thisBusiness)) return false;
-                thisBusiness = thisBusiness.getParentBusiness();
-            } while(thisBusiness!=null);
-            throw new UnsupportedOperationException("Not implemented");
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    /**
-     * A group contains all users of its own business plus all parent businesses.
-     */
-    @Override
-    public boolean removeMember(Principal user) {
-        if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
-        try {
-            Business userBusiness = ((BusinessAdministrator)user).getUsername().getBusiness();
-            Business thisBusiness = this;
-            do {
-                if(userBusiness.equals(thisBusiness)) throw new UnsupportedOperationException("Not implemented");
-                thisBusiness = thisBusiness.getParentBusiness();
-            } while(thisBusiness!=null);
-            return false;
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    /**
-     * A group contains all users of its own business plus all parent businesses.
-     */
-    @Override
-    public boolean isMember(Principal user) {
-        if(!(user instanceof BusinessAdministrator)) throw new IllegalArgumentException("Not BusinessAdministrator: "+user.getName());
-        try {
-            Business userBusiness = ((BusinessAdministrator)user).getUsername().getBusiness();
-            Business thisBusiness = this;
-            do {
-                if(userBusiness.equals(thisBusiness)) return true;
-                thisBusiness = thisBusiness.getParentBusiness();
-            } while(thisBusiness!=null);
-            return false;
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-
-    /**
-     * A group contains all users of its own business plus all parent businesses.
-     */
-    @Override
-    public Enumeration<BusinessAdministrator> members() {
-        List<BusinessAdministrator> members = new ArrayList<BusinessAdministrator>();
-        try {
-            Business thisBusiness = this;
-            do {
-                for(Username un : thisBusiness.getUsernames()) {
-                    BusinessAdministrator ba = un.getBusinessAdministrator();
-                    if(ba!=null) members.add(ba);
-                }
-                thisBusiness = thisBusiness.getParentBusiness();
-            } while(thisBusiness!=null);
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-        return Collections.enumeration(members);
-    }
-
-    @Override
-    public String getName() {
-        return getKey().toString();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Account Balances">
-    /**
-     * <p>
-     * Gets the account balances for this account.  This will always include
-     * the currencies used for any package that is part of the business, even
-     * if there is not any transactions for that currency.
-     * </p>
-     * <p>
-     * If the business has no packages, will default to $0.00.
-     * </p>
-     */
-    public SortedMap<Currency,Money> getAccountBalances() throws RemoteException {
-        SortedMap<Currency,Money> totals = new TreeMap<Currency,Money>(CurrencyComparator.getInstance());
-        // Add the currency that is used by the package definition of this account
-        Currency pdCurrency = getPackageDefinition().getMonthlyRate().getCurrency();
-        totals.put(pdCurrency, new Money(pdCurrency, BigDecimal.ZERO));
-
-        // Get the total for each currency
-        for(Transaction tr : getTransactions()) {
-            if(tr.getStatus()!=Transaction.Status.N) {
-                Money amount = tr.getAmount();
-                Currency currency = amount.getCurrency();
-                Money total = totals.get(currency);
-                if(total==null) total = amount;
-                else total = total.add(amount);
-                totals.put(currency, total);
-            }
-        }
-
-        // Add $0.00 if there is no balance yet
-        if(totals.isEmpty()) {
-            Currency usd = Currency.getInstance("USD");
-            totals.put(usd, new Money(usd, BigDecimal.ZERO));
-        }
-        return AoCollections.optimalUnmodifiableSortedMap(totals);
-    }
-
-    /**
-     * Determines if this account has any non-zero balance in any currency.
-     */
-    public boolean hasNonZeroBalance() throws RemoteException {
-        for(Money balance : getAccountBalances().values()) {
-            if(balance.getValue().compareTo(BigDecimal.ZERO)!=0) return true;
-        }
-        return false;
-    }
-
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public int addBusinessProfile(
         String name,
         boolean isPrivate,
@@ -670,7 +84,7 @@ implements
         String technicalContact,
         String technicalEmail
     ) throws IOException, SQLException {
-        return getConnector().getBusinessProfiles().addBusinessProfile(
+        return table.connector.getBusinessProfiles().addBusinessProfile(
             this,
             name,
             isPrivate,
@@ -693,26 +107,178 @@ implements
     public int addBusinessServer(
         Server server
     ) throws IOException, SQLException {
-        return getConnector().getBusinessServers().addBusinessServer(this, server);
+        return table.connector.getBusinessServers().addBusinessServer(this, server);
     }
-    */
 
-    /* TODO
+    public int addCreditCard(
+        CreditCardProcessor processor,
+        String groupName,
+        String cardInfo,
+        String providerUniqueId,
+        String firstName,
+        String lastName,
+        String companyName,
+        String email,
+        String phone,
+        String fax,
+        String customerTaxId,
+        String streetAddress1,
+        String streetAddress2,
+        String city,
+        String state,
+        String postalCode,
+        CountryCode countryCode,
+        String principalName,
+        String description,
+        String cardNumber,
+        byte expirationMonth,
+        short expirationYear
+    ) throws IOException, SQLException {
+	return table.connector.getCreditCards().addCreditCard(
+            processor,
+            this,
+            groupName,
+            cardInfo,
+            providerUniqueId,
+            firstName,
+            lastName,
+            companyName,
+            email,
+            phone,
+            fax,
+            customerTaxId,
+            streetAddress1,
+            streetAddress2,
+            city,
+            state,
+            postalCode,
+            countryCode,
+            principalName,
+            description,
+            cardNumber,
+            expirationMonth,
+            expirationYear
+	);
+    }
+
+    /**
+     * Adds a transaction in the pending state.
+     */
+    public int addCreditCardTransaction(
+        CreditCardProcessor processor,
+        String groupName,
+        boolean testMode,
+        int duplicateWindow,
+        String orderNumber,
+        String currencyCode,
+        BigDecimal amount,
+        BigDecimal taxAmount,
+        boolean taxExempt,
+        BigDecimal shippingAmount,
+        BigDecimal dutyAmount,
+        String shippingFirstName,
+        String shippingLastName,
+        String shippingCompanyName,
+        String shippingStreetAddress1,
+        String shippingStreetAddress2,
+        String shippingCity,
+        String shippingState,
+        String shippingPostalCode,
+        String shippingCountryCode,
+        boolean emailCustomer,
+        String merchantEmail,
+        String invoiceNumber,
+        String purchaseOrderNumber,
+        String description,
+        BusinessAdministrator creditCardCreatedBy,
+        String creditCardPrincipalName,
+        Business creditCardAccounting,
+        String creditCardGroupName,
+        String creditCardProviderUniqueId,
+        String creditCardMaskedCardNumber,
+        String creditCardFirstName,
+        String creditCardLastName,
+        String creditCardCompanyName,
+        String creditCardEmail,
+        String creditCardPhone,
+        String creditCardFax,
+        String creditCardCustomerTaxId,
+        String creditCardStreetAddress1,
+        String creditCardStreetAddress2,
+        String creditCardCity,
+        String creditCardState,
+        String creditCardPostalCode,
+        String creditCardCountryCode,
+        String creditCardComments,
+        long authorizationTime,
+        String authorizationPrincipalName
+    ) throws IOException, SQLException {
+	return table.connector.getCreditCardTransactions().addCreditCardTransaction(
+            processor,
+            this,
+            groupName,
+            testMode,
+            duplicateWindow,
+            orderNumber,
+            currencyCode,
+            amount,
+            taxAmount,
+            taxExempt,
+            shippingAmount,
+            dutyAmount,
+            shippingFirstName,
+            shippingLastName,
+            shippingCompanyName,
+            shippingStreetAddress1,
+            shippingStreetAddress2,
+            shippingCity,
+            shippingState,
+            shippingPostalCode,
+            shippingCountryCode,
+            emailCustomer,
+            merchantEmail,
+            invoiceNumber,
+            purchaseOrderNumber,
+            description,
+            creditCardCreatedBy,
+            creditCardPrincipalName,
+            creditCardAccounting,
+            creditCardGroupName,
+            creditCardProviderUniqueId,
+            creditCardMaskedCardNumber,
+            creditCardFirstName,
+            creditCardLastName,
+            creditCardCompanyName,
+            creditCardEmail,
+            creditCardPhone,
+            creditCardFax,
+            creditCardCustomerTaxId,
+            creditCardStreetAddress1,
+            creditCardStreetAddress2,
+            creditCardCity,
+            creditCardState,
+            creditCardPostalCode,
+            creditCardCountryCode,
+            creditCardComments,
+            authorizationTime,
+            authorizationPrincipalName
+	);
+    }
+
     public int addDisableLog(
         String disableReason
     ) throws IOException, SQLException {
-        return getConnector().getDisableLogs().addDisableLog(this, disableReason);
-    }*/
+        return table.connector.getDisableLogs().addDisableLog(this, disableReason);
+    }
 
-    /* TODO
     public void addNoticeLog(
-        String billingContact,
-        String emailAddress,
-        int balance,
-        String type,
-        int transid
+	String billingContact,
+	String emailAddress,
+	BigDecimal balance,
+	String type,
+	int transid
     ) throws IOException, SQLException {
-	    getConnector().getNoticeLogs().addNoticeLog(
+	    table.connector.getNoticeLogs().addNoticeLog(
             pkey,
             billingContact,
             emailAddress,
@@ -722,31 +288,111 @@ implements
 	);
     }
 
+    public int addPackage(
+	String name,
+        PackageDefinition packageDefinition
+    ) throws IOException, SQLException {
+	return table.connector.getPackages().addPackage(
+            name,
+            this,
+            packageDefinition
+	);
+    }
+
+    public int addTransaction(
+        Business sourceBusiness,
+	BusinessAdministrator business_administrator,
+	TransactionType type,
+	String description,
+	int quantity,
+	int rate,
+        PaymentType paymentType,
+        String paymentInfo,
+        CreditCardProcessor processor,
+	byte payment_confirmed
+    ) throws IOException, SQLException {
+	return table.connector.getTransactions().addTransaction(
+            this,
+            sourceBusiness,
+            business_administrator,
+            type.pkey,
+            description,
+            quantity,
+            rate,
+            paymentType,
+            paymentInfo,
+            processor,
+            payment_confirmed
+	);
+    }
+
+    public boolean canAddBackupServer() {
+        return can_add_backup_server;
+    }
+
+    public boolean canAddBusinesses() {
+	return can_add_businesses;
+    }
+
+    public void cancel(String cancelReason) throws IllegalArgumentException, IOException, SQLException {
+        // Automatically disable if not already disabled
+        if(disable_log==-1) {
+            new SimpleAOClient(table.connector).disableBusiness(pkey, "Account canceled");
+        }
+
+        // Now cancel the account
+        if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
+        final String finalCancelReason = cancelReason;
+        table.connector.requestUpdate(
+            true,
+            new AOServConnector.UpdateRequest() {
+                IntList invalidateList;
+
+                public void writeRequest(CompressedDataOutputStream out) throws IOException {
+                    out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
+                    out.writeUTF(pkey);
+                    out.writeNullUTF(finalCancelReason);
+                }
+
+                public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+                    int code=in.readByte();
+                    if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+                    else {
+                        AOServProtocol.checkResult(code, in);
+                        throw new IOException("Unexpected response code: "+code);
+                    }
+                }
+
+                public void afterRelease() {
+                    table.connector.tablesUpdated(invalidateList);
+                }
+            }
+        );
+    }
+
+    public boolean canCancel() throws IOException, SQLException {
+        return canceled==-1 && !isRootBusiness();
+    }
+    
     public boolean isRootBusiness() throws IOException, SQLException {
-        return pkey.equals(getConnector().getBusinesses().getRootAccounting());
+        return pkey.equals(table.connector.getBusinesses().getRootAccounting());
     }
 
     public boolean canDisable() throws IOException, SQLException {
         // already disabled
-        if(disableLog!=null) return false;
-
+        if(disable_log!=-1) return false;
+        
         if(isRootBusiness()) return false;
 
-        // Can only disabled when all dependent objects are already disabled
-        for(HttpdSharedTomcat hst : getHttpdSharedTomcats()) if(hst.disableLog==null) return false;
-        for(EmailPipe ep : getEmailPipes()) if(ep.disableLog==null) return false;
-        for(CvsRepository cr : getCvsRepositories()) if(cr.disableLog==null) return false;
-        for(Username un : getUsernames()) if(un.disableLog==null) return false;
-        for(HttpdSite hs : getHttpdSites()) if(hs.disableLog==null) return false;
-        for(EmailList el : getEmailLists()) if(el.disableLog==null) return false;
-        for(EmailSmtpRelay ssr : getEmailSmtpRelays()) if(ssr.disableLog==null) return false;
-
+        // packages
+        for(Package pk : getPackages()) if(pk.disable_log==-1) return false;
+        
         return true;
     }
 
     public boolean canEnable() throws SQLException, IOException {
         // Cannot enable a canceled business
-        if(canceled!=null) return false;
+        if(canceled!=-1) return false;
 
         // Can only enable if it is disabled
         DisableLog dl=getDisableLog();
@@ -754,171 +400,294 @@ implements
         else return dl.canEnable();
     }
 
-    public void disable(DisableLog dl) throws IOException, SQLException {
-        service.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
+    public boolean canSeePrices() {
+        return can_see_prices;
     }
 
+    public void disable(DisableLog dl) throws IOException, SQLException {
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
+    }
+    
     public void enable() throws IOException, SQLException {
-        service.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
+    }
+
+    public BigDecimal getAccountBalance() throws IOException, SQLException {
+	return table.connector.getTransactions().getAccountBalance(pkey);
     }
 
     public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
-        return getConnector().getTransactions().getAccountBalance(pkey, before);
-    }*/
+	return table.connector.getTransactions().getAccountBalance(pkey, before);
+    }
+
+    /**
+     * @see  #getAccountBalance()
+     */
+    public String getAccountBalanceString() throws IOException, SQLException {
+        return "$"+getAccountBalance();
+    }
 
     /**
      * @see  #getAccountBalance(long)
      */
-    /*
     public String getAccountBalanceString(long before) throws IOException, SQLException {
-        return "$"+getAccountBalance(before).toPlainString();
+        return "$"+getAccountBalance(before);
     }
 
+    public String getAccounting() {
+	return pkey;
+    }
+
+    public boolean getAutoEnable() {
+        return auto_enable;
+    }
+    
+    public boolean billParent() {
+        return bill_parent;
+    }
+    
     public BigDecimal getAutoEnableMinimumPayment() throws IOException, SQLException {
-        BigDecimal balance = getAccountBalance();
-        if(balance.compareTo(BigDecimal.ZERO)<=0) return BigDecimal.valueOf(0, 2);
-        BigDecimal minimum = balance.divide(BigDecimal.valueOf(2), RoundingMode.CEILING);
+        BigDecimal balance=getAccountBalance();
+        if(balance.signum()<0) return BigDecimal.valueOf(0, 2);
+        BigDecimal minimum = balance.divide(BigDecimal.valueOf(2), RoundingMode.DOWN);
         if(minimum.compareTo(MINIMUM_PAYMENT)<0) minimum=MINIMUM_PAYMENT;
         if(minimum.compareTo(balance)>0) minimum=balance;
         return minimum;
-    }*/
+    }
 
+    public String getDoNotDisableReason() {
+        return do_not_disable_reason;
+    }
+    
     /**
      * Gets the <code>Business</code> in the business tree that is one level down
      * from the top level business.
      */
-    /* TODO
     public Business getTopLevelBusiness() throws IOException, SQLException {
-        String rootAccounting=getConnector().getBusinesses().getRootAccounting();
+        String rootAccounting=table.connector.getBusinesses().getRootAccounting();
         Business bu=this;
         Business tempParent;
-        while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting()==rootAccounting) bu=tempParent; // OK - interned
+        while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
         return bu;
-    }*/
+    }
 
     /**
      * Gets the <code>Business</code> the is responsible for paying the bills created by this business.
      */
-    /* TODO
     public Business getAccountingBusiness() throws SQLException, IOException {
         Business bu=this;
         while(bu.bill_parent) {
             bu=bu.getParentBusiness();
-            if(bu==null) throw new AssertionError("Unable to find the accounting business for '"+pkey+'\'');
+            if(bu==null) throw new SQLException("Unable to find the accounting business for '"+pkey+'\'');
         }
         return bu;
     }
 
-    public BusinessServer getBusinessServer(Server server) throws IOException, SQLException {
-        return getConnector().getBusinessServers().getBusinessServer(pkey, server.pkey);
+    /**
+     * Gets the <code>BusinessProfile</code> with the highest priority.
+     */
+    public BusinessProfile getBusinessProfile() throws IOException, SQLException {
+        return table.connector.getBusinessProfiles().getBusinessProfile(this);
+    }
+
+    /**
+     * Gets a list of all <code>BusinessProfiles</code> for this <code>Business</code>
+     * sorted with the highest priority profile at the zero index.
+     */
+    public List<BusinessProfile> getBusinessProfiles() throws IOException, SQLException {
+        return table.connector.getBusinessProfiles().getBusinessProfiles(this);
+    }
+
+    public BusinessServer getBusinessServer(
+        Server server
+    ) throws IOException, SQLException {
+        return table.connector.getBusinessServers().getBusinessServer(this, server);
+    }
+    
+    public List<BusinessServer> getBusinessServers() throws IOException, SQLException {
+        return table.connector.getBusinessServers().getBusinessServers(this);
+    }
+
+    public long getCanceled() {
+	return canceled;
+    }
+
+    public String getCancelReason() {
+	return cancelReason;
+    }
+
+    public List<Business> getChildBusinesses() throws IOException, SQLException {
+        return table.connector.getBusinesses().getChildBusinesses(this);
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_ACCOUNTING: return pkey;
+            case 1: return contractVersion;
+            case 2: return new java.sql.Date(created);
+            case 3: return canceled==-1?null:new java.sql.Date(canceled);
+            case 4: return cancelReason;
+            case 5: return parent;
+            case 6: return can_add_backup_server?Boolean.TRUE:Boolean.FALSE;
+            case 7: return can_add_businesses?Boolean.TRUE:Boolean.FALSE;
+            case 8: return can_see_prices?Boolean.TRUE:Boolean.FALSE;
+            case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 10: return do_not_disable_reason;
+            case 11: return auto_enable?Boolean.TRUE:Boolean.FALSE;
+            case 12: return bill_parent?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
     public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
-    	return getConnector().getTransactions().getConfirmedAccountBalance(pkey);
+	return table.connector.getTransactions().getConfirmedAccountBalance(pkey);
     }
 
     public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
-    	return getConnector().getTransactions().getConfirmedAccountBalance(pkey, before);
+	return table.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
+    }
+
+    public String getContractVersion() {
+	return contractVersion;
+    }
+
+    public long getCreated() {
+	return created;
+    }
+
+    public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
+	return table.connector.getCreditCardProcessors().getCreditCardProcessors(this);
+    }
+
+    public List<CreditCard> getCreditCards() throws IOException, SQLException {
+	return table.connector.getCreditCards().getCreditCards(this);
     }
 
     public Server getDefaultServer() throws IOException, SQLException {
         // May be null when the account is canceled or not using servers
-	return getConnector().getBusinessServers().getDefaultServer(this);
+	return table.connector.getBusinessServers().getDefaultServer(this);
     }
 
     public boolean isDisabled() {
-        return disableLog!=null;
+        return disable_log!=-1;
+    }
+
+    public DisableLog getDisableLog() throws SQLException, IOException {
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+        return obj;
     }
 
     public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
-    	return getConnector().getEmailForwardings().getEmailForwarding(this);
+	return table.connector.getEmailForwardings().getEmailForwarding(this);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-    	return getConnector().getEmailLists().getEmailLists(this);
+	return table.connector.getEmailLists().getEmailLists(this);
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-    	return getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
+	return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
     }
 
     public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
-	return getConnector().getLinuxAccounts().getMailAccounts(this);
+	return table.connector.getLinuxAccounts().getMailAccounts(this);
     }
 
     public CreditCard getMonthlyCreditCard() throws IOException, SQLException {
-        return getConnector().getCreditCards().getMonthlyCreditCard(this);
+	return table.connector.getCreditCards().getMonthlyCreditCard(this);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
-        return getConnector().getMonthlyCharges().getMonthlyCharges(this);
+        return table.connector.getMonthlyCharges().getMonthlyCharges(this);
     }
-
-    public List<MonthlyCharge> getMonthlyChargesBySourceBusiness() throws SQLException, IOException {
-        return getConnector().getMonthlyCharges().getMonthlyChargesBySourceBusiness(this);
-    }*/
 
     /**
      * Gets an approximation of the monthly rate paid by this account.  This is not guaranteed to
      * be exactly the same as the underlying accounting database processes.
      */
-    /* TODO
     public BigDecimal getMonthlyRate() throws SQLException, IOException {
         BigDecimal total = BigDecimal.valueOf(0, 2);
         for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total = total.add(new BigDecimal(SQLUtility.getDecimal(mc.getPennies())));
         return total;
-    }*/
+    }
 
     /**
      * @see  #getMonthlyRate()
      */
-    /* TODO
     public String getMonthlyRateString() throws SQLException, IOException {
         return "$"+getMonthlyRate();
     }
 
     public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
-        return getConnector().getNoticeLogs().getNoticeLogs(this);
+        return table.connector.getNoticeLogs().getNoticeLogs(this);
+    }
+
+    public List<Package> getPackages() throws IOException, SQLException {
+	return table.connector.getPackages().getPackages(this);
+    }
+
+    public Business getParentBusiness() throws IOException, SQLException {
+        if(parent==null) return null;
+        // The parent business might not be found, even when the value is set.  This is normal due
+        // to filtering.
+        return table.connector.getBusinesses().get(parent);
     }
 
     public List<EmailDomain> getEmailDomains() throws SQLException, IOException {
-        return getConnector().getEmailDomains().getEmailDomains(this);
+        return table.connector.getEmailDomains().getEmailDomains(this);
     }
 
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.BUSINESSES;
     }
-    */
+
     /**
      * Gets the total monthly rate or <code>null</code> if unavailable.
      */
-    /* TODO
     public BigDecimal getTotalMonthlyRate() throws SQLException, IOException {
         BigDecimal sum = BigDecimal.valueOf(0, 2);
-        BigDecimal monthlyRate = getPackageDefinition().getMonthlyRate();
-        if(monthlyRate==null) return null;
-        sum = sum.add(monthlyRate);
+        for (Package pack : getPackages()) {
+            BigDecimal monthlyRate = pack.getPackageDefinition().getMonthlyRate();
+            if(monthlyRate==null) return null;
+            sum = sum.add(monthlyRate);
+        }
         return sum;
     }
 
-    public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
-        return getConnector().getWhoisHistory().getWhoisHistory(this);
+    public List<Transaction> getTransactions() throws IOException, SQLException {
+        return table.connector.getTransactions().getTransactions(pkey);
     }
-    */
+
+    public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
+        return table.connector.getWhoisHistory().getWhoisHistory(this);
+    }
+
     /**
      * @deprecated  Please use <code>isBusinessOrParentOf</code> instead.
      */
-    /* TODO
     public boolean isBusinessOrParent(Business other) throws IOException, SQLException {
         return isBusinessOrParentOf(other);
     }
+
+    /**
+     * Determines if this <code>Business</code> is the other business
+     * or a parent of it.  This is often used for access control between
+     * accounts.
      */
+    public boolean isBusinessOrParentOf(Business other) throws IOException, SQLException {
+        while(other!=null) {
+            if(equals(other)) return true;
+            other=other.getParentBusiness();
+        }
+        return false;
+    }
 
     /**
      * Determines if this <code>Business</code> is a parent of the other business.
      * This is often used for access control between accounts.
      */
-    /* TODO
     public boolean isParentOf(Business other) throws IOException, SQLException {
         if(other!=null) {
             other=other.getParentBusiness();
@@ -930,17 +699,375 @@ implements
         return false;
     }
 
+    public static boolean isValidAccounting(String accounting) {
+	int len=accounting.length();
+	if(len<2 || len>32) return false;
+	char ch=accounting.charAt(0);
+	if(ch<'A' || ch>'Z') return false;
+	ch=accounting.charAt(len-1);
+	if(
+            (ch<'A' || ch>'Z')
+            && (ch<'0' || ch>'9')
+	) return false;
+	for(int c=1;c<(len-1);c++) {
+            ch=accounting.charAt(c);
+            if(
+                (ch<'A' || ch>'Z')
+                && (ch<'0' || ch>'9')
+                && ch!='_'
+            ) return false;
+	}
+	return true;
+    }
+
+    public void move(AOServer from, AOServer to, TerminalWriter out) throws IOException, SQLException {
+        if(from.equals(to)) throw new SQLException("Cannot move from AOServer "+from.getHostname()+" to AOServer "+to.getHostname()+": same AOServer");
+
+        BusinessServer fromBusinessServer=getBusinessServer(from.getServer());
+        if(fromBusinessServer==null) throw new SQLException("Unable to find BusinessServer for Business="+pkey+" and Server="+from.getHostname());
+
+        // Grant the Business access to the other server if it does not already have access
+        if(out!=null) {
+            out.boldOn();
+            out.println("Adding Business Privileges");
+            out.attributesOff();
+            out.flush();
+        }
+        BusinessServer toBusinessServer=getBusinessServer(to.getServer());
+        if(toBusinessServer==null) {
+            if(out!=null) {
+                out.print("    ");
+                out.println(to.getHostname());
+                out.flush();
+            }
+            addBusinessServer(to.getServer());
+        }
+
+        // Add the LinuxServerGroups
+        if(out!=null) {
+            out.boldOn();
+            out.println("Adding Linux Groups");
+            out.attributesOff();
+            out.flush();
+        }
+        List<LinuxServerGroup> fromLinuxServerGroups=new ArrayList<LinuxServerGroup>();
+        List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<LinuxServerGroup>();
+        {
+            for(LinuxServerGroup lsg : table.connector.getLinuxServerGroups().getRows()) {
+                Package pk=lsg.getLinuxGroup().getPackage();
+                if(pk!=null && pk.getBusiness().equals(this)) {
+                    AOServer ao=lsg.getAOServer();
+                    if(ao.equals(from)) fromLinuxServerGroups.add(lsg);
+                    else if(ao.equals(to)) toLinuxServerGroups.add(lsg);
+                }
+            }
+        }
+        for(int c=0;c<fromLinuxServerGroups.size();c++) {
+            LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
+            if(!toLinuxServerGroups.contains(lsg)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsg.name);
+                    out.print(" to ");
+                    out.println(to.getHostname());
+                    out.flush();
+                }
+                lsg.getLinuxGroup().addLinuxServerGroup(to);
+            }
+        }
+
+        // Add the LinuxServerAccounts
+        if(out!=null) {
+            out.boldOn();
+            out.println("Adding Linux Accounts");
+            out.attributesOff();
+            out.flush();
+        }
+        List<LinuxServerAccount> fromLinuxServerAccounts=new ArrayList<LinuxServerAccount>();
+        List<LinuxServerAccount> toLinuxServerAccounts=new SortedArrayList<LinuxServerAccount>();
+        {
+            List<LinuxServerAccount> lsas=table.connector.getLinuxServerAccounts().getRows();
+            for(int c=0;c<lsas.size();c++) {
+                LinuxServerAccount lsa=lsas.get(c);
+                Package pk=lsa.getLinuxAccount().getUsername().getPackage();
+                if(pk!=null && pk.getBusiness().equals(this)) {
+                    AOServer ao=lsa.getAOServer();
+                    if(ao.equals(from)) fromLinuxServerAccounts.add(lsa);
+                    else if(ao.equals(to)) toLinuxServerAccounts.add(lsa);
+                }
+            }
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(!toLinuxServerAccounts.contains(lsa)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsa.username);
+                    out.print(" to ");
+                    out.println(to.getHostname());
+                    out.flush();
+                }
+                lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
+            }
+        }
+
+        // Wait for Linux Account rebuild
+        if(out!=null) {
+            out.boldOn();
+            out.println("Waiting for Linux Account rebuild");
+            out.attributesOff();
+            out.print("    ");
+            out.println(to.getHostname());
+            out.flush();
+        }
+        to.waitForLinuxAccountRebuild();
+
+        // Copy the home directory contents
+        if(out!=null) {
+            out.boldOn();
+            out.println("Copying Home Directories");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(!toLinuxServerAccounts.contains(lsa)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsa.username);
+                    out.print(" to ");
+                    out.print(to.getHostname());
+                    out.print(": ");
+                    out.flush();
+                }
+                long byteCount=lsa.copyHomeDirectory(to);
+                if(out!=null) {
+                    out.print(byteCount);
+                    out.println(byteCount==1?" byte":" bytes");
+                    out.flush();
+                }
+            }
+        }
+
+        // Copy the cron tables
+        if(out!=null) {
+            out.boldOn();
+            out.println("Copying Cron Tables");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(!toLinuxServerAccounts.contains(lsa)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsa.username);
+                    out.print(" to ");
+                    out.print(to.getHostname());
+                    out.print(": ");
+                    out.flush();
+                }
+                String cronTable=lsa.getCronTable();
+                lsa.getLinuxAccount().getLinuxServerAccount(to).setCronTable(cronTable);
+                if(out!=null) {
+                    out.print(cronTable.length());
+                    out.println(cronTable.length()==1?" byte":" bytes");
+                    out.flush();
+                }
+            }
+        }
+
+        // Copy the passwords
+        if(out!=null) {
+            out.boldOn();
+            out.println("Copying Passwords");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(!toLinuxServerAccounts.contains(lsa)) {
+                if(out!=null) {
+                    out.print("    ");
+                    out.print(lsa.username);
+                    out.print(" to ");
+                    out.println(to.getHostname());
+                    out.flush();
+                }
+
+                lsa.copyPassword(lsa.getLinuxAccount().getLinuxServerAccount(to));
+            }
+        }
+
+        // Move IP Addresses
+        if(out!=null) {
+            out.boldOn();
+            out.println("Moving IP Addresses");
+            out.attributesOff();
+            out.flush();
+        }
+        List<IPAddress> ips=table.connector.getIpAddresses().getRows();
+        for(int c=0;c<ips.size();c++) {
+            IPAddress ip=ips.get(c);
+            if(
+                ip.isAlias()
+                && !ip.isWildcard()
+                && !ip.getNetDevice().getNetDeviceID().isLoopback()
+                && ip.getPackage().accounting.equals(pkey)
+            ) {
+                out.print("    ");
+                out.println(ip);
+                ip.moveTo(to.getServer());
+            }
+        }
+
+        // TODO: Continue development here
+
+
+
+        // Remove the LinuxServerAccounts
+        if(out!=null) {
+            out.boldOn();
+            out.println("Removing Linux Accounts");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
+            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
+            if(out!=null) {
+                out.print("    ");
+                out.print(lsa.username);
+                out.print(" on ");
+                out.println(from.getHostname());
+                out.flush();
+            }
+            lsa.remove();
+        }
+
+        // Remove the LinuxServerGroups
+        if(out!=null) {
+            out.boldOn();
+            out.println("Removing Linux Groups");
+            out.attributesOff();
+            out.flush();
+        }
+        for(int c=0;c<fromLinuxServerGroups.size();c++) {
+            LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
+            if(out!=null) {
+                out.print("    ");
+                out.print(lsg.name);
+                out.print(" on ");
+                out.println(from.getHostname());
+                out.flush();
+            }
+            lsg.remove();
+        }
+
+        // Remove access to the old server
+        if(out!=null) {
+            out.boldOn();
+            out.println("Removing Business Privileges");
+            out.attributesOff();
+            out.print("    ");
+            out.println(from.getHostname());
+            out.flush();
+        }
+        fromBusinessServer.remove();
+    }
+
+     public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        contractVersion = result.getString(2);
+        created = result.getTimestamp(3).getTime();
+        Timestamp T = result.getTimestamp(4);
+        if (result.wasNull()) canceled = -1;
+        else canceled = T.getTime();
+        cancelReason = result.getString(5);
+        parent = result.getString(6);
+        can_add_backup_server=result.getBoolean(7);
+        can_add_businesses=result.getBoolean(8);
+        can_see_prices=result.getBoolean(9);
+        disable_log=result.getInt(10);
+        if(result.wasNull()) disable_log=-1;
+        do_not_disable_reason=result.getString(11);
+        auto_enable=result.getBoolean(12);
+        bill_parent=result.getBoolean(13);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        contractVersion=StringUtility.intern(in.readNullUTF());
+        created=in.readLong();
+        canceled=in.readLong();
+        cancelReason=in.readNullUTF();
+        parent=StringUtility.intern(in.readNullUTF());
+        can_add_backup_server=in.readBoolean();
+        can_add_businesses=in.readBoolean();
+        can_see_prices=in.readBoolean();
+        disable_log=in.readCompressedInt();
+        do_not_disable_reason=in.readNullUTF();
+        auto_enable=in.readBoolean();
+        bill_parent=in.readBoolean();
+    }
+
     public void setAccounting(String accounting) throws SQLException, IOException {
         if(!isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
     }
-    */
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
+        out.writeLong(created);
+        out.writeLong(canceled);
+        out.writeNullUTF(cancelReason);
+        out.writeNullUTF(parent);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
+        out.writeBoolean(can_add_businesses);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) out.writeBoolean(can_see_prices);
+        out.writeCompressedInt(disable_log);
+        out.writeNullUTF(do_not_disable_reason);
+        out.writeBoolean(auto_enable);
+        out.writeBoolean(bill_parent);
+    }
+
+    public List<Ticket> getTickets() throws SQLException, IOException {
+	return table.connector.getTickets().getTickets(this);
+    }
+    
     /**
      * Gets all of the encryption keys for this business.
      */
-    /* TODO
     public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
-        return getConnector().getEncryptionKeys().getEncryptionKeys(this);
+        return table.connector.getEncryptionKeys().getEncryptionKeys(this);
+    }
+    
+    /**
+     * Sets the credit card that will be used monthly.  Any other selected card will
+     * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
+     */
+    public void setUseMonthlyCreditCard(CreditCard creditCard) throws IOException, SQLException {
+        table.connector.requestUpdateIL(
+            true,
+            AOServProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
+            pkey,
+            creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPkey())
+        );
+    }
+    
+    /**
+     * Gets the most recent credit card transaction.
+     */
+    public CreditCardTransaction getLastCreditCardTransaction() throws IOException, SQLException {
+        return table.connector.getCreditCardTransactions().getLastCreditCardTransaction(this);
+    }
+
+    /**
+     * Gets the Brand for this business or <code>null</code> if not a brand.
+     */
+    public Brand getBrand() throws IOException, SQLException {
+        return table.connector.getBrands().getBrand(this);
     }
 
     public int addPackageDefinition(
@@ -954,7 +1081,7 @@ implements
         int monthlyRate,
         TransactionType monthlyRateTransactionType
     ) throws IOException, SQLException {
-        return getConnector().getPackageDefinitions().addPackageDefinition(
+        return table.connector.getPackageDefinitions().addPackageDefinition(
             this,
             category,
             name,
@@ -969,113 +1096,32 @@ implements
     }
 
     public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
-        return getConnector().getPackageDefinitions().getPackageDefinition(this, category, name, version);
+        return table.connector.getPackageDefinitions().getPackageDefinition(this, category, name, version);
     }
 
     public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
-        return getConnector().getPackageDefinitions().getPackageDefinitions(this, category);
+        return table.connector.getPackageDefinitions().getPackageDefinitions(this, category);
     }
 
-    public void addDnsZone(String zone, String ip, int ttl) throws IOException, SQLException {
-	    getConnector().getDnsZones().addDnsZone(this, zone, ip, ttl);
-    }
-
-    public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
-        return getConnector().getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
-    }
-
-    public void addLinuxGroup(String name, LinuxGroupType type) throws IOException, SQLException {
-    	addLinuxGroup(name, type.pkey);
-    }
-
-    public void addLinuxGroup(String name, String type) throws IOException, SQLException {
-	    getConnector().getLinuxGroups().addLinuxGroup(name, this, type);
-    }
-
-    public void addUsername(String username) throws IOException, SQLException {
-	    getConnector().getUsernames().addUsername(this, username);
-    }
-
-    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-        return getConnector().getCvsRepositories().getCvsRepositories(this);
-    }
-
-    public List<DnsZone> getDnsZones() throws IOException, SQLException {
-        return getConnector().getDnsZones().getDnsZones(this);
-    }
-
-    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-        return getConnector().getEmailPipes().getEmailPipes(this);
-    }
-
-    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return getConnector().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
-    }
-
-    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
-        return getConnector().getHttpdServers().getHttpdServers(this);
-    }
-
-    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return getConnector().getHttpdSites().getHttpdSites(this);
-    }
-
-    public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-        return getConnector().getIpAddresses().getIPAddresses(this);
-    }
-
-    public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
-        return getConnector().getLinuxGroups().getLinuxGroups(this);
-    }
-
-    public List<MySQLDatabase> getMysqlDatabases() throws IOException, SQLException {
-        return getConnector().getMysqlDatabases().getMySQLDatabases(this);
-    }
-    */
-
-    /*
-    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-        return getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
-    }
-
-    public List<MySQLServer> getMysqlServers() throws IOException, SQLException {
-        return getConnector().getMysqlServers().getMySQLServers(this);
-    }
+    /**
+     * Gets all active package definitions for this business.
      */
-
-    /*
-    public List<MySQLUser> getMysqlUsers() throws IOException, SQLException {
-        return getConnector().getMysqlUsers().getMySQLUsers(this);
-    }*/
-
-    /*
-    public List<NetBind> getNetBinds() throws IOException, SQLException {
-        return getConnector().getNetBinds().getNetBinds(this);
+    public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
+        // Determine the active packages per category
+        List<PackageCategory> allCategories = table.connector.getPackageCategories().getRows();
+        Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<PackageCategory,List<PackageDefinition>>(allCategories.size()*4/3+1);
+        for(PackageCategory category : allCategories) {
+            List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
+            List<PackageDefinition> definitions = new ArrayList<PackageDefinition>(allDefinitions.size());
+            for(PackageDefinition definition : allDefinitions) {
+                if(definition.isActive()) definitions.add(definition);
+            }
+            if(!definitions.isEmpty()) categories.put(category, Collections.unmodifiableList(definitions));
+        }
+        return Collections.unmodifiableMap(categories);
     }
 
-    public List<NetBind> getNetBinds(IPAddress ip) throws IOException, SQLException {
-        return getConnector().getNetBinds().getNetBinds(this, ip);
+    public int compareTo(Business o) {
+        return pkey.compareTo(o.pkey);
     }
-     */
-
-    /*
-    public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
-        return getConnector().getPostgresDatabases().getPostgresDatabases(this);
-    }
-
-    public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
-        return getConnector().getPostgresUsers().getPostgresUsers(this);
-    }
-
-    public Server getServer(String name) throws IOException, SQLException {
-        // Use index first
-        for(Server se : getServers()) if(se.getName()==name) return se; // OK - interned
-        return null;
-    }
-
-    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-        return getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
-    }
-     */
-    // </editor-fold>
 }

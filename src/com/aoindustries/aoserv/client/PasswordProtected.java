@@ -1,16 +1,18 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.command.AOServCommand;
-import java.util.List;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Classes that are <code>PasswordProtected</code> provide mechanisms for
- * checking password strength and setting passwords.
+ * checking password strength.
+ *
+ * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -19,24 +21,21 @@ public interface PasswordProtected {
     /**
      * Indicates that none of the passwords are set.
      */
-    //int NONE=0;
+    int NONE=0;
 
     /**
      * Indicates that some of the passwords are set.
      */
-    //int SOME=1;
+    int SOME=1;
     
     /**
      * Indicates that all of the passwords are set.
      */
-    //int ALL=2;
+    int ALL=2;
 
-    AOServCommand<List<PasswordChecker.Result>> getCheckPasswordCommand(String password);
-
+    PasswordChecker.Result[] checkPassword(String password) throws IOException, SQLException;
     //String checkPasswordDescribe(String password);
-    //boolean canSetPassword() throws IOException, SQLException;
-    //int arePasswordsSet() throws IOException, SQLException;
-    //void setPassword(String password) throws IOException, SQLException;
-
-    AOServCommand<Void> getSetPasswordCommand(String plaintext);
+    boolean canSetPassword() throws IOException, SQLException;
+    int arePasswordsSet() throws IOException, SQLException;
+    void setPassword(String password) throws IOException, SQLException;
 }

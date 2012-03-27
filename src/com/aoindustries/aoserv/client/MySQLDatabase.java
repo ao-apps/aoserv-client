@@ -1,15 +1,26 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.io.Serializable;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.BufferManager;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A <code>MySQLDatabase</code> corresponds to a unique MySQL table
@@ -21,163 +32,56 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLDatabase extends AOServerResource implements Comparable<MySQLDatabase>, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabase> /* TODO: implements Removable, Dumpable, JdbcProvider*/ {
+final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> implements Removable, Dumpable, JdbcProvider {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_MYSQL_SERVER=2,
+        COLUMN_PACKAGE=3
+    ;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
+
     /**
      * The classname of the JDBC driver used for the <code>MySQLDatabase</code>.
      */
     public static final String
         REDHAT_JDBC_DRIVER="com.mysql.jdbc.Driver",
+        MANDRAKE_JDBC_DRIVER="com.mysql.jdbc.Driver",
         CENTOS_JDBC_DRIVER="com.mysql.jdbc.Driver"
     ;
     
     /**
      * The URL for MySQL JDBC documentation.
+     * TODO: put the Mandrake documentation on http://www.aoindustries.com/docs/
      */
     public static final String
         REDHAT_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
+        MANDRAKE_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
         CENTOS_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html"
     ;
 
     /**
+     * The longest name allowed for a MySQL database.
+     */
+    public static final int MAX_DATABASE_NAME_LENGTH=64;
+
+    /**
      * The root database for a mysql installation.
      */
-    public static final MySQLDatabaseName MYSQL;
+    public static final String MYSQL="mysql";
 
     /**
      * A special database that is never removed.
      */
-    public static final MySQLDatabaseName INFORMATION_SCHEMA;
+    public static final String INFORMATION_SCHEMA="information_schema";
 
-    static {
-        try {
-            MYSQL = MySQLDatabaseName.valueOf("mysql").intern();
-            INFORMATION_SCHEMA = MySQLDatabaseName.valueOf("information_schema").intern();
-        } catch(ValidationException err) {
-            throw new AssertionError(err.getMessage());
-        }
-    }
-    // </editor-fold>
+    String name;
+    int mysql_server;
+    String packageName;
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 5235199386519358800L;
-
-    private MySQLDatabaseName name;
-    final private int mysqlServer;
-
-    public MySQLDatabase(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int aoServer,
-        int businessServer,
-        MySQLDatabaseName name,
-        int mysqlServer
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
-        this.name = name;
-        this.mysqlServer = mysqlServer;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        name = intern(name);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(MySQLDatabase other) {
-        try {
-            int diff = name.compareTo(other.name);
-            if(diff!=0) return diff;
-            return mysqlServer==other.mysqlServer ? 0 : getMysqlServer().compareTo(other.getMysqlServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_NAME = getMethodColumn(MySQLDatabase.class, "name");
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the name of the database")
-    public MySQLDatabaseName getName() {
-        return name;
-    }
-
-    public static final MethodColumn COLUMN_MYSQL_SERVER = getMethodColumn(MySQLDatabase.class, "mysqlServer");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the pkey of the server that this database is hosted on")
-    public MySQLServer getMysqlServer() throws RemoteException {
-        return getConnector().getMysqlServers().get(mysqlServer);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public MySQLDatabase(AOServConnector connector, com.aoindustries.aoserv.client.dto.MySQLDatabase dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getAoServer(),
-            dto.getBusinessServer(),
-            getMySQLDatabaseName(dto.getName()),
-            dto.getMysqlServer()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.MySQLDatabase getDto() {
-        return new com.aoindustries.aoserv.client.dto.MySQLDatabase(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            aoServer,
-            businessServer,
-            getDto(name),
-            mysqlServer
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() {
-        return name.toString();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<MySQLDBUser> getMySQLDBUsers() throws RemoteException {
-        return getConnector().getMysqlDBUsers().filterIndexed(MySQLDBUser.COLUMN_MYSQL_DATABASE, this);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /*
-    public int addMySQLDBUser(
-        MySQLUser mu,
+    public int addMySQLServerUser(
+        MySQLServerUser msu,
         boolean canSelect,
         boolean canInsert,
         boolean canUpdate,
@@ -196,9 +100,9 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
         boolean canEvent,
         boolean canTrigger
     ) throws IOException, SQLException {
-        return getConnector().getMysqlDBUsers().addMySQLDBUser(
+        return table.connector.getMysqlDBUsers().addMySQLDBUser(
             this,
-            mu,
+            msu,
             canSelect,
             canInsert,
             canUpdate,
@@ -224,7 +128,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     }
 
     public void dump(final Writer out) throws IOException, SQLException {
-        getConnector().requestUpdate(
+        table.connector.requestUpdate(
             false,
             new AOServConnector.UpdateRequest() {
                 public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
@@ -233,18 +137,35 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
                 }
 
                 public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+                    /*int code;
+                    byte[] buff=BufferManager.getBytes();
+                    try {
+                        char[] chars=BufferManager.getChars();
+                        try {
+                            while((code=masterIn.readByte())==AOServProtocol.NEXT) {
+                                int len=masterIn.readShort();
+                                masterIn.readFully(buff, 0, len);
+                                for(int c=0;c<len;c++) chars[c]=(char)buff[c];
+                                out.write(chars, 0, len);
+                            }
+                        } finally {
+                            BufferManager.release(chars);
+                        }
+                    } finally {
+                        BufferManager.release(buff);
+                    }
+                    if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);*/
                     Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8");
                     try {
-                        IoUtils.copy(nestedIn, out);
-                        //char[] chars=BufferManager.getChars();
-                        //try {
-                        //    int len;
-                        //    while((len=nestedIn.read(chars, 0, BufferManager.BUFFER_SIZE))!=-1) {
-                        //        out.write(chars, 0, len);
-                        //    }
-                        //} finally {
-                        //    BufferManager.release(chars);
-                        //}
+                        char[] chars=BufferManager.getChars();
+                        try {
+                            int len;
+                            while((len=nestedIn.read(chars, 0, BufferManager.BUFFER_SIZE))!=-1) {
+                                out.write(chars, 0, len);
+                            }
+                        } finally {
+                            BufferManager.release(chars);
+                        }
                     } finally {
                         nestedIn.close();
                     }
@@ -256,9 +177,20 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
         );
     }
 
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return name;
+            case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
+            case COLUMN_PACKAGE: return packageName;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
     public String getJdbcDriver() throws SQLException, IOException {
-        int osv=getMySQLServer().getAoServer().getServer().getOperatingSystemVersion().getPkey();
+        int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
+            case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DRIVER;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
             case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: return CENTOS_JDBC_DRIVER;
             default : throw new SQLException("Unsupported OperatingSystemVersion: "+osv);
@@ -267,12 +199,12 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
 
     public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
         MySQLServer ms=getMySQLServer();
-    	AOServer ao=ms.getAoServer();
+	AOServer ao=ms.getAOServer();
         return
             "jdbc:mysql://"
             + (ipOnly
                ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
-    	       :ao.getHostname()
+	       :ao.getHostname()
             )
             + ":"
             + ms.getNetBind().getPort().getPort()
@@ -282,7 +214,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     }
 
     public String getJdbcDocumentationUrl() throws SQLException, IOException {
-        int osv=getMySQLServer().getAoServer().getServer().getOperatingSystemVersion().getPkey();
+        int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
         switch(osv) {
             case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
             case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DOCUMENTATION_URL;
@@ -291,18 +223,56 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
         }
     }
 
-    public MySQLDBUser getMySQLDBUser(MySQLUser mu) throws IOException, SQLException {
-    	return getConnector().getMysqlDBUsers().getMySQLDBUser(this, mu);
+    public MySQLDBUser getMySQLDBUser(MySQLServerUser msu) throws IOException, SQLException {
+	return table.connector.getMysqlDBUsers().getMySQLDBUser(this, msu);
+    }
+
+    public List<MySQLDBUser> getMySQLDBUsers() throws IOException, SQLException {
+        return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
+    }
+
+    public List<MySQLServerUser> getMySQLServerUsers() throws IOException, SQLException {
+        return table.connector.getMysqlDBUsers().getMySQLServerUsers(this);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Package getPackage() throws SQLException, IOException {
+        Package obj=table.connector.getPackages().get(packageName);
+        if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
+        return obj;
+    }
+
+    public MySQLServer getMySQLServer() throws SQLException, IOException {
+        MySQLServer obj=table.connector.getMysqlServers().get(mysql_server);
+        if(obj==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
+        return obj;
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.MYSQL_DATABASES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        name=result.getString(2);
+        mysql_server=result.getInt(3);
+        packageName=result.getString(4);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        name=in.readUTF();
+        mysql_server=in.readCompressedInt();
+        packageName=in.readUTF().intern();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        if(
-            name==MYSQL // OK - interned
-        ) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+MYSQL, this));
-        if(
-            name==INFORMATION_SCHEMA // OK - interned
-        ) {
+        if(name.equals(MYSQL)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+MYSQL, this));
+        if(name.equals(INFORMATION_SCHEMA)) {
             String version = getMySQLServer().getVersion().getVersion();
             if(
                 version.startsWith(MySQLServer.VERSION_5_0_PREFIX)
@@ -313,14 +283,31 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     }
 
     public void remove() throws IOException, SQLException {
-    	getConnector().requestUpdateIL(
+    	table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.MYSQL_DATABASES,
             pkey
     	);
     }
-*/
+
+    @Override
+    String toStringImpl() {
+        return name;
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(name);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
+        else out.writeCompressedInt(mysql_server);
+        out.writeUTF(packageName);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+            out.writeShort(0);
+            out.writeShort(7);
+        }
+    }
+
     public enum Engine {
         CSV,
         MyISAM,
@@ -329,9 +316,7 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
         MEMORY
     }
 
-    public static class TableStatus implements Serializable {
-
-        private static final long serialVersionUID = -6666081829820808838L;
+    public static class TableStatus {
 
         public enum RowFormat {
             Compact,
@@ -405,74 +390,128 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
             this.comment = comment;
         }
 
+        /**
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * @return the engine
+         */
         public Engine getEngine() {
             return engine;
         }
 
+        /**
+         * @return the version
+         */
         public Integer getVersion() {
             return version;
         }
 
+        /**
+         * @return the rowFormat
+         */
         public RowFormat getRowFormat() {
             return rowFormat;
         }
 
+        /**
+         * @return the rows
+         */
         public Long getRows() {
             return rows;
         }
 
+        /**
+         * @return the avgRowLength
+         */
         public Long getAvgRowLength() {
             return avgRowLength;
         }
 
+        /**
+         * @return the dataLength
+         */
         public Long getDataLength() {
             return dataLength;
         }
 
+        /**
+         * @return the maxDataLength
+         */
         public Long getMaxDataLength() {
             return maxDataLength;
         }
 
+        /**
+         * @return the indexLength
+         */
         public Long getIndexLength() {
             return indexLength;
         }
 
+        /**
+         * @return the dataFree
+         */
         public Long getDataFree() {
             return dataFree;
         }
 
+        /**
+         * @return the autoIncrement
+         */
         public Long getAutoIncrement() {
             return autoIncrement;
         }
 
+        /**
+         * @return the createTime
+         */
         public String getCreateTime() {
             return createTime;
         }
 
+        /**
+         * @return the updateTime
+         */
         public String getUpdateTime() {
             return updateTime;
         }
 
+        /**
+         * @return the checkTime
+         */
         public String getCheckTime() {
             return checkTime;
         }
 
+        /**
+         * @return the collation
+         */
         public Collation getCollation() {
             return collation;
         }
 
+        /**
+         * @return the checksum
+         */
         public String getChecksum() {
             return checksum;
         }
 
+        /**
+         * @return the createOptions
+         */
         public String getCreateOptions() {
             return createOptions;
         }
 
+        /**
+         * @return the comment
+         */
         public String getComment() {
             return comment;
         }
@@ -481,17 +520,15 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     /**
      * Gets the table status on the master server.
      */
-/* TODO
     public List<TableStatus> getTableStatus() throws IOException, SQLException {
         return getTableStatus(null);
     }
-*/
+
     /**
      * Gets the table status on the master server or provided slave server.
      */
-/* TODO
     public List<TableStatus> getTableStatus(final FailoverMySQLReplication mysqlSlave) throws IOException, SQLException {
-        return getConnector().requestResult(
+        return table.connector.requestResult(
             true,
             new AOServConnector.ResultRequest<List<TableStatus>>() {
                 private List<TableStatus> result;
@@ -544,10 +581,8 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
             }
         );
     }
-    */
-    public static class CheckTableResult implements Serializable {
 
-        private static final long serialVersionUID = -1955886824424419791L;
+    public static class CheckTableResult {
 
         public enum MsgType {
             status,
@@ -559,13 +594,13 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
             Error
         }
 
-        private final MySQLTableName table;
+        private final String table;
         private final long duration;
         private final MsgType msgType;
         private final String msgText;
 
         public CheckTableResult(
-            MySQLTableName table,
+            String table,
             long duration,
             MsgType msgType,
             String msgText
@@ -576,18 +611,30 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
             this.msgText = msgText;
         }
 
-        public MySQLTableName getTable() {
+        /**
+         * @return the table
+         */
+        public String getTable() {
             return table;
         }
 
+        /**
+         * @return the duration
+         */
         public long getDuration() {
             return duration;
         }
 
+        /**
+         * @return the msgType
+         */
         public MsgType getMsgType() {
             return msgType;
         }
 
+        /**
+         * @return the msgText
+         */
         public String getMsgText() {
             return msgText;
         }
@@ -596,18 +643,16 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
     /**
      * Gets the table status on the master server.
      */
-/* TODO
     public List<CheckTableResult> checkTables(final Collection<String> tableNames) throws IOException, SQLException {
         return checkTables(null, tableNames);
     }
-*/
+
     /**
      * Gets the table status on the master server or provided slave server.
      */
-/* TODO
     public List<CheckTableResult> checkTables(final FailoverMySQLReplication mysqlSlave, final Collection<String> tableNames) throws IOException, SQLException {
         if(tableNames.isEmpty()) return Collections.emptyList();
-        return getConnector().requestResult(
+        return table.connector.requestResult(
             true,
             new AOServConnector.ResultRequest<List<CheckTableResult>>() {
                 private List<CheckTableResult> result;
@@ -655,6 +700,29 @@ final public class MySQLDatabase extends AOServerResource implements Comparable<
             }
         );
     }
-*/
-    // </editor-fold>
+
+    /**
+     * Determines if a name is safe for use as a table/column name, the name identifier
+     * should be enclosed with backticks (`).
+     */
+    public static boolean isSafeName(String name) {
+        // Must be a-z first, then a-z or 0-9 or _ or -
+        int len = name.length();
+        if (len == 0) return false;
+        // The first character must be [a-z] or [A-Z] or _
+        char ch = name.charAt(0);
+        if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && ch != '_') return false;
+        // The rest may have additional characters
+        for (int c = 1; c < len; c++) {
+            ch = name.charAt(c);
+            if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && (ch < '0' || ch > '9') && ch != '_' && ch != '-') return false;
+        }
+
+        // Also must not be a reserved word
+        /*int size=reservedWords.size();
+        for(int c=0;c<size;c++) {
+            if(name.equalsIgnoreCase(reservedWords.get(c).toString())) return false;
+    	}*/
+    	return true;
+    }
 }

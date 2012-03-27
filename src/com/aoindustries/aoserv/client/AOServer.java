@@ -1,607 +1,102 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2003-2011 by AO Industries, Inc.,
+ * Copyright 2003-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import java.io.Serializable;
-import java.rmi.RemoteException;
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.BufferManager;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.NoSuchElementException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class AOServer extends AOServObjectIntegerKey implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServer>, Comparable<AOServer> {
+final public class AOServer extends CachedObjectIntegerKey<AOServer> {
+
+    static final int COLUMN_SERVER=0;
+    static final int COLUMN_HOSTNAME=1;
+    static final String COLUMN_HOSTNAME_name = "hostname";
+
+    private String hostname;
+    int daemon_bind;
+    private String daemon_key;
+    private int pool_size;
+    private int distro_hour;
+    private long last_distro_time;
+    int failover_server;
+    private String daemon_device_id;
+    int daemon_connect_bind;
+    private String time_zone;
+    int jilter_bind;
+    private boolean restrict_outbound_email;
+    private String daemon_connect_address;
+    private int failover_batch_size;
+    private float monitoring_load_low;
+    private float monitoring_load_medium;
+    private float monitoring_load_high;
+    private float monitoring_load_critical;
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    /**
-     * The daemon key is only available to <code>MasterUser</code>s.  This value is used
-     * in place of the key when not accessible.
-     */
-    public static final String HIDDEN_PASSWORD="*";
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -2739295664156776165L;
-
-    private DomainName hostname;
-    final private Integer daemonBind;
-    final private HashedPassword daemonKey;
-    final private int poolSize;
-    final private int distroHour;
-    final private Long lastDistroTime;
-    final private Integer failoverServer;
-    private String daemonDeviceId;
-    final private Integer daemonConnectBind;
-    private String timeZone;
-    final private Integer jilterBind;
-    final private boolean restrictOutboundEmail;
-    private InetAddress daemonConnectAddress;
-    final private int failoverBatchSize;
-    final private Float monitoringLoadLow;
-    final private Float monitoringLoadMedium;
-    final private Float monitoringLoadHigh;
-    final private Float monitoringLoadCritical;
-
-    public AOServer(
-        AOServConnector connector,
-        int server,
-        DomainName hostname,
-        Integer daemonBind,
-        HashedPassword daemonKey,
-        int poolSize,
-        int distroHour,
-        Long lastDistroTime,
-        Integer failoverServer,
-        String daemonDeviceId,
-        Integer daemonConnectBind,
-        String timeZone,
-        Integer jilterBind,
-        boolean restrictOutboundEmail,
-        InetAddress daemonConnectAddress,
-        int failoverBatchSize,
-        Float monitoringLoadLow,
-        Float monitoringLoadMedium,
-        Float monitoringLoadHigh,
-        Float monitoringLoadCritical
-    ) {
-        super(connector, server);
-        this.hostname = hostname;
-        this.daemonBind = daemonBind;
-        this.daemonKey = daemonKey;
-        this.poolSize = poolSize;
-        this.distroHour = distroHour;
-        this.lastDistroTime = lastDistroTime;
-        this.failoverServer = failoverServer;
-        this.daemonDeviceId = daemonDeviceId;
-        this.daemonConnectBind = daemonConnectBind;
-        this.timeZone = timeZone;
-        this.jilterBind = jilterBind;
-        this.restrictOutboundEmail = restrictOutboundEmail;
-        this.daemonConnectAddress = daemonConnectAddress;
-        this.failoverBatchSize = failoverBatchSize;
-        this.monitoringLoadLow = monitoringLoadLow;
-        this.monitoringLoadMedium = monitoringLoadMedium;
-        this.monitoringLoadHigh = monitoringLoadHigh;
-        this.monitoringLoadCritical = monitoringLoadCritical;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        hostname = intern(hostname);
-        daemonDeviceId = intern(daemonDeviceId);
-        timeZone = intern(timeZone);
-        daemonConnectAddress = intern(daemonConnectAddress);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(AOServer other) {
-        return hostname.compareTo(other.hostname);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_SERVER = getMethodColumn(AOServer.class, "server");
-    @DependencySingleton
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a reference to servers")
-    public Server getServer() throws RemoteException {
-        return getConnector().getServers().get(getKey());
-    }
-
-    public static final MethodColumn COLUMN_HOSTNAME = getMethodColumn(AOServer.class, "hostname");
-
-    /**
-     * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
-     */
-    @SchemaColumn(order=1, index=IndexType.UNIQUE, description="the unique hostname of the server")
-    public DomainName getHostname() {
-        return hostname;
-    }
-
-    /**
-     * Gets the port information to bind to.
-     */
-    public static final MethodColumn COLUMN_DAEMON_BIND = getMethodColumn(AOServer.class, "daemonBind");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.UNIQUE, description="the network bind info for the AOServ Daemon")
-    public NetBind getDaemonBind() throws RemoteException {
-    	if(daemonBind==null) return null;
-        return getConnector().getNetBinds().get(daemonBind);
-    }
-
-    @SchemaColumn(order=3, description="the hashed key used to connect to this server")
-    public HashedPassword getDaemonKey() {
-        return daemonKey;
-    }
-
-    @SchemaColumn(order=4, description="the recommended connection pool size for the AOServ Master")
-    public int getPoolSize() {
-        return poolSize;
-    }
-
-    @SchemaColumn(order=5, description="the hour the distribution will occur, in server time zone")
-    public int getDistroHour() {
-        return distroHour;
-    }
-
-    @SchemaColumn(order=6, description="the time the last distro check was started")
-    public Timestamp getLastDistroTime() {
-        return lastDistroTime==null ? null : new Timestamp(lastDistroTime);
-    }
-
-    public static final MethodColumn COLUMN_FAILOVER_SERVER = getMethodColumn(AOServer.class, "failoverServer");
-    @DependencySingleton
-    @SchemaColumn(order=7, index=IndexType.INDEXED, description="the server that is currently running this server")
-    public AOServer getFailoverServer() throws RemoteException {
-        if(failoverServer==null) return null;
-        return getConnector().getAoServers().get(failoverServer);
-    }
-
-    public static final MethodColumn COLUMN_DAEMON_DEVICE_ID = getMethodColumn(AOServer.class, "daemonDeviceId");
-    @DependencySingleton
-    @SchemaColumn(order=8, index=IndexType.INDEXED, description="the device name the master connects to")
-    public NetDeviceID getDaemonDeviceId() throws RemoteException {
-        return getConnector().getNetDeviceIDs().get(daemonDeviceId);
-    }
-
-    public static final MethodColumn COLUMN_DAEMON_CONNECT_BIND = getMethodColumn(AOServer.class, "daemonConnectBind");
-    @DependencySingleton
-    @SchemaColumn(order=9, index=IndexType.UNIQUE, description="the bind to connect to")
-    public NetBind getDaemonConnectBind() throws RemoteException {
-        if(daemonConnectBind==null) return null;
-        return getConnector().getNetBinds().get(daemonConnectBind);
-    }
-
-    public static final MethodColumn COLUMN_TIME_ZONE = getMethodColumn(AOServer.class, "timeZone");
-    @DependencySingleton
-    @SchemaColumn(order=10, index=IndexType.INDEXED, description="the time zone setting for the server")
-    public TimeZone getTimeZone() throws RemoteException {
-        return getConnector().getTimeZones().get(timeZone);
-    }
-
-    public static final MethodColumn COLUMN_JILTER_BIND = getMethodColumn(AOServer.class, "jilterBind");
-    @DependencySingleton
-    @SchemaColumn(order=11, index=IndexType.UNIQUE, description="the bind that sendmail uses to connect to jilter")
-    public NetBind getJilterBind() throws RemoteException {
-    	if(jilterBind==null) return null;
-        return getConnector().getNetBinds().get(jilterBind);
-    }
-
-    @SchemaColumn(order=12, description="controls if outbound email may only come from address hosted on this machine")
-    public boolean getRestrictOutboundEmail() {
-        return restrictOutboundEmail;
-    }
-
-    /**
-     * Gets the address that should be connected to in order to reach this server.
-     * This overrides both getDaemonConnectBind and getDaemonBind.
-     *
-     * @see  #getDaemonConnectBind
-     * @see  #getDaemonBind
-     */
-    @SchemaColumn(order=13, description="provides a specific address to use for connecting to AOServDaemon")
-    public InetAddress getDaemonConnectAddress() {
-        return daemonConnectAddress;
-    }
-
-    /**
-     * Gets the number of filesystem entries sent per batch during failover replications.
-     */
-    @SchemaColumn(order=14, description="the batch size used for failover replications coming from this server")
-    public int getFailoverBatchSize() {
-        return failoverBatchSize;
-    }
-
-    /**
-     * Gets the 5-minute load average that is considered a low-priority alert or
-     * <code>NaN</code> if no alert allowed at this level.
-     */
-    @SchemaColumn(order=15, description="the 5-minute load average that will trigger a low-level alert")
-    public Float getMonitoringLoadLow() {
-        return monitoringLoadLow;
-    }
-
-    /**
-     * Gets the 5-minute load average that is considered a medium-priority alert or
-     * <code>NaN</code> if no alert allowed at this level.
-     */
-    @SchemaColumn(order=16, description="the 5-minute load average that will trigger a medium-level alert")
-    public Float getMonitoringLoadMedium() {
-        return monitoringLoadMedium;
-    }
-
-    /**
-     * Gets the 5-minute load average that is considered a high-priority alert or
-     * <code>NaN</code> if no alert allowed at this level.
-     */
-    @SchemaColumn(order=17, description="the 5-minute load average that will trigger a high-level alert")
-    public Float getMonitoringLoadHigh() {
-        return monitoringLoadHigh;
-    }
-
-    /**
-     * Gets the 5-minute load average that is considered a critical-priority alert or
-     * <code>NaN</code> if no alert allowed at this level.  This is the level
-     * that will alert people 24x7.
-     */
-    @SchemaColumn(order=18, description="the 5-minute load average that will trigger a critical-level alert")
-    public Float getMonitoringLoadCritical() {
-        return monitoringLoadCritical;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public AOServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.AOServer dto) throws ValidationException {
-        this(
-            connector,
-            dto.getServer(),
-            getDomainName(dto.getHostname()),
-            dto.getDaemonBind(),
-            getHashedPassword(dto.getDaemonKey()),
-            dto.getPoolSize(),
-            dto.getDistroHour(),
-            getTimeMillis(dto.getLastDistroTime()),
-            dto.getFailoverServer(),
-            dto.getDaemonDeviceId(),
-            dto.getDaemonConnectBind(),
-            dto.getTimeZone(),
-            dto.getJilterBind(),
-            dto.isRestrictOutboundEmail(),
-            getInetAddress(dto.getDaemonConnectAddress()),
-            dto.getFailoverBatchSize(),
-            dto.getMonitoringLoadLow(),
-            dto.getMonitoringLoadMedium(),
-            dto.getMonitoringLoadHigh(),
-            dto.getMonitoringLoadCritical()
-        );
-    }
-    @Override
-    public com.aoindustries.aoserv.client.dto.AOServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.AOServer(getKeyInt(), getDto(hostname), daemonBind, getDto(daemonKey), poolSize, distroHour, lastDistroTime, failoverServer, daemonDeviceId, daemonConnectBind, timeZone, jilterBind, restrictOutboundEmail, getDto(daemonConnectAddress), failoverBatchSize, monitoringLoadLow, monitoringLoadMedium, monitoringLoadHigh, monitoringLoadCritical);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<AOServerResource> getAoServerResources() throws RemoteException {
-        return getConnector().getAoServerResources().filterIndexed(AOServerResource.COLUMN_AO_SERVER, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<BackupPartition> getBackupPartitions() throws RemoteException {
-        return getConnector().getBackupPartitions().filterIndexed(BackupPartition.COLUMN_AO_SERVER, this);
-    }
-
-    public IndexedSet<CvsRepository> getCvsRepositories() throws RemoteException {
-        return getConnector().getCvsRepositories().filterUniqueSet(CvsRepository.COLUMN_PKEY, getAoServerResources());
-    }
-
-    public IndexedSet<FtpGuestUser> getFtpGuestUsers() throws RemoteException {
-        return getConnector().getFtpGuestUsers().filterUniqueSet(FtpGuestUser.COLUMN_LINUX_ACCOUNT, getLinuxAccounts());
-    }
-
-    public IndexedSet<HttpdServer> getHttpdServers() throws RemoteException {
-        return getConnector().getHttpdServers().filterUniqueSet(HttpdServer.COLUMN_PKEY, getAoServerResources());
-    }
-
-    /**
-     * Gets the set of servers that are currently failed-over to this server.
-     */
-    @DependentObjectSet
-    public IndexedSet<AOServer> getNestedAoServers() throws RemoteException {
-        return getConnector().getAoServers().filterIndexed(AOServer.COLUMN_FAILOVER_SERVER, this);
-    }
-
-    public IndexedSet<HttpdSite> getHttpdSites() throws RemoteException {
-        return getConnector().getHttpdSites().filterUniqueSet(HttpdSite.COLUMN_PKEY, getAoServerResources());
-    }
-
-    /**
-     * Gets all of the linux accounts on this server.
-     */
-    public IndexedSet<LinuxAccount> getLinuxAccounts() throws RemoteException {
-        return getConnector().getLinuxAccounts().filterUniqueSet(LinuxAccount.COLUMN_PKEY, getAoServerResources());
-    }
-
-    /**
-     * Gets the linux account with the given name.
-     *
-     * @throws NoSuchElementException if account not found.
-     */
-    public LinuxAccount getLinuxAccount(UserId username) throws RemoteException, NoSuchElementException {
-        LinuxAccount la = getLinuxAccounts().filterUnique(LinuxAccount.COLUMN_USERNAME, getConnector().getUsernames().get(username));
-        if(la==null) throw new NoSuchElementException("this="+this+", username="+username);
-        return la;
-    }
-
-    /**
-     * Gets the linux accounts with the given UID.
-     *
-     * @throws NoSuchElementException if no accounts found.
-     */
-    public IndexedSet<LinuxAccount> getLinuxAccounts(LinuxID uid) throws RemoteException, NoSuchElementException {
-        IndexedSet<LinuxAccount> las = getLinuxAccounts().filterIndexed(LinuxAccount.COLUMN_UID, uid);
-        if(las.isEmpty()) throw new NoSuchElementException("this="+this+", uid="+uid);
-        return las;
-    }
-
-    public IndexedSet<LinuxGroup> getLinuxGroups() throws RemoteException {
-        return getConnector().getLinuxGroups().filterUniqueSet(LinuxGroup.COLUMN_PKEY, getAoServerResources());
-    }
-
-    /**
-     * Gets the linux group with the given name.
-     *
-     * @throws NoSuchElementException if group not found.
-     */
-    public LinuxGroup getLinuxGroup(GroupId groupName) throws RemoteException, NoSuchElementException {
-        LinuxGroup lg = getLinuxGroups().filterUnique(LinuxGroup.COLUMN_GROUP_NAME, getConnector().getGroupNames().get(groupName));
-        if(lg==null) throw new NoSuchElementException("this="+this+", groupName="+groupName);
-        return lg;
-    }
-
-    public IndexedSet<MySQLServer> getMysqlServers() throws RemoteException {
-        return getConnector().getMysqlServers().filterUniqueSet(MySQLServer.COLUMN_PKEY, getAoServerResources());
-    }
-
-    /**
-     * Gets the MySQL server with the given server name.
-     *
-     * @throws NoSuchElementException if group not found.
-     */
-    public MySQLServer getMysqlServer(MySQLServerName name) throws RemoteException {
-        MySQLServer ms = getMysqlServers().filterUnique(MySQLServer.COLUMN_NAME, name);
-        if(ms==null) throw new NoSuchElementException("this="+this+", name="+name);
-        return ms;
-    }
-
-    public IndexedSet<PostgresServer> getPostgresServers() throws RemoteException {
-        return getConnector().getPostgresServers().filterUniqueSet(PostgresServer.COLUMN_PKEY, getAoServerResources());
-    }
-
-    /**
-     * Gets the PostgresSQL server with the given server name.
-     *
-     * @throws NoSuchElementException if group not found.
-     */
-    public PostgresServer getPostgresServer(PostgresServerName name) throws RemoteException {
-        PostgresServer ps = getPostgresServers().filterUnique(PostgresServer.COLUMN_NAME, name);
-        if(ps==null) throw new NoSuchElementException("this="+this+", name="+name);
-        return ps;
-    }
-
-    @DependentObjectSet
-    public IndexedSet<AOServerDaemonHost> getAoServerDaemonHosts() throws RemoteException {
-    	return getConnector().getAoServerDaemonHosts().filterIndexed(AOServerDaemonHost.COLUMN_AO_SERVER, this);
-    }
-
-    public IPAddress getPrimaryIPAddress() throws RemoteException {
-        NetDeviceID deviceId = getDaemonDeviceId();
-        NetDevice nd=getServer().getNetDevice(deviceId);
-        if(nd==null) throw new NoSuchElementException("Unable to find NetDevice: "+deviceId+" on "+this);
-        return nd.getPrimaryIPAddress();
-    }
-
-    public InetAddress getDaemonConnectorIP() throws RemoteException {
-        InetAddress address = getDaemonConnectAddress();
-        if(address!=null) return address;
-        address = getDaemonConnectBind().getIpAddress().getInetAddress();
-        if(address.isUnspecified()) address = getPrimaryIPAddress().getInetAddress();
-        return address;
-    }
-
-    @DependentObjectSet
-    public IndexedSet<FailoverMySQLReplication> getFailoverMySQLReplications() throws RemoteException {
-        return getConnector().getFailoverMySQLReplications().filterIndexed(FailoverMySQLReplication.COLUMN_AO_SERVER, this);
-    }
-
-    /* TODO
-    public IPAddress getDaemonIPAddress() throws IOException {
-        NetBind nb=getDaemonBind();
-        if(nb==null) throw new AssertionError("Unable to find daemon NetBind for AOServer: "+pkey);
-        IPAddress ia=nb.getIPAddress();
-        String ip=ia.getIPAddress();
-        if(ip.equals(IPAddress.WILDCARD_IP)) {
-            NetDeviceID ndi=getDaemonDeviceID();
-            NetDevice nd=getServer().getNetDevice(ndi.getName());
-            if(nd==null) throw new AssertionError("Unable to find NetDevice: "+ndi.getName()+" on "+pkey);
-            ia=nd.getPrimaryIPAddress();
-            if(ia==null) throw new AssertionError("Unable to find primary IPAddress: "+ndi.getName()+" on "+pkey);
-        }
-        return ia;
-    }
-
-    public List<EmailAddress> getEmailAddresses() throws IOException {
-        return getConnector().getEmailAddresses().getEmailAddresses(this);
-    }
-
-    public List<EmailDomain> getEmailDomains() throws IOException {
-    	return getConnector().getEmailDomains().getEmailDomains(this);
-    }
-
-    public List<EmailForwarding> getEmailForwarding() throws IOException {
-        return getConnector().getEmailForwardings().getEmailForwarding(this);
-    }
-
-    public List<EmailListAddress> getEmailListAddresses() throws IOException {
-        return getConnector().getEmailListAddresses().getEmailListAddresses(this);
-    }
-
-    public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException {
-        return getConnector().getEmailPipeAddresses().getEmailPipeAddresses(this);
-    }
-
-    public List<EmailPipe> getEmailPipes() throws IOException {
-        return getConnector().getEmailPipes().getEmailPipes(this);
-    }
-    */
-    /**
-     * Gets all of the smtp relays settings that apply to either all servers or this server specifically.
-     */
-    /* TODO
-    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException {
-        return getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
-    }
-
-    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException {
-        return getConnector().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
-    }
-
-    public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException {
-        return getConnector().getLinuxAccAddresses().getLinuxAccAddresses(this);
-    }
-
-    public List<LinuxAccount> getLinuxAccounts() throws IOException {
-        List<LinuxServerAccount> lsa=getLinuxServerAccounts();
-        int len=lsa.size();
-        List<LinuxAccount> la=new ArrayList<LinuxAccount>(len);
-        for(int c=0;c<len;c++) la.add(lsa.get(c).getLinuxAccount());
-        return la;
-    }
-
-    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException {
-    	return getConnector().getLinuxServerAccounts().getLinuxServerAccounts(this);
-    }
-
-    public List<LinuxServerGroup> getLinuxServerGroups() throws IOException {
-    	return getConnector().getLinuxServerGroups().getLinuxServerGroups(this);
-    }
-
-    public List<MajordomoServer> getMajordomoServers() throws IOException {
-        return getConnector().getMajordomoServers().getMajordomoServers(this);
-    }
-
-    public List<PrivateFtpServer> getPrivateFtpServers() throws IOException {
-    	return getConnector().getPrivateFtpServers().getPrivateFtpServers(this);
-    }
-
-    public List<SystemEmailAlias> getSystemEmailAliases() throws IOException {
-        return getConnector().getSystemEmailAliases().getSystemEmailAliases(this);
-    }
-     */
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    protected String toStringImpl() {
-        return hostname.toString();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Daemon Access">
-    public static class DaemonAccess implements Serializable, DtoFactory<com.aoindustries.aoserv.client.dto.DaemonAccess> {
-
-        private static final long serialVersionUID = 8345459669465488959L;
-
-        private final String protocol;
-        private final Hostname host;
-        private final NetPort port;
-        private final long key;
-
-        public DaemonAccess(String protocol, Hostname host, NetPort port, long key) {
-            this.protocol = protocol;
-            this.host = host;
-            this.port = port;
-            this.key = key;
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public Hostname getHost() {
-            return host;
-        }
-
-        public NetPort getPort() {
-            return port;
-        }
-
-        public long getKey() {
-            return key;
-        }
-
-        @Override
-        public com.aoindustries.aoserv.client.dto.DaemonAccess getDto() {
-            return new com.aoindustries.aoserv.client.dto.DaemonAccess(protocol, AOServObject.getDto(host), AOServObject.getDto(port), key);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public int addCvsRepository(
         String path,
         LinuxServerAccount lsa,
         LinuxServerGroup lsg,
         long mode
-    ) throws IOException {
-    	return getConnector().getCvsRepositories().addCvsRepository(
+    ) throws IOException, SQLException {
+	return table.connector.getCvsRepositories().addCvsRepository(
             this,
             path,
             lsa,
             lsg,
             mode
-    	);
+	);
     }
 
-    public int addEmailDomain(String domain, Business business) throws IOException {
-        return getConnector().getEmailDomains().addEmailDomain(domain, this, business);
+    public int addEmailDomain(String domain, Package packageObject) throws SQLException, IOException {
+	return table.connector.getEmailDomains().addEmailDomain(domain, this, packageObject);
     }
 
-    public int addEmailPipe(String path, Business bu) throws IOException {
-        return getConnector().getEmailPipes().addEmailPipe(this, path, bu);
+    public int addEmailPipe(String path, Package packageObject) throws IOException, SQLException {
+	return table.connector.getEmailPipes().addEmailPipe(this, path, packageObject);
     }
 
     public int addHttpdJBossSite(
-        String siteName,
-        Business business,
-        LinuxServerAccount siteUser,
-        LinuxServerGroup siteGroup,
-        String serverAdmin,
-        boolean useApache,
-        IPAddress ipAddress,
-        DomainName primaryHttpHostname,
-        DomainName[] altHttpHostnames,
-        int jBossVersion
-    ) throws IOException {
-        return getConnector().getHttpdJBossSites().addHttpdJBossSite(
+	String siteName,
+	Package packageObj,
+	LinuxAccount siteUser,
+	LinuxGroup siteGroup,
+	String serverAdmin,
+	boolean useApache,
+	IPAddress ipAddress,
+	String primaryHttpHostname,
+	String[] altHttpHostnames,
+	int jBossVersion,
+	String contentSrc
+    ) throws IOException, SQLException {
+        return table.connector.getHttpdJBossSites().addHttpdJBossSite(
             this,
             siteName,
-            business,
+            packageObj,
             siteUser,
             siteGroup,
             serverAdmin,
@@ -609,19 +104,20 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             ipAddress,
             primaryHttpHostname,
             altHttpHostnames,
-            jBossVersion
+            jBossVersion,
+            contentSrc
         );
     }
 
     public int addHttpdSharedTomcat(
-    	String name,
+	String name,
         HttpdTomcatVersion version,
-        LinuxServerAccount lsa,
-        LinuxServerGroup lsg,
-        boolean isSecure,
+	LinuxServerAccount lsa,
+	LinuxServerGroup lsg,
+	boolean isSecure,
         boolean isOverflow
-    ) throws IOException {
-        return getConnector().getHttpdSharedTomcats().addHttpdSharedTomcat(
+    ) throws IOException, SQLException {
+        return table.connector.getHttpdSharedTomcats().addHttpdSharedTomcat(
             name,
             this,
             version,
@@ -634,20 +130,22 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
 
     public int addHttpdTomcatSharedSite(
         String siteName,
-        Business business,
-        LinuxServerAccount siteUser,
-        LinuxServerGroup siteGroup,
+        Package packageObj,
+        LinuxAccount siteUser,
+        LinuxGroup siteGroup,
         String serverAdmin,
         boolean useApache,
         IPAddress ipAddress,
-        DomainName primaryHttpHostname,
-        DomainName[] altHttpHostnames,
-        String sharedTomcatName
-    ) throws IOException {
-        return getConnector().getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
+        String primaryHttpHostname,
+        String[] altHttpHostnames,
+        String sharedTomcatName,
+        HttpdTomcatVersion version,
+        String contentSrc
+    ) throws IOException, SQLException {
+        return table.connector.getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
             this,
             siteName,
-            business,
+            packageObj,
             siteUser,
             siteGroup,
             serverAdmin,
@@ -655,26 +153,29 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             ipAddress,
             primaryHttpHostname,
             altHttpHostnames,
-            sharedTomcatName
+            sharedTomcatName,
+            version,
+            contentSrc
         );
     }
 
     public int addHttpdTomcatStdSite(
-        String siteName,
-        Business business,
-        LinuxServerAccount jvmUser,
-        LinuxServerGroup jvmGroup,
-        String serverAdmin,
-        boolean useApache,
-        IPAddress ipAddress,
-        DomainName primaryHttpHostname,
-        DomainName[] altHttpHostnames,
-        HttpdTomcatVersion tomcatVersion
-    ) throws IOException {
-        return getConnector().getHttpdTomcatStdSites().addHttpdTomcatStdSite(
+	String siteName,
+	Package packageObj,
+	LinuxAccount jvmUser,
+	LinuxGroup jvmGroup,
+	String serverAdmin,
+	boolean useApache,
+	IPAddress ipAddress,
+	String primaryHttpHostname,
+	String[] altHttpHostnames,
+	HttpdTomcatVersion tomcatVersion,
+	String contentSrc
+    ) throws IOException, SQLException {
+        return table.connector.getHttpdTomcatStdSites().addHttpdTomcatStdSite(
             this,
             siteName,
-            business,
+            packageObj,
             jvmUser,
             jvmGroup,
             serverAdmin,
@@ -682,61 +183,313 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             ipAddress,
             primaryHttpHostname,
             altHttpHostnames,
-            tomcatVersion
+            tomcatVersion,
+            contentSrc
         );
     }
 
-    public BackupPartition getBackupPartitionForPath(String path) throws IOException {
-        return getConnector().getBackupPartitions().getBackupPartitionForPath(this, path);
+    public List<AOServerDaemonHost> getAOServerDaemonHosts() throws IOException, SQLException {
+	return table.connector.getAoServerDaemonHosts().getAOServerDaemonHosts(this);
     }
 
-    public CvsRepository getCvsRepository(String path) throws IOException {
-        return getConnector().getCvsRepositories().getCvsRepository(this, path);
+    public List<BackupPartition> getBackupPartitions() throws IOException, SQLException {
+        return table.connector.getBackupPartitions().getBackupPartitions(this);
     }
 
-    public EmailDomain getEmailDomain(String domain) throws IOException {
-        return getConnector().getEmailDomains().getEmailDomain(this, domain);
+    public BackupPartition getBackupPartitionForPath(String path) throws IOException, SQLException {
+        return table.connector.getBackupPartitions().getBackupPartitionForPath(this, path);
     }
-    */
+
+    public List<BlackholeEmailAddress> getBlackholeEmailAddresses() throws IOException, SQLException {
+	return table.connector.getBlackholeEmailAddresses().getBlackholeEmailAddresses(this);
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_SERVER: return Integer.valueOf(pkey);
+            case COLUMN_HOSTNAME: return hostname;
+            case 2: return daemon_bind==-1?null:Integer.valueOf(daemon_bind);
+            case 3: return daemon_key;
+            case 4: return Integer.valueOf(pool_size);
+            case 5: return Integer.valueOf(distro_hour);
+            case 6: return last_distro_time==-1?null:new Date(last_distro_time);
+            case 7: return failover_server==-1?null:Integer.valueOf(failover_server);
+            case 8: return daemon_device_id;
+            case 9: return daemon_connect_bind==-1?null:Integer.valueOf(daemon_connect_bind);
+            case 10: return time_zone;
+            case 11: return jilter_bind;
+            case 12: return restrict_outbound_email;
+            case 13: return daemon_connect_address;
+            case 14: return failover_batch_size;
+            case 15: return Float.isNaN(monitoring_load_low) ? null : Float.valueOf(monitoring_load_low);
+            case 16: return Float.isNaN(monitoring_load_medium) ? null : Float.valueOf(monitoring_load_medium);
+            case 17: return Float.isNaN(monitoring_load_high) ? null : Float.valueOf(monitoring_load_high);
+            case 18: return Float.isNaN(monitoring_load_critical) ? null : Float.valueOf(monitoring_load_critical);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public CvsRepository getCvsRepository(String path) throws IOException, SQLException {
+        return table.connector.getCvsRepositories().getCvsRepository(this, path);
+    }
+
+    public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
+        return table.connector.getCvsRepositories().getCvsRepositories(this);
+    }
+
+    /**
+     * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
+     */
+    public String getHostname() {
+        return hostname;
+    }
+
+    /**
+     * Gets the port information to bind to.
+     */
+    public NetBind getDaemonBind() throws IOException, SQLException {
+	if(daemon_bind==-1) return null;
+        // May be filtered
+        return table.connector.getNetBinds().get(daemon_bind);
+    }
+
+    /**
+     * Gets the port information to connect to.
+     */
+    public NetBind getDaemonConnectBind() throws IOException, SQLException {
+	if(daemon_connect_bind==-1) return null;
+        // May be filtered
+        return table.connector.getNetBinds().get(daemon_connect_bind);
+    }
+    
+    public TimeZone getTimeZone() throws SQLException, IOException {
+        TimeZone tz=table.connector.getTimeZones().get(time_zone);
+        if(tz==null) throw new SQLException("Unable to find TimeZone: "+time_zone);
+        return tz;
+    }
+
+    public NetBind getJilterBind() throws IOException, SQLException {
+	if(jilter_bind==-1) return null;
+        // May be filtered
+        return table.connector.getNetBinds().get(jilter_bind);
+    }
+    
+    public boolean getRestrictOutboundEmail() {
+        return restrict_outbound_email;
+    }
+    
+    /**
+     * Gets the address that should be connected to in order to reach this server.
+     * This overrides both getDaemonConnectBind and getDaemonBind.
+     *
+     * @see  #getDaemonConnectBind
+     * @see  #getDaemonBind
+     */
+    public String getDaemonConnectAddress() {
+        return daemon_connect_address;
+    }
+    
+    /**
+     * Gets the number of filesystem entries sent per batch during failover replications.
+     */
+    public int getFailoverBatchSize() {
+        return failover_batch_size;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a low-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    public float getMonitoringLoadLow() {
+        return monitoring_load_low;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a medium-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    public float getMonitoringLoadMedium() {
+        return monitoring_load_medium;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a high-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.
+     */
+    public float getMonitoringLoadHigh() {
+        return monitoring_load_high;
+    }
+
+    /**
+     * Gets the 5-minute load average that is considered a critical-priority alert or
+     * <code>NaN</code> if no alert allowed at this level.  This is the level
+     * that will alert people 24x7.
+     */
+    public float getMonitoringLoadCritical() {
+        return monitoring_load_critical;
+    }
+
+    public NetDeviceID getDaemonDeviceID() throws SQLException, IOException {
+        NetDeviceID ndi=table.connector.getNetDeviceIDs().get(daemon_device_id);
+        if(ndi==null) throw new SQLException("Unable to find NetDeviceID: "+daemon_device_id);
+        return ndi;
+    }
+
+    public IPAddress getDaemonIPAddress() throws SQLException, IOException {
+        NetBind nb=getDaemonBind();
+        if(nb==null) throw new SQLException("Unable to find daemon NetBind for AOServer: "+pkey);
+        IPAddress ia=nb.getIPAddress();
+        String ip=ia.getIPAddress();
+        if(ip.equals(IPAddress.WILDCARD_IP)) {
+            NetDeviceID ndi=getDaemonDeviceID();
+            NetDevice nd=getServer().getNetDevice(ndi.getName());
+            if(nd==null) throw new SQLException("Unable to find NetDevice: "+ndi.getName()+" on "+pkey);
+            ia=nd.getPrimaryIPAddress();
+            if(ia==null) throw new SQLException("Unable to find primary IPAddress: "+ndi.getName()+" on "+pkey);
+        }
+        return ia;
+    }
+
+    public String getDaemonKey() {
+	return daemon_key;
+    }
+
+    public int getDistroHour() {
+        return distro_hour;
+    }
+
+    public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
+	return table.connector.getEmailAddresses().getEmailAddresses(this);
+    }
+
+    public EmailDomain getEmailDomain(String domain) throws IOException, SQLException {
+        return table.connector.getEmailDomains().getEmailDomain(this, domain);
+    }
+
+    public List<EmailDomain> getEmailDomains() throws IOException, SQLException {
+	return table.connector.getEmailDomains().getEmailDomains(this);
+    }
+
+    public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
+	return table.connector.getEmailForwardings().getEmailForwarding(this);
+    }
+
     /**
      * Rename to getEmailList when all uses updated.
      */
-    /* TODO
-    public EmailList getEmailList(String path) throws IOException {
-        return getConnector().getEmailLists().getEmailList(this, path);
+    public EmailList getEmailList(String path) throws IOException, SQLException {
+        return table.connector.getEmailLists().getEmailList(this, path);
     }
 
-    public EmailSmtpRelay getEmailSmtpRelay(Business bu, String host) throws IOException {
-    	return getConnector().getEmailSmtpRelays().getEmailSmtpRelay(bu, this, host);
+    public List<EmailListAddress> getEmailListAddresses() throws IOException, SQLException {
+	return table.connector.getEmailListAddresses().getEmailListAddresses(this);
     }
 
-    public HttpdSharedTomcat getHttpdSharedTomcat(String jvmName) throws IOException {
-        return getConnector().getHttpdSharedTomcats().getHttpdSharedTomcat(jvmName, this);
+    public List<EmailPipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
+	return table.connector.getEmailPipeAddresses().getEmailPipeAddresses(this);
     }
 
-    public HttpdSite getHttpdSite(String siteName) throws IOException {
-    	return getConnector().getHttpdSites().getHttpdSite(siteName, this);
+    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
+	return table.connector.getEmailPipes().getEmailPipes(this);
     }
 
-    public LinuxServerAccount getLinuxServerAccount(String username) throws IOException {
-        return getConnector().getLinuxServerAccounts().getLinuxServerAccount(this, username);
+    public EmailSmtpRelay getEmailSmtpRelay(Package pk, String host) throws IOException, SQLException {
+	return table.connector.getEmailSmtpRelays().getEmailSmtpRelay(pk, this, host);
     }
 
-    public LinuxServerAccount getLinuxServerAccount(int uid) throws IOException {
-        return getConnector().getLinuxServerAccounts().getLinuxServerAccount(this, uid);
+    /**
+     * Gets all of the smtp relays settings that apply to either all servers or this server specifically.
+     */
+    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
+	return table.connector.getEmailSmtpRelays().getEmailSmtpRelays(this);
     }
 
-    public LinuxServerGroup getLinuxServerGroup(int gid) throws IOException {
-        return getConnector().getLinuxServerGroups().getLinuxServerGroup(this, gid);
+    public AOServer getFailoverServer() throws SQLException, IOException {
+        if(failover_server==-1) return null;
+        AOServer se=table.connector.getAoServers().get(failover_server);
+        if(se==null) new SQLException("Unable to find AOServer: "+failover_server);
+        return se;
     }
 
-    public LinuxServerGroup getLinuxServerGroup(String groupName) throws IOException {
-        return getConnector().getLinuxServerGroups().getLinuxServerGroup(this, groupName);
+    public List<FTPGuestUser> getFTPGuestUsers() throws IOException, SQLException {
+	return table.connector.getFtpGuestUsers().getFTPGuestUsers(this);
+    }
+
+    public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
+	return table.connector.getHttpdServers().getHttpdServers(this);
+    }
+
+    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
+	return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcats(this);
+    }
+
+    public HttpdSharedTomcat getHttpdSharedTomcat(String jvmName) throws IOException, SQLException {
+	return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcat(jvmName, this);
+    }
+
+    public HttpdSite getHttpdSite(String siteName) throws IOException, SQLException {
+	return table.connector.getHttpdSites().getHttpdSite(siteName, this);
+    }
+
+    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
+	return table.connector.getHttpdSites().getHttpdSites(this);
+    }
+
+    public long getLastDistroTime() {
+        return last_distro_time;
+    }
+
+    public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
+	return table.connector.getLinuxAccAddresses().getLinuxAccAddresses(this);
+    }
+
+    public List<LinuxAccount> getLinuxAccounts() throws SQLException, IOException {
+	List<LinuxServerAccount> lsa=getLinuxServerAccounts();
+	int len=lsa.size();
+	List<LinuxAccount> la=new ArrayList<LinuxAccount>(len);
+	for(int c=0;c<len;c++) la.add(lsa.get(c).getLinuxAccount());
+	return la;
+    }
+
+    public List<LinuxGroup> getLinuxGroups() throws SQLException, IOException {
+	List<LinuxServerGroup> lsg=getLinuxServerGroups();
+	int len=lsg.size();
+	List<LinuxGroup> lg=new ArrayList<LinuxGroup>(len);
+	for(int c=0;c<len;c++) lg.add(lsg.get(c).getLinuxGroup());
+	return lg;
+    }
+
+    public LinuxServerAccount getLinuxServerAccount(String username) throws IOException, SQLException {
+        return table.connector.getLinuxServerAccounts().getLinuxServerAccount(this, username);
+    }
+
+    public LinuxServerAccount getLinuxServerAccount(int uid) throws IOException, SQLException {
+        return table.connector.getLinuxServerAccounts().getLinuxServerAccount(this, uid);
+    }
+
+    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
+	return table.connector.getLinuxServerAccounts().getLinuxServerAccounts(this);
+    }
+
+    public LinuxServerGroup getLinuxServerGroup(int gid) throws IOException, SQLException {
+        return table.connector.getLinuxServerGroups().getLinuxServerGroup(this, gid);
+    }
+
+    public LinuxServerGroup getLinuxServerGroup(String groupName) throws IOException, SQLException {
+        return table.connector.getLinuxServerGroups().getLinuxServerGroup(this, groupName);
+    }
+
+    public List<LinuxServerGroup> getLinuxServerGroups() throws IOException, SQLException {
+	return table.connector.getLinuxServerGroups().getLinuxServerGroups(this);
+    }
+
+    public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
+        return table.connector.getMajordomoServers().getMajordomoServers(this);
     }
 
     private static final Map<Integer,Object> mrtgLocks = new HashMap<Integer,Object>();
 
-    public void getMrtgFile(final String filename, final OutputStream out) throws IOException {
+    public void getMrtgFile(final String filename, final OutputStream out) throws IOException, SQLException {
         // Only one MRTG graph per server at a time, if don't get the lock in 15 seconds, return an error
         synchronized(mrtgLocks) {
             long startTime = System.currentTimeMillis();
@@ -761,7 +514,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         }
 
         try {
-            getConnector().requestUpdate(
+            table.connector.requestUpdate(
                 false,
                 new AOServConnector.UpdateRequest() {
                     public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
@@ -770,7 +523,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                         masterOut.writeUTF(filename);
                     }
 
-                    public void readResponse(CompressedDataInputStream in) throws IOException {
+                    public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
                         byte[] buff=BufferManager.getBytes();
                         try {
                             int code;
@@ -797,7 +550,15 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         }
     }
 
-    public MySQLServer getPreferredMySQLServer() throws IOException {
+    public MySQLServer getMySQLServer(String name) throws IOException, SQLException {
+	return table.connector.getMysqlServers().getMySQLServer(name, this);
+    }
+
+    public List<MySQLServer> getMySQLServers() throws IOException, SQLException {
+	return table.connector.getMysqlServers().getMySQLServers(this);
+    }
+
+    public MySQLServer getPreferredMySQLServer() throws IOException, SQLException {
         // Look for the most-preferred version that has an instance on the server
         List<MySQLServer> pss=getMySQLServers();
         String[] preferredVersionPrefixes=MySQLServer.getPreferredVersionPrefixes();
@@ -815,7 +576,23 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         return pss.isEmpty()?null:pss.get(0);
     }
 
-    public PostgresServer getPreferredPostgresServer() throws IOException {
+    public List<AOServer> getNestedAOServers() throws IOException, SQLException {
+        return table.connector.getAoServers().getNestedAOServers(this);
+    }
+
+    public int getPoolSize() {
+	return pool_size;
+    }
+
+    public PostgresServer getPostgresServer(String name) throws IOException, SQLException {
+	return table.connector.getPostgresServers().getPostgresServer(name, this);
+    }
+
+    public List<PostgresServer> getPostgresServers() throws IOException, SQLException {
+	return table.connector.getPostgresServers().getPostgresServers(this);
+    }
+
+    public PostgresServer getPreferredPostgresServer() throws SQLException, IOException {
         // Look for the most-preferred version that has an instance on the server
         List<PostgresServer> pss=getPostgresServers();
         String[] preferredMinorVersions=PostgresVersion.getPreferredMinorVersions();
@@ -823,7 +600,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             String version=preferredMinorVersions[c];
             for(int d=0;d<pss.size();d++) {
                 PostgresServer ps=pss.get(d);
-                if(ps.getPostgresVersion().getMinorVersion()==version) {
+                if(ps.getPostgresVersion().getMinorVersion().equals(version)) {
                     return ps;
                 }
             }
@@ -833,140 +610,311 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         return pss.isEmpty()?null:pss.get(0);
     }
 
-    public PrivateFtpServer getPrivateFtpServer(String path) {
-    	return getConnector().privateFtpServers.getPrivateFtpServer(this, path);
+    public IPAddress getPrimaryIPAddress() throws SQLException, IOException {
+        NetDeviceID ndi=getDaemonDeviceID();
+        String name=ndi.getName();
+        NetDevice nd=getServer().getNetDevice(name);
+        if(nd==null) throw new SQLException("Unable to find NetDevice: "+name+" on "+pkey);
+        return nd.getPrimaryIPAddress();
+    }
+
+    /*
+    public PrivateFTPServer getPrivateFTPServer(String path) {
+	return table.connector.privateFTPServers.getPrivateFTPServer(this, path);
+    }*/
+
+    public List<PrivateFTPServer> getPrivateFTPServers() throws IOException, SQLException {
+	return table.connector.getPrivateFTPServers().getPrivateFTPServers(this);
+    }
+
+    public Server getServer() throws SQLException, IOException {
+        Server se=table.connector.getServers().get(pkey);
+        if(se==null) throw new SQLException("Unable to find Server: "+pkey);
+        return se;
+    }
+
+    public List<SystemEmailAlias> getSystemEmailAliases() throws IOException, SQLException {
+	return table.connector.getSystemEmailAliases().getSystemEmailAliases(this);
+    }
+    
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.AO_SERVERS;
     }
 
     public boolean isEmailDomainAvailable(String domain) throws SQLException, IOException {
-        return getConnector().getEmailDomains().isEmailDomainAvailable(this, domain);
+        return table.connector.getEmailDomains().isEmailDomainAvailable(this, domain);
     }
 
     public boolean isHomeUsed(String directory) throws IOException, SQLException {
-    	return getConnector().getLinuxServerAccounts().isHomeUsed(this, directory);
+	return table.connector.getLinuxServerAccounts().isHomeUsed(this, directory);
     }
 
     public boolean isMySQLServerNameAvailable(String name) throws IOException, SQLException {
-        return getConnector().getMysqlServers().isMySQLServerNameAvailable(name, this);
+	return table.connector.getMysqlServers().isMySQLServerNameAvailable(name, this);
     }
 
     public boolean isPostgresServerNameAvailable(String name) throws IOException, SQLException {
-    	return getConnector().getPostgresServers().isPostgresServerNameAvailable(name, this);
+	return table.connector.getPostgresServers().isPostgresServerNameAvailable(name, this);
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        int pos = 1;
+        pkey=result.getInt(pos++);
+        hostname=result.getString(pos++);
+	daemon_bind=result.getInt(pos++);
+	if(result.wasNull()) daemon_bind=-1;
+	daemon_key=result.getString(pos++);
+	pool_size=result.getInt(pos++);
+        distro_hour=result.getInt(pos++);
+        Timestamp T=result.getTimestamp(pos++);
+        last_distro_time=T==null?-1:T.getTime();
+        failover_server=result.getInt(pos++);
+        if(result.wasNull()) failover_server=-1;
+        daemon_device_id=result.getString(pos++);
+        daemon_connect_bind=result.getInt(pos++);
+        time_zone=result.getString(pos++);
+        jilter_bind=result.getInt(pos++);
+        if(result.wasNull()) jilter_bind=-1;
+        restrict_outbound_email=result.getBoolean(pos++);
+        daemon_connect_address=result.getString(pos++);
+        failover_batch_size=result.getInt(pos++);
+        monitoring_load_low = result.getFloat(pos++);
+        if(result.wasNull()) monitoring_load_low = Float.NaN;
+        monitoring_load_medium = result.getFloat(pos++);
+        if(result.wasNull()) monitoring_load_medium = Float.NaN;
+        monitoring_load_high = result.getFloat(pos++);
+        if(result.wasNull()) monitoring_load_high = Float.NaN;
+        monitoring_load_critical = result.getFloat(pos++);
+        if(result.wasNull()) monitoring_load_critical = Float.NaN;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        hostname=in.readUTF();
+	daemon_bind=in.readCompressedInt();
+	daemon_key=in.readUTF();
+	pool_size=in.readCompressedInt();
+        distro_hour=in.readCompressedInt();
+        last_distro_time=in.readLong();
+        failover_server=in.readCompressedInt();
+        daemon_device_id=StringUtility.intern(in.readNullUTF());
+        daemon_connect_bind=in.readCompressedInt();
+        time_zone=in.readUTF().intern();
+        jilter_bind=in.readCompressedInt();
+        restrict_outbound_email=in.readBoolean();
+        daemon_connect_address=StringUtility.intern(in.readNullUTF());
+        failover_batch_size=in.readCompressedInt();
+        monitoring_load_low = in.readFloat();
+        monitoring_load_medium = in.readFloat();
+        monitoring_load_high = in.readFloat();
+        monitoring_load_critical = in.readFloat();
     }
 
     public void restartApache() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_APACHE, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_APACHE, pkey);
     }
 
     public void restartCron() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_CRON, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_CRON, pkey);
     }
 
     public void restartXfs() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_XFS, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_XFS, pkey);
     }
 
     public void restartXvfb() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_XVFB, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_XVFB, pkey);
+    }
+
+    public static class DaemonAccess {
+
+        private final String protocol;
+        private final String host;
+        private final int port;
+        private final long key;
+
+        public DaemonAccess(String protocol, String host, int port, long key) {
+            this.protocol = protocol;
+            this.host = host;
+            this.port = port;
+            this.key = key;
+        }
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public long getKey() {
+            return key;
+        }
     }
 
     public void setLastDistroTime(long distroTime) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
     }
 
     public void startApache() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.START_APACHE, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_APACHE, pkey);
     }
 
     public void startCron() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.START_CRON, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_CRON, pkey);
     }
 
     public void startDistro(boolean includeUser) throws IOException, SQLException {
-        getConnector().getDistroFiles().startDistro(this, includeUser);
+        table.connector.getDistroFiles().startDistro(this, includeUser);
     }
 
     public void startXfs() throws IOException, SQLException {
-        getConnector().requestUpdate(false,AOServProtocol.CommandID.START_XFS, pkey);
+        table.connector.requestUpdate(false,AOServProtocol.CommandID.START_XFS, pkey);
     }
 
     public void startXvfb() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.START_XVFB, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_XVFB, pkey);
     }
 
     public void stopApache() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_APACHE, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_APACHE, pkey);
     }
 
     public void stopCron() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_CRON, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_CRON, pkey);
     }
 
     public void stopXfs() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_XFS, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_XFS, pkey);
     }
 
     public void stopXvfb() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_XVFB, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_XVFB, pkey);
+    }
+
+    @Override
+    protected String toStringImpl() {
+        return hostname;
     }
 
     public void waitForHttpdSiteRebuild() throws IOException, SQLException {
-	    getConnector().getHttpdSites().waitForRebuild(this);
+	    table.connector.getHttpdSites().waitForRebuild(this);
     }
 
     public void waitForLinuxAccountRebuild() throws IOException, SQLException {
-	    getConnector().getLinuxAccounts().waitForRebuild(this);
+	    table.connector.getLinuxAccounts().waitForRebuild(this);
     }
 
     public void waitForMySQLDatabaseRebuild() throws IOException, SQLException {
-	    getConnector().getMysqlDatabases().waitForRebuild(this);
+	    table.connector.getMysqlDatabases().waitForRebuild(this);
     }
 
     public void waitForMySQLDBUserRebuild() throws IOException, SQLException {
-	    getConnector().getMysqlDBUsers().waitForRebuild(this);
+	    table.connector.getMysqlDBUsers().waitForRebuild(this);
     }
 
     public void waitForMySQLServerRebuild() throws IOException, SQLException {
-	    getConnector().getMysqlServers().waitForRebuild(this);
+	    table.connector.getMysqlServers().waitForRebuild(this);
     }
 
     public void waitForMySQLUserRebuild() throws IOException, SQLException {
-	    getConnector().getMysqlUsers().waitForRebuild(this);
+	    table.connector.getMysqlUsers().waitForRebuild(this);
     }
 
     public void waitForPostgresDatabaseRebuild() throws IOException, SQLException {
-	    getConnector().getPostgresDatabases().waitForRebuild(this);
+	    table.connector.getPostgresDatabases().waitForRebuild(this);
     }
 
     public void waitForPostgresServerRebuild() throws IOException, SQLException {
-	    getConnector().getPostgresServers().waitForRebuild(this);
+	    table.connector.getPostgresServers().waitForRebuild(this);
     }
 
     public void waitForPostgresUserRebuild() throws IOException, SQLException {
-	    getConnector().getPostgresUsers().waitForRebuild(this);
+	    table.connector.getPostgresUsers().waitForRebuild(this);
     }
-    */
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+            out.writeCompressedInt(1);
+            out.writeCompressedInt(2000);
+            out.writeCompressedInt(1024);
+            out.writeCompressedInt(2);
+            out.writeCompressedInt(240);
+            out.writeNullUTF(null);
+            out.writeBoolean(false);
+            out.writeBoolean(false);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeBoolean(true);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+            out.writeBoolean(false);
+            out.writeUTF("AOServer #"+pkey);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+            out.writeUTF(hostname);
+        }
+	out.writeCompressedInt(daemon_bind);
+	out.writeUTF(daemon_key);
+	out.writeCompressedInt(pool_size);
+        out.writeCompressedInt(distro_hour);
+        out.writeLong(last_distro_time);
+        out.writeCompressedInt(failover_server);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+            out.writeCompressedInt(60*1000);
+            out.writeCompressedInt(5*60*1000);
+            out.writeBoolean(false);
+        }
+        out.writeNullUTF(daemon_device_id);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+            out.writeNullUTF(null);
+            out.writeCompressedInt(1200*100);
+            out.writeBoolean(true);
+            if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) {
+                out.writeNullUTF(null);
+                out.writeNullUTF(null);
+            } else if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
+                out.writeUTF(AOServProtocol.FILTERED);
+                out.writeUTF(AOServProtocol.FILTERED);
+            }
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(daemon_connect_address);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
+            out.writeFloat(monitoring_load_low);
+            out.writeFloat(monitoring_load_medium);
+            out.writeFloat(monitoring_load_high);
+            out.writeFloat(monitoring_load_critical);
+        }
+    }
+
     /**
      * Gets the 3ware RAID report.
      */
-    /* TODO
     public String get3wareRaidReport() throws IOException, SQLException {
-        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_3WARE_RAID_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_3WARE_RAID_REPORT, pkey);
     }
-    */
+
     /**
      * Gets the MD RAID report.
      */
-    /* TODO
     public String getMdRaidReport() throws IOException, SQLException {
-        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
     }
 
     public static class DrbdReport {
-    */
+
         /**
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-connection-states
          */
-    /* TODO
         public enum ConnectionState {
             StandAlone,
             Disconnecting,
@@ -991,22 +939,20 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             VerifyS,
             VerifyT,
             Unconfigured
-        }*/
+        }
 
         /**
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-roles
          */
-    /* TODO
         public enum Role {
             Primary,
             Secondary,
             Unknown
         }
-*/
+
         /**
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-disk-states
          */
-    /* TODO
         public enum DiskState {
             Diskless,
             Attaching,
@@ -1020,7 +966,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         }
 
         final private String device;
-        final private DomainName resourceHostname;
+        final private String resourceHostname;
         final private String resourceDevice;
         final private ConnectionState connectionState;
         final private DiskState localDiskState;
@@ -1030,7 +976,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
 
         DrbdReport(
             String device,
-            DomainName resourceHostname,
+            String resourceHostname,
             String resourceDevice,
             ConnectionState connectionState,
             DiskState localDiskState,
@@ -1076,23 +1022,21 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             return resourceDevice;
         }
 
-        public DomainName getResourceHostname() {
+        public String getResourceHostname() {
             return resourceHostname;
         }
     }
-    */
+
     /**
      * Gets the DRBD report.
      */
-    /* TODO
     public List<DrbdReport> getDrbdReport() throws IOException, SQLException, ParseException {
-        return parseDrbdReport(getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey));
+        return parseDrbdReport(table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_DRBD_REPORT, pkey));
     }
-    */
+
     /**
      * Parses a DRBD report.
      */
-    /* TODO
     public static List<DrbdReport> parseDrbdReport(String drbdReport) throws ParseException {
         List<String> lines = StringUtility.splitLines(drbdReport);
         int lineNum = 0;
@@ -1102,7 +1046,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             String[] values = StringUtility.splitString(line, '\t');
             if(values.length!=5) {
                 throw new ParseException(
-                    ApplicationResources.accessor.getMessage(
+                    accessor.getMessage(
                         "AOServer.DrbdReport.ParseException.badColumnCount",
                         line
                     ),
@@ -1114,7 +1058,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             String device = values[0];
             if(!device.startsWith("/dev/drbd")) {
                 throw new ParseException(
-                    ApplicationResources.accessor.getMessage(
+                    accessor.getMessage(
                         "AOServer.DrbdReport.ParseException.badDeviceStart",
                         device
                     ),
@@ -1126,13 +1070,13 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             String resource = values[1];
             int dashPos = resource.lastIndexOf('-');
             if(dashPos==-1) throw new ParseException(
-                ApplicationResources.accessor.getMessage(
+                accessor.getMessage(
                     "AOServer.DrbdReport.ParseException.noDash",
                     resource
                 ),
                 lineNum
             );
-            DomainName domUHostname = resource.substring(0, dashPos);
+            String domUHostname = resource.substring(0, dashPos);
             String domUDevice = resource.substring(dashPos+1);
             if(
                 domUDevice.length()!=4
@@ -1142,7 +1086,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                 || domUDevice.charAt(3)<'a'
                 || domUDevice.charAt(3)>'z'
             ) throw new ParseException(
-                ApplicationResources.accessor.getMessage(
+                accessor.getMessage(
                     "AOServer.DrbdReport.ParseException.unexpectedResourceEnding",
                     domUDevice
                 ),
@@ -1156,7 +1100,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             String ds = values[3];
             int dsSlashPos = ds.indexOf('/');
             if(dsSlashPos==-1) throw new ParseException(
-                ApplicationResources.accessor.getMessage(
+                accessor.getMessage(
                     "AOServer.DrbdReport.ParseException.noSlashInDiskStates",
                     ds
                 ),
@@ -1169,7 +1113,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             String state = values[4];
             int slashPos = state.indexOf('/');
             if(slashPos==-1) throw new ParseException(
-                ApplicationResources.accessor.getMessage(
+                accessor.getMessage(
                     "AOServer.DrbdReport.ParseException.noSlashInState",
                     state
                 ),
@@ -1193,11 +1137,10 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         }
 
         public static class VolumeGroup implements Comparable<VolumeGroup> {
-*/
+
             /**
              * Parses the output of vgs --noheadings --separator=$'\t' --units=b -o vg_name,vg_extent_size,vg_extent_count,vg_free_count,pv_count,lv_count
              */
-    /* TODO
             private static Map<String,VolumeGroup> parseVgsReport(String vgs) throws ParseException {
                 List<String> lines = StringUtility.splitLines(vgs);
                 int size = lines.size();
@@ -1207,7 +1150,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     String line = lines.get(c);
                     String[] fields = StringUtility.splitString(line, '\t');
                     if(fields.length!=6) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.VolumeGroup.parseVgsReport.badColumnCount",
                             6,
                             fields.length
@@ -1217,7 +1160,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     String vgExtentSize = fields[1].trim();
                     if(!vgExtentSize.endsWith("B")) {
                         throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.VolumeGroup.parseVgsReport.invalidateVgExtentSize",
                                 vgExtentSize
                             ),
@@ -1239,7 +1182,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                             )
                         )!=null
                     ) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.VolumeGroup.parseVgsReport.vgNameFoundTwice",
                             vgName
                         ),
@@ -1271,14 +1214,13 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             public String toString() {
                 return vgName;
             }
-*/
+
             /**
              * Sorts ascending by:
              * <ol>
              *   <li>vgName</li>
              * </ol>
              */
-    /* TODO
             public int compareTo(VolumeGroup other) {
                 return vgName.compareTo(other.vgName);
             }
@@ -1317,11 +1259,10 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         }
 
         public static class PhysicalVolume implements Comparable<PhysicalVolume> {
-*/
+
             /**
              * Parses the output of pvs --noheadings --separator=$'\t' --units=b -o pv_name,pv_pe_count,pv_pe_alloc_count,pv_size,vg_name
              */
-    /* TODO
             private static Map<String,PhysicalVolume> parsePvsReport(String pvs, Map<String,VolumeGroup> volumeGroups) throws ParseException {
                 List<String> lines = StringUtility.splitLines(pvs);
                 int size = lines.size();
@@ -1334,7 +1275,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     String line = lines.get(c);
                     String[] fields = StringUtility.splitString(line, '\t');
                     if(fields.length!=5) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
                             5,
                             fields.length
@@ -1351,7 +1292,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     VolumeGroup volumeGroup;
                     if(vgName.length()==0) {
                         if(pvPeCount!=0 || pvPeAllocCount!=0) throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
                                 pvPeCount,
                                 pvPeAllocCount,
@@ -1362,7 +1303,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                         volumeGroup = null;
                     } else {
                         if(pvPeCount<1 && pvPeAllocCount<0 && pvPeAllocCount>pvPeCount) throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.PhysicalVolume.parsePvsReport.invalidValues",
                                 pvPeCount,
                                 pvPeAllocCount,
@@ -1372,7 +1313,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                         );
                         volumeGroup = volumeGroups.get(vgName);
                         if(volumeGroup==null) throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.PhysicalVolume.parsePvsReport.volumeGroupNotFound",
                                 vgName
                             ),
@@ -1407,7 +1348,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                             )
                         )!=null
                     ) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.pvNameFoundTwice",
                             pvName
                         ),
@@ -1423,7 +1364,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     Integer actualPvCountI = vgPhysicalVolumeCounts.get(vgName);
                     int actualPvCount = actualPvCountI==null ? 0 : actualPvCountI.intValue();
                     if(expectedPvCount!=actualPvCount) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.mismatchPvCount",
                             vgName
                         ),
@@ -1434,7 +1375,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     Long actualVgExtentCountL = vgExtentCountTotals.get(vgName);
                     long actualVgExtentCount = actualVgExtentCountL==null ? 0 : actualVgExtentCountL.longValue();
                     if(expectedVgExtentCount!=actualVgExtentCount) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badVgExtentCount",
                             vgName
                         ),
@@ -1445,7 +1386,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     Long vgAllocCountTotalL = vgAllocCountTotals.get(vgName);
                     long actualVgFreeCount = vgAllocCountTotalL==null ? expectedVgExtentCount : (expectedVgExtentCount-vgAllocCountTotalL);
                     if(expectedVgFreeCount!=actualVgFreeCount) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.PhysicalVolume.parsePvsReport.badVgFreeCount",
                             vgName
                         ),
@@ -1473,14 +1414,13 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             public String toString() {
                 return pvName;
             }
-*/
+
             /**
              * Sorts ascending by:
              * <ol>
              *   <li>pvName</li>
              * </ol>
              */
-    /* TODO
             public int compareTo(PhysicalVolume other) {
                 return pvName.compareTo(other.pvName);
             }
@@ -1488,28 +1428,25 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             public String getPvName() {
                 return pvName;
             }
-*/
+
             /**
              * The number of extents allocated, this is 0 when not allocated.
              */
-    /* TODO
             public long getPvPeAllocCount() {
                 return pvPeAllocCount;
             }
-*/
+
             /**
              * The total number of extents, this is 0 when not allocated.
              */
-    /* TODO
             public long getPvPeCount() {
                 return pvPeCount;
             }
-*/
+            
             /**
              * The size of the physical volume in bytes.  This is always available,
              * even when not allocated.
              */
-    /* TODO
             public long getPvSize() {
                 return pvSize;
             }
@@ -1520,11 +1457,10 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         }
 
         public static class LogicalVolume implements Comparable<LogicalVolume> {
-*/
+
             /**
              * Parses the output from lvs --noheadings --separator=$'\t' -o vg_name,lv_name,seg_count,segtype,stripes,seg_start_pe,seg_pe_ranges
              */
-    /* TODO
             private static void parseLvsReport(String lvs, Map<String,VolumeGroup> volumeGroups, Map<String,PhysicalVolume> physicalVolumes) throws ParseException {
                 final List<String> lines = StringUtility.splitLines(lvs);
                 final int size = lines.size();
@@ -1533,7 +1469,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     final String line = lines.get(c);
                     final String[] fields = StringUtility.splitString(line, '\t');
                     if(fields.length!=7) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.badColumnCount",
                             7,
                             fields.length
@@ -1551,7 +1487,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     // Find the volume group
                     VolumeGroup volumeGroup = volumeGroups.get(vgName);
                     if(volumeGroup==null) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.volumeGroupNotFound",
                             vgName
                         ),
@@ -1560,7 +1496,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
 
                     // Find or add the logical volume
                     if(segCount<1) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.badSegCount",
                             segCount
                         ),
@@ -1572,7 +1508,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                         volumeGroup.logicalVolumes.put(lvName, logicalVolume);
                     } else {
                         if(segCount!=logicalVolume.segCount) throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.segCountChanged",
                                 logicalVolume.segCount,
                                 segCount
@@ -1583,14 +1519,14 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
 
                     // Add the segment
                     if(stripeCount<1) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.badStripeCount",
                             stripeCount
                         ),
                         lineNum
                     );
                     if(segPeRanges.length!=stripeCount) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchStripeCount"
                         ),
                         lineNum
@@ -1599,7 +1535,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     // Check no overlap in segments
                     for(Segment existingSegment : logicalVolume.segments) {
                         if(newSegment.overlaps(existingSegment)) throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.segmentOverlap",
                                 existingSegment,
                                 newSegment
@@ -1613,7 +1549,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     for(String segPeRange : segPeRanges) {
                         int colonPos = segPeRange.indexOf(':');
                         if(colonPos==-1) throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoColon",
                                 segPeRange
                             ),
@@ -1621,7 +1557,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                         );
                         int dashPos = segPeRange.indexOf('-', colonPos+1);
                         if(dashPos==-1) throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.segPeRangeNoDash",
                                 segPeRange
                             ),
@@ -1630,7 +1566,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                         String stripeDevice = segPeRange.substring(0, colonPos).trim();
                         PhysicalVolume stripePv = physicalVolumes.get(stripeDevice);
                         if(stripePv==null) throw new ParseException(
-                            ApplicationResources.accessor.getMessage(
+                            accessor.getMessage(
                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.physicalVolumeNotFound",
                                 stripeDevice
                             ),
@@ -1647,7 +1583,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                                 for(Segment existingSegment : existingLV.segments) {
                                     for(Stripe existingStripe : existingSegment.stripes) {
                                         if(newStripe.overlaps(existingStripe)) throw new ParseException(
-                                            ApplicationResources.accessor.getMessage(
+                                            accessor.getMessage(
                                                 "AOServer.LvmReport.LogicalVolume.parseLsvReport.stripeOverlap",
                                                 existingStripe,
                                                 newStripe
@@ -1669,7 +1605,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     int expectedLvCount = volumeGroup.getLvCount();
                     int actualLvCount = volumeGroup.logicalVolumes.size();
                     if(expectedLvCount!=actualLvCount) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchLvCount",
                             volumeGroup
                         ),
@@ -1688,7 +1624,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
                     long expectedFreeCount = volumeGroup.vgFreeCount;
                     long actualFreeCount = volumeGroup.vgExtentCount - totalLvExtents;
                     if(expectedFreeCount!=actualFreeCount) throw new ParseException(
-                        ApplicationResources.accessor.getMessage(
+                        accessor.getMessage(
                             "AOServer.LvmReport.LogicalVolume.parseLsvReport.mismatchFreeCount",
                             volumeGroup
                         ),
@@ -1718,7 +1654,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             public String toString() {
                 return volumeGroup+"/"+lvName;
             }
-*/
+
             /**
              * Sorts ascending by:
              * <ol>
@@ -1726,7 +1662,6 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
              *   <li>lvName</li>
              * </ol>
              */
-    /* TODO
             public int compareTo(LogicalVolume other) {
                 int diff = volumeGroup.compareTo(other.volumeGroup);
                 if(diff!=0) return diff;
@@ -1775,7 +1710,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             public String toString() {
                 return logicalVolume+"("+segStartPe+"-"+getSegEndPe()+")";
             }
-*/
+
             /**
              * Sorts ascending by:
              * <ol>
@@ -1783,7 +1718,6 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
              *   <li>segStartPe</li>
              * </ol>
              */
-    /* TODO
             public int compareTo(Segment other) {
                 int diff = logicalVolume.compareTo(other.logicalVolume);
                 if(diff!=0) return diff;
@@ -1807,13 +1741,12 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             public long getSegStartPe() {
                 return segStartPe;
             }
-*/
+
             /**
              * Gets the last logical physical extent as determined by counting
              * the total size of the stripes and using the following function:
              * <pre>segStartPe + totalStripePE - 1</pre>
              */
-    /* TODO
             public long getSegEndPe() {
                 long segmentCount = 0;
                 for(Stripe stripe : stripes) segmentCount += stripe.getLastPe()-stripe.getFirstPe()+1;
@@ -1857,7 +1790,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             public String toString() {
                 return segment+":"+physicalVolume+"("+firstPe+"-"+lastPe+")";
             }
-*/
+
             /**
              * Sorts ascending by:
              * <ol>
@@ -1865,7 +1798,6 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
              *   <li>firstPe</li>
              * </ol>
              */
-    /* TODO
             public int compareTo(Stripe other) {
                 int diff = segment.compareTo(other.segment);
                 if(diff!=0) return diff;
@@ -1930,14 +1862,13 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             return volumeGroups;
         }
     }
-*/
+
     /**
      * Gets the LVM report.
      */
-    /* TODO
     public LvmReport getLvmReport() throws IOException, SQLException, ParseException {
         try {
-            return getConnector().requestResult(
+            return table.connector.requestResult(
                 true,
                 new AOServConnector.ResultRequest<LvmReport>() {
                     String vgs;
@@ -1973,22 +1904,20 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             throw err;
         }
     }
-*/
+
     /**
      * Gets the hard drive temperature report.
      */
-    /* TODO
     public String getHddTempReport() throws IOException, SQLException {
-        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_TEMP_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_TEMP_REPORT, pkey);
     }
-*/
+
     /**
      * Gets the model of each hard drive on the server.  The key
      * is the device name and the value is the model name.
      */
-    /* TODO
     public Map<String,String> getHddModelReport() throws IOException, SQLException, ParseException {
-        String report = getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
+        String report = table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
         List<String> lines = StringUtility.splitLines(report);
         int lineNum = 0;
         Map<String,String> results = new HashMap<String,String>(lines.size()*4/3+1);
@@ -1996,7 +1925,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             lineNum++;
             int colonPos = line.indexOf(':');
             if(colonPos==-1) throw new ParseException(
-                ApplicationResources.accessor.getMessage(
+                accessor.getMessage(
                     "AOServer.getHddModelReport.ParseException.noColon",
                     line
                 ),
@@ -2005,7 +1934,7 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             String device = line.substring(0, colonPos).trim();
             String model = line.substring(colonPos+1).trim();
             if(results.put(device, model)!=null) throw new ParseException(
-                ApplicationResources.accessor.getMessage(
+                accessor.getMessage(
                     "AOServer.getHddModelReport.ParseException.duplicateDevice",
                     device
                 ),
@@ -2014,37 +1943,33 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
         }
         return results;
     }
-*/
+
     /**
      * Gets the filesystem states report.
      */
-    /* TODO
     public String getFilesystemsCsvReport() throws IOException, SQLException {
-        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
     }
-*/
+    
     /**
      * Gets the output of /proc/loadavg
      */
-    /* TODO
     public String getLoadAvgReport() throws IOException, SQLException {
-        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_LOADAVG_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_LOADAVG_REPORT, pkey);
     }
-    */
+    
     /**
      * Gets the output of /proc/meminfo
      */
-    /* TODO
     public String getMemInfoReport() throws IOException, SQLException {
-        return getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MEMINFO_REPORT, pkey);
     }
-*/
+    
     /**
      * Checks a port from the daemon's point of view.  This is required for monitoring of private and loopback IPs.
      */
-    /* TODO
     public String checkPort(String ipAddress, int port, String netProtocol, String appProtocol, Map<String,String> monitoringParameters) throws IOException, SQLException {
-        return getConnector().requestStringQuery(
+        return table.connector.requestStringQuery(
             true,
             AOServProtocol.CommandID.AO_SERVER_CHECK_PORT,
             pkey,
@@ -2055,22 +1980,22 @@ final public class AOServer extends AOServObjectIntegerKey implements DtoFactory
             NetBind.encodeParameters(monitoringParameters)
         );
     }
-*/
+
     /**
      * Gets the current system time in milliseconds.
      */
-    /* TODO
     public long getSystemTimeMillis() throws IOException, SQLException {
-        return getConnector().requestLongQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
+        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_SYSTEM_TIME_MILLIS, pkey);
     }
-*/
+
+    public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
+        return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+    }
+
     /**
      * Gets the status line of a SMTP server from the server from the provided source IP.
      */
-    /* TODO
     public String checkSmtpBlacklist(String sourceIp, String connectIp) throws IOException, SQLException {
-        return getConnector().requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
     }
-     */
-    // </editor-fold>
 }

@@ -1,14 +1,17 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A <code>BusinessServer</code> grants a <code>Business</code> permission to
@@ -16,141 +19,127 @@ import java.rmi.RemoteException;
  *
  * @see  Business
  * @see  Server
- * @see  AOServerResource
+ *
+ * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessServer extends AOServObjectIntegerKey implements Comparable<BusinessServer>, DtoFactory<com.aoindustries.aoserv.client.dto.BusinessServer> /*, Removable*/ {
+final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer> implements Removable {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -1199350130176995699L;
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_ACCOUNTING=1,
+        COLUMN_SERVER=2
+    ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_SERVER_name = "server";
 
-    private AccountingCode accounting;
-    final private int server;
-    final private boolean isDefault;
-    final private boolean canVncConsole;
-
-    public BusinessServer(
-        AOServConnector connector,
-        int pkey,
-        AccountingCode accounting,
-        int server,
-        boolean isDefault,
-        boolean canVncConsole
-    ) {
-        super(connector, pkey);
-        this.accounting = accounting;
-        this.server = server;
-        this.isDefault = isDefault;
-        this.canVncConsole = canVncConsole;
-        intern();
+    String accounting;
+    int server;
+    boolean is_default;
+    private boolean
+        can_control_apache,
+        can_control_cron,
+        can_control_mysql,
+        can_control_postgresql,
+        can_control_xfs,
+        can_control_xvfb,
+        can_vnc_console
+    ;
+    
+    public boolean canControlApache() {
+        return can_control_apache;
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
+    public boolean canControlCron() {
+        return can_control_cron;
     }
 
-    private void intern() {
-        accounting = intern(accounting);
+    public boolean canControlMySQL() {
+        return can_control_mysql;
     }
-    // </editor-fold>
+    
+    public boolean canControlPostgreSQL() {
+        return can_control_postgresql;
+    }
+    
+    public boolean canControlXfs() {
+        return can_control_xfs;
+    }
+    
+    public boolean canControlXvfb() {
+        return can_control_xvfb;
+    }
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(BusinessServer other) {
-        try {
-            int diff = accounting.toUpperCase().compareTo(other.accounting.toUpperCase());
-            if(diff!=0) return diff;
-            return server==other.server ? 0 : getServer().compareTo(other.getServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    public boolean canVncConsole() {
+        return can_vnc_console;
+    }
+
+    public Business getBusiness() throws IOException, SQLException {
+        Business obj=table.connector.getBusinesses().get(accounting);
+        if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
+        return obj;
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return pkey;
+            case COLUMN_ACCOUNTING: return accounting;
+            case COLUMN_SERVER: return server;
+            case 3: return is_default;
+            case 4: return can_control_apache;
+            case 5: return can_control_cron;
+            case 6: return can_control_mysql;
+            case 7: return can_control_postgresql;
+            case 8: return can_control_xfs;
+            case 9: return can_control_xvfb;
+            case 10: return can_vnc_console;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
-    public int getPkey() {
-        return getKeyInt();
+    public Server getServer() throws IOException, SQLException {
+        Server obj=table.connector.getServers().get(server);
+        if(obj==null) throw new SQLException("Unable to find Server: "+server);
+        return obj;
     }
 
-    /**
-     * May be filtered.
-     */
-    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(BusinessServer.class, "business");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the business")
-    public Business getBusiness() throws RemoteException {
-        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.BUSINESS_SERVERS;
     }
 
-    public static final MethodColumn COLUMN_SERVER = getMethodColumn(BusinessServer.class, "server");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the server")
-    public Server getServer() throws RemoteException {
-        //try {
-            return getConnector().getServers().get(server);
-        //} catch(NoSuchElementException exc) {
-        //    throw exc;
-        //}
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getInt(1);
+        accounting=result.getString(2);
+        server=result.getInt(3);
+        is_default=result.getBoolean(4);
+        can_control_apache=result.getBoolean(5);
+        can_control_cron=result.getBoolean(6);
+        can_control_mysql=result.getBoolean(7);
+        can_control_postgresql=result.getBoolean(8);
+        can_control_xfs=result.getBoolean(9);
+        can_control_xvfb=result.getBoolean(10);
+        can_vnc_console = result.getBoolean(11);
     }
 
-    @SchemaColumn(order=3, description="if <code>true</code>, this is the default server.")
-    public boolean getIsDefault() {
-        return isDefault;
+    public boolean isDefault() {
+        return is_default;
     }
 
-    @SchemaColumn(order=4, description="grants VNC console access")
-    public boolean getCanVncConsole() {
-        return canVncConsole;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public BusinessServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.BusinessServer dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            getAccountingCode(dto.getAccounting()),
-            dto.getServer(),
-            dto.getIsDefault(),
-            dto.isCanVncConsole()
-        );
-    }
-    @Override
-    public com.aoindustries.aoserv.client.dto.BusinessServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.BusinessServer(getKeyInt(), getDto(accounting), server, isDefault, canVncConsole);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        Business bu = getBusiness();
-    	return (bu==null ? accounting : bu.toString())+"->"+getServer().toStringImpl();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<AOServerResource> getAoServerResources() throws RemoteException {
-        return getConnector().getAoServerResources().filterIndexed(AOServerResource.COLUMN_BUSINESS_SERVER, this);
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readCompressedInt();
+        accounting=in.readUTF().intern();
+        server=in.readCompressedInt();
+        is_default=in.readBoolean();
+        can_control_apache=in.readBoolean();
+        can_control_cron=in.readBoolean();
+        can_control_mysql=in.readBoolean();
+        can_control_postgresql=in.readBoolean();
+        can_control_xfs=in.readBoolean();
+        can_control_xvfb=in.readBoolean();
+        can_vnc_console = in.readBoolean();
     }
 
-    @DependentObjectSet
-    public IndexedSet<NetBind> getNetBinds() throws RemoteException {
-        return getConnector().getNetBinds().filterIndexed(NetBind.COLUMN_BUSINESS_SERVER, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<ServerResource> getServerResources() throws RemoteException {
-        return getConnector().getServerResources().filterIndexed(ServerResource.COLUMN_BUSINESS_SERVER, this);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
@@ -158,7 +147,7 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
 
         // Do not remove the default unless it is the only one left
         if(
-            isDefault
+            is_default
             && bu.getBusinessServers().size()>1
         ) reasons.add(new CannotRemoveReason<Business>("Not allowed to remove access to the default server while access to other servers remains", bu));
 
@@ -166,96 +155,103 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
         AOServer ao=se.getAOServer();
 
         // No children should be able to access the server
-        List<Business> bus=getConnector().getBusinesses().getRows();
+        List<Business> bus=table.connector.getBusinesses().getRows();
         for(int c=0;c<bus.size();c++) {
             if(bu.isBusinessOrParentOf(bus.get(c))) {
                 Business bu2=bus.get(c);
                 if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<Business>("Child business "+bu2.getAccounting()+" still has access to "+se, bu2));
+                List<Package> pks=bu2.getPackages();
+                for(int d=0;d<pks.size();d++) {
+                    Package pk=pks.get(d);
 
-                // net_binds
-                for(NetBind nb : getNetBinds()) {
-                    String details=nb.getDetails();
-                    if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(), nb));
-                    else {
-                        IPAddress ia=nb.getIPAddress();
+                    // net_binds
+                    for(NetBind nb : pk.getNetBinds()) {
+                        if(nb.getServer().equals(se)) {
+                            String details=nb.getDetails();
+                            if(details!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for "+details+" on "+se.toStringImpl(), nb));
+                            else {
+                                IPAddress ia=nb.getIPAddress();
+                                NetDevice nd=ia.getNetDevice();
+                                if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), nb));
+                                else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(), nb));
+                            }
+                        }
+                    }
+
+                    // ip_addresses
+                    for(IPAddress ia : pk.getIPAddresses()) {
                         NetDevice nd=ia.getNetDevice();
-                        if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), nb));
-                        else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(), nb));
-                    }
-                }
-
-                // ip_addresses
-                for(IPAddress ia : bu2.getIPAddresses()) {
-                    NetDevice nd=ia.getNetDevice();
-                    if(
-                        nd!=null
-                        && se.equals(nd.getServer())
-                    ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), ia));
-                }
-
-                if(ao!=null) {
-                    // email_pipes
-                    for(EmailPipe ep : bu2.getEmailPipes()) {
-                        if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailPipe>("Used by email pipe '"+ep.getPath()+"' on "+ao.getHostname(), ep));
+                        if(
+                            nd!=null
+                            && se.equals(nd.getServer())
+                        ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), ia));
                     }
 
-                    // httpd_sites
-                    for(HttpdSite hs : bu2.getHttpdSites()) {
-                        if(hs.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
-                    }
-
-                    for(Username un : bu2.getUsernames()) {
-                        // linux_server_accounts
-                        LinuxAccount la=un.getLinuxAccount();
-                        if(la!=null) {
-                            LinuxServerAccount lsa=la.getLinuxServerAccount(ao);
-                            if(lsa!=null) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Used by Linux account "+un.getUsername()+" on "+ao.getHostname(), lsa));
+                    if(ao!=null) {
+                        // email_pipes
+                        for(EmailPipe ep : pk.getEmailPipes()) {
+                            if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailPipe>("Used by email pipe '"+ep.getPath()+"' on "+ao.getHostname(), ep));
                         }
 
-                        // mysql_users
-                        for(MySQLUser mu : un.getMySQLUsers()) {
-                            MySQLServer ms = mu.getMySQLServer();
-                            if(ms.getAoServer().equals(ao)) {
-                                reasons.add(new CannotRemoveReason<MySQLUser>("Used by MySQL user "+mu.username+" on "+ms.getName()+" on "+ao.getHostname(), mu));
+                        // httpd_sites
+                        for(HttpdSite hs : pk.getHttpdSites()) {
+                            if(hs.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
+                        }
+
+                        for(Username un : pk.getUsernames()) {
+                            // linux_server_accounts
+                            LinuxAccount la=un.getLinuxAccount();
+                            if(la!=null) {
+                                LinuxServerAccount lsa=la.getLinuxServerAccount(ao);
+                                if(lsa!=null) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Used by Linux account "+un.getUsername()+" on "+ao.getHostname(), lsa));
+                            }
+
+                            // mysql_server_users
+                            MySQLUser mu=un.getMySQLUser();
+                            if(mu!=null) {
+                                for(MySQLServer ms : ao.getMySQLServers()) {
+                                    MySQLServerUser msu=mu.getMySQLServerUser(ms);
+                                    if(msu!=null) reasons.add(new CannotRemoveReason<MySQLServerUser>("Used by MySQL user "+un.getUsername()+" on "+ms.getName()+" on "+ao.getHostname(), msu));
+                                }
+                            }
+
+                            // postgres_server_users
+                            PostgresUser pu=un.getPostgresUser();
+                            if(pu!=null) {
+                                for(PostgresServer ps : ao.getPostgresServers()) {
+                                    PostgresServerUser psu=pu.getPostgresServerUser(ps);
+                                    if(psu!=null) reasons.add(new CannotRemoveReason<PostgresServerUser>("Used by PostgreSQL user "+un.getUsername()+" on "+ps.getName()+" on "+ao.getHostname(), psu));
+                                }
                             }
                         }
 
-                        // postgres_server_users
-                        PostgresUser pu=un.getPostgresUser();
-                        if(pu!=null) {
-                            for(PostgresServer ps : ao.getPostgresServers()) {
-                                PostgresServerUser psu=pu.getPostgresServerUser(ps);
-                                if(psu!=null) reasons.add(new CannotRemoveReason<PostgresServerUser>("Used by PostgreSQL user "+un.getUsername()+" on "+ps.getName()+" on "+ao.getHostname(), psu));
-                            }
+                        for(LinuxGroup lg : pk.getLinuxGroups()) {
+                            // linux_server_groups
+                            LinuxServerGroup lsg=lg.getLinuxServerGroup(ao);
+                            if(lsg!=null) reasons.add(new CannotRemoveReason<LinuxServerGroup>("Used by Linux group "+lg.getName()+" on "+ao.getHostname(), lsg));
                         }
-                    }
 
-                    for(LinuxGroup lg : bu2.getLinuxGroups()) {
-                        // linux_server_groups
-                        LinuxServerGroup lsg=lg.getLinuxServerGroup(ao);
-                        if(lsg!=null) reasons.add(new CannotRemoveReason<LinuxServerGroup>("Used by Linux group "+lg.getName()+" on "+ao.getHostname(), lsg));
-                    }
+                        // mysql_databases
+                        for(MySQLDatabase md : pk.getMySQLDatabases()) {
+                            MySQLServer ms=md.getMySQLServer();
+                            if(ms.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
+                        }
 
-                    // mysql_databases
-                    for(MySQLDatabase md : bu2.getMysqlDatabases()) {
-                        MySQLServer ms=md.getMySQLServer();
-                        if(ms.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
-                    }
+                        // postgres_databases
+                        for(PostgresDatabase pd : pk.getPostgresDatabases()) {
+                            PostgresServer ps=pd.getPostgresServer();
+                            if(ps.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
+                        }
 
-                    // postgres_databases
-                    for(PostgresDatabase pd : bu2.getPostgresDatabases()) {
-                        PostgresServer ps=pd.getPostgresServer();
-                        if(ps.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
-                    }
+                        // email_domains
+                        for(EmailDomain ed : pk.getEmailDomains()) {
+                            if(ed.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailDomain>("Used by email domain "+ed.getDomain()+" on "+ao.getHostname(), ed));
+                        }
 
-                    // email_domains
-                    for(EmailDomain ed : bu2.getEmailDomains()) {
-                        if(ed.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailDomain>("Used by email domain "+ed.getDomain()+" on "+ao.getHostname(), ed));
-                    }
-
-                    // email_smtp_relays
-                    for(EmailSmtpRelay esr : bu2.getEmailSmtpRelays()) {
-                        if(esr.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailSmtpRelay>("Used by email SMTP rule "+esr, esr));
+                        // email_smtp_relays
+                        for(EmailSmtpRelay esr : pk.getEmailSmtpRelays()) {
+                            if(esr.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<EmailSmtpRelay>("Used by email SMTP rule "+esr, esr));
+                        }
                     }
                 }
             }
@@ -264,12 +260,26 @@ final public class BusinessServer extends AOServObjectIntegerKey implements Comp
     }
 
     public void remove() throws IOException, SQLException {
-    	getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
+    	table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.BUSINESS_SERVERS, pkey);
     }
 
     public void setAsDefault() throws IOException, SQLException {
-    	getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
+    	table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_DEFAULT_BUSINESS_SERVER, pkey);
     }
-    */
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(accounting);
+        out.writeCompressedInt(server);
+        out.writeBoolean(is_default);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup
+        out.writeBoolean(can_control_apache);
+        out.writeBoolean(can_control_cron);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_control_interbase
+        out.writeBoolean(can_control_mysql);
+        out.writeBoolean(can_control_postgresql);
+        out.writeBoolean(can_control_xfs);
+        out.writeBoolean(can_control_xvfb);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeBoolean(can_vnc_console);
+    }
 }

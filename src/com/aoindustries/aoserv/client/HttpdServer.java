@@ -1,16 +1,16 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.aoserv.client.validator.ValidationException;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * An <code>HttpdServer</code> represents one running instance of the
@@ -22,196 +22,212 @@ import java.rmi.RemoteException;
  * @see  HttpdSite
  * @see  HttpdSiteBind
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class HttpdServer extends AOServerResource implements Comparable<HttpdServer>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdServer> {
+final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_AO_SERVER=1,
+        COLUMN_PACKAGE=10
+    ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_NUMBER_name = "number";
+
     /**
      * The highest recommended number of sites to bind in one server.
      */
-    public static final int DEFAULT_MAXIMUM_BINDS=128;
-    // </editor-fold>
+    public static final int RECOMMENDED_MAXIMUM_BINDS=128;
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -8904437243470486353L;
+    int ao_server;
+    private int number;
+    private boolean can_add_sites;
+    // TODO: Remove this field
+    private boolean is_mod_jk;
+    private int max_binds;
+    int linux_server_account;
+    int linux_server_group;
+    private int mod_php_version;
+    private boolean use_suexec;
+    private int packageNum;
+    private boolean is_shared;
+    private boolean use_mod_perl;
+    private int timeout;
 
-    final private int number;
-    final private int maxBinds;
-    final private int linuxAccountGroup;
-    final private Integer modPhpVersion;
-    final private boolean useSuexec;
-    final private boolean shared;
-    final private boolean useModPerl;
-    final private int timeout;
-
-    public HttpdServer(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int aoServer,
-        int businessServer,
-        int number,
-        int maxBinds,
-        int linuxAccountGroup,
-        Integer modPhpVersion,
-        boolean useSuexec,
-        boolean isShared,
-        boolean useModPerl,
-        int timeout
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
-        this.number = number;
-        this.maxBinds = maxBinds;
-        this.linuxAccountGroup = linuxAccountGroup;
-        this.modPhpVersion = modPhpVersion;
-        this.useSuexec = useSuexec;
-        this.shared = isShared;
-        this.useModPerl = useModPerl;
-        this.timeout = timeout;
+    public boolean canAddSites() {
+	return can_add_sites;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(HttpdServer other) {
-        try {
-            if(getKeyInt()==other.getKeyInt()) return 0;
-            int diff = aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
-            if(diff!=0) return diff;
-            return compare(number, other.number);
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
+            case 2: return Integer.valueOf(number);
+            case 3: return can_add_sites?Boolean.TRUE:Boolean.FALSE;
+            case 4: return is_mod_jk?Boolean.TRUE:Boolean.FALSE;
+            case 5: return Integer.valueOf(max_binds);
+            case 6: return Integer.valueOf(linux_server_account);
+            case 7: return Integer.valueOf(linux_server_group);
+            case 8: return mod_php_version==-1?null:Integer.valueOf(mod_php_version);
+            case 9: return use_suexec?Boolean.TRUE:Boolean.FALSE;
+            case COLUMN_PACKAGE: return Integer.valueOf(packageNum);
+            case 11: return is_shared?Boolean.TRUE:Boolean.FALSE;
+            case 12: return use_mod_perl?Boolean.TRUE:Boolean.FALSE;
+            case 13: return Integer.valueOf(timeout);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, description="the number of the instance on the server")
-    public int getNumber() {
-        return number;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, description="the maximum number of httpd_site_binds on this server")
-    public int getMaxBinds() {
-        return maxBinds;
-    }
-
-    public static final MethodColumn COLUMN_LINUX_ACCOUNT_GROUP = getMethodColumn(HttpdServer.class, "linuxAccountGroup");
-    /**
-     * May be filtered.
-     */
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, index=IndexType.INDEXED, description="the account and group the servers runs as")
-    public LinuxAccountGroup getLinuxAccountGroup() throws RemoteException {
-        return getConnector().getLinuxAccountGroups().filterUnique(LinuxAccountGroup.COLUMN_PKEY, linuxAccountGroup);
-    }
-
-    public static final MethodColumn COLUMN_MOD_PHP_VERSION = getMethodColumn(HttpdServer.class, "modPhpVersion");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, index=IndexType.INDEXED, description="the version of mod_php to run")
-    public TechnologyVersion getModPhpVersion() throws RemoteException {
-        if(modPhpVersion==null) return null;
-        TechnologyVersion tv=getConnector().getTechnologyVersions().get(modPhpVersion);
-        if(tv.operatingSystemVersion!=getAoServer().getServer().operatingSystemVersion) throw new RemoteException("mod_php/operating system version mismatch on HttpdServer: #"+getKey());
-        return tv;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="indicates that the suexec wrapper will be used for CGI")
-    public boolean getUseSuexec() {
-        return useSuexec;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="indicates that any user on the server may use this httpd instance")
-    public boolean isShared() {
-        return shared;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="enables mod_perl")
-    public boolean getUseModPerl() {
-        return useModPerl;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+8, description="the timeout setting in seconds")
-    public int getTimeOut() {
-        return timeout;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public HttpdServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdServer dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getAoServer(),
-            dto.getBusinessServer(),
-            dto.getNumber(),
-            dto.getMaxBinds(),
-            dto.getLinuxAccountGroup(),
-            dto.getModPhpVersion(),
-            dto.isUseSuexec(),
-            dto.isShared(),
-            dto.isUseModPerl(),
-            dto.getTimeout()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.HttpdServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.HttpdServer(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            aoServer,
-            businessServer,
-            number,
-            maxBinds,
-            linuxAccountGroup,
-            modPhpVersion,
-            useSuexec,
-            shared,
-            useModPerl,
-            timeout
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() {
-    	return "httpd"+number;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    @DependentObjectSet
     public List<HttpdBind> getHttpdBinds() throws IOException, SQLException {
-        return getConnector().getHttpdBinds().getHttpdBinds(this);
+	return table.connector.getHttpdBinds().getHttpdBinds(this);
     }
 
     public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return getConnector().getHttpdSites().getHttpdSites(this);
+	return table.connector.getHttpdSites().getHttpdSites(this);
     }
 
     public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
-        return getConnector().getHttpdWorkers().getHttpdWorkers(this);
+	return table.connector.getHttpdWorkers().getHttpdWorkers(this);
     }
+
+    public int getMaxBinds() {
+        return max_binds;
+    }
+
+    public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
+        LinuxServerAccount lsa=table.connector.getLinuxServerAccounts().get(linux_server_account);
+        if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
+        return lsa;
+    }
+
+    public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
+        LinuxServerGroup lsg=table.connector.getLinuxServerGroups().get(linux_server_group);
+        if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
+        return lsg;
+    }
+
+    public TechnologyVersion getModPhpVersion() throws SQLException, IOException {
+        if(mod_php_version==-1) return null;
+        TechnologyVersion tv=table.connector.getTechnologyVersions().get(mod_php_version);
+        if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+mod_php_version);
+        if(
+            tv.getOperatingSystemVersion(table.connector).getPkey()
+            != getAOServer().getServer().getOperatingSystemVersion().getPkey()
+        ) {
+            throw new SQLException("mod_php/operating system version mismatch on HttpdServer: #"+pkey);
+        }
+        return tv;
+    }
+
+    public boolean useSuexec() {
+        return use_suexec;
+    }
+
+    public Package getPackage() throws IOException, SQLException {
+        // Package may be filtered
+        return table.connector.getPackages().get(packageNum);
+    }
+
+    public boolean isShared() {
+        return is_shared;
+    }
+    
+    public boolean useModPERL() {
+        return use_mod_perl;
+    }
+    
+    /**
+     * Gets the timeout value in seconds.
      */
-    // </editor-fold>
+    public int getTimeOut() {
+        return timeout;
+    }
+
+    public int getNumber() {
+	return number;
+    }
+
+    public AOServer getAOServer() throws SQLException, IOException {
+	AOServer obj=table.connector.getAoServers().get(ao_server);
+	if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+	return obj;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_SERVERS;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey=result.getInt(1);
+	ao_server=result.getInt(2);
+	number=result.getInt(3);
+	can_add_sites=result.getBoolean(4);
+        is_mod_jk=result.getBoolean(5);
+        max_binds=result.getInt(6);
+        linux_server_account=result.getInt(7);
+        linux_server_group=result.getInt(8);
+        mod_php_version=result.getInt(9);
+        if(result.wasNull()) mod_php_version=-1;
+        use_suexec=result.getBoolean(10);
+        packageNum=result.getInt(11);
+        is_shared=result.getBoolean(12);
+        use_mod_perl=result.getBoolean(13);
+        timeout=result.getInt(14);
+    }
+
+    /**
+     * @deprecated  All servers now use mod_jk, mod_jserv is no longer supported.
+     */
+    @Deprecated
+    public boolean isModJK() {
+        return is_mod_jk;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readCompressedInt();
+	ao_server=in.readCompressedInt();
+	number=in.readCompressedInt();
+	can_add_sites=in.readBoolean();
+        is_mod_jk=in.readBoolean();
+        max_binds=in.readCompressedInt();
+        linux_server_account=in.readCompressedInt();
+        linux_server_group=in.readCompressedInt();
+        mod_php_version=in.readCompressedInt();
+        use_suexec=in.readBoolean();
+        packageNum=in.readCompressedInt();
+        is_shared=in.readBoolean();
+        use_mod_perl=in.readBoolean();
+        timeout=in.readCompressedInt();
+    }
+
+    @Override
+    String toStringImpl() {
+	return "httpd"+number;
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeCompressedInt(pkey);
+	out.writeCompressedInt(ao_server);
+	out.writeCompressedInt(number);
+	out.writeBoolean(can_add_sites);
+        out.writeBoolean(is_mod_jk);
+        out.writeCompressedInt(max_binds);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) {
+            out.writeCompressedInt(linux_server_account);
+            out.writeCompressedInt(linux_server_group);
+            out.writeCompressedInt(mod_php_version);
+            out.writeBoolean(use_suexec);
+            out.writeCompressedInt(packageNum);
+            if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
+            out.writeBoolean(is_shared);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) {
+            out.writeBoolean(use_mod_perl);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)>=0) {
+            out.writeCompressedInt(timeout);
+        }
+    }
 }
