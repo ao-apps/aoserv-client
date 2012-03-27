@@ -1,341 +1,107 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2009-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * A <code>Resource</code> represents one accountable item.  For the purposes
- * of controlling disable/enable/remove sequence, it also has a set of
- * dependencies.
+ * A <code>Resource</code> is a measurable hardware resource.  A <code>Package</code>
+ * comes with a set of resources, and when those <code>PackageDefinitionLimit</code>s are exceeded,
+ * an additional amount is charged to the <code>Business</code>.
+ *
+ * @see  Package
  *
  * @author  AO Industries, Inc.
  */
-public abstract class Resource extends AOServObjectIntegerKey {
+final public class Resource extends GlobalObjectStringKey<Resource> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 4217224887608168109L;
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
-    private String resourceType;
-    private AccountingCode accounting;
-    final protected long created;
-    private UserId createdBy;
-    final protected Integer disableLog;
-    final protected long lastEnabled;
+    public static final String
+        AOSERV_DAEMON="aoserv_daemon",
+        AOSERV_MASTER="aoserv_master",
+        BANDWIDTH="bandwidth",
+        CONSULTING="consulting",
+        DISK="disk",
+        DISTRIBUTION_SCAN="distribution_scan",
+        DRUPAL="drupal",
+        EMAIL="email",
+        FAILOVER="failover",
+        HARDWARE_DISK_7200_120="hardware_disk_7200_120",
+        HTTPD="httpd",
+        IP="ip",
+        JAVAVM="javavm",
+        JOOMLA="joomla",
+        MYSQL_REPLICATION="mysql_replication",
+        RACK="rack",
+        SERVER_DATABASE="server_database",
+        SERVER_ENTERPRISE="server_enterprise",
+        SERVER_P4="server_p4",
+        SERVER_SCSI="server_scsi",
+        SERVER_XEON="server_xeon",
+        SITE="site",
+        SYSADMIN="sysadmin",
+        USER="user"
+    ;
 
-    protected Resource(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled
-    ) {
-        super(connector, pkey);
-        this.resourceType = resourceType;
-        this.accounting = accounting;
-        this.created = created;
-        this.createdBy = createdBy;
-        this.disableLog = disableLog;
-        this.lastEnabled = lastEnabled;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        resourceType = intern(resourceType);
-        accounting = intern(accounting);
-        createdBy = intern(createdBy);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Read-only access to fields for subclasses">
-    protected String getResourceTypeName() {
-        return resourceType;
-    }
-    protected AccountingCode getAccounting() {
-        return accounting;
-    }
-    protected UserId getCreatedByUsername() {
-        return createdBy;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    public static final Comparator<Resource> resourceComparator = new Comparator<Resource>() {
-        @Override
-        public int compare(Resource o1, Resource o2) {
-            try {
-                int diff = o1.accounting==o2.accounting ? 0 : o1.getBusiness().compareTo(o2.getBusiness()); // OK - interned
-                if(diff!=0) return diff;
-                diff = o1.resourceType==o2.resourceType ? 0 : o1.getResourceType().compareTo(o2.getResourceType()); // OK - interned
-                if(diff!=0) return diff;
-                return AOServObject.compare(o1.getKeyInt(), o2.getKeyInt());
-            } catch(RemoteException err) {
-                throw new WrappedException(err);
-            }
-        }
-    };
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_PKEY = getMethodColumn(Resource.class, "pkey");
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique pkey")
-    public int getPkey() {
-        return getKeyInt();
-    }
-
-    public static final MethodColumn COLUMN_RESOURCE_TYPE = getMethodColumn(Resource.class, "resourceType");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the type of resource")
-    public ResourceType getResourceType() throws RemoteException {
-        return getConnector().getResourceTypes().get(resourceType);
-    }
-
-    /**
-     * Gets the business that is responsible for any charges caused by this resource.
-     * This may be filtered.
-     */
-    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(Resource.class, "business");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the business that owns this resource")
-    public Business getBusiness() throws RemoteException {
-        return getConnector().getBusinesses().filterUnique(Business.COLUMN_ACCOUNTING, accounting);
-    }
-
-    /**
-     * Gets the time this was initially created.
-     */
-    @SchemaColumn(order=3, description="the time the resources was created")
-    public Timestamp getCreated() {
-    	return new Timestamp(created);
-    }
-
-    /**
-     * May be filtered.
-     */
-    public static final MethodColumn COLUMN_CREATED_BY = getMethodColumn(Resource.class, "createdBy");
-    @DependencySingleton
-    @SchemaColumn(order=4, index=IndexType.INDEXED, description="the administrator who created the resource")
-    public BusinessAdministrator getCreatedBy() throws RemoteException {
-        try {
-            return getConnector().getBusinessAdministrators().get(createdBy);
-        } catch(NoSuchElementException err) {
-            // Filtered
-            return null;
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
-    public static final MethodColumn COLUMN_DISABLE_LOG = getMethodColumn(Resource.class, "disableLog");
-    @DependencySingleton
-    @SchemaColumn(order=5, index=IndexType.INDEXED, description="indicates the resource is disabled")
-    public DisableLog getDisableLog() throws RemoteException {
-        if(disableLog==null) return null;
-        return getConnector().getDisableLogs().get(disableLog);
-    }
-    public boolean isDisabled() {
-        return disableLog!=null;
-    }
-
     /**
-     * Gets the time this resource was last enabled.  Initially this will be the
-     * same as the created time.  This is used to pro-rate billing.
+     * Gets the unique name of this resource.
      */
-    @SchemaColumn(order=6, description="the time the resources was last enabled or the creation time if never disabled")
-    public Timestamp getLastEnabled() {
-        return new Timestamp(lastEnabled);
-    }
-    protected static final int RESOURCE_LAST_COLUMN = 6;
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Dependencies">
-    /**
-     * Gets the set of all resources this depends on, topologically sorted
-     * from most distant to closest.
-     */
-    public List<Resource> getAllDependencies() throws RemoteException {
-        // TODO
-        return Collections.emptyList();
+    public String getName() {
+        return pkey;
     }
 
-    /**
-     * Gets the set of all resources that are dependent on this, topologically
-     * sorted from most distant to closest.
-     */
-    public List<Resource> getAllDependentResources() throws RemoteException {
-        // TODO
-        return Collections.emptyList();
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.RESOURCES;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Accounting">
-    /* TODO
-    public static class ResourceAccounting implements Serializable {
-        private final ResourceType resourceType;
-        private final int count;
-        // TODO: Include package_definition_limit
-        // TODO: There should be foreign key constraints / triggers to make sure all resources are within their package definition limits.
+    public String getDisplayUnit(int quantity) {
+        if(quantity==1) return accessor.getMessage("Resource."+pkey+".singularDisplayUnit", quantity);
+        else return accessor.getMessage("Resource."+pkey+".pluralDisplayUnit", quantity);
     }
-     */
 
-    /**
-     * Gets the set of all resources types and counts that this resource will add
-     * for accounting.  For instance, a httpd_tomcat_site is also a httpd_site.
-     */
-    /* TODO
-    public Set<ResourceAccounting> getAccountingResourceTypes() throws RemoteException {
+    public String getPerUnit(Object amount) {
+        return accessor.getMessage("Resource."+pkey+".perUnit", amount);
     }
-     */
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
-    public boolean isDisabled() {
-        return disableLog!=null;
-    }*/
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+    }
 
-    /**
-     * Gets the reasons this resource would not be enableable, even if all dependencies were enabled.
-     * In order to be enabled, this resource must:
-     * <ol>
-     *   <li>Be currently disabled</li>
-     *   <li>Be enableable by the current user</li>
-     *   <li>Not be restricted by any type-specific rules</li>
-     * <ol>
-     *
-     * @return  an empty <code>List</code> if this resource would be enableable given all dependencies were enabled, or a list of reasons
-     */
-    /* TODO
-    public List<Reason> getCannotEnableReasons() throws IOException, SQLException {
-        List<Reason> reasons = new ArrayList<Reason>();
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+    }
 
-        // Be currently disabled
-        DisableLog dl=getDisableLog();
-        if(dl==null) reasons.add(new Reason(ApplicationResources.accessor.getMessage("Resource.getCannotEnableReasons.notDisabled"), this));
-        else {
-            // Be enableable by the current user
-            if(!dl.canEnable()) reasons.add(new Reason(ApplicationResources.accessor.getMessage("Resource.getCannotEnableReasons.notAllowed"), this));
+    @Override
+    String toStringImpl() {
+        return accessor.getMessage("Resource."+pkey+".toString");
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+            out.writeUTF(accessor.getMessage("Resource."+pkey+".singularDisplayUnit", ""));
         }
-
-        // TODO: Not be restricted by any type-specific rules
-
-        return reasons;
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+            out.writeUTF(accessor.getMessage("Resource."+pkey+".pluralDisplayUnit", ""));
+            out.writeUTF(getPerUnit(""));
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // description
     }
-    */
-    /**
-     * Gets all the reasons this resource may not be enabled, including reasons why any of the dependencies
-     * may not be enabled.
-     *
-     * @return  an empty <code>List</code> if this resource may be enabled, or a list of reasons
-     *
-     * @see  #getAllDependencies() for the order these are returned
-     */
-    /* TODO
-    public List<Reason> getAllCannotEnableReasons() throws IOException, SQLException {
-        // TODO
-        return Collections.emptyList();
-    }
-     */
-
-    /**
-     * Enables all disabled dependencies and then this resource.
-     *
-     * @see  #getAllDependencies() for the order these are enabled
-     */
-    /* TODO
-    public void enable() throws IOException, SQLException {
-        // TODO: Add here per type
-        throw new AssertionError("Unexpected resource type: "+resource_type);
-    }
-    */
-    /**
-     * Gets the reasons this resource would not be disableable, even if all dependent resources were disabled.
-     *
-     * @return  an empty <code>List</code> if this resource would be disableable given all dependent resources were disabled, or a list of reasons
-     */
-    /* TODO
-    public List<Reason> getCannotDisableReasons() throws IOException, SQLException {
-        // TODO
-        return Collections.emptyList();
-    }
-    */
-    /**
-     * Gets all the reasons this resource may not be disabled, including reasons why any of the dependent resources
-     * may not be disabled.
-     *
-     * @return  an empty <code>List</code> if this resource may be disabled, or a list of reasons
-     *
-     * @see  #getAllDependentResources() for the order these are returned
-     */
-    /* TODO
-    public List<Reason> getAllCannotDisableReasons() throws IOException, SQLException {
-        // TODO
-        return Collections.emptyList();
-    }
-    */
-    /**
-     * Disables all enabled dependent resources and then this resource.
-     *
-     * @see  #getAllDependentResources() for the order these are disabled
-     */
-    /* TODO
-    public void disable(DisableLog dl) throws IOException, SQLException {
-        // TODO: Add here per type
-        throw new AssertionError("Unexpected resource type: "+resource_type);
-    }
-     */
-    /**
-     * Gets the reasons this resource would not be removable, even if all dependent resources were removed.
-     *
-     * @return  an empty <code>List</code> if this resource would be removable given all dependent resources were removed, or a list of reasons
-     */
-    /* TODO
-    public List<Reason> getCannotRemoveReasons() throws IOException, SQLException {
-        // TODO
-        return Collections.emptyList();
-    }
-    */
-    /**
-     * Gets all the reasons this resource may not be removed, including reasons why any of the dependent resources
-     * may not be removed.
-     *
-     * @return  an empty <code>List</code> if this resource may be removed, or a list of reasons
-     *
-     * @see  #getAllDependentResources() for the order these are returned
-     */
-    /* TODO
-    public List<Reason> getAllCannotRemoveReasons() throws IOException, SQLException {
-        // TODO
-        return Collections.emptyList();
-    }
-    */
-    /**
-     * Removes all dependent resources and then this resource.
-     *
-     * @see  #getAllDependentResources() for the order these are removed
-     */
-    /* TODO
-    public void remove() throws IOException, SQLException {
-        // TODO: Add here per type
-        throw new AssertionError("Unexpected resource type: "+resource_type);
-    }
-    */
-    // </editor-fold>
 }

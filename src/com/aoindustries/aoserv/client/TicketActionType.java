@@ -1,12 +1,16 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * All of the types of ticket changes are represented by these
@@ -15,11 +19,18 @@ import java.rmi.RemoteException;
  * @see TicketAction
  * @see Ticket
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class TicketActionType extends AOServObjectStringKey implements Comparable<TicketActionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketActionType> {
+final public class TicketActionType extends GlobalObjectStringKey<TicketActionType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_TYPE = 0;
+
+    static final String COLUMN_TYPE_name = "type";
+
+    private boolean visible_admin_only;
+
     public static final String
         SET_BUSINESS="set_business",
         SET_CONTACT_EMAILS="set_contact_emails",
@@ -34,73 +45,54 @@ final public class TicketActionType extends AOServObjectStringKey implements Com
         SET_INTERNAL_NOTES="set_internal_notes",
         SET_TYPE="set_type"
     ;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -4017127521966787365L;
-
-    final private boolean visibleAdminOnly;
-
-    public TicketActionType(AOServConnector connector, String type, boolean visibleAdminOnly) {
-        super(connector, type);
-        this.visibleAdminOnly = visibleAdminOnly;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    public int compareTo(TicketActionType other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_TYPE: return pkey;
+            case 1: return visible_admin_only;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the type name")
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.TICKET_ACTION_TYPES;
+    }
+
     public String getType() {
-        return getKey();
+        return pkey;
     }
 
-    @SchemaColumn(order=1, description="when true, only visible to ticket administrators")
-    public boolean isVisibleAdminOnly() {
-        return visibleAdminOnly;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public TicketActionType(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketActionType dto) {
-        this(connector, dto.getType(), dto.isVisibleAdminOnly());
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        visible_admin_only = result.getBoolean(2);
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.TicketActionType getDto() {
-        return new com.aoindustries.aoserv.client.dto.TicketActionType(getKey(), visibleAdminOnly);
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey = in.readUTF().intern();
+        visible_admin_only = in.readBoolean();
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
     String toStringImpl() {
-        return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".toString");
+        return accessor.getMessage("TicketActionType."+pkey+".toString");
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeBoolean(visible_admin_only);
     }
 
     /**
      * Generates a locale-specific summary.
      */
-    String generateSummary(AOServConnector connector, String oldValue, String newValue) {
+    String generateSummary(AOServConnector connector, String oldValue, String newValue) throws IOException, SQLException {
         if(oldValue==null) {
-            if(newValue==null) return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.null.null");
-            return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.null.notNull", newValue);
+            if(newValue==null) return accessor.getMessage("TicketActionType."+pkey+".generatedSummary.null.null");
+            return accessor.getMessage("TicketActionType."+pkey+".generatedSummary.null.notNull", newValue);
         } else {
-            if(newValue==null) return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.notNull.null", oldValue);
-            return ApplicationResources.accessor.getMessage("TicketActionType."+getKey()+".generatedSummary.notNull.notNull", oldValue, newValue);
+            if(newValue==null) return accessor.getMessage("TicketActionType."+pkey+".generatedSummary.notNull.null", oldValue);
+            return accessor.getMessage("TicketActionType."+pkey+".generatedSummary.notNull.notNull", oldValue, newValue);
         }
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActions() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_ACTION_TYPE, this);
-    }
-    // </editor-fold>
 }

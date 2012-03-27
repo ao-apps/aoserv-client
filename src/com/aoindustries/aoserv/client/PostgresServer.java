@@ -1,19 +1,16 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2002-2011 by AO Industries, Inc.,
+ * Copyright 2002-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import com.aoindustries.io.*;
+import com.aoindustries.sql.*;
+import java.io.*;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A <code>PostgresServer</code> corresponds to a unique PostgreSQL install
@@ -25,360 +22,46 @@ import java.util.Set;
  * @see  PostgresDatabase
  * @see  PostgresServerUser
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class PostgresServer extends AOServerResource implements Comparable<PostgresServer>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresServer> {
+final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_AO_SERVER=2,
+        COLUMN_NET_BIND=5
+    ;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+
     /**
      * The directory that contains the PostgreSQL data files.
      */
     public static final String DATA_BASE_DIR="/var/lib/pgsql";
 
-    public enum ReservedWord {
-        ABORT,
-        ALL,
-        ANALYSE,
-        ANALYZE,
-        AND,
-        ANY,
-        AS,
-        ASC,
-        BETWEEN,
-        BINARY,
-        BIT,
-        BOTH,
-        CASE,
-        CAST,
-        CHAR,
-        CHARACTER,
-        CHECK,
-        CLUSTER,
-        COALESCE,
-        COLLATE,
-        COLUMN,
-        CONSTRAINT,
-        COPY,
-        CROSS,
-        CURRENT_DATE,
-        CURRENT_TIME,
-        CURRENT_TIMESTAMP,
-        CURRENT_USER,
-        DEC,
-        DECIMAL,
-        DEFAULT,
-        DEFERRABLE,
-        DESC,
-        DISTINCT,
-        DO,
-        ELSE,
-        END,
-        EXCEPT,
-        EXISTS,
-        EXPLAIN,
-        EXTEND,
-        EXTRACT,
-        FALSE,
-        FLOAT,
-        FOR,
-        FOREIGN,
-        FROM,
-        FULL,
-        GLOBAL,
-        GROUP,
-        HAVING,
-        ILIKE,
-        IN,
-        INITIALLY,
-        INNER,
-        INOUT,
-        INTERSECT,
-        INTO,
-        IS,
-        ISNULL,
-        JOIN,
-        LEADING,
-        LEFT,
-        LIKE,
-        LIMIT,
-        LISTEN,
-        LOAD,
-        LOCAL,
-        LOCK,
-        MOVE,
-        NATURAL,
-        NCHAR,
-        NEW,
-        NOT,
-        NOTNULL,
-        NULL,
-        NULLIF,
-        NUMERIC,
-        OFF,
-        OFFSET,
-        OLD,
-        ON,
-        ONLY,
-        OR,
-        ORDER,
-        OUT,
-        OUTER,
-        OVERLAPS,
-        POSITION,
-        PRECISION,
-        PRIMARY,
-        PUBLIC,
-        REFERENCES,
-        RESET,
-        RIGHT,
-        SELECT,
-        SESSION_USER,
-        SETOF,
-        SHOW,
-        SOME,
-        SUBSTRING,
-        TABLE,
-        THEN,
-        TO,
-        TRAILING,
-        TRANSACTION,
-        TRIM,
-        TRUE,
-        UNION,
-        UNIQUE,
-        USER,
-        USING,
-        VACUUM,
-        VARCHAR,
-        VERBOSE,
-        WHEN,
-        WHERE;
-
-        private static volatile Set<String> reservedWords = null;
-
-        /**
-         * Case-insensitive check for if the provided string is a reserved word.
-         */
-        public static boolean isReservedWord(String value) {
-            Set<String> words = reservedWords;
-            if(words==null) {
-                ReservedWord[] values = values();
-                words = new HashSet<String>(values.length*4/3+1);
-                for(ReservedWord word : values) words.add(word.name().toLowerCase(Locale.ENGLISH));
-                reservedWords = words;
-            }
-            return words.contains(value.toLowerCase(Locale.ENGLISH));
-        }
-    }
-    // </editor-fold>
+    /**
+     * The maximum length of the name.
+     */
+    public static final int MAX_SERVER_NAME_LENGTH=31;
     
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -9148226929378829089L;
+    String name;
+    int ao_server;
+    private int version;
+    private int max_connections;
+    int net_bind;
+    private int sort_mem;
+    private int shared_buffers;
+    private boolean fsync;
 
-    private PostgresServerName name;
-    final int version;
-    final private int maxConnections;
-    final private int netBind;
-    final private int sortMem;
-    final private int sharedBuffers;
-    final private boolean fsync;
-
-    public PostgresServer(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int aoServer,
-        int businessServer,
-        PostgresServerName name,
-        int version,
-        int maxConnections,
-        int netBind,
-        int sortMem,
-        int sharedBuffers,
-        boolean fsync
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
-        this.name = name;
-        this.version = version;
-        this.maxConnections = maxConnections;
-        this.netBind = netBind;
-        this.sortMem = sortMem;
-        this.sharedBuffers = sharedBuffers;
-        this.fsync = fsync;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        name = intern(name);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(PostgresServer other) {
-        try {
-            if(getKeyInt()==other.getKeyInt()) return 0;
-            int diff = name.compareTo(other.name);
-            if(diff!=0) return diff;
-            return aoServer==other.aoServer ? 0 : getAoServer().compareTo(other.getAoServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_NAME = getMethodColumn(PostgresServer.class, "name");
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the name of the database")
-    public PostgresServerName getName() {
-        return name;
-    }
-
-    public static final MethodColumn COLUMN_VERSION = getMethodColumn(PostgresServer.class, "version");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the pkey of the PostgreSQL version")
-    public PostgresVersion getVersion() throws RemoteException {
-        PostgresVersion obj=getConnector().getPostgresVersions().get(version);
-        if(!StringUtility.equals(obj.getVersion().operatingSystemVersion, getAoServer().getServer().operatingSystemVersion)) {
-            throw new RemoteException("resource/operating system version mismatch on PostgresServer: #"+getKeyInt());
-        }
-    	return obj;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="the maximum number of connections for the db")
-    public int getMaxConnections() {
-        return maxConnections;
-    }
-
-    public static final MethodColumn COLUMN_NET_BIND = getMethodColumn(PostgresServer.class, "netBind");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, index=IndexType.UNIQUE, description="the port the servers binds to")
-    public NetBind getNetBind() throws RemoteException {
-        return getConnector().getNetBinds().get(netBind);
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="the amount of shared memory used for sorting")
-    public int getSortMem() {
-        return sortMem;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="the number of shared buffers")
-    public int getSharedBuffers() {
-        return sharedBuffers;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="indicates that writes are synchronous")
-    public boolean getFsync() {
-        return fsync;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public PostgresServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.PostgresServer dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getAoServer(),
-            dto.getBusinessServer(),
-            getPostgresServerName(dto.getName()),
-            dto.getVersion(),
-            dto.getMaxConnections(),
-            dto.getNetBind(),
-            dto.getSortMem(),
-            dto.getSharedBuffers(),
-            dto.isFsync()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.PostgresServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.PostgresServer(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            aoServer,
-            businessServer,
-            getDto(name),
-            version,
-            maxConnections,
-            netBind,
-            sortMem,
-            sharedBuffers,
-            fsync
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return getAoServer().toStringImpl()+"/"+name;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
-    	return getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_POSTGRES_SERVER, this);
-    }
-
-    /**
-     * Gets the database with the provided name.
-     *
-     * @throws java.util.NoSuchElementException if not found
-     */
-    public PostgresDatabase getPostgresDatabase(PostgresDatabaseName name) throws RemoteException, NoSuchElementException {
-        PostgresDatabase pd = getPostgresDatabases().filterUnique(PostgresDatabase.COLUMN_NAME, name);
-        if(pd==null) throw new NoSuchElementException("Unable to find PostgresDatabase: "+name+" on "+this);
-        return pd;
-    }
-
-    @DependentObjectSet
-    public IndexedSet<PostgresUser> getPostgresUsers() throws RemoteException {
-        return getConnector().getPostgresUsers().filterIndexed(PostgresUser.COLUMN_POSTGRES_SERVER, this);
-    }
-
-    /**
-     * Gets the user with the provided username.
-     *
-     * @throws java.util.NoSuchElementException if not found
-     */
-    public PostgresUser getPostgresUser(PostgresUserId username) throws RemoteException, NoSuchElementException {
-        PostgresUser pu = getPostgresUsers().filterUnique(PostgresUser.COLUMN_USERNAME, getConnector().getUsernames().get(username.getUserId()));
-        if(pu==null) throw new NoSuchElementException("Unable to find PostgresUser: "+username+"@"+this);
-        return pu;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public int addPostgresDatabase(
         String name,
         PostgresServerUser datdba,
         PostgresEncoding encoding,
         boolean enablePostgis
     ) throws IOException, SQLException {
-	return getConnector().getPostgresDatabases().addPostgresDatabase(
+	return table.connector.getPostgresDatabases().addPostgresDatabase(
             name,
             this,
             datdba,
@@ -387,29 +70,174 @@ final public class PostgresServer extends AOServerResource implements Comparable
 	);
     }
 
+    public static void checkServerName(String name) throws IllegalArgumentException {
+	// Must be a-z or 0-9 first, then a-z or 0-9 or . or _
+	int len = name.length();
+	if (len == 0 || len > MAX_SERVER_NAME_LENGTH) throw new IllegalArgumentException("PostgreSQL server name should not exceed "+MAX_SERVER_NAME_LENGTH+" characters.");
+
+        // The first character must be [a-z] or [0-9]
+	char ch = name.charAt(0);
+	if ((ch < 'a' || ch > 'z') && (ch<'0' || ch>'9')) throw new IllegalArgumentException("PostgreSQL server names must start with [a-z] or [0-9]");
+        // The rest may have additional characters
+	for (int c = 1; c < len; c++) {
+            ch = name.charAt(c);
+            if (
+                (ch<'a' || ch>'z')
+                && (ch<'0' || ch>'9')
+                && ch!='.'
+                && ch!='_'
+            ) throw new IllegalArgumentException("PostgreSQL server names may only contain [a-z], [0-9], period (.), and underscore (_)");
+	}
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return name;
+            case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
+            case 3: return Integer.valueOf(version);
+            case 4: return Integer.valueOf(max_connections);
+            case COLUMN_NET_BIND: return Integer.valueOf(net_bind);
+            case 6: return Integer.valueOf(sort_mem);
+            case 7: return Integer.valueOf(shared_buffers);
+            case 8: return fsync?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
     public String getDataDirectory() {
         return DATA_BASE_DIR+'/'+name;
     }
 
+    public String getName() {
+	return name;
+    }
+
+    public PostgresVersion getPostgresVersion() throws SQLException, IOException {
+	PostgresVersion obj=table.connector.getPostgresVersions().get(version);
+	if(obj==null) throw new SQLException("Unable to find PostgresVersion: "+version);
+        if(
+            obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
+            != getAOServer().getServer().getOperatingSystemVersion().getPkey()
+        ) {
+            throw new SQLException("resource/operating system version mismatch on PostgresServer: #"+pkey);
+        }
+	return obj;
+    }
+
+    public AOServer getAOServer() throws SQLException, IOException {
+	AOServer ao=table.connector.getAoServers().get(ao_server);
+	if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+	return ao;
+    }
+
+    public int getMaxConnections() {
+        return max_connections;
+    }
+    
+    public NetBind getNetBind() throws SQLException, IOException {
+        NetBind nb=table.connector.getNetBinds().get(net_bind);
+        if(nb==null) throw new SQLException("Unable to find NetBind: "+net_bind);
+        return nb;
+    }
+    
+    public PostgresDatabase getPostgresDatabase(String name) throws IOException, SQLException {
+	return table.connector.getPostgresDatabases().getPostgresDatabase(name, this);
+    }
+
+    public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
+	return table.connector.getPostgresDatabases().getPostgresDatabases(this);
+    }
+
     public PostgresServerUser getPostgresServerUser(String username) throws IOException, SQLException {
-	return getConnector().getPostgresServerUsers().getPostgresServerUser(username, this);
+	return table.connector.getPostgresServerUsers().getPostgresServerUser(username, this);
+    }
+
+    public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
+	return table.connector.getPostgresServerUsers().getPostgresServerUsers(this);
+    }
+
+    public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
+	List<PostgresServerUser> psu=getPostgresServerUsers();
+	int len=psu.size();
+	List<PostgresUser> pu=new ArrayList<PostgresUser>(len);
+	for(int c=0;c<len;c++) pu.add(psu.get(c).getPostgresUser());
+	return pu;
+    }
+
+    public int getSortMem() {
+        return sort_mem;
+    }
+    
+    public int getSharedBuffers() {
+        return shared_buffers;
+    }
+    
+    public boolean getFSync() {
+        return fsync;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_SERVERS;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey=result.getInt(1);
+	name=result.getString(2);
+	ao_server=result.getInt(3);
+	version=result.getInt(4);
+        max_connections=result.getInt(5);
+        net_bind=result.getInt(6);
+        sort_mem=result.getInt(7);
+        shared_buffers=result.getInt(8);
+        fsync=result.getBoolean(9);
     }
 
     public boolean isPostgresDatabaseNameAvailable(String name) throws IOException, SQLException {
-    	return getConnector().getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
+	return table.connector.getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readCompressedInt();
+	name=in.readUTF().intern();
+	ao_server=in.readCompressedInt();
+	version=in.readCompressedInt();
+        max_connections=in.readCompressedInt();
+        net_bind=in.readCompressedInt();
+        sort_mem=in.readCompressedInt();
+        shared_buffers=in.readCompressedInt();
+        fsync=in.readBoolean();
     }
 
     public void restartPostgreSQL() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.RESTART_POSTGRESQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.RESTART_POSTGRESQL, pkey);
     }
 
     public void startPostgreSQL() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.START_POSTGRESQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.START_POSTGRESQL, pkey);
     }
 
     public void stopPostgreSQL() throws IOException, SQLException {
-        getConnector().requestUpdate(false, AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
+        table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
     }
-     */
-    // </editor-fold>
+
+    @Override
+    String toStringImpl() throws SQLException, IOException {
+        return name+" on "+getAOServer().getHostname();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	out.writeCompressedInt(pkey);
+	out.writeUTF(name);
+	out.writeCompressedInt(ao_server);
+	out.writeCompressedInt(version);
+        out.writeCompressedInt(max_connections);
+        out.writeCompressedInt(net_bind);
+        out.writeCompressedInt(sort_mem);
+        out.writeCompressedInt(shared_buffers);
+        out.writeBoolean(fsync);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)<=0) {
+            out.writeCompressedInt(-1);
+        }
+    }
 }

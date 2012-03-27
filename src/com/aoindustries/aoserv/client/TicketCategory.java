@@ -1,140 +1,110 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2009-2011 by AO Industries, Inc.,
+ * Copyright 2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.rmi.RemoteException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  Ticket
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketCategory extends AOServObjectIntegerKey implements Comparable<TicketCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketCategory> {
+final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_PARENT=1,
+        COLUMN_NAME=2
+    ;
+    static final String COLUMN_PKEY_name = "pkey";
+    static final String COLUMN_PARENT_name = "parent";
+    static final String COLUMN_NAME_name = "name";
+
     /**
      * Some conveniences constants for specific categories.
      */
     public static final int AOSERV_MASTER_PKEY = 110;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -9103008803104498590L;
+    int parent;
+    String name;
 
-    final private Integer parent;
-    private String name;
-
-    public TicketCategory(AOServConnector connector, int pkey, Integer parent, String name) {
-        super(connector, pkey);
-        this.parent = parent;
-        this.name = name;
-        intern();
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return pkey;
+            case COLUMN_PARENT: return parent==-1 ? null : parent;
+            case COLUMN_NAME: return name;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
+    /**
+     * Gets the parent category or <code>null</code> if this is a top-level category.
+     */
+    public TicketCategory getParent() throws IOException, SQLException {
+        if(parent==-1) return null;
+        TicketCategory tc = table.connector.getTicketCategories().get(parent);
+        if(tc==null) throw new SQLException("Unable to find TicketCategory: "+parent);
+        return tc;
     }
 
-    private void intern() {
-        name = intern(name);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(TicketCategory other) {
-        int diff = compare(parent, other.parent);
-        if(diff!=0) return diff;
-        return compareIgnoreCaseConsistentWithEquals(name, other.name);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique category id")
-    public int getPkey() {
-        return getKeyInt();
-    }
-
-    public static final MethodColumn COLUMN_PARENT = getMethodColumn(TicketCategory.class, "parent");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the category id of its parent or null if this is a top-level category")
-    public TicketCategory getParent() throws RemoteException {
-        if(parent==null) return null;
-        return getConnector().getTicketCategories().get(parent);
-    }
-
-    @SchemaColumn(order=2, description="the name of this category, unique per parent")
     public String getName() {
         return name;
     }
 
-    public static final MethodColumn COLUMN_SLASH_PATH = getMethodColumn(TicketCategory.class, "slashPath");
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.TICKET_CATEGORIES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getInt(1);
+        parent = result.getInt(2);
+        if(result.wasNull()) parent = -1;
+        name = result.getString(3);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey = in.readCompressedInt();
+        parent = in.readCompressedInt();
+        name = in.readUTF().intern();
+    }
+
     private String slashPath = null;
-    @SchemaColumn(order=3, index=IndexType.UNIQUE, description="the full path to the category, separated by slashes (/)")
-    synchronized public String getSlashPath() throws RemoteException {
-        if(slashPath==null) slashPath = parent==null ? name : (getParent().getSlashPath()+'/'+name);
+    synchronized public String getSlashPath() throws IOException, SQLException {
+        if(slashPath==null) slashPath = parent==-1 ? name : (getParent().getSlashPath()+'/'+name);
         return slashPath;
     }
 
-    public static final MethodColumn COLUMN_DOT_PATH = getMethodColumn(TicketCategory.class, "dotPath");
     private String dotPath = null;
-    @SchemaColumn(order=4, index=IndexType.UNIQUE, description="the full path to the category, separated by periods (.)")
-    synchronized public String getDotPath() throws RemoteException {
-        if(dotPath==null) dotPath = parent==null ? name : (getParent().getDotPath()+'.'+name);
+    synchronized public String getDotPath() throws IOException, SQLException {
+        if(dotPath==null) dotPath = parent==-1 ? name : (getParent().getDotPath()+'.'+name);
         return dotPath;
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public TicketCategory(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketCategory dto) {
-        this(connector, dto.getPkey(), dto.getParent(), dto.getName());
-    }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.TicketCategory getDto() {
-        return new com.aoindustries.aoserv.client.dto.TicketCategory(getKeyInt(), parent, name);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("TicketCategory."+getDotPath()+".toString");
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<TicketCategory> getChildrenCategories() throws RemoteException {
-        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+    String toStringImpl() throws IOException, SQLException {
+        return accessor.getMessage("TicketCategory."+getDotPath()+".toString");
     }
 
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActionsByOldCategory() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_CATEGORY, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(parent);
+        out.writeUTF(name);
     }
 
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActionsByNewCategory() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_CATEGORY, this);
+    public List<TicketBrandCategory> getTicketBrandCategorys() throws IOException, SQLException {
+        return table.connector.getTicketBrandCategories().getTicketBrandCategories(this);
     }
 
-    @DependentObjectSet
-    public IndexedSet<Ticket> getTickets() throws RemoteException {
-        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_CATEGORY, this);
+    public List<TicketCategory> getChildrenCategories() throws IOException, SQLException {
+        return table.connector.getTicketCategories().getChildrenCategories(this);
     }
-
-    /* TODO
-    public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
-        return getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
-    }
-    */
-    // </editor-fold>
 }

@@ -1,138 +1,105 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2008-2011 by AO Industries, Inc.,
+ * Copyright 2008-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
-import com.aoindustries.aoserv.client.validator.ValidationException;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * A <code>Rack</code> houses <code>PhysicalServer</code>s.
+ * A <code>Rack</code> stores <code>PhysicalServer</code>s.
  *
  * @author  AO Industries, Inc.
  */
-final public class Rack extends Resource implements Comparable<Rack>, DtoFactory<com.aoindustries.aoserv.client.dto.Rack>{
+final public class Rack extends CachedObjectIntegerKey<Rack> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -2729086832214700368L;
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_FARM=1,
+        COLUMN_NAME=2
+    ;
+    static final String COLUMN_FARM_name = "farm";
+    static final String COLUMN_NAME_name = "name";
 
-    final private int farm;
-    final private String name;
-    final private Float maxPower;
-    final private Integer totalRackUnits;
+    private String farm;
+    private String name;
+    private float maxPower;
+    private int totalRackUnits;
 
-    public Rack(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int farm,
-        String name,
-        Float maxPower,
-        Integer totalRackUnits
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled);
-        this.farm = farm;
-        this.name = name;
-        this.maxPower = maxPower;
-        this.totalRackUnits = totalRackUnits;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(Rack other) {
-        try {
-            int diff = farm==other.farm ? 0 : getFarm().compareTo(other.getFarm());
-            if(diff!=0) return diff;
-            return compareIgnoreCaseConsistentWithEquals(name, other.name);
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case COLUMN_FARM: return farm;
+            case COLUMN_NAME: return name;
+            case 3: return Float.isNaN(maxPower) ? null : Float.valueOf(maxPower);
+            case 4: return totalRackUnits==-1 ? null : Integer.valueOf(totalRackUnits);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_FARM = getMethodColumn(Rack.class, "farm");
-    @DependencySingleton
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the server_farm housing the rack")
-    public ServerFarm getFarm() throws RemoteException {
-        return getConnector().getServerFarms().get(farm);
+    public ServerFarm getServerFarm() throws SQLException, IOException {
+	ServerFarm sf=table.connector.getServerFarms().get(farm);
+	if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
+	return sf;
     }
-
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+2, description="the per-farm unique name")
+    
     public String getName() {
         return name;
     }
 
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+3, description="the maximum electrical load supported by the rack")
-    public Float getMaxPower() {
+    /**
+     * Gets the max power for the rack or <code>Float.NaN</code> if unknown.
+     */
+    public float getMaxPower() {
         return maxPower;
     }
-
-    @SchemaColumn(order=RESOURCE_LAST_COLUMN+4, description="the number of rack units of physical space")
+    
+    /**
+     * Gets the total rack units or <code>-1</code> if unknown.
+     */
     public int getTotalRackUnits() {
         return totalRackUnits;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public Rack(AOServConnector connector, com.aoindustries.aoserv.client.dto.Rack dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getFarm(),
-            dto.getName(),
-            dto.getMaxPower(),
-            dto.getTotalRackUnits()
-        );
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.RACKS;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getInt(1);
+	farm = result.getString(2);
+        name = result.getString(3);
+        maxPower = result.getFloat(4);
+        if(result.wasNull()) maxPower = Float.NaN;
+        totalRackUnits = result.getInt(5);
+        if(result.wasNull()) totalRackUnits = -1;
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.Rack getDto() {
-        return new com.aoindustries.aoserv.client.dto.Rack(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            farm,
-            name,
-            maxPower,
-            totalRackUnits
-        );
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey = in.readCompressedInt();
+	farm = in.readUTF().intern();
+        name = in.readUTF();
+        maxPower = in.readFloat();
+        totalRackUnits = in.readCompressedInt();
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     @Override
-    String toStringImpl() {
+    protected String toStringImpl() {
         return name;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<PhysicalServer> getPhysicalServers() throws RemoteException {
-        return getConnector().getPhysicalServers().filterIndexed(PhysicalServer.COLUMN_RACK, this);
+    @Override
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeUTF(farm);
+        out.writeUTF(name);
+        out.writeFloat(maxPower);
+        out.writeCompressedInt(totalRackUnits);
     }
-    // </editor-fold>
 }

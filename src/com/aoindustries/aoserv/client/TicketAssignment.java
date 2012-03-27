@@ -1,116 +1,96 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2009-2011 by AO Industries, Inc.,
+ * Copyright 2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @see  Ticket
  *
  * @author  AO Industries, Inc.
  */
-final public class TicketAssignment extends AOServObjectIntegerKey implements Comparable<TicketAssignment>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketAssignment> {
+final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignment> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 1426621734817219461L;
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_TICKET=1,
+        COLUMN_RESELLER=2,
+        COLUMN_ADMINISTRATOR=3
+    ;
+    static final String COLUMN_PKEY_name = "pkey";
+    static final String COLUMN_TICKET_name = "ticket";
+    static final String COLUMN_RESELLER_name = "reseller";
+    static final String COLUMN_ADMINISTRATOR_name = "administrator";
 
-    final private int ticket;
-    private AccountingCode reseller;
-    private UserId administrator;
+    private int ticket;
+    private String reseller;
+    private String administrator;
 
-    public TicketAssignment(
-        AOServConnector connector,
-        int pkey,
-        int ticket,
-        AccountingCode reseller,
-        UserId administrator
-    ) {
-        super(connector, pkey);
-        this.ticket = ticket;
-        this.reseller = reseller;
-        this.administrator = administrator;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        reseller = intern(reseller);
-        administrator = intern(administrator);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(TicketAssignment other) {
-        try {
-            int diff = ticket==other.ticket ? 0 : getTicket().compareTo(other.getTicket());
-            if(diff!=0) return diff;
-            return reseller==other.reseller ? 0 : getReseller().compareTo(other.getReseller());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return pkey;
+            case COLUMN_TICKET: return ticket;
+            case COLUMN_RESELLER: return reseller;
+            case COLUMN_ADMINISTRATOR: return administrator;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique id")
-    public int getPkey() {
-        return getKeyInt();
+    public Ticket getTicket() throws IOException, SQLException {
+        Ticket t = table.connector.getTickets().get(ticket);
+        if(t==null) throw new SQLException("Unable to find Ticket: "+ticket);
+        return t;
     }
 
-    public static final MethodColumn COLUMN_TICKET = getMethodColumn(TicketAssignment.class, "ticket");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the ticket id that is assigned")
-    public Ticket getTicket() throws RemoteException {
-        return getConnector().getTickets().get(ticket);
+    public Reseller getReseller() throws IOException, SQLException {
+        Reseller r = table.connector.getResellers().get(reseller);
+        if(r==null) throw new SQLException("Unable to find Reseller: "+reseller);
+        return r;
     }
 
-    public static final MethodColumn COLUMN_RESELLER = getMethodColumn(TicketAssignment.class, "reseller");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the reseller for the assignment")
-    public Reseller getReseller() throws RemoteException {
-        return getConnector().getResellers().get(reseller);
+    public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
+        BusinessAdministrator ba = table.connector.getBusinessAdministrators().get(administrator);
+        if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+administrator);
+        return ba;
+        //Username un=table.connector.getUsernames().get(administrator);
+        //if(un==null) return null;
+        //return un.getBusinessAdministrator();
     }
 
-    public static final MethodColumn COLUMN_ADMINISTRATOR = getMethodColumn(TicketAssignment.class, "administrator");
-    @DependencySingleton
-    @SchemaColumn(order=3, index=IndexType.INDEXED, description="the individual that the ticket is assigned to within the reseller")
-    public BusinessAdministrator getAdministrator() throws RemoteException {
-        return getConnector().getBusinessAdministrators().get(administrator);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public TicketAssignment(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketAssignment dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getTicket(),
-            getAccountingCode(dto.getReseller()),
-            getUserId(dto.getAdministrator())
-        );
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.TICKET_ASSIGNMENTS;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.TicketAssignment getDto() {
-        return new com.aoindustries.aoserv.client.dto.TicketAssignment(getKeyInt(), ticket, getDto(reseller), getDto(administrator));
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getInt(1);
+        ticket = result.getInt(2);
+        reseller = result.getString(3);
+        administrator = result.getString(4);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey = in.readCompressedInt();
+        ticket = in.readCompressedInt();
+        reseller = in.readUTF().intern();
+        administrator = in.readUTF().intern();
+    }
+
     @Override
     String toStringImpl() {
-        return ticket+"|"+getKeyInt()+'|'+reseller+'|'+administrator;
+        return ticket+"|"+pkey+'|'+reseller+'|'+administrator;
     }
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeCompressedInt(ticket);
+        out.writeUTF(reseller);
+        out.writeUTF(administrator);
+    }
 }

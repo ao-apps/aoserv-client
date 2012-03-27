@@ -1,12 +1,17 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2005-2011 by AO Industries, Inc.,
+ * Copyright 2005-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * A <code>TransactionType</code> is one type that may be used
@@ -20,99 +25,76 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionType extends AOServObjectStringKey implements Comparable<TransactionType>, DtoFactory<com.aoindustries.aoserv.client.dto.TransactionType> {
+public final class TransactionType extends GlobalObjectStringKey<TransactionType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
+
     public static final String
         HTTPD="httpd",
         PAYMENT="payment",
         VIRTUAL="virtual"
     ;
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -1059222609721321377L;
 
     /**
      * If <code>true</code> this <code>TransactionType</code> represents a credit to
      * an account and will be listed in payments received reports.
      */
-    final private boolean credit;
+    private boolean isCredit;
 
-    public TransactionType(AOServConnector connector, String name, boolean credit) {
-        super(connector, name);
-        this.credit = credit;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(TransactionType other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of this transaction type")
-    public String getName() {
-        return getKey();
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case 1: return isCredit?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
 
-    @SchemaColumn(order=1, description="indicates that this type of transaction represents payment or credit")
-    public boolean isCredit() {
-        return credit;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public TransactionType(AOServConnector connector, com.aoindustries.aoserv.client.dto.TransactionType dto) {
-        this(
-            connector,
-            dto.getName(),
-            dto.isCredit()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.TransactionType getDto() {
-        return new com.aoindustries.aoserv.client.dto.TransactionType(getKey(), credit);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
-        return ApplicationResources.accessor.getMessage("TransactionType."+getKey()+".description");
+        return accessor.getMessage("TransactionType."+pkey+".description");
+    }
+
+    /**
+     * Gets the unique name of this transaction type.
+     */
+    public String getName() {
+        return pkey;
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.TRANSACTION_TYPES;
     }
 
     public String getUnit() {
-        return ApplicationResources.accessor.getMessage("TransactionType."+getKey()+".unit");
+        return accessor.getMessage("TransactionType."+pkey+".unit");
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        isCredit = result.getBoolean(2);
+    }
+
+    public boolean isCredit() {
+        return isCredit;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey = in.readUTF().intern();
+        isCredit = in.readBoolean();
     }
 
     @Override
     String toStringImpl() {
-        return ApplicationResources.accessor.getMessage("TransactionType."+getKey()+".toString");
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_TYPE, this);
+        return accessor.getMessage("TransactionType."+pkey+".toString");
     }
 
-    @DependentObjectSet
-    public IndexedSet<PackageDefinition> getPackageDefinitionsBySetupFeeTransactionType() throws RemoteException {
-        return getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_SETUP_FEE_TRANSACTION_TYPE, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+            out.writeUTF(toStringImpl()); // display
+            out.writeUTF(getDescription()); // description
+            out.writeUTF(getUnit()); // unit
+        }
+        out.writeBoolean(isCredit);
     }
-
-    @DependentObjectSet
-    public IndexedSet<PackageDefinition> getPackageDefinitionsByMonthlyRateTransactionType() throws RemoteException {
-        return getConnector().getPackageDefinitions().filterIndexed(PackageDefinition.COLUMN_MONTHLY_RATE_TRANSACTION_TYPE, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<PackageDefinitionLimit> getPackageDefinitionLimits() throws RemoteException {
-        return getConnector().getPackageDefinitionLimits().filterIndexed(PackageDefinitionLimit.COLUMN_ADDITIONAL_TRANSACTION_TYPE, this);
-    }
-    // </editor-fold>
 }

@@ -1,244 +1,81 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.command.AOServCommand;
-import com.aoindustries.aoserv.client.command.CheckPostgresUserPasswordCommand;
-import com.aoindustries.aoserv.client.command.SetPostgresUserPasswordCommand;
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
-import java.util.List;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
 
 /**
- * A <code>PostgresUser</code> has access to one PostgreSQL server.
+ * A <code>PostgresUser</code> may have access to multiple servers.  The information
+ * common to all servers is contained in <code>PostgresUser</code>.
+ *
+ * @see  PostgresServerUser
+ *
+ * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUser extends AOServerResource implements Comparable<PostgresUser>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUser>, PasswordProtected /* TODO: Removable, Disablable*/ {
+final public class PostgresUser extends CachedObjectStringKey<PostgresUser> implements Removable, PasswordProtected, Disablable {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
+
+    /**
+     * The maximum length of a PostgreSQL username.
+     */
+    public static final int MAX_USERNAME_LENGTH=31;
+
     /**
      * The username of the PostgreSQL special users.
      */
-    public static final PostgresUserId
-        POSTGRES,
-        AOADMIN,
-        AOSERV_APP,
-        AOWEB_APP
+    public static final String
+        POSTGRES="postgres",
+        AOADMIN="aoadmin",
+        AOSERV_APP="aoserv_app",
+        AOWEB_APP="aoweb_app"
     ;
-    static {
-        try {
-            POSTGRES = PostgresUserId.valueOf("postgres").intern();
-            AOADMIN = PostgresUserId.valueOf("aoadmin").intern();
-            AOSERV_APP = PostgresUserId.valueOf("aoserv_app").intern();
-            AOWEB_APP = PostgresUserId.valueOf("aoweb_app").intern();
-        } catch(ValidationException err) {
-            throw new AssertionError(err.getMessage());
-        }
-    }
 
     /**
      * A password may be set to null, which means that the account will
-     * be disabled.  When this is the case, an empty string is stored in the
-     * password field of the database.
+     * be disabled.
      */
+    public static final String NO_PASSWORD=null;
+
     public static final String NO_PASSWORD_DB_VALUE="";
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -7696474433400596295L;
+    private boolean
+        createdb,
+        trace,
+        superPriv,
+        catupd
+    ;
+    int disable_log;
 
-    private PostgresUserId username;
-    final private int postgresServer;
-    final private boolean createdb;
-    final private boolean trace;
-    final private boolean superPriv;
-    final private boolean catupd;
-    private String predisablePassword;
-
-    public PostgresUser(
-        AOServConnector connector,
-        int pkey,
-        String resourceType,
-        AccountingCode accounting,
-        long created,
-        UserId createdBy,
-        Integer disableLog,
-        long lastEnabled,
-        int aoServer,
-        int businessServer,
-        PostgresUserId username,
-        int postgresServer,
-        boolean createdb,
-        boolean trace,
-        boolean superPriv,
-        boolean catupd,
-        String predisablePassword
-    ) {
-        super(connector, pkey, resourceType, accounting, created, createdBy, disableLog, lastEnabled, aoServer, businessServer);
-        this.username = username;
-        this.postgresServer = postgresServer;
-        this.createdb = createdb;
-        this.trace = trace;
-        this.superPriv = superPriv;
-        this.catupd = catupd;
-        this.predisablePassword = predisablePassword;
-        intern();
+    public int addPostgresServerUser(PostgresServer postgresServer) throws IOException, SQLException {
+        return table.connector.getPostgresServerUsers().addPostgresServerUser(pkey, postgresServer);
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
+    public int arePasswordsSet() throws IOException, SQLException {
+        return Username.groupPasswordsSet(getPostgresServerUsers());
     }
 
-    private void intern() {
-        username = intern(username);
-        predisablePassword = intern(predisablePassword);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(PostgresUser other) {
-        try {
-            int diff = username==other.username ? 0 : getUsername().compareTo(other.getUsername());
-            if(diff!=0) return diff;
-            return postgresServer==other.postgresServer ? 0 : getPostgresServer().compareTo(other.getPostgresServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_USERNAME = getMethodColumn(PostgresUser.class, "username");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+1, index=IndexType.INDEXED, description="the username of the PostgreSQL user")
-    public Username getUsername() throws RemoteException {
-        return getConnector().getUsernames().get(username.getUserId());
-    }
-    public PostgresUserId getUserId() {
-        return username;
-    }
-
-    public static final MethodColumn COLUMN_POSTGRES_SERVER = getMethodColumn(PostgresUser.class, "postgresServer");
-    @DependencySingleton
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+2, index=IndexType.INDEXED, description="the pkey of the PostgreSQL server")
-    public PostgresServer getPostgresServer() throws RemoteException {
-        return getConnector().getPostgresServers().get(postgresServer);
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+3, description="createdb flag")
-    public boolean getCreatedb() {
-        return createdb;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+4, description="trace flag")
-    public boolean getTrace() {
-        return trace;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+5, description="super flag")
-    public boolean getSuper() {
-        return superPriv;
-    }
-
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+6, description="catupd flag")
-    public boolean getCatupd() {
+    public boolean canCatUPD() {
         return catupd;
     }
 
-    @SchemaColumn(order=AOSERVER_RESOURCE_LAST_COLUMN+7, description="the password that was on the account before it was disabled")
-    public String getPredisablePassword() {
-        return predisablePassword;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public PostgresUser(AOServConnector connector, com.aoindustries.aoserv.client.dto.PostgresUser dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getResourceType(),
-            getAccountingCode(dto.getAccounting()),
-            getTimeMillis(dto.getCreated()),
-            getUserId(dto.getCreatedBy()),
-            dto.getDisableLog(),
-            getTimeMillis(dto.getLastEnabled()),
-            dto.getAoServer(),
-            dto.getBusinessServer(),
-            getPostgresUserId(dto.getUsername()),
-            dto.getPostgresServer(),
-            dto.isCreatedb(),
-            dto.isTrace(),
-            dto.isSuperPriv(),
-            dto.isCatupd(),
-            dto.getPredisablePassword()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.PostgresUser getDto() {
-        return new com.aoindustries.aoserv.client.dto.PostgresUser(
-            getKeyInt(),
-            getResourceTypeName(),
-            getDto(getAccounting()),
-            created,
-            getDto(getCreatedByUsername()),
-            disableLog,
-            lastEnabled,
-            aoServer,
-            businessServer,
-            getDto(username),
-            postgresServer,
-            createdb,
-            trace,
-            superPriv,
-            catupd,
-            predisablePassword
-        );
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return username+"@"+getPostgresServer().toStringImpl();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<PostgresDatabase> getPostgresDatabases() throws RemoteException {
-        return getConnector().getPostgresDatabases().filterIndexed(PostgresDatabase.COLUMN_DATDBA, this);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Password Protected">
-    @Override
-    public AOServCommand<List<PasswordChecker.Result>> getCheckPasswordCommand(String password) {
-        return new CheckPostgresUserPasswordCommand(this, password);
-    }
-
-    @Override
-    public AOServCommand<Void> getSetPasswordCommand(String plaintext) {
-        return new SetPostgresUserPasswordCommand(this, plaintext);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
-    public int arePasswordsSet() throws IOException, SQLException {
-        return getConnector().requestBooleanQuery(true, AOServProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+    public boolean canCreateDB() {
+        return createdb;
     }
 
     public boolean canDisable() throws IOException, SQLException {
-        return disable_log==-1;
+        if(disable_log!=-1) return false;
+        for(PostgresServerUser psu : getPostgresServerUsers()) if(psu.disable_log==-1) return false;
+        return true;
     }
 
     public boolean canEnable() throws SQLException, IOException {
@@ -247,41 +84,152 @@ final public class PostgresUser extends AOServerResource implements Comparable<P
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
+    public boolean canTrace() {
+        return trace;
+    }
+
+    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
+        return checkPassword(pkey, password);
+    }
+
+    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
+        return PasswordChecker.checkPassword(username, password, true, false);
+    }
+
+    /*public String checkPasswordDescribe(String password) {
+        return checkPasswordDescribe(pkey, password);
+    }
+
+    public static String checkPasswordDescribe(String username, String password) {
+        return PasswordChecker.checkPasswordDescribe(username, password, true, false);
+    }*/
+
     public void disable(DisableLog dl) throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.POSTGRES_USERS, dl.pkey, pkey);
     }
     
     public void enable() throws IOException, SQLException {
-        getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_USERS, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.POSTGRES_USERS, pkey);
+    }
+
+    Object getColumnImpl(int i) {
+        if(i==COLUMN_USERNAME) return pkey;
+        if(i==1) return createdb?Boolean.TRUE:Boolean.FALSE;
+        if(i==2) return trace?Boolean.TRUE:Boolean.FALSE;
+        if(i==3) return superPriv?Boolean.TRUE:Boolean.FALSE;
+        if(i==4) return catupd?Boolean.TRUE:Boolean.FALSE;
+        if(i==5) return disable_log==-1?null:Integer.valueOf(disable_log);
+        throw new IllegalArgumentException("Invalid index: "+i);
     }
 
     public boolean isDisabled() {
         return disable_log!=-1;
     }
 
+    public DisableLog getDisableLog() throws SQLException, IOException {
+        if(disable_log==-1) return null;
+        DisableLog obj=table.connector.getDisableLogs().get(disable_log);
+        if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+        return obj;
+    }
+
+    public PostgresServerUser getPostgresServerUser(PostgresServer server) throws IOException, SQLException {
+        return server.getPostgresServerUser(pkey);
+    }
+
+    public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
+        return table.connector.getPostgresServerUsers().getPostgresServerUsers(this);
+    }
+
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.POSTGRES_USERS;
+    }
+
+    public Username getUsername() throws SQLException, IOException {
+        Username username=table.connector.getUsernames().get(this.pkey);
+        if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
+        return username;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getString(1);
+        createdb=result.getBoolean(2);
+        trace=result.getBoolean(3);
+        superPriv=result.getBoolean(4);
+        catupd=result.getBoolean(5);
+        disable_log=result.getInt(6);
+        if(result.wasNull()) disable_log=-1;
+    }
+
+    public boolean isDatabaseAdmin() {
+        return superPriv;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        createdb=in.readBoolean();
+        trace=in.readBoolean();
+        superPriv=in.readBoolean();
+        catupd=in.readBoolean();
+        disable_log=in.readCompressedInt();
+    }
+
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
         List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-
-        if(
-            username==PostgresUser.POSTGRES // OK - interned
-        ) reasons.add(new CannotRemoveReason<PostgresServerUser>("Not allowed to remove the "+PostgresUser.POSTGRES+" PostgreSQL user", this));
-
-        for(PostgresDatabase pd : getPostgresDatabases()) {
-            PostgresServer ps=pd.getPostgresServer();
-            reasons.add(new CannotRemoveReason<PostgresDatabase>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), pd));
-        }
-
+        for(PostgresServerUser psu : getPostgresServerUsers()) reasons.addAll(psu.getCannotRemoveReasons());
         return reasons;
     }
 
     public void remove() throws IOException, SQLException {
-        getConnector().requestUpdateIL(
+        table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.REMOVE,
             SchemaTable.TableID.POSTGRES_USERS,
             pkey
         );
     }
-    */
-    // </editor-fold>
+
+    public void setPassword(String password) throws IOException, SQLException {
+        for(PostgresServerUser user : getPostgresServerUsers()) if(user.canSetPassword()) user.setPassword(password);
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeBoolean(createdb);
+        out.writeBoolean(trace);
+        out.writeBoolean(superPriv);
+        out.writeBoolean(catupd);
+        out.writeCompressedInt(disable_log);
+    }
+
+    /**
+     * Determines if a name can be used as a username.  A name is valid if
+     * it is between 1 and 31 characters in length and uses only [a-z], [0-9], _, or -
+     */
+    public static boolean isValidUsername(String name) {
+        if(
+            name.equals("sameuser")
+            || name.equals("samegroup")
+            || name.equals("all")
+        ) return false;
+        int len = name.length();
+        if (len == 0 || len > MAX_USERNAME_LENGTH) return false;
+        // The first character must be [a-z]
+        char ch = name.charAt(0);
+        if (ch < 'a' || ch > 'z') return false;
+        // The rest may have additional characters
+        for (int c = 1; c < len; c++) {
+            ch = name.charAt(c);
+            if(
+                (ch<'a' || ch>'z')
+                && (ch<'0' || ch>'9')
+                && ch!='_'
+            ) return false;
+        }
+        return true;
+    }
+    
+    public boolean canSetPassword() {
+        return disable_log==-1 && !POSTGRES.equals(pkey);
+    }
 }
