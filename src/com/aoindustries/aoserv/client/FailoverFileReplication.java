@@ -201,7 +201,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(backup_partition);
         if(
             version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0
-            && version.compareTo(AOServProtocol.Version.VERSION_1_61)<0
+            && version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0
         ) {
             int maxBitRateInt;
             if(max_bit_rate==null) maxBitRateInt = -1;
