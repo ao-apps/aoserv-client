@@ -35,6 +35,25 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
     private float maxPower;
     private Boolean supports_hvm;
 
+    public enum UpsType {
+        /**
+         * No UPS is supporting this device.
+         */
+        none,
+
+        /**
+         * The UPS is provided by the datacenter, but cannot be monitored for clean shutdown.
+         */
+        datacenter,
+
+        /**
+         * The UPS is an APC model and can be monitored for clean shutdown.
+         */
+        apc
+    }
+
+    private UpsType upsType;
+
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_SERVER: return Integer.valueOf(pkey);
@@ -46,6 +65,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
             case 6: return processorCores==-1 ? null : Integer.valueOf(processorCores);
             case 7: return Float.isNaN(maxPower) ? null : Float.valueOf(maxPower);
             case 8: return supports_hvm;
+            case 9: return upsType.name();
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -120,6 +140,13 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         return supports_hvm;
     }
 
+    /**
+     * Gets the UPS type powering this server.
+     */
+    public UpsType getUpsType() {
+        return upsType;
+    }
+
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.PHYSICAL_SERVERS;
     }
@@ -142,6 +169,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         if(result.wasNull()) maxPower = Float.NaN;
         supports_hvm = result.getBoolean(pos++);
         if(result.wasNull()) supports_hvm = null;
+        upsType = UpsType.valueOf(result.getString(pos++));
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -154,6 +182,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
         processorCores = in.readCompressedInt();
         maxPower = in.readFloat();
         supports_hvm = in.readBoolean() ? in.readBoolean() : null;
+        upsType = UpsType.valueOf(in.readUTF());
     }
 
     @Override
@@ -174,5 +203,6 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
             out.writeBoolean(supports_hvm!=null);
             if(supports_hvm!=null) out.writeBoolean(supports_hvm);
         }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_63)>=0) out.writeUTF(upsType.name());
     }
 }

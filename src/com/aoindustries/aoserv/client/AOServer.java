@@ -1998,4 +1998,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public String checkSmtpBlacklist(String sourceIp, String connectIp) throws IOException, SQLException {
         return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
     }
+
+    /**
+     * Gets UPS status report
+     */
+    public String getUpsStatus() throws IOException, SQLException {
+        return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_UPS_STATUS, pkey);
+    }
 }

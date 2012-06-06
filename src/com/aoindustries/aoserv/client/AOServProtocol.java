@@ -120,9 +120,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_59("1.59"),
         VERSION_1_60("1.60"),
         VERSION_1_61("1.61"),
-        VERSION_1_62("1.62");
+        VERSION_1_62("1.62"),
+        VERSION_1_63("1.63");
 
-        public static final Version CURRENT_VERSION = VERSION_1_62;
+        public static final Version CURRENT_VERSION = VERSION_1_63;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -479,7 +480,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         GET_MYSQL_TABLE_STATUS,
         CHECK_MYSQL_TABLES,
         AO_SERVER_CHECK_PORT,
-        AO_SERVER_CHECK_SMTP_BLACKLIST
+        AO_SERVER_CHECK_SMTP_BLACKLIST,
+        GET_UPS_STATUS
     }
 
     /**

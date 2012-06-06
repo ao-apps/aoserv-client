@@ -4650,6 +4650,23 @@ final public class SimpleAOClient {
     }
 
     /**
+     * Gets the current status of the UPS.
+     *
+     * @param  aoServer  the hostname of the server to get the file from
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>AOServer</code>
+     *
+     * @see  AOServer#getMrtgFile
+     */
+    public String getUpsStatus(
+        String aoServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return getAOServer(aoServer).getUpsStatus();
+    }
+
+    /**
      * Gets the contents of an AWStats file.
      *
      * @param  siteName  the site name
