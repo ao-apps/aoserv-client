@@ -1,12 +1,14 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.StringUtility;
+import java.io.*;
+import java.sql.*;
 
 /**
  * An <code>NetDeviceID</code> is a simple wrapper for the
@@ -14,13 +16,20 @@ import java.rmi.RemoteException;
  *
  * @see  NetDevice
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class NetDeviceID extends AOServObjectStringKey implements Comparable<NetDeviceID>, DtoFactory<com.aoindustries.aoserv.client.dto.NetDeviceID> {
+final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implements Comparable<NetDeviceID> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
+
     public static final String
+        BMC="bmc",
         BOND0="bond0",
+        BOND1="bond1",
+        BOND2="bond2",
         LO="lo",
         ETH0="eth0",
         ETH1="eth1",
@@ -30,58 +39,43 @@ final public class NetDeviceID extends AOServObjectStringKey implements Comparab
         ETH5="eth5",
         ETH6="eth6"
     ;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -1874738491073974795L;
+    private boolean is_loopback;
 
-    final private boolean loopback;
-
-    public NetDeviceID(AOServConnector connector, String name, boolean loopback) {
-        super(connector, name);
-        this.loopback = loopback;
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_NAME) return pkey;
+	if(i==1) return is_loopback?Boolean.TRUE:Boolean.FALSE;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(NetDeviceID other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the device")
     public String getName() {
-    	return getKey();
+	return pkey;
     }
 
-    @SchemaColumn(order=1, description="if the device is the loopback device")
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NET_DEVICE_IDS;
+    }
+
+    public void init(ResultSet results) throws SQLException {
+	pkey=results.getString(1);
+	is_loopback=results.getBoolean(2);
+    }
+
     public boolean isLoopback() {
-        return loopback;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public NetDeviceID(AOServConnector connector, com.aoindustries.aoserv.client.dto.NetDeviceID dto) {
-        this(connector, dto.getName(), dto.isLoopback());
+	return is_loopback;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.NetDeviceID getDto() {
-        return new com.aoindustries.aoserv.client.dto.NetDeviceID(getKey(), loopback);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<AOServer> getAoServers() throws RemoteException {
-        return getConnector().getAoServers().filterIndexed(AOServer.COLUMN_DAEMON_DEVICE_ID, this);
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	is_loopback=in.readBoolean();
     }
 
-    @DependentObjectSet
-    public IndexedSet<NetDevice> getNetDevices() throws RemoteException {
-    	return getConnector().getNetDevices().filterIndexed(NetDevice.COLUMN_DEVICE_ID, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeBoolean(is_loopback);
     }
-    // </editor-fold>
+    
+    public int compareTo(NetDeviceID other) {
+        return pkey.compareTo(other.pkey);
+    }
 }
