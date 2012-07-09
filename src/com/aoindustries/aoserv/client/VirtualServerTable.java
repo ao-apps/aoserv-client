@@ -43,42 +43,42 @@ final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.CREATE_VIRTUAL_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.CREATE_VIRTUAL_SERVER, args, 1, err)) {
-                out.println(connector.getSimpleAOClient().createVirtualServer(args[1]));
+                out.print(connector.getSimpleAOClient().createVirtualServer(args[1]));
                 out.flush();
             }
             return true;
 	}
 	if(command.equalsIgnoreCase(AOSHCommand.REBOOT_VIRTUAL_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.REBOOT_VIRTUAL_SERVER, args, 1, err)) {
-                out.println(connector.getSimpleAOClient().rebootVirtualServer(args[1]));
+                out.print(connector.getSimpleAOClient().rebootVirtualServer(args[1]));
                 out.flush();
             }
             return true;
 	}
 	if(command.equalsIgnoreCase(AOSHCommand.SHUTDOWN_VIRTUAL_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.SHUTDOWN_VIRTUAL_SERVER, args, 1, err)) {
-                out.println(connector.getSimpleAOClient().shutdownVirtualServer(args[1]));
+                out.print(connector.getSimpleAOClient().shutdownVirtualServer(args[1]));
                 out.flush();
             }
             return true;
 	}
 	if(command.equalsIgnoreCase(AOSHCommand.DESTROY_VIRTUAL_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.DESTROY_VIRTUAL_SERVER, args, 1, err)) {
-                out.println(connector.getSimpleAOClient().destroyVirtualServer(args[1]));
+                out.print(connector.getSimpleAOClient().destroyVirtualServer(args[1]));
                 out.flush();
             }
             return true;
 	}
 	if(command.equalsIgnoreCase(AOSHCommand.PAUSE_VIRTUAL_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.PAUSE_VIRTUAL_SERVER, args, 1, err)) {
-                out.println(connector.getSimpleAOClient().pauseVirtualServer(args[1]));
+                out.print(connector.getSimpleAOClient().pauseVirtualServer(args[1]));
                 out.flush();
             }
             return true;
 	}
 	if(command.equalsIgnoreCase(AOSHCommand.UNPAUSE_VIRTUAL_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.UNPAUSE_VIRTUAL_SERVER, args, 1, err)) {
-                out.println(connector.getSimpleAOClient().unpauseVirtualServer(args[1]));
+                out.print(connector.getSimpleAOClient().unpauseVirtualServer(args[1]));
                 out.flush();
             }
             return true;
