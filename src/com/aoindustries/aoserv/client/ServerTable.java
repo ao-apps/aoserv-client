@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
 import java.io.*;
@@ -97,6 +97,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 
     /**
      * Gets a <code>Server</code> based on its hostname, package/name, or pkey.
+     * If unambiguous, just "name" may be used without the package.
      * This is compatible with the output of <code>Server.toString()</code>.
      * Accepts either a hostname (for ao_servers), package/name, or pkey.
      *
@@ -108,6 +109,17 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
         // Is it the exact hostname of an ao_server?
         AOServer aoServer = connector.getAoServers().get(server);
         if(aoServer!=null) return aoServer.getServer();
+
+        // Look for matching server name (but only one server)
+        Server match = null;
+        int numMatches = 0;
+        for(Server se : connector.getServers().getRows()) {
+            if(server.equals(se.getName())) {
+                match = se;
+                numMatches++;
+            }
+        }
+        if(match!=null && numMatches==1) return match;
 
         // Is if a package/name combo?
         int slashPos = server.indexOf('/');
