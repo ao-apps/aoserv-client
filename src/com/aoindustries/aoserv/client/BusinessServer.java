@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -19,8 +19,6 @@ import java.util.List;
  *
  * @see  Business
  * @see  Server
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -44,7 +42,8 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         can_control_postgresql,
         can_control_xfs,
         can_control_xvfb,
-        can_vnc_console
+        can_vnc_console,
+        can_control_virtual_server
     ;
     
     public boolean canControlApache() {
@@ -75,6 +74,10 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         return can_vnc_console;
     }
 
+    public boolean canControlVirtualServer() {
+        return can_control_virtual_server;
+    }
+
     public Business getBusiness() throws IOException, SQLException {
         Business obj=table.connector.getBusinesses().get(accounting);
         if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
@@ -94,6 +97,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
             case 8: return can_control_xfs;
             case 9: return can_control_xvfb;
             case 10: return can_vnc_console;
+            case 11: return can_control_virtual_server;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -120,6 +124,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         can_control_xfs=result.getBoolean(9);
         can_control_xvfb=result.getBoolean(10);
         can_vnc_console = result.getBoolean(11);
+        can_control_virtual_server = result.getBoolean(12);
     }
 
     public boolean isDefault() {
@@ -138,6 +143,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         can_control_xfs=in.readBoolean();
         can_control_xvfb=in.readBoolean();
         can_vnc_console = in.readBoolean();
+        can_control_virtual_server = in.readBoolean();
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -281,5 +287,6 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
         out.writeBoolean(can_control_xfs);
         out.writeBoolean(can_control_xvfb);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeBoolean(can_vnc_console);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_64)>=0) out.writeBoolean(can_control_virtual_server);
     }
 }

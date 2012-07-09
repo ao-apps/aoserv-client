@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2008-2009 by AO Industries, Inc.,
+ * Copyright 2008-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
@@ -304,5 +304,148 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
                 }
             }
         );
+    }
+
+    /**
+     * Calls "xm create" on the current primary physical server.
+     *
+     * @return  the output of the command.
+     * 
+     * @exception  IOException  any non-zero exit code will result in an
+     *                          exception with the standard error in the
+     *                          exception message.
+     */
+    public String create() throws IOException, SQLException {
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.CREATE_VIRTUAL_SERVER, pkey);
+    }
+
+    /**
+     * Calls "xm reboot" on the current primary physical server.
+     *
+     * @return  the output of the command.
+     *
+     * @exception  IOException  any non-zero exit code will result in an
+     *                          exception with the standard error in the
+     *                          exception message.
+     */
+    public String reboot() throws IOException, SQLException {
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.REBOOT_VIRTUAL_SERVER, pkey);
+    }
+
+    /**
+     * Calls "xm shutdown" on the current primary physical server.
+     *
+     * @return  the output of the command.
+     *
+     * @exception  IOException  any non-zero exit code will result in an
+     *                          exception with the standard error in the
+     *                          exception message.
+     */
+    public String shutdown() throws IOException, SQLException {
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.SHUTDOWN_VIRTUAL_SERVER, pkey);
+    }
+
+    /**
+     * Calls "xm destroy" on the current primary physical server.
+     *
+     * @return  the output of the command.
+     *
+     * @exception  IOException  any non-zero exit code will result in an
+     *                          exception with the standard error in the
+     *                          exception message.
+     */
+    public String destroy() throws IOException, SQLException {
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.DESTROY_VIRTUAL_SERVER, pkey);
+    }
+
+    /**
+     * Calls "xm pause" on the current primary physical server.
+     *
+     * @return  the output of the command.
+     *
+     * @exception  IOException  any non-zero exit code will result in an
+     *                          exception with the standard error in the
+     *                          exception message.
+     */
+    public String pause() throws IOException, SQLException {
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.PAUSE_VIRTUAL_SERVER, pkey);
+    }
+
+    /**
+     * Calls "xm unpause" on the current primary physical server.
+     *
+     * @return  the output of the command.
+     *
+     * @exception  IOException  any non-zero exit code will result in an
+     *                          exception with the standard error in the
+     *                          exception message.
+     */
+    public String unpause() throws IOException, SQLException {
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.UNPAUSE_VIRTUAL_SERVER, pkey);
+    }
+
+    /**
+     * The possible state flags for the virtual server.  At least one of these
+     * flags will be enable in the result.  Any number of them may be present
+     * concurrently, as returned by "xm list".
+     */
+    public static final int
+        RUNNING = 1,
+        BLOCKED = 2,
+        PAUSED = 4,
+        SHUTDOWN = 8,
+        CRASHED = 16,
+        DYING = 32,
+        DESTROYED = 64
+    ;
+
+    /**
+     * Gets a human readable, but constant and not translated, comma-separated list of current status flags.
+     */
+    public static String getStatusList(int status) {
+        StringBuilder sb = new StringBuilder();
+        if((status&RUNNING)!=0) {
+            if(sb.length()>0) sb.append(',');
+            sb.append("Running");
+        }
+        if((status&BLOCKED)!=0) {
+            if(sb.length()>0) sb.append(',');
+            sb.append("Blocked");
+        }
+        if((status&PAUSED)!=0) {
+            if(sb.length()>0) sb.append(',');
+            sb.append("Paused");
+        }
+        if((status&SHUTDOWN)!=0) {
+            if(sb.length()>0) sb.append(',');
+            sb.append("Shutdown");
+        }
+        if((status&CRASHED)!=0) {
+            if(sb.length()>0) sb.append(',');
+            sb.append("Crashed");
+        }
+        if((status&DYING)!=0) {
+            if(sb.length()>0) sb.append(',');
+            sb.append("Dying");
+        }
+        if((status&DESTROYED)!=0) {
+            if(sb.length()>0) sb.append(',');
+            sb.append("Destroyed");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Calls "xm list" to get the current state on the current primary physical
+     * server.
+     *
+     * @return  the OR of all state bits.
+     *
+     * @exception  IOException  any non-zero exit code will result in an
+     *                          exception with the standard error in the
+     *                          exception message.
+     */
+    public int getStatus() throws IOException, SQLException {
+        return table.connector.requestIntQuery(true, AOServProtocol.CommandID.GET_VIRTUAL_SERVER_STATUS, pkey);
     }
 }

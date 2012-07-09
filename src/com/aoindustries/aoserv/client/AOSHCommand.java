@@ -19,8 +19,6 @@ import java.sql.SQLException;
  *
  * @see AOSH
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
@@ -127,10 +125,12 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         //COMPLETE_TICKET="complete_ticket",
         COPY_HOME_DIRECTORY="copy_home_directory",
         COPY_LINUX_SERVER_ACCOUNT_PASSWORD="copy_linux_server_account_password",
+        CREATE_VIRTUAL_SERVER="create_virtual_server",
         CRYPT="crypt",
         DECLINE_CREDIT_CARD="decline_credit_card",
         DESC="desc",
         DESCRIBE="describe",
+        DESTROY_VIRTUAL_SERVER="destroy_virtual_server",
         DISABLE_BUSINESS="disable_business",
         DISABLE_BUSINESS_ADMINISTRATOR="disable_business_administrator",
         DISABLE_CVS_REPOSITORY="disable_cvs_repository",
@@ -189,6 +189,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         GET_MRTG_FILE="get_mrtg_file",
         GET_ROOT_BUSINESS="get_root_business",
         GET_UPS_STATUS="get_ups_status",
+        GET_VIRTUAL_SERVER_STATUS="get_virtual_server_status",
         HELP="help",
         //HOLD_TICKET="hold_ticket",
         //INITIALIZE_HTTPD_SITE_PASSWD_FILE="initialize_httpd_site_passwd_file",
@@ -215,9 +216,11 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         JOBS="jobs",
         MOVE_BUSINESS="move_business",
         MOVE_IP_ADDRESS="move_ip_address",
+        PAUSE_VIRTUAL_SERVER="pause_virtual_server",
         PING="ping",
         PRINT_ZONE_FILE="print_zone_file",
         //REACTIVATE_TICKET="reactivate_ticket",
+        REBOOT_VIRTUAL_SERVER="reboot_virtual_server",
         REFRESH_EMAIL_SMTP_RELAY="refresh_email_smtp_relay",
         REMOVE_BLACKHOLE_EMAIL_ADDRESS="remove_blackhole_email_address",
         REMOVE_BUSINESS_ADMINISTRATOR="remove_business_administrator",
@@ -309,6 +312,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         SET_PRIMARY_HTTPD_SITE_URL="set_primary_httpd_site_url",
         SET_PRIMARY_LINUX_GROUP_ACCOUNT="set_primary_linux_group_account",
         SET_USERNAME_PASSWORD="set_username_password",
+        SHUTDOWN_VIRTUAL_SERVER="shutdown_virtual_server",
         SHOW="show",
         SLEEP="sleep",
         START_APACHE="start_apache",
@@ -328,6 +332,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         STOP_XVFB="stop_xvfb",
         SU="su",
         TIME="time",
+        UNPAUSE_VIRTUAL_SERVER="unpause_virtual_server",
         UPDATE_HTTPD_TOMCAT_DATA_SOURCE="update_httpd_tomcat_data_source",
         UPDATE_HTTPD_TOMCAT_PARAMETER="update_httpd_tomcat_parameter",
         WAIT_FOR_HTTPD_SITE_REBUILD="wait_for_httpd_site_rebuild",

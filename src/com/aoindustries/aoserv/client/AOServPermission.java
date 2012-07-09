@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2007-2009 by AO Industries, Inc.,
+ * Copyright 2007-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -14,8 +14,6 @@ import java.sql.SQLException;
 
 /**
  * All of the permissions within the system.
- *
- * @version  1.0
  *
  * @author  AO Industries, Inc.
  */
@@ -60,6 +58,8 @@ final public class AOServPermission extends GlobalObjectStringKey<AOServPermissi
         add_ticket,
         edit_ticket,
         // virtual_servers
+        control_virtual_server,
+        get_virtual_server_status,
         vnc_console
         ;
 

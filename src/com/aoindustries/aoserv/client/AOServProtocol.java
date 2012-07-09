@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
  * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.EOFException;
@@ -121,9 +121,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_60("1.60"),
         VERSION_1_61("1.61"),
         VERSION_1_62("1.62"),
-        VERSION_1_63("1.63");
+        VERSION_1_63("1.63"),
+        VERSION_1_64("1.64");
 
-        public static final Version CURRENT_VERSION = VERSION_1_63;
+        public static final Version CURRENT_VERSION = VERSION_1_64;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -481,7 +482,14 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         CHECK_MYSQL_TABLES,
         AO_SERVER_CHECK_PORT,
         AO_SERVER_CHECK_SMTP_BLACKLIST,
-        GET_UPS_STATUS
+        GET_UPS_STATUS,
+        CREATE_VIRTUAL_SERVER,
+        REBOOT_VIRTUAL_SERVER,
+        SHUTDOWN_VIRTUAL_SERVER,
+        DESTROY_VIRTUAL_SERVER,
+        PAUSE_VIRTUAL_SERVER,
+        UNPAUSE_VIRTUAL_SERVER,
+        GET_VIRTUAL_SERVER_STATUS
     }
 
     /**

@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
@@ -108,7 +108,7 @@ final public class SimpleAOClient {
         if(hs==null) throw new IllegalArgumentException("Unable to find HttpdSite: "+siteName+" on "+aoServer);
         return hs;
     }
-            
+
     private IPAddress getIPAddress(String server, String netDevice, String ipAddress) throws IllegalArgumentException, SQLException, IOException {
         IPAddress ia=getNetDevice(server, netDevice).getIPAddress(ipAddress);
         if(ia==null) throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress+" on "+netDevice+" on "+server);
@@ -276,6 +276,13 @@ final public class SimpleAOClient {
         Username un=connector.getUsernames().get(username);
         if(un==null) throw new IllegalArgumentException("Unable to find Username: "+username);
         return un;
+    }
+
+    private VirtualServer getVirtualServer(String virtualServer) throws IllegalArgumentException, SQLException, IOException {
+        Server se = getServer(virtualServer);
+        VirtualServer vs = se.getVirtualServer();
+        if(vs==null) throw new IllegalArgumentException("Unable to find VirtualServer: "+virtualServer);
+        return vs;
     }
 
     /**
@@ -7911,5 +7918,110 @@ final public class SimpleAOClient {
      */
     public void waitForPostgresUserRebuild(String aoServer) throws IOException, SQLException {
         getAOServer(aoServer).waitForPostgresUserRebuild();
+    }
+
+    /**
+     * @see  VirtualServer#create()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public String createVirtualServer(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return getVirtualServer(virtualServer).create();
+    }
+
+    /**
+     * @see  VirtualServer#reboot()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public String rebootVirtualServer(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return getVirtualServer(virtualServer).reboot();
+    }
+
+    /**
+     * @see  VirtualServer#shutdown()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public String shutdownVirtualServer(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return getVirtualServer(virtualServer).shutdown();
+    }
+
+    /**
+     * @see  VirtualServer#destroy()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public String destroyVirtualServer(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return getVirtualServer(virtualServer).destroy();
+    }
+
+    /**
+     * @see  VirtualServer#pause()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public String pauseVirtualServer(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return getVirtualServer(virtualServer).pause();
+    }
+
+    /**
+     * @see  VirtualServer#unpause()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public String unpauseVirtualServer(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return getVirtualServer(virtualServer).unpause();
+    }
+
+    /**
+     * @see  VirtualServer#getStatus()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public int getVirtualServerStatus(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return getVirtualServer(virtualServer).getStatus();
     }
 }
