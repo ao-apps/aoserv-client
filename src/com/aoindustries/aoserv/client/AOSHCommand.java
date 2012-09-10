@@ -59,6 +59,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
         ADD_HTTPD_TOMCAT_SHARED_SITE="add_httpd_tomcat_shared_site",
         ADD_HTTPD_TOMCAT_STD_SITE="add_httpd_tomcat_std_site",
         ADD_INCOMING_PAYMENT="add_incoming_payment",
+        ADD_IP_REPUTATION="add_ip_reputation",
         ADD_LINUX_ACC_ADDRESS="add_linux_acc_address",
         ADD_LINUX_ACCOUNT="add_linux_account",
         ADD_LINUX_GROUP="add_linux_group",

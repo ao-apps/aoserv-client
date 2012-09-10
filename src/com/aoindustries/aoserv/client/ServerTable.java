@@ -159,7 +159,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_BACKUP_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BACKUP_SERVER, args, 12, err)) {

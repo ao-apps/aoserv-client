@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.sql.SQLException;
 
 /**
@@ -39,7 +39,7 @@ final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.CREATE_VIRTUAL_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.CREATE_VIRTUAL_SERVER, args, 1, err)) {

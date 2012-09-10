@@ -1,13 +1,15 @@
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>MasterUser</code> is a <code>BusinessAdministrator</code> who
@@ -21,123 +23,105 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterUser extends AOServObjectUserIdKey implements Comparable<MasterUser>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterUser> {
+final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -4273739122344650408L;
+    static final int COLUMN_USERNAME=0;
+    static final String COLUMN_USERNAME_name = "username";
 
-    final private boolean active;
-    final private boolean canAccessAccounting;
-    final private boolean canAccessBankAccount;
-    final private boolean canInvalidateTables;
-    final private boolean canAccessAdminWeb;
-    final private boolean dnsAdmin;
+    private boolean
+        is_active,
+        can_access_accounting,
+        can_access_bank_account,
+        can_invalidate_tables,
+        can_access_admin_web,
+        is_dns_admin,
+        is_router
+    ;
 
-    public MasterUser(
-        AOServConnector connector,
-        UserId username,
-        boolean active,
-        boolean canAccessAccounting,
-        boolean canAccessBankAccount,
-        boolean canInvalidateTables,
-        boolean canAccessAdminWeb,
-        boolean dnsAdmin
-    ) {
-        super(connector, username);
-        this.active = active;
-        this.canAccessAccounting = canAccessAccounting;
-        this.canAccessBankAccount = canAccessBankAccount;
-        this.canInvalidateTables = canInvalidateTables;
-        this.canAccessAdminWeb = canAccessAdminWeb;
-        this.dnsAdmin = dnsAdmin;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(MasterUser other) {
-        return getKey().compareTo(other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_BUSINESS_ADMINISTRATOR = getMethodColumn(MasterUser.class, "businessAdministrator");
-    @DependencySingleton
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique username of this master user")
-    public BusinessAdministrator getBusinessAdministrator() throws RemoteException {
-        return getConnector().getBusinessAdministrators().get(getKey());
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_USERS;
     }
 
-    @SchemaColumn(order=1, description="this level of access may be disabled")
+    public void init(ResultSet result) throws SQLException {
+        pkey                   = result.getString(1);
+        is_active              = result.getBoolean(2);
+        can_access_accounting  = result.getBoolean(3);
+        can_access_bank_account= result.getBoolean(4);
+        can_invalidate_tables  = result.getBoolean(5);
+        can_access_admin_web   = result.getBoolean(6);
+        is_dns_admin           = result.getBoolean(7);
+        is_router              = result.getBoolean(8);
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeBoolean(is_active);
+        out.writeBoolean(can_access_accounting);
+        out.writeBoolean(can_access_bank_account);
+        out.writeBoolean(can_invalidate_tables);
+        out.writeBoolean(can_access_admin_web);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0)     out.writeBoolean(false); // is_ticket_admin
+        out.writeBoolean(is_dns_admin);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)<0) out.writeBoolean(false);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_65)>=0)     out.writeBoolean(is_router);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey                    = in.readUTF().intern();
+        is_active               = in.readBoolean();
+        can_access_accounting   = in.readBoolean();
+        can_access_bank_account = in.readBoolean();
+        can_invalidate_tables   = in.readBoolean();
+        can_access_admin_web    = in.readBoolean();
+        is_dns_admin            = in.readBoolean();
+        is_router               = in.readBoolean();
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_USERNAME: return pkey;
+            case 1: return is_active;
+            case 2: return can_access_accounting;
+            case 3: return can_access_bank_account;
+            case 4: return can_invalidate_tables;
+            case 5: return can_access_admin_web;
+            case 6: return is_dns_admin;
+            case 7: return is_router;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
+    }
+
+    public BusinessAdministrator getBusinessAdministrator() throws SQLException, IOException {
+	BusinessAdministrator obj=table.connector.getBusinessAdministrators().get(pkey);
+	if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+pkey);
+	return obj;
+    }
+
     public boolean isActive() {
-        return active;
+        return is_active;
     }
 
-    @SchemaColumn(order=2, description="if they can access accounting resources")
-    public boolean getCanAccessAccounting() {
-        return canAccessAccounting;
+    public boolean canAccessAccounting() {
+	return can_access_accounting;
     }
 
-    @SchemaColumn(order=3, description="if they can access bank account info")
-    public boolean getCanAccessBankAccount() {
-        return canAccessBankAccount;
+    public boolean canAccessBankAccount() {
+	return can_access_bank_account;
     }
 
-    @SchemaColumn(order=4, description="if they can invalidate master tables")
-    public boolean getCanInvalidateTables() {
-        return canInvalidateTables;
+    public boolean canInvalidateTables() {
+	return can_invalidate_tables;
     }
 
-    @SchemaColumn(order=5, description="if they can access administrative web pages")
-    public boolean getCanAccessAdminWeb() {
-        return canAccessAdminWeb;
+    public boolean isWebAdmin() {
+        return can_access_admin_web;
     }
 
-    @SchemaColumn(order=6, description="if they can access all DNS zones and records")
-    public boolean isDnsAdmin() {
-        return dnsAdmin;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public MasterUser(AOServConnector connector, com.aoindustries.aoserv.client.dto.MasterUser dto) throws ValidationException {
-        this(
-            connector,
-            getUserId(dto.getUsername()),
-            dto.isActive(),
-            dto.isCanAccessAccounting(),
-            dto.isCanAccessBankAccount(),
-            dto.isCanInvalidateTables(),
-            dto.isCanAccessAdminWeb(),
-            dto.isDnsAdmin()
-        );
+    public boolean isDNSAdmin() {
+        return is_dns_admin;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.MasterUser getDto() {
-        return new com.aoindustries.aoserv.client.dto.MasterUser(getDto(getKey()), active, canAccessAccounting, canAccessBankAccount, canInvalidateTables, canAccessAdminWeb, dnsAdmin);
+    public boolean isRouter() {
+        return is_router;
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getConnector().getBankTransactions().filterIndexed(BankTransaction.COLUMN_ADMINISTRATOR, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<MasterHost> getMasterHosts() throws RemoteException {
-        return getConnector().getMasterHosts().filterIndexed(MasterHost.COLUMN_MASTER_USER, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<MasterServer> getMasterServers() throws RemoteException {
-        return getConnector().getMasterServers().filterIndexed(MasterServer.COLUMN_MASTER_USER, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
-        return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_OWNER, this);
-    }
-    // </editor-fold>
 }

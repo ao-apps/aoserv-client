@@ -1,21 +1,20 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.sql.SQLException;
 import java.util.List;
 
 /**
  * @see  MySQLDatabase
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -78,7 +77,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DATABASE)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DATABASE, args, 4, err)) {

@@ -1,17 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -256,12 +256,12 @@ public class TCPConnector extends AOServConnector {
             if(connector.password==null) throw new NullPointerException("connector.password is null");
             if(
                 connector.hostname.equals(hostname)
-                && StringUtility.equals(local_ip, connector.local_ip)
+                && ObjectUtils.equals(local_ip, connector.local_ip)
                 && connector.port==port
                 && connector.connectAs.equals(connectAs)
                 && connector.authenticateAs.equals(authenticateAs)
                 && connector.password.equals(password)
-                && StringUtility.equals(daemonServer, connector.daemonServer)
+                && ObjectUtils.equals(daemonServer, connector.daemonServer)
                 && connector.poolSize==poolSize
                 && connector.maxConnectionAge==maxConnectionAge
             ) return connector;

@@ -5,16 +5,17 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  FileBackupSettingTable
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -67,7 +68,7 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_FILE_BACKUP_SETTING)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_FILE_BACKUP_SETTING, args, 4, err)) {

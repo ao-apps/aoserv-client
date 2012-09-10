@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -17,8 +17,6 @@ import java.util.List;
 
 /**
  * A <code>Resource</code> wraps all the data for an entry in the resource table.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -109,6 +107,12 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         HTTPD_TOMCAT_VERSIONS,
         HTTPD_WORKERS,
         IP_ADDRESSES,
+        IP_REPUTATION_LIMITER_LIMITS,
+        IP_REPUTATION_LIMITER_SETS,
+        IP_REPUTATION_LIMITERS,
+        IP_REPUTATION_SET_HOSTS,
+        IP_REPUTATION_SET_NETWORKS,
+        IP_REPUTATION_SETS,
         LANGUAGES,
         LINUX_ACC_ADDRESSES,
         LINUX_ACCOUNT_TYPES,

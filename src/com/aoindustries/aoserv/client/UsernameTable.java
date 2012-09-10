@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
@@ -12,8 +12,6 @@ import java.util.*;
 
 /**
  * @see  Username
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -54,7 +52,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
+    boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_USERNAME)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_USERNAME, args, 2, err)) {

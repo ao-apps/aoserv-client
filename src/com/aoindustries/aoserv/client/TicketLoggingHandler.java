@@ -1,20 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2009-2011 by AO Industries, Inc.,
+ * Copyright 2009-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.command.*;
-import com.aoindustries.aoserv.client.validator.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.ErrorPrinter;
-import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.logging.QueuedHandler;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -75,19 +72,19 @@ final public class TicketLoggingHandler extends QueuedHandler {
         this.connector = connector;
         this.category = category;
         // Look-up things in advance to reduce possible round-trips during logging
-        business = connector.getThisBusinessAdministrator().getUsername().getBusiness();
+        business = connector.getThisBusinessAdministrator().getUsername().getPackage().getBusiness();
         brand = business.getBrand();
-        if(brand==null) throw new NoSuchElementException("Unable to find Brand for connector: "+connector);
+        if(brand==null) throw new SQLException("Unable to find Brand for connector: "+connector);
         language = connector.getLanguages().get(Language.EN);
+        if(language==null) throw new SQLException("Unable to find Language: "+Language.EN);
         ticketType = connector.getTicketTypes().get(TicketType.LOGS);
+        if(ticketType==null) throw new SQLException("Unable to find TicketType: "+TicketType.LOGS);
     }
 
-    @Override
     protected boolean useCustomLogging(LogRecord record) {
         return record.getLevel().intValue()>Level.FINE.intValue();
     }
 
-    @Override
     protected void doCustomLogging(Formatter formatter, LogRecord record, String fullReport) {
         try {
             Level level = record.getLevel();
@@ -99,30 +96,29 @@ final public class TicketLoggingHandler extends QueuedHandler {
             String summary = tempSB.toString();
             // Look for an existing ticket to append
             Ticket existingTicket = null;
-            for(Ticket ticket : connector.getTickets().getSet()) {
+            for(Ticket ticket : connector.getTickets()) {
                 String status = ticket.getStatus().getStatus();
                 if(
                     (
-                        TicketStatus.OPEN==status // OK - interned
-                        || TicketStatus.HOLD==status // OK - interned
-                        || TicketStatus.BOUNCED==status // OK - interned
+                        TicketStatus.OPEN.equals(status)
+                        || TicketStatus.HOLD.equals(status)
+                        || TicketStatus.BOUNCED.equals(status)
                     ) && brand.equals(ticket.getBrand())
                     && business.equals(ticket.getBusiness())
                     && language.equals(ticket.getLanguage())
                     && ticketType.equals(ticket.getTicketType())
                     && ticket.getSummary().equals(summary) // level, prefix, classname, and method
-                    && StringUtility.equals(category, ticket.getCategory())
+                    && ObjectUtils.equals(category, ticket.getCategory())
                 ) {
                     existingTicket = ticket;
                     break;
                 }
             }
             if(existingTicket!=null) {
-                new AddTicketAnnotationCommand(
-                    existingTicket,
+                existingTicket.addAnnotation(
                     generateActionSummary(formatter, record),
                     fullReport
-                ).execute(existingTicket.getConnector());
+                );
             } else {
                 // The priority depends on the log level
                 String priorityName;
@@ -132,26 +128,27 @@ final public class TicketLoggingHandler extends QueuedHandler {
                 else if(intLevel<=Level.WARNING.intValue()) priorityName = TicketPriority.HIGH;    // INFO < level <=WARNING
                 else priorityName = TicketPriority.URGENT;                                         // WARNING < level
                 TicketPriority priority = connector.getTicketPriorities().get(priorityName);
-                new AddTicketCommand(
+                if(priority==null) throw new SQLException("Unable to find TicketPriority: "+priorityName);
+                connector.getTickets().addTicket(
                     brand,
                     business,
                     language,
                     category,
                     ticketType,
-                    (Email)null,
+                    null,
                     summary,
                     fullReport,
                     priority,
                     "",
                     ""
-                ).execute(connector);
+                );
             }
         } catch(Exception err) {
             ErrorPrinter.printStackTraces(err);
         }
     }
 
-    public static String generateActionSummary(Formatter formatter, LogRecord record) {
+    public static final String generateActionSummary(Formatter formatter, LogRecord record) {
         // Generate the annotation summary as localized message + thrown
         StringBuilder tempSB = new StringBuilder();
         String message = formatter.formatMessage(record);

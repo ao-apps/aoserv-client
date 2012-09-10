@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2002-2009 by AO Industries, Inc.,
+ * Copyright 2002-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,8 +15,6 @@ import java.util.List;
 
 /**
  * @see  CvsRepository
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -139,7 +137,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_CVS_REPOSITORY)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_CVS_REPOSITORY, args, 5, err)) {

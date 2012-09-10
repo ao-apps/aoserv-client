@@ -1,19 +1,23 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ShellInterpreter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
@@ -22,34 +26,22 @@ import java.util.logging.Logger;
  * based on the Bourne shell.  It may be used to control the
  * <code>AOServ Client</code> utilities.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class AOSH extends ShellInterpreter {
 
     private static final Logger logger = Logger.getLogger(AOSH.class.getName());
 
-    private static final InputStream nullInput=new ByteArrayInputStream(new byte[0]);
+    private static final Reader nullInput=new CharArrayReader(new char[0]);
 
     final private AOServConnector connector;
 
-    public AOSH(AOServConnector connector, InputStream in, TerminalWriter out, TerminalWriter err) {
+    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err) {
 	super(in, out, err);
         this.connector=connector;
     }
 
-    public AOSH(AOServConnector connector, InputStream in, TerminalWriter out, TerminalWriter err, String[] args) {
-	super(in, out, err, args);
-        this.connector=connector;
-    }
-
-    public AOSH(AOServConnector connector, InputStream in, OutputStream out, OutputStream err) {
-	super(in, out, err);
-        this.connector=connector;
-    }
-
-    public AOSH(AOServConnector connector, InputStream in, OutputStream out, OutputStream err, String[] args) {
+    public AOSH(AOServConnector connector, Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
 	super(in, out, err, args);
         this.connector=connector;
     }
@@ -98,13 +90,13 @@ final public class AOSH extends ShellInterpreter {
     }
 
     static String executeCommand(AOServConnector connector, String[] args) throws IOException, SQLException {
-        ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        TerminalWriter out=new TerminalWriter(bytes);
+        StringWriter buff = new StringWriter();
+        TerminalWriter out=new TerminalWriter(buff);
         out.setEnabled(false);
         AOSH sh=new AOSH(connector, nullInput, out, out);
         sh.handleCommand(args);
         out.flush();
-        return new String(bytes.toByteArray());
+        return buff.toString();
     }
 
     protected String getName() {
@@ -196,13 +188,13 @@ final public class AOSH extends ShellInterpreter {
     }
 
     public static void main(String[] args) {
-        TerminalWriter out=new TerminalWriter(System.out);
-        TerminalWriter err=new TerminalWriter(System.err);
+        TerminalWriter out=new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
+        TerminalWriter err=System.out==System.err ? out : new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.err)));
         try {
             String username=getConfigUsername(System.in, err);
             String password=getConfigPassword(System.in, err);
             AOServConnector connector=AOServConnector.getConnector(username, password, logger);
-            AOSH aosh=new AOSH(connector, System.in, out, err, args);
+            AOSH aosh=new AOSH(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, args);
             aosh.run();
             if(aosh.isInteractive()) {
                 out.println();
@@ -237,7 +229,7 @@ final public class AOSH extends ShellInterpreter {
         return password;
     }
 
-    protected ShellInterpreter newShellInterpreter(InputStream in, TerminalWriter out, TerminalWriter err, String[] args) {
+    protected ShellInterpreter newShellInterpreter(Reader in, TerminalWriter out, TerminalWriter err, String[] args) {
         return new AOSH(connector, in, out, err, args);
     }
 

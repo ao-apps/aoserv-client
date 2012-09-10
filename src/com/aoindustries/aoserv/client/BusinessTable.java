@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -14,6 +14,7 @@ import com.aoindustries.util.tree.Tree;
 import com.aoindustries.util.tree.TreeCopy;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,8 +22,6 @@ import java.util.List;
 
 /**
  * @see  Business
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -151,7 +150,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
+    boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
         String command=args[0];
         if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS, args, 8, err)) {

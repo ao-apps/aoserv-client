@@ -122,9 +122,11 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_61("1.61"),
         VERSION_1_62("1.62"),
         VERSION_1_63("1.63"),
-        VERSION_1_64("1.64");
+        VERSION_1_64("1.64"),
+        VERSION_1_65("1.65"),
+        VERSION_1_66("1.66");
 
-        public static final Version CURRENT_VERSION = VERSION_1_64;
+        public static final Version CURRENT_VERSION = VERSION_1_66;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -489,7 +491,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         DESTROY_VIRTUAL_SERVER,
         PAUSE_VIRTUAL_SERVER,
         UNPAUSE_VIRTUAL_SERVER,
-        GET_VIRTUAL_SERVER_STATUS
+        GET_VIRTUAL_SERVER_STATUS,
+        ADD_IP_REPUTATION
     }
 
     /**

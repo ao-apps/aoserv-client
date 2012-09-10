@@ -1,19 +1,20 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2012 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.io.WriterOutputStream;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  AOServer
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -92,7 +93,7 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
     }
 
     @Override
-    boolean handleCommand(String[] args, InputStream in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+    boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 	String command=args[0];
 	if(command.equalsIgnoreCase(AOSHCommand.GET_MRTG_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_MRTG_FILE, args, 2, err)) {

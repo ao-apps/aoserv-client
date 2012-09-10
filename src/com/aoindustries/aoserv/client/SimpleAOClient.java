@@ -15,6 +15,7 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * <code>SimpleAOClient</code> is a simplified interface into the client
@@ -283,6 +284,12 @@ final public class SimpleAOClient {
         VirtualServer vs = se.getVirtualServer();
         if(vs==null) throw new IllegalArgumentException("Unable to find VirtualServer: "+virtualServer);
         return vs;
+    }
+
+    private IpReputationSet getIpReputationSet(String identifier) throws IllegalArgumentException, SQLException, IOException {
+        IpReputationSet set = connector.getIpReputationSets().get(identifier);
+        if(set==null) throw new IllegalArgumentException("Unable to find IpReputationSet: "+identifier);
+        return set;
     }
 
     /**
@@ -8023,5 +8030,34 @@ final public class SimpleAOClient {
         String virtualServer
     ) throws IllegalArgumentException, IOException, SQLException {
         return getVirtualServer(virtualServer).getStatus();
+    }
+
+    /**
+     * @see  IpReputationSet#addReputation(int, com.aoindustries.aoserv.client.IpReputationSet.ConfidenceType, com.aoindustries.aoserv.client.IpReputationSet.ReputationType, short)
+     *
+     * @param  identifier      the unique identifier of the set
+     * @param  host            the dotted-quad (A.B.C.D) format IPv4 address
+     * @param  confidence      either "uncertain" or "definite"
+     * @param  reputationType  either "good" or "bad"
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>IpReputationSet</code> or unable to parse parameters
+     */
+    public void addIpReputation(
+        String identifier,
+        String host,
+        String confidence,
+        String reputationType,
+        short score
+    ) throws IllegalArgumentException, IOException, SQLException {
+        IpReputationSet set = getIpReputationSet(identifier);
+        int hostIp = IPAddress.getIntForIPAddress(host);
+        set.addReputation(
+            hostIp,
+            IpReputationSet.ConfidenceType.valueOf(confidence.toUpperCase(Locale.ENGLISH)),
+            IpReputationSet.ReputationType.valueOf(reputationType.toUpperCase(Locale.ENGLISH)),
+            score
+        );
     }
 }
