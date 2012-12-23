@@ -43,6 +43,7 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
     private long lastHostDecay;
     private int networkDecayInterval;
     private long lastNetworkDecay;
+    private long lastReputationAdded;
 
     public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.IP_REPUTATION_SETS;
@@ -63,6 +64,7 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
         lastHostDecay = result.getTimestamp(pos++).getTime();
         networkDecayInterval = result.getInt(pos++);
         lastNetworkDecay = result.getTimestamp(pos++).getTime();
+        lastReputationAdded = result.getTimestamp(pos++).getTime();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
@@ -79,6 +81,7 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
         out.writeLong(lastHostDecay);
         out.writeCompressedInt(networkDecayInterval);
         out.writeLong(lastNetworkDecay);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_67)>=0) out.writeLong(lastReputationAdded);
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
@@ -95,6 +98,7 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
         lastHostDecay = in.readLong();
         networkDecayInterval = in.readCompressedInt();
         lastNetworkDecay = in.readLong();
+        lastReputationAdded = in.readLong();
     }
 
     Object getColumnImpl(int i) {
@@ -112,6 +116,7 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
             case 10: return new java.sql.Date(lastHostDecay);
             case 11: return networkDecayInterval;
             case 12: return new java.sql.Date(lastNetworkDecay);
+            case 13: return new java.sql.Date(lastReputationAdded);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -198,6 +203,13 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
      */
     public long getLastNetworkDecay() {
         return lastNetworkDecay;
+    }
+
+    /**
+     * Gets the last time reputation was added.
+     */
+    public long getLastReputationAdded() {
+        return lastReputationAdded;
     }
 
     public List<IpReputationSetHost> getHosts() throws IOException, SQLException {

@@ -23,7 +23,7 @@ final public class IpReputationSetNetwork extends CachedObjectLongKey<IpReputati
         COLUMN_SET  = 1
     ;
     static final String
-        COLUMN_SET_name = "set",
+        COLUMN_SET_name      = "set",
         COLUMN_NETWORK_name  = "network"
     ;
 
@@ -61,7 +61,7 @@ final public class IpReputationSetNetwork extends CachedObjectLongKey<IpReputati
         switch(i) {
             case COLUMN_PKEY : return pkey;
             case COLUMN_SET  : return set;
-            case 2           : return network;
+            case 2           : return IPAddress.getIPAddressForInt(network);
             case 3           : return counter;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -78,6 +78,13 @@ final public class IpReputationSetNetwork extends CachedObjectLongKey<IpReputati
      */
     public int getNetwork() {
         return network;
+    }
+
+    /**
+     * Gets the IPv4 network address.
+     */
+    public String getNetworkAddress() {
+        return IPAddress.getIPAddressForInt(network);
     }
 
     /**

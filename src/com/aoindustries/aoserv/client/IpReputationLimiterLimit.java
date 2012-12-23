@@ -32,6 +32,16 @@ final public class IpReputationLimiterLimit extends CachedObjectIntegerKey<IpRep
      */
     public enum LimiterClass {
         /**
+         * Manual Good
+         */
+        gm,
+
+        /**
+         * Manual Bad
+         */
+        bm,
+
+        /**
          * Definite Bad
          */
         bd,

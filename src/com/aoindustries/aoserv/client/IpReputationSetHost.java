@@ -24,8 +24,8 @@ final public class IpReputationSetHost extends CachedObjectLongKey<IpReputationS
         COLUMN_SET = 1
     ;
     static final String
-        COLUMN_SET_name = "set",
-        COLUMN_HOST_name     = "host"
+        COLUMN_SET_name  = "set",
+        COLUMN_HOST_name = "host"
     ;
 
     int set;
@@ -66,7 +66,7 @@ final public class IpReputationSetHost extends CachedObjectLongKey<IpReputationS
         switch(i) {
             case COLUMN_PKEY     : return pkey;
             case COLUMN_SET      : return set;
-            case 2               : return host;
+            case 2               : return IPAddress.getIPAddressForInt(host);
             case 3               : return goodReputation;
             case 4               : return badReputation;
             default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -84,6 +84,13 @@ final public class IpReputationSetHost extends CachedObjectLongKey<IpReputationS
      */
     public int getHost() {
         return host;
+    }
+
+    /**
+     * Gets the IPv4 host address.
+     */
+    public String getHostAddress() {
+        return IPAddress.getIPAddressForInt(host);
     }
 
     /**
