@@ -1,16 +1,18 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2002-2009 by AO Industries, Inc.,
+ * Copyright 2002-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>PostgresServer</code> corresponds to a unique PostgreSQL install
@@ -22,11 +24,152 @@ import java.util.List;
  * @see  PostgresDatabase
  * @see  PostgresServerUser
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer> {
+
+    // <editor-fold defaultstate="collapsed" desc="Constants">
+    /**
+     * The directory that contains the PostgreSQL data files.
+     */
+    public static final String DATA_BASE_DIR="/var/lib/pgsql";
+
+    public enum ReservedWord {
+        ABORT,
+        ALL,
+        ANALYSE,
+        ANALYZE,
+        AND,
+        ANY,
+        AS,
+        ASC,
+        BETWEEN,
+        BINARY,
+        BIT,
+        BOTH,
+        CASE,
+        CAST,
+        CHAR,
+        CHARACTER,
+        CHECK,
+        CLUSTER,
+        COALESCE,
+        COLLATE,
+        COLUMN,
+        CONSTRAINT,
+        COPY,
+        CROSS,
+        CURRENT_DATE,
+        CURRENT_TIME,
+        CURRENT_TIMESTAMP,
+        CURRENT_USER,
+        DEC,
+        DECIMAL,
+        DEFAULT,
+        DEFERRABLE,
+        DESC,
+        DISTINCT,
+        DO,
+        ELSE,
+        END,
+        EXCEPT,
+        EXISTS,
+        EXPLAIN,
+        EXTEND,
+        EXTRACT,
+        FALSE,
+        FLOAT,
+        FOR,
+        FOREIGN,
+        FROM,
+        FULL,
+        GLOBAL,
+        GROUP,
+        HAVING,
+        ILIKE,
+        IN,
+        INITIALLY,
+        INNER,
+        INOUT,
+        INTERSECT,
+        INTO,
+        IS,
+        ISNULL,
+        JOIN,
+        LEADING,
+        LEFT,
+        LIKE,
+        LIMIT,
+        LISTEN,
+        LOAD,
+        LOCAL,
+        LOCK,
+        MOVE,
+        NATURAL,
+        NCHAR,
+        NEW,
+        NOT,
+        NOTNULL,
+        NULL,
+        NULLIF,
+        NUMERIC,
+        OFF,
+        OFFSET,
+        OLD,
+        ON,
+        ONLY,
+        OR,
+        ORDER,
+        OUT,
+        OUTER,
+        OVERLAPS,
+        POSITION,
+        PRECISION,
+        PRIMARY,
+        PUBLIC,
+        REFERENCES,
+        RESET,
+        RIGHT,
+        SELECT,
+        SESSION_USER,
+        SETOF,
+        SHOW,
+        SOME,
+        SUBSTRING,
+        TABLE,
+        THEN,
+        TO,
+        TRAILING,
+        TRANSACTION,
+        TRIM,
+        TRUE,
+        UNION,
+        UNIQUE,
+        USER,
+        USING,
+        VACUUM,
+        VARCHAR,
+        VERBOSE,
+        WHEN,
+        WHERE;
+
+        private static volatile Set<String> reservedWords = null;
+
+        /**
+         * Case-insensitive check for if the provided string is a reserved word.
+         */
+        public static boolean isReservedWord(String value) {
+            Set<String> words = reservedWords;
+            if(words==null) {
+                ReservedWord[] values = values();
+                words = new HashSet<String>(values.length*4/3+1);
+                for(ReservedWord word : values) words.add(word.name().toUpperCase(Locale.ENGLISH));
+                reservedWords = words;
+            }
+            return words.contains(value.toUpperCase(Locale.ENGLISH));
+        }
+    }
+    // </editor-fold>
 
     static final int
         COLUMN_PKEY=0,
@@ -35,11 +178,6 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
     ;
     static final String COLUMN_NAME_name = "name";
     static final String COLUMN_AO_SERVER_name = "ao_server";
-
-    /**
-     * The directory that contains the PostgreSQL data files.
-     */
-    public static final String DATA_BASE_DIR="/var/lib/pgsql";
 
     /**
      * The maximum length of the name.

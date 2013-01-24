@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.*;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.math.LongLong;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.persistent.PersistentCollections;
@@ -22,7 +22,12 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class InetAddress implements Comparable<InetAddress>, Serializable, DtoFactory<com.aoindustries.aoserv.client.dto.InetAddress>, Internable<InetAddress> {
+final public class InetAddress implements
+    Comparable<InetAddress>,
+    Serializable,
+    DtoFactory<com.aoindustries.aoserv.client.dto.InetAddress>,
+    Internable<InetAddress>
+{
 
     private static final long serialVersionUID = -5667211900395977633L;
 

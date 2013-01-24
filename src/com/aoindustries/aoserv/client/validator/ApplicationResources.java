@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client.validator;
-
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client.validator;
+
 import com.aoindustries.util.i18n.ApplicationResourcesAccessor;
 import com.aoindustries.util.i18n.EditableResourceBundle;
 import com.aoindustries.util.i18n.EditableResourceBundleSet;

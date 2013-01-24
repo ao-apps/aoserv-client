@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -407,7 +407,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public AOServer getFailoverServer() throws SQLException, IOException {
         if(failover_server==-1) return null;
         AOServer se=table.connector.getAoServers().get(failover_server);
-        if(se==null) new SQLException("Unable to find AOServer: "+failover_server);
+        if(se==null) throw new SQLException("Unable to find AOServer: "+failover_server);
         return se;
     }
 
@@ -561,9 +561,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public MySQLServer getPreferredMySQLServer() throws IOException, SQLException {
         // Look for the most-preferred version that has an instance on the server
         List<MySQLServer> pss=getMySQLServers();
-        String[] preferredVersionPrefixes=MySQLServer.getPreferredVersionPrefixes();
-        for(int c=0;c<preferredVersionPrefixes.length;c++) {
-            String versionPrefix=preferredVersionPrefixes[c];
+        for(String versionPrefix : MySQLServer.PREFERRED_VERSION_PREFIXES) {
             for(int d=0;d<pss.size();d++) {
                 MySQLServer ps=pss.get(d);
                 if(ps.getVersion().getVersion().startsWith(versionPrefix)) {

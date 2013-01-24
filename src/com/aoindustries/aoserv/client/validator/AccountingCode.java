@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.*;
+import com.aoindustries.aoserv.client.AOServObject;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
 import com.aoindustries.io.FastObjectOutput;
@@ -33,7 +34,13 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class AccountingCode implements Comparable<AccountingCode>, FastExternalizable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.AccountingCode>, Internable<AccountingCode> {
+final public class AccountingCode implements
+    Comparable<AccountingCode>,
+    FastExternalizable,
+    ObjectInputValidation,
+    DtoFactory<com.aoindustries.aoserv.client.dto.AccountingCode>,
+    Internable<AccountingCode>
+{
 
     public static final int MIN_LENGTH = 2;
 

@@ -1,11 +1,12 @@
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.*;
+import com.aoindustries.aoserv.client.AOServObject;
+import com.aoindustries.aoserv.client.DtoFactory;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -20,7 +21,12 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxID implements Comparable<LinuxID>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.LinuxID> {
+final public class LinuxID implements
+    Comparable<LinuxID>,
+    Serializable,
+    ObjectInputValidation,
+    DtoFactory<com.aoindustries.aoserv.client.dto.LinuxID>
+{
 
     private static final long serialVersionUID = -6222776271442175855L;
 

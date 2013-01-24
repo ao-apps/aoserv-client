@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.*;
+import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.util.Base64Coder;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
@@ -28,7 +28,11 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author  AO Industries, Inc.
  */
-final public class HashedPassword implements Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.HashedPassword> {
+final public class HashedPassword implements
+    Serializable,
+    ObjectInputValidation,
+    DtoFactory<com.aoindustries.aoserv.client.dto.HashedPassword>
+{
 
     private static final long serialVersionUID = 6198625525641344394L;
 

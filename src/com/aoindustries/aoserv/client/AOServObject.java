@@ -14,8 +14,10 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An <code>AOServObject</code> is the lowest level object
@@ -34,6 +36,39 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
     protected AOServObject() {
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Ordering">
+    private static final Collator collator = Collator.getInstance(Locale.ENGLISH);
+    public static int compareIgnoreCaseConsistentWithEquals(String S1, String S2) {
+        if(S1==S2) return 0;
+        int diff = collator.compare(S1, S2);
+        if(diff!=0) return diff;
+        return S1.compareTo(S2);
+    }
+
+    public static int compare(int i1, int i2) {
+        return i1<i2 ? -1 : i1==i2 ? 0 : 1;
+    }
+
+    public static int compare(short s1, short s2) {
+        return s1<s2 ? -1 : s1==s2 ? 0 : 1;
+    }
+
+    public static int compare(long l1, long l2) {
+        return l1<l2 ? -1 : l1==l2 ? 0 : 1;
+    }
+
+    /**
+     * Compares two objects allowing for nulls, sorts non-null before null.
+     */
+    public static <T extends Comparable<T>> int compare(T obj1, T obj2) {
+        if(obj1!=null) {
+            return obj2!=null ? obj1.compareTo(obj2) : -1;
+        } else {
+            return obj2!=null ? 1 : 0;
+        }
+    }
+
+    // TODO: Remove in AOServ 2
     final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
         int len=sortExpressions.length;
         for(int c=0;c<len;c++) {
@@ -48,6 +83,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
         return 0;
     }
 
+    // TODO: Remove in AOServ 2
     final public int compareTo(AOServConnector conn, Comparable value, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
         int len=sortExpressions.length;
         for(int c=0;c<len;c++) {
@@ -62,6 +98,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
         return 0;
     }
 
+    // TODO: Remove in AOServ 2
     final public int compareTo(AOServConnector conn, Object[] OA, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
         int len=sortExpressions.length;
         if(len!=OA.length) throw new IllegalArgumentException("Array length mismatch when comparing AOServObject to Object[]: sortExpressions.length="+len+", OA.length="+OA.length);
@@ -77,6 +114,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
         }
         return 0;
     }
+    // </editor-fold>
 
     @Override
     final public boolean equals(Object O) {

@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.*;
+import com.aoindustries.aoserv.client.DtoFactory;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.Internable;
-import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -23,7 +23,13 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * @author  AO Industries, Inc.
  */
-final public class Hostname implements Comparable<Hostname>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.Hostname>, Internable<Hostname> {
+final public class Hostname implements
+    Comparable<Hostname>,
+    Serializable,
+    ObjectInputValidation,
+    DtoFactory<com.aoindustries.aoserv.client.dto.Hostname>,
+    Internable<Hostname>
+{
 
     private static final long serialVersionUID = -6323326583709666966L;
 
@@ -130,8 +136,8 @@ final public class Hostname implements Comparable<Hostname>, Serializable, Objec
         if(!(O instanceof Hostname)) return false;
         Hostname other = (Hostname)O;
     	return
-            StringUtility.equals(domainName, other.domainName)
-            && StringUtility.equals(inetAddress, other.inetAddress)
+            ObjectUtils.equals(domainName, other.domainName)
+            && ObjectUtils.equals(inetAddress, other.inetAddress)
     	;
     }
 

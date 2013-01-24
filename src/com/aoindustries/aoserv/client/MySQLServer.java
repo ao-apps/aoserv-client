@@ -1,17 +1,22 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2006-2009 by AO Industries, Inc.,
+ * Copyright 2006-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.AoCollections;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * A <code>MySQLServer</code> corresponds to a unique MySQL install
@@ -22,29 +27,19 @@ import java.util.List;
  * @see  MySQLDatabase
  * @see  MySQLServerUser
  *
- * @version  1.4
- *
  * @author  AO Industries, Inc.
  */
 final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_AO_SERVER=2,
-        COLUMN_NET_BIND=5,
-        COLUMN_PACKAGE=6
-    ;
-    static final String COLUMN_AO_SERVER_name = "ao_server";
-    static final String COLUMN_NAME_name = "name";
-
+    // <editor-fold defaultstate="collapsed" desc="Constants">
     /**
      * The supported versions of MySQL.
      */
     public static final String
-        VERSION_5_1_PREFIX="5.1.",
-        VERSION_5_0_PREFIX="5.0.",
-        VERSION_4_1_PREFIX="4.1.",
-        VERSION_4_0_PREFIX="4.0."
+        VERSION_5_1_PREFIX = "5.1.",
+        VERSION_5_0_PREFIX = "5.0.",
+        VERSION_4_1_PREFIX = "4.1.",
+        VERSION_4_0_PREFIX = "4.0."
     ;
 
     /**
@@ -57,14 +52,275 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      * preference.  Index <code>0</code> is the most
      * preferred.
      */
-    public static final String[] getPreferredVersionPrefixes() {
-        return new String[] {
+    public static final List<String> PREFERRED_VERSION_PREFIXES = AoCollections.optimalUnmodifiableList(
+        Arrays.asList(
             VERSION_5_1_PREFIX,
             VERSION_5_0_PREFIX,
             VERSION_4_1_PREFIX,
             VERSION_4_0_PREFIX
-        };
+        )
+    );
+
+    public enum ReservedWord {
+        ACTION,
+        ADD,
+        AFTER,
+        AGGREGATE,
+        ALL,
+        ALTER,
+        AND,
+        AS,
+        ASC,
+        AUTO_INCREMENT,
+        AVG,
+        AVG_ROW_LENGTH,
+        BETWEEN,
+        BIGINT,
+        BINARY,
+        BIT,
+        BLOB,
+        BOOL,
+        BOTH,
+        BY,
+        CASCADE,
+        CASE,
+        CHANGE,
+        CHAR,
+        CHARACTER,
+        CHECK,
+        CHECKSUM,
+        COLUMN,
+        COLUMNS,
+        COMMENT,
+        CONSTRAINT,
+        CREATE,
+        CROSS,
+        CURRENT_DATE,
+        CURRENT_TIME,
+        CURRENT_TIMESTAMP,
+        DATA,
+        DATABASE,
+        DATABASES,
+        DATE,
+        DATETIME,
+        DAY,
+        DAY_HOUR,
+        DAY_MINUTE,
+        DAY_SECOND,
+        DAYOFMONTH,
+        DAYOFWEEK,
+        DAYOFYEAR,
+        DEC,
+        DECIMAL,
+        DEFAULT,
+        DELAY_KEY_WRITE,
+        DELAYED,
+        DELETE,
+        DESC,
+        DESCRIBE,
+        DISTINCT,
+        DISTINCTROW,
+        DOUBLE,
+        DROP,
+        ELSE,
+        ENCLOSED,
+        END,
+        ENUM,
+        ESCAPE,
+        ESCAPED,
+        EXISTS,
+        EXPLAIN,
+        FIELDS,
+        FILE,
+        FIRST,
+        FLOAT,
+        FLOAT4,
+        FLOAT8,
+        FLUSH,
+        FOR,
+        FOREIGN,
+        FROM,
+        FULL,
+        FUNCTION,
+        GLOBAL,
+        GRANT,
+        GRANTS,
+        GROUP,
+        HAVING,
+        HEAP,
+        HIGH_PRIORITY,
+        HOSTS,
+        HOUR,
+        HOUR_MINUTE,
+        HOUR_SECOND,
+        IDENTIFIED,
+        IF,
+        IGNORE,
+        IN,
+        INDEX,
+        INFILE,
+        INNER,
+        INSERT,
+        INSERT_ID,
+        INT,
+        INT1,
+        INT2,
+        INT3,
+        INT4,
+        INT8,
+        INTEGER,
+        INTERVAL,
+        INTO,
+        IS,
+        ISAM,
+        JOIN,
+        KEY,
+        KEYS,
+        KILL,
+        LAST_INSERT_ID,
+        LEADING,
+        LEFT,
+        LENGTH,
+        LIKE,
+        LIMIT,
+        LINES,
+        LOAD,
+        LOCAL,
+        LOCK,
+        LOGS,
+        LONG,
+        LONGBLOB,
+        LONGTEXT,
+        LOW_PRIORITY,
+        MATCH,
+        MAX,
+        MAX_ROWS,
+        MEDIUMBLOB,
+        MEDIUMINT,
+        MEDIUMTEXT,
+        MIDDLEINT,
+        MIN_ROWS,
+        MINUTE,
+        MINUTE_SECOND,
+        MODIFY,
+        MONTH,
+        MONTHNAME,
+        MYISAM,
+        NATURAL,
+        NO,
+        NOT,
+        NULL,
+        NUMERIC,
+        ON,
+        OPTIMIZE,
+        OPTION,
+        OPTIONALLY,
+        OR,
+        ORDER,
+        OUTER,
+        OUTFILE,
+        PACK_KEYS,
+        PARTIAL,
+        PASSWORD,
+        PRECISION,
+        PRIMARY,
+        PRIVILEGES,
+        PROCEDURE,
+        PROCESS,
+        PROCESSLIST,
+        READ,
+        REAL,
+        REFERENCES,
+        REGEXP,
+        RELOAD,
+        RENAME,
+        REPLACE,
+        RESTRICT,
+        RETURNS,
+        REVOKE,
+        RLIKE,
+        ROW,
+        ROWS,
+        SECOND,
+        SELECT,
+        SET,
+        SHOW,
+        SHUTDOWN,
+        SMALLINT,
+        SONAME,
+        SQL_BIG_RESULT,
+        SQL_BIG_SELECTS,
+        SQL_BIG_TABLES,
+        SQL_LOG_OFF,
+        SQL_LOG_UPDATE,
+        SQL_LOW_PRIORITY_UPDATES,
+        SQL_SELECT_LIMIT,
+        SQL_SMALL_RESULT,
+        SQL_WARNINGS,
+        STARTING,
+        STATUS,
+        STRAIGHT_JOIN,
+        STRING,
+        TABLE,
+        TABLES,
+        TEMPORARY,
+        TERMINATED,
+        TEXT,
+        THEN,
+        TIME,
+        TIMESTAMP,
+        TINYBLOB,
+        TINYINT,
+        TINYTEXT,
+        TO,
+        TRAILING,
+        TYPE,
+        UNIQUE,
+        UNLOCK,
+        UNSIGNED,
+        UPDATE,
+        USAGE,
+        USE,
+        USING,
+        VALUES,
+        VARBINARY,
+        VARCHAR,
+        VARIABLES,
+        VARYING,
+        WHEN,
+        WHERE,
+        WITH,
+        WRITE,
+        YEAR,
+        YEAR_MONTH,
+        ZEROFILL;
+
+        private static volatile Set<String> reservedWords = null;
+
+        /**
+         * Case-insensitive check for if the provided string is a reserved word.
+         */
+        public static boolean isReservedWord(String value) {
+            Set<String> words = reservedWords;
+            if(words==null) {
+                ReservedWord[] values = values();
+                words = new HashSet<String>(values.length*4/3+1);
+                for(ReservedWord word : values) words.add(word.name().toUpperCase(Locale.ENGLISH));
+                reservedWords = words;
+            }
+            return words.contains(value.toUpperCase(Locale.ENGLISH));
+        }
     }
+    // </editor-fold>
+
+    static final int
+        COLUMN_PKEY=0,
+        COLUMN_AO_SERVER=2,
+        COLUMN_NET_BIND=5,
+        COLUMN_PACKAGE=6
+    ;
+    static final String COLUMN_AO_SERVER_name = "ao_server";
+    static final String COLUMN_NAME_name = "name";
 
     /**
      * The maximum length of the name.

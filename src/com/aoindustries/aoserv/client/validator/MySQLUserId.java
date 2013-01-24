@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.*;
+import com.aoindustries.aoserv.client.DtoFactory;
+import com.aoindustries.aoserv.client.MySQLServer;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -29,7 +30,13 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUserId implements Comparable<MySQLUserId>, Serializable, ObjectInputValidation, DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUserId>, Internable<MySQLUserId> {
+final public class MySQLUserId implements
+    Comparable<MySQLUserId>,
+    Serializable,
+    ObjectInputValidation,
+    DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUserId>,
+    Internable<MySQLUserId>
+{
 
     private static final long serialVersionUID = -2153769675565702888L;
 
