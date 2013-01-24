@@ -86,7 +86,7 @@ final public class UsernameTable extends CachedTableStringKey<Username> {
             return true;
 	} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_USERNAME_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_USERNAME_PASSWORD, args, 2, err)) {
-                PasswordChecker.Result[] results = connector.getSimpleAOClient().checkUsernamePassword(args[1], args[2]);
+                List<PasswordChecker.Result> results = connector.getSimpleAOClient().checkUsernamePassword(args[1], args[2]);
                 if(PasswordChecker.hasResults(results)) {
                     PasswordChecker.printResults(results, out);
                     out.flush();

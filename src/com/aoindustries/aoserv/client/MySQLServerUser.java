@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.*;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.StringUtility;
@@ -91,8 +93,12 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
         else return dl.canEnable() && getMySQLUser().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
-	return MySQLUser.checkPassword(username, password);
+    public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
+        try {
+            return MySQLUser.checkPassword(MySQLUserId.valueOf(username), password);
+        } catch(ValidationException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 /*
     public String checkPasswordDescribe(String password) {

@@ -1,10 +1,12 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -96,16 +98,20 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         else return dl.canEnable();
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
-        return checkPassword(pkey, password);
+    public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
+        try {
+            return checkPassword(UserId.valueOf(pkey), password);
+        } catch(ValidationException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     /**
      * Validates a password and returns a description of the problem.  If the
      * password is valid, then <code>null</code> is returned.
      */
-    public static PasswordChecker.Result[] checkPassword(String username, String password) throws IOException {
-	return PasswordChecker.checkPassword(username, password, true, false);
+    public static List<PasswordChecker.Result> checkPassword(UserId username, String password) throws IOException {
+	return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
     }
 
     /**

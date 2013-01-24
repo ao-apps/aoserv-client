@@ -95,12 +95,12 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
         //Shell.TRUE
     };
 
-    public boolean enforceStrongPassword() {
-	return enforceStrongPassword(pkey);
+    public PasswordChecker.PasswordStrength getPasswordStrength() {
+	return getPasswordStrength(pkey);
     }
 
-    public static boolean enforceStrongPassword(String type) {
-	return !type.equals(EMAIL);
+    public static PasswordChecker.PasswordStrength getPasswordStrength(String type) {
+	return type.equals(EMAIL) ? PasswordChecker.PasswordStrength.SUPER_LAX : PasswordChecker.PasswordStrength.STRICT;
     }
 
     public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {

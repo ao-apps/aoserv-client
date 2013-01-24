@@ -81,7 +81,7 @@ final public class PostgresUserTable extends CachedTableStringKey<PostgresUser> 
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_POSTGRES_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_POSTGRES_PASSWORD, args, 2, err)) {
-                PasswordChecker.Result[] results = SimpleAOClient.checkPostgresPassword(args[1], args[2]);
+                List<PasswordChecker.Result> results = SimpleAOClient.checkPostgresPassword(args[1], args[2]);
                 if(PasswordChecker.hasResults(results)) {
                     PasswordChecker.printResults(results, out);
                     out.flush();

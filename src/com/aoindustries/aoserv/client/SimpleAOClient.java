@@ -5,6 +5,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
@@ -2652,13 +2656,17 @@ final public class SimpleAOClient {
      * @see  Username#isValidUsername
      * @see  BusinessAdministrator#checkPassword
      */
-    public static PasswordChecker.Result[] checkBusinessAdministratorPassword(
+    public static List<PasswordChecker.Result> checkBusinessAdministratorPassword(
         String username,
         String password
     ) throws IllegalArgumentException, IOException, SQLException {
         String check = Username.checkUsername(username);
         if(check!=null) throw new IllegalArgumentException(check);
-        return BusinessAdministrator.checkPassword(username, password);
+        try {
+            return BusinessAdministrator.checkPassword(UserId.valueOf(username), password);
+        } catch(ValidationException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -2808,7 +2816,7 @@ final public class SimpleAOClient {
      * @see  #setLinuxServerAccountPassword
      * @see  PasswordChecker
      */
-    public PasswordChecker.Result[] checkLinuxAccountPassword(
+    public List<PasswordChecker.Result> checkLinuxAccountPassword(
         String username,
         String password
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -2884,11 +2892,15 @@ final public class SimpleAOClient {
      * @see  #setMySQLServerUserPassword
      * @see  MySQLUser#checkPassword
      */
-    public static PasswordChecker.Result[] checkMySQLPassword(
+    public static List<PasswordChecker.Result> checkMySQLPassword(
         String username,
         String password
-    ) throws IOException {
-        return MySQLUser.checkPassword(username, password);
+    ) throws IllegalArgumentException, IOException {
+        try {
+            return MySQLUser.checkPassword(MySQLUserId.valueOf(username), password);
+        } catch(ValidationException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -2977,11 +2989,15 @@ final public class SimpleAOClient {
      * @see  #setPostgresServerUserPassword
      * @see  PostgresUser#checkPassword
      */
-    public static PasswordChecker.Result[] checkPostgresPassword(
+    public static List<PasswordChecker.Result> checkPostgresPassword(
         String username,
         String password
-    ) throws IOException {
-        return PostgresUser.checkPassword(username, password);
+    ) throws IllegalArgumentException, IOException {
+        try {
+            return PostgresUser.checkPassword(PostgresUserId.valueOf(username), password);
+        } catch(ValidationException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -3116,7 +3132,7 @@ final public class SimpleAOClient {
      * @see  #setUsernamePassword
      * @see  Username#checkPassword
      */
-    public PasswordChecker.Result[] checkUsernamePassword(
+    public List<PasswordChecker.Result> checkUsernamePassword(
         String username,
         String password
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -4354,7 +4370,7 @@ final public class SimpleAOClient {
      *
      */
     public String generatePassword() throws IOException {
-        return LinuxAccountTable.generatePassword();
+        return PasswordGenerator.generatePassword();
     }
 
     /**

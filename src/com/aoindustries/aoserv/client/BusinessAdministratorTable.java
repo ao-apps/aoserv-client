@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  BusinessAdministrator
@@ -154,7 +155,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
-                PasswordChecker.Result[] results = SimpleAOClient.checkBusinessAdministratorPassword(
+                List<PasswordChecker.Result> results = SimpleAOClient.checkBusinessAdministratorPassword(
                     args[1],
                     args[2]
                 );

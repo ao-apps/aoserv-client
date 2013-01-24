@@ -5,6 +5,8 @@ package com.aoindustries.aoserv.client;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -96,8 +98,12 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         else return dl.canEnable() && getUsername().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) throws IOException {
-        return checkPassword(pkey, type, password);
+    public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
+        try {
+            return checkPassword(UserId.valueOf(pkey), type, password);
+        } catch(ValidationException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -108,9 +114,8 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
      * @see  LinuxAccountType#enforceStrongPassword(String)
      * @see  PasswordChecker#checkPassword(String,String,boolean,boolean)
      */
-    public static PasswordChecker.Result[] checkPassword(String username, String type, String password) throws IOException {
-        boolean enforceStrong=LinuxAccountType.enforceStrongPassword(type);
-        return PasswordChecker.checkPassword(username, password, enforceStrong, !enforceStrong);
+    public static List<PasswordChecker.Result> checkPassword(UserId username, String type, String password) throws IOException {
+        return PasswordChecker.checkPassword(username, password, LinuxAccountType.getPasswordStrength(type));
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {

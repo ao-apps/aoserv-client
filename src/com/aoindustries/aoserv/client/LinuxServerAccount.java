@@ -106,7 +106,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
         else return dl.canEnable() && getLinuxAccount().disable_log==-1;
     }
 
-    public PasswordChecker.Result[] checkPassword(String password) throws SQLException, IOException {
+    public List<PasswordChecker.Result> checkPassword(String password) throws SQLException, IOException {
         return getLinuxAccount().checkPassword(password);
     }
 
