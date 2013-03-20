@@ -23,7 +23,7 @@ public class TableEventThread extends Thread {
     private final AOServTable table;
 
     public TableEventThread(AOServTable table) {
-        super("TableEventThread ("+table.getTableID()+") - "+table.getClass().getName());
+        setName("TableEventThread #" + getId() + " ("+table.getTableID()+") - "+table.getClass().getName());
         this.table=table;
         setDaemon(true);
         start();

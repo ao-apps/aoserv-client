@@ -47,7 +47,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     // TODO: Should have an upper bound to this cache to avoid memory leak
     private static final ConcurrentMap<String,Integer> intForIPAddressCache = new ConcurrentHashMap<String,Integer>();
 
-    public static Integer getIntForIPAddress(String ipAddress) {
+    public static Integer getIntForIPAddress(String ipAddress) throws IllegalArgumentException {
         Integer result = intForIPAddressCache.get(ipAddress);
         if(result==null) {
             // There must be four octets with . between

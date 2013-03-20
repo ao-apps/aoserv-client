@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -21,8 +21,6 @@ import java.util.List;
  * @see  HttpdBind
  * @see  HttpdSite
  * @see  HttpdSiteBind
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -55,6 +53,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     private boolean is_shared;
     private boolean use_mod_perl;
     private int timeout;
+    private int max_concurrency;
 
     public boolean canAddSites() {
 	return can_add_sites;
@@ -76,6 +75,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
             case 11: return is_shared?Boolean.TRUE:Boolean.FALSE;
             case 12: return use_mod_perl?Boolean.TRUE:Boolean.FALSE;
             case 13: return Integer.valueOf(timeout);
+            case 14: return Integer.valueOf(max_concurrency);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -145,6 +145,13 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         return timeout;
     }
 
+    /**
+     * Gets the maximum concurrency of this server (number of children processes/threads).
+     */
+    public int getMaxConcurrency() {
+        return max_concurrency;
+    }
+
     public int getNumber() {
 	return number;
     }
@@ -160,21 +167,23 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	ao_server=result.getInt(2);
-	number=result.getInt(3);
-	can_add_sites=result.getBoolean(4);
-        is_mod_jk=result.getBoolean(5);
-        max_binds=result.getInt(6);
-        linux_server_account=result.getInt(7);
-        linux_server_group=result.getInt(8);
-        mod_php_version=result.getInt(9);
+        int pos=1;
+	pkey=result.getInt(pos++);
+	ao_server=result.getInt(pos++);
+	number=result.getInt(pos++);
+	can_add_sites=result.getBoolean(pos++);
+        is_mod_jk=result.getBoolean(pos++);
+        max_binds=result.getInt(pos++);
+        linux_server_account=result.getInt(pos++);
+        linux_server_group=result.getInt(pos++);
+        mod_php_version=result.getInt(pos++);
         if(result.wasNull()) mod_php_version=-1;
-        use_suexec=result.getBoolean(10);
-        packageNum=result.getInt(11);
-        is_shared=result.getBoolean(12);
-        use_mod_perl=result.getBoolean(13);
-        timeout=result.getInt(14);
+        use_suexec=result.getBoolean(pos++);
+        packageNum=result.getInt(pos++);
+        is_shared=result.getBoolean(pos++);
+        use_mod_perl=result.getBoolean(pos++);
+        timeout=result.getInt(pos++);
+        max_concurrency=result.getInt(pos++);
     }
 
     /**
@@ -200,6 +209,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         is_shared=in.readBoolean();
         use_mod_perl=in.readBoolean();
         timeout=in.readCompressedInt();
+        max_concurrency=in.readCompressedInt();
     }
 
     @Override
@@ -228,6 +238,9 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
         }
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)>=0) {
             out.writeCompressedInt(timeout);
+        }
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_68)>=0) {
+            out.writeCompressedInt(max_concurrency);
         }
     }
 }
