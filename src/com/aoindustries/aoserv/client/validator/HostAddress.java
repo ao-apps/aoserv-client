@@ -17,30 +17,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Represents a hostname as either a <code>DomainName</code> or an <code>InetAddress</code>.
+ * Represents a host's address as either a <code>DomainName</code> or an <code>InetAddress</code>.
  * To not allow the IP address representation, use <code>DomainName</code> instead.
  * No DNS lookups are performed during validation.
  * 
  * @author  AO Industries, Inc.
  */
-final public class Hostname implements
-    Comparable<Hostname>,
+final public class HostAddress implements
+    Comparable<HostAddress>,
     Serializable,
     ObjectInputValidation,
-    DtoFactory<com.aoindustries.aoserv.client.dto.Hostname>,
-    Internable<Hostname>
+    DtoFactory<com.aoindustries.aoserv.client.dto.HostAddress>,
+    Internable<HostAddress>
 {
 
     private static final long serialVersionUID = -6323326583709666966L;
 
-    private static boolean isIp(String hostname) {
-        if(hostname==null) return false;
-        int len = hostname.length();
+    private static boolean isIp(String address) {
+        if(address==null) return false;
+        int len = address.length();
         if(len==0) return false;
         // If contains all digits and periods, or contains any colon, then is an IP
         boolean allDigitsAndPeriods = true;
         for(int c=0;c<len;c++) {
-            char ch = hostname.charAt(c);
+            char ch = address.charAt(c);
             if(ch==':') return true;
             if(
                 (ch<'0' || ch>'9')
@@ -54,65 +54,66 @@ final public class Hostname implements
     }
 
     /**
-     * Validates a hostname, must be either a valid domain name or a valid IP address.
+     * Validates a host address, must be either a valid domain name or a valid IP address.
+     * // TODO: Must be non-arpa
      */
-    public static ValidationResult validate(String hostname) {
-        if(isIp(hostname)) return InetAddress.validate(hostname);
-        else return DomainName.validate(hostname);
+    public static ValidationResult validate(String address) {
+        if(isIp(address)) return InetAddress.validate(address);
+        else return DomainName.validate(address);
     }
 
-    private static final ConcurrentMap<DomainName,Hostname> internedByDomainName = new ConcurrentHashMap<DomainName,Hostname>();
+    private static final ConcurrentMap<DomainName,HostAddress> internedByDomainName = new ConcurrentHashMap<DomainName,HostAddress>();
 
-    private static final ConcurrentMap<InetAddress,Hostname> internedByInetAddress = new ConcurrentHashMap<InetAddress,Hostname>();
+    private static final ConcurrentMap<InetAddress,HostAddress> internedByInetAddress = new ConcurrentHashMap<InetAddress,HostAddress>();
 
     /**
-     * If hostname is null, returns null.
+     * If address is null, returns null.
      */
-    public static Hostname valueOf(String hostname) throws ValidationException {
-        if(hostname==null) return null;
+    public static HostAddress valueOf(String address) throws ValidationException {
+        if(address==null) return null;
         return
-            isIp(hostname)
-            ? valueOf(InetAddress.valueOf(hostname))
-            : valueOf(DomainName.valueOf(hostname))
+            isIp(address)
+            ? valueOf(InetAddress.valueOf(address))
+            : valueOf(DomainName.valueOf(address))
         ;
     }
 
     /**
      * If domainName is null, returns null.
      */
-    public static Hostname valueOf(DomainName domainName) {
+    public static HostAddress valueOf(DomainName domainName) {
         if(domainName==null) return null;
-        //Hostname existing = internedByDomainName.get(domainName);
-        //return existing!=null ? existing : new Hostname(domainName);
-        return new Hostname(domainName);
+        //HostAddress existing = internedByDomainName.get(domainName);
+        //return existing!=null ? existing : new HostAddress(domainName);
+        return new HostAddress(domainName);
     }
 
     /**
      * If ip is null, returns null.
      */
-    public static Hostname valueOf(InetAddress ip) {
+    public static HostAddress valueOf(InetAddress ip) {
         if(ip==null) return null;
-        //Hostname existing = internedByInetAddress.get(ip);
-        //return existing!=null ? existing : new Hostname(ip);
-        return new Hostname(ip);
+        //HostAddress existing = internedByInetAddress.get(ip);
+        //return existing!=null ? existing : new HostAddress(ip);
+        return new HostAddress(ip);
     }
 
     final private DomainName domainName;
     final private InetAddress inetAddress;
 
-    private Hostname(DomainName domainName) {
+    private HostAddress(DomainName domainName) {
         this.domainName = domainName;
         this.inetAddress = null;
     }
 
-    private Hostname(InetAddress inetAddress) {
+    private HostAddress(InetAddress inetAddress) {
         this.domainName = null;
         this.inetAddress = inetAddress;
     }
 
     private void validate() throws ValidationException {
-        if(domainName==null && inetAddress==null) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "Hostname.validate.bothNull"));
-        if(domainName!=null && inetAddress!=null) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "Hostname.validate.bothNonNull"));
+        if(domainName==null && inetAddress==null) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "HostAddress.validate.bothNull"));
+        if(domainName!=null && inetAddress!=null) throw new ValidationException(new InvalidResult(ApplicationResources.accessor, "HostAddress.validate.bothNonNull"));
     }
 
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
@@ -133,8 +134,8 @@ final public class Hostname implements
 
     @Override
     public boolean equals(Object O) {
-        if(!(O instanceof Hostname)) return false;
-        Hostname other = (Hostname)O;
+        if(!(O instanceof HostAddress)) return false;
+        HostAddress other = (HostAddress)O;
     	return
             ObjectUtils.equals(domainName, other.domainName)
             && ObjectUtils.equals(inetAddress, other.inetAddress)
@@ -150,7 +151,7 @@ final public class Hostname implements
      * Sorts IP addresses before domain names.
      */
     @Override
-    public int compareTo(Hostname other) {
+    public int compareTo(HostAddress other) {
         if(this==other) return 0;
         if(domainName!=null) {
             if(other.domainName!=null) return domainName.compareTo(other.domainName);
@@ -166,27 +167,31 @@ final public class Hostname implements
         return domainName!=null ? domainName.toString() : inetAddress.toString();
     }
 
+    public String toBracketedString() {
+        return domainName!=null ? domainName.toString() : inetAddress.toBracketedString();
+    }
+
     /**
-     * Interns this hostname much in the same fashion as <code>String.intern()</code>.
+     * Interns this host address much in the same fashion as <code>String.intern()</code>.
      *
      * @see  String#intern()
      */
     @Override
-    public Hostname intern() {
+    public HostAddress intern() {
         if(domainName!=null) {
-            Hostname existing = internedByDomainName.get(domainName);
+            HostAddress existing = internedByDomainName.get(domainName);
             if(existing==null) {
                 DomainName internedDomainName = domainName.intern();
-                Hostname addMe = domainName==internedDomainName ? this : new Hostname(internedDomainName);
+                HostAddress addMe = domainName==internedDomainName ? this : new HostAddress(internedDomainName);
                 existing = internedByDomainName.putIfAbsent(internedDomainName, addMe);
                 if(existing==null) existing = addMe;
             }
             return existing;
         } else {
-            Hostname existing = internedByInetAddress.get(inetAddress);
+            HostAddress existing = internedByInetAddress.get(inetAddress);
             if(existing==null) {
                 InetAddress internedInetAddress = inetAddress.intern();
-                Hostname addMe = inetAddress==internedInetAddress ? this : new Hostname(internedInetAddress);
+                HostAddress addMe = inetAddress==internedInetAddress ? this : new HostAddress(internedInetAddress);
                 existing = internedByInetAddress.putIfAbsent(internedInetAddress, addMe);
                 if(existing==null) existing = addMe;
             }
@@ -203,7 +208,7 @@ final public class Hostname implements
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.Hostname getDto() {
-        return new com.aoindustries.aoserv.client.dto.Hostname(toString());
+    public com.aoindustries.aoserv.client.dto.HostAddress getDto() {
+        return new com.aoindustries.aoserv.client.dto.HostAddress(toString());
     }
 }

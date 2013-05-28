@@ -17,33 +17,33 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 /**
  * Several resources on a <code>Server</code> require a server-wide
  * unique identifier.  All of the possible identifiers are represented
- * by <code>LinuxID</code>s.
+ * by <code>LinuxId</code>s.
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxID implements
-    Comparable<LinuxID>,
+final public class LinuxId implements
+    Comparable<LinuxId>,
     Serializable,
     ObjectInputValidation,
-    DtoFactory<com.aoindustries.aoserv.client.dto.LinuxID>
+    DtoFactory<com.aoindustries.aoserv.client.dto.LinuxId>
 {
 
     private static final long serialVersionUID = -6222776271442175855L;
 
     public static ValidationResult validate(int id) {
-        if(id<0) return new InvalidResult(ApplicationResources.accessor, "LinuxID.validate.lessThanZero", id);
-        if(id>65535) return new InvalidResult(ApplicationResources.accessor, "LinuxID.validate.greaterThan64k", id);
+        if(id<0) return new InvalidResult(ApplicationResources.accessor, "LinuxId.validate.lessThanZero", id);
+        if(id>65535) return new InvalidResult(ApplicationResources.accessor, "LinuxId.validate.greaterThan64k", id);
         return ValidResult.getInstance();
     }
 
-    private static final AtomicReferenceArray<LinuxID> cache = new AtomicReferenceArray<LinuxID>(65536);
+    private static final AtomicReferenceArray<LinuxId> cache = new AtomicReferenceArray<LinuxId>(65536);
 
-    public static LinuxID valueOf(int id) throws ValidationException {
+    public static LinuxId valueOf(int id) throws ValidationException {
         ValidationResult result = validate(id);
         if(!result.isValid()) throw new ValidationException(result);
-        LinuxID linuxId = cache.get(id);
+        LinuxId linuxId = cache.get(id);
         if(linuxId==null) {
-            linuxId = new LinuxID(id);
+            linuxId = new LinuxId(id);
             if(!cache.compareAndSet(id, null, linuxId)) linuxId = cache.get(id);
         }
         return linuxId;
@@ -51,7 +51,7 @@ final public class LinuxID implements
 
     final private int id;
 
-    private LinuxID(int id) throws ValidationException {
+    private LinuxId(int id) throws ValidationException {
         this.id=id;
         validate();
     }
@@ -94,8 +94,8 @@ final public class LinuxID implements
     public boolean equals(Object O) {
     	return
             O!=null
-            && O instanceof LinuxID
-            && ((LinuxID)O).id==id
+            && O instanceof LinuxId
+            && ((LinuxId)O).id==id
     	;
     }
 
@@ -105,7 +105,7 @@ final public class LinuxID implements
     }
 
     @Override
-    public int compareTo(LinuxID other) {
+    public int compareTo(LinuxId other) {
         return this==other ? 0 : AOServObject.compare(id, other.id);
     }
 
@@ -123,7 +123,7 @@ final public class LinuxID implements
     }
 
     @Override
-    public com.aoindustries.aoserv.client.dto.LinuxID getDto() {
-        return new com.aoindustries.aoserv.client.dto.LinuxID(id);
+    public com.aoindustries.aoserv.client.dto.LinuxId getDto() {
+        return new com.aoindustries.aoserv.client.dto.LinuxId(id);
     }
 }
