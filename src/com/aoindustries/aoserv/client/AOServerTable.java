@@ -1,10 +1,11 @@
 /*
- * Copyright 2003-2012 by AO Industries, Inc.,
+ * Copyright 2003-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.WriterOutputStream;
 import java.io.IOException;
@@ -33,20 +34,20 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
     }
 
     /**
-     * Supports both Integer (server) and String (hostname) keys.
+     * Supports both Integer (server) and DomainName (hostname) keys.
      */
     @Override
     public AOServer get(Object pkey) throws IOException, SQLException {
         if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-        else if(pkey instanceof String) return get((String)pkey);
-        else throw new IllegalArgumentException("Must be an Integer or a String");
+        else if(pkey instanceof DomainName) return get((DomainName)pkey);
+        else throw new IllegalArgumentException("Must be an Integer or a DomainName");
     }
 
     public AOServer get(int pkey) throws IOException, SQLException {
         return getUniqueRow(AOServer.COLUMN_SERVER, pkey);
     }
 
-    public AOServer get(String hostname) throws IOException, SQLException {
+    public AOServer get(DomainName hostname) throws IOException, SQLException {
         return getUniqueRow(AOServer.COLUMN_HOSTNAME, hostname);
     }
 

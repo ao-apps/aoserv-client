@@ -5,11 +5,16 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
+import com.aoindustries.aoserv.client.validator.HostAddress;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  EmailSmtpRelay
@@ -72,7 +77,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
     	return getUniqueRow(EmailSmtpRelay.COLUMN_PKEY, pkey);
     }
 
-    EmailSmtpRelay getEmailSmtpRelay(Package pk, AOServer ao, String host) throws IOException, SQLException {
+    EmailSmtpRelay getEmailSmtpRelay(Package pk, AOServer ao, HostAddress host) throws IOException, SQLException {
 	String packageName=pk.name;
         int aoPKey=ao.pkey;
 
@@ -83,7 +88,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
             if(
                 packageName.equals(relay.packageName)
                 && (relay.ao_server==-1 || relay.ao_server==aoPKey)
-                && host.equals(relay.host)
+                && host.equals(relay.getHost())
             ) return relay;
 	}
 	return null;
@@ -121,7 +126,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
                     args[2],
                     args[3],
                     args[4],
-                    S.length()==0?EmailSmtpRelay.NO_EXPIRATION:AOSH.parseLong(S, "duration")
+                    S.length()==0?-1:AOSH.parseLong(S, "duration")
                 );
                 out.println(pkey);
                 out.flush();
@@ -147,7 +152,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
             if(AOSH.checkParamCount(AOSHCommand.REFRESH_EMAIL_SMTP_RELAY, args, 1, err)) {
                 connector.getSimpleAOClient().refreshEmailSmtpRelay(
                     AOSH.parseInt(args[1], "pkey"),
-                    args[2].trim().length()==0?EmailSmtpRelay.NO_EXPIRATION:AOSH.parseLong(args[2], "min_duration")
+                    args[2].trim().length()==0?-1:AOSH.parseLong(args[2], "min_duration")
                 );
             }
             return true;

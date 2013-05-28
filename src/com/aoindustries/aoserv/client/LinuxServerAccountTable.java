@@ -1,10 +1,11 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.unix.UnixFile;
 import com.aoindustries.security.AccountDisabledException;
@@ -158,7 +159,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
      *
      * @exception  LoginException  if a possible account match is found but the account is disabled or has a different password
      */
-    public LinuxServerAccount getLinuxServerAccountFromEmailAddress(String address, String domain, String password) throws LoginException, IOException, SQLException {
+    public LinuxServerAccount getLinuxServerAccountFromEmailAddress(String address, DomainName domain, String password) throws LoginException, IOException, SQLException {
         LinuxServerAccount badPasswordLSA=null;
         LinuxServerAccount disabledLSA=null;
 
@@ -166,7 +167,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
         int domainsLen=domains.size();
         for(int c=0;c<domainsLen;c++) {
             EmailDomain ed=domains.get(c);
-            if(ed.domain.equals(domain)) {
+            if(ed.getDomain().equals(domain)) {
                 AOServer ao=ed.getAOServer();
                 EmailAddress ea=ed.getEmailAddress(address);
                 if(ea!=null) {
@@ -394,7 +395,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
                     args[1],
                     args[2],
                     args[3],
-                    args[4],
+                    args[4].length()==0 ? null : AOSH.parseDomainName(args[4], "address"),
                     args[5],
                     args[6],
                     AOSH.parseBoolean(args[7], "enabled")

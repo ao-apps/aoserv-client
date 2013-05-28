@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -73,7 +73,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_SERVER, args, 5, err)) {
                 connector.getSimpleAOClient().addMajordomoServer(
-                    args[1],
+                    AOSH.parseDomainName(args[1], "domain"),
                     args[2],
                     args[3],
                     args[4],
@@ -84,7 +84,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
         } else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MAJORDOMO_SERVER)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_MAJORDOMO_SERVER, args, 2, err)) {
                 connector.getSimpleAOClient().removeMajordomoServer(
-                    args[1],
+                    AOSH.parseDomainName(args[1], "domain"),
                     args[2]
                 );
             }

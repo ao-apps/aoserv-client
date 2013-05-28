@@ -1,16 +1,19 @@
 /*
- * Copyright 2012 by AO Industries, Inc.,
+ * Copyright 2012-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -31,7 +34,7 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
     ;
     static final String COLUMN_IDENTIFIER_name= "identifier";
 
-    String accounting;
+    private AccountingCode accounting;
     private String identifier;
     private boolean allowSubaccountUse;
     private int maxHosts;
@@ -50,26 +53,32 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
     }
 
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey = result.getInt(pos++);
-        accounting = result.getString(pos++);
-        identifier = result.getString(pos++);
-        allowSubaccountUse = result.getBoolean(pos++);
-        maxHosts = result.getInt(pos++);
-        maxUncertainReputation = result.getShort(pos++);
-        maxDefiniteReputation = result.getShort(pos++);
-        networkPrefix = result.getShort(pos++);
-        maxNetworkReputation = result.getShort(pos++);
-        hostDecayInterval = result.getInt(pos++);
-        lastHostDecay = result.getTimestamp(pos++).getTime();
-        networkDecayInterval = result.getInt(pos++);
-        lastNetworkDecay = result.getTimestamp(pos++).getTime();
-        lastReputationAdded = result.getTimestamp(pos++).getTime();
+        try {
+            int pos = 1;
+            pkey = result.getInt(pos++);
+            accounting = AccountingCode.valueOf(result.getString(pos++));
+            identifier = result.getString(pos++);
+            allowSubaccountUse = result.getBoolean(pos++);
+            maxHosts = result.getInt(pos++);
+            maxUncertainReputation = result.getShort(pos++);
+            maxDefiniteReputation = result.getShort(pos++);
+            networkPrefix = result.getShort(pos++);
+            maxNetworkReputation = result.getShort(pos++);
+            hostDecayInterval = result.getInt(pos++);
+            lastHostDecay = result.getTimestamp(pos++).getTime();
+            networkDecayInterval = result.getInt(pos++);
+            lastNetworkDecay = result.getTimestamp(pos++).getTime();
+            lastReputationAdded = result.getTimestamp(pos++).getTime();
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeCompressedUTF(accounting, 0);
+        out.writeCompressedUTF(accounting.toString(), 0);
         out.writeUTF(identifier);
         out.writeBoolean(allowSubaccountUse);
         out.writeCompressedInt(maxHosts);
@@ -85,20 +94,26 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        accounting = in.readCompressedUTF().intern();
-        identifier = in.readUTF();
-        allowSubaccountUse = in.readBoolean();
-        maxHosts = in.readCompressedInt();
-        maxUncertainReputation = in.readShort();
-        maxDefiniteReputation = in.readShort();
-        networkPrefix = in.readShort();
-        maxNetworkReputation = in.readShort();
-        hostDecayInterval = in.readCompressedInt();
-        lastHostDecay = in.readLong();
-        networkDecayInterval = in.readCompressedInt();
-        lastNetworkDecay = in.readLong();
-        lastReputationAdded = in.readLong();
+        try {
+            pkey = in.readCompressedInt();
+            accounting = AccountingCode.valueOf(in.readCompressedUTF()).intern();
+            identifier = in.readUTF();
+            allowSubaccountUse = in.readBoolean();
+            maxHosts = in.readCompressedInt();
+            maxUncertainReputation = in.readShort();
+            maxDefiniteReputation = in.readShort();
+            networkPrefix = in.readShort();
+            maxNetworkReputation = in.readShort();
+            hostDecayInterval = in.readCompressedInt();
+            lastHostDecay = in.readLong();
+            networkDecayInterval = in.readCompressedInt();
+            lastNetworkDecay = in.readLong();
+            lastReputationAdded = in.readLong();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     Object getColumnImpl(int i) {
@@ -113,10 +128,10 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
             case 7: return networkPrefix;
             case 8: return maxNetworkReputation;
             case 9: return hostDecayInterval;
-            case 10: return new java.sql.Date(lastHostDecay);
+            case 10: return getLastHostDecay();
             case 11: return networkDecayInterval;
-            case 12: return new java.sql.Date(lastNetworkDecay);
-            case 13: return new java.sql.Date(lastReputationAdded);
+            case 12: return getLastNetworkDecay();
+            case 13: return getLastReputationAdded();
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -187,8 +202,8 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
     /**
      * Gets the last time the hosts were decayed.
      */
-    public long getLastHostDecay() {
-        return lastHostDecay;
+    public Timestamp getLastHostDecay() {
+        return new Timestamp(lastHostDecay);
     }
 
     /**
@@ -201,15 +216,15 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
     /**
      * Gets the last time the networks were decayed.
      */
-    public long getLastNetworkDecay() {
-        return lastNetworkDecay;
+    public Timestamp getLastNetworkDecay() {
+        return new Timestamp(lastNetworkDecay);
     }
 
     /**
      * Gets the last time reputation was added.
      */
-    public long getLastReputationAdded() {
-        return lastReputationAdded;
+    public Timestamp getLastReputationAdded() {
+        return new Timestamp(lastReputationAdded);
     }
 
     public List<IpReputationSetHost> getHosts() throws IOException, SQLException {

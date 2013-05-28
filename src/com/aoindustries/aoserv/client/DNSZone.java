@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,8 +23,6 @@ import java.util.List;
  *
  * @see  DNSTLD
  * @see  DNSRecord
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -84,6 +82,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	} else {
             DNSType[] types={
                 tt.get(DNSType.A),
+                tt.get(DNSType.AAAA),
                 tt.get(DNSType.CNAME),
                 tt.get(DNSType.MX),
                 tt.get(DNSType.NS)

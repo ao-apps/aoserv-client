@@ -12,6 +12,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -93,7 +94,7 @@ final public class MacAddress implements
     final private String address;
 
     private MacAddress(String address) throws ValidationException {
-        this.address = address;
+        this.address = address.toUpperCase(Locale.ENGLISH);
         validate();
     }
 

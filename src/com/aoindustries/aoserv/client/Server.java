@@ -1,10 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.WrappedException;
@@ -41,7 +42,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
     private boolean monitoring_enabled;
 
     public void addBusiness(
-        String accounting,
+        AccountingCode accounting,
         String contractVersion,
         Business parent,
         boolean can_add_backup_servers,

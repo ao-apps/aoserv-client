@@ -1,10 +1,11 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
@@ -57,7 +58,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
     }
 
     LinuxServerGroup getLinuxServerGroup(AOServer aoServer, Business business) throws IOException, SQLException {
-        String accounting=business.pkey;
+        AccountingCode accounting=business.pkey;
         int aoPKey=aoServer.pkey;
 
         List<LinuxServerGroup> list = getRows();

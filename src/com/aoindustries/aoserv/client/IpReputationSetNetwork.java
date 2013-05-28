@@ -1,12 +1,14 @@
 /*
- * Copyright 2012 by AO Industries, Inc.,
+ * Copyright 2012-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.math.LongLong;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,7 +63,7 @@ final public class IpReputationSetNetwork extends CachedObjectLongKey<IpReputati
         switch(i) {
             case COLUMN_PKEY : return pkey;
             case COLUMN_SET  : return set;
-            case 2           : return IPAddress.getIPAddressForInt(network);
+            case 2           : return getNetworkAddress();
             case 3           : return counter;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -83,8 +85,13 @@ final public class IpReputationSetNetwork extends CachedObjectLongKey<IpReputati
     /**
      * Gets the IPv4 network address.
      */
-    public String getNetworkAddress() {
-        return IPAddress.getIPAddressForInt(network);
+    public InetAddress getNetworkAddress() {
+        return InetAddress.valueOf(
+            LongLong.valueOf(
+                0,
+                ((long)network) & 0x00000000ffffffffL
+            )
+        );
     }
 
     /**

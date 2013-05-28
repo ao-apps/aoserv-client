@@ -1,15 +1,20 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.BufferManager;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A <code>PostgresDatabase</code> corresponds to a unique PostgreSQL table
@@ -20,245 +25,243 @@ import java.util.*;
  * @see  PostgresEncoding
  * @see  PostgresServerUser
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatabase> implements Dumpable, Removable, JdbcProvider {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_POSTGRES_SERVER=2,
-        COLUMN_DATDBA=3
-    ;
-    static final String COLUMN_NAME_name = "name";
-    static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
+	static final int
+		COLUMN_PKEY=0,
+		COLUMN_POSTGRES_SERVER=2,
+		COLUMN_DATDBA=3
+	;
+	static final String COLUMN_NAME_name = "name";
+	static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
 
-    /**
-     * The classname of the JDBC driver used for the <code>PostgresDatabase</code>.
-     */
-    public static final String JDBC_DRIVER="org.postgresql.Driver";
+	/**
+	 * The classname of the JDBC driver used for the <code>PostgresDatabase</code>.
+	 */
+	public static final String JDBC_DRIVER="org.postgresql.Driver";
 
-    /**
-     * Special databases.
-     */
-    public static final String
-        AOINDUSTRIES="aoindustries",
-        AOSERV="aoserv",
-        AOWEB="aoweb",
-        TEMPLATE0="template0",
-        TEMPLATE1="template1"
-    ;
+	/**
+	 * Special databases.
+	 */
+	public static final String
+		AOINDUSTRIES="aoindustries",
+		AOSERV="aoserv",
+		AOWEB="aoweb",
+		TEMPLATE0="template0",
+		TEMPLATE1="template1"
+	;
 
-    /**
-     * The name of a database is limited by the internal data type of
-     * the <code>pg_database</code> table.  The type is <code>name</code>
-     * which has a maximum length of 31 characters.
-     */
-    public static final int MAX_DATABASE_NAME_LENGTH=31;
+	/**
+	 * The name of a database is limited by the internal data type of
+	 * the <code>pg_database</code> table.  The type is <code>name</code>
+	 * which has a maximum length of 31 characters.
+	 */
+	public static final int MAX_DATABASE_NAME_LENGTH=31;
 
-    String name;
-    int postgres_server;
-    int datdba;
-    private int encoding;
-    private boolean is_template;
-    private boolean allow_conn;
-    private boolean enable_postgis;
+	String name;
+	int postgres_server;
+	int datdba;
+	private int encoding;
+	private boolean is_template;
+	private boolean allow_conn;
+	private boolean enable_postgis;
 
-    public boolean allowsConnections() {
-	return allow_conn;
-    }
+	public boolean allowsConnections() {
+		return allow_conn;
+	}
 
-    public void dump(PrintWriter out) throws IOException, SQLException {
-        dump((Writer)out);
-    }
+	public void dump(PrintWriter out) throws IOException, SQLException {
+		dump((Writer)out);
+	}
 
-    public void dump(final Writer out) throws IOException, SQLException {
-        table.connector.requestUpdate(
-            false,
-            new AOServConnector.UpdateRequest() {
+	public void dump(final Writer out) throws IOException, SQLException {
+		table.connector.requestUpdate(
+			false,
+			new AOServConnector.UpdateRequest() {
 
-                public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
-                    masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
-                    masterOut.writeCompressedInt(pkey);
-                }
+				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
+					masterOut.writeCompressedInt(pkey);
+				}
 
-                public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
-                    int code;
-                    byte[] buff=BufferManager.getBytes();
-                    try {
-                        char[] chars=BufferManager.getChars();
-                        try {
-                            while((code=masterIn.readByte())==AOServProtocol.NEXT) {
-                                int len=masterIn.readShort();
-                                masterIn.readFully(buff, 0, len);
-                                for(int c=0;c<len;c++) chars[c]=(char)buff[c];
-                                out.write(chars, 0, len);
-                            }
-                        } finally {
-                            BufferManager.release(chars);
-                        }
-                    } finally {
-                        BufferManager.release(buff);
-                    }
-                    if(code!=AOServProtocol.DONE) {
-                        AOServProtocol.checkResult(code, masterIn);
-                        throw new IOException("Unexpected response code: "+code);
-                    }
-                }
+				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+					int code;
+					byte[] buff=BufferManager.getBytes();
+					try {
+						char[] chars=BufferManager.getChars();
+						try {
+							while((code=masterIn.readByte())==AOServProtocol.NEXT) {
+								int len=masterIn.readShort();
+								masterIn.readFully(buff, 0, len);
+								for(int c=0;c<len;c++) chars[c]=(char)buff[c];
+								out.write(chars, 0, len);
+							}
+						} finally {
+							BufferManager.release(chars);
+						}
+					} finally {
+						BufferManager.release(buff);
+					}
+					if(code!=AOServProtocol.DONE) {
+						AOServProtocol.checkResult(code, masterIn);
+						throw new IOException("Unexpected response code: "+code);
+					}
+				}
 
-                public void afterRelease() {
-                }
-            }
-        );
-    }
+				public void afterRelease() {
+				}
+			}
+		);
+	}
 
-    /**
-     * Indicates that PostGIS should be enabled for this database.
-     */
-    public boolean getEnablePostgis() {
-        return enable_postgis;
-    }
+	/**
+	 * Indicates that PostGIS should be enabled for this database.
+	 */
+	public boolean getEnablePostgis() {
+		return enable_postgis;
+	}
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return pkey;
-            case 1: return name;
-            case COLUMN_POSTGRES_SERVER: return postgres_server;
-            case COLUMN_DATDBA: return datdba;
-            case 4: return encoding;
-            case 5: return is_template;
-            case 6: return allow_conn;
-            case 7: return enable_postgis;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_PKEY: return pkey;
+			case 1: return name;
+			case COLUMN_POSTGRES_SERVER: return postgres_server;
+			case COLUMN_DATDBA: return datdba;
+			case 4: return encoding;
+			case 5: return is_template;
+			case 6: return allow_conn;
+			case 7: return enable_postgis;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
 
-    public PostgresServerUser getDatDBA() throws SQLException, IOException {
-	PostgresServerUser obj=table.connector.getPostgresServerUsers().get(datdba);
-	if(obj==null) throw new SQLException("Unable to find PostgresServerUser: "+datdba);
-	return obj;
-    }
+	public PostgresServerUser getDatDBA() throws SQLException, IOException {
+		PostgresServerUser obj=table.connector.getPostgresServerUsers().get(datdba);
+		if(obj==null) throw new SQLException("Unable to find PostgresServerUser: "+datdba);
+		return obj;
+	}
 
-    public String getJdbcDriver() {
-        return JDBC_DRIVER;
-    }
+	public String getJdbcDriver() {
+		return JDBC_DRIVER;
+	}
 
-    public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
-	AOServer ao=getPostgresServer().getAOServer();
-        return
-            "jdbc:postgresql://"
-            + (ipOnly
-               ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getIPAddress()
-               :ao.getHostname()
-            )
-            + ':'
-            + getPostgresServer().getNetBind().getPort().getPort()
-            + '/'
-            + getName()
-        ;
-    }
-    
-    public String getJdbcDocumentationUrl() throws SQLException, IOException {
-        String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(table.connector).getVersion();
-        return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
-    }
+	public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
+		AOServer ao=getPostgresServer().getAOServer();
+		return
+			"jdbc:postgresql://"
+			+ (ipOnly
+			   ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString()
+			   :ao.getHostname()
+			)
+			+ ':'
+			+ getPostgresServer().getNetBind().getPort().getPort()
+			+ '/'
+			+ getName()
+		;
+	}
 
-    public String getName() {
-	return name;
-    }
+	public String getJdbcDocumentationUrl() throws SQLException, IOException {
+		String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(table.connector).getVersion();
+		return "http://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
+	}
 
-    public PostgresEncoding getPostgresEncoding() throws SQLException, IOException {
-	PostgresEncoding obj=table.connector.getPostgresEncodings().get(encoding);
-	if(obj==null) throw new SQLException("Unable to find PostgresEncoding: "+encoding);
-        // Make sure the postgres encoding postgresql version matches the server this database is part of
-        if(
-            obj.getPostgresVersion(table.connector).getPkey()
-            != getPostgresServer().getPostgresVersion().getPkey()
-        ) {
-            throw new SQLException("encoding/postgres server version mismatch on PostgresDatabase: #"+pkey);
-        }
-        
-	return obj;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public PostgresServer getPostgresServer() throws SQLException, IOException {
-	PostgresServer obj=table.connector.getPostgresServers().get(postgres_server);
-	if(obj==null) throw new SQLException("Unable to find PostgresServer: "+postgres_server);
-	return obj;
-    }
+	public PostgresEncoding getPostgresEncoding() throws SQLException, IOException {
+		PostgresEncoding obj=table.connector.getPostgresEncodings().get(encoding);
+		if(obj==null) throw new SQLException("Unable to find PostgresEncoding: "+encoding);
+		// Make sure the postgres encoding postgresql version matches the server this database is part of
+		if(
+			obj.getPostgresVersion(table.connector).getPkey()
+			!= getPostgresServer().getPostgresVersion().getPkey()
+		) {
+			throw new SQLException("encoding/postgres server version mismatch on PostgresDatabase: #"+pkey);
+		}
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.POSTGRES_DATABASES;
-    }
+		return obj;
+	}
 
-    public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	name=result.getString(2);
-	postgres_server=result.getInt(3);
-	datdba=result.getInt(4);
-	encoding=result.getInt(5);
-	is_template=result.getBoolean(6);
-	allow_conn=result.getBoolean(7);
-        enable_postgis=result.getBoolean(8);
-    }
+	public PostgresServer getPostgresServer() throws SQLException, IOException {
+		PostgresServer obj=table.connector.getPostgresServers().get(postgres_server);
+		if(obj==null) throw new SQLException("Unable to find PostgresServer: "+postgres_server);
+		return obj;
+	}
 
-    public boolean isTemplate() {
-	return is_template;
-    }
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.POSTGRES_DATABASES;
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	name=in.readUTF();
-	postgres_server=in.readCompressedInt();
-	datdba=in.readCompressedInt();
-	encoding=in.readCompressedInt();
-	is_template=in.readBoolean();
-	allow_conn=in.readBoolean();
-        enable_postgis=in.readBoolean();
-    }
+	public void init(ResultSet result) throws SQLException {
+		pkey=result.getInt(1);
+		name=result.getString(2);
+		postgres_server=result.getInt(3);
+		datdba=result.getInt(4);
+		encoding=result.getInt(5);
+		is_template=result.getBoolean(6);
+		allow_conn=result.getBoolean(7);
+		enable_postgis=result.getBoolean(8);
+	}
 
-    public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-        List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-        
-        PostgresServer ps=getPostgresServer();
-        if(!allow_conn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
-        if(is_template) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
-        if(
-            name.equals(AOINDUSTRIES)
-            || name.equals(AOSERV)
-            || name.equals(AOWEB)
-        ) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+	public boolean isTemplate() {
+		return is_template;
+	}
 
-        return reasons;
-    }
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey=in.readCompressedInt();
+		name=in.readUTF();
+		postgres_server=in.readCompressedInt();
+		datdba=in.readCompressedInt();
+		encoding=in.readCompressedInt();
+		is_template=in.readBoolean();
+		allow_conn=in.readBoolean();
+		enable_postgis=in.readBoolean();
+	}
 
-    public void remove() throws IOException, SQLException {
-    	table.connector.requestUpdateIL(
-            true,
-            AOServProtocol.CommandID.REMOVE,
-            SchemaTable.TableID.POSTGRES_DATABASES,
-            pkey
-    	);
-    }
+	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
 
-    @Override
-    String toStringImpl() {
-	return name;
-    }
+		PostgresServer ps=getPostgresServer();
+		if(!allow_conn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+		if(is_template) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+		if(
+			name.equals(AOINDUSTRIES)
+			|| name.equals(AOSERV)
+			|| name.equals(AOWEB)
+		) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(name);
-	out.writeCompressedInt(postgres_server);
-	out.writeCompressedInt(datdba);
-	out.writeCompressedInt(encoding);
-	out.writeBoolean(is_template);
-	out.writeBoolean(allow_conn);
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-            out.writeShort(0);
-            out.writeShort(7);
-        }
-        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_27)>=0) out.writeBoolean(enable_postgis);
-    }
+		return reasons;
+	}
+
+	public void remove() throws IOException, SQLException {
+		table.connector.requestUpdateIL(
+			true,
+			AOServProtocol.CommandID.REMOVE,
+			SchemaTable.TableID.POSTGRES_DATABASES,
+			pkey
+		);
+	}
+
+	@Override
+	String toStringImpl() {
+		return name;
+	}
+
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeUTF(name);
+		out.writeCompressedInt(postgres_server);
+		out.writeCompressedInt(datdba);
+		out.writeCompressedInt(encoding);
+		out.writeBoolean(is_template);
+		out.writeBoolean(allow_conn);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+			out.writeShort(0);
+			out.writeShort(7);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_27)>=0) out.writeBoolean(enable_postgis);
+	}
 }

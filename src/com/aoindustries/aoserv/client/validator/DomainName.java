@@ -622,7 +622,8 @@ implements
         return lowerDomain.hashCode();
     }
 
-    static int compareLabels(String labels1, String labels2) {
+    // TODO: Should not be public once all classes using validator types
+    public static int compareLabels(String labels1, String labels2) {
         if(labels1==labels2) return 0; // Shortcut for interned
         while(labels1.length()>0 && labels2.length()>0) {
             int pos=labels1.lastIndexOf('.');

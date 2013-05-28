@@ -1,14 +1,14 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2005-2009 by AO Industries, Inc.,
+ * Copyright 2005-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -157,7 +157,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
         soft_limit=in.readCompressedInt();
         hard_limit=in.readCompressedInt();
         additional_rate=in.readCompressedInt();
-        additional_transaction_type=StringUtility.intern(in.readNullUTF());
+        additional_transaction_type=InternUtils.intern(in.readNullUTF());
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -1,10 +1,12 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -27,7 +29,7 @@ final public class TicketBrandCategory extends CachedObjectIntegerKey<TicketBran
     static final String COLUMN_BRAND_name = "brand";
     static final String COLUMN_CATEGORY_name = "category";
 
-    private String brand;
+    private AccountingCode brand;
     private int category;
     private boolean enabled;
 
@@ -62,17 +64,29 @@ final public class TicketBrandCategory extends CachedObjectIntegerKey<TicketBran
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        brand = result.getString(2);
-        category = result.getInt(3);
-        enabled = result.getBoolean(4);
+        try {
+            pkey = result.getInt(1);
+            brand = AccountingCode.valueOf(result.getString(2));
+            category = result.getInt(3);
+            enabled = result.getBoolean(4);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        brand = in.readUTF().intern();
-        category = in.readCompressedInt();
-        enabled = in.readBoolean();
+        try {
+            pkey = in.readCompressedInt();
+            brand = AccountingCode.valueOf(in.readUTF()).intern();
+            category = in.readCompressedInt();
+            enabled = in.readBoolean();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
@@ -82,7 +96,7 @@ final public class TicketBrandCategory extends CachedObjectIntegerKey<TicketBran
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeUTF(brand);
+        out.writeUTF(brand.toString());
         out.writeCompressedInt(category);
         out.writeBoolean(enabled);
     }

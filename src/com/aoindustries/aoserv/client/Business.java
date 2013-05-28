@@ -1,17 +1,21 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.SortedArrayList;
-import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,11 +34,9 @@ import java.util.Map;
  * case, the top level business is ultimately responsible for all actions taken and
  * resources used by itself and all child businesses.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class Business extends CachedObjectStringKey<Business> implements Disablable, Comparable<Business> {
+final public class Business extends CachedObjectAccountingCodeKey<Business> implements Disablable, Comparable<Business> {
 
     static final int COLUMN_ACCOUNTING=0;
     static final String COLUMN_ACCOUNTING_name = "accounting";
@@ -56,7 +58,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
     private String cancelReason;
 
-    String parent;
+    AccountingCode parent;
 
     private boolean can_add_backup_server;
     private boolean can_add_businesses;
@@ -278,7 +280,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	String type,
 	int transid
     ) throws IOException, SQLException {
-	    table.connector.getNoticeLogs().addNoticeLog(
+        table.connector.getNoticeLogs().addNoticeLog(
             pkey,
             billingContact,
             emailAddress,
@@ -350,7 +352,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
-                    out.writeUTF(pkey);
+                    out.writeUTF(pkey.toString());
                     out.writeNullUTF(finalCancelReason);
                 }
 
@@ -405,11 +407,11 @@ final public class Business extends CachedObjectStringKey<Business> implements D
     }
 
     public void disable(DisableLog dl) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey.toString());
     }
     
     public void enable() throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey);
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey.toString());
     }
 
     public BigDecimal getAccountBalance() throws IOException, SQLException {
@@ -434,7 +436,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return "$"+getAccountBalance(before);
     }
 
-    public String getAccounting() {
+    public AccountingCode getAccounting() {
 	return pkey;
     }
 
@@ -464,7 +466,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
      * from the top level business.
      */
     public Business getTopLevelBusiness() throws IOException, SQLException {
-        String rootAccounting=table.connector.getBusinesses().getRootAccounting();
+        AccountingCode rootAccounting=table.connector.getBusinesses().getRootAccounting();
         Business bu=this;
         Business tempParent;
         while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
@@ -508,8 +510,8 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         return table.connector.getBusinessServers().getBusinessServers(this);
     }
 
-    public long getCanceled() {
-	return canceled;
+    public Timestamp getCanceled() {
+	return canceled==-1 ? null : new Timestamp(canceled);
     }
 
     public String getCancelReason() {
@@ -524,8 +526,8 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         switch(i) {
             case COLUMN_ACCOUNTING: return pkey;
             case 1: return contractVersion;
-            case 2: return new java.sql.Date(created);
-            case 3: return canceled==-1?null:new java.sql.Date(canceled);
+            case 2: return getCreated();
+            case 3: return getCanceled();
             case 4: return cancelReason;
             case 5: return parent;
             case 6: return can_add_backup_server?Boolean.TRUE:Boolean.FALSE;
@@ -551,8 +553,8 @@ final public class Business extends CachedObjectStringKey<Business> implements D
 	return contractVersion;
     }
 
-    public long getCreated() {
-	return created;
+    public Timestamp getCreated() {
+	return new Timestamp(created);
     }
 
     public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
@@ -697,27 +699,6 @@ final public class Business extends CachedObjectStringKey<Business> implements D
             }
         }
         return false;
-    }
-
-    public static boolean isValidAccounting(String accounting) {
-	int len=accounting.length();
-	if(len<2 || len>32) return false;
-	char ch=accounting.charAt(0);
-	if(ch<'A' || ch>'Z') return false;
-	ch=accounting.charAt(len-1);
-	if(
-            (ch<'A' || ch>'Z')
-            && (ch<'0' || ch>'9')
-	) return false;
-	for(int c=1;c<(len-1);c++) {
-            ch=accounting.charAt(c);
-            if(
-                (ch<'A' || ch>'Z')
-                && (ch<'0' || ch>'9')
-                && ch!='_'
-            ) return false;
-	}
-	return true;
     }
 
     public void move(AOServer from, AOServer to, TerminalWriter out) throws IOException, SQLException {
@@ -909,9 +890,10 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         List<IPAddress> ips=table.connector.getIpAddresses().getRows();
         for(int c=0;c<ips.size();c++) {
             IPAddress ip=ips.get(c);
+            InetAddress inetAddress = ip.getInetAddress();
             if(
                 ip.isAlias()
-                && !ip.isWildcard()
+                && !inetAddress.isUnspecified()
                 && !ip.getNetDevice().getNetDeviceID().isLoopback()
                 && ip.getPackage().accounting.equals(pkey)
             ) {
@@ -975,53 +957,63 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         fromBusinessServer.remove();
     }
 
-     public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        contractVersion = result.getString(2);
-        created = result.getTimestamp(3).getTime();
-        Timestamp T = result.getTimestamp(4);
-        if (result.wasNull()) canceled = -1;
-        else canceled = T.getTime();
-        cancelReason = result.getString(5);
-        parent = result.getString(6);
-        can_add_backup_server=result.getBoolean(7);
-        can_add_businesses=result.getBoolean(8);
-        can_see_prices=result.getBoolean(9);
-        disable_log=result.getInt(10);
-        if(result.wasNull()) disable_log=-1;
-        do_not_disable_reason=result.getString(11);
-        auto_enable=result.getBoolean(12);
-        bill_parent=result.getBoolean(13);
+    public void init(ResultSet result) throws SQLException {
+        try {
+            pkey = AccountingCode.valueOf(result.getString(1));
+            contractVersion = result.getString(2);
+            created = result.getTimestamp(3).getTime();
+            Timestamp T = result.getTimestamp(4);
+            canceled = T==null ? -1 : T.getTime();
+            cancelReason = result.getString(5);
+            parent = AccountingCode.valueOf(result.getString(6));
+            can_add_backup_server=result.getBoolean(7);
+            can_add_businesses=result.getBoolean(8);
+            can_see_prices=result.getBoolean(9);
+            disable_log=result.getInt(10);
+            if(result.wasNull()) disable_log=-1;
+            do_not_disable_reason=result.getString(11);
+            auto_enable=result.getBoolean(12);
+            bill_parent=result.getBoolean(13);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        contractVersion=StringUtility.intern(in.readNullUTF());
-        created=in.readLong();
-        canceled=in.readLong();
-        cancelReason=in.readNullUTF();
-        parent=StringUtility.intern(in.readNullUTF());
-        can_add_backup_server=in.readBoolean();
-        can_add_businesses=in.readBoolean();
-        can_see_prices=in.readBoolean();
-        disable_log=in.readCompressedInt();
-        do_not_disable_reason=in.readNullUTF();
-        auto_enable=in.readBoolean();
-        bill_parent=in.readBoolean();
+        try {
+            pkey=AccountingCode.valueOf(in.readUTF()).intern();
+            contractVersion=InternUtils.intern(in.readNullUTF());
+            created=in.readLong();
+            canceled=in.readLong();
+            cancelReason=in.readNullUTF();
+            parent=InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
+            can_add_backup_server=in.readBoolean();
+            can_add_businesses=in.readBoolean();
+            can_see_prices=in.readBoolean();
+            disable_log=in.readCompressedInt();
+            do_not_disable_reason=in.readNullUTF();
+            auto_enable=in.readBoolean();
+            bill_parent=in.readBoolean();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
-    public void setAccounting(String accounting) throws SQLException, IOException {
-        if(!isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey, accounting);
+    public void setAccounting(AccountingCode accounting) throws SQLException, IOException {
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey.toString(), accounting.toString());
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
+        out.writeUTF(pkey.toString());
         out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
         out.writeLong(created);
         out.writeLong(canceled);
         out.writeNullUTF(cancelReason);
-        out.writeNullUTF(parent);
+        out.writeNullUTF(ObjectUtils.toString(parent));
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
         out.writeBoolean(can_add_businesses);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
@@ -1051,7 +1043,7 @@ final public class Business extends CachedObjectStringKey<Business> implements D
         table.connector.requestUpdateIL(
             true,
             AOServProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
-            pkey,
+            pkey.toString(),
             creditCard==null ? Integer.valueOf(-1) : Integer.valueOf(creditCard.getPkey())
         );
     }

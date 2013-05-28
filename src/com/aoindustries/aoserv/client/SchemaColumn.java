@@ -1,13 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,8 +20,6 @@ import java.util.List;
  *
  * @see  SchemaTable
  * @see  AOServObject
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -177,7 +175,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
         is_public=in.readBoolean();
         description=in.readUTF();
         since_version=in.readUTF().intern();
-        last_version=StringUtility.intern(in.readNullUTF());
+        last_version=InternUtils.intern(in.readNullUTF());
     }
 
     @Override

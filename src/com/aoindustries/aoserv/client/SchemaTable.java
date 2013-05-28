@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -9,7 +9,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -405,7 +405,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         is_public=in.readBoolean();
         description=in.readUTF();
         since_version=in.readUTF().intern();
-        last_version=StringUtility.intern(in.readNullUTF());
+        last_version=InternUtils.intern(in.readNullUTF());
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

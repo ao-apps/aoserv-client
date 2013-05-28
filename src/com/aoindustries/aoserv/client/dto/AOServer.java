@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2011 by AO Industries, Inc.,
+ * Copyright 2009-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -25,7 +25,7 @@ public class AOServer extends AOServObject {
     private String timeZone;
     private Integer jilterBind;
     private boolean restrictOutboundEmail;
-    private InetAddress daemonConnectAddress;
+    private HostAddress daemonConnectAddress;
     private int failoverBatchSize;
     private Float monitoringLoadLow;
     private Float monitoringLoadMedium;
@@ -49,7 +49,7 @@ public class AOServer extends AOServObject {
         String timeZone,
         Integer jilterBind,
         boolean restrictOutboundEmail,
-        InetAddress daemonConnectAddress,
+        HostAddress daemonConnectAddress,
         int failoverBatchSize,
         Float monitoringLoadLow,
         Float monitoringLoadMedium,
@@ -181,11 +181,11 @@ public class AOServer extends AOServObject {
         this.restrictOutboundEmail = restrictOutboundEmail;
     }
 
-    public InetAddress getDaemonConnectAddress() {
+    public HostAddress getDaemonConnectAddress() {
         return daemonConnectAddress;
     }
 
-    public void setDaemonConnectAddress(InetAddress daemonConnectAddress) {
+    public void setDaemonConnectAddress(HostAddress daemonConnectAddress) {
         this.daemonConnectAddress = daemonConnectAddress;
     }
 

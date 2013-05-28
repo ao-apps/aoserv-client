@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -175,7 +175,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
                 connector.getSimpleAOClient().addNetBind(
                     args[1],
                     args[2],
-                    args[3],
+                    AOSH.parseInetAddress(args[3], "ip_address"),
                     args[4],
                     AOSH.parseInt(args[5], "port"),
                     args[6],

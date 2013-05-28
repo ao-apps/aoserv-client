@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -54,8 +54,8 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
-                    out.writeUTF(brand.pkey);
-                    out.writeNullUTF(business==null ? null : business.pkey);
+                    out.writeUTF(brand.pkey.toString());
+                    out.writeNullUTF(business==null ? null : business.pkey.toString());
                     out.writeUTF(language.pkey);
                     out.writeCompressedInt(category==null ? -1 : category.pkey);
                     out.writeUTF(ticketType.pkey);

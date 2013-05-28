@@ -1,16 +1,24 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
 import java.math.BigDecimal;
-import java.sql.*;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @see  Transaction
@@ -20,9 +28,9 @@ import java.util.*;
 final public class TransactionTable extends AOServTable<Integer,Transaction> {
 
     private long accountBalancesClearCounter = 0;
-    final private Map<String,BigDecimal> accountBalances=new HashMap<String,BigDecimal>();
+    final private Map<AccountingCode,BigDecimal> accountBalances=new HashMap<AccountingCode,BigDecimal>();
     private long confirmedAccountBalancesClearCounter = 0;
-    final private Map<String,BigDecimal> confirmedAccountBalances=new HashMap<String,BigDecimal>();
+    final private Map<AccountingCode,BigDecimal> confirmedAccountBalances=new HashMap<AccountingCode,BigDecimal>();
 
     TransactionTable(AOServConnector connector) {
         super(connector, Transaction.class);
@@ -59,8 +67,8 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
-                    out.writeUTF(business.pkey);
-                    out.writeUTF(sourceBusiness.pkey);
+                    out.writeUTF(business.pkey.toString());
+                    out.writeUTF(sourceBusiness.pkey.toString());
                     out.writeUTF(business_administrator.pkey);
                     out.writeUTF(type);
                     out.writeUTF(description);
@@ -105,14 +113,14 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         }
     }
 
-    BigDecimal getAccountBalance(String accounting) throws IOException, SQLException {
+    BigDecimal getAccountBalance(AccountingCode accounting) throws IOException, SQLException {
         long clearCounter;
         synchronized(accountBalances) {
             BigDecimal balance=accountBalances.get(accounting);
             if(balance!=null) return balance;
             clearCounter = accountBalancesClearCounter;
         }
-        BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting), 2);
+        BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting.toString()), 2);
         synchronized(accountBalances) {
             // Only put in cache when not cleared while performing query
             if(clearCounter==accountBalancesClearCounter) accountBalances.put(accounting, balance);
@@ -120,18 +128,18 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         return balance;
     }
 
-    BigDecimal getAccountBalance(String accounting, long before) throws IOException, SQLException {
-        return BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting, before), 2);
+    BigDecimal getAccountBalance(AccountingCode accounting, long before) throws IOException, SQLException {
+        return BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting.toString(), before), 2);
     }
 
-    BigDecimal getConfirmedAccountBalance(String accounting) throws IOException, SQLException {
+    BigDecimal getConfirmedAccountBalance(AccountingCode accounting) throws IOException, SQLException {
         long clearCounter;
         synchronized(confirmedAccountBalances) {
             BigDecimal balance=confirmedAccountBalances.get(accounting);
             if(balance!=null) return balance;
             clearCounter = confirmedAccountBalancesClearCounter;
         }
-        BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting), 2);
+        BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting.toString()), 2);
         synchronized(confirmedAccountBalances) {
             // Only put in cache when not cleared while performing query
             if(clearCounter==confirmedAccountBalancesClearCounter) confirmedAccountBalances.put(accounting, balance);
@@ -139,8 +147,8 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         return balance;
     }
 
-    BigDecimal getConfirmedAccountBalance(String accounting, long before) throws IOException, SQLException {
-        return BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting, before), 2);
+    BigDecimal getConfirmedAccountBalance(AccountingCode accounting, long before) throws IOException, SQLException {
+        return BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting.toString(), before), 2);
     }
 
     public List<Transaction> getPendingPayments() throws IOException, SQLException {
@@ -169,8 +177,8 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
         return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
     }
 
-    List<Transaction> getTransactions(String accounting) throws IOException, SQLException {
-        return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting);
+    List<Transaction> getTransactions(AccountingCode accounting) throws IOException, SQLException {
+        return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting.toString());
     }
 
     List<Transaction> getTransactions(BusinessAdministrator ba) throws IOException, SQLException {
@@ -184,7 +192,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
             if(tr==null) return Collections.emptyList();
             else return Collections.singletonList(tr);
         }
-        if(col==Transaction.COLUMN_ACCOUNTING) return getTransactions((String)value);
+        if(col==Transaction.COLUMN_ACCOUNTING) return getTransactions((AccountingCode)value);
         throw new UnsupportedOperationException("Not an indexed column: "+col);
     }
 
@@ -204,8 +212,8 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
                 else if(args[11].equals("N")) pc=Transaction.NOT_CONFIRMED;
                 else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: "+args[11]);
                 int transid=connector.getSimpleAOClient().addTransaction(
-                    args[1],
-                    args[2],
+                    AOSH.parseAccountingCode(args[1], "business"),
+                    AOSH.parseAccountingCode(args[2], "source_business"),
                     args[3],
                     args[4],
                     args[5],

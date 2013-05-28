@@ -1,14 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,8 +42,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     private String administrator;
     private long time;
     private String action_type;
-    private String old_accounting;
-    private String new_accounting;
+    private AccountingCode old_accounting;
+    private AccountingCode new_accounting;
     private String old_priority;
     private String new_priority;
     private String old_type;
@@ -67,7 +70,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
             case COLUMN_PKEY: return pkey;
             case COLUMN_TICKET: return ticket;
             case COLUMN_ADMINISTRATOR: return administrator;
-            case COLUMN_TIME: return new java.sql.Date(time);
+            case COLUMN_TIME: return getTime();
             case 4: return action_type;
             case 5: return old_accounting;
             case 6: return new_accounting;
@@ -102,8 +105,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         return table.connector.getBusinessAdministrators().get(administrator);
     }
 
-    public long getTime() {
-        return time;
+    public Timestamp getTime() {
+        return new Timestamp(time);
     }
 
     public TicketActionType getTicketActionType() throws SQLException, IOException {
@@ -248,8 +251,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         final String oldValue;
         final String newValue;
         if(action_type.equals(TicketActionType.SET_BUSINESS)) {
-            oldValue = old_accounting;
-            newValue = new_accounting;
+            oldValue = ObjectUtils.toString(old_accounting);
+            newValue = ObjectUtils.toString(new_accounting);
         } else if(
             action_type.equals(TicketActionType.SET_CLIENT_PRIORITY)
             || action_type.equals(TicketActionType.SET_ADMIN_PRIORITY)
@@ -319,59 +322,70 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
     }
 
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey = result.getInt(pos++);
-        ticket = result.getInt(pos++);
-        administrator = result.getString(pos++);
-        Timestamp temp = result.getTimestamp(pos++);
-        time = temp == null ? -1 : temp.getTime();
-        action_type = result.getString(pos++);
-        old_accounting = result.getString(pos++);
-        new_accounting = result.getString(pos++);
-        old_priority = result.getString(pos++);
-        new_priority = result.getString(pos++);
-        old_type = result.getString(pos++);
-        new_type = result.getString(pos++);
-        old_status = result.getString(pos++);
-        new_status = result.getString(pos++);
-        old_assigned_to = result.getString(pos++);
-        new_assigned_to = result.getString(pos++);
-        old_category = result.getInt(pos++);
-        if(result.wasNull()) old_category = -1;
-        new_category = result.getInt(pos++);
-        if(result.wasNull()) new_category = -1;
-        // Loaded only when needed: old_value = result.getString(pos++);
-        // Loaded only when needed: new_value = result.getString(pos++);
-        from_address = result.getString(pos++);
-        summary = result.getString(pos++);
-        // Loaded only when needed: details = result.getString(pos++);
-        // Loaded only when needed: raw_email = result.getString(pos++);
+        try {
+            int pos = 1;
+            pkey = result.getInt(pos++);
+            ticket = result.getInt(pos++);
+            administrator = result.getString(pos++);
+            time = result.getTimestamp(pos++).getTime();
+            action_type = result.getString(pos++);
+            old_accounting = AccountingCode.valueOf(result.getString(pos++));
+            new_accounting = AccountingCode.valueOf(result.getString(pos++));
+            old_priority = result.getString(pos++);
+            new_priority = result.getString(pos++);
+            old_type = result.getString(pos++);
+            new_type = result.getString(pos++);
+            old_status = result.getString(pos++);
+            new_status = result.getString(pos++);
+            old_assigned_to = result.getString(pos++);
+            new_assigned_to = result.getString(pos++);
+            old_category = result.getInt(pos++);
+            if(result.wasNull()) old_category = -1;
+            new_category = result.getInt(pos++);
+            if(result.wasNull()) new_category = -1;
+            // Loaded only when needed: old_value = result.getString(pos++);
+            // Loaded only when needed: new_value = result.getString(pos++);
+            from_address = result.getString(pos++);
+            summary = result.getString(pos++);
+            // Loaded only when needed: details = result.getString(pos++);
+            // Loaded only when needed: raw_email = result.getString(pos++);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        ticket = in.readCompressedInt();
-        administrator = StringUtility.intern(in.readNullUTF());
-        time = in.readLong();
-        action_type = in.readUTF().intern();
-        old_accounting = StringUtility.intern(in.readNullUTF());
-        new_accounting = StringUtility.intern(in.readNullUTF());
-        old_priority = StringUtility.intern(in.readNullUTF());
-        new_priority = StringUtility.intern(in.readNullUTF());
-        old_type = StringUtility.intern(in.readNullUTF());
-        new_type = StringUtility.intern(in.readNullUTF());
-        old_status = StringUtility.intern(in.readNullUTF());
-        new_status = StringUtility.intern(in.readNullUTF());
-        old_assigned_to = StringUtility.intern(in.readNullUTF());
-        new_assigned_to = StringUtility.intern(in.readNullUTF());
-        old_category = in.readCompressedInt();
-        new_category = in.readCompressedInt();
-        // Loaded only when needed: old_value
-        // Loaded only when needed: new_value
-        from_address = in.readNullUTF();
-        summary = in.readNullUTF();
-        // Loaded only when needed: details
-        // Loaded only when needed: raw_email
+        try {
+            pkey = in.readCompressedInt();
+            ticket = in.readCompressedInt();
+            administrator = InternUtils.intern(in.readNullUTF());
+            time = in.readLong();
+            action_type = in.readUTF().intern();
+            old_accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
+            new_accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
+            old_priority = InternUtils.intern(in.readNullUTF());
+            new_priority = InternUtils.intern(in.readNullUTF());
+            old_type = InternUtils.intern(in.readNullUTF());
+            new_type = InternUtils.intern(in.readNullUTF());
+            old_status = InternUtils.intern(in.readNullUTF());
+            new_status = InternUtils.intern(in.readNullUTF());
+            old_assigned_to = InternUtils.intern(in.readNullUTF());
+            new_assigned_to = InternUtils.intern(in.readNullUTF());
+            old_category = in.readCompressedInt();
+            new_category = in.readCompressedInt();
+            // Loaded only when needed: old_value
+            // Loaded only when needed: new_value
+            from_address = in.readNullUTF();
+            summary = in.readNullUTF();
+            // Loaded only when needed: details
+            // Loaded only when needed: raw_email
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
@@ -386,8 +400,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
         else out.writeUTF(administrator==null ? "aoadmin" : administrator);
         out.writeLong(time);
         out.writeUTF(action_type);
-        out.writeNullUTF(old_accounting);
-        out.writeNullUTF(new_accounting);
+        out.writeNullUTF(ObjectUtils.toString(old_accounting));
+        out.writeNullUTF(ObjectUtils.toString(new_accounting));
         out.writeNullUTF(old_priority);
         out.writeNullUTF(new_priority);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_49)>=0) {

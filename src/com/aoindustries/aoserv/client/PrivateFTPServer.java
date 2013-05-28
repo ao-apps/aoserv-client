@@ -1,15 +1,18 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * When a <code>PrivateFTPServer</code> is attached to a
@@ -17,8 +20,6 @@ import java.sql.SQLException;
  * in the <code>PrivateFTPServer</code>.
  *
  * @see  NetBind
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -28,7 +29,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
     static final String COLUMN_NET_BIND_name = "net_bind";
 
     private String logfile;
-    private String hostname;
+    private DomainName hostname;
     private String email;
     private long created;
     int pub_linux_server_account;
@@ -40,22 +41,22 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
             case 1: return logfile;
             case 2: return hostname;
             case 3: return email;
-            case 4: return new java.sql.Date(created);
+            case 4: return getCreated();
             case 5: return Integer.valueOf(pub_linux_server_account);
             case 6: return allow_anonymous?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
-    public long getCreated() {
-        return created;
+    public Timestamp getCreated() {
+        return new Timestamp(created);
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getHostname() {
+    public DomainName getHostname() {
         return hostname;
     }
 
@@ -98,28 +99,40 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        logfile = result.getString(2);
-        hostname = result.getString(3);
-        email = result.getString(4);
-        created = result.getTimestamp(5).getTime();
-        pub_linux_server_account=result.getInt(6);
-        allow_anonymous=result.getBoolean(7);
+        try {
+            pkey = result.getInt(1);
+            logfile = result.getString(2);
+            hostname = DomainName.valueOf(result.getString(3));
+            email = result.getString(4);
+            created = result.getTimestamp(5).getTime();
+            pub_linux_server_account=result.getInt(6);
+            allow_anonymous=result.getBoolean(7);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        logfile=in.readUTF();
-        hostname=in.readUTF();
-        email=in.readUTF();
-        created=in.readLong();
-        pub_linux_server_account=in.readCompressedInt();
-        allow_anonymous=in.readBoolean();
+        try {
+            pkey=in.readCompressedInt();
+            logfile=in.readUTF();
+            hostname=DomainName.valueOf(in.readUTF());
+            email=in.readUTF();
+            created=in.readLong();
+            pub_linux_server_account=in.readCompressedInt();
+            allow_anonymous=in.readBoolean();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
     String toStringImpl() {
-        return hostname;
+        return hostname.toString();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
@@ -127,7 +140,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
         out.writeCompressedInt(pkey);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_38)<=0) out.writeUTF("Upgrade AOServClient to version "+AOServProtocol.Version.VERSION_1_39+" or newer");
         out.writeUTF(logfile);
-        out.writeUTF(hostname);
+        out.writeUTF(hostname.toString());
         out.writeUTF(email);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
         out.writeLong(created);

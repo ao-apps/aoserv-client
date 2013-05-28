@@ -1,22 +1,30 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.HashedPassword;
+import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.aoserv.client.validator.ValidationResult;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
@@ -61,12 +69,17 @@ final public class SimpleAOClient {
     }
 
     private AOServer getAOServer(String hostname) throws IllegalArgumentException, IOException, SQLException {
-        AOServer ao=connector.getAoServers().get(hostname);
-        if(ao==null) throw new IllegalArgumentException("Server is not an AOServer: "+hostname);
-        return ao;
+        try {
+            AOServer ao=DomainName.validate(hostname).isValid() ? connector.getAoServers().get(DomainName.valueOf(hostname)) : null;
+            if(ao==null) throw new IllegalArgumentException("Server is not an AOServer: "+hostname);
+            return ao;
+        } catch(ValidationException e) {
+            // Should not happen since isValid checked first
+            throw new WrappedException(e);
+        }
     }
 
-    private Business getBusiness(String accounting) throws IllegalArgumentException, IOException, SQLException {
+    private Business getBusiness(AccountingCode accounting) throws IllegalArgumentException, IOException, SQLException {
         Business bu=connector.getBusinesses().get(accounting);
         if(bu==null) throw new IllegalArgumentException("Unable to find Business: "+accounting);
         return bu;
@@ -78,13 +91,13 @@ final public class SimpleAOClient {
         return dz;
     }
 
-    private EmailAddress getEmailAddress(String aoServer, String domain, String address) throws IllegalArgumentException, IOException, SQLException {
+    private EmailAddress getEmailAddress(String aoServer, DomainName domain, String address) throws IllegalArgumentException, IOException, SQLException {
         EmailAddress ea=getEmailDomain(aoServer, domain).getEmailAddress(address);
         if(ea==null) throw new IllegalArgumentException("Unable to find EmailAddress: "+address+'@'+domain+" on "+aoServer);
         return ea;
     }
 
-    private EmailDomain getEmailDomain(String aoServer, String domain) throws IllegalArgumentException, IOException, SQLException {
+    private EmailDomain getEmailDomain(String aoServer, DomainName domain) throws IllegalArgumentException, IOException, SQLException {
         EmailDomain ed=getAOServer(aoServer).getEmailDomain(domain);
         if(ed==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+aoServer);
         return ed;
@@ -114,7 +127,7 @@ final public class SimpleAOClient {
         return hs;
     }
 
-    private IPAddress getIPAddress(String server, String netDevice, String ipAddress) throws IllegalArgumentException, SQLException, IOException {
+    private IPAddress getIPAddress(String server, String netDevice, InetAddress ipAddress) throws IllegalArgumentException, SQLException, IOException {
         IPAddress ia=getNetDevice(server, netDevice).getIPAddress(ipAddress);
         if(ia==null) throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress+" on "+netDevice+" on "+server);
         return ia;
@@ -373,16 +386,15 @@ final public class SimpleAOClient {
      * @see  Server#addBusiness
      */
     public void addBusiness(
-        String accounting,
+        AccountingCode accounting,
         String contractVersion,
         String defaultServer,
-        String parent,
+        AccountingCode parent,
         boolean can_add_backup_servers,
         boolean can_add_businesses,
         boolean can_see_prices,
         boolean billParent
     ) throws IllegalArgumentException, SQLException, IOException {
-        checkAccounting(accounting);
         if(contractVersion!=null && contractVersion.length()==0) contractVersion=null;
         getServer(defaultServer).addBusiness(
             accounting,
@@ -411,7 +423,7 @@ final public class SimpleAOClient {
         String username,
         String name,
         String title,
-        long birthday,
+        Date birthday,
         boolean isPrivate,
         String workPhone,
         String homePhone,
@@ -461,7 +473,7 @@ final public class SimpleAOClient {
      * @see  Business#addBusinessProfile
      */
     public int addBusinessProfile(
-        String business,
+        AccountingCode business,
         String name,
         boolean isPrivate,
         String phone,
@@ -515,7 +527,7 @@ final public class SimpleAOClient {
      * @see  Business#addBusinessServer
      */
     public int addBusinessServer(
-        String accounting,
+        AccountingCode accounting,
         String server
     ) throws IllegalArgumentException, SQLException, IOException {
         return getBusiness(accounting).addBusinessServer(getServer(server));
@@ -642,11 +654,10 @@ final public class SimpleAOClient {
     public void addDNSZone(
         String packageName,
         String zone,
-        String ip,
+        InetAddress ip,
         int ttl
     ) throws IllegalArgumentException, IOException, SQLException {
         if(!connector.getDnsZones().checkDNSZone(zone)) throw new IllegalArgumentException("Invalid zone: "+zone);
-        checkIPAddress(ip);
         getPackage(packageName).addDNSZone(zone, ip, ttl);
     }
 
@@ -671,7 +682,7 @@ final public class SimpleAOClient {
      */
     public int addEmailForwarding(
         String address,
-        String domain,
+        DomainName domain,
         String aoServer,
         String destination
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -761,7 +772,7 @@ final public class SimpleAOClient {
      */
     public int addEmailListAddress(
         String address,
-        String domain,
+        DomainName domain,
         String path,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -834,7 +845,7 @@ final public class SimpleAOClient {
      */
     public int addEmailPipeAddress(
         String address,
-        String domain,
+        DomainName domain,
         int pkey
     ) throws IllegalArgumentException, IOException, SQLException {
         EmailPipe ep=connector.getEmailPipes().get(pkey);
@@ -955,7 +966,7 @@ final public class SimpleAOClient {
         String groupName,
         String serverAdmin,
         boolean useApache,
-        String ipAddress,
+        InetAddress ipAddress,
         String netDevice,
         String primaryHttpHostname,
         String[] altHttpHostnames,
@@ -968,7 +979,6 @@ final public class SimpleAOClient {
 
         IPAddress ip;
         if (netDevice!=null && (netDevice=netDevice.trim()).length()==0) netDevice=null;
-        if (ipAddress!=null && (ipAddress=ipAddress.trim()).length()==0) ipAddress=null;
         if (ipAddress!=null && netDevice!=null) {
             ip=getIPAddress(aoServer, netDevice, ipAddress);
         } else if(ipAddress==null && netDevice==null) {
@@ -1216,7 +1226,7 @@ final public class SimpleAOClient {
         String groupName,
         String serverAdmin,
         boolean useApache,
-        String ipAddress,
+        InetAddress ipAddress,
         String netDevice,
         String primaryHttpHostname,
         String[] altHttpHostnames,
@@ -1230,7 +1240,6 @@ final public class SimpleAOClient {
 
         IPAddress ip;
         if (netDevice!=null && (netDevice=netDevice.trim()).length()==0) netDevice=null;
-        if (ipAddress!=null && (ipAddress=ipAddress.trim()).length()==0) ipAddress=null;
         if (ipAddress!=null && netDevice!=null) {
             ip=getIPAddress(aoServer, netDevice, ipAddress);
         } else if(ipAddress==null && netDevice==null) {
@@ -1329,7 +1338,7 @@ final public class SimpleAOClient {
         String groupName,
         String serverAdmin,
         boolean useApache,
-        String ipAddress,
+        InetAddress ipAddress,
         String netDevice,
         String primaryHttpHostname,
         String[] altHttpHostnames,
@@ -1342,7 +1351,6 @@ final public class SimpleAOClient {
 
         IPAddress ip;
         if (netDevice!=null && (netDevice=netDevice.trim()).length()==0) netDevice=null;
-        if (ipAddress!=null && (ipAddress=ipAddress.trim()).length()==0) ipAddress=null;
         if (ipAddress!=null && netDevice!=null) {
             ip=getIPAddress(aoServer, netDevice, ipAddress);
         } else if(ipAddress==null && netDevice==null) {
@@ -1400,7 +1408,7 @@ final public class SimpleAOClient {
      */
     public int addLinuxAccAddress(
         String address,
-        String domain,
+        DomainName domain,
         String aoServer,
         String username
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -1452,18 +1460,16 @@ final public class SimpleAOClient {
     public void addLinuxAccount(
         String username,
         String primary_group,
-        String name,
-        String office_location,
-        String office_phone,
-        String home_phone,
+        Gecos name,
+        Gecos office_location,
+        Gecos office_phone,
+        Gecos home_phone,
         String type,
         String shell
     ) throws IllegalArgumentException, IOException, SQLException {
         Username un=getUsername(username);
         checkLinuxAccountUsername(username);
         LinuxGroup lg=getLinuxGroup(primary_group);
-        String validity=LinuxAccount.checkGECOS(name, "full name");
-        if(validity!=null) throw new IllegalArgumentException(validity);
         LinuxAccountType lat=connector.getLinuxAccountTypes().get(type);
         if(lat==null) throw new IllegalArgumentException("Unable to find LinuxAccountType: "+type);
         Shell sh=connector.getShells().get(shell);
@@ -1628,7 +1634,7 @@ final public class SimpleAOClient {
      * @see  #removeEmailList
      */
     public int addMajordomoList(
-        String domain,
+        DomainName domain,
         String aoServer,
         String listName
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -1656,7 +1662,7 @@ final public class SimpleAOClient {
      * @see  #removeMajordomoServer
      */
     public void addMajordomoServer(
-        String domain,
+        DomainName domain,
         String aoServer,
         String linux_account,
         String linux_group,
@@ -1858,7 +1864,7 @@ final public class SimpleAOClient {
     public int addNetBind(
         String server,
         String packageName,
-        String ipAddress,
+        InetAddress ipAddress,
         String net_device,
         int netPort,
         String netProtocol,
@@ -1908,7 +1914,7 @@ final public class SimpleAOClient {
      * @see  Transaction
      */
     public void addNoticeLog(
-        String accounting,
+        AccountingCode accounting,
         String billingContact,
         String emailAddress,
         BigDecimal balance,
@@ -1963,7 +1969,7 @@ final public class SimpleAOClient {
      */
     public int addPackage(
         String packageName,
-        String accounting,
+        AccountingCode accounting,
         int packageDefinition
     ) throws IllegalArgumentException, IOException, SQLException {
         checkPackageName(packageName);
@@ -2294,8 +2300,8 @@ final public class SimpleAOClient {
      * @see  TransactionType
      */
     public int addTransaction(
-        String business,
-        String source_business,
+        AccountingCode business,
+        AccountingCode source_business,
         String business_administrator,
         String type,
         String description,
@@ -2503,7 +2509,7 @@ final public class SimpleAOClient {
      * @see  Business#cancel
      */
     public void cancelBusiness(
-        String accounting,
+        AccountingCode accounting,
         String reason
     ) throws IllegalArgumentException, IOException, SQLException {
         getBusiness(accounting).cancel(reason);
@@ -2622,22 +2628,6 @@ final public class SimpleAOClient {
         if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
         ti.actChangeTicketType(tt, pe, comments);
     }*/
-
-    /**
-     * Checks the format of an accounting code, which is the unique
-     * identifier for a <code>Business</code>.
-     *
-     * @param  accounting  the accounting code to check
-     *
-     * @exception  IllegalArgumentException  if the accounting code is not a valid format
-     *
-     * @see  Business#isValidAccounting
-     */
-    public static void checkAccounting(
-        String accounting
-    ) throws IllegalArgumentException {
-        if(!Business.isValidAccounting(accounting)) throw new IllegalArgumentException("Invalid accounting code: "+accounting);
-    }
 
     /**
      * Checks the strength of a password that will be used for
@@ -2776,24 +2766,6 @@ final public class SimpleAOClient {
         String ip
     ) throws IllegalArgumentException {
         if(!IPAddress.isValidIPAddress(ip)) throw new IllegalArgumentException("Invalid IP address: "+ip);
-    }
-
-    /**
-     * Checks the format of a full name that will be used for
-     * a <code>LinuxAccount</code>.
-     *
-     * @param  name  the full name
-     *
-     * @exception  IllegalArgumentException  if the name is not in a valid format
-     *
-     * @see  LinuxAccount#checkGECOS
-     * @see  #setLinuxAccountName
-     */
-    public static void checkLinuxAccountName(
-        String name
-    ) throws IllegalArgumentException {
-        String validity=LinuxAccount.checkGECOS(name, "full name");
-        if(validity!=null) throw new IllegalArgumentException(validity);
     }
 
     /**
@@ -3253,22 +3225,21 @@ final public class SimpleAOClient {
      * @param  password  the password that is to be encrypted
      * @param  salt  the two character salt for the encryption process, if <code>null</code>,
      *					a random salt will be used
-     *
-     * @see  BusinessAdministrator#crypt(String,String)
      * 
      * @deprecated  Please use hash instead.
      * @see  #hash(String)
      */
     @Deprecated
     public static String crypt(String password, String salt) {
-        return BusinessAdministrator.crypt(password, salt);
+	if(password==null || password.length()==0) return "*";
+	return salt==null || salt.length()==0?com.aoindustries.util.UnixCrypt.crypt(password):com.aoindustries.util.UnixCrypt.crypt(password, salt);
     }
 
     /**
      * Hashes a password using SHA-1.
      */
     public static String hash(String password) {
-        return BusinessAdministrator.hash(password);
+        return HashedPassword.hash(password);
     }
 
     /**
@@ -3309,7 +3280,7 @@ final public class SimpleAOClient {
      *					violation occurs
      * @exception  IllegalArgumentException  if unable to find the necessary <code>AOServObject</code>s
      */
-    public int disableBusiness(String accounting, String disableReason) throws IllegalArgumentException, IOException, SQLException {
+    public int disableBusiness(AccountingCode accounting, String disableReason) throws IllegalArgumentException, IOException, SQLException {
         Business bu=getBusiness(accounting);
         DisableLog dl=connector.getDisableLogs().get(bu.addDisableLog(disableReason));
         for(Package pk : bu.getPackages()) if(pk.disable_log==-1) disablePackage(dl, pk);
@@ -3805,7 +3776,7 @@ final public class SimpleAOClient {
      *					violation occurs
      * @exception  IllegalArgumentException  if unable to find the necessary <code>Business</code>s
      */
-    public void enableBusiness(String accounting) throws IllegalArgumentException, IOException, SQLException {
+    public void enableBusiness(AccountingCode accounting) throws IllegalArgumentException, IOException, SQLException {
         Business bu=getBusiness(accounting);
         DisableLog dl=bu.getDisableLog();
         if(dl==null) throw new IllegalArgumentException("Business not disabled: "+accounting);
@@ -4311,8 +4282,8 @@ final public class SimpleAOClient {
      * @see  #addBusiness
      * @see  Business
      */
-    public String generateAccountingCode(
-        String accountingTemplate
+    public AccountingCode generateAccountingCode(
+        AccountingCode accountingTemplate
     ) throws IOException, SQLException {
         return connector.getBusinesses().generateAccountingCode(accountingTemplate);
     }
@@ -4615,7 +4586,7 @@ final public class SimpleAOClient {
      * @see  #removeEmailList
      */
     public String getMajordomoInfoFile(
-        String domain,
+        DomainName domain,
         String aoServer,
         String listName
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -4646,7 +4617,7 @@ final public class SimpleAOClient {
      * @see  #removeEmailList
      */
     public String getMajordomoIntroFile(
-        String domain,
+        DomainName domain,
         String aoServer,
         String listName
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -4731,7 +4702,7 @@ final public class SimpleAOClient {
      *
      * @see  BusinessTable#getRootAccounting
      */
-    public String getRootBusiness() throws IOException, SQLException {
+    public AccountingCode getRootBusiness() throws IOException, SQLException {
         return connector.getBusinesses().getRootAccounting();
     }
 
@@ -4843,9 +4814,8 @@ final public class SimpleAOClient {
      * @see  Business
      */
     public boolean isAccountingAvailable(
-        String accounting
+        AccountingCode accounting
     ) throws IllegalArgumentException, SQLException, IOException {
-        checkAccounting(accounting);
         return connector.getBusinesses().isAccountingAvailable(accounting);
     }
 
@@ -4908,7 +4878,7 @@ final public class SimpleAOClient {
      * @see  #setIPAddressPackage
      */
     public boolean isIPAddressUsed(
-        String ipAddress,
+        InetAddress ipAddress,
         String server,
         String net_device
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -5293,7 +5263,7 @@ final public class SimpleAOClient {
      * @see  Business#move
      */
     public void moveBusiness(
-        String business,
+        AccountingCode business,
         String from,
         String to,
         TerminalWriter out
@@ -5315,7 +5285,7 @@ final public class SimpleAOClient {
      * @see  IPAddress#moveTo
      */
     public void moveIPAddress(
-        String ip_address,
+        InetAddress ip_address,
         String from_server,
         String from_net_device,
         String to_server
@@ -5425,7 +5395,7 @@ final public class SimpleAOClient {
      */
     public void removeBlackholeEmailAddress(
         String address,
-        String domain,
+        DomainName domain,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
         EmailAddress addr=getEmailAddress(aoServer, domain, address);
@@ -5477,7 +5447,7 @@ final public class SimpleAOClient {
      * @see  #setDefaultBusinessServer
      */
     public void removeBusinessServer(
-        String accounting,
+        AccountingCode accounting,
         String server
     ) throws IllegalArgumentException, IOException, SQLException {
         Business bu=getBusiness(accounting);
@@ -5617,7 +5587,7 @@ final public class SimpleAOClient {
      */
     public void removeEmailAddress(
         String address,
-        String domain,
+        DomainName domain,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
         getEmailAddress(aoServer, domain, address).remove();
@@ -5642,7 +5612,7 @@ final public class SimpleAOClient {
      */
     public void removeEmailForwarding(
         String address,
-        String domain,
+        DomainName domain,
         String aoServer,
         String destination
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -5695,7 +5665,7 @@ final public class SimpleAOClient {
      */
     public void removeEmailListAddress(
         String address,
-        String domain,
+        DomainName domain,
         String path,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -5748,7 +5718,7 @@ final public class SimpleAOClient {
      */
     public void removeEmailPipeAddress(
         String address,
-        String domain,
+        DomainName domain,
         int pipe
     ) throws IllegalArgumentException, IOException, SQLException {
         EmailPipe ep=connector.getEmailPipes().get(pipe);
@@ -5757,9 +5727,9 @@ final public class SimpleAOClient {
         EmailDomain sd=ao.getEmailDomain(domain);
         if(sd==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getHostname());
         EmailAddress addr=connector.getEmailAddresses().getEmailAddress(address, sd);
-        if(addr==null) throw new IllegalArgumentException("Unable to find EmailAddress: "+address+'@'+domain+" on "+ao.getHostname());
+        if(addr==null) throw new IllegalArgumentException("Unable to find EmailAddress: "+address+"@"+domain+" on "+ao.getHostname());
         EmailPipeAddress epa=addr.getEmailPipeAddress(ep);
-        if(epa==null) throw new IllegalArgumentException("Unable to find EmailPipeAddress: "+address+'@'+domain+"->"+ep);
+        if(epa==null) throw new IllegalArgumentException("Unable to find EmailPipeAddress: "+address+"@"+domain+"->"+ep);
         epa.remove();
         if(addr.getCannotRemoveReasons().isEmpty() && !addr.isUsed()) addr.remove();
     }
@@ -5927,7 +5897,7 @@ final public class SimpleAOClient {
      */
     public void removeLinuxAccAddress(
         String address,
-        String domain,
+        DomainName domain,
         String aoServer,
         String username
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -6258,7 +6228,7 @@ final public class SimpleAOClient {
      * @see  #removeEmailAddress
      */
     public void removeEmailDomain(
-        String domain,
+        DomainName domain,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
         getEmailDomain(aoServer, domain).remove();
@@ -6328,7 +6298,7 @@ final public class SimpleAOClient {
      * @see  #addMajordomoServer
      */
     public void removeMajordomoServer(
-        String domain,
+        DomainName domain,
         String aoServer
     ) throws IllegalArgumentException, IOException, SQLException {
         EmailDomain sd=getEmailDomain(aoServer, domain);
@@ -6470,13 +6440,12 @@ final public class SimpleAOClient {
         String username,
         String aoServer,
         String address,
-        String domain,
+        DomainName domain,
         String subject,
         String content,
         boolean enabled
     ) throws IllegalArgumentException, IOException, SQLException {
         LinuxServerAccount lsa=getLinuxServerAccount(aoServer, username);
-        if(domain!=null && domain.length()==0) domain=null;
         if(address==null) address="";
         EmailDomain sd;
         EmailAddress ea;
@@ -6512,8 +6481,8 @@ final public class SimpleAOClient {
      * @see  Business#setAccounting
      */
     public void setBusinessAccounting(
-        String oldAccounting,
-        String newAccounting
+        AccountingCode oldAccounting,
+        AccountingCode newAccounting
     ) throws IllegalArgumentException, IOException, SQLException {
         getBusiness(oldAccounting).setAccounting(newAccounting);
     }
@@ -6558,7 +6527,7 @@ final public class SimpleAOClient {
         String username,
         String name,
         String title,
-        long birthday,
+        Date birthday,
         boolean isPrivate,
         String workPhone,
         String homePhone,
@@ -6660,7 +6629,7 @@ final public class SimpleAOClient {
      * @see  #removeBusinessServer
      */
     public void setDefaultBusinessServer(
-        String accounting,
+        AccountingCode accounting,
         String server
     ) throws IllegalArgumentException, SQLException, IOException {
         Business bu=getBusiness(accounting);
@@ -6896,12 +6865,11 @@ final public class SimpleAOClient {
      * @see  EmailDomain#isValidFormat
      */
     public void setIPAddressHostname(
-        String ipAddress,
+        InetAddress ipAddress,
         String server,
         String net_device,
-        String hostname
+        DomainName hostname
     ) throws IllegalArgumentException, IOException, SQLException {
-        if(!EmailDomain.isValidFormat(hostname)) throw new IllegalArgumentException("Invalid hostname: "+hostname);
         getIPAddress(server, net_device, ipAddress).setHostname(hostname);
     }
 
@@ -6922,11 +6890,10 @@ final public class SimpleAOClient {
      */
     public void setIPAddressDHCPAddress(
         int ipAddress,
-        String dhcpAddress
+        InetAddress dhcpAddress
     ) throws IllegalArgumentException, IOException, SQLException {
         IPAddress ia=connector.getIpAddresses().get(ipAddress);
         if(ia==null) throw new IllegalArgumentException("Unable to find IPAddress: "+ipAddress);
-        if(!IPAddress.isValidIPAddress(dhcpAddress)) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
         ia.setDHCPAddress(dhcpAddress);
     }
 
@@ -6947,7 +6914,7 @@ final public class SimpleAOClient {
      * @see  #addPackage
      */
     public void setIPAddressPackage(
-        String ipAddress,
+        InetAddress ipAddress,
         String server,
         String net_device,
         String newPackage
@@ -6971,9 +6938,9 @@ final public class SimpleAOClient {
      */
     public void setLinuxAccountHomePhone(
         String username,
-        String phone
+        Gecos phone
     ) throws IllegalArgumentException, IOException, SQLException {
-        getLinuxAccount(username).setHomePhone(phone==null||phone.length()==0?null:phone);
+        getLinuxAccount(username).setHomePhone(phone);
     }
 
     /**
@@ -6994,12 +6961,9 @@ final public class SimpleAOClient {
      */
     public void setLinuxAccountName(
         String username,
-        String name
+        Gecos name
     ) throws IllegalArgumentException, IOException, SQLException {
-        LinuxAccount la=getLinuxAccount(username);
-        String validity=LinuxAccount.checkGECOS(name, "full name");
-        if(validity!=null) throw new IllegalArgumentException(validity);
-        la.setName(name);
+        getLinuxAccount(username).setName(name);
     }
 
     /**
@@ -7018,9 +6982,9 @@ final public class SimpleAOClient {
      */
     public void setLinuxAccountOfficeLocation(
         String username,
-        String location
+        Gecos location
     ) throws IllegalArgumentException, IOException, SQLException {
-        getLinuxAccount(username).setOfficeLocation(location==null||location.length()==0?null:location);
+        getLinuxAccount(username).setOfficeLocation(location);
     }
 
     /**
@@ -7039,9 +7003,9 @@ final public class SimpleAOClient {
      */
     public void setLinuxAccountOfficePhone(
         String username,
-        String phone
+        Gecos phone
     ) throws IllegalArgumentException, IOException, SQLException {
-        getLinuxAccount(username).setOfficePhone(phone==null||phone.length()==0?null:phone);
+        getLinuxAccount(username).setOfficePhone(phone);
     }
 
     /**
@@ -7246,7 +7210,7 @@ final public class SimpleAOClient {
      * @see  #removeEmailList
      */
     public void setMajordomoInfoFile(
-        String domain,
+        DomainName domain,
         String aoServer,
         String listName,
         String file
@@ -7279,7 +7243,7 @@ final public class SimpleAOClient {
      * @see  #removeEmailList
      */
     public void setMajordomoIntroFile(
-        String domain,
+        DomainName domain,
         String aoServer,
         String listName,
         String file

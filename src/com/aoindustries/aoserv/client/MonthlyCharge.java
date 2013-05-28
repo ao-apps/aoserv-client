@@ -1,16 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * Miscellaneous monthly charges may be applied to a
@@ -33,7 +36,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     static final String COLUMN_TYPE_name = "type";
     static final String COLUMN_CREATED_name = "created";
 
-    String accounting;
+    private AccountingCode accounting;
     String packageName;
     private String type;
     private String description;
@@ -78,15 +81,15 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
             case 4: return description;
             case 5: return Integer.valueOf(quantity);
             case 6: return Integer.valueOf(rate);
-            case 7: return new java.sql.Date(created);
+            case 7: return getCreated();
             case 8: return created_by;
             case 9: return active?Boolean.TRUE:Boolean.FALSE;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
-    public long getCreated() {
-	return created;
+    public Timestamp getCreated() {
+	return new Timestamp(created);
     }
 
     public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
@@ -139,16 +142,22 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        accounting = result.getString(2);
-        packageName = result.getString(3);
-        type = result.getString(4);
-        description = result.getString(5);
-        quantity = SQLUtility.getMillis(result.getString(6));
-        rate = SQLUtility.getPennies(result.getString(7));
-        created = result.getTimestamp(8).getTime();
-        created_by = result.getString(9);
-        active = result.getBoolean(10);
+        try {
+            pkey = result.getInt(1);
+            accounting = AccountingCode.valueOf(result.getString(2));
+            packageName = result.getString(3);
+            type = result.getString(4);
+            description = result.getString(5);
+            quantity = SQLUtility.getMillis(result.getString(6));
+            rate = SQLUtility.getPennies(result.getString(7));
+            created = result.getTimestamp(8).getTime();
+            created_by = result.getString(9);
+            active = result.getBoolean(10);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public boolean isActive() {
@@ -156,16 +165,22 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        accounting=in.readUTF().intern();
-        packageName=in.readUTF().intern();
-        type=in.readUTF().intern();
-        description=in.readBoolean()?in.readUTF():null;
-        quantity=in.readCompressedInt();
-        rate=in.readCompressedInt();
-        created=in.readLong();
-        created_by=in.readUTF().intern();
-        active=in.readBoolean();
+        try {
+            pkey=in.readCompressedInt();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            packageName=in.readUTF().intern();
+            type=in.readUTF().intern();
+            description=in.readNullUTF();
+            quantity=in.readCompressedInt();
+            rate=in.readCompressedInt();
+            created=in.readLong();
+            created_by=in.readUTF().intern();
+            active=in.readBoolean();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
@@ -175,7 +190,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeUTF(accounting);
+        out.writeUTF(accounting.toString());
         out.writeUTF(packageName);
         out.writeUTF(type);
         out.writeNullUTF(description);

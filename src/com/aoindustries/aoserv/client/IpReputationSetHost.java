@@ -1,12 +1,14 @@
 /*
- * Copyright 2012 by AO Industries, Inc.,
+ * Copyright 2012-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.math.LongLong;
 import com.aoindustries.math.SafeMath;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -66,7 +68,7 @@ final public class IpReputationSetHost extends CachedObjectLongKey<IpReputationS
         switch(i) {
             case COLUMN_PKEY     : return pkey;
             case COLUMN_SET      : return set;
-            case 2               : return IPAddress.getIPAddressForInt(host);
+            case 2               : return getHostAddress();
             case 3               : return goodReputation;
             case 4               : return badReputation;
             default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -89,8 +91,13 @@ final public class IpReputationSetHost extends CachedObjectLongKey<IpReputationS
     /**
      * Gets the IPv4 host address.
      */
-    public String getHostAddress() {
-        return IPAddress.getIPAddressForInt(host);
+    public InetAddress getHostAddress() {
+        return InetAddress.valueOf(
+            LongLong.valueOf(
+                0,
+                ((long)host) & 0x00000000ffffffffL
+            )
+        );
     }
 
     /**

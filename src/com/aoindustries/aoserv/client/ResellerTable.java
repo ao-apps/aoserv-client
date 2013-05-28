@@ -1,10 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.util.tree.Node;
 import com.aoindustries.util.tree.Tree;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ResellerTable extends CachedTableStringKey<Reseller> {
+final public class ResellerTable extends CachedTableAccountingCodeKey<Reseller> {
 
     ResellerTable(AOServConnector connector) {
         super(connector, Reseller.class);
@@ -35,7 +36,7 @@ final public class ResellerTable extends CachedTableStringKey<Reseller> {
     /**
      * Gets a <code>Reseller</code> from the database.
      */
-    public Reseller get(String accounting) throws IOException, SQLException {
+    public Reseller get(AccountingCode accounting) throws IOException, SQLException {
         return getUniqueRow(Reseller.COLUMN_ACCOUNTING, accounting);
     }
 

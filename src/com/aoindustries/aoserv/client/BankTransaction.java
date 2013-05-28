@@ -1,20 +1,18 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.*;
 import com.aoindustries.sql.*;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.*;
 import java.sql.*;
 
 /**
  * For AO Industries use only.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -74,7 +72,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 
     Object getColumnImpl(int i) {
         switch(i) {
-            case 0: return new java.sql.Date(time);
+            case 0: return getTime();
             case 1: return Integer.valueOf(transID);
             case 2: return bankAccount;
             case 3: return processor;
@@ -124,8 +122,8 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	return SchemaTable.TableID.BANK_TRANSACTIONS;
     }
 
-    public long getTime() {
-	return time;
+    public Timestamp getTime() {
+	return new Timestamp(time);
     }
 
     public int getTransID() {
@@ -159,10 +157,10 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	time = in.readLong();
 	transID = in.readCompressedInt();
 	bankAccount = in.readUTF().intern();
-	processor = StringUtility.intern(in.readNullUTF());
+	processor = InternUtils.intern(in.readNullUTF());
 	administrator = in.readUTF().intern();
 	type = in.readUTF().intern();
-	expenseCode = StringUtility.intern(in.readNullUTF());
+	expenseCode = InternUtils.intern(in.readNullUTF());
 	description = in.readUTF();
 	checkNo = in.readNullUTF();
 	amount = in.readCompressedInt();

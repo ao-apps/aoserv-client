@@ -1,10 +1,12 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -30,7 +32,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
     static final String COLUMN_ADMINISTRATOR_name = "administrator";
 
     private int ticket;
-    private String reseller;
+    private AccountingCode reseller;
     private String administrator;
 
     Object getColumnImpl(int i) {
@@ -69,17 +71,29 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey = result.getInt(1);
-        ticket = result.getInt(2);
-        reseller = result.getString(3);
-        administrator = result.getString(4);
+        try {
+            pkey = result.getInt(1);
+            ticket = result.getInt(2);
+            reseller = AccountingCode.valueOf(result.getString(3));
+            administrator = result.getString(4);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        ticket = in.readCompressedInt();
-        reseller = in.readUTF().intern();
-        administrator = in.readUTF().intern();
+        try {
+            pkey = in.readCompressedInt();
+            ticket = in.readCompressedInt();
+            reseller = AccountingCode.valueOf(in.readUTF()).intern();
+            administrator = in.readUTF().intern();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
@@ -90,7 +104,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(ticket);
-        out.writeUTF(reseller);
+        out.writeUTF(reseller.toString());
         out.writeUTF(administrator);
     }
 }

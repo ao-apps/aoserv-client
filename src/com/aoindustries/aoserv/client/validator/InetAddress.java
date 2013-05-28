@@ -274,8 +274,15 @@ final public class InetAddress implements
         return LongLong.valueOf(ipHigh, ipLow);
     }
 
-    public static final InetAddress UNSPECIFIED = valueOf(new LongLong(0, 0)).intern();
-    public static final InetAddress LOOPBACK = valueOf(new LongLong(0, 1)).intern();
+    public static final InetAddress UNSPECIFIED = valueOf(
+        new LongLong(0, 0)
+    ).intern();
+    public static final InetAddress LOOPBACK_IPV4 = valueOf(
+        new LongLong(0, 0x000000007f000001L)
+    ).intern();
+    public static final InetAddress LOOPBACK_IPV6 = valueOf(
+        new LongLong(0, 1)
+    ).intern();
 
     final private LongLong ip;
 
@@ -401,6 +408,15 @@ final public class InetAddress implements
             }
         }
         return SB.toString();
+    }
+
+    /**
+     * Gets an optionally-bracketed String representation of this IP address.
+     * If IPv6, the address is surrounded by [...]
+     */
+    public String toBracketedString() {
+        if(isIPv6()) return '[' + toString() + ']';
+        else return toString();
     }
 
     /**
@@ -552,4 +568,10 @@ final public class InetAddress implements
     public boolean isIPv6() {
         return !isIPv4();
     }
+
+    /*
+    public static void main(String[] args) {
+        System.out.println(LOOPBACK_IPV6.toString());
+    }
+     */
 }

@@ -1,10 +1,12 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
@@ -33,15 +35,15 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
         return getUniqueRow(DNSZone.COLUMN_ZONE, zone);
     }
 
-    private List<String> getDNSTLDs() throws IOException, SQLException {
+    private List<DomainName> getDNSTLDs() throws IOException, SQLException {
         List<DNSTLD> tlds=connector.getDnsTLDs().getRows();
-        List<String> strings=new ArrayList<String>(tlds.size());
-        for(DNSTLD tld : tlds) strings.add(tld.getDomain());
-        return strings;
+        List<DomainName> names=new ArrayList<DomainName>(tlds.size());
+        for(DNSTLD tld : tlds) names.add(tld.getDomain());
+        return names;
     }
 
-    void addDNSZone(Package packageObj, String zone, String ip, int ttl) throws IOException, SQLException {
-    	connector.requestUpdateIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.DNS_ZONES, packageObj.name, zone, ip, ttl);
+    void addDNSZone(Package packageObj, String zone, InetAddress ip, int ttl) throws IOException, SQLException {
+    	connector.requestUpdateIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.DNS_ZONES, packageObj.name, zone, ip.toString(), ttl);
     }
 
     /**
@@ -54,14 +56,14 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
     /**
      * Checks the formatting for a DNS zone.  The format of a DNS zone must be <code><i>name</i>.<i>tld</i>.</code>
      */
-    public static boolean checkDNSZone(String zone, List<String> tlds) {
+    public static boolean checkDNSZone(String zone, List<DomainName> tlds) {
 	int zoneLen=zone.length();
 
 	String shortestName=null;
 	int len=tlds.size();
 	for(int c=0;c<len;c++) {
-            String o = tlds.get(c);
-            String tld='.'+o+'.';
+            DomainName o = tlds.get(c);
+            String tld='.'+o.toString()+'.';
 
             int tldLen=tld.length();
             if(tldLen<zoneLen) {
@@ -84,7 +86,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
      *
      * @return  the zone in the format <code><i>name</i>.<i>tld</i>.</code>
      */
-    public static String getDNSZoneForHostname(String hostname, List<String> tlds) throws IllegalArgumentException, IOException, SQLException {
+    public static String getDNSZoneForHostname(String hostname, List<DomainName> tlds) throws IllegalArgumentException, IOException, SQLException {
         int hlen = hostname.length();
 	if (hlen>0 && hostname.charAt(hlen-1)=='.') {
             hostname = hostname.substring(0, --hlen);
@@ -92,8 +94,8 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	String longestTld = null;
 	int tldlen = tlds.size();
 	for (int i = 0; i < tldlen; i++) {
-            String o = tlds.get(i);
-            String tld='.'+o;
+            DomainName o = tlds.get(i);
+            String tld='.'+o.toString(); // No dot at end
 
             int len = tld.length();
             if (hlen>=len && hostname.substring(hlen-len).equals(tld)) {
@@ -119,7 +121,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
      *
      * @exception  IllegalArgumentException  if hostname cannot be resolved to a top level domain
      */
-    public static String getHostTLD(String hostname, List<String> tlds) throws IllegalArgumentException {
+    public static String getHostTLD(String hostname, List<DomainName> tlds) throws IllegalArgumentException {
     	int hostnameLen=hostname.length();
         if (hostnameLen>0 && hostname.charAt(hostnameLen-1)!='.') {
             hostname = hostname+".";
@@ -128,8 +130,8 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 
 	int len=tlds.size();
 	for(int c=0;c<len;c++) {
-            String o = tlds.get(c);
-            String tld='.'+(String)o+'.';
+            DomainName o = tlds.get(c);
+            String tld='.'+o.toString()+'.';
 
             int tldLen=tld.length();
             if(tldLen<hostnameLen) {
@@ -161,7 +163,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
                 connector.getSimpleAOClient().addDNSZone(
                     args[1],
                     args[2],
-                    args[3],
+                    AOSH.parseInetAddress(args[3], "ip_address"),
                     AOSH.parseInt(args[4], "ttl")
                 );
             }

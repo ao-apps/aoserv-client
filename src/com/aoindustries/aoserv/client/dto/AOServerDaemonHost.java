@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -12,7 +12,7 @@ public class AOServerDaemonHost extends AOServObject {
 
     private int pkey;
     private int aoServer;
-    private Hostname host;
+    private InetAddress host;
 
     public AOServerDaemonHost() {
     }
@@ -20,7 +20,7 @@ public class AOServerDaemonHost extends AOServObject {
     public AOServerDaemonHost(
         int pkey,
         int aoServer,
-        Hostname host
+        InetAddress host
     ) {
         this.pkey = pkey;
         this.aoServer = aoServer;
@@ -43,11 +43,11 @@ public class AOServerDaemonHost extends AOServObject {
         this.aoServer = aoServer;
     }
 
-    public Hostname getHost() {
+    public InetAddress getHost() {
         return host;
     }
 
-    public void setHost(Hostname host) {
+    public void setHost(InetAddress host) {
         this.host = host;
     }
 }

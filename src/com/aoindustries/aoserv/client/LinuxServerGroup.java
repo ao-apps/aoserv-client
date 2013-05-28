@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
@@ -18,8 +18,6 @@ import java.util.*;
  * @see  LinuxGroup
  * @see  LinuxServerAccount
  * @see  AOServer
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -36,7 +34,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
     String name;
     int ao_server;
     int gid;
-    long created;
+    private long created;
 
     public List<LinuxServerAccount> getAlternateLinuxServerAccounts() throws SQLException, IOException {
         return table.connector.getLinuxServerAccounts().getAlternateLinuxServerAccounts(this);
@@ -48,7 +46,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
             case COLUMN_NAME: return name;
             case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
             case 3: return Integer.valueOf(gid);
-            case 4: return new java.sql.Date(created);
+            case 4: return getCreated();
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -59,8 +57,8 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
         return obj;
     }
 
-    public long getCreated() {
-        return created;
+    public Timestamp getCreated() {
+        return new Timestamp(created);
     }
 
     public LinuxGroup getLinuxGroup() throws SQLException, IOException {

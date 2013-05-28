@@ -1,16 +1,21 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.util.InternUtils;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * Each <code>Business</code> has an account of all the
@@ -18,8 +23,6 @@ import java.sql.*;
  * account is a <code>Transaction</code>.
  *
  * @see  Business
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -40,14 +43,12 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
     public static final int UNASSIGNED = -1;
 
     private long time;
-    int transid;
-    String
-        accounting,
-        source_accounting,
-        username,
-        type,
-        description
-    ;
+    private int transid;
+    private AccountingCode accounting;
+    private AccountingCode source_accounting;
+    private String username;
+    private String type;
+    private String description;
 
     /**
      * The quantity in 1000th's of a unit
@@ -203,7 +204,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
     Object getColumnImpl(int i) {
         switch(i) {
-            case 0: return new java.sql.Date(time);
+            case 0: return getTime();
             case COLUMN_TRANSID: return Integer.valueOf(transid);
             case COLUMN_ACCOUNTING: return accounting;
             case 3: return source_accounting;
@@ -292,8 +293,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	return SchemaTable.TableID.TRANSACTIONS;
     }
 
-    public long getTime() {
-	return time;
+    public Timestamp getTime() {
+	return new Timestamp(time);
     }
 
     public int getTransID() {
@@ -312,43 +313,55 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
     }
 
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-	time = result.getTimestamp(pos++).getTime();
-	transid = result.getInt(pos++);
-	accounting = result.getString(pos++);
-        source_accounting = result.getString(pos++);
-	username = result.getString(pos++);
-	type = result.getString(pos++);
-	description = result.getString(pos++);
-	quantity = SQLUtility.getMillis(result.getString(pos++));
-	rate = SQLUtility.getPennies(result.getString(pos++));
-	payment_type = result.getString(pos++);
-	payment_info = result.getString(pos++);
-	processor = result.getString(pos++);
-        creditCardTransaction = result.getInt(pos++);
-        if(result.wasNull()) creditCardTransaction = -1;
-	String typeString = result.getString(pos++);
-	if("Y".equals(typeString)) payment_confirmed=CONFIRMED;
-	else if("N".equals(typeString)) payment_confirmed=NOT_CONFIRMED;
-	else if("W".equals(typeString)) payment_confirmed=WAITING_CONFIRMATION;
-	else throw new SQLException("Unknown payment_confirmed '" + typeString + "' for transid=" + transid);
+        try {
+            int pos = 1;
+            time = result.getTimestamp(pos++).getTime();
+            transid = result.getInt(pos++);
+            accounting = AccountingCode.valueOf(result.getString(pos++));
+            source_accounting = AccountingCode.valueOf(result.getString(pos++));
+            username = result.getString(pos++);
+            type = result.getString(pos++);
+            description = result.getString(pos++);
+            quantity = SQLUtility.getMillis(result.getString(pos++));
+            rate = SQLUtility.getPennies(result.getString(pos++));
+            payment_type = result.getString(pos++);
+            payment_info = result.getString(pos++);
+            processor = result.getString(pos++);
+            creditCardTransaction = result.getInt(pos++);
+            if(result.wasNull()) creditCardTransaction = -1;
+            String typeString = result.getString(pos++);
+            if("Y".equals(typeString)) payment_confirmed=CONFIRMED;
+            else if("N".equals(typeString)) payment_confirmed=NOT_CONFIRMED;
+            else if("W".equals(typeString)) payment_confirmed=WAITING_CONFIRMATION;
+            else throw new SQLException("Unknown payment_confirmed '" + typeString + "' for transid=" + transid);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	time=in.readLong();
-	transid=in.readCompressedInt();
-	accounting=in.readCompressedUTF().intern();
-        source_accounting=in.readCompressedUTF().intern();
-	username=in.readCompressedUTF().intern();
-	type=in.readCompressedUTF().intern();
-	description=in.readCompressedUTF();
-	quantity=in.readCompressedInt();
-	rate=in.readCompressedInt();
-	payment_type=StringUtility.intern(in.readNullUTF());
-	payment_info=in.readNullUTF();
-	processor = StringUtility.intern(in.readNullUTF());
-        creditCardTransaction = in.readCompressedInt();
-	payment_confirmed=in.readByte();
+        try {
+            time=in.readLong();
+            transid=in.readCompressedInt();
+            accounting=AccountingCode.valueOf(in.readCompressedUTF()).intern();
+            source_accounting=AccountingCode.valueOf(in.readCompressedUTF()).intern();
+            username=in.readCompressedUTF().intern();
+            type=in.readCompressedUTF().intern();
+            description=in.readCompressedUTF();
+            quantity=in.readCompressedInt();
+            rate=in.readCompressedInt();
+            payment_type=InternUtils.intern(in.readNullUTF());
+            payment_info=in.readNullUTF();
+            processor = InternUtils.intern(in.readNullUTF());
+            creditCardTransaction = in.readCompressedInt();
+            payment_confirmed=in.readByte();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void setTable(AOServTable<Integer,Transaction> table) {
@@ -382,8 +395,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeLong(time);
 	out.writeCompressedInt(transid);
-	out.writeCompressedUTF(accounting, 0);
-        out.writeCompressedUTF(source_accounting, 1);
+	out.writeCompressedUTF(accounting.toString(), 0);
+        out.writeCompressedUTF(source_accounting.toString(), 1);
 	out.writeCompressedUTF(username, 2);
 	out.writeCompressedUTF(type, 3);
 	out.writeCompressedUTF(description, 4);

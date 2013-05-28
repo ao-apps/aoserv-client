@@ -1,14 +1,16 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  EmailListAddress
@@ -56,18 +58,18 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
         int len=cached.size();
         List<EmailAddress> eas=new ArrayList<EmailAddress>(len);
         for(int c=0;c<len;c++) eas.add(cached.get(c).getEmailAddress());
-	return eas;
-    }
+			return eas;
+		}
 
-    EmailListAddress getEmailListAddress(EmailAddress ea, EmailList list) throws IOException, SQLException {
-        int pkey=ea.pkey;
-        // Use the index first
-	List<EmailListAddress> cached=getEmailListAddresses(list);
-	int size=cached.size();
-	for (int c = 0; c < size; c++) {
+	    EmailListAddress getEmailListAddress(EmailAddress ea, EmailList list) throws IOException, SQLException {
+		int pkey=ea.pkey;
+		// Use the index first
+		List<EmailListAddress> cached=getEmailListAddresses(list);
+		int size=cached.size();
+		for (int c = 0; c < size; c++) {
             EmailListAddress ela=cached.get(c);
             if(ela.email_address==pkey) return ela;
-	}
+		}
         return null;
     }
 
@@ -132,7 +134,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
                             out.println(
                                 connector.getSimpleAOClient().addEmailListAddress(
                                     addr.substring(0, pos),
-                                    addr.substring(pos+1),
+                                    AOSH.parseDomainName(addr.substring(pos+1), "address"),
                                     args[c+1],
                                     args[c+2]
                                 )
@@ -154,7 +156,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
                 } else {
                     connector.getSimpleAOClient().removeEmailListAddress(
                         addr.substring(0, pos),
-                        addr.substring(pos+1),
+                        AOSH.parseDomainName(addr.substring(pos+1), "address"),
                         args[2],
                         args[3]
                     );

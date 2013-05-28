@@ -24,7 +24,7 @@ public interface ValidationResult extends Serializable {
 
     /**
      * Gets a description of why invalid in the current thread's locale.
-     * Should be simply "Valid" for valid.
+     * Should be simply "Valid" (or translation) for valid.
      */
     @Override
     String toString();

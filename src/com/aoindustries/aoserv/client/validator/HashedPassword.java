@@ -29,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
  * @author  AO Industries, Inc.
  */
 final public class HashedPassword implements
+    Comparable<HashedPassword>,
     Serializable,
     ObjectInputValidation,
     DtoFactory<com.aoindustries.aoserv.client.dto.HashedPassword>
@@ -78,7 +79,7 @@ final public class HashedPassword implements
     }
 
     public static HashedPassword valueOf(String hashedPassword) throws ValidationException {
-        return new HashedPassword(hashedPassword);
+        return hashedPassword==null ? null : new HashedPassword(hashedPassword);
     }
 
     final private String hashedPassword;
@@ -123,6 +124,11 @@ final public class HashedPassword implements
     @Override
     public int hashCode() {
         return hashedPassword.hashCode();
+    }
+
+    @Override
+    public int compareTo(HashedPassword other) {
+        return this==other ? 0 : hashedPassword.compareTo(other.hashedPassword);
     }
 
     @Override

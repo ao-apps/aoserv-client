@@ -1,15 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2005-2009 by AO Industries, Inc.,
+ * Copyright 2005-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -31,7 +33,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     static final String COLUMN_NAME_name = "name";
     static final String COLUMN_VERSION_name = "version";
 
-    String accounting;
+    AccountingCode accounting;
     String category;
     String name;
     String version;
@@ -193,36 +195,48 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        accounting=result.getString(2);
-        category=result.getString(3);
-        name=result.getString(4);
-        version=result.getString(5);
-        display=result.getString(6);
-        description=result.getString(7);
-        String S=result.getString(8);
-        setup_fee=S==null ? -1 : SQLUtility.getPennies(S);
-        setup_fee_transaction_type=result.getString(9);
-        monthly_rate=SQLUtility.getPennies(result.getString(10));
-        monthly_rate_transaction_type=result.getString(11);
-        active=result.getBoolean(12);
-        approved=result.getBoolean(13);
+        try {
+            pkey=result.getInt(1);
+            accounting=AccountingCode.valueOf(result.getString(2));
+            category=result.getString(3);
+            name=result.getString(4);
+            version=result.getString(5);
+            display=result.getString(6);
+            description=result.getString(7);
+            String S=result.getString(8);
+            setup_fee=S==null ? -1 : SQLUtility.getPennies(S);
+            setup_fee_transaction_type=result.getString(9);
+            monthly_rate=SQLUtility.getPennies(result.getString(10));
+            monthly_rate_transaction_type=result.getString(11);
+            active=result.getBoolean(12);
+            approved=result.getBoolean(13);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        accounting=in.readUTF().intern();
-        category=in.readUTF().intern();
-        name=in.readUTF();
-        version=in.readUTF();
-        display=in.readUTF();
-        description=in.readUTF();
-        setup_fee=in.readCompressedInt();
-        setup_fee_transaction_type=StringUtility.intern(in.readNullUTF());
-        monthly_rate=in.readCompressedInt();
-        monthly_rate_transaction_type=StringUtility.intern(in.readNullUTF());
-        active=in.readBoolean();
-        approved=in.readBoolean();
+        try {
+            pkey=in.readCompressedInt();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            category=in.readUTF().intern();
+            name=in.readUTF();
+            version=in.readUTF();
+            display=in.readUTF();
+            description=in.readUTF();
+            setup_fee=in.readCompressedInt();
+            setup_fee_transaction_type=InternUtils.intern(in.readNullUTF());
+            monthly_rate=in.readCompressedInt();
+            monthly_rate_transaction_type=InternUtils.intern(in.readNullUTF());
+            active=in.readBoolean();
+            approved=in.readBoolean();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
@@ -232,7 +246,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version aoservVersion) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeUTF(accounting);
+        out.writeUTF(accounting.toString());
         out.writeUTF(category);
         out.writeUTF(name);
         out.writeUTF(version);
@@ -282,7 +296,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION.ordinal());
                     out.writeCompressedInt(pkey);
-                    out.writeUTF(business.pkey);
+                    out.writeUTF(business.pkey.toString());
                     out.writeUTF(category.pkey);
                     out.writeUTF(name);
                     out.writeUTF(version);

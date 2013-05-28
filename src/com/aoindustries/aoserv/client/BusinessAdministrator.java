@@ -5,21 +5,19 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.Base64Coder;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
-import com.aoindustries.util.WrappedException;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,13 +36,8 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     static final int COLUMN_USERNAME=0;
     static final String COLUMN_USERNAME_name = "username";
 
-    /**
-     * Value representing no password.
-     */
-    public static final String NO_PASSWORD = "*";
-
+    private HashedPassword password;
     private String
-        password,
         name,
         title
     ;
@@ -130,35 +123,6 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return PasswordChecker.checkPasswordDescribe(username, password, true, false);
     }*/
 
-    /**
-     * Encrypts a password.  If the password is <code>null</code>, returns <code>NO_PASSWORD</code>.
-     * If the salt is <code>null</code>, a random salt will be generated.
-     * 
-     * @deprecated  Please use hash instead
-     * @see #hash(String)
-     */
-    public static String crypt(String password, String salt) {
-	if(password==null || password.length()==0) return BusinessAdministrator.NO_PASSWORD;
-	return salt==null || salt.length()==0?com.aoindustries.util.UnixCrypt.crypt(password):com.aoindustries.util.UnixCrypt.crypt(password, salt);
-    }
-
-    /**
-     * Performs a one-way hash of the plaintext value using SHA-1.
-     *
-     * @exception  WrappedException  if any problem occurs.
-     */
-    public static String hash(String plaintext) throws WrappedException {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            md.update(plaintext.getBytes("UTF-8"));
-            return new String(Base64Coder.encode(md.digest()));
-        } catch(NoSuchAlgorithmException err) {
-            throw new WrappedException(err);
-        } catch(UnsupportedEncodingException err) {
-            throw new WrappedException(err);
-        }
-    }
-
     public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESS_ADMINISTRATORS, dl.pkey, pkey);
     }
@@ -183,8 +147,8 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return address2;
     }
 
-    public long getBirthday() {
-	return birthday;
+    public Date getBirthday() {
+	return birthday==-1 ? null : new Date(birthday);
     }
 
     public String getCellPhone() {
@@ -201,10 +165,10 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
             case 1: return password;
             case 2: return name;
             case 3: return title;
-            case 4: return birthday==-1?null:new java.sql.Date(birthday);
+            case 4: return getBirthday();
             case 5: return isPreferred?Boolean.TRUE:Boolean.FALSE;
             case 6: return isPrivate?Boolean.TRUE:Boolean.FALSE;
-            case 7: return new java.sql.Date(created);
+            case 7: return getCreated();
             case 8: return work_phone;
             case 9: return home_phone;
             case 10: return cell_phone;
@@ -230,8 +194,8 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
         return countryCode;
     }
 
-    public long getCreated() {
-	return created;
+    public Timestamp getCreated() {
+	return new Timestamp(created);
     }
 
     public List<Ticket> getCreatedTickets() throws IOException, SQLException {
@@ -280,7 +244,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
      *
      * @see  AOServConnector#isSecure
      */
-    public String getPassword() {
+    public HashedPassword getPassword() {
 	return password;
     }
 
@@ -367,76 +331,68 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	return isPrivate;
     }
 
-    @SuppressWarnings("deprecation")
-    public static boolean passwordMatches(String plaintext, String ciphertext) {
-        if(!NO_PASSWORD.equals(ciphertext)) {
-            // Try hash first
-            String hashed = hash(plaintext);
-            if(hashed.equals(ciphertext)) return true;
-            // Try old crypt next
-            if(ciphertext.length()>=2) {
-                String salt=ciphertext.substring(0,2);
-                String crypted=com.aoindustries.util.UnixCrypt.crypt(plaintext, salt);
-                return crypted.equals(ciphertext);
-            }
-        }
-	return false;
-    }
-
-    public boolean passwordMatches(String plaintext) {
-        return passwordMatches(plaintext, password);
-    }
-
     public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        password = result.getString(2).trim();
-        name = result.getString(3);
-        title = result.getString(4);
-        String S=result.getString(5);
-        birthday = S==null?-1:SQLUtility.getDate(S.substring(0,10)).getTime();
-        isPreferred = result.getBoolean(6);
-        isPrivate = result.getBoolean(7);
-        created = result.getTimestamp(8).getTime();
-        work_phone = result.getString(9);
-        home_phone = result.getString(10);
-        cell_phone = result.getString(11);
-        fax = result.getString(12);
-        email = result.getString(13);
-        address1 = result.getString(14);
-        address2 = result.getString(15);
-        city = result.getString(16);
-        state = result.getString(17);
-        country = result.getString(18);
-        zip = result.getString(19);
-        disable_log=result.getInt(20);
-        if(result.wasNull()) disable_log=-1;
-        can_switch_users=result.getBoolean(21);
-        support_code = result.getString(22);
+        try {
+            pkey = result.getString(1);
+            password = HashedPassword.valueOf(result.getString(2));
+            name = result.getString(3);
+            title = result.getString(4);
+            Date D=result.getDate(5);
+            birthday = D==null?-1:D.getTime();
+            isPreferred = result.getBoolean(6);
+            isPrivate = result.getBoolean(7);
+            created = result.getTimestamp(8).getTime();
+            work_phone = result.getString(9);
+            home_phone = result.getString(10);
+            cell_phone = result.getString(11);
+            fax = result.getString(12);
+            email = result.getString(13);
+            address1 = result.getString(14);
+            address2 = result.getString(15);
+            city = result.getString(16);
+            state = result.getString(17);
+            country = result.getString(18);
+            zip = result.getString(19);
+            disable_log=result.getInt(20);
+            if(result.wasNull()) disable_log=-1;
+            can_switch_users=result.getBoolean(21);
+            support_code = result.getString(22);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        password=in.readUTF();
-        name=in.readUTF();
-        title=in.readNullUTF();
-        birthday=in.readLong();
-        isPreferred=in.readBoolean();
-        isPrivate=in.readBoolean();
-        created=in.readLong();
-        work_phone=in.readUTF();
-        home_phone=in.readNullUTF();
-        cell_phone=in.readNullUTF();
-        fax=in.readNullUTF();
-        email=in.readUTF();
-        address1=in.readNullUTF();
-        address2=in.readNullUTF();
-        city=in.readNullUTF();
-        state=StringUtility.intern(in.readNullUTF());
-        country=StringUtility.intern(in.readNullUTF());
-        zip=in.readNullUTF();
-        disable_log=in.readCompressedInt();
-        can_switch_users=in.readBoolean();
-        support_code = in.readNullUTF();
+        try {
+            pkey=in.readUTF().intern();
+            password=HashedPassword.valueOf(in.readNullUTF());
+            name=in.readUTF();
+            title=in.readNullUTF();
+            birthday=in.readLong();
+            isPreferred=in.readBoolean();
+            isPrivate=in.readBoolean();
+            created=in.readLong();
+            work_phone=in.readUTF();
+            home_phone=in.readNullUTF();
+            cell_phone=in.readNullUTF();
+            fax=in.readNullUTF();
+            email=in.readUTF();
+            address1=in.readNullUTF();
+            address2=in.readNullUTF();
+            city=in.readNullUTF();
+            state=InternUtils.intern(in.readNullUTF());
+            country=InternUtils.intern(in.readNullUTF());
+            zip=in.readNullUTF();
+            disable_log=in.readCompressedInt();
+            can_switch_users=in.readBoolean();
+            support_code = in.readNullUTF();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -481,7 +437,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
     public void setProfile(
         final String name,
         String title,
-        final long birthday,
+        final Date birthday,
         final boolean isPrivate,
         final String workPhone,
         String homePhone,
@@ -525,7 +481,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
                     out.writeUTF(pkey);
                     out.writeUTF(name);
                     out.writeBoolean(finalTitle!=null); if(finalTitle!=null) out.writeUTF(finalTitle);
-                    out.writeLong(birthday);
+                    out.writeLong(birthday==null ? -1 : birthday.getTime());
                     out.writeBoolean(isPrivate);
                     out.writeUTF(workPhone);
                     out.writeBoolean(finalHomePhone!=null); if(finalHomePhone!=null) out.writeUTF(finalHomePhone);
@@ -558,7 +514,8 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
-        out.writeUTF(password);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) out.writeUTF(password==null ? "*" : password.toString());
+        else out.writeNullUTF(ObjectUtils.toString(password));
         out.writeUTF(name);
         out.writeNullUTF(title);
         out.writeLong(birthday);

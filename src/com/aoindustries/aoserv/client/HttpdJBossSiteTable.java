@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -174,7 +174,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
                         args[5],
                         args[6],
                         AOSH.parseBoolean(args[7], "use_apache"),
-                        args[8],
+                        args[8].length()==0 ? null : AOSH.parseInetAddress(args[8], "ip_address"),
                         args[9],
                         args[11],
                         altHostnames,

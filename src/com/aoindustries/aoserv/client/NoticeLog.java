@@ -1,14 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.SQLUtility;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * A <code>NoticeLog</code> entry is created when a client has been
@@ -16,8 +21,6 @@ import java.sql.*;
  * debt.
  *
  * @see  NoticeType
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -33,11 +36,9 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
     public static final int NO_TRANSACTION=-1;
 
     private long create_time;
-    String
-        accounting,
-        billing_contact,
-        billing_email
-    ;
+    private AccountingCode accounting;
+    private String billing_contact;
+    private String billing_email;
     private int balance;
     private String notice_type;
     private int transid;
@@ -63,7 +64,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return new java.sql.Date(create_time);
+            case 1: return getCreateTime();
             case COLUMN_ACCOUNTING: return accounting;
             case 3: return billing_contact;
             case 4: return billing_email;
@@ -74,8 +75,8 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
         }
     }
 
-    public long getCreateTime() {
-	return create_time;
+    public Timestamp getCreateTime() {
+	return new Timestamp(create_time);
     }
 
     public NoticeType getNoticeType() throws SQLException, IOException {
@@ -96,26 +97,38 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	create_time=result.getTimestamp(2).getTime();
-	accounting=result.getString(3);
-	billing_contact=result.getString(4);
-	billing_email=result.getString(5);
-	balance=SQLUtility.getPennies(result.getString(6));
-	notice_type=result.getString(7);
-	transid=result.getInt(8);
-	if(result.wasNull()) transid=-1;
+        try {
+            pkey=result.getInt(1);
+            create_time=result.getTimestamp(2).getTime();
+            accounting=AccountingCode.valueOf(result.getString(3));
+            billing_contact=result.getString(4);
+            billing_email=result.getString(5);
+            balance=SQLUtility.getPennies(result.getString(6));
+            notice_type=result.getString(7);
+            transid=result.getInt(8);
+            if(result.wasNull()) transid=-1;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	create_time=in.readLong();
-	accounting=in.readUTF().intern();
-	billing_contact=in.readUTF();
-	billing_email=in.readUTF();
-	balance=in.readCompressedInt();
-	notice_type=in.readUTF().intern();
-	transid=in.readCompressedInt();
+        try {
+            pkey=in.readCompressedInt();
+            create_time=in.readLong();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            billing_contact=in.readUTF();
+            billing_email=in.readUTF();
+            balance=in.readCompressedInt();
+            notice_type=in.readUTF().intern();
+            transid=in.readCompressedInt();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
@@ -126,7 +139,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeLong(create_time);
-	out.writeUTF(accounting);
+	out.writeUTF(accounting.toString());
 	out.writeUTF(billing_contact);
 	out.writeUTF(billing_email);
 	out.writeCompressedInt(balance);

@@ -1,20 +1,24 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Contact information associated with a <code>Business</code>.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -27,7 +31,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
     static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_PRIORITY_name = "priority";
 
-    String accounting;
+    AccountingCode accounting;
     private int priority;
 
     private String name;
@@ -85,7 +89,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
             case 11: return country;
             case 12: return zip;
             case 13: return sendInvoice?Boolean.TRUE:Boolean.FALSE;
-            case 14: return new java.sql.Date(created);
+            case 14: return getCreated();
             case 15: return billingContact;
             case 16: return billingEmail;
             case 17: return technicalContact;
@@ -100,8 +104,8 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
         return countryCode;
     }
 
-    public long getCreated() {
-	return created;
+    public Timestamp getCreated() {
+	return new Timestamp(created);
     }
 
     public String getFax() {
@@ -141,25 +145,31 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getInt(1);
-	accounting = result.getString(2);
-	priority = result.getInt(3);
-	name = result.getString(4);
-	isPrivate = result.getBoolean(5);
-	phone = result.getString(6);
-	fax = result.getString(7);
-	address1 = result.getString(8);
-	address2 = result.getString(9);
-	city = result.getString(10);
-	state = result.getString(11);
-	country = result.getString(12);
-	zip = result.getString(13);
-	sendInvoice = result.getBoolean(14);
-	created = result.getTimestamp(15).getTime();
-	billingContact = result.getString(16);
-	billingEmail = result.getString(17);
-	technicalContact = result.getString(18);
-	technicalEmail = result.getString(19);
+        try {
+            pkey = result.getInt(1);
+            accounting = AccountingCode.valueOf(result.getString(2));
+            priority = result.getInt(3);
+            name = result.getString(4);
+            isPrivate = result.getBoolean(5);
+            phone = result.getString(6);
+            fax = result.getString(7);
+            address1 = result.getString(8);
+            address2 = result.getString(9);
+            city = result.getString(10);
+            state = result.getString(11);
+            country = result.getString(12);
+            zip = result.getString(13);
+            sendInvoice = result.getBoolean(14);
+            created = result.getTimestamp(15).getTime();
+            billingContact = result.getString(16);
+            billingEmail = result.getString(17);
+            technicalContact = result.getString(18);
+            technicalEmail = result.getString(19);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public boolean isPrivate() {
@@ -178,25 +188,31 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
     }*/
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	accounting=in.readUTF().intern();
-	priority=in.readCompressedInt();
-	name=in.readUTF();
-	isPrivate=in.readBoolean();
-	phone=in.readUTF();
-	fax=in.readNullUTF();
-	address1=in.readUTF();
-	address2=in.readNullUTF();
-	city=in.readUTF();
-	state=StringUtility.intern(in.readNullUTF());
-	country=in.readUTF().intern();
-	zip=in.readNullUTF();
-	sendInvoice=in.readBoolean();
-	created=in.readLong();
-	billingContact=in.readUTF();
-	billingEmail=in.readUTF();
-	technicalContact=in.readUTF();
-	technicalEmail=in.readUTF();
+        try {
+            pkey=in.readCompressedInt();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            priority=in.readCompressedInt();
+            name=in.readUTF();
+            isPrivate=in.readBoolean();
+            phone=in.readUTF();
+            fax=in.readNullUTF();
+            address1=in.readUTF();
+            address2=in.readNullUTF();
+            city=in.readUTF();
+            state=InternUtils.intern(in.readNullUTF());
+            country=in.readUTF().intern();
+            zip=in.readNullUTF();
+            sendInvoice=in.readBoolean();
+            created=in.readLong();
+            billingContact=in.readUTF();
+            billingEmail=in.readUTF();
+            technicalContact=in.readUTF();
+            technicalEmail=in.readUTF();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public boolean sendInvoice() {
@@ -210,7 +226,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
-	out.writeUTF(accounting);
+	out.writeUTF(accounting.toString());
 	out.writeCompressedInt(priority);
 	out.writeUTF(name);
 	out.writeBoolean(isPrivate);

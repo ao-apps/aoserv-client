@@ -1,15 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An <code>EmailAddress</code> represents a unique email
@@ -22,8 +24,6 @@ import java.util.*;
  * @see  EmailListAddress
  * @see  EmailPipeAddress
  * @see  LinuxAccAddress
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -238,7 +238,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 
     @Override
     String toStringImpl() throws SQLException, IOException {
-        return address+'@'+getDomain().getDomain();
+        return address+'@'+getDomain().getDomain().toString();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

@@ -1,14 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.Gecos;
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,8 +25,6 @@ import java.util.List;
  * @see  LinuxAccount
  * @see  MySQLUser
  * @see  PostgresUser
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -44,7 +44,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
     public void addBusinessAdministrator(
         String name,
         String title,
-        long birthday,
+        Date birthday,
         boolean isPrivate,
         String workPhone,
         String homePhone,
@@ -82,10 +82,10 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
     public void addLinuxAccount(
         LinuxGroup primaryGroup,
-        String name,
-        String office_location,
-        String office_phone,
-        String home_phone,
+        Gecos name,
+        Gecos office_location,
+        Gecos office_phone,
+        Gecos home_phone,
         LinuxAccountType typeObject,
         Shell shellObject
     ) throws IOException, SQLException {
@@ -94,10 +94,10 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
     public void addLinuxAccount(
         String primaryGroup,
-        String name,
-        String office_location,
-        String office_phone,
-        String home_phone,
+        Gecos name,
+        Gecos office_location,
+        Gecos office_phone,
+        Gecos home_phone,
         String type,
         String shell
     ) throws IOException, SQLException {

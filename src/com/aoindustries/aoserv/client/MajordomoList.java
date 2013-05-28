@@ -1,21 +1,21 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>MajordomoList</code> is one list within a <code>MajordomoServer</code>.
  *
  * @see  MajordomoServer
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -57,12 +57,12 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         }
     }
 
-    public static String getDefaultInfoFile(String domain, String listName) {
+    public static String getDefaultInfoFile(DomainName domain, String listName) {
         return
               "Information about the "+listName+" mailing list:\n"
             + "\n"
             + "HOW TO POST A MESSAGE TO THE LIST:\n"
-            + "Just send an email message to "+listName+'@'+domain+". The message will\n"
+            + "Just send an email message to "+listName+"@"+domain+". The message will\n"
             + "be distributed to all the members of the list.\n"
             + "\n"
             + "HOW TO UNSUBSCRIBE:\n"
@@ -83,7 +83,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
         return getDefaultInfoFile(getMajordomoServer().getDomain().getDomain(), name);
     }
     
-    public static String getDefaultIntroFile(String domain, String listName) {
+    public static String getDefaultIntroFile(DomainName domain, String listName) {
         return
               "Welcome to the "+listName+" mailing list.\n"
             + "\n"
@@ -232,7 +232,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 
     @Override
     String toStringImpl() throws SQLException, IOException {
-        return name+'@'+getMajordomoServer().getDomain().domain;
+        return name+'@'+getMajordomoServer().getDomain().getDomain().toString();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {

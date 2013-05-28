@@ -1,13 +1,18 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.HostAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,8 +20,6 @@ import java.util.List;
  * When a user successfully logs into either the POP3 or
  * IMAP mail systems, access from their host is
  * granted to the SMTP server via a <code>EmailSmtpRelay</code>.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -30,8 +33,6 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     static final String COLUMN_HOST_name = "host";
     static final String COLUMN_PACKAGE_name = "package";
 
-    public static final long NO_EXPIRATION=-1;
-
     /**
      * Keep the SMTP relay history for three months (92 days).
      */
@@ -39,7 +40,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 
     String packageName;
     int ao_server;
-    String host;
+    private HostAddress host;
     String type;
     private long created;
     private long last_refreshed;
@@ -76,17 +77,17 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
             case 2: return ao_server==-1?null:Integer.valueOf(ao_server);
             case 3: return host;
             case 4: return type;
-            case 5: return new java.sql.Date(created);
-            case 6: return new java.sql.Date(last_refreshed);
+            case 5: return getCreated();
+            case 6: return getLastRefreshed();
             case 7: return Integer.valueOf(refresh_count);
-            case 8: return expiration==NO_EXPIRATION?null:new java.sql.Date(expiration);
+            case 8: return getExpiration();
             case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
-    public long getCreated() {
-	return created;
+    public Timestamp getCreated() {
+	return new Timestamp(created);
     }
 
     public boolean isDisabled() {
@@ -100,11 +101,11 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         return obj;
     }
 
-    public long getExpiration() {
-	return expiration;
+    public Timestamp getExpiration() {
+	return expiration==-1 ? null : new Timestamp(expiration);
     }
 
-    public String getHost() {
+    public HostAddress getHost() {
 	return host;
     }
     
@@ -114,8 +115,8 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
         return esrt;
     }
 
-    public long getLastRefreshed() {
-	return last_refreshed;
+    public Timestamp getLastRefreshed() {
+	return new Timestamp(last_refreshed);
     }
 
     public Package getPackage() throws IOException, SQLException {
@@ -143,39 +144,44 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	packageName=result.getString(2);
-	ao_server=result.getInt(3);
-        if(result.wasNull()) ao_server=-1;
-	host=result.getString(4);
-        type=result.getString(5);
-	created=result.getTimestamp(6).getTime();
-	last_refreshed=result.getTimestamp(7).getTime();
-	refresh_count=result.getInt(8);
-	Timestamp T=result.getTimestamp(9);
-	expiration=T==null?NO_EXPIRATION:T.getTime();
-        disable_log=result.getInt(10);
-        if(result.wasNull()) disable_log=-1;
-    }
-
-    public static boolean isValidHost(String host) {
-        return
-            IPAddress.isValidIPAddress(host)
-            || EmailDomain.isValidFormat(host)
-        ;
+        try {
+            pkey=result.getInt(1);
+            packageName=result.getString(2);
+            ao_server=result.getInt(3);
+            if(result.wasNull()) ao_server=-1;
+            host=HostAddress.valueOf(result.getString(4));
+            type=result.getString(5);
+            created=result.getTimestamp(6).getTime();
+            last_refreshed=result.getTimestamp(7).getTime();
+            refresh_count=result.getInt(8);
+            Timestamp T=result.getTimestamp(9);
+            expiration=T==null?-1:T.getTime();
+            disable_log=result.getInt(10);
+            if(result.wasNull()) disable_log=-1;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	packageName=in.readUTF().intern();
-	ao_server=in.readCompressedInt();
-	host=in.readUTF();
-        type=in.readUTF().intern();
-	created=in.readLong();
-	last_refreshed=in.readLong();
-	refresh_count=in.readCompressedInt();
-	expiration=in.readLong();
-        disable_log=in.readCompressedInt();
+        try {
+            pkey=in.readCompressedInt();
+            packageName=in.readUTF().intern();
+            ao_server=in.readCompressedInt();
+            host=HostAddress.valueOf(in.readUTF());
+            type=in.readUTF().intern();
+            created=in.readLong();
+            last_refreshed=in.readLong();
+            refresh_count=in.readCompressedInt();
+            expiration=in.readLong();
+            disable_log=in.readCompressedInt();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void refresh(long minDuration) throws IOException, SQLException {
@@ -209,7 +215,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	out.writeCompressedInt(pkey);
 	out.writeUTF(packageName);
 	out.writeCompressedInt(ao_server);
-	out.writeUTF(host);
+	out.writeUTF(host.toString());
         out.writeUTF(type);
 	out.writeLong(created);
 	out.writeLong(last_refreshed);

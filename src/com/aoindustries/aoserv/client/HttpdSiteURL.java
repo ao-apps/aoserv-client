@@ -1,14 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Multiple <code>HttpdSiteURL</code>s may be attached to a unique
@@ -20,8 +25,6 @@ import java.util.*;
  * @see  HttpdSiteBind
  * @see  HttpdSite
  * @see  HttpdBind
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -35,7 +38,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
 
     int httpd_site_bind;
-    private String hostname;
+    private DomainName hostname;
     boolean isPrimary;
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -57,7 +60,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
         }
     }
 
-    public String getHostname() {
+    public DomainName getHostname() {
 	return hostname;
     }
 
@@ -113,10 +116,16 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        httpd_site_bind=result.getInt(2);
-        hostname=result.getString(3);
-        isPrimary=result.getBoolean(4);
+        try {
+            pkey=result.getInt(1);
+            httpd_site_bind=result.getInt(2);
+            hostname=DomainName.valueOf(result.getString(3));
+            isPrimary=result.getBoolean(4);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public boolean isPrimary() {
@@ -125,14 +134,20 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 
     public boolean isTestURL() throws SQLException, IOException {
         HttpdSite hs=getHttpdSiteBind().getHttpdSite();
-        return hostname.equals(hs.getSiteName()+'.'+hs.getAOServer().getHostname());
+        return hostname.toString().equalsIgnoreCase(hs.getSiteName()+"."+hs.getAOServer().getHostname());
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        httpd_site_bind=in.readCompressedInt();
-        hostname=in.readUTF();
-        isPrimary=in.readBoolean();
+        try {
+            pkey=in.readCompressedInt();
+            httpd_site_bind=in.readCompressedInt();
+            hostname=DomainName.valueOf(in.readUTF());
+            isPrimary=in.readBoolean();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void remove() throws IOException, SQLException {
@@ -145,13 +160,13 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 
     @Override
     String toStringImpl() {
-        return hostname;
+        return hostname.toString();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeCompressedInt(httpd_site_bind);
-        out.writeUTF(hostname);
+        out.writeUTF(hostname.toString());
         out.writeBoolean(isPrimary);
     }
 }

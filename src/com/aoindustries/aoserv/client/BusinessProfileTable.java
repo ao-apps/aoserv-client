@@ -1,15 +1,19 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  BusinessProfile
@@ -67,7 +71,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.BUSINESS_PROFILES.ordinal());
-                    out.writeUTF(business.getAccounting());
+                    out.writeUTF(business.getAccounting().toString());
                     out.writeUTF(name);
                     out.writeBoolean(isPrivate);
                     out.writeUTF(phone);
@@ -117,7 +121,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
      * the provided <code>Business</code>.
      */
     BusinessProfile getBusinessProfile(Business business) throws IOException, SQLException {
-	String accounting=business.getAccounting();
+	AccountingCode accounting=business.getAccounting();
 	List<BusinessProfile> cached=getRows();
 	int size=cached.size();
 	for(int c=0;c<size;c++) {
@@ -143,7 +147,7 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_PROFILE, args, 16, err)) {
                 try {
                     connector.getSimpleAOClient().addBusinessProfile(
-                        args[1],
+                        AOSH.parseAccountingCode(args[1], "business"),
                         args[2],
                         AOSH.parseBoolean(args[3], "is_secure"),
                         args[4],

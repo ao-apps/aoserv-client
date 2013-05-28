@@ -1,16 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * Each <code>Thread</code> on the master reports its activities so that
@@ -47,7 +50,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
     private String authenticated_user;
     private String effective_user;
     private int daemon_server;
-    private String host;
+    private InetAddress host;
     private String protocol;
     private String aoserv_protocol;
     private boolean is_secure;
@@ -66,7 +69,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 
     public MasterProcess(
         long process_id,
-        String host,
+        InetAddress host,
         String protocol,
         boolean is_secure,
         long connect_time
@@ -115,13 +118,13 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
             case 6: return protocol;
             case 7: return aoserv_protocol;
             case 8: return is_secure?Boolean.TRUE:Boolean.FALSE;
-            case 9: return new java.sql.Date(connect_time);
+            case 9: return getConnectTime();
             case 10: return Long.valueOf(use_count);
             case 11: return Long.valueOf(total_time);
             case 12: return Integer.valueOf(priority);
             case 13: return state;
             case 14: return getCommand();
-            case 15: return new java.sql.Date(state_start_time);
+            case 15: return getStateStartTime();
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -161,7 +164,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         return ba;
     }
 
-    public String getHost() {
+    public InetAddress getHost() {
         return host;
     }
     
@@ -181,8 +184,8 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         return is_secure;
     }
 
-    public long getConnectTime() {
-        return connect_time;
+    public Timestamp getConnectTime() {
+        return new Timestamp(connect_time);
     }
     
     public long getUseCount() {
@@ -197,8 +200,8 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         return state;
     }
     
-    public long getStateStartTime() {
-        return state_start_time;
+    public Timestamp getStateStartTime() {
+        return new Timestamp(state_start_time);
     }
 
     public Long getKey() {
@@ -223,26 +226,32 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        process_id=in.readLong();
-        connector_id=in.readLong();
-        authenticated_user=StringUtility.intern(in.readNullUTF());
-        effective_user=StringUtility.intern(in.readNullUTF());
-        daemon_server=in.readCompressedInt();
-        host=in.readUTF().intern();
-        protocol=in.readUTF().intern();
-        aoserv_protocol=StringUtility.intern(in.readNullUTF());
-        is_secure=in.readBoolean();
-        connect_time=in.readLong();
-        use_count=in.readLong();
-        total_time=in.readLong();
-        priority=in.readCompressedInt();
-        state=in.readUTF().intern();
-        if(in.readBoolean()) {
-            command=new Object[] {in.readUTF()};
-        } else {
-            command=null;
+        try {
+            process_id=in.readLong();
+            connector_id=in.readLong();
+            authenticated_user=InternUtils.intern(in.readNullUTF());
+            effective_user=InternUtils.intern(in.readNullUTF());
+            daemon_server=in.readCompressedInt();
+            host=InetAddress.valueOf(in.readUTF()).intern();
+            protocol=in.readUTF().intern();
+            aoserv_protocol=InternUtils.intern(in.readNullUTF());
+            is_secure=in.readBoolean();
+            connect_time=in.readLong();
+            use_count=in.readLong();
+            total_time=in.readLong();
+            priority=in.readCompressedInt();
+            state=in.readUTF().intern();
+            if(in.readBoolean()) {
+                command=new Object[] {in.readUTF()};
+            } else {
+                command=null;
+            }
+            state_start_time=in.readLong();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
         }
-        state_start_time=in.readLong();
     }
 
     synchronized public void setCommand(Object ... command) {
@@ -310,7 +319,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
         out.writeNullUTF(authenticated_user);
         out.writeNullUTF(effective_user);
         out.writeCompressedInt(daemon_server);
-        out.writeUTF(host);
+        out.writeUTF(host.toString());
         out.writeUTF(protocol);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
         out.writeBoolean(is_secure);

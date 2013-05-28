@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -9,6 +9,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -126,9 +127,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         VERSION_1_65("1.65"),
         VERSION_1_66("1.66"),
         VERSION_1_67("1.67"),
-        VERSION_1_68("1.68");
+        VERSION_1_68("1.68"),
+        VERSION_1_69("1.69");
 
-        public static final Version CURRENT_VERSION = VERSION_1_68;
+        public static final Version CURRENT_VERSION = VERSION_1_69;
 
         private static final Map<String,Version> versionMap = new HashMap<String,Version>();
         static {
@@ -517,9 +519,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_VERSION: return pkey;
-            case 1: return new java.sql.Date(created);
+            case 1: return getCreated();
             case 2: return comments;
-            case 3: return last_used == -1 ? null : new java.sql.Date(last_used);
+            case 3: return getLastUsed();
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -528,16 +530,16 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         return pkey;
     }
 
-    public long getCreated() {
-        return created;
+    public Date getCreated() {
+        return new Date(created);
     }
 
     public String getComments() {
         return comments;
     }
     
-    public long getLastUsed() {
-        return last_used;
+    public Date getLastUsed() {
+        return last_used==-1 ? null : new Date(last_used);
     }
 
     public SchemaTable.TableID getTableID() {
@@ -548,7 +550,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
         pkey=result.getString(1);
         created=result.getDate(2).getTime();
         comments=result.getString(3);
-        java.sql.Date D = result.getDate(4);
+        Date D = result.getDate(4);
         last_used = D==null ? -1 : D.getTime();
     }
 

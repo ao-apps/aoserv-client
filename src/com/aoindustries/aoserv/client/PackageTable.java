@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -39,7 +39,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.PACKAGES,
             name,
-            business.pkey,
+            business.pkey.toString(),
             packageDefinition.pkey
     	);
     }
@@ -87,7 +87,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
                     out.println(
                         connector.getSimpleAOClient().addPackage(
                             args[1],
-                            args[2],
+                            AOSH.parseAccountingCode(args[2], "business"),
                             AOSH.parseInt(args[3], "package_definition")
                         )
                     );

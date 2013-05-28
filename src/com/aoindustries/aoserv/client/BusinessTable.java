@@ -1,10 +1,13 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.aoserv.client.validator.ValidationResult;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -13,7 +16,6 @@ import com.aoindustries.util.tree.Node;
 import com.aoindustries.util.tree.Tree;
 import com.aoindustries.util.tree.TreeCopy;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,9 +27,9 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessTable extends CachedTableStringKey<Business> {
+final public class BusinessTable extends CachedTableAccountingCodeKey<Business> {
 
-    private String rootAccounting;
+    private AccountingCode rootAccounting;
 
     BusinessTable(AOServConnector connector) {
 	super(connector, Business.class);
@@ -42,10 +44,10 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
     }
 
     void addBusiness(
-        final String accounting,
+        final AccountingCode accounting,
         final String contractNumber,
         final Server defaultServer,
-        final String parent,
+        final AccountingCode parent,
         final boolean canAddBackupServers,
     	final boolean canAddBusinesses,
         final boolean canSeePrices,
@@ -59,11 +61,11 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.BUSINESSES.ordinal());
-                    out.writeUTF(accounting);
+                    out.writeUTF(accounting.toString());
                     out.writeBoolean(contractNumber!=null);
                     if(contractNumber!=null) out.writeUTF(contractNumber);
                     out.writeCompressedInt(defaultServer.pkey);
-                    out.writeUTF(parent);
+                    out.writeUTF(parent.toString());
                     out.writeBoolean(canAddBackupServers);
                     out.writeBoolean(canAddBusinesses);
                     out.writeBoolean(canSeePrices);
@@ -94,19 +96,31 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
         }
     }
 
-    public String generateAccountingCode(String template) throws IOException, SQLException {
-    	return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_ACCOUNTING_CODE, template);
+    public AccountingCode generateAccountingCode(AccountingCode template) throws IOException, SQLException {
+        try {
+            return AccountingCode.valueOf(
+                connector.requestStringQuery(
+                    true,
+                    AOServProtocol.CommandID.GENERATE_ACCOUNTING_CODE,
+                    template.toString()
+                )
+            );
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     /**
      * Gets one <code>Business</code> from the database.
      */
-    public Business get(String accounting) throws IOException, SQLException {
+    public Business get(AccountingCode accounting) throws IOException, SQLException {
         return getUniqueRow(Business.COLUMN_ACCOUNTING, accounting);
     }
 
     List<Business> getChildBusinesses(Business business) throws IOException, SQLException {
-        String accounting=business.pkey;
+        AccountingCode accounting=business.pkey;
 
         List<Business> cached=getRows();
         List<Business> matches=new ArrayList<Business>();
@@ -118,13 +132,21 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
         return matches;
     }
 
-    synchronized public String getRootAccounting() throws IOException, SQLException {
-        if(rootAccounting==null) rootAccounting=connector.requestStringQuery(true, AOServProtocol.CommandID.GET_ROOT_BUSINESS);
+    synchronized public AccountingCode getRootAccounting() throws IOException, SQLException {
+        if(rootAccounting==null) {
+            try {
+               rootAccounting=AccountingCode.valueOf(connector.requestStringQuery(true, AOServProtocol.CommandID.GET_ROOT_BUSINESS));
+            } catch(ValidationException e) {
+                IOException exc = new IOException(e.getLocalizedMessage());
+                exc.initCause(e);
+                throw exc;
+            }
+        }
         return rootAccounting;
     }
 
     public Business getRootBusiness() throws IOException, SQLException {
-        String accounting=getRootAccounting();
+        AccountingCode accounting=getRootAccounting();
         Business bu=get(accounting);
         if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
         return bu;
@@ -156,10 +178,10 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS, args, 8, err)) {
                 try {
                     connector.getSimpleAOClient().addBusiness(
-                        args[1],
+                        AOSH.parseAccountingCode(args[1], "accounting_code"),
                         args[2],
                         args[3],
-                        args[4],
+                        AOSH.parseAccountingCode(args[4], "parent_business"),
                         AOSH.parseBoolean(args[5], "can_add_backup_servers"),
                         AOSH.parseBoolean(args[6], "can_add_businesses"),
                         AOSH.parseBoolean(args[7], "can_see_prices"),
@@ -174,26 +196,29 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CANCEL_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.CANCEL_BUSINESS, args, 2, err)) {
-                connector.getSimpleAOClient().cancelBusiness(args[1], args[2]);
+                connector.getSimpleAOClient().cancelBusiness(
+                    AOSH.parseAccountingCode(args[1], "accounting_code"),
+                    args[2]
+                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_ACCOUNTING)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_ACCOUNTING, args, 1, err)) {
-                try {
-                    SimpleAOClient.checkAccounting(args[1]);
-                    out.println("true");
-                } catch(IllegalArgumentException iae) {
-                    out.print("aosh: "+AOSHCommand.CHECK_ACCOUNTING+": ");
-                    out.println(iae.getMessage());
-                }
+                ValidationResult validationResult = AccountingCode.validate(args[1]);
+                out.println(validationResult.isValid());
                 out.flush();
+                if(!validationResult.isValid()) {
+                    err.print("aosh: "+AOSHCommand.CHECK_ACCOUNTING+": ");
+                    err.println(validationResult.toString());
+                    err.flush();
+                }
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.DISABLE_BUSINESS, args, 2, err)) {
                 out.println(
                     connector.getSimpleAOClient().disableBusiness(
-                        args[1],
+                        AOSH.parseAccountingCode(args[1], "accounting"),
                         args[2]
                     )
                 );
@@ -202,12 +227,18 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.ENABLE_BUSINESS, args, 1, err)) {
-                connector.getSimpleAOClient().enableBusiness(args[1]);
+                connector.getSimpleAOClient().enableBusiness(
+                    AOSH.parseAccountingCode(args[1], "accounting")
+                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_ACCOUNTING)) {
             if(AOSH.checkParamCount(AOSHCommand.GENERATE_ACCOUNTING, args, 1, err)) {
-                out.println(connector.getSimpleAOClient().generateAccountingCode(args[1]));
+                out.println(
+                    connector.getSimpleAOClient().generateAccountingCode(
+                        AOSH.parseAccountingCode(args[1], "template")
+                    )
+                );
                 out.flush();
             }
             return true;
@@ -220,7 +251,11 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
         } else if(command.equalsIgnoreCase(AOSHCommand.IS_ACCOUNTING_AVAILABLE)) {
             if(AOSH.checkParamCount(AOSHCommand.IS_ACCOUNTING_AVAILABLE, args, 1, err)) {
                 try {
-                    out.println(connector.getSimpleAOClient().isAccountingAvailable(args[1]));
+                    out.println(
+                        connector.getSimpleAOClient().isAccountingAvailable(
+                            AOSH.parseAccountingCode(args[1], "accounting_code")
+                        )
+                    );
                     out.flush();
                 } catch(IllegalArgumentException iae) {
                     err.print("aosh: "+AOSHCommand.IS_ACCOUNTING_AVAILABLE+": ");
@@ -232,7 +267,7 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
         } else if(command.equalsIgnoreCase(AOSHCommand.MOVE_BUSINESS)) {
             if(AOSH.checkParamCount(AOSHCommand.MOVE_BUSINESS, args, 3, err)) {
                 connector.getSimpleAOClient().moveBusiness(
-                    args[1],
+                    AOSH.parseAccountingCode(args[1], "business"),
                     args[2],
                     args[3],
                     isInteractive?out:null
@@ -242,15 +277,21 @@ final public class BusinessTable extends CachedTableStringKey<Business> {
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_BUSINESS_ACCOUNTING)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_BUSINESS_ACCOUNTING, args, 2, err)) {
-                connector.getSimpleAOClient().setBusinessAccounting(args[1], args[2]);
+                connector.getSimpleAOClient().setBusinessAccounting(
+                    AOSH.parseAccountingCode(args[1], "old_accounting"),
+                    AOSH.parseAccountingCode(args[2], "new_accounting")
+                );
             }
             return true;
         } else return false;
     }
 
-    public boolean isAccountingAvailable(String accounting) throws SQLException, IOException {
-        if(!Business.isValidAccounting(accounting)) throw new SQLException("Invalid accounting code: "+accounting);
-        return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_ACCOUNTING_AVAILABLE, accounting);
+    public boolean isAccountingAvailable(AccountingCode accounting) throws SQLException, IOException {
+        return connector.requestBooleanQuery(
+            true,
+            AOServProtocol.CommandID.IS_ACCOUNTING_AVAILABLE,
+            accounting.toString()
+        );
     }
 
     // <editor-fold defaultstate="collapsed" desc="Tree compatibility">

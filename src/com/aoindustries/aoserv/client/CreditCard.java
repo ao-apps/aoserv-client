@@ -1,15 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -80,7 +82,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     private String processorId;
-    String accounting;
+    AccountingCode accounting;
     private String groupName;
     private String cardInfo;
     private String providerUniqueId;
@@ -208,12 +210,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
             case 16: return state;
             case 17: return postalCode;
             case 18: return countryCode;
-            case 19: return new java.sql.Date(created);
+            case 19: return getCreated();
             case 20: return createdBy;
             case 21: return principalName;
             case 22: return useMonthly?Boolean.TRUE:Boolean.FALSE;
             case 23: return isActive?Boolean.TRUE:Boolean.FALSE;
-            case 24: return deactivatedOn==-1?null:new java.sql.Date(deactivatedOn);
+            case 24: return getDeactivatedOn();
             case 25: return deactivateReason;
             case 26: return description;
             case 27: return encrypted_card_number;
@@ -280,8 +282,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return countryCodeObj;
     }
 
-    public long getCreated() {
-	return created;
+    public Timestamp getCreated() {
+	return new Timestamp(created);
     }
 
     public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
@@ -297,8 +299,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
         return principalName;
     }
 
-    public long getDeactivatedOn() {
-	return deactivatedOn;
+    public Timestamp getDeactivatedOn() {
+	return deactivatedOn==-1 ? null : new Timestamp(deactivatedOn);
     }
 
     public String getDeactivatedOnString() {
@@ -346,45 +348,51 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-	pkey = result.getInt(pos++);
-        processorId = result.getString(pos++);
-	accounting = result.getString(pos++);
-        groupName = result.getString(pos++);
-	cardInfo = result.getString(pos++);
-        providerUniqueId = result.getString(pos++);
-        firstName = result.getString(pos++);
-        lastName = result.getString(pos++);
-        companyName = result.getString(pos++);
-        email = result.getString(pos++);
-        phone = result.getString(pos++);
-        fax = result.getString(pos++);
-        customerTaxId = result.getString(pos++);
-        streetAddress1 = result.getString(pos++);
-        streetAddress2 = result.getString(pos++);
-        city = result.getString(pos++);
-        state = result.getString(pos++);
-        postalCode = result.getString(pos++);
-        countryCode = result.getString(pos++);
-	created = result.getTimestamp(pos++).getTime();
-	createdBy = result.getString(pos++);
-        principalName = result.getString(pos++);
-	useMonthly = result.getBoolean(pos++);
-	isActive = result.getBoolean(pos++);
-	Timestamp time = result.getTimestamp(pos++);
-	deactivatedOn = time == null ? -1 : time.getTime();
-	deactivateReason = result.getString(pos++);
-	description = result.getString(pos++);
-        encrypted_card_number = result.getString(pos++);
-        encryption_card_number_from = result.getInt(pos++);
-        if(result.wasNull()) encryption_card_number_from = -1;
-        encryption_card_number_recipient = result.getInt(pos++);
-        if(result.wasNull()) encryption_card_number_recipient = -1;
-        encrypted_expiration = result.getString(pos++);
-        encryption_expiration_from = result.getInt(pos++);
-        if(result.wasNull()) encryption_expiration_from = -1;
-        encryption_expiration_recipient = result.getInt(pos++);
-        if(result.wasNull()) encryption_expiration_recipient = -1;
+        try {
+            int pos = 1;
+            pkey = result.getInt(pos++);
+            processorId = result.getString(pos++);
+            accounting = AccountingCode.valueOf(result.getString(pos++));
+            groupName = result.getString(pos++);
+            cardInfo = result.getString(pos++);
+            providerUniqueId = result.getString(pos++);
+            firstName = result.getString(pos++);
+            lastName = result.getString(pos++);
+            companyName = result.getString(pos++);
+            email = result.getString(pos++);
+            phone = result.getString(pos++);
+            fax = result.getString(pos++);
+            customerTaxId = result.getString(pos++);
+            streetAddress1 = result.getString(pos++);
+            streetAddress2 = result.getString(pos++);
+            city = result.getString(pos++);
+            state = result.getString(pos++);
+            postalCode = result.getString(pos++);
+            countryCode = result.getString(pos++);
+            created = result.getTimestamp(pos++).getTime();
+            createdBy = result.getString(pos++);
+            principalName = result.getString(pos++);
+            useMonthly = result.getBoolean(pos++);
+            isActive = result.getBoolean(pos++);
+            Timestamp time = result.getTimestamp(pos++);
+            deactivatedOn = time == null ? -1 : time.getTime();
+            deactivateReason = result.getString(pos++);
+            description = result.getString(pos++);
+            encrypted_card_number = result.getString(pos++);
+            encryption_card_number_from = result.getInt(pos++);
+            if(result.wasNull()) encryption_card_number_from = -1;
+            encryption_card_number_recipient = result.getInt(pos++);
+            if(result.wasNull()) encryption_card_number_recipient = -1;
+            encrypted_expiration = result.getString(pos++);
+            encryption_expiration_from = result.getInt(pos++);
+            if(result.wasNull()) encryption_expiration_from = -1;
+            encryption_expiration_recipient = result.getInt(pos++);
+            if(result.wasNull()) encryption_expiration_recipient = -1;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public boolean getIsActive() {
@@ -392,39 +400,45 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-        processorId=in.readUTF().intern();
-	accounting=in.readUTF().intern();
-        groupName=in.readNullUTF();
-        cardInfo=in.readUTF();
-        providerUniqueId=in.readUTF();
-        firstName=in.readUTF();
-        lastName=in.readUTF();
-        companyName=in.readNullUTF();
-        email=in.readNullUTF();
-        phone=in.readNullUTF();
-        fax=in.readNullUTF();
-        customerTaxId=in.readNullUTF();
-        streetAddress1=in.readUTF();
-        streetAddress2=in.readNullUTF();
-        city=in.readUTF();
-        state=StringUtility.intern(in.readNullUTF());
-        postalCode=in.readNullUTF();
-        countryCode=in.readUTF().intern();
-	created=in.readLong();
-	createdBy=in.readUTF().intern();
-        principalName=in.readNullUTF();
-	useMonthly=in.readBoolean();
-	isActive=in.readBoolean();
-	deactivatedOn=in.readLong();
-	deactivateReason=in.readNullUTF();
-	description=in.readNullUTF();
-        encrypted_card_number=in.readNullUTF();
-        encryption_card_number_from=in.readCompressedInt();
-        encryption_card_number_recipient=in.readCompressedInt();
-        encrypted_expiration=in.readNullUTF();
-        encryption_expiration_from=in.readCompressedInt();
-        encryption_expiration_recipient=in.readCompressedInt();
+        try {
+            pkey=in.readCompressedInt();
+            processorId=in.readUTF().intern();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            groupName=in.readNullUTF();
+            cardInfo=in.readUTF();
+            providerUniqueId=in.readUTF();
+            firstName=in.readUTF();
+            lastName=in.readUTF();
+            companyName=in.readNullUTF();
+            email=in.readNullUTF();
+            phone=in.readNullUTF();
+            fax=in.readNullUTF();
+            customerTaxId=in.readNullUTF();
+            streetAddress1=in.readUTF();
+            streetAddress2=in.readNullUTF();
+            city=in.readUTF();
+            state=InternUtils.intern(in.readNullUTF());
+            postalCode=in.readNullUTF();
+            countryCode=in.readUTF().intern();
+            created=in.readLong();
+            createdBy=in.readUTF().intern();
+            principalName=in.readNullUTF();
+            useMonthly=in.readBoolean();
+            isActive=in.readBoolean();
+            deactivatedOn=in.readLong();
+            deactivateReason=in.readNullUTF();
+            description=in.readNullUTF();
+            encrypted_card_number=in.readNullUTF();
+            encryption_card_number_from=in.readCompressedInt();
+            encryption_card_number_recipient=in.readCompressedInt();
+            encrypted_expiration=in.readNullUTF();
+            encryption_expiration_from=in.readCompressedInt();
+            encryption_expiration_recipient=in.readCompressedInt();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void remove() throws IOException, SQLException {
@@ -443,7 +457,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeUTF(processorId);
-	out.writeUTF(accounting);
+	out.writeUTF(accounting.toString());
 	if(version.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(0);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(groupName);
 	out.writeUTF(cardInfo);

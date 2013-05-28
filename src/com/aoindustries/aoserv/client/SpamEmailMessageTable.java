@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -66,7 +66,7 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
     }
 
     @Override
-    final public List<SpamEmailMessage> getIndexedRows(int col, Object value) throws IOException, SQLException {
+    public List<SpamEmailMessage> getIndexedRows(int col, Object value) throws IOException, SQLException {
         if(col==SpamEmailMessage.COLUMN_PKEY) {
             SpamEmailMessage sem=get(value);
             if(sem==null) return Collections.emptyList();

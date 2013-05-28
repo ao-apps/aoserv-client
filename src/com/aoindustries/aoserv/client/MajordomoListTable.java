@@ -5,10 +5,11 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  MajordomoList
@@ -18,7 +19,7 @@ import java.util.*;
 final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoList> {
 
     MajordomoListTable(AOServConnector connector) {
-	super(connector, MajordomoList.class);
+		super(connector, MajordomoList.class);
     }
 
     private static final OrderBy[] defaultOrderBy = {
@@ -76,7 +77,7 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
         if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_LIST)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_LIST, args, 3, err)) {
                 int pkey=connector.getSimpleAOClient().addMajordomoList(
-                    args[1],
+                    AOSH.parseDomainName(args[1], "domain"),
                     args[2],
                     args[3]
                 );
@@ -98,24 +99,46 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INFO_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INFO_FILE, args, 3, err)) {
-                out.println(connector.getSimpleAOClient().getMajordomoInfoFile(args[1], args[2], args[3]));
+                out.println(
+                    connector.getSimpleAOClient().getMajordomoInfoFile(
+                        AOSH.parseDomainName(args[1], "domain"),
+                        args[2],
+                        args[3]
+                    )
+                );
                 out.flush();
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INTRO_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INTRO_FILE, args, 3, err)) {
-                out.println(connector.getSimpleAOClient().getMajordomoIntroFile(args[1], args[2], args[3]));
+                out.println(
+                    connector.getSimpleAOClient().getMajordomoIntroFile(
+                        AOSH.parseDomainName(args[1], "domain"),
+                        args[2],
+                        args[3]
+                    )
+                );
                 out.flush();
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INFO_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INFO_FILE, args, 4, err)) {
-                connector.getSimpleAOClient().setMajordomoInfoFile(args[1], args[2], args[3], args[4]);
+                connector.getSimpleAOClient().setMajordomoInfoFile(
+                    AOSH.parseDomainName(args[1], "domain"),
+                    args[2],
+                    args[3],
+                    args[4]
+                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INTRO_FILE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INTRO_FILE, args, 4, err)) {
-                connector.getSimpleAOClient().setMajordomoIntroFile(args[1], args[2], args[3], args[4]);
+                connector.getSimpleAOClient().setMajordomoIntroFile(
+                    AOSH.parseDomainName(args[1], "domain"),
+                    args[2],
+                    args[3],
+                    args[4]
+                );
             }
             return true;
         }

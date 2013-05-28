@@ -1,14 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,9 +31,9 @@ import java.util.List;
 final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
     // <editor-fold desc="Fields">
-    private String brand;
-    private String reseller;
-    private String accounting;
+    private AccountingCode brand;
+    private AccountingCode reseller;
+    private AccountingCode accounting;
     private String language;
     private String created_by;
     private int category;
@@ -81,11 +84,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
             case 9: return summary;
             case 10: return getDetails();
             case 11: return getRawEmail();
-            case COLUMN_OPEN_DATE: return new java.sql.Date(open_date);
+            case COLUMN_OPEN_DATE: return getOpenDate();
             case 13: return client_priority;
             case 14: return admin_priority;
             case 15: return status;
-            case 16: return status_timeout==-1 ? null : new java.sql.Date(status_timeout);
+            case 16: return getStatusTimeout();
             case 17: return contact_emails;
             case 18: return contact_phone_numbers;
             case 19: return getInternalNotes();
@@ -98,57 +101,74 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
     }
 
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey = result.getInt(pos++);
-        brand = result.getString(pos++);
-        reseller = result.getString(pos++);
-        accounting = result.getString(pos++);
-        language = result.getString(pos++);
-        created_by = result.getString(pos++);
-        category = result.getInt(pos++); if(result.wasNull()) category = -1;
-        ticket_type = result.getString(pos++);
-        from_address = result.getString(pos++);
-        summary = result.getString(pos++);
-        Timestamp temp = result.getTimestamp(pos++);
-        open_date = temp == null ? -1 : temp.getTime();
-        client_priority = result.getString(pos++);
-        admin_priority = result.getString(pos++);
-        status = result.getString(pos++);
-        temp = result.getTimestamp(pos++);
-        status_timeout = temp == null ? -1 : temp.getTime();
-        contact_emails = result.getString(pos++);
-        contact_phone_numbers = result.getString(pos++);
+        try {
+            int pos = 1;
+            pkey = result.getInt(pos++);
+            brand = AccountingCode.valueOf(result.getString(pos++));
+            reseller = AccountingCode.valueOf(result.getString(pos++));
+            accounting = AccountingCode.valueOf(result.getString(pos++));
+            language = result.getString(pos++);
+            created_by = result.getString(pos++);
+            category = result.getInt(pos++); if(result.wasNull()) category = -1;
+            ticket_type = result.getString(pos++);
+            from_address = result.getString(pos++);
+            summary = result.getString(pos++);
+            open_date = result.getTimestamp(pos++).getTime();
+            client_priority = result.getString(pos++);
+            admin_priority = result.getString(pos++);
+            status = result.getString(pos++);
+            Timestamp temp = result.getTimestamp(pos++);
+            status_timeout = temp == null ? -1 : temp.getTime();
+            contact_emails = result.getString(pos++);
+            contact_phone_numbers = result.getString(pos++);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readCompressedInt();
-        brand = in.readUTF().intern();
-        reseller = in.readUTF().intern();
-        accounting = StringUtility.intern(in.readNullUTF());
-        language = in.readUTF().intern();
-    	created_by = StringUtility.intern(in.readNullUTF());
-        category = in.readCompressedInt();
-    	ticket_type = in.readUTF().intern();
-        from_address = in.readNullUTF();
-        summary = in.readUTF();
-        open_date = in.readLong();
-        client_priority = in.readUTF().intern();
-        admin_priority = StringUtility.intern(in.readNullUTF());
-        status = in.readUTF().intern();
-        status_timeout = in.readLong();
-        contact_emails = in.readUTF();
-        contact_phone_numbers = in.readUTF();
+        try {
+            pkey = in.readCompressedInt();
+            brand = AccountingCode.valueOf(in.readUTF()).intern();
+            reseller = AccountingCode.valueOf(in.readUTF()).intern();
+            accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
+            language = in.readUTF().intern();
+            created_by = InternUtils.intern(in.readNullUTF());
+            category = in.readCompressedInt();
+            ticket_type = in.readUTF().intern();
+            from_address = in.readNullUTF();
+            summary = in.readUTF();
+            open_date = in.readLong();
+            client_priority = in.readUTF().intern();
+            admin_priority = InternUtils.intern(in.readNullUTF());
+            status = in.readUTF().intern();
+            status_timeout = in.readLong();
+            contact_emails = in.readUTF();
+            contact_phone_numbers = in.readUTF();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) out.writeUTF(accounting==null ? "" : accounting);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_126)>=0) out.writeNullUTF(accounting);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand.toString());
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller.toString());
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
+            out.writeUTF(accounting==null ? "" : accounting.toString());
+        } else {
+            out.writeNullUTF(ObjectUtils.toString(accounting));
+        }
         if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(language);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) out.writeUTF(created_by==null ? "" : created_by);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_126)>=0) out.writeNullUTF(created_by);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
+            out.writeUTF(created_by==null ? "" : created_by);
+        } else {
+            out.writeNullUTF(created_by);
+        }
         if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeCompressedInt(category);
     	out.writeUTF(ticket_type);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(from_address);
@@ -252,8 +272,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         return raw_email;
     }
 
-    public long getOpenDate() {
-        return open_date;
+    public Timestamp getOpenDate() {
+        return new Timestamp(open_date);
     }
 
     public TicketPriority getClientPriority() throws IOException, SQLException {
@@ -275,8 +295,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
         return statusObject;
     }
 
-    public long getStatusTimeout() {
-        return status_timeout;
+    public Timestamp getStatusTimeout() {
+        return status_timeout==-1 ? null : new Timestamp(status_timeout);
     }
 
     public String getContactEmails() {
@@ -400,8 +420,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
             true,
             AOServProtocol.CommandID.SET_TICKET_BUSINESS,
             pkey,
-            oldBusiness==null ? "" : oldBusiness.getAccounting(),
-            newBusiness==null ? "" : newBusiness.getAccounting()
+            oldBusiness==null ? "" : oldBusiness.getAccounting().toString(),
+            newBusiness==null ? "" : newBusiness.getAccounting().toString()
         );
     }
 

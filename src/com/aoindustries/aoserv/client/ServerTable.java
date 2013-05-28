@@ -1,20 +1,24 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.util.WrappedException;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @see  Server
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -107,8 +111,13 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
      */
     public Server get(String server) throws SQLException, IOException {
         // Is it the exact hostname of an ao_server?
-        AOServer aoServer = connector.getAoServers().get(server);
-        if(aoServer!=null) return aoServer.getServer();
+        try {
+            AOServer aoServer = DomainName.validate(server).isValid() ? connector.getAoServers().get(DomainName.valueOf(server)) : null;
+            if(aoServer!=null) return aoServer.getServer();
+        } catch(ValidationException e) {
+            // Should not happen since validation is checked first
+            throw new WrappedException(e);
+        }
 
         // Look for matching server name (but only one server)
         Server match = null;

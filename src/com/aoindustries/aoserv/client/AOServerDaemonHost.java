@@ -1,25 +1,28 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A limited number of hosts may connect to a <code>AOServer</code>'s daemon,
  * each is configured as an <code>AOServerDaemonHost</code>.
  *
- * @see  Server
- *
- * @version  1.0a
+ * @see  AOServer
  *
  * @author  AO Industries, Inc.
  */
-public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDaemonHost> {
+public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDaemonHost>
+    implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServerDaemonHost> {
 
     static final int
         COLUMN_PKEY=0,
@@ -29,7 +32,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
     static final String COLUMN_HOST_name = "host";
 
     int aoServer;
-    private String host;
+    private InetAddress host;
 
     Object getColumnImpl(int i) {
         switch(i) {
@@ -40,7 +43,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
         }
     }
 
-    public String getHost() {
+    public InetAddress getHost() {
 	return host;
     }
 
@@ -55,25 +58,44 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey=result.getInt(1);
-	aoServer=result.getInt(2);
-	host=result.getString(3);
+        try {
+            pkey=result.getInt(1);
+            aoServer=result.getInt(2);
+            host=InetAddress.valueOf(result.getString(3));
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	aoServer=in.readCompressedInt();
-	host=in.readUTF().intern();
+        try {
+            pkey=in.readCompressedInt();
+            aoServer=in.readCompressedInt();
+            host=InetAddress.valueOf(in.readUTF().intern());
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
     String toStringImpl() {
-	return aoServer+'|'+host;
+	return aoServer+"|"+host.toString();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
 	out.writeCompressedInt(aoServer);
-	out.writeUTF(host);
+	out.writeUTF(host.toString());
     }
+
+    // <editor-fold defaultstate="collapsed" desc="DTO">
+    @Override
+    public com.aoindustries.aoserv.client.dto.AOServerDaemonHost getDto() {
+        return new com.aoindustries.aoserv.client.dto.AOServerDaemonHost(getPkey(), aoServer, getDto(host));
+    }
+    // </editor-fold>
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -124,7 +124,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
                             out.println(
                                 connector.getSimpleAOClient().addEmailForwarding(
                                     addr.substring(0, pos),
-                                    addr.substring(pos+1),
+                                    AOSH.parseDomainName(addr.substring(pos+1), "address"),
                                     args[c+1],
                                     args[c+2]
                                 )
@@ -187,7 +187,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
                 } else {
                     connector.getSimpleAOClient().removeEmailForwarding(
                         addr.substring(0, pos),
-                        addr.substring(pos+1),
+                        AOSH.parseDomainName(addr.substring(pos+1), "domain"),
                         args[2],
                         args[3]
                     );

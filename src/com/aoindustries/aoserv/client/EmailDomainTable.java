@@ -1,14 +1,18 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.io.TerminalWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  EmailDomain
@@ -31,7 +35,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
     }
 
     int addEmailDomain(String domain, AOServer ao, Package packageObject) throws SQLException, IOException {
-        if (!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid domain format: " + domain);
+        if(!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid domain format: " + domain);
         return connector.requestIntQueryIL(
             true,
             AOServProtocol.CommandID.ADD,
@@ -47,7 +51,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
     }
 
     List<EmailDomain> getEmailDomains(Business owner) throws SQLException, IOException {
-        String accounting=owner.pkey;
+        AccountingCode accounting=owner.pkey;
 
         List<EmailDomain> cached = getRows();
 	int len = cached.size();
@@ -67,13 +71,13 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
         return getIndexedRows(EmailDomain.COLUMN_AO_SERVER, ao.pkey);
     }
 
-    EmailDomain getEmailDomain(AOServer ao, String domain) throws IOException, SQLException {
+    EmailDomain getEmailDomain(AOServer ao, DomainName domain) throws IOException, SQLException {
         // Use the index first
         List<EmailDomain> cached = getEmailDomains(ao);
 	int len = cached.size();
 	for (int c = 0; c < len; c++) {
             EmailDomain sd = cached.get(c);
-            if(domain.equals(sd.domain)) return sd;
+            if(domain.equals(sd.getDomain())) return sd;
 	}
 	return null;
     }
@@ -124,7 +128,8 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 	} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_EMAIL_DOMAIN)) {
             if(AOSH.checkParamCount(AOSHCommand.REMOVE_EMAIL_DOMAIN, args, 2, err)) {
                 connector.getSimpleAOClient().removeEmailDomain(
-                    args[1], args[2]
+                    AOSH.parseDomainName(args[1], "domain"),
+                    args[2]
                 );
             }
             return true;

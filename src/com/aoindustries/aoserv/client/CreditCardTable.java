@@ -1,10 +1,11 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -90,7 +91,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
                     out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
                     out.writeCompressedInt(SchemaTable.TableID.CREDIT_CARDS.ordinal());
                     out.writeUTF(processor.pkey);
-                    out.writeUTF(business.pkey);
+                    out.writeUTF(business.pkey.toString());
                     out.writeNullUTF(groupName);
                     out.writeUTF(cardInfo);
                     out.writeUTF(providerUniqueId);
@@ -150,7 +151,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
      * @return  the <code>CreditCard</code> or <code>null</code> if none found
      */
     CreditCard getMonthlyCreditCard(Business business) throws IOException, SQLException {
-	String accounting = business.getAccounting();
+	AccountingCode accounting = business.getAccounting();
 
 	List<CreditCard> cards = getRows();
 	int size = cards.size();

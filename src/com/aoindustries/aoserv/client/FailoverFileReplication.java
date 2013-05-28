@@ -1,15 +1,19 @@
 /*
- * Copyright 2003-2012 by AO Industries, Inc.,
+ * Copyright 2003-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.HostAddress;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.BufferManager;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,8 +21,6 @@ import java.util.List;
 
 /**
  * Causes a server to replicate itself to another machine on a regular basis.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -34,8 +36,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
     private Long max_bit_rate;
     private boolean use_compression;
     private short retention;
-    private String connect_address;
-    private String connect_from;
+    private HostAddress connect_address;
+    private InetAddress connect_from;
     private boolean enabled;
     private int quota_gid;
 
@@ -117,7 +119,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
      * Gets a connect address that should override the normal address resolution mechanisms.  This allows
      * a replication to be specifically sent through a gigabit connection or alternate route.
      */
-    public String getConnectAddress() {
+    public HostAddress getConnectAddress() {
         return connect_address;
     }
 
@@ -125,7 +127,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
      * Gets the address connections should be made from that overrides the normal address resolution mechanism.  This
      * allows a replication to be specifically sent through a gigabit connection or alternate route.
      */
-    public String getConnectFrom() {
+    public InetAddress getConnectFrom() {
         return connect_from;
     }
 
@@ -158,34 +160,46 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 
     @Override
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey=result.getInt(pos++);
-        server=result.getInt(pos++);
-        backup_partition=result.getInt(pos++);
-        long maxBitRateLong = result.getLong(pos++);
-        max_bit_rate = result.wasNull() ? null : maxBitRateLong;
-        use_compression=result.getBoolean(pos++);
-        retention=result.getShort(pos++);
-        connect_address=result.getString(pos++);
-        connect_from=result.getString(pos++);
-        enabled=result.getBoolean(pos++);
-        quota_gid=result.getInt(pos++);
-        if(result.wasNull()) quota_gid=-1;
+        try {
+            int pos = 1;
+            pkey=result.getInt(pos++);
+            server=result.getInt(pos++);
+            backup_partition=result.getInt(pos++);
+            long maxBitRateLong = result.getLong(pos++);
+            max_bit_rate = result.wasNull() ? null : maxBitRateLong;
+            use_compression=result.getBoolean(pos++);
+            retention=result.getShort(pos++);
+            connect_address=HostAddress.valueOf(result.getString(pos++));
+            connect_from=InetAddress.valueOf(result.getString(pos++));
+            enabled=result.getBoolean(pos++);
+            quota_gid=result.getInt(pos++);
+            if(result.wasNull()) quota_gid=-1;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        server=in.readCompressedInt();
-        backup_partition=in.readCompressedInt();
-        long maxBitRateLong = in.readLong();
-        max_bit_rate = maxBitRateLong==-1 ? null : maxBitRateLong;
-        use_compression=in.readBoolean();
-        retention=in.readShort();
-        connect_address=StringUtility.intern(in.readNullUTF());
-        connect_from=StringUtility.intern(in.readNullUTF());
-        enabled=in.readBoolean();
-        quota_gid=in.readCompressedInt();
+        try {
+            pkey=in.readCompressedInt();
+            server=in.readCompressedInt();
+            backup_partition=in.readCompressedInt();
+            long maxBitRateLong = in.readLong();
+            max_bit_rate = maxBitRateLong==-1 ? null : maxBitRateLong;
+            use_compression=in.readBoolean();
+            retention=in.readShort();
+            connect_address=InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
+            connect_from=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+            enabled=in.readBoolean();
+            quota_gid=in.readCompressedInt();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
@@ -215,8 +229,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeLong(-1); // last_start_time
         if(version.compareTo(AOServProtocol.Version.VERSION_1_9)>=0) out.writeBoolean(use_compression);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_13)>=0) out.writeShort(retention);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_14)>=0) out.writeNullUTF(connect_address);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_22)>=0) out.writeNullUTF(connect_from);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_14)>=0) out.writeNullUTF(ObjectUtils.toString(connect_address));
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_22)>=0) out.writeNullUTF(ObjectUtils.toString(connect_from));
         if(version.compareTo(AOServProtocol.Version.VERSION_1_15)>=0) out.writeBoolean(enabled);
         if(
             version.compareTo(AOServProtocol.Version.VERSION_1_17)>=0
@@ -260,12 +274,18 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
                     int code=in.readByte();
                     if(code==AOServProtocol.DONE) {
-                        daemonAccess = new AOServer.DaemonAccess(
-                            in.readUTF(),
-                            in.readUTF(),
-                            in.readCompressedInt(),
-                            in.readLong()
-                        );
+                        try {
+                            daemonAccess = new AOServer.DaemonAccess(
+                                in.readUTF(),
+                                HostAddress.valueOf(in.readUTF()),
+                                in.readCompressedInt(),
+                                in.readLong()
+                            );
+                        } catch(ValidationException e) {
+                            IOException exc = new IOException(e.getLocalizedMessage());
+                            exc.initCause(e);
+                            throw exc;
+                        }
                     } else {
                         AOServProtocol.checkResult(code, in);
                         throw new IOException("Unexpected response code: "+code);

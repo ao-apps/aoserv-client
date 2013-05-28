@@ -5,16 +5,23 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.HashedPassword;
+import com.aoindustries.aoserv.client.validator.HostAddress;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.BufferManager;
+import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
+import com.sun.org.apache.bcel.internal.generic.UnconditionalBranch;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -28,19 +35,18 @@ import java.util.Map;
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
-final public class AOServer extends CachedObjectIntegerKey<AOServer> {
+final public class AOServer extends CachedObjectIntegerKey<AOServer>
+    implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServer> {
 
     static final int COLUMN_SERVER=0;
     static final int COLUMN_HOSTNAME=1;
     static final String COLUMN_HOSTNAME_name = "hostname";
 
-    private String hostname;
+    private DomainName hostname;
     int daemon_bind;
-    private String daemon_key;
+    private HashedPassword daemon_key;
     private int pool_size;
     private int distro_hour;
     private long last_distro_time;
@@ -50,7 +56,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     private String time_zone;
     int jilter_bind;
     private boolean restrict_outbound_email;
-    private String daemon_connect_address;
+    private HostAddress daemon_connect_address;
     private int failover_batch_size;
     private float monitoring_load_low;
     private float monitoring_load_medium;
@@ -212,7 +218,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             case 3: return daemon_key;
             case 4: return Integer.valueOf(pool_size);
             case 5: return Integer.valueOf(distro_hour);
-            case 6: return last_distro_time==-1?null:new Date(last_distro_time);
+            case 6: return getLastDistroTime();
             case 7: return failover_server==-1?null:Integer.valueOf(failover_server);
             case 8: return daemon_device_id;
             case 9: return daemon_connect_bind==-1?null:Integer.valueOf(daemon_connect_bind);
@@ -240,7 +246,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     /**
      * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
      */
-    public String getHostname() {
+    public DomainName getHostname() {
         return hostname;
     }
 
@@ -285,10 +291,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
      * @see  #getDaemonConnectBind
      * @see  #getDaemonBind
      */
-    public String getDaemonConnectAddress() {
+    public HostAddress getDaemonConnectAddress() {
         return daemon_connect_address;
     }
-    
+
     /**
      * Gets the number of filesystem entries sent per batch during failover replications.
      */
@@ -339,8 +345,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         NetBind nb=getDaemonBind();
         if(nb==null) throw new SQLException("Unable to find daemon NetBind for AOServer: "+pkey);
         IPAddress ia=nb.getIPAddress();
-        String ip=ia.getIPAddress();
-        if(ip.equals(IPAddress.WILDCARD_IP)) {
+        InetAddress ip=ia.getInetAddress();
+        if(ip.isUnspecified()) {
             NetDeviceID ndi=getDaemonDeviceID();
             NetDevice nd=getServer().getNetDevice(ndi.getName());
             if(nd==null) throw new SQLException("Unable to find NetDevice: "+ndi.getName()+" on "+pkey);
@@ -350,7 +356,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         return ia;
     }
 
-    public String getDaemonKey() {
+    public HashedPassword getDaemonKey() {
 	return daemon_key;
     }
 
@@ -362,7 +368,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.getEmailAddresses().getEmailAddresses(this);
     }
 
-    public EmailDomain getEmailDomain(String domain) throws IOException, SQLException {
+    public EmailDomain getEmailDomain(DomainName domain) throws IOException, SQLException {
         return table.connector.getEmailDomains().getEmailDomain(this, domain);
     }
 
@@ -393,7 +399,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.getEmailPipes().getEmailPipes(this);
     }
 
-    public EmailSmtpRelay getEmailSmtpRelay(Package pk, String host) throws IOException, SQLException {
+    public EmailSmtpRelay getEmailSmtpRelay(Package pk, HostAddress host) throws IOException, SQLException {
 	return table.connector.getEmailSmtpRelays().getEmailSmtpRelay(pk, this, host);
     }
 
@@ -435,8 +441,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 	return table.connector.getHttpdSites().getHttpdSites(this);
     }
 
-    public long getLastDistroTime() {
-        return last_distro_time;
+    public Timestamp getLastDistroTime() {
+        return last_distro_time==-1 ? null : new Timestamp(last_distro_time);
     }
 
     public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
@@ -656,56 +662,68 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     }
 
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey=result.getInt(pos++);
-        hostname=result.getString(pos++);
-	daemon_bind=result.getInt(pos++);
-	if(result.wasNull()) daemon_bind=-1;
-	daemon_key=result.getString(pos++);
-	pool_size=result.getInt(pos++);
-        distro_hour=result.getInt(pos++);
-        Timestamp T=result.getTimestamp(pos++);
-        last_distro_time=T==null?-1:T.getTime();
-        failover_server=result.getInt(pos++);
-        if(result.wasNull()) failover_server=-1;
-        daemon_device_id=result.getString(pos++);
-        daemon_connect_bind=result.getInt(pos++);
-        time_zone=result.getString(pos++);
-        jilter_bind=result.getInt(pos++);
-        if(result.wasNull()) jilter_bind=-1;
-        restrict_outbound_email=result.getBoolean(pos++);
-        daemon_connect_address=result.getString(pos++);
-        failover_batch_size=result.getInt(pos++);
-        monitoring_load_low = result.getFloat(pos++);
-        if(result.wasNull()) monitoring_load_low = Float.NaN;
-        monitoring_load_medium = result.getFloat(pos++);
-        if(result.wasNull()) monitoring_load_medium = Float.NaN;
-        monitoring_load_high = result.getFloat(pos++);
-        if(result.wasNull()) monitoring_load_high = Float.NaN;
-        monitoring_load_critical = result.getFloat(pos++);
-        if(result.wasNull()) monitoring_load_critical = Float.NaN;
+        try {
+            int pos = 1;
+            pkey=result.getInt(pos++);
+            hostname = DomainName.valueOf(result.getString(pos++));
+            daemon_bind=result.getInt(pos++);
+            if(result.wasNull()) daemon_bind=-1;
+            daemon_key=HashedPassword.valueOf(result.getString(pos++));
+            pool_size=result.getInt(pos++);
+            distro_hour=result.getInt(pos++);
+            Timestamp T=result.getTimestamp(pos++);
+            last_distro_time=T==null?-1:T.getTime();
+            failover_server=result.getInt(pos++);
+            if(result.wasNull()) failover_server=-1;
+            daemon_device_id=result.getString(pos++);
+            daemon_connect_bind=result.getInt(pos++);
+            time_zone=result.getString(pos++);
+            jilter_bind=result.getInt(pos++);
+            if(result.wasNull()) jilter_bind=-1;
+            restrict_outbound_email=result.getBoolean(pos++);
+            daemon_connect_address=HostAddress.valueOf(result.getString(pos++));
+            failover_batch_size=result.getInt(pos++);
+            monitoring_load_low = result.getFloat(pos++);
+            if(result.wasNull()) monitoring_load_low = Float.NaN;
+            monitoring_load_medium = result.getFloat(pos++);
+            if(result.wasNull()) monitoring_load_medium = Float.NaN;
+            monitoring_load_high = result.getFloat(pos++);
+            if(result.wasNull()) monitoring_load_high = Float.NaN;
+            monitoring_load_critical = result.getFloat(pos++);
+            if(result.wasNull()) monitoring_load_critical = Float.NaN;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        hostname=in.readUTF();
-	daemon_bind=in.readCompressedInt();
-	daemon_key=in.readUTF();
-	pool_size=in.readCompressedInt();
-        distro_hour=in.readCompressedInt();
-        last_distro_time=in.readLong();
-        failover_server=in.readCompressedInt();
-        daemon_device_id=StringUtility.intern(in.readNullUTF());
-        daemon_connect_bind=in.readCompressedInt();
-        time_zone=in.readUTF().intern();
-        jilter_bind=in.readCompressedInt();
-        restrict_outbound_email=in.readBoolean();
-        daemon_connect_address=StringUtility.intern(in.readNullUTF());
-        failover_batch_size=in.readCompressedInt();
-        monitoring_load_low = in.readFloat();
-        monitoring_load_medium = in.readFloat();
-        monitoring_load_high = in.readFloat();
-        monitoring_load_critical = in.readFloat();
+        try {
+            pkey=in.readCompressedInt();
+            hostname=DomainName.valueOf(in.readUTF());
+            daemon_bind=in.readCompressedInt();
+            daemon_key=HashedPassword.valueOf(in.readUTF());
+            pool_size=in.readCompressedInt();
+            distro_hour=in.readCompressedInt();
+            last_distro_time=in.readLong();
+            failover_server=in.readCompressedInt();
+            daemon_device_id=InternUtils.intern(in.readNullUTF());
+            daemon_connect_bind=in.readCompressedInt();
+            time_zone=in.readUTF().intern();
+            jilter_bind=in.readCompressedInt();
+            restrict_outbound_email=in.readBoolean();
+            daemon_connect_address=InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
+            failover_batch_size=in.readCompressedInt();
+            monitoring_load_low = in.readFloat();
+            monitoring_load_medium = in.readFloat();
+            monitoring_load_high = in.readFloat();
+            monitoring_load_critical = in.readFloat();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void restartApache() throws IOException, SQLException {
@@ -727,11 +745,11 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public static class DaemonAccess {
 
         private final String protocol;
-        private final String host;
+        private final HostAddress host;
         private final int port;
         private final long key;
 
-        public DaemonAccess(String protocol, String host, int port, long key) {
+        public DaemonAccess(String protocol, HostAddress host, int port, long key) {
             this.protocol = protocol;
             this.host = host;
             this.port = port;
@@ -742,7 +760,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             return protocol;
         }
 
-        public String getHost() {
+        public HostAddress getHost() {
             return host;
         }
 
@@ -755,8 +773,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         }
     }
 
-    public void setLastDistroTime(long distroTime) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
+    public void setLastDistroTime(Timestamp distroTime) throws IOException, SQLException {
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime.getTime());
     }
 
     public void startApache() throws IOException, SQLException {
@@ -797,7 +815,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
     @Override
     protected String toStringImpl() {
-        return hostname;
+        return hostname.toString();
     }
 
     public void waitForHttpdSiteRebuild() throws IOException, SQLException {
@@ -854,10 +872,10 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             out.writeUTF("AOServer #"+pkey);
         }
         if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
-            out.writeUTF(hostname);
+            out.writeUTF(hostname.toString());
         }
 	out.writeCompressedInt(daemon_bind);
-	out.writeUTF(daemon_key);
+	out.writeUTF(daemon_key.toString());
 	out.writeCompressedInt(pool_size);
         out.writeCompressedInt(distro_hour);
         out.writeLong(last_distro_time);
@@ -884,7 +902,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(daemon_connect_address);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(ObjectUtils.toString(daemon_connect_address));
         if(version.compareTo(AOServProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
             out.writeFloat(monitoring_load_low);
@@ -914,6 +932,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-connection-states
          */
         public enum ConnectionState {
+            Unconfigured,
             StandAlone,
             Disconnecting,
             Unconnected,
@@ -935,14 +954,14 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             PausedSyncS,
             PausedSyncT,
             VerifyS,
-            VerifyT,
-            Unconfigured
+            VerifyT
         }
 
         /**
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-roles
          */
         public enum Role {
+			Unconfigured,
             Primary,
             Secondary,
             Unknown
@@ -952,6 +971,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
          * Obtained from http://www.drbd.org/users-guide/ch-admin.html#s-disk-states
          */
         public enum DiskState {
+			Unconfigured,
             Diskless,
             Attaching,
             Failed,
@@ -960,7 +980,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
             Outdated,
             DUnknown,
             Consistent,
-            UpToDate
+            UpToDate,
         }
 
         final private String device;
@@ -1096,31 +1116,45 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
 
             // Disk states
             String ds = values[3];
-            int dsSlashPos = ds.indexOf('/');
-            if(dsSlashPos==-1) throw new ParseException(
-                accessor.getMessage(
-                    "AOServer.DrbdReport.ParseException.noSlashInDiskStates",
-                    ds
-                ),
-                lineNum
-            );
-            DrbdReport.DiskState localDiskState = DrbdReport.DiskState.valueOf(ds.substring(0, dsSlashPos));
-            DrbdReport.DiskState remoteDiskState = DrbdReport.DiskState.valueOf(ds.substring(dsSlashPos+1));
+			DrbdReport.DiskState localDiskState;
+			DrbdReport.DiskState remoteDiskState;
+			if(DrbdReport.DiskState.Unconfigured.name().equals(ds)) {
+				localDiskState = DrbdReport.DiskState.Unconfigured;
+				remoteDiskState = DrbdReport.DiskState.Unconfigured;
+			} else {
+				int dsSlashPos = ds.indexOf('/');
+				if(dsSlashPos==-1) throw new ParseException(
+					accessor.getMessage(
+						"AOServer.DrbdReport.ParseException.noSlashInDiskStates",
+						ds
+					),
+					lineNum
+				);
+				localDiskState = DrbdReport.DiskState.valueOf(ds.substring(0, dsSlashPos));
+				remoteDiskState = DrbdReport.DiskState.valueOf(ds.substring(dsSlashPos+1));
+			}
 
             // Roles
             String state = values[4];
-            int slashPos = state.indexOf('/');
-            if(slashPos==-1) throw new ParseException(
-                accessor.getMessage(
-                    "AOServer.DrbdReport.ParseException.noSlashInState",
-                    state
-                ),
-                lineNum
-            );
-            DrbdReport.Role localRole = DrbdReport.Role.valueOf(state.substring(0, slashPos));
-            DrbdReport.Role remoteRole = DrbdReport.Role.valueOf(state.substring(slashPos+1));
+			DrbdReport.Role localRole;
+			DrbdReport.Role remoteRole;
+			if(DrbdReport.Role.Unconfigured.name().equals(state)) {
+				localRole = DrbdReport.Role.Unconfigured;
+				remoteRole = DrbdReport.Role.Unconfigured;
+			} else {
+				int slashPos = state.indexOf('/');
+				if(slashPos==-1) throw new ParseException(
+					accessor.getMessage(
+						"AOServer.DrbdReport.ParseException.noSlashInState",
+						state
+					),
+					lineNum
+				);
+				localRole = DrbdReport.Role.valueOf(state.substring(0, slashPos));
+				remoteRole = DrbdReport.Role.valueOf(state.substring(slashPos+1));
+			}
 
-            reports.add(new DrbdReport(device, domUHostname, domUDevice, connectionState, localDiskState, remoteDiskState, localRole, remoteRole));
+			reports.add(new DrbdReport(device, domUHostname, domUDevice, connectionState, localDiskState, remoteDiskState, localRole, remoteRole));
         }
         return reports;
     }
@@ -1966,12 +2000,12 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     /**
      * Checks a port from the daemon's point of view.  This is required for monitoring of private and loopback IPs.
      */
-    public String checkPort(String ipAddress, int port, String netProtocol, String appProtocol, Map<String,String> monitoringParameters) throws IOException, SQLException {
+    public String checkPort(InetAddress ipAddress, int port, String netProtocol, String appProtocol, Map<String,String> monitoringParameters) throws IOException, SQLException {
         return table.connector.requestStringQuery(
             true,
             AOServProtocol.CommandID.AO_SERVER_CHECK_PORT,
             pkey,
-            ipAddress,
+            ipAddress.toString(),
             port,
             netProtocol,
             appProtocol,
@@ -1993,8 +2027,8 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     /**
      * Gets the status line of a SMTP server from the server from the provided source IP.
      */
-    public String checkSmtpBlacklist(String sourceIp, String connectIp) throws IOException, SQLException {
-        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
+    public String checkSmtpBlacklist(InetAddress sourceIp, String connectIp) throws IOException, SQLException {
+        return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp.toString(), connectIp);
     }
 
     /**
@@ -2003,4 +2037,31 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer> {
     public String getUpsStatus() throws IOException, SQLException {
         return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_UPS_STATUS, pkey);
     }
+
+    // <editor-fold defaultstate="collapsed" desc="DTO">
+    @Override
+    public com.aoindustries.aoserv.client.dto.AOServer getDto() {
+        return new com.aoindustries.aoserv.client.dto.AOServer(
+            getPkey(),
+            getDto(hostname),
+            daemon_bind==-1 ? null : Integer.valueOf(daemon_bind),
+            getDto(daemon_key),
+            pool_size,
+            distro_hour,
+            last_distro_time==-1 ? null : Long.valueOf(last_distro_time),
+            failover_server==-1 ? null : Integer.valueOf(failover_server),
+            daemon_device_id,
+            daemon_connect_bind==-1 ? null : Integer.valueOf(daemon_connect_bind),
+            time_zone,
+            jilter_bind==-1 ? null : Integer.valueOf(jilter_bind),
+            restrict_outbound_email,
+            getDto(daemon_connect_address),
+            failover_batch_size,
+            Float.isNaN(monitoring_load_low) ? null : Float.valueOf(monitoring_load_low),
+            Float.isNaN(monitoring_load_medium) ? null : Float.valueOf(monitoring_load_medium),
+            Float.isNaN(monitoring_load_high) ? null : Float.valueOf(monitoring_load_high),
+            Float.isNaN(monitoring_load_critical) ? null : Float.valueOf(monitoring_load_critical)
+        );
+    }
+    // </editor-fold>
 }

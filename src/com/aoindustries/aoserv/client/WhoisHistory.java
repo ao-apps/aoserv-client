@@ -1,20 +1,21 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2007-2009 by AO Industries, Inc.,
+ * Copyright 2007-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  * Logs the whois history for each account and domain combination.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -30,7 +31,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     static final String COLUMN_TIME_name = "time";
 
     private long time;
-    String accounting;
+    private AccountingCode accounting;
     private String zone;
 
     /**
@@ -41,7 +42,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     Object getColumnImpl(int i) throws IOException, SQLException {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case 1: return new java.sql.Date(time);
+            case 1: return getTime();
             case COLUMN_ACCOUNTING: return accounting;
             case 3: return zone;
             case COLUMN_WHOIS_OUTPUT: {
@@ -56,8 +57,8 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
         return pkey;
     }
     
-    public long getTime() {
-        return time;
+    public Timestamp getTime() {
+        return new Timestamp(time);
     }
     
     public Business getBusiness() throws SQLException, IOException {
@@ -91,30 +92,42 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
     }
 
     public void init(ResultSet result) throws SQLException {
-	pkey = result.getInt(1);
-        time = result.getTimestamp(2).getTime();
-        accounting = result.getString(3);
-        zone = result.getString(4);
-        // Note: this is loaded in a separate call to the master as needed to conserve heap space: whois_output = result.getString(5);
+        try {
+            pkey = result.getInt(1);
+            time = result.getTimestamp(2).getTime();
+            accounting = AccountingCode.valueOf(result.getString(3));
+            zone = result.getString(4);
+            // Note: this is loaded in a separate call to the master as needed to conserve heap space: whois_output = result.getString(5);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey = in.readCompressedInt();
-        time = in.readLong();
-        accounting = in.readUTF().intern();
-        zone = in.readUTF().intern();
-        // Note: this is loaded in a separate call to the master as needed to conserve heap space: whois_output = in.readUTF();
+        try {
+            pkey = in.readCompressedInt();
+            time = in.readLong();
+            accounting = AccountingCode.valueOf(in.readUTF()).intern();
+            zone = in.readUTF().intern();
+            // Note: this is loaded in a separate call to the master as needed to conserve heap space: whois_output = in.readUTF();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
     String toStringImpl() {
-	return pkey+"|"+accounting+'|'+zone+'|'+new java.sql.Date(time);
+	return pkey+"|"+accounting+'|'+zone+'|'+getTime();
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 	out.writeCompressedInt(pkey);
         out.writeLong(time);
-        out.writeUTF(accounting);
+        out.writeUTF(accounting.toString());
         out.writeUTF(zone);
         // Note: this is loaded in a separate call to the master as needed to conserve heap space: out.writeUTF(whois_output);
     }

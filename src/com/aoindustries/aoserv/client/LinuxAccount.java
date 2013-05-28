@@ -1,17 +1,20 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +23,6 @@ import java.util.List;
  * of servers.  However, some of the information is common across
  * all machines, and that set of information is contained in a
  * <code>LinuxAccount</code>.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -57,10 +58,10 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 
     public static final String NO_PASSWORD_CONFIG_VALUE="!!";
 
-    private String name;
-    private String office_location;
-    private String office_phone;
-    private String home_phone;
+    private Gecos name;
+    private Gecos office_location;
+    private Gecos office_phone;
+    private Gecos home_phone;
     private String type;
     private String shell;
     private long created;
@@ -135,14 +136,14 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
             case 4: return home_phone;
             case 5: return type;
             case 6: return shell;
-            case 7: return new java.sql.Date(created);
+            case 7: return getCreated();
             case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
-    public long getCreated() {
-        return created;
+    public Timestamp getCreated() {
+        return new Timestamp(created);
     }
 
     public boolean isDisabled() {
@@ -160,7 +161,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return table.connector.getFtpGuestUsers().get(pkey);
     }
 
-    public String getHomePhone() {
+    public Gecos getHomePhone() {
         return home_phone;
     }
 
@@ -176,15 +177,15 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         return table.connector.getLinuxServerAccounts().getLinuxServerAccounts(this);
     }
 
-    public String getName() {
+    public Gecos getName() {
         return name;
     }
 
-    public String getOfficeLocation() {
+    public Gecos getOfficeLocation() {
         return office_location;
     }
 
-    public String getOfficePhone() {
+    public Gecos getOfficePhone() {
         return office_phone;
     }
 
@@ -241,75 +242,40 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        name = result.getString(2);
-        office_location = result.getString(3);
-        office_phone = result.getString(4);
-        home_phone = result.getString(5);
-        type = result.getString(6);
-        shell = result.getString(7);
-        created = result.getTimestamp(8).getTime();
-        disable_log=result.getInt(9);
-        if(result.wasNull()) disable_log=-1;
-    }
-
-    /**
-     * Determines if a name can be used as a GECOS field.  A GECOS field
-     * is valid if it is between 1 and 100 characters in length and uses only
-     * <code>[a-z,A-Z,0-9,-,_,@, ,.,#,=,/,$,%,^,&,*,(,),?,']</code> for each
-     * character.<br>
-     * <br>
-     * Refer to <code>man 5 passwd</code>
-     * @see  #setName
-     * @see  #setOfficeLocation
-     * @see  #setOfficePhone
-     * @see  #setHomePhone
-     */
-    public static String checkGECOS(String name, String display) {
-        if(name!=null) {
-            int len = name.length();
-            if (len == 0 || len > 100) return "The "+display+" must be between 1 and 100 characters long.";
-
-            for (int c = 0; c < len; c++) {
-                char ch = name.charAt(c);
-                if (
-                    (ch < 'a' || ch > 'z')
-                    && (ch<'A' || ch>'Z')
-                    && (ch < '0' || ch > '9')
-                    && ch != '-'
-                    && ch != '_'
-                    && ch != '@'
-                    && ch != ' '
-                    && ch != '.'
-                    && ch != '#'
-                    && ch != '='
-                    && ch != '/'
-                    && ch != '$'
-                    && ch != '%'
-                    && ch != '^'
-                    && ch != '&'
-                    && ch != '*'
-                    && ch != '('
-                    && ch != ')'
-                    && ch != '?'
-                    && ch != '\''
-                    && ch != '+'
-                ) return "Invalid character found in "+display+": "+ch;
-            }
+        try {
+            pkey = result.getString(1);
+            name = Gecos.valueOf(result.getString(2));
+            office_location = Gecos.valueOf(result.getString(3));
+            office_phone = Gecos.valueOf(result.getString(4));
+            home_phone = Gecos.valueOf(result.getString(5));
+            type = result.getString(6);
+            shell = result.getString(7);
+            created = result.getTimestamp(8).getTime();
+            disable_log=result.getInt(9);
+            if(result.wasNull()) disable_log=-1;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
         }
-        return null;
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        name=in.readUTF();
-        office_location=in.readBoolean()?in.readUTF():null;
-        office_phone=in.readBoolean()?in.readUTF():null;
-        home_phone=in.readBoolean()?in.readUTF():null;
-        type=in.readUTF().intern();
-        shell=in.readUTF().intern();
-        created=in.readLong();
-        disable_log=in.readCompressedInt();
+        try {
+            pkey=in.readUTF().intern();
+            name=Gecos.valueOf(in.readUTF());
+            office_location=Gecos.valueOf(in.readNullUTF());
+            office_phone=Gecos.valueOf(in.readNullUTF());
+            home_phone=Gecos.valueOf(in.readNullUTF());
+            type=in.readUTF().intern();
+            shell=in.readUTF().intern();
+            created=in.readLong();
+            disable_log=in.readCompressedInt();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -336,20 +302,20 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
         table.connector.getLinuxGroupAccounts().getLinuxGroupAccount(group.pkey, pkey).remove();
     }
 
-    public void setHomePhone(String phone) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone);
+    public void setHomePhone(Gecos phone) throws IOException, SQLException {
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_HOME_PHONE, pkey, phone==null?"":phone.toString());
     }
 
-    public void setName(String name) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name);
+    public void setName(Gecos name) throws IOException, SQLException {
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name.toString());
     }
 
-    public void setOfficeLocation(String location) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location);
+    public void setOfficeLocation(Gecos location) throws IOException, SQLException {
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_LOCATION, pkey, location==null?"":location.toString());
     }
 
-    public void setOfficePhone(String phone) throws IOException, SQLException {
-        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone);
+    public void setOfficePhone(Gecos phone) throws IOException, SQLException {
+        table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_OFFICE_PHONE, pkey, phone==null?"":phone.toString());
     }
 
     public void setPassword(String password) throws SQLException, IOException {
@@ -364,10 +330,10 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
-        out.writeUTF(name);
-        out.writeNullUTF(office_location);
-        out.writeNullUTF(office_phone);
-        out.writeNullUTF(home_phone);
+        out.writeUTF(name.toString());
+        out.writeNullUTF(ObjectUtils.toString(office_location));
+        out.writeNullUTF(ObjectUtils.toString(office_phone));
+        out.writeNullUTF(ObjectUtils.toString(home_phone));
         out.writeUTF(type);
         out.writeUTF(shell);
         out.writeLong(created);

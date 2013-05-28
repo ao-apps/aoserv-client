@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.*;
 import java.io.*;
 import java.sql.*;
@@ -180,7 +180,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
                     int code=in.readByte();
                     if(code==AOServProtocol.DONE) {
-                        result = in.readBoolean()?in.readUTF():null;
+                        result = in.readNullUTF();
                         return;
                     }
                     AOServProtocol.checkResult(code, in);
@@ -207,7 +207,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
                     int code=in.readByte();
                     if(code==AOServProtocol.DONE) {
-                        result = in.readBoolean()?in.readUTF():null;
+                        result = in.readNullUTF();
                         return;
                     }
                     AOServProtocol.checkResult(code, in);

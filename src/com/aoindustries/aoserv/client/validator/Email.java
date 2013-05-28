@@ -10,6 +10,7 @@ import com.aoindustries.aoserv.client.DtoFactory;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
 import com.aoindustries.io.FastObjectOutput;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -72,7 +73,7 @@ final public class Email implements
      * Validates the local part of the email address (before the @ symbol), as well as additional domain rules.
      */
     public static ValidationResult validate(String localPart, DomainName domain) {
-        return validateImpl(localPart, domain==null ? null : domain.toString());
+        return validateImpl(localPart, ObjectUtils.toString(domain));
     }
 
     private static final boolean[] validChars = new boolean[128];

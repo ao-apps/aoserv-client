@@ -1,10 +1,12 @@
 /*
- * Copyright 2000-2012 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -32,7 +34,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     static final String COLUMN_ACCOUNTING_name = "accounting";
     static final String COLUMN_SERVER_name = "server";
 
-    String accounting;
+    private AccountingCode accounting;
     int server;
     boolean is_default;
     private boolean
@@ -113,18 +115,24 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public void init(ResultSet result) throws SQLException {
-        pkey=result.getInt(1);
-        accounting=result.getString(2);
-        server=result.getInt(3);
-        is_default=result.getBoolean(4);
-        can_control_apache=result.getBoolean(5);
-        can_control_cron=result.getBoolean(6);
-        can_control_mysql=result.getBoolean(7);
-        can_control_postgresql=result.getBoolean(8);
-        can_control_xfs=result.getBoolean(9);
-        can_control_xvfb=result.getBoolean(10);
-        can_vnc_console = result.getBoolean(11);
-        can_control_virtual_server = result.getBoolean(12);
+        try {
+            pkey=result.getInt(1);
+            accounting=AccountingCode.valueOf(result.getString(2));
+            server=result.getInt(3);
+            is_default=result.getBoolean(4);
+            can_control_apache=result.getBoolean(5);
+            can_control_cron=result.getBoolean(6);
+            can_control_mysql=result.getBoolean(7);
+            can_control_postgresql=result.getBoolean(8);
+            can_control_xfs=result.getBoolean(9);
+            can_control_xvfb=result.getBoolean(10);
+            can_vnc_console = result.getBoolean(11);
+            can_control_virtual_server = result.getBoolean(12);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public boolean isDefault() {
@@ -132,18 +140,24 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        accounting=in.readUTF().intern();
-        server=in.readCompressedInt();
-        is_default=in.readBoolean();
-        can_control_apache=in.readBoolean();
-        can_control_cron=in.readBoolean();
-        can_control_mysql=in.readBoolean();
-        can_control_postgresql=in.readBoolean();
-        can_control_xfs=in.readBoolean();
-        can_control_xvfb=in.readBoolean();
-        can_vnc_console = in.readBoolean();
-        can_control_virtual_server = in.readBoolean();
+        try {
+            pkey=in.readCompressedInt();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            server=in.readCompressedInt();
+            is_default=in.readBoolean();
+            can_control_apache=in.readBoolean();
+            can_control_cron=in.readBoolean();
+            can_control_mysql=in.readBoolean();
+            can_control_postgresql=in.readBoolean();
+            can_control_xfs=in.readBoolean();
+            can_control_xvfb=in.readBoolean();
+            can_vnc_console = in.readBoolean();
+            can_control_virtual_server = in.readBoolean();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
@@ -178,8 +192,8 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                             else {
                                 IPAddress ia=nb.getIPAddress();
                                 NetDevice nd=ia.getNetDevice();
-                                if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), nb));
-                                else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getIPAddress()+" on "+se.toStringImpl(), nb));
+                                if(nd!=null) reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getInetAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), nb));
+                                else reasons.add(new CannotRemoveReason<NetBind>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getInetAddress()+" on "+se.toStringImpl(), nb));
                             }
                         }
                     }
@@ -190,7 +204,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
                         if(
                             nd!=null
                             && se.equals(nd.getServer())
-                        ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getIPAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), ia));
+                        ) reasons.add(new CannotRemoveReason<IPAddress>("Used by IP address "+ia.getInetAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), ia));
                     }
 
                     if(ao!=null) {
@@ -275,7 +289,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
-        out.writeUTF(accounting);
+        out.writeUTF(accounting.toString());
         out.writeCompressedInt(server);
         out.writeBoolean(is_default);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup

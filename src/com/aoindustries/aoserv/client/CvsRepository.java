@@ -1,15 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2002-2009 by AO Industries, Inc.,
+ * Copyright 2002-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -103,7 +104,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
             case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
             case 3: return Integer.valueOf(linux_server_group);
             case 4: return Long.valueOf(mode);
-            case 5: return new java.sql.Date(created);
+            case 5: return getCreated();
             case 6: return disable_log==-1?null:Integer.valueOf(disable_log);
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
@@ -140,8 +141,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
         return mode;
     }
     
-    public long getCreated() {
-        return created;
+    public Timestamp getCreated() {
+        return new Timestamp(created);
     }
 
     public SchemaTable.TableID getTableID() {

@@ -1,10 +1,15 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ShellInterpreter;
@@ -18,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
@@ -233,6 +239,14 @@ final public class AOSH extends ShellInterpreter {
         return new AOSH(connector, in, out, err, args);
     }
 
+    static AccountingCode parseAccountingCode(String S, String field) {
+        try {
+            return AccountingCode.valueOf(S);
+        } catch(ValidationException err) {
+            throw new IllegalArgumentException("invalid argument for ip_address "+field+": "+S, err);
+        }
+    }
+
     static boolean parseBoolean(String S, String field) {
         if(
             S.equalsIgnoreCase("true")
@@ -260,11 +274,11 @@ final public class AOSH extends ShellInterpreter {
         else throw new IllegalArgumentException("invalid argument for boolean "+field+": "+S);
     }
 
-    static long parseDate(String S, String field) {
+    static Date parseDate(String S, String field) {
         try {
-            return SQLUtility.getDate(S).getTime();
+            return SQLUtility.getDate(S);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for date "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for date "+field+": "+S, err);
         }
     }
 
@@ -272,7 +286,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             return Integer.parseInt(S);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for int "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for int "+field+": "+S, err);
         }
     }
 
@@ -280,7 +294,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             return Float.parseFloat(S);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for float "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for float "+field+": "+S, err);
         }
     }
 
@@ -288,7 +302,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             return Long.parseLong(S);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for long "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for long "+field+": "+S, err);
         }
     }
 
@@ -296,7 +310,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             return SQLUtility.getMillis(S);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S, err);
         }
     }
 
@@ -304,7 +318,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             return Integer.parseInt(S, 8);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for octal int "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for octal int "+field+": "+S, err);
         }
     }
 
@@ -312,7 +326,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             return Long.parseLong(S, 8);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for octal long "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for octal long "+field+": "+S, err);
         }
     }
 
@@ -320,7 +334,7 @@ final public class AOSH extends ShellInterpreter {
         try {
             return SQLUtility.getPennies(S);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S, err);
         }
     }
 
@@ -328,7 +342,31 @@ final public class AOSH extends ShellInterpreter {
         try {
             return Short.parseShort(S);
         } catch(NumberFormatException err) {
-            throw new IllegalArgumentException("invalid argument for short "+field+": "+S);
+            throw new IllegalArgumentException("invalid argument for short "+field+": "+S, err);
+        }
+    }
+
+    static DomainName parseDomainName(String S, String field) {
+        try {
+            return DomainName.valueOf(S);
+        } catch(ValidationException err) {
+            throw new IllegalArgumentException("invalid argument for domain_name "+field+": "+S, err);
+        }
+    }
+
+    static Gecos parseGecos(String S, String field) {
+        try {
+            return Gecos.valueOf(S);
+        } catch(ValidationException err) {
+            throw new IllegalArgumentException("invalid argument for gecos "+field+": "+S, err);
+        }
+    }
+
+    static InetAddress parseInetAddress(String S, String field) {
+        try {
+            return InetAddress.valueOf(S);
+        } catch(ValidationException err) {
+            throw new IllegalArgumentException("invalid argument for ip_address "+field+": "+S, err);
         }
     }
 

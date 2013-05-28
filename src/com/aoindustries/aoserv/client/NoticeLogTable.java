@@ -1,10 +1,11 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.*;
 import java.io.*;
 import java.math.BigDecimal;
@@ -32,7 +33,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
     }
 
     void addNoticeLog(
-	String accounting,
+	AccountingCode accounting,
 	String billingContact,
 	String emailAddress,
 	BigDecimal balance,
@@ -43,7 +44,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
             true,
             AOServProtocol.CommandID.ADD,
             SchemaTable.TableID.NOTICE_LOG,
-            accounting,
+            accounting.toString(),
             billingContact,
             emailAddress,
             balance.scaleByPowerOfTen(2).intValueExact(),
@@ -70,7 +71,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	if(command.equalsIgnoreCase(AOSHCommand.ADD_NOTICE_LOG)) {
             if(AOSH.checkParamCount(AOSHCommand.ADD_NOTICE_LOG, args, 6, err)) {
                 connector.getSimpleAOClient().addNoticeLog(
-                    args[1],
+                    AOSH.parseAccountingCode(args[1], "business"),
                     args[2],
                     args[3],
                     BigDecimal.valueOf(AOSH.parsePennies(args[4], "balance"), 2),

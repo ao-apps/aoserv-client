@@ -1,16 +1,23 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.*;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.ValidationResult;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.StringUtility;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see  LinuxAccount
@@ -34,22 +41,13 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
     void addLinuxAccount(
     	final Username usernameObject,
         final String primaryGroup,
-        final String name,
-        String office_location,
-        String office_phone,
-        String home_phone,
+        final Gecos name,
+        final Gecos office_location,
+        final Gecos office_phone,
+        final Gecos home_phone,
         final String type,
         final String shell
     ) throws IOException, SQLException {
-        String validity=LinuxAccount.checkGECOS(name, "full name");
-        if(validity!=null) throw new SQLException(validity);
-
-        if(office_location!=null && office_location.length()==0) office_location=null;
-        final String finalOfficeLocation = office_location;
-        if(office_phone!=null && office_phone.length()==0) office_phone=null;
-        final String finalOfficePhone = office_phone;
-        if(home_phone!=null && home_phone.length()==0) home_phone=null;
-        final String finalHomePhone = home_phone;
         connector.requestUpdate(
             true,
             new AOServConnector.UpdateRequest() {
@@ -60,10 +58,10 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
                     out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
                     out.writeUTF(usernameObject.pkey);
                     out.writeUTF(primaryGroup);
-                    out.writeUTF(name);
-                    out.writeBoolean(finalOfficeLocation!=null); if(finalOfficeLocation!=null) out.writeUTF(finalOfficeLocation);
-                    out.writeBoolean(finalOfficePhone!=null); if(finalOfficePhone!=null) out.writeUTF(finalOfficePhone);
-                    out.writeBoolean(finalHomePhone!=null); if(finalHomePhone!=null) out.writeUTF(finalHomePhone);
+                    out.writeUTF(name.toString());
+                    out.writeNullUTF(ObjectUtils.toString(office_location));
+                    out.writeNullUTF(ObjectUtils.toString(office_phone));
+                    out.writeNullUTF(ObjectUtils.toString(home_phone));
                     out.writeUTF(type);
                     out.writeUTF(shell);
                 }
@@ -100,7 +98,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
     }
 
     List<LinuxAccount> getMailAccounts(Business business) throws IOException, SQLException {
-        String accounting=business.pkey;
+        AccountingCode accounting=business.pkey;
         List<LinuxAccount> cached = getRows();
         int len = cached.size();
         List<LinuxAccount> matches=new ArrayList<LinuxAccount>(len);
@@ -126,10 +124,10 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
                 connector.getSimpleAOClient().addLinuxAccount(
                     args[1],
                     args[2],
-                    args[3],
-                    args[4],
-                    args[5],
-                    args[6],
+                    AOSH.parseGecos(args[3], "full_name"),
+                    args[4].length()==0 ? null : AOSH.parseGecos(args[4], "office_location"),
+                    args[5].length()==0 ? null : AOSH.parseGecos(args[5], "office_phone"),
+                    args[6].length()==0 ? null : AOSH.parseGecos(args[6], "home_phone"),
                     args[7],
                     args[8]
                 );
@@ -147,13 +145,14 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_LINUX_ACCOUNT_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.CHECK_LINUX_ACCOUNT_NAME, args, 1, err)) {
-                try {
-                    SimpleAOClient.checkLinuxAccountName(args[1]);
-                    out.println("true");
-                } catch(IllegalArgumentException ia) {
-                    out.println("false");
-                }
+                ValidationResult validationResult = Gecos.validate(args[1]);
+                out.println(validationResult.isValid());
                 out.flush();
+                if(!validationResult.isValid()) {
+                    err.print("aosh: "+AOSHCommand.CHECK_ACCOUNTING+": ");
+                    err.println(validationResult.toString());
+                    err.flush();
+                }
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.CHECK_LINUX_ACCOUNT_PASSWORD)) {
@@ -199,22 +198,34 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_HOME_PHONE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_HOME_PHONE, args, 2, err)) {
-                connector.getSimpleAOClient().setLinuxAccountHomePhone(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountHomePhone(
+                    args[1],
+                    args[2].length()==0 ? null : AOSH.parseGecos(args[2], "phone_number")
+                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_NAME)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_NAME, args, 2, err)) {
-                connector.getSimpleAOClient().setLinuxAccountName(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountName(
+                    args[1],
+                    AOSH.parseGecos(args[2], "full_name")
+                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_LOCATION)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_LOCATION, args, 2, err)) {
-                connector.getSimpleAOClient().setLinuxAccountOfficeLocation(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountOfficeLocation(
+                    args[1],
+                    args[2].length()==0 ? null : AOSH.parseGecos(args[2], "loation")
+                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_PHONE)) {
             if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_PHONE, args, 2, err)) {
-                connector.getSimpleAOClient().setLinuxAccountOfficePhone(args[1], args[2]);
+                connector.getSimpleAOClient().setLinuxAccountOfficePhone(
+                    args[1],
+                    args[2].length()==0 ? null : AOSH.parseGecos(args[2], "phone_number")
+                );
             }
             return true;
         } else if(command.equalsIgnoreCase(AOSHCommand.SET_LINUX_ACCOUNT_PASSWORD)) {

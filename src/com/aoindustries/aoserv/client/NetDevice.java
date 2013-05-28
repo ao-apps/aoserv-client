@@ -1,13 +1,16 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,9 +36,9 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
     String device_id;
     private String description;
     private String delete_route;
-    private String gateway;
-    private String network;
-    private String broadcast;
+    private InetAddress gateway;
+    private InetAddress network;
+    private InetAddress broadcast;
     private String mac_address;
     private long max_bit_rate;
     private long monitoring_bit_rate_low;
@@ -72,11 +75,11 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	return description;
     }
 
-    public String getGateway() {
+    public InetAddress getGateway() {
 	return gateway;
     }
     
-    public IPAddress getIPAddress(String ipAddress) throws IOException, SQLException {
+    public IPAddress getIPAddress(InetAddress ipAddress) throws IOException, SQLException {
 	return table.connector.getIpAddresses().getIPAddress(this, ipAddress);
     }
 
@@ -90,11 +93,11 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
         return ndi;
     }
 
-    public String getNetwork() {
+    public InetAddress getNetwork() {
         return network;
     }
     
-    public String getBroadcast() {
+    public InetAddress getBroadcast() {
         return broadcast;
     }
     
@@ -168,44 +171,56 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
     @Override
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-	pkey=result.getInt(pos++);
-	server=result.getInt(pos++);
-	device_id=result.getString(pos++);
-	description=result.getString(pos++);
-	delete_route=result.getString(pos++);
-	gateway=result.getString(pos++);
-        network=result.getString(pos++);
-        broadcast=result.getString(pos++);
-        mac_address=result.getString(pos++);
-        max_bit_rate=result.getLong(pos++);
-        if(result.wasNull()) max_bit_rate=-1;
-        monitoring_bit_rate_low = result.getLong(pos++);
-        if(result.wasNull()) monitoring_bit_rate_low = -1;
-        monitoring_bit_rate_medium = result.getLong(pos++);
-        if(result.wasNull()) monitoring_bit_rate_medium = -1;
-        monitoring_bit_rate_high = result.getLong(pos++);
-        if(result.wasNull()) monitoring_bit_rate_high = -1;
-        monitoring_bit_rate_critical = result.getLong(pos++);
-        if(result.wasNull()) monitoring_bit_rate_critical = -1;
+        try {
+            int pos = 1;
+            pkey=result.getInt(pos++);
+            server=result.getInt(pos++);
+            device_id=result.getString(pos++);
+            description=result.getString(pos++);
+            delete_route=result.getString(pos++);
+            gateway=InetAddress.valueOf(result.getString(pos++));
+            network=InetAddress.valueOf(result.getString(pos++));
+            broadcast=InetAddress.valueOf(result.getString(pos++));
+            mac_address=result.getString(pos++);
+            max_bit_rate=result.getLong(pos++);
+            if(result.wasNull()) max_bit_rate=-1;
+            monitoring_bit_rate_low = result.getLong(pos++);
+            if(result.wasNull()) monitoring_bit_rate_low = -1;
+            monitoring_bit_rate_medium = result.getLong(pos++);
+            if(result.wasNull()) monitoring_bit_rate_medium = -1;
+            monitoring_bit_rate_high = result.getLong(pos++);
+            if(result.wasNull()) monitoring_bit_rate_high = -1;
+            monitoring_bit_rate_critical = result.getLong(pos++);
+            if(result.wasNull()) monitoring_bit_rate_critical = -1;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
     public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readCompressedInt();
-	server=in.readCompressedInt();
-	device_id=in.readUTF().intern();
-	description=in.readUTF();
-	delete_route=StringUtility.intern(in.readNullUTF());
-	gateway=StringUtility.intern(in.readNullUTF());
-        network=StringUtility.intern(in.readNullUTF());
-        broadcast=StringUtility.intern(in.readNullUTF());
-        mac_address=in.readNullUTF();
-        max_bit_rate=in.readLong();
-        monitoring_bit_rate_low = in.readLong();
-        monitoring_bit_rate_medium = in.readLong();
-        monitoring_bit_rate_high = in.readLong();
-        monitoring_bit_rate_critical = in.readLong();
+        try {
+            pkey=in.readCompressedInt();
+            server=in.readCompressedInt();
+            device_id=in.readUTF().intern();
+            description=in.readUTF();
+            delete_route=InternUtils.intern(in.readNullUTF());
+            gateway=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+            network=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+            broadcast=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
+            mac_address=in.readNullUTF();
+            max_bit_rate=in.readLong();
+            monitoring_bit_rate_low = in.readLong();
+            monitoring_bit_rate_medium = in.readLong();
+            monitoring_bit_rate_high = in.readLong();
+            monitoring_bit_rate_critical = in.readLong();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     @Override
@@ -220,11 +235,11 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	out.writeUTF(device_id);
 	out.writeUTF(description);
 	out.writeNullUTF(delete_route);
-	out.writeNullUTF(gateway);
+	out.writeNullUTF(ObjectUtils.toString(gateway));
         if(version.compareTo(AOServProtocol.Version.VERSION_1_37)<=0) out.writeUTF("255.255.255.0");
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_112)>=0) {
-            out.writeNullUTF(network);
-            out.writeNullUTF(broadcast);
+            out.writeNullUTF(ObjectUtils.toString(network));
+            out.writeNullUTF(ObjectUtils.toString(broadcast));
         }
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)>=0) {
             out.writeNullUTF(mac_address);

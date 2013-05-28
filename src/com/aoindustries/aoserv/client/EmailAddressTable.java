@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -122,7 +122,7 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
                         } else {
                             connector.getSimpleAOClient().removeEmailAddress(
                                 addr.substring(0, pos),
-                                addr.substring(pos+1),
+                                AOSH.parseDomainName(addr.substring(pos+1), "address"),
                                 args[c+1]
                             );
                         }

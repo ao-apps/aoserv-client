@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,8 +10,8 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -38,7 +38,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
         final Username username,
         final String name,
         String title,
-        final long birthday,
+        final Date birthday,
         final boolean isPrivate,
         final String workPhone,
         String homePhone,
@@ -83,7 +83,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
                     out.writeUTF(username.pkey);
                     out.writeUTF(name);
                     out.writeBoolean(finalTitle!=null); if(finalTitle!=null) out.writeUTF(finalTitle);
-                    out.writeLong(birthday);
+                    out.writeLong(birthday==null ? -1 : birthday.getTime());
                     out.writeBoolean(isPrivate);
                     out.writeUTF(workPhone);
                     out.writeBoolean(finalHomePhone!=null); if(finalHomePhone!=null) out.writeUTF(finalHomePhone);
@@ -136,7 +136,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
                     args[1],
                     args[2],
                     args[3],
-                    args[4].length()==0?-1:AOSH.parseDate(args[4], "birthday"),
+                    args[4].length()==0?null:AOSH.parseDate(args[4], "birthday"),
                     AOSH.parseBoolean(args[5], "is_private"),
                     args[6],
                     args[7],

@@ -1,10 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.util.tree.Node;
 import com.aoindustries.util.tree.Tree;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BrandTable extends CachedTableStringKey<Brand> {
+final public class BrandTable extends CachedTableAccountingCodeKey<Brand> {
 
     BrandTable(AOServConnector connector) {
         super(connector, Brand.class);
@@ -35,7 +36,7 @@ final public class BrandTable extends CachedTableStringKey<Brand> {
     /**
      * Gets a <code>Brand</code> from the database.
      */
-    public Brand get(String accounting) throws IOException, SQLException {
+    public Brand get(AccountingCode accounting) throws IOException, SQLException {
         return getUniqueRow(Brand.COLUMN_ACCOUNTING, accounting);
     }
 
