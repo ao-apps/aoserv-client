@@ -1,10 +1,13 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -67,7 +70,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     public static final float DEFAULT_EMAIL_RELAY_RATE = .1f;
 
     String name;
-    String accounting;
+    AccountingCode accounting;
     int package_definition;
     private long created;
     private String created_by;
@@ -79,8 +82,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     private int email_relay_burst;
     private float email_relay_rate;
 
-    public void addDNSZone(String zone, String ip, int ttl) throws IOException, SQLException {
-	    table.connector.getDnsZones().addDNSZone(this, zone, ip, ttl);
+    public void addDNSZone(String zone, InetAddress ip, int ttl) throws IOException, SQLException {
+        table.connector.getDnsZones().addDNSZone(this, zone, ip, ttl);
     }
     
     public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
@@ -145,7 +148,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
             case COLUMN_NAME: return name;
             case COLUMN_ACCOUNTING: return accounting;
             case COLUMN_PACKAGE_DEFINITION: return Integer.valueOf(package_definition);
-            case 4: return new java.sql.Date(created);
+            case 4: return getCreated();
             case 5: return created_by;
             case 6: return disable_log==-1?null:Integer.valueOf(disable_log);
             case 7: return email_in_burst==-1 ? null : Integer.valueOf(email_in_burst);
@@ -158,8 +161,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
         }
     }
 
-    public long getCreated() {
-	return created;
+    public Timestamp getCreated() {
+	return new Timestamp(created);
     }
 
     public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
@@ -330,54 +333,65 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
     }
 
     public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey = result.getInt(pos++);
-        name = result.getString(pos++);
-        accounting = result.getString(pos++);
-        package_definition = result.getInt(pos++);
-        Timestamp temp5 = result.getTimestamp(pos++);
-        created = temp5 == null ? -1 : temp5.getTime();
-        created_by = result.getString(pos++);
-        disable_log=result.getInt(pos++);
-        if(result.wasNull()) disable_log = -1;
-        email_in_burst=result.getInt(pos++);
-        if(result.wasNull()) email_in_burst = -1;
-        email_in_rate=result.getFloat(pos++);
-        if(result.wasNull()) email_in_rate = Float.NaN;
-        email_out_burst=result.getInt(pos++);
-        if(result.wasNull()) email_out_burst = -1;
-        email_out_rate=result.getFloat(pos++);
-        if(result.wasNull()) email_out_rate = Float.NaN;
-        email_relay_burst=result.getInt(pos++);
-        if(result.wasNull()) email_relay_burst = -1;
-        email_relay_rate=result.getFloat(pos++);
-        if(result.wasNull()) email_relay_rate = Float.NaN;
+        try {
+            int pos = 1;
+            pkey = result.getInt(pos++);
+            name = result.getString(pos++);
+            accounting = AccountingCode.valueOf(result.getString(pos++));
+            package_definition = result.getInt(pos++);
+            created = result.getTimestamp(pos++).getTime();
+            created_by = result.getString(pos++);
+            disable_log=result.getInt(pos++);
+            if(result.wasNull()) disable_log = -1;
+            email_in_burst=result.getInt(pos++);
+            if(result.wasNull()) email_in_burst = -1;
+            email_in_rate=result.getFloat(pos++);
+            if(result.wasNull()) email_in_rate = Float.NaN;
+            email_out_burst=result.getInt(pos++);
+            if(result.wasNull()) email_out_burst = -1;
+            email_out_rate=result.getFloat(pos++);
+            if(result.wasNull()) email_out_rate = Float.NaN;
+            email_relay_burst=result.getInt(pos++);
+            if(result.wasNull()) email_relay_burst = -1;
+            email_relay_rate=result.getFloat(pos++);
+            if(result.wasNull()) email_relay_rate = Float.NaN;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public static boolean isValidPackageName(String packageName) {
-        return Business.isValidAccounting(packageName);
+        return AccountingCode.validate(packageName).isValid();
     }
 
     public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readCompressedInt();
-        name=in.readUTF().intern();
-        accounting=in.readUTF().intern();
-        package_definition=in.readCompressedInt();
-        created=in.readLong();
-        created_by=in.readUTF().intern();
-        disable_log=in.readCompressedInt();
-        email_in_burst=in.readCompressedInt();
-        email_in_rate=in.readFloat();
-        email_out_burst=in.readCompressedInt();
-        email_out_rate=in.readFloat();
-        email_relay_burst=in.readCompressedInt();
-        email_relay_rate=in.readFloat();
+        try {
+            pkey=in.readCompressedInt();
+            name=in.readUTF().intern();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            package_definition=in.readCompressedInt();
+            created=in.readLong();
+            created_by=in.readUTF().intern();
+            disable_log=in.readCompressedInt();
+            email_in_burst=in.readCompressedInt();
+            email_in_rate=in.readFloat();
+            email_out_burst=in.readCompressedInt();
+            email_out_rate=in.readFloat();
+            email_relay_burst=in.readCompressedInt();
+            email_relay_rate=in.readFloat();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         out.writeUTF(name);
-        out.writeUTF(accounting);
+        out.writeUTF(accounting.toString());
         if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
             out.writeUTF("unknown");
             out.writeCompressedInt(0);

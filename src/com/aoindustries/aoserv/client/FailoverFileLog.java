@@ -1,20 +1,14 @@
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.FastExternalizable;
-import com.aoindustries.io.FastObjectInput;
-import com.aoindustries.io.FastObjectOutput;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
+import com.aoindustries.io.*;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * The entire contents of servers are periodically replicated to another server.  In the
@@ -23,170 +17,135 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class FailoverFileLog extends AOServObjectIntegerKey implements Comparable<FailoverFileLog>, DtoFactory<com.aoindustries.aoserv.client.dto.FailoverFileLog>, FastExternalizable {
+final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog> implements SingleTableObject<Integer,FailoverFileLog> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
+    static final String COLUMN_REPLICATION_name = "replication";
+    static final String COLUMN_END_TIME_name = "end_time";
+
+    protected AOServTable<Integer,FailoverFileLog> table;
+
+    private int pkey;
     private int replication;
     private long startTime;
     private long endTime;
     private int scanned;
     private int updated;
     private long bytes;
-    private boolean successful;
-
-    public FailoverFileLog(
-        AOServConnector connector,
-        int pkey,
-        int replication,
-        long startTime,
-        long endTime,
-        int scanned,
-        int updated,
-        long bytes,
-        boolean isSuccessful
-    ) {
-        super(connector, pkey);
-        this.replication = replication;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.scanned = scanned;
-        this.updated = updated;
-        this.bytes = bytes;
-        this.successful = isSuccessful;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="FastExternalizable">
-    private static final long serialVersionUID = -4289674682220613055L;
-
-    public FailoverFileLog() {
-        replication = Integer.MIN_VALUE;
-    }
+    private boolean is_successful;
 
     @Override
-    public long getSerialVersionUID() {
-        return super.getSerialVersionUID() ^ serialVersionUID;
+    boolean equalsImpl(Object O) {
+	return
+            O instanceof FailoverFileLog
+            && ((FailoverFileLog)O).pkey==pkey
+	;
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        FastObjectOutput fastOut = FastObjectOutput.wrap(out);
-        try {
-            super.writeExternal(fastOut);
-            fastOut.writeInt(replication);
-            fastOut.writeLong(startTime);
-            fastOut.writeLong(endTime);
-            fastOut.writeInt(scanned);
-            fastOut.writeInt(updated);
-            fastOut.writeLong(bytes);
-            fastOut.writeBoolean(successful);
-        } finally {
-            fastOut.unwrap();
+    public long getBytes() {
+	return bytes;
+    }
+
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case 0: return Integer.valueOf(pkey);
+            case 1: return Integer.valueOf(replication);
+            case 2: return getStartTime();
+            case 3: return getEndTime();
+            case 4: return Integer.valueOf(scanned);
+            case 5: return Integer.valueOf(updated);
+            case 6: return Long.valueOf(bytes);
+            case 7: return is_successful?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        if(replication!=Integer.MIN_VALUE) throw new IllegalStateException();
-        FastObjectInput fastIn = FastObjectInput.wrap(in);
-        try {
-            super.readExternal(fastIn);
-            replication = fastIn.readInt();
-            startTime = fastIn.readLong();
-            endTime = fastIn.readLong();
-            scanned = fastIn.readInt();
-            updated = fastIn.readInt();
-            bytes = fastIn.readLong();
-            successful = fastIn.readBoolean();
-        } finally {
-            fastIn.unwrap();
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(FailoverFileLog other) {
-        try {
-            int diff = compare(other.endTime, endTime); // Descending
-            if(diff!=0) return diff;
-            return replication==other.replication ? 0 : getReplication().compareTo(other.getReplication());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated, unique id")
-    public int getPkey() {
-        return getKeyInt();
-    }
-
-    public static final MethodColumn COLUMN_REPLICATION = getMethodColumn(FailoverFileLog.class, "replication");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the replication that was performed")
-    public FailoverFileReplication getReplication() throws RemoteException {
-        return getConnector().getFailoverFileReplications().get(replication);
-    }
-
-    @SchemaColumn(order=2, description="the time the replication started")
     public Timestamp getStartTime() {
         return new Timestamp(startTime);
     }
 
-    @SchemaColumn(order=3, description="the time the replication finished")
     public Timestamp getEndTime() {
-        return new Timestamp(endTime);
+	return new Timestamp(endTime);
     }
 
-    @SchemaColumn(order=4, description="the number of files scanned")
+    public int getPkey() {
+	return pkey;
+    }
+
+    public Integer getKey() {
+	return pkey;
+    }
+
     public int getScanned() {
-    	return scanned;
+	return scanned;
     }
 
-    @SchemaColumn(order=5, description="the number of files updated")
+    public FailoverFileReplication getFailoverFileReplication() throws SQLException, IOException {
+        FailoverFileReplication ffr=table.connector.getFailoverFileReplications().get(replication);
+        if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
+        return ffr;
+    }
+
+    /**
+     * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
+     *
+     * @return  the <code>AOServTable</code>.
+     */
+    final public AOServTable<Integer,FailoverFileLog> getTable() {
+	return table;
+    }
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.FAILOVER_FILE_LOG;
+    }
+
     public int getUpdated() {
-        return updated;
+	return updated;
     }
 
-    @SchemaColumn(order=6, description="the number of bytes transferred")
-    public long getBytes() {
-        return bytes;
-    }
-
-    @SchemaColumn(order=7, description="keeps track of which passes completed successfully")
-    public boolean isSuccessful() {
-        return successful;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public FailoverFileLog(AOServConnector connector, com.aoindustries.aoserv.client.dto.FailoverFileLog dto) {
-        this(
-            connector,
-            dto.getPkey(),
-            dto.getReplication(),
-            getTimeMillis(dto.getStartTime()),
-            getTimeMillis(dto.getEndTime()),
-            dto.getScanned(),
-            dto.getUpdated(),
-            dto.getBytes(),
-            dto.isSuccessful()
-        );
-    }
     @Override
-    public com.aoindustries.aoserv.client.dto.FailoverFileLog getDto() {
-        return new com.aoindustries.aoserv.client.dto.FailoverFileLog(
-            getKeyInt(),
-            replication,
-            startTime,
-            endTime,
-            scanned,
-            updated,
-            bytes,
-            successful
-        );
+    int hashCodeImpl() {
+	return pkey;
     }
-    // </editor-fold>
+
+    public void init(ResultSet result) throws SQLException {
+	pkey=result.getInt(1);
+	replication=result.getInt(2);
+	startTime=result.getTimestamp(3).getTime();
+	endTime=result.getTimestamp(4).getTime();
+	scanned=result.getInt(5);
+	updated=result.getInt(6);
+	bytes=result.getLong(7);
+        is_successful=result.getBoolean(8);
+    }
+
+    public boolean isSuccessful() {
+        return is_successful;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readCompressedInt();
+	replication=in.readCompressedInt();
+        startTime=in.readLong();
+	endTime=in.readLong();
+	scanned=in.readCompressedInt();
+	updated=in.readCompressedInt();
+	bytes=in.readLong();
+        is_successful=in.readBoolean();
+    }
+
+    public void setTable(AOServTable<Integer,FailoverFileLog> table) {
+	if(this.table!=null) throw new IllegalStateException("table already set");
+	this.table=table;
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeCompressedInt(pkey);
+        out.writeCompressedInt(replication);
+        out.writeLong(startTime);
+	out.writeLong(endTime);
+	out.writeCompressedInt(scanned);
+	out.writeCompressedInt(updated);
+	out.writeLong(bytes);
+        out.writeBoolean(is_successful);
+    }
 }

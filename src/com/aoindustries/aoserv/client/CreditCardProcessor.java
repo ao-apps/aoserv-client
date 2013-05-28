@@ -1,213 +1,189 @@
 /*
- * Copyright 2007-2011 by AO Industries, Inc.,
+ * Copyright 2007-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>CreditCardProcessor</code> represents on Merchant account used for credit card processing.
  *
  * @author  AO Industries, Inc.
  */
-final public class CreditCardProcessor extends AOServObjectStringKey implements Comparable<CreditCardProcessor>, DtoFactory<com.aoindustries.aoserv.client.dto.CreditCardProcessor> {
+final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardProcessor> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 1735379036885171107L;
+    static final int
+        COLUMN_PROVIDER_ID=0,
+        COLUMN_ACCOUNTING=1
+    ;
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_PROVIDER_ID_name = "provider_id";
 
     private AccountingCode accounting;
     private String className;
-    final private String param1;
-    final private String param2;
-    final private String param3;
-    final private String param4;
-    final private boolean enabled;
-    final private int weight;
-    final private String description;
-    final private Integer encryptionFrom;
-    final private Integer encryptionRecipient;
+    private String param1;
+    private String param2;
+    private String param3;
+    private String param4;
+    private boolean enabled;
+    private int weight;
+    private String description;
+    private int encryption_from;
+    private int encryption_recipient;
 
-    public CreditCardProcessor(
-        AOServConnector connector,
-        String providerId,
-        AccountingCode accounting,
-        String className,
-        String param1,
-        String param2,
-        String param3,
-        String param4,
-        boolean enabled,
-        int weight,
-        String description,
-        Integer encryptionFrom,
-        Integer encryptionRecipient
-    ) {
-        super(connector, providerId);
-        this.accounting = accounting;
-        this.className = className;
-        this.param1 = param1;
-        this.param2 = param2;
-        this.param3 = param3;
-        this.param4 = param4;
-        this.enabled = enabled;
-        this.weight = weight;
-        this.description = description;
-        this.encryptionFrom = encryptionFrom;
-        this.encryptionRecipient = encryptionRecipient;
-        intern();
+    public Business getBusiness() throws SQLException, IOException {
+        Business business = table.connector.getBusinesses().get(accounting);
+        if (business == null) throw new SQLException("Unable to find Business: " + accounting);
+        return business;
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        accounting = intern(accounting);
-        className = intern(className);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(CreditCardProcessor other) {
-        try {
-            int diff = accounting==other.accounting ? 0 : compare(getBusiness(), other.getBusiness()); // OK - interned
-            if(diff!=0) return diff;
-            return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PROVIDER_ID: return pkey;
+            case COLUMN_ACCOUNTING: return accounting;
+            case 2: return className;
+            case 3: return param1;
+            case 4: return param2;
+            case 5: return param3;
+            case 6: return param4;
+            case 7: return enabled;
+            case 8: return weight;
+            case 9: return description;
+            case 10: return encryption_from==-1 ? null : Integer.valueOf(encryption_from);
+            case 11: return encryption_recipient==-1 ? null : Integer.valueOf(encryption_recipient);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique ID of this processor")
     public String getProviderId() {
-        return getKey();
+        return pkey;
     }
 
-    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(CreditCardProcessor.class, "business");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the accounting code of the business owning the merchant account")
-    public Business getBusiness() throws RemoteException {
-        return getConnector().getBusinesses().get(accounting);
-    }
-
-    @SchemaColumn(order=2, description="the classname of the Java code that connects to the merchant services provider")
     public String getClassName() {
         return className;
     }
-
-    @SchemaColumn(order=3, description="the optional parameters for the Java code that connects to the merchant services provider")
+    
     public String getParam1() {
         return param1;
     }
-
-    @SchemaColumn(order=4, description="the optional parameters for the Java code that connects to the merchant services provider")
+    
     public String getParam2() {
         return param2;
     }
-
-    @SchemaColumn(order=5, description="the optional parameters for the Java code that connects to the merchant services provider")
+    
     public String getParam3() {
         return param3;
     }
-
-    @SchemaColumn(order=6, description="the optional parameters for the Java code that connects to the merchant services provider")
+    
     public String getParam4() {
         return param4;
     }
 
-    @SchemaColumn(order=7, description="the enabled flag")
-    public boolean isEnabled() {
+    public boolean getEnabled() {
         return enabled;
     }
 
-    @SchemaColumn(order=8, description="the weight used for multi-processor weighted transaction distribution")
     public int getWeight() {
         return weight;
     }
 
-    @SchemaColumn(order=9, description="an optional description of the processor")
     public String getDescription() {
-        return description;
+	return description;
     }
-
+    
     /**
      * Gets the key used for encrypting the card in storage or <code>null</code>
      * if the card is not stored in the database.
      */
-    /* TODO
-    @SchemaColumn(order=10, description="the from that will be used for encryption")
     public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
-        if(encryptionFrom==-1) return null;
-        return getConnector().getEncryptionKeys().get(encryptionFrom);
+        if(encryption_from==-1) return null;
+        EncryptionKey ek = table.connector.getEncryptionKeys().get(encryption_from);
+        if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+encryption_from);
+        return ek;
     }
-     */
 
     /**
      * Gets the key used for encrypting the card in storage or <code>null</code>
      * if the card is not stored in the database.
      */
-    /* TODO
-    @SchemaColumn(order=11, description="the recipient that will be used for encryption")
     public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
-        if(encryptionRecipient==-1) return null;
-        return getConnector().getEncryptionKeys().get(encryptionRecipient);
-    }
-     */
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public CreditCardProcessor(AOServConnector connector, com.aoindustries.aoserv.client.dto.CreditCardProcessor dto) throws ValidationException {
-        this(
-            connector,
-            dto.getProviderId(),
-            getAccountingCode(dto.getAccounting()),
-            dto.getClassName(),
-            dto.getParam1(),
-            dto.getParam2(),
-            dto.getParam3(),
-            dto.getParam4(),
-            dto.isEnabled(),
-            dto.getWeight(),
-            dto.getDescription(),
-            dto.getEncryptionFrom(),
-            dto.getEncryptionRecipient()
-        );
+        if(encryption_recipient==-1) return null;
+        EncryptionKey ek = table.connector.getEncryptionKeys().get(encryption_recipient);
+        if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+encryption_recipient);
+        return ek;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.CreditCardProcessor getDto() {
-        return new com.aoindustries.aoserv.client.dto.CreditCardProcessor(getKey(), getDto(accounting), className, param1, param2, param3, param4, enabled, weight, description, encryptionFrom, encryptionRecipient);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<CreditCard> getCreditCards() throws RemoteException {
-        return getConnector().getCreditCards().filterIndexed(CreditCard.COLUMN_PROCESSOR, this);
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.CREDIT_CARD_PROCESSORS;
     }
 
-    @DependentObjectSet
-    public IndexedSet<Transaction> getTransactions() throws RemoteException {
-        return getConnector().getTransactions().filterIndexed(Transaction.COLUMN_PROCESSOR, this);
+    public void init(ResultSet result) throws SQLException {
+        try {
+            int pos = 1;
+            pkey = result.getString(pos++);
+            accounting = AccountingCode.valueOf(result.getString(pos++));
+            className = result.getString(pos++);
+            param1 = result.getString(pos++);
+            param2 = result.getString(pos++);
+            param3 = result.getString(pos++);
+            param4 = result.getString(pos++);
+            enabled = result.getBoolean(pos++);
+            weight = result.getInt(pos++);
+            description = result.getString(pos++);
+            encryption_from = result.getInt(pos++);
+            if(result.wasNull()) encryption_from = -1;
+            encryption_recipient = result.getInt(pos++);
+            if(result.wasNull()) encryption_recipient = -1;
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
-    @DependentObjectSet
-    public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getConnector().getBankTransactions().filterIndexed(BankTransaction.COLUMN_PROCESSOR, this);
+    public void read(CompressedDataInputStream in) throws IOException {
+        try {
+            pkey=in.readUTF().intern();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            className = in.readUTF();
+            param1 = in.readNullUTF();
+            param2 = in.readNullUTF();
+            param3 = in.readNullUTF();
+            param4 = in.readNullUTF();
+            enabled = in.readBoolean();
+            weight = in.readCompressedInt();
+            description = in.readNullUTF();
+            encryption_from = in.readCompressedInt();
+            encryption_recipient = in.readCompressedInt();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
-    @DependentObjectSet
-    public IndexedSet<CreditCardTransaction> getCreditCardTransactions() throws RemoteException {
-        return getConnector().getCreditCardTransactions().filterIndexed(CreditCardTransaction.COLUMN_PROCESSOR, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(accounting.toString());
+        out.writeUTF(className);
+        out.writeNullUTF(param1);
+        out.writeNullUTF(param2);
+        out.writeNullUTF(param3);
+        out.writeNullUTF(param4);
+        out.writeBoolean(enabled);
+        out.writeCompressedInt(weight);
+        out.writeNullUTF(description);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+            out.writeCompressedInt(encryption_from);
+            out.writeCompressedInt(encryption_recipient);
+        }
     }
-    // </editor-fold>
 }

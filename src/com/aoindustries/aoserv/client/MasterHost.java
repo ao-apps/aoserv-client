@@ -1,14 +1,17 @@
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.aoserv.client.validator.InetAddress;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A <code>MasterHost</code> controls which hosts a <code>MasterUser</code>
@@ -19,82 +22,63 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterHost extends AOServObjectIntegerKey implements Comparable<MasterHost>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterHost> {
+final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 5745550350806339001L;
+	static final int COLUMN_PKEY=0;
+	static final String COLUMN_USERNAME_name = "username";
+	static final String COLUMN_HOST_name = "host";
 
-    private UserId username;
-    private InetAddress host;
+	private String username;
+	private InetAddress host;
 
-    public MasterHost(
-        AOServConnector connector,
-        int pkey,
-        UserId username,
-        InetAddress host
-    ) {
-        super(connector, pkey);
-        this.username = username;
-        this.host = host;
-        intern();
-    }
+	Object getColumnImpl(int i) {
+		if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
+		if(i==1) return username;
+		if(i==2) return host;
+		throw new IllegalArgumentException("Invalid index: "+i);
+	}
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
+	public InetAddress getHost() {
+		return host;
+	}
 
-    private void intern() {
-        username = intern(username);
-        host = intern(host);
-    }
-    // </editor-fold>
+	public MasterUser getMasterUser() throws SQLException, IOException {
+		MasterUser obj=table.connector.getMasterUsers().get(username);
+		if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
+		return obj;
+	}
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(MasterHost other) {
-        try {
-            int diff = username==other.username ? 0 : getMasterUser().compareTo(other.getMasterUser()); // OK - interned
-            if(diff!=0) return diff;
-            return host.compareTo(other.host);
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.MASTER_HOSTS;
+	}
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
-    public int getPkey() {
-        return getKeyInt();
-    }
+	public void init(ResultSet result) throws SQLException {
+		try {
+			pkey=result.getInt(1);
+			username=result.getString(2);
+			host=InetAddress.valueOf(result.getString(3));
+		} catch(ValidationException e) {
+			SQLException exc = new SQLException(e.getLocalizedMessage());
+			exc.initCause(e);
+			throw exc;
+		}
+	}
 
-    public static final MethodColumn COLUMN_MASTER_USER = getMethodColumn(MasterHost.class, "masterUser");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the unique username of the user")
-    public MasterUser getMasterUser() throws RemoteException {
-    	return getConnector().getMasterUsers().get(username);
-    }
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey=in.readCompressedInt();
+			username=in.readUTF().intern();
+			host=InetAddress.valueOf(in.readUTF()).intern();
+		} catch(ValidationException e) {
+			IOException exc = new IOException(e.getLocalizedMessage());
+			exc.initCause(e);
+			throw exc;
+		}
+	}
 
-    @SchemaColumn(order=2, description="the IP address they are allowed to connect from")
-    public InetAddress getHost() {
-        return host;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public MasterHost(AOServConnector connector, com.aoindustries.aoserv.client.dto.MasterHost dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            getUserId(dto.getUsername()),
-            getInetAddress(dto.getHost())
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.MasterHost getDto() {
-        return new com.aoindustries.aoserv.client.dto.MasterHost(getKeyInt(), getDto(username), getDto(host));
-    }
-    // </editor-fold>
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeUTF(username);
+		out.writeUTF(host.toString());
+	}
 }

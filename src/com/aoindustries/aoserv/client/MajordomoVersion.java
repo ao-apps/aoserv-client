@@ -1,11 +1,15 @@
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.table.IndexType;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 /**
@@ -18,53 +22,48 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class MajordomoVersion extends AOServObjectStringKey implements Comparable<MajordomoVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.MajordomoVersion> {
+final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersion> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    /**
-     * The default Majordomo version.
-     */
-    public static final String DEFAULT_VERSION="1.94.5";
-    // </editor-fold>
+	static final int COLUMN_VERSION=0;
+	static final String COLUMN_VERSION_name = "version";
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 2680067617200373570L;
+	/**
+	 * The default Majordomo version.
+	 */
+	public static final String DEFAULT_VERSION="1.94.5";
 
-    final private long created;
+	private long created;
 
-    public MajordomoVersion(AOServConnector connector, String version, long created) {
-        super(connector, version);
-        this.created = created;
-    }
-    // </editor-fold>
+	Object getColumnImpl(int i) {
+		if(i==COLUMN_VERSION) return pkey;
+		if(i==1) return getCreated();
+		throw new IllegalArgumentException("Invalid index: "+i);
+	}
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(MajordomoVersion other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
+	public Timestamp getCreated() {
+		return new Timestamp(created);
+	}
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the version number")
-    public String getVersion() {
-        return getKey();
-    }
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.MAJORDOMO_VERSIONS;
+	}
 
-    @SchemaColumn(order=1, description="the time the version was added")
-    public Timestamp getCreated() {
-        return new Timestamp(created);
-    }
-    // </editor-fold>
+	public String getVersion() {
+		return pkey;
+	}
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public MajordomoVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.MajordomoVersion dto) {
-        this(connector, dto.getVersion(), getTimeMillis(dto.getCreated()));
-    }
+	public void init(ResultSet result) throws SQLException {
+		pkey=result.getString(1);
+		created=result.getTimestamp(2).getTime();
+	}
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.MajordomoVersion getDto() {
-        return new com.aoindustries.aoserv.client.dto.MajordomoVersion(getKey(), created);
-    }
-    // </editor-fold>
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey=in.readUTF().intern();
+		created=in.readLong();
+	}
+
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeUTF(pkey);
+		out.writeLong(created);
+	}
 }

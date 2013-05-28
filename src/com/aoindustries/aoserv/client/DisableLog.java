@@ -1,224 +1,126 @@
 /*
- * Copyright 2002-2011 by AO Industries, Inc.,
+ * Copyright 2002-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.ValidationException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.NoSuchElementException;
 
 /**
  * When a resource or resources are disabled, the reason and time is logged.
  *
  * @author  AO Industries, Inc.
  */
-final public class DisableLog extends AOServObjectIntegerKey implements Comparable<DisableLog>, DtoFactory<com.aoindustries.aoserv.client.dto.DisableLog> {
+final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -1878947339845865532L;
+    static final int COLUMN_PKEY=0;
+    static final String COLUMN_TIME_name = "time";
+    static final String COLUMN_ACCOUNTING_name = "accounting";
+    static final String COLUMN_PKEY_name = "pkey";
 
-    final private long time;
+    private long time;
     private AccountingCode accounting;
-    private UserId disabledBy;
-    private String disableReason;
-
-    public DisableLog(
-        AOServConnector connector,
-        int pkey,
-        long time,
-        AccountingCode accounting,
-        UserId disabledBy,
-        String disableReason
-    ) {
-        super(connector, pkey);
-        this.time = time;
-        this.accounting = accounting;
-        this.disabledBy = disabledBy;
-        this.disableReason = disableReason;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        accounting = intern(accounting);
-        disabledBy = intern(disabledBy);
-        disableReason = intern(disableReason);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(DisableLog other) {
-        try {
-            int diff = compare(time, other.time);
-            if(diff!=0) return diff;
-            diff = accounting==other.accounting ? 0 : getBusiness().compareTo(other.getBusiness()); // OK - interned
-            if(diff!=0) return diff;
-            return compare(getKeyInt(), other.getKeyInt());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated primary key")
-    public int getPkey() {
-        return getKeyInt();
-    }
-
-    @SchemaColumn(order=1, description="the time the stuff was disabled")
-    public Timestamp getTime() {
-        return new Timestamp(time);
-    }
-
-    public static final MethodColumn COLUMN_BUSINESS = getMethodColumn(DisableLog.class, "business");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the business whos resources are being disabled")
-    public Business getBusiness() throws RemoteException {
-        return getConnector().getBusinesses().get(accounting);
-    }
-
-    /**
-     * May be filtered.
-     */
-    public static final MethodColumn COLUMN_DISABLED_BY = getMethodColumn(DisableLog.class, "disabledBy");
-    @DependencySingleton
-    @SchemaColumn(order=3, index=IndexType.INDEXED, description="the person who disabled the accounts")
-    public BusinessAdministrator getDisabledBy() throws RemoteException {
-        try {
-            return getConnector().getBusinessAdministrators().get(disabledBy);
-        } catch(NoSuchElementException err) {
-            // Filtered
-            return null;
-        }
-    }
-
-    @SchemaColumn(order=4, description="the optional reason the accounts were disabled")
-    public String getDisableReason() {
-        return disableReason;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public DisableLog(AOServConnector connector, com.aoindustries.aoserv.client.dto.DisableLog dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            getTimeMillis(dto.getTime()),
-            getAccountingCode(dto.getAccounting()),
-            getUserId(dto.getDisabledBy()),
-            dto.getDisableReason()
-        );
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.DisableLog getDto() {
-        return new com.aoindustries.aoserv.client.dto.DisableLog(getKeyInt(), time, getDto(accounting), getDto(disabledBy), disableReason);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    // Caused cycle in dependency DAG: @DependentObjectSet
-    public IndexedSet<Business> getBusinesses() throws RemoteException {
-        return getConnector().getBusinesses().filterIndexed(Business.COLUMN_DISABLE_LOG, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<BusinessAdministrator> getBusinessAdministrators() throws RemoteException {
-        return getConnector().getBusinessAdministrators().filterIndexed(BusinessAdministrator.COLUMN_DISABLE_LOG, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<GroupName> getGroupNames() throws RemoteException {
-        return getConnector().getGroupNames().filterIndexed(GroupName.COLUMN_DISABLE_LOG, this);
-    }
-
-    // Caused cycle in dependency DAG: @DependentObjectSet
-    public IndexedSet<Username> getUsernames() throws RemoteException {
-        return getConnector().getUsernames().filterIndexed(Username.COLUMN_DISABLE_LOG, this);
-    }
-
-    @DependentObjectSet
-    public IndexedSet<Resource> getResources() throws RemoteException {
-        return getConnector().getResources().filterIndexed(Resource.COLUMN_DISABLE_LOG, this);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
-    public String getDisabledByUsername() {
-        return disabled_by;
-    }*/
-
+    private String disabled_by;
+    private String disable_reason;
+    
     /**
      * Determines if the current <code>AOServConnector</code> can enable
      * things disabled by this <code>DisableLog</code>.
      */
-    /* TODO
     public boolean canEnable() throws SQLException, IOException {
         BusinessAdministrator disabledBy=getDisabledBy();
         return disabledBy!=null && table
             .connector
             .getThisBusinessAdministrator()
             .getUsername()
+            .getPackage()
             .getBusiness()
             .isBusinessOrParentOf(
                 disabledBy
                 .getUsername()
+                .getPackage()
                 .getBusiness()
             )
         ;
     }
 
-    public List<LinuxServerAccount> getLinuxServerAccounts() throws IOException, SQLException {
-        return getConnector().getLinuxServerAccounts().getIndexedRows(LinuxServerAccount.COLUMN_DISABLE_LOG, pkey);
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
+	if(i==1) return getTime();
+        if(i==2) return accounting;
+        if(i==3) return disabled_by;
+        if(i==4) return disable_reason;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    public List<Username> getUsernames() throws IOException, SQLException {
-        return getConnector().getUsernames().getIndexedRows(Username.COLUMN_DISABLE_LOG, pkey);
+    public Business getBusiness() throws SQLException, IOException {
+        Business bu=table.connector.getBusinesses().get(accounting);
+        if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
+        return bu;
     }
 
-    public List<EmailList> getEmailLists() throws IOException, SQLException {
-        return getConnector().getEmailLists().getIndexedRows(EmailList.COLUMN_DISABLE_LOG, pkey);
+    public Timestamp getTime() {
+        return new Timestamp(time);
     }
 
-    public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
-        return getConnector().getEmailPipes().getIndexedRows(EmailPipe.COLUMN_DISABLE_LOG, pkey);
+    public String getDisabledByUsername() {
+        return disabled_by;
     }
 
-    public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-        return getConnector().getEmailSmtpRelays().getIndexedRows(EmailSmtpRelay.COLUMN_DISABLE_LOG, pkey);
+    public BusinessAdministrator getDisabledBy() throws IOException, SQLException {
+        // May be filtered
+        return table.connector.getBusinessAdministrators().get(disabled_by);
     }
 
-    public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
-        return getConnector().getHttpdSites().getIndexedRows(HttpdSite.COLUMN_DISABLE_LOG, pkey);
+    public String getDisableReason() {
+        return disable_reason;
     }
 
-    public List<HttpdSiteBind> getHttpdSiteBinds() throws IOException, SQLException {
-        return getConnector().getHttpdSiteBinds().getIndexedRows(HttpdSiteBind.COLUMN_DISABLE_LOG, pkey);
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.DISABLE_LOG;
     }
 
-    public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-        return getConnector().getHttpdSharedTomcats().getIndexedRows(HttpdSharedTomcat.COLUMN_DISABLE_LOG, pkey);
+    public void init(ResultSet result) throws SQLException {
+        try {
+            pkey=result.getInt(1);
+            time=result.getTimestamp(2).getTime();
+            accounting=AccountingCode.valueOf(result.getString(3));
+            disabled_by=result.getString(4);
+            disable_reason=result.getString(5);
+        } catch(ValidationException e) {
+            SQLException exc = new SQLException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
-    public List<PostgresServerUser> getPostgresServerUsers() throws IOException, SQLException {
-        return getConnector().getPostgresServerUsers().getIndexedRows(PostgresServerUser.COLUMN_DISABLE_LOG, pkey);
+    public void read(CompressedDataInputStream in) throws IOException {
+        try {
+            pkey=in.readCompressedInt();
+            time=in.readLong();
+            accounting=AccountingCode.valueOf(in.readUTF()).intern();
+            disabled_by=in.readUTF().intern();
+            disable_reason=in.readNullUTF();
+        } catch(ValidationException e) {
+            IOException exc = new IOException(e.getLocalizedMessage());
+            exc.initCause(e);
+            throw exc;
+        }
     }
 
-    public List<PostgresUser> getPostgresUsers() throws IOException, SQLException {
-        return getConnector().getPostgresUsers().getIndexedRows(PostgresUser.COLUMN_DISABLE_LOG, pkey);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeCompressedInt(pkey);
+        out.writeLong(time);
+        out.writeUTF(accounting.toString());
+        out.writeUTF(disabled_by);
+        out.writeNullUTF(disable_reason);
     }
-     */
-    // </editor-fold>
 }
