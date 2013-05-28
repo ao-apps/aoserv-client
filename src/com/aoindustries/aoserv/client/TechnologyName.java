@@ -1,12 +1,16 @@
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * A <code>TechnologyName</code> represents one piece of software installed in
@@ -14,67 +18,91 @@ import java.rmi.RemoteException;
  *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyName extends AOServObjectStringKey implements Comparable<TechnologyName>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyName> {
+final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
-    public static final String MYSQL = "MySQL";
-    public static final String POSTGRESQL = "postgresql";
-    // </editor-fold>
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -3142205408585822979L;
+    public static final String MYSQL="MySQL";
 
-    public TechnologyName(AOServConnector connector, String name) {
-        super(connector, name);
+    private String image_filename;
+    private int image_width;
+    private int image_height;
+    private String image_alt;
+    private String home_page_url;
+
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_NAME) return pkey;
+	if(i==1) return image_filename;
+	if(i==2) return image_width==-1?null:Integer.valueOf(image_width);
+	if(i==3) return image_height==-1?null:Integer.valueOf(image_height);
+	if(i==4) return image_alt;
+	if(i==5) return home_page_url;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(TechnologyName other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
+    public String getHomePageURL() {
+	return home_page_url;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the name of the package")
+    public String getImageAlt() {
+	return image_alt;
+    }
+
+    public String getImageFilename() {
+	return image_filename;
+    }
+
+    public int getImageHeight() {
+	return image_height;
+    }
+
+    public int getImageWidth() {
+	return image_width;
+    }
+
     public String getName() {
-        return getKey();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public TechnologyName(AOServConnector connector, com.aoindustries.aoserv.client.dto.TechnologyName dto) {
-        this(connector, dto.getName());
+	return pkey;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.TechnologyName getDto() {
-        return new com.aoindustries.aoserv.client.dto.TechnologyName(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<TechnologyVersion> getTechnologyVersions() throws RemoteException {
-        return getConnector().getTechnologyVersions().filterIndexed(TechnologyVersion.COLUMN_NAME, this);
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGY_NAMES;
     }
 
-    @DependentObjectSet
-    public IndexedSet<Technology> getTechnologies() throws RemoteException {
-        return getConnector().getTechnologies().filterIndexed(Technology.COLUMN_TECHNOLOGY_NAME, this);
+    public List<Technology> getTechnologies(AOServConnector connector) throws IOException, SQLException {
+	return connector.getTechnologies().getTechnologies(this);
     }
 
-    /* TODO
-    public List<Technology> getTechnologies() throws RemoteException {
-    	return connector.getTechnologies().getTechnologies(this);
-    }*/
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="TODO">
-    /* TODO
     public TechnologyVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
-        return connector.getTechnologyVersions().getTechnologyVersion(this, version, osv);
-    } */
-    // </editor-fold>
+	return connector.getTechnologyVersions().getTechnologyVersion(this, version, osv);
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	image_filename=result.getString(2);
+	image_width=result.getInt(3);
+	if(result.wasNull()) image_width=-1;
+	image_height=result.getInt(4);
+	if(result.wasNull()) image_height=-1;
+	image_alt=result.getString(5);
+	home_page_url=result.getString(6);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	image_filename=in.readNullUTF();
+	image_width=in.readCompressedInt();
+	image_height=in.readCompressedInt();
+	image_alt=in.readNullUTF();
+	home_page_url=in.readNullUTF();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeNullUTF(image_filename);
+	out.writeCompressedInt(image_width);
+	out.writeCompressedInt(image_height);
+	out.writeNullUTF(image_alt);
+	out.writeNullUTF(home_page_url);
+    }
 }
