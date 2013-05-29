@@ -1,12 +1,13 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * <code>Ticket</code>s are prioritized by both the client and
@@ -14,11 +15,15 @@ import java.rmi.RemoteException;
  *
  * @see  Ticket
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class TicketPriority extends AOServObjectStringKey implements Comparable<TicketPriority>, DtoFactory<com.aoindustries.aoserv.client.dto.TicketPriority> {
+final public class TicketPriority extends GlobalObjectStringKey<TicketPriority> implements Comparable<TicketPriority> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_PRIORITY=0;
+    static final String COLUMN_PRIORITY_name = "priority";
+
     /**
      * The possible ticket priorities.
      */
@@ -28,60 +33,33 @@ final public class TicketPriority extends AOServObjectStringKey implements Compa
         HIGH="2-High",
         URGENT="3-Urgent"
     ;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 3068599948005442526L;
-
-    public TicketPriority(AOServConnector connector, String priority) {
-        super(connector, priority);
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_PRIORITY) return pkey;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(TicketPriority other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique priority")
     public String getPriority() {
-    	return getKey();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public TicketPriority(AOServConnector connector, com.aoindustries.aoserv.client.dto.TicketPriority dto) {
-        this(connector, dto.getPriority());
+	return pkey;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.TicketPriority getDto() {
-        return new com.aoindustries.aoserv.client.dto.TicketPriority(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActionsByOldPriority() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_OLD_PRIORITY, this);
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TICKET_PRIORITIES;
     }
 
-    @DependentObjectSet
-    public IndexedSet<TicketAction> getTicketActionsByNewPriority() throws RemoteException {
-        return getConnector().getTicketActions().filterIndexed(TicketAction.COLUMN_NEW_PRIORITY, this);
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
     }
 
-    @DependentObjectSet
-    public IndexedSet<Ticket> getTicketsByClientPriority() throws RemoteException {
-        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_CLIENT_PRIORITY, this);
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
     }
 
-    @DependentObjectSet
-    public IndexedSet<Ticket> getTicketsByAdminPriority() throws RemoteException {
-        return getConnector().getTickets().filterIndexed(Ticket.COLUMN_ADMIN_PRIORITY, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
     }
-    // </editor-fold>
+
+    public int compareTo(TicketPriority o) {
+        return pkey.compareTo(o.pkey);
+    }
 }

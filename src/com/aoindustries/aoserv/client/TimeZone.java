@@ -1,86 +1,78 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2006-2011 by AO Industries, Inc.,
+ * Copyright 2006-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * All of the time zones on a server.
  *
+ * @since  1.2
+ *
  * @author  AO Industries, Inc.
  */
-final public class TimeZone extends AOServObjectStringKey implements Comparable<TimeZone>, DtoFactory<com.aoindustries.aoserv.client.dto.TimeZone> {
+final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 2601042049486907833L;
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
 
-    public TimeZone(AOServConnector connector, String name) {
-        super(connector, name);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(TimeZone other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of this time zone")
+    /**
+     * Gets the unique name for this time zone.
+     */
     public String getName() {
-        return getKey();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public TimeZone(AOServConnector connector, com.aoindustries.aoserv.client.dto.TimeZone dto) {
-        this(connector, dto.getName());
+        return pkey;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.TimeZone getDto() {
-        return new com.aoindustries.aoserv.client.dto.TimeZone(getKey());
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.TIME_ZONES;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<AOServer> getAoServers() throws RemoteException {
-        return getConnector().getAoServers().filterIndexed(AOServer.COLUMN_TIME_ZONE, this);
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="java.util.TimeZone compatibility">
-    private static final ConcurrentMap<String,java.util.TimeZone> timeZones = new ConcurrentHashMap<String,java.util.TimeZone>();
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+    }
+ 
+    private java.util.TimeZone timeZone;
 
     /**
      * Gets the Java TimeZone for this TimeZone.
+     * 
+     * Not synchronized because double initialization is acceptable.
      */
     public java.util.TimeZone getTimeZone() {
-        String key = getKey();
-        java.util.TimeZone timeZone = timeZones.get(key);
         if(timeZone==null) {
             String[] ids = java.util.TimeZone.getAvailableIDs();
             boolean found = false;
             for(String id : ids) {
-                if(id.equals(key)) {
+                if(id.equals(pkey)) {
                     found = true;
                     break;
                 }
             }
-            if(!found) throw new IllegalArgumentException("TimeZone not found: "+key);
-            java.util.TimeZone newTimeZone = java.util.TimeZone.getTimeZone(key);
-            java.util.TimeZone existing = timeZones.putIfAbsent(key, newTimeZone);
-            timeZone = existing==null ? newTimeZone : existing;
+            if(!found) throw new IllegalArgumentException("TimeZone not found: "+pkey);
+            timeZone = java.util.TimeZone.getTimeZone(pkey);
         }
         return timeZone;
     }
-    // </editor-fold>
 }

@@ -1,17 +1,17 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2002-2011 by AO Industries, Inc.,
+ * Copyright 2002-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.command.AOServCommand;
-import java.rmi.RemoteException;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Classes that are <code>Disablable</code> can be disable and reenabled.
- * 
- * TODO: Remove this interface once everything switched to resources.
+ *
+ * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -24,9 +24,13 @@ public interface Disablable {
      */
     boolean isDisabled();
 
-    DisableLog getDisableLog() throws RemoteException;
+    DisableLog getDisableLog() throws IOException, SQLException;
 
-    AOServCommand<Void> getDisableCommand(DisableLog dl);
+    boolean canDisable() throws IOException, SQLException;
 
-    AOServCommand<Void> getEnableCommand();
+    boolean canEnable() throws IOException, SQLException;
+
+    void disable(DisableLog dl) throws IOException, SQLException;
+
+    void enable() throws IOException, SQLException;
 }

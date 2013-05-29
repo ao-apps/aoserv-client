@@ -1,11 +1,13 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2004-2011 by AO Industries, Inc.,
+ * Copyright 2004-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * An <code>EmailAttachmentType</code> represents one extension that may
@@ -13,63 +15,58 @@ import com.aoindustries.table.IndexType;
  *
  * @see  EmailAttachmentBlock
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class EmailAttachmentType extends AOServObjectStringKey implements Comparable<EmailAttachmentType>, DtoFactory<com.aoindustries.aoserv.client.dto.EmailAttachmentType> {
+public final class EmailAttachmentType extends GlobalObjectStringKey<EmailAttachmentType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -1702955162008962360L;
+    static final int COLUMN_EXTENSION=0;
+    static final String COLUMN_EXTENSION_name = "extension";
 
-    final private boolean defaultBlock;
+    private String description;
+    private boolean is_default_block;
 
-    public EmailAttachmentType(AOServConnector connector, String extension, boolean defaultBlock) {
-        super(connector, extension);
-        this.defaultBlock = defaultBlock;
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_EXTENSION: return pkey;
+            case 1: return description;
+            case 2: return is_default_block?Boolean.TRUE:Boolean.FALSE;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(EmailAttachmentType other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique filename extension")
     public String getExtension() {
-        return getKey();
+        return pkey;
     }
     
-    @SchemaColumn(order=1, description="indicates that the type will be blocked by default")
-    public boolean isDefaultBlock() {
-        return defaultBlock;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public EmailAttachmentType(AOServConnector connector, com.aoindustries.aoserv.client.dto.EmailAttachmentType dto) {
-        this(connector, dto.getExtension(), dto.isDefaultBlock());
-    }
-
-    @Override
-    public com.aoindustries.aoserv.client.dto.EmailAttachmentType getDto() {
-        return new com.aoindustries.aoserv.client.dto.EmailAttachmentType(getKey(), defaultBlock);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
-        return ApplicationResources.accessor.getMessage("EmailAttachmentType."+getKey()+".description");
+        return description;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    /* TODO
-    @DependentObjectSet
-    public IndexedSet<EmailAttachmentBlock> getEmailAttachmentBlocks() throws RemoteException {
-        return getConnector().getTicketCategories().filterIndexed(COLUMN_PARENT, this);
+    public boolean isDefaultBlock() {
+        return is_default_block;
     }
-     */
-    // </editor-fold>
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EMAIL_ATTACHMENT_TYPES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey=result.getString(1);
+        description=result.getString(2);
+        is_default_block=result.getBoolean(3);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        description=in.readUTF();
+        is_default_block=in.readBoolean();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+        out.writeUTF(description);
+        out.writeBoolean(is_default_block);
+    }
 }

@@ -1,57 +1,49 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.StringUtility;
+import java.io.*;
+import java.sql.*;
 
 /**
  * For AO Industries use only.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class ExpenseCategory extends AOServObjectStringKey implements Comparable<ExpenseCategory>, DtoFactory<com.aoindustries.aoserv.client.dto.ExpenseCategory> {
+final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -3817289260721241380L;
+    static final int COLUMN_EXPENSE_CODE=0;
+    static final String COLUMN_EXPENSE_CODE_name = "expense_code";
 
-    public ExpenseCategory(AOServConnector connector, String expenseCode) {
-        super(connector, expenseCode);
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_EXPENSE_CODE) return pkey;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(ExpenseCategory other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a simple code used as primary key")
     public String getExpenseCode() {
-        return getKey();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public ExpenseCategory(AOServConnector connector, com.aoindustries.aoserv.client.dto.ExpenseCategory dto) {
-        this(connector, dto.getExpenseCode());
+	return pkey;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.ExpenseCategory getDto() {
-        return new com.aoindustries.aoserv.client.dto.ExpenseCategory(getKey());
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.EXPENSE_CATEGORIES;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<BankTransaction> getBankTransactions() throws RemoteException {
-        return getConnector().getBankTransactions().filterIndexed(BankTransaction.COLUMN_EXPENSE_CODE, this);
+    public void init(ResultSet result) throws SQLException {
+	pkey=result.getString(1);
     }
-    // </editor-fold>
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+    }
 }

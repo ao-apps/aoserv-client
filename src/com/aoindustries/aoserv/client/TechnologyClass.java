@@ -1,12 +1,14 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.StringUtility;
+import java.io.*;
+import java.sql.*;
 
 /**
  * A <code>TechnologyClass</code> is one type of software package
@@ -14,11 +16,15 @@ import java.rmi.RemoteException;
  *
  * @see  Technology
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class TechnologyClass extends AOServObjectStringKey implements Comparable<TechnologyClass>, DtoFactory<com.aoindustries.aoserv.client.dto.TechnologyClass> {
+final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
+
     /**
      * The possible <code>TechnologyClass</code>es.
      */
@@ -36,56 +42,40 @@ final public class TechnologyClass extends AOServObjectStringKey implements Comp
         X11="X11",
         XML="XML"
     ;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 8924692879673552444L;
 
-    public TechnologyClass(AOServConnector connector, String name) {
-        super(connector, name);
-    }
-    // </editor-fold>
+    private String description;
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(TechnologyClass other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the name of the class")
-    public String getName() {
-    	return getKey();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public TechnologyClass(AOServConnector connector, com.aoindustries.aoserv.client.dto.TechnologyClass dto) {
-        this(connector,dto.getName());
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_NAME) return pkey;
+	if(i==1) return description;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.TechnologyClass getDto() {
-        return new com.aoindustries.aoserv.client.dto.TechnologyClass(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
-        return ApplicationResources.accessor.getMessage("TechnologyClass."+getKey()+".description");
+	return description;
     }
 
-    @Override
-    String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("TechnologyClass."+getKey()+".toString");
+    public String getName() {
+	return pkey;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<Technology> getTechnologies() throws RemoteException {
-        return getConnector().getTechnologies().filterIndexed(Technology.COLUMN_TECHNOLOGY_CLASS, this);
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGY_CLASSES;
     }
-    // </editor-fold>
+
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	description = result.getString(2);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	description=in.readUTF();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(description);
+    }
 }

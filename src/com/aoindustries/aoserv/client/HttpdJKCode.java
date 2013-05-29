@@ -1,11 +1,14 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
+import com.aoindustries.io.*;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * When using Apache's <code>mod_jk</code>, each connection to a servlet
@@ -14,40 +17,37 @@ import com.aoindustries.table.IndexType;
  *
  * @see  HttpdWorker
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class HttpdJKCode extends AOServObjectStringKey implements Comparable<HttpdJKCode>, DtoFactory<com.aoindustries.aoserv.client.dto.HttpdJKCode> {
+final public class HttpdJKCode extends GlobalObjectStringKey<HttpdJKCode> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 7573349870795185250L;
+    static final int COLUMN_CODE=0;
+    static final String COLUMN_CODE_name = "code";
 
-    public HttpdJKCode(AOServConnector connector, String code) {
-        super(connector, code);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(HttpdJKCode other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique, two-character code")
     public String getCode() {
-        return getKey();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public HttpdJKCode(AOServConnector connector, com.aoindustries.aoserv.client.dto.HttpdJKCode dto) {
-        this(connector, dto.getCode());
+	return pkey;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.HttpdJKCode getDto() {
-        return new com.aoindustries.aoserv.client.dto.HttpdJKCode(getKey());
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_CODE) return pkey;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
-    // </editor-fold>
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.HTTPD_JK_CODES;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey=result.getString(1);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+    }
 }

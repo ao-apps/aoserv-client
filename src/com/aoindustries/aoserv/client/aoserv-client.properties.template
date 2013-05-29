@@ -1,51 +1,20 @@
-# SSL Initialization
-aoserv.client.truststore.path=
-aoserv.client.truststore.password=
+aoserv.client.protocols=ssl
 
-# Connection Parameters
-aoserv.client.protocol=rmi
-aoserv.client.rmi.hostname=master.aoindustries.com
-aoserv.client.rmi.local_ip=
-aoserv.client.rmi.port=1099
-aoserv.client.rmi.useSsl=true
-aoserv.client.soap.targetEndpoint=
+aoserv.client.tcp.hostname=master.aoindustries.com
+aoserv.client.tcp.local_ip=
+aoserv.client.tcp.port=4582
+aoserv.client.tcp.connection.pool.size=16
+aoserv.client.tcp.connection.max_age=
 
-# Will log tracing details when enabled.
-# Defaults to false.
-aoserv.client.trace=false
+aoserv.client.ssl.hostname=master.aoindustries.com
+aoserv.client.ssl.local_ip=
+aoserv.client.ssl.port=4583
+aoserv.client.ssl.connection.pool.size=16
+aoserv.client.ssl.connection.max_age=
+aoserv.client.ssl.truststore.path=
+aoserv.client.ssl.truststore.password=
 
-# An optional timeout may be enabled if this value is provided and greater than zero.
-aoserv.client.timeout=300
-
-# The timeout time unit.  Defaults to SECONDS
-aoserv.client.timeout.unit=SECONDS
-
-# Will retry failed idempotent operations when enabled.
-# Defaults to true.
-aoserv.client.retry=true
-
-# Will use client-side caching for more speed at the cost of more space.
-# Defaults to true.
-aoserv.client.useCache=true
-
-# Will refuse any operation from the Swing event dispatch thread when this is enabled.
-# Defaults to false.
-aoserv.client.noSwing=false
-
-# Default authentication.  When provided a call to
-# AOServClientConfiguration.getConnector() is enough to establish a connection.
-# AOSH will also bypass authentication when these values are provided.
 aoserv.client.username=
 aoserv.client.password=
 
-# When provided, after authentication the effective user will be switched to this
-# account.  This account must be in a subaccount of the authenticated user.
-aoserv.client.switchUser=
-
-# The server that this connection represents.  This is used to allow clients to synchronously
-# wait for specific server-side events.  For use by AOServDaemon accounts only.
 aoserv.client.daemon.server=
-
-# When true the connection will be read-only.  A read-only connection is only allowed
-# to execute read-only commands.  Defaults to false.
-aoserv.client.readOnly=false

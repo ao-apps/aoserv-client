@@ -1,12 +1,14 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * An <code>Architecture</code> is a simple wrapper for the type
@@ -14,11 +16,15 @@ import java.rmi.RemoteException;
  *
  * @see  Server
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class Architecture extends AOServObjectStringKey implements Comparable<Architecture>, DtoFactory<com.aoindustries.aoserv.client.dto.Architecture> {
+final public class Architecture extends GlobalObjectStringKey<Architecture> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_NAME_name = "name";
+
     public static final String
         ALPHA="alpha",
         ARM="arm",
@@ -35,58 +41,41 @@ final public class Architecture extends AOServObjectStringKey implements Compara
     ;
 
     public static final String DEFAULT_ARCHITECTURE=I686;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -4934496731736918420L;
+    private int bits;
 
-    final private int bits;
-
-    public Architecture(AOServConnector connector, String name, int bits) {
-        super(connector, name);
-        this.bits = bits;
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case 1: return Integer.valueOf(bits);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(Architecture other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the architecture")
     public String getName() {
-        return getKey();
+        return pkey;
     }
 
-    @SchemaColumn(order=1, description="the number of bits used by the architecture")
     public int getBits() {
         return bits;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public Architecture(AOServConnector connector, com.aoindustries.aoserv.client.dto.Architecture dto) {
-        this(connector, dto.getName(), dto.getBits());
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.ARCHITECTURES;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.Architecture getDto() {
-        return new com.aoindustries.aoserv.client.dto.Architecture(getKey(), bits);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<OperatingSystemVersion> getOperatingSystemVersions() throws RemoteException {
-        return getConnector().getOperatingSystemVersions().filterIndexed(OperatingSystemVersion.COLUMN_ARCHITECTURE, this);
+    public void init(ResultSet result) throws SQLException {
+        pkey=result.getString(1);
+        bits=result.getInt(2);
     }
 
-    @DependentObjectSet
-    public IndexedSet<VirtualServer> getVirtualServersByMinimumProcessorArchitecture() throws RemoteException {
-        return getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_ARCHITECTURE, this);
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        bits=in.readCompressedInt();
     }
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeCompressedInt(bits);
+    }
 }

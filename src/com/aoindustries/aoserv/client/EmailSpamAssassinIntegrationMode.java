@@ -1,12 +1,14 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2005-2011 by AO Industries, Inc.,
+ * Copyright 2005-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import com.aoindustries.util.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * An <code>EmailSpamAssassinIntegrationMode</code> is a simple wrapper for the types
@@ -14,76 +16,66 @@ import java.rmi.RemoteException;
  *
  * @see  Server
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class EmailSpamAssassinIntegrationMode
-extends AOServObjectStringKey
-implements
-    Comparable<EmailSpamAssassinIntegrationMode>,
-    DtoFactory<com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode> {
+public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKey<EmailSpamAssassinIntegrationMode> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_NAME=0;
+    static final String COLUMN_SORT_ORDER_name = "sort_order";
+
     public static final String
         NONE="none",
         POP3="pop3",
         IMAP="imap"
     ;
 
-    public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE=IMAP;
-    // </editor-fold>
+    public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE=POP3;
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 7333571682567593702L;
+    private String display;
+    private int sort_order;
 
-    final private short sortOrder;
-
-    public EmailSpamAssassinIntegrationMode(AOServConnector connector, String name, short sortOrder) {
-        super(connector, name);
-        this.sortOrder = sortOrder;
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_NAME: return pkey;
+            case 1: return display;
+            case 2: return Integer.valueOf(sort_order);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(EmailSpamAssassinIntegrationMode other) {
-        return compare(sortOrder, other.sortOrder);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the mode")
     public String getName() {
-        return getKey();
+        return pkey;
     }
 
-    @SchemaColumn(order=1, description="provides ordering of the modes")
-    public short getSortOrder() {
-        return sortOrder;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public EmailSpamAssassinIntegrationMode(AOServConnector connector, com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode dto) {
-        this(connector, dto.getName(), dto.getSortOrder());
+    public String getDisplay() {
+        return display;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode getDto() {
-        return new com.aoindustries.aoserv.client.dto.EmailSpamAssassinIntegrationMode(getKey(), sortOrder);
+    public int getSortOrder() {
+        return sort_order;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="i18n">
-    @Override
-    String toStringImpl() throws RemoteException {
-        return ApplicationResources.accessor.getMessage("EmailSpamAssassinIntegrationMode."+getKey()+".toString");
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<EmailInbox> getEmailInboxes() throws RemoteException {
-        return getConnector().getEmailInboxes().filterIndexed(EmailInbox.COLUMN_SA_INTEGRATION_MODE, this);
+    public void init(ResultSet results) throws SQLException {
+        pkey=results.getString(1);
+        display=results.getString(2);
+        sort_order=results.getInt(3);
     }
-    // </editor-fold>
+
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        display=in.readUTF();
+        sort_order=in.readCompressedInt();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeUTF(display);
+        out.writeCompressedInt(sort_order);
+    }
 }

@@ -1,11 +1,10 @@
+package com.aoindustries.aoserv.client;
 /*
- * Copyright 2006-2011 by AO Industries, Inc.,
+ * Copyright 2006-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
 
-import java.math.BigDecimal;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -26,7 +25,7 @@ public class GetTableSizesTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        conns = AOServConnectorTest.getTestConnectors(true);
+        conns = AOServConnectorTest.getTestConnectors();
     }
 
     @Override
@@ -35,7 +34,9 @@ public class GetTableSizesTest extends TestCase {
     }
 
     public static Test suite() {
-        return new TestSuite(GetTableSizesTest.class);
+        TestSuite suite = new TestSuite(GetTableSizesTest.class);
+        
+        return suite;
     }
 
     /**
@@ -45,32 +46,25 @@ public class GetTableSizesTest extends TestCase {
         final int PASSES=10;
         System.out.println("Testing getTable(tableID).size()");
         for(AOServConnector conn : conns) {
-            System.out.println("    "+conn.getThisBusinessAdministrator());
-            int numTables = ServiceName.values.size();
+            String username = conn.getThisBusinessAdministrator().pkey;
+            System.out.println("    "+username);
+            int numTables = SchemaTable.TableID.values().length;
             int[][] counts=new int[PASSES][numTables];
             for(int d=0;d<PASSES;d++) {
+                // Excluded for testing speed
+                if(
+                    d==SchemaTable.TableID.DISTRO_FILES.ordinal()
+                    || d==SchemaTable.TableID.TRANSACTIONS.ordinal()
+                    || d==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+                ) continue;
                 System.out.print("        Pass"+(d<9?"  ":" ")+(d+1)+" of "+PASSES+": ");
-                if(d==0) System.out.println();
                 for(int c=0;c<numTables;c++) {
-                    AOServService<?,?> service = conn.getServices().get(ServiceName.values.get(c));
-                    // Excluded for testing speed
-                    if(!(service instanceof UnionService<?,?>)) {
-                        /* TODOif(
-                            (table instanceof DistroFileTable...c==SchemaTable.TableID.DISTRO_FILES.ordinal()
-                            || c==SchemaTable.TableID.TRANSACTIONS.ordinal()
-                            || c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
-                        ) continue;*/
-                        //long startTime = System.currentTimeMillis();
-                        long startTime = System.currentTimeMillis();
-                        int size=service.getSize();
-                        long endTime = System.currentTimeMillis();
-                        //long endTime = System.currentTimeMillis();
-                        if(d==0) System.out.println(service+": "+size+" in "+BigDecimal.valueOf(endTime - startTime, 3)+" ms"); //+" in "+(endTime-startTime)+" ms");
-                        else System.out.print('.');
-                        //if(c==SchemaTable.TableID.AO_SERVER_RESOURCES.ordinal()) System.out.println("\nao_server_resources.size="+size);
-                        if(size<0) fail("Table size < 0 for table "+service.getTable().getTableName()+": "+size);
-                        counts[d][c]=size;
-                    }
+                    System.out.print('.');
+                    AOServTable table=conn.getTable(c);
+                    String tableName=table.getTableName();
+                    int size=table.size();
+                    if(size<0) fail("Table size < 0 for table "+tableName+": "+size);
+                    counts[d][c]=size;
                 }
                 System.out.println(" Done");
             }
@@ -78,7 +72,7 @@ public class GetTableSizesTest extends TestCase {
             for(int c=1;c<PASSES;c++) {
                 for(int d=0;d<numTables;d++) {
                     // Excluded for testing speed
-                    /* TODO: if(
+                    if(
                         d==SchemaTable.TableID.DISTRO_FILES.ordinal()
                         || d==SchemaTable.TableID.TRANSACTIONS.ordinal()
                         || d==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
@@ -88,16 +82,11 @@ public class GetTableSizesTest extends TestCase {
                         d!=SchemaTable.TableID.MASTER_HISTORY.ordinal()
                         && d!=SchemaTable.TableID.MASTER_SERVER_PROFILE.ordinal()
                         && d!=SchemaTable.TableID.MASTER_PROCESSES.ordinal()
-                    ) {*/
-                        AOServService<?,?> table=conn.getServices().get(ServiceName.values.get(d));
-                        /*if(c==1) {
-                            for(AOServObject<?,?> row : table.getSortedSet()) {
-                                System.err.println(row);
-                            }
-                        }*/
-                        String tableName=table.getTable().getTableName();
+                    ) {
+                        AOServTable table=conn.getTable(d);
+                        String tableName=table.getTableName();
                         assertEquals("Mismatched counts from different passes on table "+tableName+": ", counts[0][d], counts[c][d]);
-                    // TODO: }
+                    }
                 }
             }
         }

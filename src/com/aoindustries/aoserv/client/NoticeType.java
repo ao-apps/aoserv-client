@@ -1,21 +1,30 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
+import com.aoindustries.io.*;
+import com.aoindustries.util.StringUtility;
+import java.io.*;
+import java.sql.*;
 
 /**
  * Each reason for notifying clients is represented by a
  * <code>NoticeType</code>.
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class NoticeType extends AOServObjectStringKey implements Comparable<NoticeType>, DtoFactory<com.aoindustries.aoserv.client.dto.NoticeType> {
+final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_TYPE=0;
+    static final String COLUMN_TYPE_name = "type";
+
+    private String description;
+
     public static final String
         NONPAY="nonpay",
         BADCARD="badcard",
@@ -23,44 +32,37 @@ final public class NoticeType extends AOServObjectStringKey implements Comparabl
         DISABLED="disabled",
         ENABLED="enabled"
     ;
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 1445397931590541727L;
-
-    public NoticeType(AOServConnector connector, String type) {
-        super(connector, type);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(NoticeType other) {
-        return compareIgnoreCaseConsistentWithEquals(getKey(), other.getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique type name")
-    public String getType() {
-        return getKey();
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public NoticeType(AOServConnector connector, com.aoindustries.aoserv.client.dto.NoticeType dto) {
-        this(connector, dto.getType());
+    Object getColumnImpl(int i) {
+	if(i==COLUMN_TYPE) return pkey;
+	if(i==1) return description;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.NoticeType getDto() {
-        return new com.aoindustries.aoserv.client.dto.NoticeType(getKey());
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="i18n">
     public String getDescription() {
-        return ApplicationResources.accessor.getMessage("NoticeType."+getKey()+".description");
+	return description;
     }
-    // </editor-fold>
+
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.NOTICE_TYPES;
+    }
+
+    public String getType() {
+	return pkey;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey = result.getString(1);
+	description = result.getString(2);
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readUTF().intern();
+	description=in.readUTF();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeUTF(pkey);
+	out.writeUTF(description);
+    }
 }

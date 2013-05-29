@@ -1,70 +1,64 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2008-2011 by AO Industries, Inc.,
+ * Copyright 2008-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import java.rmi.RemoteException;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * All of the types of processors.
  *
  * @author  AO Industries, Inc.
  */
-final public class ProcessorType extends AOServObjectStringKey implements Comparable<ProcessorType>, DtoFactory<com.aoindustries.aoserv.client.dto.ProcessorType> {
+final public class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 3398281682562550519L;
+    static final int COLUMN_TYPE = 0;
+    static final int COLUMN_SORT_ORDER = 1;
+    
+    static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-    final private short sortOrder;
+    private short sortOrder;
 
-    public ProcessorType(AOServConnector connector, String type, short sortOrder) {
-        super(connector, type);
-        this.sortOrder = sortOrder;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
     @Override
-    public int compareTo(ProcessorType other) {
-        return compare(sortOrder, other.sortOrder);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_TYPE: return pkey;
+            case COLUMN_SORT_ORDER : return sortOrder;
+            default: throw new IllegalArgumentException("Invalid index: "+i);
+        }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique name of the type of processor")
+    public SchemaTable.TableID getTableID() {
+        return SchemaTable.TableID.PROCESSOR_TYPES;
+    }
+
     public String getType() {
-        return getKey();
+        return pkey;
     }
 
-    @SchemaColumn(order=1, index=IndexType.UNIQUE, description="the sort order of the processor, those sorted higher may be substituted for those sorted lower")
     public short getSortOrder() {
         return sortOrder;
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public ProcessorType(AOServConnector connector, com.aoindustries.aoserv.client.dto.ProcessorType dto) {
-        this(connector, dto.getType(), dto.getSortOrder());
+
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getString(1);
+        sortOrder = result.getShort(2);
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.ProcessorType getDto() {
-        return new com.aoindustries.aoserv.client.dto.ProcessorType(getKey(), sortOrder);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<VirtualServer> getVirtualServers() throws RemoteException {
-        return getConnector().getVirtualServers().filterIndexed(VirtualServer.COLUMN_MINIMUM_PROCESSOR_TYPE, this);
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey=in.readUTF().intern();
+        sortOrder = in.readShort();
     }
 
-    @DependentObjectSet
-    public IndexedSet<PhysicalServer> getPhysicalServers() throws RemoteException {
-        return getConnector().getPhysicalServers().filterIndexed(PhysicalServer.COLUMN_PROCESSOR_TYPE, this);
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        out.writeUTF(pkey);
+        out.writeShort(sortOrder);
     }
-    // </editor-fold>
 }

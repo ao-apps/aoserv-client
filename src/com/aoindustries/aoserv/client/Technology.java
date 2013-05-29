@@ -1,13 +1,13 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2000-2011 by AO Industries, Inc.,
+ * Copyright 2000-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * A <code>Technology</code> associates a <code>TechnologyClass</code>
@@ -16,76 +16,57 @@ import java.rmi.RemoteException;
  * @see  TechnologyClass
  * @see  TechnologyName
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class Technology extends AOServObjectIntegerKey implements Comparable<Technology>, DtoFactory<com.aoindustries.aoserv.client.dto.Technology> {
+final public class Technology extends GlobalObjectIntegerKey<Technology> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 7706379688673891556L;
+    static final int COLUMN_PKEY=0;
+    static final int COLUMN_NAME=1;
+    static final String COLUMN_NAME_name = "name";
+    static final String COLUMN_CLASS_name = "class";
 
-    private String name;
-    private String technologyClass;
+    String name, clazz;
 
-    public Technology(AOServConnector connector, int pkey, String name, String technologyClass) {
-        super(connector, pkey);
-        this.name = name;
-        this.technologyClass = technologyClass;
-        intern();
+    Object getColumnImpl(int i) {
+        if(i==COLUMN_PKEY) return pkey;
+	if(i==COLUMN_NAME) return name;
+	if(i==2) return clazz;
+	throw new IllegalArgumentException("Invalid index: "+i);
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.TECHNOLOGIES;
     }
 
-    private void intern() {
-        name = intern(name);
-        technologyClass = intern(technologyClass);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(Technology other) {
-        try {
-            int diff = name==other.name ? 0 : getTechnologyName().compareTo(other.getTechnologyName()); // OK - interned
-            if(diff!=0) return diff;
-            return technologyClass==other.technologyClass ? 0 : getTechnologyClass().compareTo(other.getTechnologyClass()); // OK - interned
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
-        }
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="the unique identifier")
-    public int getPkey() {
-        return getKeyInt();
+    public TechnologyClass getTechnologyClass(AOServConnector connector) throws SQLException, IOException {
+        TechnologyClass technologyClass = connector.getTechnologyClasses().get(clazz);
+        if (technologyClass == null) throw new SQLException("Unable to find TechnologyClass: " + clazz);
+        return technologyClass;
     }
 
-    public static final MethodColumn COLUMN_TECHNOLOGY_NAME = getMethodColumn(Technology.class, "technologyName");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the name of the package")
-    public TechnologyName getTechnologyName() throws RemoteException {
-        return getConnector().getTechnologyNames().get(name);
+    public TechnologyName getTechnologyName(AOServConnector connector) throws SQLException, IOException {
+        TechnologyName technologyName = connector.getTechnologyNames().get(name);
+        if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
+        return technologyName;
     }
 
-    public static final MethodColumn COLUMN_TECHNOLOGY_CLASS = getMethodColumn(Technology.class, "technologyClass");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the name of the group this package belongs to")
-    public TechnologyClass getTechnologyClass() throws RemoteException {
-        return getConnector().getTechnologyClasses().get(technologyClass);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public Technology(AOServConnector connector, com.aoindustries.aoserv.client.dto.Technology dto) {
-        this(connector, dto.getPkey(), dto.getName(), dto.getTechnologyClass());
+    public void init(ResultSet result) throws SQLException {
+        pkey = result.getInt(1);
+        name = result.getString(2);
+        clazz = result.getString(3);
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.Technology getDto() {
-        return new com.aoindustries.aoserv.client.dto.Technology(getKeyInt(), name, technologyClass);
+    public void read(CompressedDataInputStream in) throws IOException {
+        pkey = in.readCompressedInt();
+	name = in.readUTF().intern();
+	clazz = in.readUTF().intern();
     }
-    // </editor-fold>
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) out.writeCompressedInt(pkey);
+	out.writeUTF(name);
+	out.writeUTF(clazz);
+    }
 }

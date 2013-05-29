@@ -1,15 +1,13 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2002-2011 by AO Industries, Inc.,
+ * Copyright 2002-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
-import java.util.Arrays;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -19,11 +17,21 @@ import java.util.List;
  * @see  PostgresServer
  * @see  TechnologyVersion
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class PostgresVersion extends AOServObjectIntegerKey implements Comparable<PostgresVersion>, DtoFactory<com.aoindustries.aoserv.client.dto.PostgresVersion> {
+final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersion> {
 
-    // <editor-fold defaultstate="collapsed" desc="Constants">
+    static final int COLUMN_VERSION=0;
+    static final String COLUMN_MINOR_VERSION_name = "minor_version";
+    static final String COLUMN_VERSION_name = "version";
+
+    private String minorVersion;
+    private int postgisVersion;
+
+    public static final String TECHNOLOGY_NAME="postgresql";
+
     public static final String
         VERSION_7_1="7.1",
         VERSION_7_2="7.2",
@@ -38,69 +46,26 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
      * preference.  Index <code>0</code> is the most
      * preferred.
      */
-    private static final List<String> preferredMinorVersions = AoCollections.optimalUnmodifiableList(
-        Arrays.asList(
+    public static final String[] getPreferredMinorVersions() {
+        return new String[] {
             VERSION_8_3,
             VERSION_8_1,
             VERSION_8_0,
             VERSION_7_3,
             VERSION_7_2,
             VERSION_7_1
-        )
-    );
-    public static final List<String> getPreferredMinorVersions() {
-        return preferredMinorVersions;
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = -1799351801183642585L;
-
-    private String minorVersion;
-    final private Integer postgisVersion;
-
-    public PostgresVersion(
-        AOServConnector connector,
-        int version,
-        String minorVersion,
-        Integer postgisVersion
-    ) {
-        super(connector, version);
-        this.minorVersion = minorVersion;
-        this.postgisVersion = postgisVersion;
-        intern();
+        };
     }
 
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        minorVersion = intern(minorVersion);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(PostgresVersion other) {
-        try {
-            return getKeyInt()==other.getKeyInt() ? 0 : getVersion().compareTo(other.getVersion());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_VERSION: return Integer.valueOf(pkey);
+            case 1: return minorVersion;
+            case 2: return postgisVersion==-1 ? null : Integer.valueOf(postgisVersion);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    public static final MethodColumn COLUMN_VERSION = getMethodColumn(PostgresVersion.class, "version");
-    @DependencySingleton
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a reference to the PostgreSQL details in the <code>technology_versions</code> table")
-    public TechnologyVersion getVersion() throws RemoteException {
-        return getConnector().getTechnologyVersions().get(getKey());
-    }
-
-    @SchemaColumn(order=1, description="the minor version for this version")
     public String getMinorVersion() {
         return minorVersion;
     }
@@ -108,52 +73,54 @@ final public class PostgresVersion extends AOServObjectIntegerKey implements Com
     /**
      * Gets the PostGIS version of <code>null</code> if not supported by this PostgreSQL version....
      */
-    public static final MethodColumn COLUMN_POSTGIS_VERSION = getMethodColumn(PostgresVersion.class, "postgisVersion");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="a reference to the PostGIS defails in the <code>technology_versions</code>")
-    public TechnologyVersion getPostgisVersion() throws RemoteException {
-        if(postgisVersion==null) return null;
-        TechnologyVersion tv = getConnector().getTechnologyVersions().get(postgisVersion);
+    public TechnologyVersion getPostgisVersion(AOServConnector connector) throws SQLException, IOException {
+        if(postgisVersion==-1) return null;
+        TechnologyVersion tv = connector.getTechnologyVersions().get(postgisVersion);
+        if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+postgisVersion);
         if(
-            tv.operatingSystemVersion
-            != getVersion().operatingSystemVersion
+            tv.getOperatingSystemVersion(connector).getPkey()
+            != getTechnologyVersion(connector).getOperatingSystemVersion(connector).getPkey()
         ) {
-            throw new RemoteException("postgresql/postgis version mismatch on PostgresVersion: #"+getKeyInt());
+            throw new SQLException("postgresql/postgis version mismatch on PostgresVersion: #"+pkey);
         }
         return tv;
     }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public PostgresVersion(AOServConnector connector, com.aoindustries.aoserv.client.dto.PostgresVersion dto) {
-        this(
-            connector,
-            dto.getVersion(),
-            dto.getMinorVersion(),
-            dto.getPostgisVersion()
-        );
+    
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.POSTGRES_VERSIONS;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.PostgresVersion getDto() {
-        return new com.aoindustries.aoserv.client.dto.PostgresVersion(getKeyInt(), minorVersion, postgisVersion);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Relations">
-    @DependentObjectSet
-    public IndexedSet<PostgresServer> getPostgresServers() throws RemoteException {
-        return getConnector().getPostgresServers().filterIndexed(PostgresServer.COLUMN_VERSION, this);
+    public List<PostgresEncoding> getPostgresEncodings(AOServConnector connector) throws IOException, SQLException {
+        return connector.getPostgresEncodings().getPostgresEncodings(this);
     }
 
-    @DependentObjectSet
-    public IndexedSet<PostgresEncoding> getPostgresEncodings() throws RemoteException {
-        return getConnector().getPostgresEncodings().filterIndexed(PostgresEncoding.COLUMN_POSTGRES_VERSION, this);
-    }
-    /* TODO
     public PostgresEncoding getPostgresEncoding(AOServConnector connector, String encoding) throws IOException, SQLException {
         return connector.getPostgresEncodings().getPostgresEncoding(this, encoding);
     }
-     */
-    // </editor-fold>
+
+    public TechnologyVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
+	TechnologyVersion obj=connector.getTechnologyVersions().get(pkey);
+	if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
+	return obj;
+    }
+
+    public void init(ResultSet result) throws SQLException {
+	pkey=result.getInt(1);
+        minorVersion=result.getString(2);
+        postgisVersion=result.getInt(3);
+        if(result.wasNull()) postgisVersion=-1;
+    }
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readCompressedInt();
+        minorVersion=in.readUTF().intern();
+        postgisVersion=in.readCompressedInt();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	out.writeCompressedInt(pkey);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_109)<=0) out.writeCompressedInt(5432);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_121)>=0) out.writeUTF(minorVersion);
+        if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_27)>=0) out.writeCompressedInt(postgisVersion);
+    }
 }

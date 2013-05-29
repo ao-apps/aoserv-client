@@ -1,14 +1,13 @@
+package com.aoindustries.aoserv.client;
+
 /*
- * Copyright 2001-2011 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-package com.aoindustries.aoserv.client;
-
-import com.aoindustries.aoserv.client.validator.*;
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.WrappedException;
-import java.rmi.RemoteException;
+import com.aoindustries.io.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * <code>MasterUser</code>s are restricted to data based on a list
@@ -21,85 +20,63 @@ import java.rmi.RemoteException;
  * @see  MasterUser
  * @see  Server
  *
+ * @version  1.0a
+ *
  * @author  AO Industries, Inc.
  */
-final public class MasterServer extends AOServObjectIntegerKey implements Comparable<MasterServer>, DtoFactory<com.aoindustries.aoserv.client.dto.MasterServer> {
+final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 
-    // <editor-fold defaultstate="collapsed" desc="Fields">
-    private static final long serialVersionUID = 8730731547197042299L;
+    static final int COLUMN_PKEY=0;
+    static final String COLUMN_USERNAME_name = "username";
+    static final String COLUMN_SERVER_name = "server";
 
-    private UserId username;
-    final private int server;
+    private String username;
+    private int server;
 
-    public MasterServer(
-        AOServConnector connector,
-        int pkey,
-        UserId username,
-        int server
-    ) {
-        super(connector, pkey);
-        this.username = username;
-        this.server = server;
-        intern();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        intern();
-    }
-
-    private void intern() {
-        username = intern(username);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Ordering">
-    @Override
-    public int compareTo(MasterServer other) {
-        try {
-            int diff = username==other.username ? 0 : getMasterUser().compareTo(other.getMasterUser());
-            if(diff!=0) return diff;
-            return server==other.server ? 0 : getServer().compareTo(other.getServer());
-        } catch(RemoteException err) {
-            throw new WrappedException(err);
+    Object getColumnImpl(int i) {
+        switch(i) {
+            case COLUMN_PKEY: return Integer.valueOf(pkey);
+            case 1: return username;
+            case 2: return Integer.valueOf(server);
+            default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
-    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Columns">
-    @SchemaColumn(order=0, index=IndexType.PRIMARY_KEY, description="a generated unique primary key")
-    public int getPkey() {
-        return getKeyInt();
+    public MasterUser getMasterUser() throws SQLException, IOException {
+	MasterUser obj=table.connector.getMasterUsers().get(username);
+	if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
+	return obj;
     }
 
-    public static final MethodColumn COLUMN_MASTER_USER = getMethodColumn(MasterServer.class, "masterUser");
-    @DependencySingleton
-    @SchemaColumn(order=1, index=IndexType.INDEXED, description="the unique username of the user")
-    public MasterUser getMasterUser() throws RemoteException {
-        return getConnector().getMasterUsers().get(username);
+    public Server getServer() throws SQLException, IOException {
+	Server obj=table.connector.getServers().get(server);
+	if(obj==null) throw new SQLException("Unable to find Server: "+server);
+	return obj;
+    }
+    
+    public int getServerPKey() {
+        return server;
     }
 
-    public static final MethodColumn COLUMN_SERVER = getMethodColumn(MasterServer.class, "server");
-    @DependencySingleton
-    @SchemaColumn(order=2, index=IndexType.INDEXED, description="the pkey of the server they may control")
-    public Server getServer() throws RemoteException {
-        return getConnector().getServers().get(server);
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="DTO">
-    public MasterServer(AOServConnector connector, com.aoindustries.aoserv.client.dto.MasterServer dto) throws ValidationException {
-        this(
-            connector,
-            dto.getPkey(),
-            getUserId(dto.getUsername()),
-            dto.getServer()
-        );
+    public SchemaTable.TableID getTableID() {
+	return SchemaTable.TableID.MASTER_SERVERS;
     }
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.MasterServer getDto() {
-        return new com.aoindustries.aoserv.client.dto.MasterServer(getKeyInt(), getDto(username), server);
+    public void init(ResultSet result) throws SQLException {
+	pkey=result.getInt(1);
+	username=result.getString(2);
+	server=result.getInt(3);
     }
-    // </editor-fold>
+
+    public void read(CompressedDataInputStream in) throws IOException {
+	pkey=in.readCompressedInt();
+	username=in.readUTF().intern();
+	server=in.readCompressedInt();
+    }
+
+    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	out.writeCompressedInt(pkey);
+	out.writeUTF(username);
+	out.writeCompressedInt(server);
+    }
 }
