@@ -392,7 +392,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
                         }
                         AOServProtocol.checkResult(code, in);
                     } finally {
-                        BufferManager.release(buff);
+                        BufferManager.release(buff, false);
                     }
                 }
 

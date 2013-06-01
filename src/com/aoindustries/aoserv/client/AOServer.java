@@ -540,7 +540,7 @@ final public class AOServer extends CachedObjectIntegerKey<AOServer>
                             }
                             AOServProtocol.checkResult(code, in);
                         } finally {
-                            BufferManager.release(buff);
+                            BufferManager.release(buff, false);
                         }
                     }
 

@@ -95,14 +95,14 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 							while((code=masterIn.readByte())==AOServProtocol.NEXT) {
 								int len=masterIn.readShort();
 								masterIn.readFully(buff, 0, len);
-								for(int c=0;c<len;c++) chars[c]=(char)buff[c];
+								for(int c=0;c<len;c++) chars[c]=(char)buff[c]; // Assumes ISO8859-1 encoding
 								out.write(chars, 0, len);
 							}
 						} finally {
-							BufferManager.release(chars);
+							BufferManager.release(chars, false);
 						}
 					} finally {
-						BufferManager.release(buff);
+						BufferManager.release(buff, false);
 					}
 					if(code!=AOServProtocol.DONE) {
 						AOServProtocol.checkResult(code, masterIn);

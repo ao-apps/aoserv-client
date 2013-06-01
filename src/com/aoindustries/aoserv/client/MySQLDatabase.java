@@ -7,7 +7,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.BufferManager;
+import com.aoindustries.io.IoUtils;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -157,15 +157,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
                     if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);*/
                     Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8");
                     try {
-                        char[] chars=BufferManager.getChars();
-                        try {
-                            int len;
-                            while((len=nestedIn.read(chars, 0, BufferManager.BUFFER_SIZE))!=-1) {
-                                out.write(chars, 0, len);
-                            }
-                        } finally {
-                            BufferManager.release(chars);
-                        }
+						IoUtils.copy(nestedIn, out);
                     } finally {
                         nestedIn.close();
                     }

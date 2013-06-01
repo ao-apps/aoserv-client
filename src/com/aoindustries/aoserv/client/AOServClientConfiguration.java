@@ -6,10 +6,9 @@ package com.aoindustries.aoserv.client;
  * All rights reserved.
  */
 import com.aoindustries.io.AOPool;
+import com.aoindustries.util.PropertiesUtils;
 import com.aoindustries.util.StringUtility;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
@@ -30,18 +29,7 @@ final public class AOServClientConfiguration {
 
     private static String getProperty(String name) throws IOException {
         synchronized (propsLock) {
-            Properties newProps = new Properties();
-            if (props == null) {
-                InputStream in = AOServClientConfiguration.class.getResourceAsStream("aoserv-client.properties");
-                if(in==null) throw new IOException("Unable to find configuration: aoserv-client.properties");
-                try {
-                    in = new BufferedInputStream(in);
-                    newProps.load(in);
-                } finally {
-                    in.close();
-                }
-                props = newProps;
-            }
+            if (props == null) props = PropertiesUtils.loadFromResource(AOServClientConfiguration.class, "aoserv-client.properties");
             return props.getProperty(name);
         }
     }

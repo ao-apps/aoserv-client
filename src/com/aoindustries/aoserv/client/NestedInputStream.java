@@ -73,7 +73,7 @@ public final class NestedInputStream extends InputStream {
             isDone=true;
             bufferFilled=bufferRead=0;
             if(buffer!=null) {
-                BufferManager.release(buffer);
+                BufferManager.release(buffer, false);
                 buffer=null;
             }
             try {
@@ -115,9 +115,9 @@ public final class NestedInputStream extends InputStream {
     }
     
     @Override
-    public void finalize() throws Throwable {
+    protected void finalize() throws Throwable {
         if(buffer!=null) {
-            BufferManager.release(buffer);
+            BufferManager.release(buffer, false);
             buffer=null;
         }
         super.finalize();
