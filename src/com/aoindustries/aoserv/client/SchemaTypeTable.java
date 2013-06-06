@@ -1,20 +1,17 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.util.sort.ComparisonSortAlgorithm;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * @see  SchemaType
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */
@@ -57,8 +54,13 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
         return SchemaTable.TableID.SCHEMA_TYPES;
     }
 
-    public <T extends AOServObject> void sort(T[] list, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Arrays.sort(
+    public <K,T extends AOServObject<K,T>> void sort(
+		ComparisonSortAlgorithm<? super T> sortAlgorithm,
+		T[] list,
+		SQLExpression[] sortExpressions,
+		boolean[] sortOrders
+	) {
+        sortAlgorithm.sort(
             list,
             new SQLComparator<T>(
                 connector,
@@ -68,8 +70,13 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
         );
     }
 
-    public <T extends AOServObject> void sort(List<T> list, SQLExpression[] sortExpressions, boolean[] sortOrders) {
-        Collections.sort(
+    public <K,T extends AOServObject<K,T>> void sort(
+		ComparisonSortAlgorithm<? super T> sortAlgorithm,
+		List<T> list,
+		SQLExpression[] sortExpressions,
+		boolean[] sortOrders
+	) {
+        sortAlgorithm.sort(
             list,
             new SQLComparator<T>(
                 connector,

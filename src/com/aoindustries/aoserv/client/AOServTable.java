@@ -13,6 +13,8 @@ import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.table.Table;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.WrappedException;
+import com.aoindustries.util.sort.ComparisonSortAlgorithm;
+import com.aoindustries.util.sort.JavaSort;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -481,7 +483,15 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
         }
     }
 
-    /**
+	/**
+	 * Gets the ComparisonSortAlgorithm used to sort the table.
+	 * Defaults to JavaSort.
+	 */
+	protected ComparisonSortAlgorithm<Object> getSortAlgorithm() {
+		return JavaSort.getInstance();
+	}
+
+	/**
      * Sorts the table using the default sort columns and orders.  If no defaults have been provided, then
      * the table is not sorted.
      *
@@ -496,7 +506,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
             for(int c=0;c<orderBys.length;c++) {
                 sortOrders[c] = orderBys[c].getOrder();
             }
-            connector.getSchemaTypes().sort(list, sortExpressions, sortOrders);
+            connector.getSchemaTypes().sort(getSortAlgorithm(), list, sortExpressions, sortOrders);
         }
     }
 

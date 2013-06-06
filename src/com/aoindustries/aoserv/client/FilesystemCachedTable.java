@@ -1,14 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.io.FileList;
+import com.aoindustries.io.FileListObjectFactory;
+import com.aoindustries.util.sort.ComparisonSortAlgorithm;
+import com.aoindustries.util.sort.FastQSort;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A <code>FilesystemCachedTable</code> stores all of the
@@ -115,6 +120,16 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
         }
     }
 
+	/**
+	 * FastQSort accesses the disk file less than other algorithms, and does
+	 * not load all the objects into memory at once like the default Java
+	 * merge sort.
+	 */
+	@Override
+	protected ComparisonSortAlgorithm<Object> getSortAlgorithm() {
+		return FastQSort.getInstance();
+	}
+
     final protected V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
         SchemaTable schemaTable=getTableSchema();
         SchemaColumn schemaColumn=schemaTable.getSchemaColumn(connector, col);
@@ -149,7 +164,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
                     tableList.getObjectFactory()
                 );
                 sortedFileList.addAll(tableList);
-                Collections.sort(sortedFileList, Vcomparator);
+                getSortAlgorithm().sort(sortedFileList, Vcomparator);
                 unmodifiableSortedList=Collections.unmodifiableList(sortedFileList);
                 columnLists.set(col, unmodifiableSortedList);
             }
@@ -175,8 +190,8 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
     }
 
     public V createInstance() throws IOException {
-        V obj = (V)getNewObject();
-        if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(this);
+        V obj = getNewObject();
+        if(obj instanceof SingleTableObject<?,?>) ((SingleTableObject<K,V>)obj).setTable(this);
         return obj;
     }
 }

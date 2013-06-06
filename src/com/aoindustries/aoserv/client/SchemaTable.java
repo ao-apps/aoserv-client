@@ -59,6 +59,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         DISABLE_LOG,
         DISTRO_FILE_TYPES,
         DISTRO_FILES,
+		DISTRO_REPORT_TYPES,
         DNS_FORBIDDEN_ZONES,
         DNS_RECORDS,
         DNS_TLDS,
@@ -239,7 +240,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
         this.last_version=last_version;
     }
 
-    public AOServTable<?,? extends AOServObject> getAOServTable(AOServConnector connector) {
+    public AOServTable<?,? extends AOServObject<?,?>> getAOServTable(AOServConnector connector) {
         return connector.getTable(pkey);
     }
 

@@ -30,6 +30,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
         //VERSION_7_2="7.2",
         //VERSION_9_2="9.2",
         VERSION_5="5",
+        VERSION_5_DOM0="5.dom0",
         VERSION_2006_0="2006.0",
         VERSION_ES_4="ES 4"
     ;
@@ -47,8 +48,8 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
     public static final String DEFAULT_OPERATING_SYSTEM_VERSION=VERSION_2006_0;
 
     public static final int
-        CENTOS_5DOM0_X86_64 = 63,
-        CENTOS_5DOM0_I686 = 64,
+        CENTOS_5_DOM0_X86_64 = 63,
+        CENTOS_5_DOM0_I686 = 64,
         CENTOS_5_I686_AND_X86_64 = 67,
         //GENTOO_1_4_I686=5,
         //MANDRAKE_9_2_I586=12,
@@ -176,8 +177,8 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
             case REDHAT_ES_4_X86_64 :
             case CENTOS_5_I686_AND_X86_64 :
                 return "/www";
-            case CENTOS_5DOM0_I686 :
-            case CENTOS_5DOM0_X86_64 :
+            case CENTOS_5_DOM0_I686 :
+            case CENTOS_5_DOM0_X86_64 :
                 return null;
             default :
                 throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
@@ -203,8 +204,8 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
             case REDHAT_ES_4_X86_64 :
             case CENTOS_5_I686_AND_X86_64 :
                 return "/wwwgroup";
-            case CENTOS_5DOM0_I686 :
-            case CENTOS_5DOM0_X86_64 :
+            case CENTOS_5_DOM0_I686 :
+            case CENTOS_5_DOM0_X86_64 :
                 return null;
             default :
                 throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);

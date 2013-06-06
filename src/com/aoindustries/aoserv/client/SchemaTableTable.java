@@ -8,6 +8,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.sort.JavaSort;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -209,7 +210,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                             boolean[] orders=new boolean[exprs.length];
                             for(int d=0;d<orders.length;d++) orders[d]=sortOrders.get(d).booleanValue();
                             rows = new ArrayList<AOServObject>(rows);
-                            connector.getSchemaTypes().sort(rows, exprs, orders);
+                            connector.getSchemaTypes().sort(JavaSort.getInstance(), rows, exprs, orders);
                         }
 
                         // Convert the results
