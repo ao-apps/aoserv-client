@@ -38,7 +38,8 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
         VERSION_7_3="7.3",
         VERSION_8_0="8.0",
         VERSION_8_1="8.1",
-        VERSION_8_3="8.3"
+        VERSION_8_3="8.3",
+        VERSION_9_2="9.2"
     ;
 
     /**
@@ -46,8 +47,9 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
      * preference.  Index <code>0</code> is the most
      * preferred.
      */
-    public static final String[] getPreferredMinorVersions() {
+    public static String[] getPreferredMinorVersions() {
         return new String[] {
+            VERSION_9_2,
             VERSION_8_3,
             VERSION_8_1,
             VERSION_8_0,

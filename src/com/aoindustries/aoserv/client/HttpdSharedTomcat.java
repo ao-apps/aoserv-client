@@ -55,7 +55,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
     public static final String OVERFLOW_TEMPLATE="tomcat";
 
-    public static final String DEFAULT_TOMCAT_VERSION_PREFIX=HttpdTomcatVersion.VERSION_6_0_PREFIX;
+    public static final String DEFAULT_TOMCAT_VERSION_PREFIX=HttpdTomcatVersion.VERSION_7_0_PREFIX;
 
     private String name;
     int ao_server;
