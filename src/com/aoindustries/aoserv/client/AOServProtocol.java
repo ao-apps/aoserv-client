@@ -133,7 +133,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 
 		public static final Version CURRENT_VERSION = VERSION_1_70;
 
-		private static final Map<String,Version> versionMap = new HashMap<String,Version>();
+		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
 			for(Version version : values()) versionMap.put(version.getVersion(), version);
 		}
@@ -517,6 +517,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 	private String comments;
 	private long last_used;
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_VERSION: return pkey;
@@ -543,10 +544,12 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		return last_used==-1 ? null : new Date(last_used);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.AOSERV_PROTOCOLS;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getString(1);
 		created=result.getDate(2).getTime();
@@ -555,6 +558,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		last_used = D==null ? -1 : D.getTime();
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 		created=in.readLong();
@@ -562,6 +566,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		last_used=in.readLong();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeLong(created);

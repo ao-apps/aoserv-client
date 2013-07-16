@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2000-2009 by AO Industries, Inc.,
+ * Copyright 2000-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -45,9 +45,9 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         HTTPS="HTTPS",
         HYPERSONIC="hypersonic",
         IMAP2="IMAP2",
-        INTERSERVER="InterServer",
         JMX="JMX",
         JNP="JNP",
+		MILTER="milter",
         MYSQL="MySQL",
         NTALK="ntalk",
         POP3="POP3",
@@ -66,6 +66,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         WEBSERVER="webserver"
     ;
 
+	@Override
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PROTOCOL: return pkey;
@@ -108,10 +109,12 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         return pkey;
     }
 
+	@Override
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.PROTOCOLS;
     }
 
+	@Override
     public void init(ResultSet result) throws SQLException {
         pkey = result.getString(1);
         port = result.getInt(2);
@@ -120,6 +123,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         net_protocol = result.getString(5);
     }
 
+	@Override
     public void read(CompressedDataInputStream in) throws IOException {
         pkey=in.readUTF().intern();
         port=in.readCompressedInt();
@@ -128,6 +132,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
         net_protocol=in.readUTF().intern();
     }
 
+	@Override
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey);
         out.writeCompressedInt(port);
