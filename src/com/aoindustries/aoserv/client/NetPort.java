@@ -1,12 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.*;
-import com.aoindustries.util.*;
 import java.io.*;
 import java.sql.*;
 
@@ -14,8 +13,6 @@ import java.sql.*;
  * Several network resources on a <code>Server</code> require a unique
  * port.  All of the possible network ports are represented by
  * <code>NetPort</code>s.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */

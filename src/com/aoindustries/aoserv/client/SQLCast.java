@@ -1,19 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2002-2009 by AO Industries, Inc.,
+ * Copyright 2002-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.List;
 
 /**
  * Casts one result type to another.
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */

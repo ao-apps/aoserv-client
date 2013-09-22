@@ -14,7 +14,6 @@ import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.validator.ValidationException;
-import com.aoindustries.aoserv.client.validator.ValidationResult;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;

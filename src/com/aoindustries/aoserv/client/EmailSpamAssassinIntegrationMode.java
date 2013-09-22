@@ -1,22 +1,21 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2005-2009 by AO Industries, Inc.,
+ * Copyright 2005-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import com.aoindustries.util.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * An <code>EmailSpamAssassinIntegrationMode</code> is a simple wrapper for the types
  * of SpamAssassin integration modes.
  *
  * @see  Server
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */

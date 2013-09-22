@@ -1,12 +1,11 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
 import java.io.*;
 import java.sql.*;
 
@@ -15,8 +14,6 @@ import java.sql.*;
  * serves static content only.
  *
  * @see  HttpdSite
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */

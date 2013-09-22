@@ -1,22 +1,19 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Flags an <code>AOServObject</code>s as being able to be removed
  * with a call to the <code>remove()</code> method.
  *
  * @see  AOServObject
- *
- * @version  1.0a
  *
  * @author  AO Industries, Inc.
  */

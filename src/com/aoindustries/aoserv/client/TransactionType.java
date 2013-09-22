@@ -1,17 +1,16 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2005-2009 by AO Industries, Inc.,
+ * Copyright 2005-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Locale;
 
 /**
  * A <code>TransactionType</code> is one type that may be used

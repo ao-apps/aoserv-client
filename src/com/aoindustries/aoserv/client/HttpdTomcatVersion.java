@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
- * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
+ * Copyright 2001-2013 by AO Industries, Inc.,
+ * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -45,6 +45,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		VERSION_7_0_PREFIX="7.0."
 	;
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_VERSION: return Integer.valueOf(pkey);
@@ -58,6 +59,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		return install_dir;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_TOMCAT_VERSIONS;
 	}
@@ -68,6 +70,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		return obj;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		install_dir=result.getString(2);
@@ -117,6 +120,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		return version.startsWith(VERSION_7_0_PREFIX);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		install_dir=in.readUTF();
@@ -127,6 +131,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		return requires_mod_jk;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(install_dir);

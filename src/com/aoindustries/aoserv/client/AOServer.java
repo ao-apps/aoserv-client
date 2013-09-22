@@ -18,7 +18,6 @@ import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
-import com.sun.org.apache.bcel.internal.generic.UnconditionalBranch;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
