@@ -318,14 +318,15 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	/**
 	 * Encodes the parameters.  Will not return null.
 	 */
-	public static String encodeParameters(Map<String,String> monitoringParameters) {
+	public static String encodeParameters(HttpParameters monitoringParameters) {
 		try {
 			StringBuilder SB = new StringBuilder();
-			for(Map.Entry<String,String> entry : monitoringParameters.entrySet()) {
+			for(Map.Entry<String,List<String>> entry : monitoringParameters.getParameterMap().entrySet()) {
 				String name = entry.getKey();
-				String value = entry.getValue();
-				if(SB.length()>0) SB.append('&');
-				SB.append(URLEncoder.encode(name, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
+				for(String value : entry.getValue()) {
+					if(SB.length()>0) SB.append('&');
+					SB.append(URLEncoder.encode(name, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
+				}
 			}
 			return SB.toString();
 		} catch(UnsupportedEncodingException err) {

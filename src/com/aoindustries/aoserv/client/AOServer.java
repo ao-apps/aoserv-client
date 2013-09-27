@@ -14,6 +14,7 @@ import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.HttpParameters;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
@@ -2013,7 +2014,7 @@ final public class AOServer
 	/**
 	 * Checks a port from the daemon's point of view.  This is required for monitoring of private and loopback IPs.
 	 */
-	public String checkPort(InetAddress ipAddress, int port, String netProtocol, String appProtocol, Map<String,String> monitoringParameters) throws IOException, SQLException {
+	public String checkPort(InetAddress ipAddress, int port, String netProtocol, String appProtocol, HttpParameters monitoringParameters) throws IOException, SQLException {
 		return table.connector.requestStringQuery(
 			true,
 			AOServProtocol.CommandID.AO_SERVER_CHECK_PORT,
