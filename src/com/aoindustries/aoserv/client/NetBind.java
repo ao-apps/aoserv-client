@@ -7,17 +7,17 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.net.EmptyParameters;
+import com.aoindustries.net.HttpParameters;
+import com.aoindustries.net.HttpParametersMap;
+import com.aoindustries.net.UnmodifiableHttpParameters;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,6 +61,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return obj;
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return Integer.valueOf(pkey);
@@ -291,10 +292,12 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return obj;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.NET_BINDS;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		packageName=result.getString(2);
@@ -330,11 +333,14 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		}
 	}
 
-	public static Map<String,String> decodeParameters(String monitoringParameters) {
-		if(monitoringParameters==null) return Collections.emptyMap();
-		else {
+	public static HttpParameters decodeParameters(String monitoringParameters) {
+		if(monitoringParameters==null) {
+			return EmptyParameters.getInstance();
+		} else {
+			return new HttpParametersMap(monitoringParameters);
+			/*
 			try {
-				String[] nameValues = StringUtility.splitString(monitoringParameters, '&');
+				List<String> nameValues = StringUtility.splitString(monitoringParameters, '&');
 				Map<String,String> newMap = new HashMap<String,String>(nameValues.length*4/3+1);
 				for(String nameValue : nameValues) {
 					String name;
@@ -352,27 +358,31 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 				return newMap;
 			} catch(UnsupportedEncodingException err) {
 				throw new WrappedException(err);
-			}
+			}*/
 		}
 	}
 
-	private static final ConcurrentMap<String,Map<String,String>> getMonitoringParametersCache = new ConcurrentHashMap<String,Map<String,String>>();
+	private static final ConcurrentMap<String,HttpParameters> getMonitoringParametersCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Gets the unmodifiable map of parameters for this bind.
 	 */
-	public Map<String,String> getMonitoringParameters() {
+	public HttpParameters getMonitoringParameters() {
 		String myParamString = monitoring_parameters;
-		if(myParamString==null) return Collections.emptyMap();
-		Map<String,String> params = getMonitoringParametersCache.get(myParamString);
-		if(params==null) {
-			params = Collections.unmodifiableMap(decodeParameters(myParamString));
-			Map<String,String> previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
-			if(previous!=null) params = previous;
+		if(myParamString==null) {
+			return EmptyParameters.getInstance();
+		} else {
+			HttpParameters params = getMonitoringParametersCache.get(myParamString);
+			if(params==null) {
+				params = UnmodifiableHttpParameters.wrap(decodeParameters(myParamString));
+				HttpParameters previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
+				if(previous!=null) params = previous;
+			}
+			return params;
 		}
-		return params;
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		packageName=in.readUTF().intern();
@@ -386,8 +396,9 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		monitoring_parameters=in.readNullUTF();
 	}
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
-		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+		List<CannotRemoveReason> reasons=new ArrayList<>();
 
 		AOServConnector conn=table.connector;
 
@@ -399,66 +410,67 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			if(
 				pkey==ao.daemon_bind
 				|| pkey==ao.daemon_connect_bind
-			) reasons.add(new CannotRemoveReason<AOServer>("Used as aoserv-daemon port for server: "+ao.getHostname(), ao));
-			if(pkey==ao.jilter_bind) reasons.add(new CannotRemoveReason<AOServer>("Used as aoserv-daemon jilter port for server: "+ao.getHostname(), ao));
+			) reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon port for server: "+ao.getHostname(), ao));
+			if(pkey==ao.jilter_bind) reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon jilter port for server: "+ao.getHostname(), ao));
 		}
 
 		// httpd_binds
 		for(HttpdBind hb : conn.getHttpdBinds().getRows()) {
 			if(equals(hb.getNetBind())) {
 				HttpdServer hs=hb.getHttpdServer();
-				reasons.add(new CannotRemoveReason<HttpdBind>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hb));
+				reasons.add(new CannotRemoveReason<>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hb));
 			}
 		}
 
 		// httpd_jboss_sites
 		for(HttpdJBossSite hjb : conn.getHttpdJBossSites().getRows()) {
 			HttpdSite hs=hjb.getHttpdTomcatSite().getHttpdSite();
-			if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
-			if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
-			if(equals(hjb.getRmiBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as RMI port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
-			if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
-			if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<HttpdJBossSite>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+			if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+			if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+			if(equals(hjb.getRmiBind())) reasons.add(new CannotRemoveReason<>("Used as RMI port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+			if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+			if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
 		}
 
 		// httpd_shared_tomcats
 		for(HttpdSharedTomcat hst : conn.getHttpdSharedTomcats().getRows()) {
-			if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+			if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
 		}
 
 		// httpd_tomcat_std_sites
 		for(HttpdTomcatStdSite hts : conn.getHttpdTomcatStdSites().getRows()) {
 			HttpdSite hs=hts.getHttpdTomcatSite().getHttpdSite();
-			if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<HttpdTomcatStdSite>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
+			if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
 		}
 
 		// httpd_workers
 		for(HttpdWorker hw : conn.getHttpdWorkers().getRows()) {
 			if(equals(hw.getNetBind())) {
 				HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
-				if(hst!=null) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+				if(hst!=null) reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
 
 				HttpdTomcatSite hts=hw.getHttpdTomcatSite();
 				if(hts!=null) {
 					HttpdSite hs=hts.getHttpdSite();
-					reasons.add(new CannotRemoveReason<HttpdTomcatSite>("Used as mod_jk worker for Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
+					reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
 				}
 			}
 		}
 
 		// mysql_servers
 		for(MySQLServer ms : conn.getMysqlServers().getRows()) {
-			if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<MySQLServer>("Used for MySQL server "+ms.getName()+" on "+ms.getAOServer().getHostname(), ms));
+			if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<>("Used for MySQL server "+ms.getName()+" on "+ms.getAOServer().getHostname(), ms));
 		}
 
 		// postgres_servers
 		for(PostgresServer ps : conn.getPostgresServers().getRows()) {
-			if(equals(ps.getNetBind())) reasons.add(new CannotRemoveReason<PostgresServer>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getAOServer().getHostname(), ps));
+			if(equals(ps.getNetBind())) reasons.add(new CannotRemoveReason<>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getAOServer().getHostname(), ps));
 		}
 
 		return reasons;
 	}
 
+	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(
 			true,
@@ -486,6 +498,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		);
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(packageName);

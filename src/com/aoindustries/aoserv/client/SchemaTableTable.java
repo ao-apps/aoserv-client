@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -135,11 +135,11 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                                 }
                             } else {
                                 if(columnName.indexOf(',')!=-1) {
-                                    String[] tcolumns=StringUtility.splitString(columnName, ',');
+                                    List<String> tcolumns=StringUtility.splitString(columnName, ',');
                                     int addPos=d--;
                                     int numAdded=0;
-                                    for (int e = 0; e < tcolumns.length; e++) {
-                                        columnName=tcolumns[e].trim();
+                                    for (int e = 0; e < tcolumns.size(); e++) {
+                                        columnName=tcolumns.get(e).trim();
                                         if(columnName.length()>0) {
                                             if(numAdded==0) columnNames.set(addPos++, columnName);
                                             else columnNames.add(addPos++, columnName);
@@ -151,7 +151,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                             }
                         }
 
-                        AOServTable<?,? extends AOServObject> aoServTable=schemaTable.getAOServTable(connector);
+                        AOServTable<?,?> aoServTable=schemaTable.getAOServTable(connector);
 
                         // Parse any order by clause
                         if(c<argCount) {
@@ -161,9 +161,9 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                                     if(args[c++].equalsIgnoreCase("by")) {
                                         while(c<argCount) {
                                             String columnName=args[c++];
-                                            String[] exprs=StringUtility.splitString(columnName, ',');
-                                            for(int d=0;d<exprs.length;d++) {
-                                                String expr=exprs[d].trim();
+                                            List<String> exprs=StringUtility.splitString(columnName, ',');
+                                            for(int d=0;d<exprs.size();d++) {
+                                                String expr=exprs.get(d).trim();
                                                 if(
                                                     orderExpressions.size()>0
                                                     && (
@@ -218,7 +218,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
                         values=new Object[columnNames.size()*numRows];
                         int valuePos=0;
                         for(int d=0;d<numRows;d++) {
-                            AOServObject row=(AOServObject)rows.get(d);
+                            AOServObject<?,?> row=(AOServObject<?,?>)rows.get(d);
                             for(int e=0;e<valueExpressions.length;e++) {
                                 SQLExpression sql=valueExpressions[e];
                                 SchemaType type=valueTypes[e];

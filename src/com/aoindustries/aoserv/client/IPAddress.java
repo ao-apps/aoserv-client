@@ -50,19 +50,19 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     ;
 
     // TODO: Should have an upper bound to this cache to avoid memory leak
-    private static final ConcurrentMap<String,Integer> intForIPAddressCache = new ConcurrentHashMap<String,Integer>();
+    private static final ConcurrentMap<String,Integer> intForIPAddressCache = new ConcurrentHashMap<>();
 
     public static Integer getIntForIPAddress(String ipAddress) throws IllegalArgumentException {
         Integer result = intForIPAddressCache.get(ipAddress);
         if(result==null) {
             // There must be four octets with . between
-            String[] octets=StringUtility.splitString(ipAddress, '.');
-            if(octets.length!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
+            List<String> octets=StringUtility.splitString(ipAddress, '.');
+            if(octets.size()!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
 
             // Each octet should be from 1 to 3 digits, all numbers
             // and should have a value between 0 and 255 inclusive
             for(int c=0;c<4;c++) {
-                String tet=octets[c];
+                String tet=octets.get(c);
                 int tetLen=tet.length();
                 if(tetLen<1 || tetLen>3) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
                 for(int d=0;d<tetLen;d++) {
@@ -73,10 +73,10 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
                 if(val<0 || val>255) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
             }
             result =
-                (Integer.parseInt(octets[0])<<24)
-                | (Integer.parseInt(octets[1])<<16)
-                | (Integer.parseInt(octets[2])<<8)
-                | (Integer.parseInt(octets[3])&255)
+                (Integer.parseInt(octets.get(0))<<24)
+                | (Integer.parseInt(octets.get(1))<<16)
+                | (Integer.parseInt(octets.get(2))<<8)
+                | (Integer.parseInt(octets.get(3))&255)
             ;
             Integer existing = intForIPAddressCache.putIfAbsent(ipAddress, result);
             if(existing!=null) result = existing;
@@ -100,13 +100,13 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 
     public static boolean isValidIPAddress(String ip) {
         // There must be four octets with . between
-        String[] octets=StringUtility.splitString(ip, '.');
-        if(octets.length!=4) return false;
+        List<String> octets=StringUtility.splitString(ip, '.');
+        if(octets.size()!=4) return false;
 
         // Each octet should be from 1 to 3 digits, all numbers
         // and should have a value between 0 and 255 inclusive
         for(int c=0;c<4;c++) {
-            String tet=octets[c];
+            String tet=octets.get(c);
             int tetLen=tet.length();
             if(tetLen<1 || tetLen>3) return false;
             for(int d=0;d<tetLen;d++) {
@@ -159,6 +159,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     private InetAddress externalIpAddress;
     private String netmask;
 
+	@Override
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
@@ -235,10 +236,12 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return netmask;
     }
 
+	@Override
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.IP_ADDRESSES;
     }
 
+	@Override
     public void init(ResultSet result) throws SQLException {
         try {
             pkey = result.getInt(1);
@@ -256,9 +259,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             externalIpAddress = InetAddress.valueOf(result.getString(12));
             netmask = result.getString(13);
         } catch(ValidationException e) {
-            SQLException exc = new SQLException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
+            throw new SQLException(e);
         }
     }
 
@@ -286,6 +287,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.MOVE_IP_ADDRESS, ip_address.toString(), server.pkey);
     }
 
+	@Override
     public void read(CompressedDataInputStream in) throws IOException {
         try {
             pkey=in.readCompressedInt();
@@ -302,9 +304,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             externalIpAddress = InetAddress.valueOf(in.readNullUTF());
             netmask = in.readUTF().intern();
         } catch(ValidationException e) {
-            IOException exc = new IOException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
+            throw new IOException(e);
         }
     }
 
@@ -329,6 +329,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress.toString());
     }
 
+	@Override
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeCompressedInt(pkey);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) out.writeUTF(ip_address.isUnspecified() ? "0.0.0.0" : ip_address.toString());
