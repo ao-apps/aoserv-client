@@ -36,6 +36,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      * The supported versions of MySQL.
      */
     public static final String
+        VERSION_5_6_PREFIX = "5.6.",
         VERSION_5_1_PREFIX = "5.1.",
         VERSION_5_0_PREFIX = "5.0.",
         VERSION_4_1_PREFIX = "4.1.",
@@ -54,6 +55,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
      */
     public static final List<String> PREFERRED_VERSION_PREFIXES = AoCollections.optimalUnmodifiableList(
         Arrays.asList(
+            VERSION_5_6_PREFIX,
             VERSION_5_1_PREFIX,
             VERSION_5_0_PREFIX,
             VERSION_4_1_PREFIX,
