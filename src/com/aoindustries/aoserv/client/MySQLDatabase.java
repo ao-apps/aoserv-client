@@ -315,7 +315,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
         MyISAM,
         InnoDB,
         HEAP,
-        MEMORY
+        MEMORY,
+		PERFORMANCE_SCHEMA
     }
 
     public static class TableStatus {
