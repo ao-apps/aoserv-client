@@ -1264,7 +1264,7 @@ final public class AOServer
 
 			// Last Verified
 			String lastVerifiedString = values.get(5);
-			Long lastVerified = lastVerifiedString.isEmpty() ? null : Long.valueOf(lastVerifiedString);
+			Long lastVerified = lastVerifiedString.isEmpty() ? null : (Long.parseLong(lastVerifiedString)*1000);
 
 			reports.add(
 				new DrbdReport(
