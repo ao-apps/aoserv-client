@@ -29,7 +29,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -607,8 +606,7 @@ final public class AOServer
 		// Look for the most-preferred version that has an instance on the server
 		List<PostgresServer> pss=getPostgresServers();
 		String[] preferredMinorVersions=PostgresVersion.getPreferredMinorVersions();
-		for(int c=0;c<preferredMinorVersions.length;c++) {
-			String version=preferredMinorVersions[c];
+		for(String version : preferredMinorVersions) {
 			for(int d=0;d<pss.size();d++) {
 				PostgresServer ps=pss.get(d);
 				if(ps.getPostgresVersion().getMinorVersion().equals(version)) {
@@ -934,28 +932,95 @@ final public class AOServer
 	}
 
 	/**
-	 * Gets the MD mismatch_cnt report.
+	 * The results of the most recent weekly RAID check.
 	 */
-	public Map<String,Long> getMdMismatchCntReport() throws IOException, SQLException, ParseException {
-		String report = table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_MISMATCH_CNT_REPORT, pkey);
-		// Parse the report
-		List<String> lines = StringUtility.splitLines(report);
-		Map<String,Long> parsed = new LinkedHashMap<>(lines.size()*4/3 + 1);
-		for(String line : lines) {
-			if(!line.isEmpty()) {
-				int tabPos = line.indexOf('\t');
-				if(tabPos == -1) throw new ParseException("No tab in line: " + line, 0);
-				String device = line.substring(0, tabPos);
-				String countString = line.substring(tabPos + 1);
-				try {
-					Long count = Long.valueOf(countString);
-					if(parsed.put(device, count) != null) throw new AssertionError("Duplicate device: " + device);
-				} catch(NumberFormatException e) {
-					throw new ParseException("Unable to parse count: " + countString, tabPos + 1);
-				}
-			}
+	public static class MdMismatchReport {
+
+		final private String device;
+		final private long count;
+
+		MdMismatchReport(
+			String device,
+			long count
+		) {
+			this.device = device;
+			this.count = count;
 		}
-		return Collections.unmodifiableMap(parsed);
+
+		/**
+		 * The device that was checked.
+		 */
+		public String getDevice() {
+			return device;
+		}
+
+		/**
+		 * The number bytes that did not match.
+		 */
+		public long getCount() {
+			return count;
+		}
+	}
+
+	/**
+	 * Gets the MD mismatch report.
+	 */
+	public List<MdMismatchReport> getMdMismatchReport() throws IOException, SQLException, ParseException {
+		return parseMdMismatchReport(table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_MISMATCH_REPORT, pkey));
+	}
+
+	/**
+	 * Parses a MD mismatch report.
+	 */
+	public static List<MdMismatchReport> parseMdMismatchReport(String mismatchReport) throws ParseException {
+		List<String> lines = StringUtility.splitLines(mismatchReport);
+		int lineNum = 0;
+		List<MdMismatchReport> reports = new ArrayList<>(lines.size());
+		for(String line : lines) {
+			lineNum++;
+			List<String> values = StringUtility.splitString(line, '\t');
+			if(values.size() != 2) {
+				throw new ParseException(
+					accessor.getMessage(
+						"AOServer.MdMismatchReport.ParseException.badColumnCount",
+						line
+					),
+					lineNum
+				);
+			}
+
+			// Device
+			String device = values.get(0);
+			if(!device.startsWith("/dev/md")) {
+				throw new ParseException(
+					accessor.getMessage(
+						"AOServer.MdMismatchReport.ParseException.badDeviceStart",
+						device
+					),
+					lineNum
+				);
+			}
+
+			// Count
+			String countString = values.get(1);
+			long count;
+			try {
+				count = Long.parseLong(countString);
+			} catch(NumberFormatException e) {
+				ParseException parseException = new ParseException(
+					accessor.getMessage(
+						"AOServer.MdMismatchReport.ParseException.countNotNumber",
+						countString
+					),
+					lineNum
+				);
+				parseException.initCause(e);
+				throw parseException;
+			}
+
+			reports.add(new MdMismatchReport(device, count));
+		}
+		return reports;
 	}
 
 	public static class DrbdReport {

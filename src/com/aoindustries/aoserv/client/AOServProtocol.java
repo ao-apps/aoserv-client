@@ -498,7 +498,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		UNPAUSE_VIRTUAL_SERVER,
 		GET_VIRTUAL_SERVER_STATUS,
 		ADD_IP_REPUTATION,
-		GET_AO_SERVER_MD_MISMATCH_CNT_REPORT
+		GET_AO_SERVER_MD_MISMATCH_REPORT
 	}
 
 	/**
