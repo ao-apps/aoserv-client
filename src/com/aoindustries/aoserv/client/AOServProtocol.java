@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2014 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -456,7 +456,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		TRANSACTION_HELD,
 		GET_NET_DEVICE_BONDING_REPORT,
 		GET_AO_SERVER_3WARE_RAID_REPORT,
-		GET_AO_SERVER_MD_RAID_REPORT,
+		GET_AO_SERVER_MD_STAT_REPORT,
 		GET_AO_SERVER_DRBD_REPORT,
 		UPDATE_CREDIT_CARD_EXPIRATION,
 		SET_FAILOVER_FILE_REPLICATION_BIT_RATE,
@@ -497,7 +497,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		PAUSE_VIRTUAL_SERVER,
 		UNPAUSE_VIRTUAL_SERVER,
 		GET_VIRTUAL_SERVER_STATUS,
-		ADD_IP_REPUTATION
+		ADD_IP_REPUTATION,
+		GET_AO_SERVER_MD_MISMATCH_CNT_REPORT
 	}
 
 	/**

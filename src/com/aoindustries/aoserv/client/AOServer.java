@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2013 by AO Industries, Inc.,
+ * Copyright 2003-2014 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -29,6 +29,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -926,10 +927,35 @@ final public class AOServer
 	}
 
 	/**
-	 * Gets the MD RAID report.
+	 * Gets the /proc/mdstat report.
 	 */
-	public String getMdRaidReport() throws IOException, SQLException {
-		return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_RAID_REPORT, pkey);
+	public String getMdStatReport() throws IOException, SQLException {
+		return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_STAT_REPORT, pkey);
+	}
+
+	/**
+	 * Gets the MD mismatch_cnt report.
+	 */
+	public Map<String,Long> getMdMismatchCntReport() throws IOException, SQLException, ParseException {
+		String report = table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_MISMATCH_CNT_REPORT, pkey);
+		// Parse the report
+		List<String> lines = StringUtility.splitLines(report);
+		Map<String,Long> parsed = new LinkedHashMap<>(lines.size()*4/3 + 1);
+		for(String line : lines) {
+			if(!line.isEmpty()) {
+				int tabPos = line.indexOf('\t');
+				if(tabPos == -1) throw new ParseException("No tab in line: " + line, 0);
+				String device = line.substring(0, tabPos);
+				String countString = line.substring(tabPos + 1);
+				try {
+					Long count = Long.valueOf(countString);
+					if(parsed.put(device, count) != null) throw new AssertionError("Duplicate device: " + device);
+				} catch(NumberFormatException e) {
+					throw new ParseException("Unable to parse count: " + countString, tabPos + 1);
+				}
+			}
+		}
+		return Collections.unmodifiableMap(parsed);
 	}
 
 	public static class DrbdReport {
