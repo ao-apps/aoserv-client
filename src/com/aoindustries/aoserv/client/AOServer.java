@@ -1088,6 +1088,7 @@ final public class AOServer
 		final private DiskState remoteDiskState;
 		final private Role localRole;
 		final private Role remoteRole;
+		final private Long lastVerified;
 
 		DrbdReport(
 			String device,
@@ -1097,7 +1098,8 @@ final public class AOServer
 			DiskState localDiskState,
 			DiskState remoteDiskState,
 			Role localRole,
-			Role remoteRole
+			Role remoteRole,
+			Long lastVerified
 		) {
 			this.device = device;
 			this.resourceHostname = resourceHostname;
@@ -1107,6 +1109,7 @@ final public class AOServer
 			this.remoteDiskState = remoteDiskState;
 			this.localRole = localRole;
 			this.remoteRole = remoteRole;
+			this.lastVerified = lastVerified;
 		}
 
 		public ConnectionState getConnectionState() {
@@ -1140,6 +1143,14 @@ final public class AOServer
 		public String getResourceHostname() {
 			return resourceHostname;
 		}
+
+		/**
+		 * Gets the time verification was last started from this node
+		 * or <code>null</code> if never started.
+		 */
+		public Long getLastVerified() {
+			return lastVerified;
+		}
 	}
 
 	/**
@@ -1159,7 +1170,7 @@ final public class AOServer
 		for(String line : lines) {
 			lineNum++;
 			List<String> values = StringUtility.splitString(line, '\t');
-			if(values.size()!=5) {
+			if(values.size() != 6) {
 				throw new ParseException(
 					accessor.getMessage(
 						"AOServer.DrbdReport.ParseException.badColumnCount",
@@ -1251,7 +1262,23 @@ final public class AOServer
 				remoteRole = DrbdReport.Role.valueOf(state.substring(slashPos+1));
 			}
 
-			reports.add(new DrbdReport(device, domUHostname, domUDevice, connectionState, localDiskState, remoteDiskState, localRole, remoteRole));
+			// Last Verified
+			String lastVerifiedString = values.get(5);
+			Long lastVerified = lastVerifiedString.isEmpty() ? null : Long.valueOf(lastVerifiedString);
+
+			reports.add(
+				new DrbdReport(
+					device,
+					domUHostname,
+					domUDevice,
+					connectionState,
+					localDiskState,
+					remoteDiskState,
+					localRole,
+					remoteRole,
+					lastVerified
+				)
+			);
 		}
 		return reports;
 	}
