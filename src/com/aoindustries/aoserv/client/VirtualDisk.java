@@ -162,8 +162,10 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	 * User must have control_virtual_server permissions on this server.
 	 * 
 	 * @see  BusinessServer#canControlVirtualServer()
+	 * 
+	 * @return  The time the verification began, which may be in the past if a verification was already in progress
 	 */
-	public void verify() throws SQLException, IOException {
-        table.connector.requestUpdate(true, AOServProtocol.CommandID.VERIFY_VIRTUAL_DISK, this.pkey);
+	public long verify() throws SQLException, IOException {
+        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.VERIFY_VIRTUAL_DISK, this.pkey);
     }
 }

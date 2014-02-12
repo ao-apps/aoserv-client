@@ -8053,6 +8053,8 @@ final public class SimpleAOClient {
      * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
      * @param  device  the device identifier (xvda, xvdb, ...)
      *
+	 * @return  The time the verification began, which may be in the past if a verification was already in progress
+	 *
      * @exception  IOException  if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data integrity
      *					violation occurs
@@ -8061,10 +8063,10 @@ final public class SimpleAOClient {
      *
      * @see  VirtualDisk#verify()
      */
-    public void verifyVirtualDisk(
+    public long verifyVirtualDisk(
         String virtualServer,
         String device
     ) throws IllegalArgumentException, IOException, SQLException {
-		getVirtualDisk(virtualServer, device).verify();
+		return getVirtualDisk(virtualServer, device).verify();
     }
 }

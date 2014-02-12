@@ -6,6 +6,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.sql.SQLUtility;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -51,7 +52,13 @@ final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.VERIFY_VIRTUAL_DISK)) {
 			if(AOSH.checkParamCount(AOSHCommand.VERIFY_VIRTUAL_DISK, args, 2, err)) {
-				connector.getSimpleAOClient().verifyVirtualDisk(args[1], args[2]);
+				long lastVerified = connector.getSimpleAOClient().verifyVirtualDisk(args[1], args[2]);
+				if(isInteractive) {
+					out.println(SQLUtility.getDateTime(lastVerified));
+				} else {
+					out.println(lastVerified);
+				}
+				out.flush();
 			}
 			return true;
 		}
