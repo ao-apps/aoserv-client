@@ -1264,7 +1264,11 @@ final public class AOServer
 
 			// Last Verified
 			String lastVerifiedString = values.get(5);
-			Long lastVerified = lastVerifiedString.isEmpty() ? null : (Long.parseLong(lastVerifiedString)*1000);
+			Long lastVerified =
+				"null".equals(lastVerifiedString)
+				? null
+				: (Long.parseLong(lastVerifiedString)*1000)
+			;
 
 			reports.add(
 				new DrbdReport(
