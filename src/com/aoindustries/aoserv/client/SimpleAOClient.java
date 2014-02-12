@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -302,7 +302,14 @@ final public class SimpleAOClient {
         return vs;
     }
 
-    private IpReputationSet getIpReputationSet(String identifier) throws IllegalArgumentException, SQLException, IOException {
+    private VirtualDisk getVirtualDisk(String virtualServer, String device) throws IllegalArgumentException, SQLException, IOException {
+        VirtualServer vs = getVirtualServer(virtualServer);
+		VirtualDisk vd = vs.getVirtualDisk(device);
+        if(vd==null) throw new IllegalArgumentException("Unable to find VirtualDisk: "+virtualServer+":/dev/"+device);
+        return vd;
+    }
+
+	private IpReputationSet getIpReputationSet(String identifier) throws IllegalArgumentException, SQLException, IOException {
         IpReputationSet set = connector.getIpReputationSets().get(identifier);
         if(set==null) throw new IllegalArgumentException("Unable to find IpReputationSet: "+identifier);
         return set;
@@ -8038,5 +8045,26 @@ final public class SimpleAOClient {
             IpReputationSet.ReputationType.valueOf(reputationType.toUpperCase(Locale.ENGLISH)),
             score
         );
+    }
+
+	/**
+     * Begins a verification of the redundancy of the virtual disk.
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     * @param  device  the device identifier (xvda, xvdb, ...)
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database or a data integrity
+     *					violation occurs
+     * @exception  IllegalArgumentException  if unable to find the <code>VirtualServer</code> or
+     *                                  <code>VirtualDisk</code>
+     *
+     * @see  VirtualDisk#verify()
+     */
+    public void verifyVirtualDisk(
+        String virtualServer,
+        String device
+    ) throws IllegalArgumentException, IOException, SQLException {
+		getVirtualDisk(virtualServer, device).verify();
     }
 }
