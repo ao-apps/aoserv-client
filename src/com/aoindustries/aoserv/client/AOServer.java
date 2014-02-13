@@ -1089,6 +1089,7 @@ final public class AOServer
 		final private Role localRole;
 		final private Role remoteRole;
 		final private Long lastVerified;
+		final private long outOfSync;
 
 		DrbdReport(
 			String device,
@@ -1099,7 +1100,8 @@ final public class AOServer
 			DiskState remoteDiskState,
 			Role localRole,
 			Role remoteRole,
-			Long lastVerified
+			Long lastVerified,
+			long outOfSync
 		) {
 			this.device = device;
 			this.resourceHostname = resourceHostname;
@@ -1110,6 +1112,7 @@ final public class AOServer
 			this.localRole = localRole;
 			this.remoteRole = remoteRole;
 			this.lastVerified = lastVerified;
+			this.outOfSync = outOfSync;
 		}
 
 		public ConnectionState getConnectionState() {
@@ -1151,6 +1154,14 @@ final public class AOServer
 		public Long getLastVerified() {
 			return lastVerified;
 		}
+
+		/**
+		 * Gets the number of kilobytes of data out of sync, in Kibibytes.
+		 * @link http://www.drbd.org/users-guide/ch-admin.html#s-performance-indicators
+		 */
+		public long getOutOfSync() {
+			return outOfSync;
+		}
 	}
 
 	/**
@@ -1170,7 +1181,7 @@ final public class AOServer
 		for(String line : lines) {
 			lineNum++;
 			List<String> values = StringUtility.splitString(line, '\t');
-			if(values.size() != 6) {
+			if(values.size() != 7) {
 				throw new ParseException(
 					accessor.getMessage(
 						"AOServer.DrbdReport.ParseException.badColumnCount",
@@ -1270,6 +1281,9 @@ final public class AOServer
 				: (Long.parseLong(lastVerifiedString)*1000)
 			;
 
+			// Out of Sync
+			long outOfSync = Long.parseLong(values.get(6));
+
 			reports.add(
 				new DrbdReport(
 					device,
@@ -1280,7 +1294,8 @@ final public class AOServer
 					remoteDiskState,
 					localRole,
 					remoteRole,
-					lastVerified
+					lastVerified,
+					outOfSync
 				)
 			);
 		}
