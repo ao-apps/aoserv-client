@@ -79,10 +79,6 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 		printZoneFile(out);
 	}
 
-	/**
-	 * @deprecated  This methods seems unused as of 2014-02-20 and will be removed in a future release.
-	 */
-	@Deprecated
 	public DNSType[] getAllowedDNSTypes() throws IOException, SQLException {
 		DNSTypeTable tt=table.connector.getDnsTypes();
 		if(isArpa()) {
