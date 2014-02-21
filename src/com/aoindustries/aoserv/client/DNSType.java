@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -16,7 +16,7 @@ import java.sql.SQLException;
 /**
  * The <code>DNSType</code> associated with a <code>DNSRecord</code> provides
  * details about which values should be used in the destination field, and whether
- * a MX priority should exist.
+ * a priority, weight, and port should exist.
  *
  * @see  DNSRecord
  *
@@ -31,18 +31,21 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 	 * The possible <code>DNSType</code>s.
 	 */
 	public static final String
-		A="A",
-		AAAA="AAAA",
-		CNAME="CNAME",
-		MX="MX",
-		NS="NS",
-		PTR="PTR",
-		TXT="TXT"
+		A     = "A",
+		AAAA  = "AAAA",
+		CNAME = "CNAME",
+		MX    = "MX",
+		NS    = "NS",
+		PTR   = "PTR",
+		SRV   = "SRV",
+		TXT   = "TXT"
 	;
 
 	private String description;
 	private boolean
-		is_mx,
+		has_priority,
+		has_weight,
+		has_port,
 		param_ip
 	;
 
@@ -78,18 +81,24 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 		}
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
-		if(i==COLUMN_TYPE) return pkey;
-		if(i==1) return description;
-		if(i==2) return is_mx?Boolean.TRUE:Boolean.FALSE;
-		if(i==3) return param_ip?Boolean.TRUE:Boolean.FALSE;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		switch(i) {
+			case COLUMN_TYPE : return pkey;
+			case 1 : return description;
+			case 2 : return has_priority;
+			case 3 : return has_weight;
+			case 4 : return has_port;
+			case 5 : return param_ip;
+			default : throw new IllegalArgumentException("Invalid index: "+i);
+		}
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.DNS_TYPES;
 	}
@@ -98,26 +107,40 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 		return pkey;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		description=result.getString(2);
-		is_mx=result.getBoolean(3);
-		param_ip=result.getBoolean(4);
+		pkey         = result.getString(1);
+		description  = result.getString(2);
+		has_priority = result.getBoolean(3);
+		has_weight   = result.getBoolean(4);
+		has_port     = result.getBoolean(5);
+		param_ip     = result.getBoolean(6);
 	}
 
-	public boolean isMX() {
-		return is_mx;
+	public boolean hasPriority() {
+		return has_priority;
+	}
+
+	public boolean hasWeight() {
+		return has_weight;
+	}
+
+	public boolean hasPort() {
+		return has_port;
 	}
 
 	public boolean isParamIP() {
 		return param_ip;
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		description=in.readUTF();
-		is_mx=in.readBoolean();
-		param_ip=in.readBoolean();
+		pkey         = in.readUTF().intern();
+		description  = in.readUTF();
+		has_priority = in.readBoolean();
+		has_weight   = in.readBoolean();
+		has_port     = in.readBoolean();
+		param_ip     = in.readBoolean();
 	}
 
 	@Override
@@ -125,10 +148,15 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 		return description;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);
-		out.writeBoolean(is_mx);
+		out.writeBoolean(has_priority);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_72) >= 0) {
+			out.writeBoolean(has_weight);
+			out.writeBoolean(has_port);
+		}
 		out.writeBoolean(param_ip);
 	}
 }

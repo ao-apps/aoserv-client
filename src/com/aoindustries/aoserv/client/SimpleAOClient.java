@@ -578,24 +578,32 @@ final public class SimpleAOClient {
      * Adds a new <code>DNSRecord</code> to a <code>DNSZone</code>.  Each <code>DNSZone</code>
      * can have multiple DNS records in it, each being a <code>DNSRecord</code>.
      *
-     * @param  zone  the zone, in the <code>name.<i>topleveldomain</i>.</code> format.  Please note the
-     *					trailing period (<code>.</code>)
-     * @param  domain  the part of the name before the zone or <code>@</code> for the zone itself.  For example,
-     *					the domain for the hostname of <code>www.aoindustries.com.</code> in the
-     *					<code>aoindustries.com.</code> zone is <code>www</code>.
-     * @param  type  the <code>DNSType</code>
-     * @param  mx_priority  if a <code>MX</code> type, then the value is the priority of the MX record, otherwise
-     *					it is <code>DNSRecord.NO_MX_PRIORITY</code>.
+     * @param  zone      the zone, in the <code>name.<i>topleveldomain</i>.</code> format.  Please note the
+     *                   trailing period (<code>.</code>)
+     * @param  domain    the part of the name before the zone or <code>@</code> for the zone itself.  For example,
+     *                   the domain for the hostname of <code>www.aoindustries.com.</code> in the
+     *                   <code>aoindustries.com.</code> zone is <code>www</code>.
+     * @param  type      the <code>DNSType</code>
+     * @param  priority  if a <code>MX</code> or <code>SRV</code> type, then the value is the priority of the record, otherwise
+     *                   it is <code>DNSRecord.NO_PRIORITY</code>.
+     * @param  weight    if a <code>SRV</code> type, then the value is the weight of the record, otherwise
+     *                   it is <code>DNSRecord.NO_WEIGHT</code>.
+     * @param  port      if a <code>SRV</code> type, then the value is the port of the record, otherwise
+     *                   it is <code>DNSRecord.NO_PORT</code>.
      *
      * @return  the <code>pkey</code> of the new <code>DNSRecord</code>
      *
-     * @exception  IOException  if unable to contact the server
+     * @exception  IOException   if unable to contact the server
      * @exception  SQLException  if unable to access the database or a data integrity
-     *					violation occurs
-     * @exception  IllegalArgumentException  if the mx_priority is provided for a non-<code>MX</code> record,
-     *					the mx_priority is not provided for a <code>MX</code> record,
-     *					the destination is not the correct format for the <code>DNSType</code>,
-     *					or  unable to find the <code>DNSZone</code> or <code>DNSType</code>
+     *                           violation occurs
+     * @exception  IllegalArgumentException  if the priority is provided for a non-<code>MX</code> and non-<code>SRV</code> record,
+     *                                       the priority is not provided for a <code>MX</code> or <code>SRV</code> record,
+	 *                                       if the weight is provided for a non-<code>SRV</code> record,
+     *                                       the weight is not provided for a <code>SRV</code> record,
+	 *                                       if the port is provided for a non-<code>SRV</code> record,
+     *                                       the port is not provided for a <code>SRV</code> record,
+     *                                       the destination is not the correct format for the <code>DNSType</code>,
+     *                                       or  unable to find the <code>DNSZone</code> or <code>DNSType</code>
      *
      * @see  DNSZone#addDNSRecord
      * @see  DNSRecord
@@ -606,7 +614,9 @@ final public class SimpleAOClient {
         String zone,
         String domain,
         String type,
-        int mx_priority,
+        int priority,
+		int weight,
+		int port,
         String destination,
         int ttl
     ) throws IllegalArgumentException, IOException, SQLException {
@@ -616,21 +626,39 @@ final public class SimpleAOClient {
         DNSType nt=connector.getDnsTypes().get(type);
         if(nt==null) throw new IllegalArgumentException("Unable to find DNSType: "+type);
 
-        // Must have appropriate MX priority
-        if(nt.isMX()) {
-            if(mx_priority==DNSRecord.NO_MX_PRIORITY) throw new IllegalArgumentException("mx_priority required for type="+type);
-            else if(mx_priority<=0) throw new IllegalArgumentException("Invalid mx_priority: "+mx_priority);
+        // Must have appropriate priority
+        if(nt.hasPriority()) {
+            if(priority==DNSRecord.NO_PRIORITY) throw new IllegalArgumentException("priority required for type="+type);
+            else if(priority<=0) throw new IllegalArgumentException("Invalid priority: "+priority);
         } else {
-            if(mx_priority!=DNSRecord.NO_MX_PRIORITY) throw new IllegalArgumentException("No mx_priority allowed for type="+type);
+            if(priority!=DNSRecord.NO_PRIORITY) throw new IllegalArgumentException("No priority allowed for type="+type);
         }
 
-        // Must have a valid destination type
+        // Must have appropriate weight
+        if(nt.hasWeight()) {
+            if(weight==DNSRecord.NO_WEIGHT) throw new IllegalArgumentException("weight required for type="+type);
+            else if(weight<=0) throw new IllegalArgumentException("Invalid weight: "+weight);
+        } else {
+            if(weight!=DNSRecord.NO_WEIGHT) throw new IllegalArgumentException("No weight allowed for type="+type);
+        }
+
+        // Must have appropriate port
+        if(nt.hasPort()) {
+            if(port==DNSRecord.NO_PORT) throw new IllegalArgumentException("port required for type="+type);
+            else if(port<1 || port>65535) throw new IllegalArgumentException("Invalid port: "+port);
+        } else {
+            if(port!=DNSRecord.NO_PORT) throw new IllegalArgumentException("No port allowed for type="+type);
+        }
+
+		// Must have a valid destination type
         nt.checkDestination(destination);
 
         return nz.addDNSRecord(
             domain,
             nt,
-            mx_priority,
+            priority,
+			weight,
+			port,
             destination,
             ttl
         );

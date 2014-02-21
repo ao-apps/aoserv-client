@@ -10,6 +10,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 
 /**
  * A <code>VirtualDisk</code> is a block device for a <code>VirtualServer</code>.
@@ -32,6 +33,8 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	private int extents;
 	private short weight;
 	private short weightTarget;
+	private int verifyDayOfWeek;
+	private int verifyHourOfDay;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -44,6 +47,8 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 			case 5 : return extents;
 			case 6 : return weight;
 			case 7 : return weightTarget;
+			case 8 : return verifyDayOfWeek;
+			case 9 : return verifyHourOfDay;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -97,6 +102,28 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 		return weightTarget;
 	}
 
+	/**
+	 * Gets the day of the week verification will begin
+	 * interpreted by the virtual server's time zone setting
+	 * and <code>Calendar</code>.
+	 *
+	 * @see  Calendar
+	 */
+	public int getVerifyDayOfWeek() {
+		return verifyDayOfWeek;
+	}
+
+	/**
+	 * Gets the hour of day verification will begin
+	 * interpreted by the virtual server's time zone setting
+	 * and <code>Calendar</code>.
+	 *
+	 * @see  Calendar
+	 */
+	public int getVerifyHourOfDay() {
+		return verifyHourOfDay;
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.VIRTUAL_DISKS;
@@ -112,9 +139,11 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 		if(result.wasNull()) minimumDiskSpeed = -1;
 		minimumDiskSpeedTarget = result.getInt(pos++);
 		if(result.wasNull()) minimumDiskSpeedTarget = -1;
-		extents = result.getInt(pos++);
-		weight = result.getShort(pos++);
-		weightTarget = result.getShort(pos++);
+		extents         = result.getInt(pos++);
+		weight          = result.getShort(pos++);
+		weightTarget    = result.getShort(pos++);
+		verifyDayOfWeek = result.getInt(pos++);
+		verifyHourOfDay = result.getInt(pos++);
 	}
 
 	@Override
@@ -127,6 +156,8 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 		extents = in.readCompressedInt();
 		weight = in.readShort();
 		weightTarget = in.readShort();
+		verifyDayOfWeek = in.readCompressedInt();
+		verifyHourOfDay = in.readCompressedInt();
 	}
 
 	@Override
@@ -153,6 +184,10 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_42)<=0) {
 			out.writeBoolean(false); // primaryPhysicalVolumesLocked
 			out.writeBoolean(false); // secondaryPhysicalVolumesLocked
+		}
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_72)>=0) {
+			out.writeCompressedInt(verifyDayOfWeek);
+			out.writeCompressedInt(verifyHourOfDay);
 		}
 	}
 
