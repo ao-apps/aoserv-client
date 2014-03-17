@@ -28,14 +28,15 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 	 * be processed by AO Industries.
 	 */
 	public static final String
-		AMEX="amex",
-		CASH="cash",
-		CHECK="check",
-		DISCOVER="discover",
-		MASTERCARD="mastercard",
-		MONEY_ORDER="money_order",
-		VISA="visa",
-		WIRE="wire"
+		AMEX = "amex",
+		CASH = "cash",
+		CHECK = "check",
+		DISCOVER = "discover",
+		MASTERCARD = "mastercard",
+		MONEY_ORDER = "money_order",
+		PAYPAL = "paypal",
+		VISA = "visa",
+		WIRE = "wire"
 	;
 
 	String description;
