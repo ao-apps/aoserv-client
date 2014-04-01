@@ -8097,4 +8097,42 @@ final public class SimpleAOClient {
     ) throws IllegalArgumentException, IOException, SQLException {
 		return getVirtualDisk(virtualServer, device).verify();
     }
+
+	/**
+     * @see  VirtualServer#getPrimaryPhysicalServer()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public String getPrimaryVirtualServer(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return
+			getVirtualServer(virtualServer)
+			.getPrimaryPhysicalServer()
+			.toString()
+		;
+    }
+
+	/**
+     * @see  VirtualServer#getSecondaryPhysicalServer()
+     *
+     * @param  virtualServer  the pkey, package/name, or hostname of the virtual server
+     *
+     * @exception  IOException  if unable to contact the server
+     * @exception  SQLException  if unable to access the database
+     * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>VirtualServer</code>
+     */
+    public String getSecondaryVirtualServer(
+        String virtualServer
+    ) throws IllegalArgumentException, IOException, SQLException {
+        return
+			getVirtualServer(virtualServer)
+			.getSecondaryPhysicalServer()
+			.toString()
+		;
+    }
 }

@@ -131,9 +131,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		VERSION_1_69("1.69"),
 		VERSION_1_70("1.70"),
 		VERSION_1_71("1.71"),
-		VERSION_1_72("1.72");
+		VERSION_1_72("1.72"),
+		VERSION_1_73("1.73");
 
-		public static final Version CURRENT_VERSION = VERSION_1_72;
+		public static final Version CURRENT_VERSION = VERSION_1_73;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
@@ -501,7 +502,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		GET_VIRTUAL_SERVER_STATUS,
 		ADD_IP_REPUTATION,
 		GET_AO_SERVER_MD_MISMATCH_REPORT,
-		VERIFY_VIRTUAL_DISK
+		VERIFY_VIRTUAL_DISK,
+		GET_PRIMARY_PHYSICAL_SERVER,
+		GET_SECONDARY_PHYSICAL_SERVER
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 by AO Industries, Inc.,
+ * Copyright 2008-2013, 2014 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -456,4 +456,30 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
     public int getStatus() throws IOException, SQLException {
         return table.connector.requestIntQuery(true, AOServProtocol.CommandID.GET_VIRTUAL_SERVER_STATUS, pkey);
     }
+
+	/**
+	 * Gets the physical server that is currently the primary node for this virtual server.
+	 */
+	public PhysicalServer getPrimaryPhysicalServer() throws IOException, SQLException {
+		return table.connector.getPhysicalServers().get(
+	        table.connector.requestIntQuery(
+				true,
+				AOServProtocol.CommandID.GET_PRIMARY_PHYSICAL_SERVER,
+				pkey
+			)
+		);
+	}
+
+	/**
+	 * Gets the physical server that is currently the secondary node for this virtual server.
+	 */
+	public PhysicalServer getSecondaryPhysicalServer() throws IOException, SQLException {
+		return table.connector.getPhysicalServers().get(
+	        table.connector.requestIntQuery(
+				true,
+				AOServProtocol.CommandID.GET_SECONDARY_PHYSICAL_SERVER,
+				pkey
+			)
+		);
+	}
 }

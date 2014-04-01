@@ -188,6 +188,8 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		GET_MAJORDOMO_INFO_FILE="get_majordomo_info_file",
 		GET_MAJORDOMO_INTRO_FILE="get_majordomo_intro_file",
 		GET_MRTG_FILE="get_mrtg_file",
+		GET_PRIMARY_PHYSICAL_SERVER="get_primary_physical_server",
+		GET_SECONDARY_PHYSICAL_SERVER="get_secondary_physical_server",
 		GET_ROOT_BUSINESS="get_root_business",
 		GET_UPS_STATUS="get_ups_status",
 		GET_VIRTUAL_SERVER_STATUS="get_virtual_server_status",
