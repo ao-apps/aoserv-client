@@ -931,19 +931,32 @@ final public class AOServer
 		return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_MD_STAT_REPORT, pkey);
 	}
 
+	public enum RaidLevel {
+		linear,
+		raid0,
+		raid1,
+		raid4,
+		raid5,
+		raid6,
+		raid10
+	}
+
 	/**
 	 * The results of the most recent weekly RAID check.
 	 */
 	public static class MdMismatchReport {
 
 		final private String device;
+		final private RaidLevel level;
 		final private long count;
 
 		MdMismatchReport(
 			String device,
+			RaidLevel level,
 			long count
 		) {
 			this.device = device;
+			this.level = level;
 			this.count = count;
 		}
 
@@ -952,6 +965,13 @@ final public class AOServer
 		 */
 		public String getDevice() {
 			return device;
+		}
+
+		/**
+		 * The RAID level of the device.
+		 */
+		public RaidLevel getLevel() {
+			return level;
 		}
 
 		/**
@@ -979,7 +999,7 @@ final public class AOServer
 		for(String line : lines) {
 			lineNum++;
 			List<String> values = StringUtility.splitString(line, '\t');
-			if(values.size() != 2) {
+			if(values.size() != 3) {
 				throw new ParseException(
 					accessor.getMessage(
 						"AOServer.MdMismatchReport.ParseException.badColumnCount",
@@ -1001,8 +1021,11 @@ final public class AOServer
 				);
 			}
 
+			// Level
+			RaidLevel level = RaidLevel.valueOf(values.get(1));
+
 			// Count
-			String countString = values.get(1);
+			String countString = values.get(2);
 			long count;
 			try {
 				count = Long.parseLong(countString);
@@ -1018,7 +1041,7 @@ final public class AOServer
 				throw parseException;
 			}
 
-			reports.add(new MdMismatchReport(device, count));
+			reports.add(new MdMismatchReport(device, level, count));
 		}
 		return reports;
 	}
