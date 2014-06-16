@@ -158,6 +158,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
     private boolean pingMonitorEnabled;
     private InetAddress externalIpAddress;
     private String netmask;
+	private boolean checkBlacklistsOverSmtp;
 
 	@Override
     Object getColumnImpl(int i) {
@@ -165,16 +166,17 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             case COLUMN_PKEY: return Integer.valueOf(pkey);
             case 1: return ip_address;
             case COLUMN_NET_DEVICE: return net_device==-1?null:Integer.valueOf(net_device);
-            case 3: return is_alias?Boolean.TRUE:Boolean.FALSE;
+            case 3: return is_alias;
             case 4: return hostname;
             case COLUMN_PACKAGE: return packageName;
             case 6: return getCreated();
-            case 7: return available?Boolean.TRUE:Boolean.FALSE;
-            case 8: return isOverflow?Boolean.TRUE:Boolean.FALSE;
-            case 9: return isDHCP?Boolean.TRUE:Boolean.FALSE;
-            case 10: return pingMonitorEnabled ? Boolean.TRUE : Boolean.FALSE;
+            case 7: return available;
+            case 8: return isOverflow;
+            case 9: return isDHCP;
+            case 10: return pingMonitorEnabled;
             case 11: return externalIpAddress;
             case 12: return netmask;
+			case 13: return checkBlacklistsOverSmtp;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
@@ -236,6 +238,17 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         return netmask;
     }
 
+	/**
+	 * When the IP address is assigned to an AOServer, blacklist status
+	 * may be further determined by making SMTP connections out from the
+	 * server point of view.  This allows the detection of blocks by some
+	 * providers that give no other way to query, such as Comcast and the
+	 * AT&amp;T family of companies.
+	 */
+	public boolean getCheckBlacklistsOverSmtp() {
+		return checkBlacklistsOverSmtp;
+	}
+
 	@Override
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.IP_ADDRESSES;
@@ -258,6 +271,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             pingMonitorEnabled = result.getBoolean(11);
             externalIpAddress = InetAddress.valueOf(result.getString(12));
             netmask = result.getString(13);
+			checkBlacklistsOverSmtp = result.getBoolean(14);
         } catch(ValidationException e) {
             throw new SQLException(e);
         }
@@ -303,6 +317,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
             pingMonitorEnabled = in.readBoolean();
             externalIpAddress = InetAddress.valueOf(in.readNullUTF());
             netmask = in.readUTF().intern();
+			checkBlacklistsOverSmtp = in.readBoolean();
         } catch(ValidationException e) {
             throw new IOException(e);
         }
@@ -350,5 +365,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
         if(version.compareTo(AOServProtocol.Version.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
         if(version.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(ObjectUtils.toString(externalIpAddress));
         if(version.compareTo(AOServProtocol.Version.VERSION_1_38)>=0) out.writeUTF(netmask);
+        if(version.compareTo(AOServProtocol.Version.VERSION_1_75)>=0) out.writeBoolean(checkBlacklistsOverSmtp);
     }
 }
