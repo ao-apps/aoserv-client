@@ -203,6 +203,73 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return null;
 	}
 
+	/**
+	 * A net_bind is disabled when all Disablable uses of it are disabled.
+	 * If there are no Disablable uses, it is considered enabled.
+	 * 
+	 * @see  Disablable
+	 */
+	public boolean isDisabled() throws SQLException, IOException {
+		boolean foundDisablable = false;
+		HttpdWorker hw=getHttpdWorker();
+		if(hw!=null) {
+			HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
+			if(hst!=null) {
+				if(!hst.isDisabled()) return false;
+				foundDisablable = true;
+			}
+			HttpdTomcatSite hts=hw.getHttpdTomcatSite();
+			if(hts!=null) {
+				if(!hts.getHttpdSite().isDisabled()) return false;
+				foundDisablable = true;
+			}
+		}
+
+		HttpdSharedTomcat hst=getHttpdSharedTomcatByShutdownPort();
+		if(hst!=null) {
+			if(!hst.isDisabled()) return false;
+			foundDisablable = true;
+		}
+
+		HttpdTomcatStdSite htss=getHttpdTomcatStdSiteByShutdownPort();
+		if(htss!=null) {
+			if(!htss.getHttpdTomcatSite().getHttpdSite().isDisabled()) return false;
+			foundDisablable = true;
+		}
+
+		HttpdJBossSite hjbs=getHttpdJBossSiteByJNPPort();
+		if(hjbs!=null) {
+			if(!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) return false;
+			foundDisablable = true;
+		}
+
+		hjbs=getHttpdJBossSiteByWebserverPort();
+		if(hjbs!=null) {
+			if(!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) return false;
+			foundDisablable = true;
+		}
+
+		hjbs=getHttpdJBossSiteByRMIPort();
+		if(hjbs!=null) {
+			if(!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) return false;
+			foundDisablable = true;
+		}
+
+		hjbs=getHttpdJBossSiteByHypersonicPort();
+		if(hjbs!=null) {
+			if(!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) return false;
+			foundDisablable = true;
+		}
+
+		hjbs=getHttpdJBossSiteByJMXPort();
+		if(hjbs!=null) {
+			if(!hjbs.getHttpdTomcatSite().getHttpdSite().isDisabled()) return false;
+			foundDisablable = true;
+		}
+
+		return foundDisablable;
+	}
+
 	public AOServer getAOServerByDaemonNetBind() throws IOException, SQLException {
 		return table.connector.getAoServers().getAOServerByDaemonNetBind(this);
 	}
