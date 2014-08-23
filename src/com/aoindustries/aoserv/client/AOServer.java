@@ -15,6 +15,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.HttpParameters;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
@@ -29,6 +30,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -2152,9 +2154,239 @@ final public class AOServer
 
 	/**
 	 * Gets the filesystem states report.
+	 * 
+	 * @Deprecated  Use {@code getFilesystemsCsvReport()} instead to let the API parse the report.
 	 */
 	public String getFilesystemsCsvReport() throws IOException, SQLException {
 		return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_AO_SERVER_FILESYSTEMS_CSV_REPORT, pkey);
+	}
+
+	public static class FilesystemReport {
+
+		private final String mountPoint;
+		private final String device;
+		private final long bytes;
+		private final long used;
+		private final long free;
+		private final byte use;
+		private final Long inodes;
+		private final Long inodesUsed;
+		private final Long inodesFree;
+		private final Byte inodeUse;
+		private final String fsType;
+		private final String mountOptions;
+		private final String extState;
+		private final String extMaxMount;
+		private final String extCheckInterval;
+
+		private FilesystemReport(
+			String mountPoint,
+			String device,
+			long bytes,
+			long used,
+			long free,
+			byte use,
+			Long inodes,
+			Long inodesUsed,
+			Long inodesFree,
+			Byte inodeUse,
+			String fsType,
+			String mountOptions,
+			String extState,
+			String extMaxMount,
+			String extCheckInterval
+		) {
+			this.mountPoint = mountPoint;
+			this.device = device;
+			this.bytes = bytes;
+			this.used = used;
+			this.free = free;
+			this.use = use;
+			this.inodes = inodes;
+			this.inodesUsed = inodesUsed;
+			this.inodesFree = inodesFree;
+			this.inodeUse = inodeUse;
+			this.fsType = fsType;
+			this.mountOptions = mountOptions;
+			this.extState = extState;
+			this.extMaxMount = extMaxMount;
+			this.extCheckInterval = extCheckInterval;
+		}
+
+		public String getMountPoint() {
+			return mountPoint;
+		}
+
+		public String getDevice() {
+			return device;
+		}
+
+		public long getBytes() {
+			return bytes;
+		}
+
+		public long getUsed() {
+			return used;
+		}
+
+		public long getFree() {
+			return free;
+		}
+
+		public byte getUse() {
+			return use;
+		}
+
+		public Long getInodes() {
+			return inodes;
+		}
+
+		public Long getInodesUsed() {
+			return inodesUsed;
+		}
+
+		public Long getInodesFree() {
+			return inodesFree;
+		}
+
+		public Byte getInodeUse() {
+			return inodeUse;
+		}
+
+		public String getFsType() {
+			return fsType;
+		}
+
+		public String getMountOptions() {
+			return mountOptions;
+		}
+
+		public String getExtState() {
+			return extState;
+		}
+
+		public String getExtMaxMount() {
+			return extMaxMount;
+		}
+
+		public String getExtCheckInterval() {
+			return extCheckInterval;
+		}
+
+		/**
+		 * Checks that this filesystem matches the expected configuration for an AOServer.
+		 */
+		public boolean isConfigOk() {
+			switch (fsType) {
+				case "ext3":
+					return
+						// Make sure extmaxmount is -1
+						"-1".equals(extMaxMount)
+						// Make sure extchkint is 0
+						&& "0 (<none>)".equals(extCheckInterval)
+					;
+				case "ext2":
+					return
+						// Make sure extmaxmount is never -1
+						!"-1".equals(extMaxMount)
+						// Make sure extchkint is never 0
+						&& !"0 (<none>)".equals(extCheckInterval)
+					;
+				default:
+					// No specific expectations for other types of filesystems
+					return true;
+			}
+		}
+
+		/**
+		 * Checks that this filesystem is in a clean state and does not require any corrective action.
+		 */
+		public boolean isClean() {
+			switch (fsType) {
+				case "ext3":
+					return "clean".equals(extState);
+				case "ext2":
+					return
+						"not clean".equals(extState) // Normal state when mounted
+						|| "clean".equals(extState)
+					;
+				default:
+					// Other types of filesystems are assumed to be clean until we have more information
+					return true;
+			}
+		}
+	}
+
+	private static Byte parsePercent(String value) throws NumberFormatException {
+		if(value.isEmpty()) return null;
+		if(!value.endsWith("%")) throw new NumberFormatException("Percentage does not end with '%': " + value);
+		return Byte.parseByte(value.substring(0, value.length()-1));
+	}
+
+	private static Long parseLong(String value) throws NumberFormatException {
+		if(value.isEmpty()) return null;
+		return Long.parseLong(value);
+	}
+
+	public Map<String,FilesystemReport> getFilesystemsReport() throws IOException, SQLException {
+		Map<String,FilesystemReport> reports = new LinkedHashMap<>();
+		// Extremely simple CSV parser, but sufficient for the known format of the source data
+		List<String> lines = StringUtility.splitLines(getFilesystemsCsvReport());
+		if(lines.isEmpty()) throw new IOException("No lines from report");
+		for(int i=0, numLines=lines.size(); i<numLines; i++) {
+			String line = lines.get(i);
+			List<String> columns = StringUtility.splitString(line, "\",\"");
+            if(columns.size() != 15) throw new IOException("Line does not have 15 columns: " + columns.size());
+			String mountPoint = columns.get(0);
+			if(!mountPoint.startsWith("\"")) throw new AssertionError();
+			mountPoint = mountPoint.substring(1);
+			String extchkint = columns.get(14);
+			if(!extchkint.endsWith("\"")) throw new AssertionError();
+			extchkint = extchkint.substring(0, extchkint.length() - 1);
+			if(i == 0) {
+				if(
+					!"mountpoint".equals(mountPoint)
+					|| !"device".equals(columns.get(1))
+					|| !"bytes".equals(columns.get(2))
+					|| !"used".equals(columns.get(3))
+					|| !"free".equals(columns.get(4))
+					|| !"use".equals(columns.get(5))
+					|| !"inodes".equals(columns.get(6))
+					|| !"iused".equals(columns.get(7))
+					|| !"ifree".equals(columns.get(8))
+					|| !"iuse".equals(columns.get(9))
+					|| !"fstype".equals(columns.get(10))
+					|| !"mountoptions".equals(columns.get(11))
+					|| !"extstate".equals(columns.get(12))
+					|| !"extmaxmount".equals(columns.get(13))
+					|| !"extchkint".equals(extchkint)
+				) throw new IOException("First line is not the expected column labels");
+			} else {
+				if(
+					reports.put(
+						mountPoint,
+						new FilesystemReport(
+							mountPoint,
+							columns.get(1), // device
+							Long.parseLong(columns.get(2)), // bytes
+							Long.parseLong(columns.get(3)), // used
+							Long.parseLong(columns.get(4)), // free
+							parsePercent(columns.get(5)), // use
+							parseLong(columns.get(6)), // inodes
+							parseLong(columns.get(7)), // inodesUsed
+							parseLong(columns.get(8)), // inodesFree
+							parsePercent(columns.get(9)), // inodeUse
+							columns.get(10), // fsType
+							columns.get(11), // mountOptions
+							columns.get(12), // extState
+							columns.get(13), // extMaxMount
+							extchkint // extCheckInterval
+						)
+					) != null
+				) throw new IOException("Duplicate mount point: " + mountPoint);
+			}
+		}
+		return AoCollections.optimalUnmodifiableMap(reports);
 	}
 
 	/**
