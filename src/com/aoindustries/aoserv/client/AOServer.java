@@ -2275,26 +2275,34 @@ final public class AOServer
 
 		/**
 		 * Checks that this filesystem matches the expected configuration for an AOServer.
+		 * 
+		 * @return  the message describing the configuration warning or {@code null} if all configs OK.
 		 */
-		public boolean isConfigOk() {
+		public String getConfigMessage() {
 			switch (fsType) {
 				case "ext3":
-					return
-						// Make sure extmaxmount is -1
-						"-1".equals(extMaxMount)
-						// Make sure extchkint is 0
-						&& "0 (<none>)".equals(extCheckInterval)
-					;
+					// Make sure extmaxmount is -1
+					if(!"-1".equals(extMaxMount)) {
+						return accessor.getMessage("AOServer.FilesystemReport.configMessage.extmaxmount.ext3", extMaxMount);
+					}
+					// Make sure extchkint is 0
+					if(!"0 (<none>)".equals(extCheckInterval)) {
+						return accessor.getMessage("AOServer.FilesystemReport.configMessage.extchkint.ext3", extCheckInterval);
+					}
+					return null;
 				case "ext2":
-					return
-						// Make sure extmaxmount is never -1
-						!"-1".equals(extMaxMount)
-						// Make sure extchkint is never 0
-						&& !"0 (<none>)".equals(extCheckInterval)
-					;
+					// Make sure extmaxmount is never -1
+					if("-1".equals(extMaxMount)) {
+						return accessor.getMessage("AOServer.FilesystemReport.configMessage.extmaxmount.ext2", extMaxMount);
+					}
+					// Make sure extchkint is never 0
+					if("0 (<none>)".equals(extCheckInterval)) {
+						return accessor.getMessage("AOServer.FilesystemReport.configMessage.extchkint.ext2", extCheckInterval);
+					}
+					return null;
 				default:
 					// No specific expectations for other types of filesystems
-					return true;
+					return null;
 			}
 		}
 
