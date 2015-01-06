@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2013, 2014 by AO Industries, Inc.,
+ * Copyright 2003-2013, 2014, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -1256,7 +1256,8 @@ final public class AOServer
 			);
 
 			// Connection State
-			DrbdReport.ConnectionState connectionState = DrbdReport.ConnectionState.valueOf(values.get(2));
+			String connectionStateStr = values.get(2);
+			DrbdReport.ConnectionState connectionState = connectionStateStr.isEmpty() ? null : DrbdReport.ConnectionState.valueOf(connectionStateStr);
 
 			// Disk states
 			String ds = values.get(3);
