@@ -1114,7 +1114,7 @@ final public class AOServer
 		final private Role localRole;
 		final private Role remoteRole;
 		final private Long lastVerified;
-		final private long outOfSync;
+		final private Long outOfSync;
 
 		DrbdReport(
 			String device,
@@ -1126,7 +1126,7 @@ final public class AOServer
 			Role localRole,
 			Role remoteRole,
 			Long lastVerified,
-			long outOfSync
+			Long outOfSync
 		) {
 			this.device = device;
 			this.resourceHostname = resourceHostname;
@@ -1184,7 +1184,7 @@ final public class AOServer
 		 * Gets the number of kilobytes of data out of sync, in Kibibytes.
 		 * @link http://www.drbd.org/users-guide/ch-admin.html#s-performance-indicators
 		 */
-		public long getOutOfSync() {
+		public Long getOutOfSync() {
 			return outOfSync;
 		}
 	}
@@ -1256,14 +1256,20 @@ final public class AOServer
 			);
 
 			// Connection State
-			String connectionStateStr = values.get(2);
-			DrbdReport.ConnectionState connectionState = connectionStateStr.isEmpty() ? null : DrbdReport.ConnectionState.valueOf(connectionStateStr);
+			String connectionStateString = values.get(2);
+			final DrbdReport.ConnectionState connectionState =
+				"null".equals(connectionStateString)
+				? null
+				: DrbdReport.ConnectionState.valueOf(connectionStateString);
 
 			// Disk states
 			String ds = values.get(3);
-			DrbdReport.DiskState localDiskState;
-			DrbdReport.DiskState remoteDiskState;
-			if(DrbdReport.DiskState.Unconfigured.name().equals(ds)) {
+			final DrbdReport.DiskState localDiskState;
+			final DrbdReport.DiskState remoteDiskState;
+			if("null".equals(ds)) {
+				localDiskState = null;
+				remoteDiskState = null;
+			} else if(DrbdReport.DiskState.Unconfigured.name().equals(ds)) {
 				localDiskState = DrbdReport.DiskState.Unconfigured;
 				remoteDiskState = DrbdReport.DiskState.Unconfigured;
 			} else {
@@ -1281,9 +1287,12 @@ final public class AOServer
 
 			// Roles
 			String state = values.get(4);
-			DrbdReport.Role localRole;
-			DrbdReport.Role remoteRole;
-			if(DrbdReport.Role.Unconfigured.name().equals(state)) {
+			final DrbdReport.Role localRole;
+			final DrbdReport.Role remoteRole;
+			if("null".equals(state)) {
+				localRole = null;
+				remoteRole = null;
+			} else if(DrbdReport.Role.Unconfigured.name().equals(state)) {
 				localRole = DrbdReport.Role.Unconfigured;
 				remoteRole = DrbdReport.Role.Unconfigured;
 			} else {
@@ -1308,7 +1317,12 @@ final public class AOServer
 			;
 
 			// Out of Sync
-			long outOfSync = Long.parseLong(values.get(6));
+			String outOfSyncString = values.get(6);
+			Long outOfSync =
+				"null".equals(outOfSyncString)
+				? null
+				: Long.parseLong(outOfSyncString)
+			;
 
 			reports.add(
 				new DrbdReport(
