@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.unix.UnixFile;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -26,6 +25,20 @@ import java.util.List;
  * @author  AO Industries, Inc.
  */
 final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServerAccount> implements Removable, PasswordProtected, Disablable {
+
+	/**
+	 * The minimum UID that is considered a normal user.
+	 * 
+	 * Note: Copied from UnixFile.java to avoid interproject dependency.
+	 */
+	public static final int MINIMUM_USER_UID = 500;
+
+	/**
+	 * The UID of the root user.
+	 * 
+	 * Note: Copied from UnixFile.java to avoid interproject dependency.
+	 */
+	public static final int ROOT_UID = 0;
 
 	static final int
 		COLUMN_PKEY=0,
@@ -73,12 +86,13 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	private float sa_required_score;
 	private int sa_discard_score;
 
+	@Override
 	public boolean canDisable() throws IOException, SQLException {
 		// already disabled
 		if(disable_log!=-1) return false;
 
 		// is a system user
-		if(uid<UnixFile.MINIMUM_USER_UID) return false;
+		if(uid<MINIMUM_USER_UID) return false;
 
 		// cvs_repositories
 		for(CvsRepository cr : getCvsRepositories()) if(cr.disable_log==-1) return false;
@@ -95,16 +109,19 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return true;
 	}
 
+	@Override
 	public boolean isDisabled() {
 		return disable_log!=-1;
 	}
 
+	@Override
 	public boolean canEnable() throws SQLException, IOException {
 		DisableLog dl=getDisableLog();
 		if(dl==null) return false;
 		else return dl.canEnable() && getLinuxAccount().disable_log==-1;
 	}
 
+	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws SQLException, IOException {
 		return getLinuxAccount().checkPassword(password);
 	}
@@ -114,12 +131,14 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			false,
 			new AOServConnector.ResultRequest<Long>() {
 				long result;
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.COPY_HOME_DIRECTORY.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(toServer.pkey);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code!=AOServProtocol.DONE) {
@@ -129,6 +148,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 					result = in.readLong();
 				}
 
+				@Override
 				public Long afterRelease() {
 					return result;
 				}
@@ -140,14 +160,17 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, pkey, other.pkey);
 	}
 
+	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, dl.pkey, pkey);
 	}
 
+	@Override
 	public void enable() throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.LINUX_SERVER_ACCOUNTS, pkey);
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return Integer.valueOf(pkey);
@@ -214,6 +237,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return "/home/"+username.charAt(0)+'/'+username;
 	}
 
+	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
 		DisableLog obj=table.connector.getDisableLogs().get(disable_log);
@@ -240,11 +264,13 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
 				InboxAttributes result;
 
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.GET_INBOX_ATTRIBUTES.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) {
@@ -260,6 +286,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 					}
 				}
 
+				@Override
 				public InboxAttributes afterRelease() {
 					return result;
 				}
@@ -273,13 +300,17 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			table.connector.requestUpdate(
 				true,
 				new AOServConnector.UpdateRequest() {
+					@Override
 					public void writeRequest(CompressedDataOutputStream out) throws IOException {
 						out.writeCompressedInt(AOServProtocol.CommandID.GET_IMAP_FOLDER_SIZES.ordinal());
 						out.writeCompressedInt(pkey);
 						out.writeCompressedInt(folderNames.length);
-						for(int c=0;c<folderNames.length;c++) out.writeUTF(folderNames[c]);
+						for (String folderName : folderNames) {
+							out.writeUTF(folderName);
+						}
 					}
 
+					@Override
 					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 						int code=in.readByte();
 						if(code==AOServProtocol.DONE) {
@@ -292,6 +323,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 						}
 					}
 
+					@Override
 					public void afterRelease() {
 					}
 				}
@@ -379,6 +411,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return ao;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.LINUX_SERVER_ACCOUNTS;
 	}
@@ -389,6 +422,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return obj;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		int pos=1;
 		pkey=result.getInt(pos++);
@@ -420,10 +454,12 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return table.connector.requestIntQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, pkey);
 	}
 
+	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
 		return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		username=in.readUTF().intern();
@@ -449,38 +485,39 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return table.connector.getEmailLists().getEmailLists(this);
 	}
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+		List<CannotRemoveReason> reasons=new ArrayList<>();
 
-		if(uid<UnixFile.MINIMUM_USER_UID) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than "+UnixFile.MINIMUM_USER_UID));
+		if(uid<MINIMUM_USER_UID) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than "+MINIMUM_USER_UID));
 
 		AOServer ao=getAOServer();
 
 		// No CVS repositories
 		for(CvsRepository cr : ao.getCvsRepositories()) {
-			if(cr.linux_server_account==pkey) reasons.add(new CannotRemoveReason<CvsRepository>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerAccount().getAOServer().getHostname(), cr));
+			if(cr.linux_server_account==pkey) reasons.add(new CannotRemoveReason<>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerAccount().getAOServer().getHostname(), cr));
 		}
 
 		// No email lists
 		for(EmailList el : getEmailLists()) {
-			reasons.add(new CannotRemoveReason<EmailList>("Used by email list "+el.getPath()+" on "+el.getLinuxServerAccount().getAOServer().getHostname(), el));
+			reasons.add(new CannotRemoveReason<>("Used by email list "+el.getPath()+" on "+el.getLinuxServerAccount().getAOServer().getHostname(), el));
 		}
 
 		// No httpd_servers
 		for(HttpdServer hs : ao.getHttpdServers()) {
-			if(hs.linux_server_account==pkey) reasons.add(new CannotRemoveReason<HttpdServer>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hs));
+			if(hs.linux_server_account==pkey) reasons.add(new CannotRemoveReason<>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hs));
 		}
 
 		// No httpd shared tomcats
 		for(HttpdSharedTomcat hst : ao.getHttpdSharedTomcats()) {
-			if(hst.linux_server_account==pkey) reasons.add(new CannotRemoveReason<HttpdSharedTomcat>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+			if(hst.linux_server_account==pkey) reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
 		}
 
 		// No majordomo_servers
 		for(MajordomoServer ms : ao.getMajordomoServers()) {
 			if(ms.linux_server_account==pkey) {
 				EmailDomain ed=ms.getDomain();
-				reasons.add(new CannotRemoveReason<MajordomoServer>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
 			}
 		}
 
@@ -488,18 +525,19 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
 			if(pfs.pub_linux_server_account==pkey) {
 				LinuxServerAccount lsa = pfs.getLinuxServerAccount();
-				reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+lsa.getHome()+" on "+lsa.getAOServer().getHostname(), pfs));
+				reasons.add(new CannotRemoveReason<>("Used by private FTP server "+lsa.getHome()+" on "+lsa.getAOServer().getHostname(), pfs));
 			}
 		}
 
 		// No httpd_sites
 		for(HttpdSite site : ao.getHttpdSites()) {
-			if(site.linuxAccount.equals(username)) reasons.add(new CannotRemoveReason<HttpdSite>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
+			if(site.linuxAccount.equals(username)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
 		}
 
 		return reasons;
 	}
 
+	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(
 			true,
@@ -517,6 +555,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		table.connector.requestUpdate(true, AOServProtocol.CommandID.SET_CRON_TABLE, pkey, cronTable);
 	}
 
+	@Override
 	public void setPassword(String password) throws IOException, SQLException {
 		AOServConnector connector=table.connector;
 		if(!connector.isSecure()) throw new IOException("Passwords for linux accounts may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
@@ -534,6 +573,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.SET_AUTORESPONDER.ordinal());
 					out.writeCompressedInt(pkey);
@@ -545,6 +585,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 					out.writeBoolean(enabled);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
@@ -554,6 +595,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 					}
 				}
 
+				@Override
 				public void afterRelease() {
 					table.connector.tablesUpdated(invalidateList);
 				}
@@ -591,12 +633,14 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(password);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
@@ -606,6 +650,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 					}
 				}
 
+				@Override
 				public void afterRelease() {
 					table.connector.tablesUpdated(invalidateList);
 				}
@@ -618,6 +663,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return username+" on "+getAOServer().getHostname();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username);
@@ -653,6 +699,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		}
 	}
 
+	@Override
 	public boolean canSetPassword() throws IOException, SQLException {
 		return disable_log==-1 && getLinuxAccount().canSetPassword();
 	}
