@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2014 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -5559,7 +5559,33 @@ final public class SimpleAOClient {
         nr.remove();
     }
 
-    /**
+    public void removeDNSRecord(
+        String zone,
+		String domain,
+		String type,
+		String destination
+    ) throws IllegalArgumentException, IOException, SQLException {
+        DNSZone nz=getDNSZone(zone);
+
+        // Must be a valid type
+        DNSType nt=connector.getDnsTypes().get(type);
+        if(nt==null) throw new IllegalArgumentException("Unable to find DNSType: "+type);
+		// Must have a valid destination type
+        nt.checkDestination(destination);
+
+		// Find the record matching all four fields, should be one and *only* one
+		DNSRecord found = null;
+		for(DNSRecord record : nz.getDNSRecords(domain, nt)) {
+			if(record.getDestination().equals(destination)) {
+				if(found != null) throw new AssertionError("Duplicate DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + destination + ")");
+				found = record;
+			}
+		}
+		if(found == null) throw new AssertionError("Unable to find DNSRecord: (" + zone + ", " + domain + ", " + type + ", " + destination + ")");
+        found.remove();
+    }
+
+	/**
      * Completely removes a <code>DNSZone</code> from the servers.
      *
      * @param  zone  the name of the <code>DNSZone</code> to remove

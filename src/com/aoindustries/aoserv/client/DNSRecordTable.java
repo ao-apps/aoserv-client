@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2012, 2014 by AO Industries, Inc.,
+ * Copyright 2001-2012, 2014, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -76,7 +76,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 		// Use the index first
 		List<DNSRecord> cached=getDNSRecords(dnsZone);
 		int size=cached.size();
-		List<DNSRecord> matches=new ArrayList<DNSRecord>(size);
+		List<DNSRecord> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			DNSRecord record=cached.get(c);
 			if(
@@ -87,6 +87,7 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 		return matches;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.DNS_RECORDS;
 	}
@@ -111,12 +112,26 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_DNS_RECORD)) {
-			if(AOSH.checkParamCount(AOSHCommand.REMOVE_DNS_RECORD, args, 1, err)) {
+			if(args.length == 2) {
 				connector.getSimpleAOClient().removeDNSRecord(
 					AOSH.parseInt(args[1], "pkey")
 				);
+				return true;
+			} else if(args.length == 5) {
+				connector.getSimpleAOClient().removeDNSRecord(
+					args[1],
+					args[2],
+					args[3],
+					args[4]
+				);
+				return true;
+			} else {
+				err.print("aosh: ");
+				err.print(AOSHCommand.REMOVE_DNS_RECORD);
+				err.println(": must be either 1 or 4 parameters");
+				err.flush();
+				return false;
 			}
-			return true;
 		}
 		return false;
 	}
