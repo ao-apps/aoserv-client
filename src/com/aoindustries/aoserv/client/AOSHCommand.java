@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2014 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -183,6 +183,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		GET_BACKUP_PARTITION_USED_SIZE="get_backup_partition_used_size",
 		GET_CRON_TABLE="get_cron_table",
 		GET_EMAIL_LIST="get_email_list",
+		GET_FAILOVER_FILE_REPLICATION_ACTIVITY = "get_failover_file_replication_activity",
 		GET_IMAP_FOLDER_SIZES="get_imap_folder_sizes",
 		GET_INBOX_ATTRIBUTES="get_inbox_attributes",
 		GET_MAJORDOMO_INFO_FILE="get_majordomo_info_file",

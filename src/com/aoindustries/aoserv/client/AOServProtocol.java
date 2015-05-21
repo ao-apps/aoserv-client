@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2014 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -134,9 +134,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		VERSION_1_72("1.72"),
 		VERSION_1_73("1.73"),
 		VERSION_1_74("1.74"),
-		VERSION_1_75("1.75");
+		VERSION_1_75("1.75"),
+		VERSION_1_76("1.76");
 
-		public static final Version CURRENT_VERSION = VERSION_1_75;
+		public static final Version CURRENT_VERSION = VERSION_1_76;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
@@ -506,7 +507,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		GET_AO_SERVER_MD_MISMATCH_REPORT,
 		VERIFY_VIRTUAL_DISK,
 		GET_PRIMARY_PHYSICAL_SERVER,
-		GET_SECONDARY_PHYSICAL_SERVER
+		GET_SECONDARY_PHYSICAL_SERVER,
+		GET_FAILOVER_FILE_REPLICATION_ACTIVITY
 	}
 
 	/**
