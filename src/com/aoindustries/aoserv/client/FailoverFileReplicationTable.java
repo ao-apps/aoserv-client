@@ -60,7 +60,7 @@ final public class FailoverFileReplicationTable extends CachedTableIntegerKey<Fa
 					args[3]
 				);
 				long timeSince = activity.getTimeSince();
-				if(timeSince == -1) out.println("No activity unavailable");
+				if(timeSince == -1) out.println("No activity available");
 				else {
 					out.println(StringUtility.getDecimalTimeLengthString(timeSince));
 					out.println(activity.getMessage());
