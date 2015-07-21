@@ -125,7 +125,7 @@ final public class SimpleAOClient {
 				break;
 			}
 		}
-		if(replication==null) throw new IllegalArgumentException("Unable to find EmailSpamAssassinIntegrationMode: From "+fromServer+" to "+toServer+" at "+path);
+		if(replication==null) throw new IllegalArgumentException("Unable to find FailoverFileReplication: From "+fromServer+" to "+toServer+" at "+path);
 		return replication;
 	}
 
