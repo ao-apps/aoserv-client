@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013, 2014 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2014, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -356,7 +356,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 			latin1_swedish_ci,
 			utf8_bin,
 			utf8_general_ci,
-			utf8_unicode_ci
+			utf8_unicode_ci,
+			utf8mb4_unicode_ci
 		}
 
 		private final String name;
