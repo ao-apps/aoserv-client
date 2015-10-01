@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 by AO Industries, Inc.,
+ * Copyright 2010-2013, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -51,6 +51,10 @@ implements
     Internable<DomainName>
 {
 
+	/**
+	 * From http://data.iana.org/TLD/tlds-alpha-by-domain.txt
+	 * TODO: Update to full list (2015-09-24)
+	 */
     public enum TopLevelDomain {
         AC,
         AD,
@@ -314,6 +318,7 @@ implements
         VN,
         VU,
         WF,
+		WORK,
         WS,
         XN__0ZWM56D,
         XN__11B5BS3A9AJ6G,
