@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2014 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -247,7 +247,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return AccountingCode.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("invalid argument for ip_address "+field+": "+S, err);
+			throw new IllegalArgumentException("invalid argument for accounting "+field+": "+S, err);
 		}
 	}
 
