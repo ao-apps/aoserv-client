@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -49,10 +49,6 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 		ENTROPY_WRITE_COUNT="entropy_write_count",
 		MEMORY_FREE="memory_free",
 		MEMORY_TOTAL="memory_total",
-		METHOD_CONCURRENCY="method_concurrency",
-		METHOD_MAX_CONCURRENCY="method_max_concurrency",
-		METHOD_PROFILE_LEVEL="method_profile_level",
-		METHOD_USES="method_uses",
 		PROTOCOL_VERSION="protocol_version",
 		REQUEST_CONCURRENCY="request_concurrency",
 		REQUEST_CONNECTIONS="request_connections",

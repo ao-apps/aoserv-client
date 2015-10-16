@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -246,11 +246,6 @@ abstract public class AOServConnector {
 		return businessServers;
 	}
 
-	private final ClientJvmProfileTable clientJvmProfiles;
-	public ClientJvmProfileTable getClientJvmProfiles() {
-		return clientJvmProfiles;
-	}
-
 	private final CountryCodeTable countryCodes;
 	public CountryCodeTable getCountryCodes() {
 		return countryCodes;
@@ -268,11 +263,6 @@ abstract public class AOServConnector {
 	private final CvsRepositoryTable cvsRepositories;
 	public CvsRepositoryTable getCvsRepositories() {
 		return cvsRepositories;
-	}
-
-	private final DaemonProfileTable daemonProfiles;
-	public DaemonProfileTable getDaemonProfiles() {
-		return daemonProfiles;
 	}
 
 	private final DisableLogTable disableLogs;
@@ -626,11 +616,6 @@ abstract public class AOServConnector {
 		return majordomoVersions;
 	}
 
-	private final MasterHistoryTable masterHistory;
-	public MasterHistoryTable getMasterHistory() {
-		return masterHistory;
-	}
-
 	private final MasterHostTable masterHosts;
 	public MasterHostTable getMasterHosts() {
 		return masterHosts;
@@ -639,11 +624,6 @@ abstract public class AOServConnector {
 	private final MasterProcessTable masterProcesses;
 	public MasterProcessTable getMasterProcesses() {
 		return masterProcesses;
-	}
-
-	private final MasterServerProfileTable masterServerProfiles;
-	public MasterServerProfileTable getMasterServerProfiles() {
-		return masterServerProfiles;
 	}
 
 	private final MasterServerStatTable masterServerStats;
@@ -1036,13 +1016,11 @@ abstract public class AOServConnector {
 		newTables.add(businessProfiles=new BusinessProfileTable(this));
 		newTables.add(businesses=new BusinessTable(this));
 		newTables.add(businessServers=new BusinessServerTable(this));
-		newTables.add(clientJvmProfiles=new ClientJvmProfileTable(this));
 		newTables.add(countryCodes=new CountryCodeTable(this));
 		newTables.add(creditCardProcessors=new CreditCardProcessorTable(this));
 		newTables.add(creditCardTransactions=new CreditCardTransactionTable(this));
 		newTables.add(creditCards=new CreditCardTable(this));
 		newTables.add(cvsRepositories=new CvsRepositoryTable(this));
-		newTables.add(daemonProfiles=new DaemonProfileTable(this));
 		newTables.add(disableLogs=new DisableLogTable(this));
 		newTables.add(distroFileTypes=new DistroFileTypeTable(this));
 		newTables.add(distroFiles=new DistroFileTable(this));
@@ -1114,10 +1092,8 @@ abstract public class AOServConnector {
 		newTables.add(majordomoLists=new MajordomoListTable(this));
 		newTables.add(majordomoServers=new MajordomoServerTable(this));
 		newTables.add(majordomoVersions=new MajordomoVersionTable(this));
-		newTables.add(masterHistory=new MasterHistoryTable(this));
 		newTables.add(masterHosts=new MasterHostTable(this));
 		newTables.add(masterProcesses=new MasterProcessTable(this));
-		newTables.add(masterServerProfiles=new MasterServerProfileTable(this));
 		newTables.add(masterServerStats=new MasterServerStatTable(this));
 		newTables.add(masterServers=new MasterServerTable(this));
 		newTables.add(masterUsers=new MasterUserTable(this));
