@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -55,7 +55,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
 	public static final String OVERFLOW_TEMPLATE="tomcat";
 
-	public static final String DEFAULT_TOMCAT_VERSION_PREFIX=HttpdTomcatVersion.VERSION_7_0_PREFIX;
+	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = HttpdTomcatVersion.VERSION_8_0_PREFIX;
 
 	private String name;
 	int ao_server;
@@ -70,10 +70,12 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	private String tomcat4_shutdown_key;
 	private boolean isManual;
 
+	@Override
 	public boolean canDisable() {
 		return disable_log==-1;
 	}
 
+	@Override
 	public boolean canEnable() throws SQLException, IOException {
 		DisableLog dl=getDisableLog();
 		if(dl==null) return false;
@@ -84,21 +86,24 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		;
 	}
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+		List<CannotRemoveReason> reasons=new ArrayList<>();
 
 		for(HttpdTomcatSharedSite htss : getHttpdTomcatSharedSites()) {
 			HttpdSite hs=htss.getHttpdTomcatSite().getHttpdSite();
-			reasons.add(new CannotRemoveReason<HttpdTomcatSharedSite>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), htss));
+			reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), htss));
 		}
 
 		return reasons;
 	}
 
+	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, dl.pkey, pkey);
 	}
 
+	@Override
 	public void enable() throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
 	}
@@ -107,29 +112,32 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		return getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+name;
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case 1: return name;
-			case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
-			case 3: return Integer.valueOf(version);
-			case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
-			case 5: return Integer.valueOf(linux_server_group);
-			case 6: return isSecure?Boolean.TRUE:Boolean.FALSE;
-			case 7: return isOverflow?Boolean.TRUE:Boolean.FALSE;
+			case COLUMN_AO_SERVER: return ao_server;
+			case 3: return version;
+			case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
+			case 5: return linux_server_group;
+			case 6: return isSecure;
+			case 7: return isOverflow;
 			case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
 			case COLUMN_TOMCAT4_WORKER: return tomcat4_worker==-1?null:Integer.valueOf(tomcat4_worker);
 			case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:Integer.valueOf(tomcat4_shutdown_port);
 			case 11: return tomcat4_shutdown_key;
-			case 12: return isManual?Boolean.TRUE:Boolean.FALSE;
+			case 12: return isManual;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
 
+	@Override
 	public boolean isDisabled() {
 		return disable_log!=-1;
 	}
 
+	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
 		DisableLog obj=table.connector.getDisableLogs().get(disable_log);
@@ -175,6 +183,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		return obj;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_SHARED_TOMCATS;
 	}
@@ -197,6 +206,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		return nb;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		int pos = 1;
 		pkey=result.getInt(pos++);
@@ -261,6 +271,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	/**
 	 * readImpl method comment.
 	 */
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		name=in.readUTF();
@@ -277,6 +288,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		isManual=in.readBoolean();
 	}
 
+	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
 	}
@@ -290,6 +302,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		return name+" on "+getAOServer().getHostname();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name);

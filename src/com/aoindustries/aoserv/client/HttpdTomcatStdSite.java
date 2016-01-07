@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * An <code>HttpdStdTomcatSite</code> inicates that a
+ * An <code>HttpdStdTomcatSite</code> indicates that a
  * <code>HttpdTomcatSite</code> is configured in the standard layout
  * of one Tomcat instance per Java virtual machine.
  *
@@ -25,7 +25,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 	static final int COLUMN_TOMCAT_SITE=0;
 	static final String COLUMN_TOMCAT_SITE_name = "tomcat_site";
 
-	public static final String DEFAULT_TOMCAT_VERSION_PREFIX=HttpdTomcatVersion.VERSION_7_0_PREFIX;
+	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = HttpdTomcatVersion.VERSION_8_0_PREFIX;
 
 	int tomcat4_shutdown_port;
 	private String tomcat4_shutdown_key;
@@ -33,7 +33,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_TOMCAT_SITE: return Integer.valueOf(pkey);
+			case COLUMN_TOMCAT_SITE: return pkey;
 			case 1: return tomcat4_shutdown_port==-1?null:Integer.valueOf(tomcat4_shutdown_port);
 			case 2: return tomcat4_shutdown_key;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
