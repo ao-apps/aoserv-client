@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -244,12 +244,13 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		return connector.getAoshCommands().getAOSHCommands(this);
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_NAME: return name;
-			case 1: return Integer.valueOf(pkey);
+			case 1: return pkey;
 			case 2: return display;
-			case 3: return is_public?Boolean.TRUE:Boolean.FALSE;
+			case 3: return is_public;
 			case 4: return description;
 			case 5: return since_version;
 			case 6: return last_version;
@@ -298,6 +299,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		return connector.getSchemaForeignKeys().getSchemaForeignKeys(this);
 	}
 
+	@Override
 	public TableID getTableID() {
 		return TableID.SCHEMA_TABLES;
 	}
@@ -306,14 +308,15 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		return pkey;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
-		name=result.getString(1);
-		pkey=result.getInt(2);
-		display=result.getString(3);
-		is_public=result.getBoolean(4);
-		description=result.getString(5);
-		since_version=result.getString(6);
-		last_version=result.getString(7);
+		name = result.getString(1);
+		pkey = result.getInt(2);
+		display = result.getString(3);
+		is_public = result.getBoolean(4);
+		description = result.getString(5);
+		since_version = result.getString(6);
+		last_version = result.getString(7);
 	}
 
 	public boolean isPublic() {
@@ -328,7 +331,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		out.println();
 		out.print("       ");
 		out.println(name);
-		if(description!=null && description.length()>0) {
+		if(description != null && description.length() > 0) {
 			out.println();
 			out.boldOn();
 			out.print("DESCRIPTION");
@@ -395,6 +398,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		SQLUtility.printTable(descColumns, values, out, isInteractive, descRightAligns);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		name=in.readUTF().intern();
 		pkey=in.readCompressedInt();
@@ -405,6 +409,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		last_version=InternUtils.intern(in.readNullUTF());
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(name);
 		out.writeCompressedInt(pkey);
