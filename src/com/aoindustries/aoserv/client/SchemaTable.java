@@ -22,7 +22,7 @@ import java.util.List;
  */
 final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 
-	static final int COLUMN_NAME=0;
+	static final int COLUMN_NAME = 0;
 
 	/**
 	 * Each table has a unique identifier.  These IDs may change over time, but
