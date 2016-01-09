@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2014, 2015 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -22,8 +22,8 @@ import java.util.Map;
  */
 public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> {
 
-	static final int COLUMN_VERSION=0;
-	static final String COLUMN_CREATED_name="created";
+	static final int COLUMN_VERSION = 0;
+	static final String COLUMN_CREATED_name = "created";
 
 	/**
 	 * The current version of the client/server protocol.
@@ -136,9 +136,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		VERSION_1_74("1.74"),
 		VERSION_1_75("1.75"),
 		VERSION_1_76("1.76"),
-		VERSION_1_77("1.77");
+		VERSION_1_77("1.77"),
+		VERSION_1_78("1.78");
 
-		public static final Version CURRENT_VERSION = VERSION_1_77;
+		public static final Version CURRENT_VERSION = VERSION_1_78;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
@@ -154,7 +155,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		 */
 		public static Version getVersion(String version) {
 			Version versionEnum = versionMap.get(version);
-			if(versionEnum==null) throw new IllegalArgumentException("Version not found: "+version);
+			if(versionEnum == null) throw new IllegalArgumentException("Version not found: " + version);
 			return versionEnum;
 		}
 
@@ -175,16 +176,16 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 	}
 
 	public static final int
-		NEXT=0,
-		DONE=1,
-		IO_EXCEPTION=2,
-		SQL_EXCEPTION=3
+		NEXT = 0,
+		DONE = 1,
+		IO_EXCEPTION = 2,
+		SQL_EXCEPTION = 3
 	;
 
 	public static final int
-		FALSE=0,
-		TRUE=1,
-		SERVER_DOWN=2
+		FALSE = 0,
+		TRUE = 1,
+		SERVER_DOWN = 2
 	;
 
 	/**
@@ -518,11 +519,11 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 	public static final String FILTERED="*";
 
 	static void checkResult(int code, CompressedDataInputStream in) throws IOException, SQLException {
-		if(in==null) throw new IllegalArgumentException("in is null");
-		if(code==AOServProtocol.IO_EXCEPTION) throw new IOException(in.readUTF());
-		if(code==AOServProtocol.SQL_EXCEPTION) throw new SQLException(in.readUTF());
-		if(code==-1) throw new EOFException("End of file while reading response code");
-		if(code!=AOServProtocol.DONE) throw new IOException("Unknown status code: "+code);
+		if(in == null) throw new IllegalArgumentException("in is null");
+		if(code == AOServProtocol.IO_EXCEPTION) throw new IOException(in.readUTF());
+		if(code == AOServProtocol.SQL_EXCEPTION) throw new SQLException(in.readUTF());
+		if(code == -1) throw new EOFException("End of file while reading response code");
+		if(code != AOServProtocol.DONE) throw new IOException("Unknown status code: "+code);
 	}
 
 	private long created;
@@ -563,19 +564,19 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		created=result.getDate(2).getTime();
-		comments=result.getString(3);
+		pkey = result.getString(1);
+		created = result.getDate(2).getTime();
+		comments = result.getString(3);
 		Date D = result.getDate(4);
-		last_used = D==null ? -1 : D.getTime();
+		last_used = D == null ? -1 : D.getTime();
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		created=in.readLong();
-		comments=in.readUTF();
-		last_used=in.readLong();
+		pkey = in.readUTF().intern();
+		created = in.readLong();
+		comments = in.readUTF();
+		last_used = in.readLong();
 	}
 
 	@Override
@@ -583,6 +584,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		out.writeUTF(pkey);
 		out.writeLong(created);
 		out.writeUTF(comments);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_9)>=0) out.writeLong(last_used);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_9) >= 0) {
+			out.writeLong(last_used);
+		}
 	}
 }

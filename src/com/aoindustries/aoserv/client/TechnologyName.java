@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -20,89 +20,96 @@ import java.util.List;
  */
 final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+	static final int COLUMN_NAME = 0;
+	static final String COLUMN_NAME_name = "name";
 
-    public static final String MYSQL="MySQL";
+	public static final String MYSQL = "MySQL";
 
-    private String image_filename;
-    private int image_width;
-    private int image_height;
-    private String image_alt;
-    private String home_page_url;
+	public static final String PHP = "php";
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_NAME) return pkey;
-	if(i==1) return image_filename;
-	if(i==2) return image_width==-1?null:Integer.valueOf(image_width);
-	if(i==3) return image_height==-1?null:Integer.valueOf(image_height);
-	if(i==4) return image_alt;
-	if(i==5) return home_page_url;
-	throw new IllegalArgumentException("Invalid index: "+i);
-    }
+	private String image_filename;
+	private int image_width;
+	private int image_height;
+	private String image_alt;
+	private String home_page_url;
 
-    public String getHomePageURL() {
-	return home_page_url;
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		if(i == COLUMN_NAME) return pkey;
+		if(i == 1) return image_filename;
+		if(i == 2) return image_width==-1?null:Integer.valueOf(image_width);
+		if(i == 3) return image_height==-1?null:Integer.valueOf(image_height);
+		if(i == 4) return image_alt;
+		if(i == 5) return home_page_url;
+		throw new IllegalArgumentException("Invalid index: "+i);
+	}
 
-    public String getImageAlt() {
-	return image_alt;
-    }
+	public String getHomePageURL() {
+		return home_page_url;
+	}
 
-    public String getImageFilename() {
-	return image_filename;
-    }
+	public String getImageAlt() {
+		return image_alt;
+	}
 
-    public int getImageHeight() {
-	return image_height;
-    }
+	public String getImageFilename() {
+		return image_filename;
+	}
 
-    public int getImageWidth() {
-	return image_width;
-    }
+	public int getImageHeight() {
+		return image_height;
+	}
 
-    public String getName() {
-	return pkey;
-    }
+	public int getImageWidth() {
+		return image_width;
+	}
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.TECHNOLOGY_NAMES;
-    }
+	public String getName() {
+		return pkey;
+	}
 
-    public List<Technology> getTechnologies(AOServConnector connector) throws IOException, SQLException {
-	return connector.getTechnologies().getTechnologies(this);
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.TECHNOLOGY_NAMES;
+	}
 
-    public TechnologyVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
-	return connector.getTechnologyVersions().getTechnologyVersion(this, version, osv);
-    }
+	public List<Technology> getTechnologies(AOServConnector connector) throws IOException, SQLException {
+		return connector.getTechnologies().getTechnologies(this);
+	}
 
-    public void init(ResultSet result) throws SQLException {
-	pkey = result.getString(1);
-	image_filename=result.getString(2);
-	image_width=result.getInt(3);
-	if(result.wasNull()) image_width=-1;
-	image_height=result.getInt(4);
-	if(result.wasNull()) image_height=-1;
-	image_alt=result.getString(5);
-	home_page_url=result.getString(6);
-    }
+	public TechnologyVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
+		return connector.getTechnologyVersions().getTechnologyVersion(this, version, osv);
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-	pkey=in.readUTF().intern();
-	image_filename=in.readNullUTF();
-	image_width=in.readCompressedInt();
-	image_height=in.readCompressedInt();
-	image_alt=in.readNullUTF();
-	home_page_url=in.readNullUTF();
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		pkey = result.getString(1);
+		image_filename=result.getString(2);
+		image_width=result.getInt(3);
+		if(result.wasNull()) image_width=-1;
+		image_height=result.getInt(4);
+		if(result.wasNull()) image_height=-1;
+		image_alt=result.getString(5);
+		home_page_url=result.getString(6);
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey);
-	out.writeNullUTF(image_filename);
-	out.writeCompressedInt(image_width);
-	out.writeCompressedInt(image_height);
-	out.writeNullUTF(image_alt);
-	out.writeNullUTF(home_page_url);
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey=in.readUTF().intern();
+		image_filename=in.readNullUTF();
+		image_width=in.readCompressedInt();
+		image_height=in.readCompressedInt();
+		image_alt=in.readNullUTF();
+		home_page_url=in.readNullUTF();
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeUTF(pkey);
+		out.writeNullUTF(image_filename);
+		out.writeCompressedInt(image_width);
+		out.writeCompressedInt(image_height);
+		out.writeNullUTF(image_alt);
+		out.writeNullUTF(home_page_url);
+	}
 }
