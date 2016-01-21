@@ -75,6 +75,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	private boolean isManual;
 	private String awstatsSkipFiles;
 	private int phpVersion;
+	private boolean enableCgi;
 
 	public int addHttpdSiteAuthenticatedLocation(
 		String path,
@@ -141,16 +142,17 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_AO_SERVER: return ao_server;
 			case 2: return site_name;
-			case 3: return list_first?Boolean.TRUE:Boolean.FALSE;
+			case 3: return list_first;
 			case COLUMN_PACKAGE: return packageName;
 			case 5: return linuxAccount;
 			case 6: return linuxGroup;
 			case 7: return serverAdmin;
 			case 8: return contentSrc;
 			case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
-			case 10: return isManual?Boolean.TRUE:Boolean.FALSE;
+			case 10: return isManual;
 			case 11: return awstatsSkipFiles;
 			case 12: return phpVersion==-1 ? null : phpVersion;
+			case 13: return enableCgi;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -277,6 +279,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		awstatsSkipFiles = result.getString(pos++);
 		phpVersion = result.getInt(pos++);
 		if(result.wasNull()) phpVersion = -1;
+		enableCgi = result.getBoolean(pos++);
 	}
 
 	public boolean isManual() {
@@ -293,6 +296,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		if(tv == null) throw new SQLException("TechnologyVersion not found: " + phpVersion);
 		if(!tv.name.equals(TechnologyName.PHP)) throw new SQLException("Not a PHP version: " + tv.name + " #" + tv.pkey);
 		return tv;
+	}
+
+	public boolean getEnableCgi() {
+		return enableCgi;
 	}
 
 	/**
@@ -351,6 +358,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		isManual = in.readBoolean();
 		awstatsSkipFiles = in.readNullUTF();
 		phpVersion = in.readCompressedInt();
+		enableCgi = in.readBoolean();
 	}
 
 	@Override
@@ -399,6 +407,9 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		}
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_78) >= 0) {
 			out.writeCompressedInt(phpVersion);
+		}
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_79) >= 0) {
+			out.writeBoolean(enableCgi);
 		}
 	}
 
