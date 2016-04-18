@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -31,7 +31,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	 * 
 	 * Note: Copied from UnixFile.java to avoid interproject dependency.
 	 */
-	public static final int MINIMUM_USER_UID = 500;
+	public static final int MINIMUM_USER_UID = 1000;
 
 	/**
 	 * The UID of the root user.
@@ -51,12 +51,12 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	/**
 	 * The default number of days email messages will be kept in the "Trash" folder.
 	 */
-	public static final int DEFAULT_TRASH_EMAIL_RETENTION=31;
+	public static final int DEFAULT_TRASH_EMAIL_RETENTION = 31;
 
 	/**
 	 * The default number of days email messages will be kept in the "Junk" folder.
 	 */
-	public static final int DEFAULT_JUNK_EMAIL_RETENTION=31;
+	public static final int DEFAULT_JUNK_EMAIL_RETENTION = 31;
 
 	/**
 	 * The default SpamAssassin required score.
@@ -173,24 +173,24 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case COLUMN_USERNAME: return username;
-			case COLUMN_AO_SERVER: return Integer.valueOf(ao_server);
-			case 3: return Integer.valueOf(uid);
+			case COLUMN_AO_SERVER: return ao_server;
+			case 3: return uid;
 			case 4: return home;
-			case 5: return autoresponder_from==-1?null:Integer.valueOf(autoresponder_from);
+			case 5: return autoresponder_from==-1?null:autoresponder_from;
 			case 6: return autoresponder_subject;
 			case 7: return autoresponder_path;
-			case 8: return is_autoresponder_enabled?Boolean.TRUE:Boolean.FALSE;
-			case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
+			case 8: return is_autoresponder_enabled;
+			case 9: return disable_log==-1?null:disable_log;
 			case 10: return predisable_password;
 			case 11: return getCreated();
-			case 12: return use_inbox?Boolean.TRUE:Boolean.FALSE;
-			case 13: return trash_email_retention==-1?null:Integer.valueOf(trash_email_retention);
-			case 14: return junk_email_retention==-1?null:Integer.valueOf(junk_email_retention);
+			case 12: return use_inbox;
+			case 13: return trash_email_retention==-1?null:trash_email_retention;
+			case 14: return junk_email_retention==-1?null:junk_email_retention;
 			case 15: return sa_integration_mode;
-			case 16: return new Float(sa_required_score);
-			case 17: return sa_discard_score==-1 ? null : Integer.valueOf(sa_discard_score);
+			case 16: return sa_required_score;
+			case 17: return sa_discard_score==-1 ? null : sa_discard_score;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
