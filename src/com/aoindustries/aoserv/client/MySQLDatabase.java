@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013, 2014, 2015 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2014, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -162,11 +162,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 						BufferManager.release(buff);
 					}
 					if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);*/
-					Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8");
-					try {
+					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8")) {
 						IoUtils.copy(nestedIn, out);
-					} finally {
-						nestedIn.close();
 					}
 				}
 
@@ -180,9 +177,9 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case 1: return name;
-			case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
+			case COLUMN_MYSQL_SERVER: return mysql_server;
 			case COLUMN_PACKAGE: return packageName;
 			case 4 : return maxCheckTableAlertLevel.name();
 			default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -193,9 +190,13 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	public String getJdbcDriver() throws SQLException, IOException {
 		int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
 		switch(osv) {
-			case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DRIVER;
-			case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DRIVER;
-			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64: return CENTOS_JDBC_DRIVER;
+			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
+				return MANDRAKE_JDBC_DRIVER;
+			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
+				return REDHAT_JDBC_DRIVER;
+			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
+			case OperatingSystemVersion.CENTOS_7_X86_64:
+				return CENTOS_JDBC_DRIVER;
 			default : throw new SQLException("Unsupported OperatingSystemVersion: "+osv);
 		}
 	}
@@ -221,9 +222,13 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
 		int osv=getMySQLServer().getAOServer().getServer().getOperatingSystemVersion().getPkey();
 		switch(osv) {
-			case OperatingSystemVersion.MANDRIVA_2006_0_I586 : return MANDRAKE_JDBC_DOCUMENTATION_URL;
-			case OperatingSystemVersion.REDHAT_ES_4_X86_64 : return REDHAT_JDBC_DOCUMENTATION_URL;
-			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 : return CENTOS_JDBC_DOCUMENTATION_URL;
+			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
+				return MANDRAKE_JDBC_DOCUMENTATION_URL;
+			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
+				return REDHAT_JDBC_DOCUMENTATION_URL;
+			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
+			case OperatingSystemVersion.CENTOS_7_X86_64 :
+				return CENTOS_JDBC_DOCUMENTATION_URL;
 			default : throw new SQLException("Unsupported OperatingSystemVersion: "+osv);
 		}
 	}
@@ -285,7 +290,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+		List<CannotRemoveReason> reasons=new ArrayList<>();
 		if(name.equals(MYSQL)) reasons.add(new CannotRemoveReason<MySQLDatabase>("Not allowed to remove the MySQL database named "+MYSQL, this));
 		if(name.equals(INFORMATION_SCHEMA)) {
 			String version = getMySQLServer().getVersion().getVersion();
@@ -304,6 +309,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		return reasons;
 	}
 
+	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(
 			true,
@@ -574,7 +580,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 					int code=in.readByte();
 					if(code==AOServProtocol.NEXT) {
 						int size = in.readCompressedInt();
-						List<TableStatus> tableStatuses = new ArrayList<TableStatus>(size);
+						List<TableStatus> tableStatuses = new ArrayList<>(size);
 						for(int c=0;c<size;c++) {
 							tableStatuses.add(
 								new TableStatus(
@@ -710,7 +716,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 					int code=in.readByte();
 					if(code==AOServProtocol.NEXT) {
 						int size = in.readCompressedInt();
-						List<CheckTableResult> checkTableResults = new ArrayList<CheckTableResult>(size);
+						List<CheckTableResult> checkTableResults = new ArrayList<>(size);
 						for(int c=0;c<size;c++) {
 							checkTableResults.add(
 								new CheckTableResult(
