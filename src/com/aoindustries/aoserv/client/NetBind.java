@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -64,15 +64,15 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case COLUMN_PACKAGE: return packageName;
-			case COLUMN_SERVER: return Integer.valueOf(server);
-			case COLUMN_IP_ADDRESS: return Integer.valueOf(ip_address);
-			case 4: return Integer.valueOf(port);
+			case COLUMN_SERVER: return server;
+			case COLUMN_IP_ADDRESS: return ip_address;
+			case 4: return port;
 			case 5: return net_protocol;
 			case 6: return app_protocol;
-			case 7: return open_firewall?Boolean.TRUE:Boolean.FALSE;
-			case 8: return monitoring_enabled?Boolean.TRUE:Boolean.FALSE;
+			case 7: return open_firewall;
+			case 8: return monitoring_enabled;
 			case 9: return monitoring_parameters;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
@@ -383,7 +383,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	}
 
 	/**
-	 * Encodes the parameters.  Will not return null.
+	 * Encodes the parameters in UTF-8.  Will not return null.
 	 */
 	public static String encodeParameters(HttpParameters monitoringParameters) {
 		try {
@@ -401,11 +401,18 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		}
 	}
 
+	/**
+	 * Decodes the parameters in UTF-8.
+	 */
 	public static HttpParameters decodeParameters(String monitoringParameters) {
 		if(monitoringParameters==null) {
 			return EmptyParameters.getInstance();
 		} else {
-			return new HttpParametersMap(monitoringParameters);
+			try {
+				return new HttpParametersMap(monitoringParameters, "UTF-8");
+			} catch(UnsupportedEncodingException e) {
+				throw new AssertionError("UTF-8 should existing on all platforms", e);
+			}
 			/*
 			try {
 				List<String> nameValues = StringUtility.splitString(monitoringParameters, '&');
