@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2014, 2015 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -3367,7 +3367,7 @@ final public class SimpleAOClient {
 		/*
 		 * HTTP stuff
 		 */
-		List<AOServer> httpdServers=new SortedArrayList<AOServer>();
+		List<AOServer> httpdServers=new SortedArrayList<>();
 		for(HttpdSharedTomcat hst : pk.getHttpdSharedTomcats()) {
 			if(hst.disable_log==-1) {
 				hst.disable(dl);
@@ -3860,9 +3860,9 @@ final public class SimpleAOClient {
 		for(EmailSmtpRelay ssr : pk.getEmailSmtpRelays()) if(ssr.disable_log==dl.pkey) ssr.enable();
 
 		// Various accounts
-		List<AOServer> linuxAccountServers=new SortedArrayList<AOServer>();
-		List<AOServer> mysqlServers=new SortedArrayList<AOServer>();
-		List<AOServer> postgresServers=new SortedArrayList<AOServer>();
+		List<AOServer> linuxAccountServers=new SortedArrayList<>();
+		List<AOServer> mysqlServers=new SortedArrayList<>();
+		List<AOServer> postgresServers=new SortedArrayList<>();
 		for(Username un : pk.getUsernames()) {
 			if(un.disable_log==dl.pkey) enableUsername(
 				dl,
@@ -8131,8 +8131,8 @@ final public class SimpleAOClient {
 		int hostIp = IPAddress.getIntForIPAddress(host);
 		set.addReputation(
 			hostIp,
-			IpReputationSet.ConfidenceType.valueOf(confidence.toUpperCase(Locale.ENGLISH)),
-			IpReputationSet.ReputationType.valueOf(reputationType.toUpperCase(Locale.ENGLISH)),
+			IpReputationSet.ConfidenceType.valueOf(confidence.toUpperCase(Locale.ROOT)),
+			IpReputationSet.ReputationType.valueOf(reputationType.toUpperCase(Locale.ROOT)),
 			score
 		);
 	}
