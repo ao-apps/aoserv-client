@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -28,12 +28,13 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
 
 	private boolean isNegative;
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_NAME: return pkey;
 			case 1: return display;
 			case 2: return description;
-			case 3: return isNegative?Boolean.TRUE:Boolean.FALSE;
+			case 3: return isNegative;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -50,10 +51,12 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
 		return pkey;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.BANK_TRANSACTION_TYPES;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey = result.getString(1);
 		display = result.getString(2);
@@ -65,6 +68,7 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
 		return isNegative;
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 		display=in.readUTF();
@@ -77,6 +81,7 @@ final public class BankTransactionType extends CachedObjectStringKey<BankTransac
 		return display;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(display);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 by AO Industries, Inc.,
+ * Copyright 2005-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -26,74 +26,79 @@ import java.sql.SQLException;
  */
 public final class TransactionType extends GlobalObjectStringKey<TransactionType> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+	static final int COLUMN_NAME=0;
+	static final String COLUMN_NAME_name = "name";
 
-    public static final String
-        HTTPD="httpd",
-        PAYMENT="payment",
-        VIRTUAL="virtual"
-    ;
+	public static final String
+		HTTPD="httpd",
+		PAYMENT="payment",
+		VIRTUAL="virtual"
+	;
 
-    /**
-     * If <code>true</code> this <code>TransactionType</code> represents a credit to
-     * an account and will be listed in payments received reports.
-     */
-    private boolean isCredit;
+	/**
+	 * If <code>true</code> this <code>TransactionType</code> represents a credit to
+	 * an account and will be listed in payments received reports.
+	 */
+	private boolean isCredit;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return isCredit?Boolean.TRUE:Boolean.FALSE;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_NAME: return pkey;
+			case 1: return isCredit;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
 
-    public String getDescription() {
-        return accessor.getMessage("TransactionType."+pkey+".description");
-    }
+	public String getDescription() {
+		return accessor.getMessage("TransactionType."+pkey+".description");
+	}
 
-    /**
-     * Gets the unique name of this transaction type.
-     */
-    public String getName() {
-        return pkey;
-    }
+	/**
+	 * Gets the unique name of this transaction type.
+	 */
+	public String getName() {
+		return pkey;
+	}
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.TRANSACTION_TYPES;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.TRANSACTION_TYPES;
+	}
 
-    public String getUnit() {
-        return accessor.getMessage("TransactionType."+pkey+".unit");
-    }
+	public String getUnit() {
+		return accessor.getMessage("TransactionType."+pkey+".unit");
+	}
 
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        isCredit = result.getBoolean(2);
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		pkey = result.getString(1);
+		isCredit = result.getBoolean(2);
+	}
 
-    public boolean isCredit() {
-        return isCredit;
-    }
+	public boolean isCredit() {
+		return isCredit;
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey = in.readUTF().intern();
-        isCredit = in.readBoolean();
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey = in.readUTF().intern();
+		isCredit = in.readBoolean();
+	}
 
-    @Override
-    String toStringImpl() {
-        return accessor.getMessage("TransactionType."+pkey+".toString");
-    }
+	@Override
+	String toStringImpl() {
+		return accessor.getMessage("TransactionType."+pkey+".toString");
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
-            out.writeUTF(toStringImpl()); // display
-            out.writeUTF(getDescription()); // description
-            out.writeUTF(getUnit()); // unit
-        }
-        out.writeBoolean(isCredit);
-    }
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeUTF(pkey);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+			out.writeUTF(toStringImpl()); // display
+			out.writeUTF(getDescription()); // description
+			out.writeUTF(getUnit()); // unit
+		}
+		out.writeBoolean(isCredit);
+	}
 }

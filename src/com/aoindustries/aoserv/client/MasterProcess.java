@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -23,314 +23,320 @@ import java.sql.Timestamp;
  */
 final public class MasterProcess extends AOServObject<Long,MasterProcess> implements SingleTableObject<Long,MasterProcess> {
 
-    private static boolean logCommands=false;
+	private static boolean logCommands=false;
 
-    /**
-     * Turns on/off command logging.
-     */
-    public static void setLogCommands(boolean state) {
-        logCommands=state;
-    }
-    
-    public static boolean getLogCommands() {
-        return logCommands;
-    }
+	/**
+	 * Turns on/off command logging.
+	 */
+	public static void setLogCommands(boolean state) {
+		logCommands=state;
+	}
 
-    /**
-     * The different states a process may be in.
-     */
-    public static final String
-        LOGIN="login",
-        RUN="run",
-        SLEEP="sleep"
-    ;
+	public static boolean getLogCommands() {
+		return logCommands;
+	}
 
-    long process_id;
-    private long connector_id=-1;
-    private String authenticated_user;
-    private String effective_user;
-    private int daemon_server;
-    private InetAddress host;
-    private String protocol;
-    private String aoserv_protocol;
-    private boolean is_secure;
-    private long connect_time;
-    private long use_count;
-    private long total_time;
-    private int priority;
-    private String state;
-    private Object[] command;
-    private long state_start_time;
+	/**
+	 * The different states a process may be in.
+	 */
+	public static final String
+		LOGIN="login",
+		RUN="run",
+		SLEEP="sleep"
+	;
 
-    protected AOServTable<Long,MasterProcess> table;
+	long process_id;
+	private long connector_id=-1;
+	private String authenticated_user;
+	private String effective_user;
+	private int daemon_server;
+	private InetAddress host;
+	private String protocol;
+	private String aoserv_protocol;
+	private boolean is_secure;
+	private long connect_time;
+	private long use_count;
+	private long total_time;
+	private int priority;
+	private String state;
+	private Object[] command;
+	private long state_start_time;
 
-    public MasterProcess() {
-    }
+	private AOServTable<Long,MasterProcess> table;
 
-    public MasterProcess(
-        long process_id,
-        InetAddress host,
-        String protocol,
-        boolean is_secure,
-        long connect_time
-    ) {
-        this.process_id=process_id;
-        this.host=host;
-        this.protocol=protocol;
-        this.is_secure=is_secure;
-        this.connect_time=connect_time;
-        this.priority=Thread.NORM_PRIORITY;
-        this.state=LOGIN;
-        this.state_start_time=connect_time;
-    }
+	public MasterProcess() {
+	}
 
-    synchronized public void commandCompleted() {
-        long time=System.currentTimeMillis();
-        total_time+=time-state_start_time;
-        state=SLEEP;
-        command=null;
-        state_start_time=time;
-    }
-    
-    synchronized public void commandRunning() {
-        use_count++;
-        state=RUN;
-        state_start_time=System.currentTimeMillis();
-    }
+	public MasterProcess(
+		long process_id,
+		InetAddress host,
+		String protocol,
+		boolean is_secure,
+		long connect_time
+	) {
+		this.process_id=process_id;
+		this.host=host;
+		this.protocol=protocol;
+		this.is_secure=is_secure;
+		this.connect_time=connect_time;
+		this.priority=Thread.NORM_PRIORITY;
+		this.state=LOGIN;
+		this.state_start_time=connect_time;
+	}
 
-    synchronized public void commandSleeping() {
-        if(!state.equals(SLEEP)) {
-            long time=System.currentTimeMillis();
-            state=SLEEP;
-            total_time+=time-state_start_time;
-            state_start_time=time;
-        }
-    }
+	synchronized public void commandCompleted() {
+		long time=System.currentTimeMillis();
+		total_time+=time-state_start_time;
+		state=SLEEP;
+		command=null;
+		state_start_time=time;
+	}
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case 0: return Long.valueOf(process_id);
-            case 1: return connector_id==-1?null:Long.valueOf(connector_id);
-            case 2: return authenticated_user;
-            case 3: return effective_user;
-            case 4: return daemon_server==-1?null:Integer.valueOf(daemon_server);
-            case 5: return host;
-            case 6: return protocol;
-            case 7: return aoserv_protocol;
-            case 8: return is_secure?Boolean.TRUE:Boolean.FALSE;
-            case 9: return getConnectTime();
-            case 10: return Long.valueOf(use_count);
-            case 11: return Long.valueOf(total_time);
-            case 12: return Integer.valueOf(priority);
-            case 13: return state;
-            case 14: return getCommand();
-            case 15: return getStateStartTime();
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
+	synchronized public void commandRunning() {
+		use_count++;
+		state=RUN;
+		state_start_time=System.currentTimeMillis();
+	}
 
-    public int getDaemonServer() {
-        return daemon_server;
-    }
+	synchronized public void commandSleeping() {
+		if(!state.equals(SLEEP)) {
+			long time=System.currentTimeMillis();
+			state=SLEEP;
+			total_time+=time-state_start_time;
+			state_start_time=time;
+		}
+	}
 
-    public int getPriority() {
-        return priority;
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case 0: return process_id;
+			case 1: return connector_id == -1 ? null : connector_id;
+			case 2: return authenticated_user;
+			case 3: return effective_user;
+			case 4: return daemon_server == -1 ? null : daemon_server;
+			case 5: return host;
+			case 6: return protocol;
+			case 7: return aoserv_protocol;
+			case 8: return is_secure;
+			case 9: return getConnectTime();
+			case 10: return use_count;
+			case 11: return total_time;
+			case 12: return priority;
+			case 13: return state;
+			case 14: return getCommand();
+			case 15: return getStateStartTime();
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
 
-    public long getProcessID() {
-        return process_id;
-    }
+	public int getDaemonServer() {
+		return daemon_server;
+	}
 
-    public long getConnectorID() {
-        return connector_id;
-    }
-    
-    public String getAuthenticatedUser() {
-        return authenticated_user;
-    }
+	public int getPriority() {
+		return priority;
+	}
 
-    public BusinessAdministrator getAuthenticatedBusinessAdministrator() throws IOException, SQLException {
-        // Null OK when filtered
-        return table.connector.getBusinessAdministrators().get(authenticated_user);
-    }
+	public long getProcessID() {
+		return process_id;
+	}
 
-    public String getEffectiveUser() {
-        return effective_user;
-    }
-    
-    public BusinessAdministrator getEffectiveBusinessAdministrator() throws SQLException, IOException {
-        BusinessAdministrator ba=table.connector.getBusinessAdministrators().get(effective_user);
-        if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+effective_user);
-        return ba;
-    }
+	public long getConnectorID() {
+		return connector_id;
+	}
 
-    public InetAddress getHost() {
-        return host;
-    }
-    
-    public String getProtocol() {
-        return protocol;
-    }
+	public String getAuthenticatedUser() {
+		return authenticated_user;
+	}
 
-    public String getAOServProtocol() {
-        return aoserv_protocol;
-    }
-    
-    public void setAOServProtocol(String aoserv_protocol) {
-        this.aoserv_protocol=aoserv_protocol;
-    }
+	public BusinessAdministrator getAuthenticatedBusinessAdministrator() throws IOException, SQLException {
+		// Null OK when filtered
+		return table.connector.getBusinessAdministrators().get(authenticated_user);
+	}
 
-    public boolean isSecure() {
-        return is_secure;
-    }
+	public String getEffectiveUser() {
+		return effective_user;
+	}
 
-    public Timestamp getConnectTime() {
-        return new Timestamp(connect_time);
-    }
-    
-    public long getUseCount() {
-        return use_count;
-    }
-    
-    public long getTotalTime() {
-        return total_time;
-    }
-    
-    public String getState() {
-        return state;
-    }
-    
-    public Timestamp getStateStartTime() {
-        return new Timestamp(state_start_time);
-    }
+	public BusinessAdministrator getEffectiveBusinessAdministrator() throws SQLException, IOException {
+		BusinessAdministrator ba=table.connector.getBusinessAdministrators().get(effective_user);
+		if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+effective_user);
+		return ba;
+	}
 
-    public Long getKey() {
-	return process_id;
-    }
+	public InetAddress getHost() {
+		return host;
+	}
 
-    /**
-     * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
-     *
-     * @return  the <code>AOServTable</code>.
-     */
-    final public AOServTable<Long,MasterProcess> getTable() {
-	return table;
-    }
+	public String getProtocol() {
+		return protocol;
+	}
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.MASTER_PROCESSES;
-    }
+	public String getAOServProtocol() {
+		return aoserv_protocol;
+	}
 
-    public void init(ResultSet result) throws SQLException {
-	throw new SQLException("Should not be read from the database, should be generated.");
-    }
+	public void setAOServProtocol(String aoserv_protocol) {
+		this.aoserv_protocol=aoserv_protocol;
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        try {
-            process_id=in.readLong();
-            connector_id=in.readLong();
-            authenticated_user=InternUtils.intern(in.readNullUTF());
-            effective_user=InternUtils.intern(in.readNullUTF());
-            daemon_server=in.readCompressedInt();
-            host=InetAddress.valueOf(in.readUTF()).intern();
-            protocol=in.readUTF().intern();
-            aoserv_protocol=InternUtils.intern(in.readNullUTF());
-            is_secure=in.readBoolean();
-            connect_time=in.readLong();
-            use_count=in.readLong();
-            total_time=in.readLong();
-            priority=in.readCompressedInt();
-            state=in.readUTF().intern();
-            if(in.readBoolean()) {
-                command=new Object[] {in.readUTF()};
-            } else {
-                command=null;
-            }
-            state_start_time=in.readLong();
-        } catch(ValidationException e) {
-            IOException exc = new IOException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
-        }
-    }
+	public boolean isSecure() {
+		return is_secure;
+	}
 
-    synchronized public void setCommand(Object ... command) {
-        if(command==null) this.command=null;
-        else {
-            this.command=command;
-        }
-    }
+	public Timestamp getConnectTime() {
+		return new Timestamp(connect_time);
+	}
 
-    synchronized public String getCommand() {
-        if(command==null) return null;
-        StringBuilder SB=new StringBuilder();
-        int len=command.length;
-        for(int c=0;c<len;c++) {
-            if(c>0) SB.append(' ');
-            Object com=command[c];
-            if(com==null) SB.append("''");
-            else if(com instanceof Object[]) {
-                Object[] oa=(Object[])com;
-                int oaLen=oa.length;
-                for(int d=0;d<oaLen;d++) {
-                    if(d>0) SB.append(' ');
-                    Object com2=oa[d];
-                    if(com2==null) SB.append("''");
-                    else SB.append(com2);
-                }
-            } else SB.append(com);
-        }
-        return SB.toString();
-    }
+	public long getUseCount() {
+		return use_count;
+	}
 
-    public void setAuthenticatedUser(String username) {
-        authenticated_user=username;
-    }
+	public long getTotalTime() {
+		return total_time;
+	}
 
-    public void setConnectorID(long id) {
-        connector_id=id;
-    }
+	public String getState() {
+		return state;
+	}
 
-    public void setDeamonServer(int server) {
-        daemon_server=server;
-    }
+	public Timestamp getStateStartTime() {
+		return new Timestamp(state_start_time);
+	}
 
-    public void setEffectiveUser(String username) {
-        effective_user=username;
-    }
+	@Override
+	public Long getKey() {
+		return process_id;
+	}
 
-    public void setPriority(int priority) {
-        this.priority=priority;
-    }
+	/**
+	 * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
+	 *
+	 * @return  the <code>AOServTable</code>.
+	 */
+	@Override
+	final public AOServTable<Long,MasterProcess> getTable() {
+		return table;
+	}
 
-    public void setTable(AOServTable<Long,MasterProcess> table) {
-	if(this.table!=null) throw new IllegalStateException("table already set");
-	this.table=table;
-    }
-    
-    @Override
-    protected String toStringImpl() {
-        return getCommand();
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.MASTER_PROCESSES;
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeLong(process_id);
-        out.writeLong(connector_id);
-        out.writeNullUTF(authenticated_user);
-        out.writeNullUTF(effective_user);
-        out.writeCompressedInt(daemon_server);
-        out.writeUTF(host.toString());
-        out.writeUTF(protocol);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
-        out.writeBoolean(is_secure);
-        out.writeLong(connect_time);
-        out.writeLong(use_count);
-        out.writeLong(total_time);
-        out.writeCompressedInt(priority);
-        out.writeUTF(state);
-        String myCommand=getCommand();
-        out.writeBoolean(myCommand!=null);
-        if(myCommand!=null) out.writeUTF(myCommand);
-        out.writeLong(state_start_time);
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		throw new SQLException("Should not be read from the database, should be generated.");
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			process_id=in.readLong();
+			connector_id=in.readLong();
+			authenticated_user=InternUtils.intern(in.readNullUTF());
+			effective_user=InternUtils.intern(in.readNullUTF());
+			daemon_server=in.readCompressedInt();
+			host=InetAddress.valueOf(in.readUTF()).intern();
+			protocol=in.readUTF().intern();
+			aoserv_protocol=InternUtils.intern(in.readNullUTF());
+			is_secure=in.readBoolean();
+			connect_time=in.readLong();
+			use_count=in.readLong();
+			total_time=in.readLong();
+			priority=in.readCompressedInt();
+			state=in.readUTF().intern();
+			if(in.readBoolean()) {
+				command=new Object[] {in.readUTF()};
+			} else {
+				command=null;
+			}
+			state_start_time=in.readLong();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
+
+	synchronized public void setCommand(Object ... command) {
+		if(command==null) this.command=null;
+		else {
+			this.command=command;
+		}
+	}
+
+	synchronized public String getCommand() {
+		if(command==null) return null;
+		StringBuilder SB=new StringBuilder();
+		int len=command.length;
+		for(int c=0;c<len;c++) {
+			if(c>0) SB.append(' ');
+			Object com=command[c];
+			if(com==null) SB.append("''");
+			else if(com instanceof Object[]) {
+				Object[] oa=(Object[])com;
+				int oaLen=oa.length;
+				for(int d=0;d<oaLen;d++) {
+					if(d>0) SB.append(' ');
+					Object com2=oa[d];
+					if(com2==null) SB.append("''");
+					else SB.append(com2);
+				}
+			} else SB.append(com);
+		}
+		return SB.toString();
+	}
+
+	public void setAuthenticatedUser(String username) {
+		authenticated_user=username;
+	}
+
+	public void setConnectorID(long id) {
+		connector_id=id;
+	}
+
+	public void setDeamonServer(int server) {
+		daemon_server=server;
+	}
+
+	public void setEffectiveUser(String username) {
+		effective_user=username;
+	}
+
+	public void setPriority(int priority) {
+		this.priority=priority;
+	}
+
+	@Override
+	public void setTable(AOServTable<Long,MasterProcess> table) {
+		if(this.table!=null) throw new IllegalStateException("table already set");
+		this.table=table;
+	}
+
+	@Override
+	 String toStringImpl() {
+		return getCommand();
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeLong(process_id);
+		out.writeLong(connector_id);
+		out.writeNullUTF(authenticated_user);
+		out.writeNullUTF(effective_user);
+		out.writeCompressedInt(daemon_server);
+		out.writeUTF(host.toString());
+		out.writeUTF(protocol);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
+		out.writeBoolean(is_secure);
+		out.writeLong(connect_time);
+		out.writeLong(use_count);
+		out.writeLong(total_time);
+		out.writeCompressedInt(priority);
+		out.writeUTF(state);
+		String myCommand=getCommand();
+		out.writeBoolean(myCommand!=null);
+		if(myCommand!=null) out.writeUTF(myCommand);
+		out.writeLong(state_start_time);
+	}
 }

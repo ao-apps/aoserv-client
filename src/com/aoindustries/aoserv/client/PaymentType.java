@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -49,11 +49,12 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 		return allowWeb;
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==COLUMN_NAME) return pkey;
 		if(i==1) return description;
-		if(i==2) return isActive?Boolean.TRUE:Boolean.FALSE;
-		if(i==3) return allowWeb?Boolean.TRUE:Boolean.FALSE;
+		if(i==2) return isActive;
+		if(i==3) return allowWeb;
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
@@ -70,6 +71,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 		return SchemaTable.TableID.PAYMENT_TYPES;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey = result.getString(1);
 		description = result.getString(2);
@@ -81,6 +83,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 		return isActive;
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 		description=in.readUTF();
@@ -93,6 +96,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 		return description;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);

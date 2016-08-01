@@ -1,92 +1,97 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2003-2009 by AO Industries, Inc.,
+ * Copyright 2003-2009, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.io.*;
-import java.io.*;
-import java.sql.*;
+package com.aoindustries.aoserv.client;
+
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * One type of operating system.
  *
  * @see Server
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_NAME_name = "name";
+	static final int COLUMN_NAME=0;
+	static final String COLUMN_NAME_name = "name";
 
-    public static final String
-        CENTOS="centos",
-        DEBIAN="debian",
-        GENTOO="gentoo",
-        MANDRAKE="mandrake",
-        MANDRIVA="mandriva",
-        REDHAT="redhat",
-        WINDOWS="windows"
-    ;
-    
-    public static final String DEFAULT_OPERATING_SYSTEM=MANDRAKE;
+	public static final String
+		CENTOS="centos",
+		DEBIAN="debian",
+		GENTOO="gentoo",
+		MANDRAKE="mandrake",
+		MANDRIVA="mandriva",
+		REDHAT="redhat",
+		WINDOWS="windows"
+	;
 
-    private String display;
-    private boolean is_unix;
+	public static final String DEFAULT_OPERATING_SYSTEM=MANDRAKE;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return display;
-            case 2: return is_unix?Boolean.TRUE:Boolean.FALSE;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
+	private String display;
+	private boolean is_unix;
 
-    public String getName() {
-        return pkey;
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_NAME: return pkey;
+			case 1: return display;
+			case 2: return is_unix;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
 
-    public String getDisplay() {
-        return display;
-    }
+	public String getName() {
+		return pkey;
+	}
 
-    public boolean isUnix() {
-        return is_unix;
-    }
+	public String getDisplay() {
+		return display;
+	}
 
-    public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
-        return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
-    }
+	public boolean isUnix() {
+		return is_unix;
+	}
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.OPERATING_SYSTEMS;
-    }
+	public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
+		return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
+	}
 
-    public void init(ResultSet result) throws SQLException {
-        pkey=result.getString(1);
-        display=result.getString(2);
-        is_unix=result.getBoolean(3);
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.OPERATING_SYSTEMS;
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        display=in.readUTF();
-        is_unix=in.readBoolean();
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		pkey=result.getString(1);
+		display=result.getString(2);
+		is_unix=result.getBoolean(3);
+	}
 
-    @Override
-    String toStringImpl() {
-        return display;
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey=in.readUTF().intern();
+		display=in.readUTF();
+		is_unix=in.readBoolean();
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeUTF(display);
-        out.writeBoolean(is_unix);
-    }
+	@Override
+	String toStringImpl() {
+		return display;
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeUTF(pkey);
+		out.writeUTF(display);
+		out.writeBoolean(is_unix);
+	}
 }

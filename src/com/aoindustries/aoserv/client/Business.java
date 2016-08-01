@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -350,12 +350,14 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             new AOServConnector.UpdateRequest() {
                 IntList invalidateList;
 
+				@Override
                 public void writeRequest(CompressedDataOutputStream out) throws IOException {
                     out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
                     out.writeUTF(pkey.toString());
                     out.writeNullUTF(finalCancelReason);
                 }
 
+				@Override
                 public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
                     int code=in.readByte();
                     if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
@@ -365,6 +367,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
                     }
                 }
 
+				@Override
                 public void afterRelease() {
                     table.connector.tablesUpdated(invalidateList);
                 }
@@ -380,6 +383,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
         return pkey.equals(table.connector.getBusinesses().getRootAccounting());
     }
 
+	@Override
     public boolean canDisable() throws IOException, SQLException {
         // already disabled
         if(disable_log!=-1) return false;
@@ -392,6 +396,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
         return true;
     }
 
+	@Override
     public boolean canEnable() throws SQLException, IOException {
         // Cannot enable a canceled business
         if(canceled!=-1) return false;
@@ -406,20 +411,22 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
         return can_see_prices;
     }
 
+	@Override
     public void disable(DisableLog dl) throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.BUSINESSES, dl.pkey, pkey.toString());
     }
     
+	@Override
     public void enable() throws IOException, SQLException {
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.BUSINESSES, pkey.toString());
     }
 
     public BigDecimal getAccountBalance() throws IOException, SQLException {
-	return table.connector.getTransactions().getAccountBalance(pkey);
+		return table.connector.getTransactions().getAccountBalance(pkey);
     }
 
     public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
-	return table.connector.getTransactions().getAccountBalance(pkey, before);
+		return table.connector.getTransactions().getAccountBalance(pkey, before);
     }
 
     /**
@@ -437,7 +444,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
     }
 
     public AccountingCode getAccounting() {
-	return pkey;
+		return pkey;
     }
 
     public boolean getAutoEnable() {
@@ -511,17 +518,18 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
     }
 
     public Timestamp getCanceled() {
-	return canceled==-1 ? null : new Timestamp(canceled);
+		return canceled==-1 ? null : new Timestamp(canceled);
     }
 
     public String getCancelReason() {
-	return cancelReason;
+		return cancelReason;
     }
 
     public List<Business> getChildBusinesses() throws IOException, SQLException {
         return table.connector.getBusinesses().getChildBusinesses(this);
     }
 
+	@Override
     Object getColumnImpl(int i) {
         switch(i) {
             case COLUMN_ACCOUNTING: return pkey;
@@ -530,50 +538,52 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             case 3: return getCanceled();
             case 4: return cancelReason;
             case 5: return parent;
-            case 6: return can_add_backup_server?Boolean.TRUE:Boolean.FALSE;
-            case 7: return can_add_businesses?Boolean.TRUE:Boolean.FALSE;
-            case 8: return can_see_prices?Boolean.TRUE:Boolean.FALSE;
-            case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
+            case 6: return can_add_backup_server;
+            case 7: return can_add_businesses;
+            case 8: return can_see_prices;
+            case 9: return disable_log== -1 ? null : disable_log;
             case 10: return do_not_disable_reason;
-            case 11: return auto_enable?Boolean.TRUE:Boolean.FALSE;
-            case 12: return bill_parent?Boolean.TRUE:Boolean.FALSE;
+            case 11: return auto_enable;
+            case 12: return bill_parent;
             default: throw new IllegalArgumentException("Invalid index: "+i);
         }
     }
 
     public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
-	return table.connector.getTransactions().getConfirmedAccountBalance(pkey);
+		return table.connector.getTransactions().getConfirmedAccountBalance(pkey);
     }
 
     public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
-	return table.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
+		return table.connector.getTransactions().getConfirmedAccountBalance(pkey, before);
     }
 
     public String getContractVersion() {
-	return contractVersion;
+		return contractVersion;
     }
 
     public Timestamp getCreated() {
-	return new Timestamp(created);
+		return new Timestamp(created);
     }
 
     public List<CreditCardProcessor> getCreditCardProcessors() throws IOException, SQLException {
-	return table.connector.getCreditCardProcessors().getCreditCardProcessors(this);
+		return table.connector.getCreditCardProcessors().getCreditCardProcessors(this);
     }
 
     public List<CreditCard> getCreditCards() throws IOException, SQLException {
-	return table.connector.getCreditCards().getCreditCards(this);
+		return table.connector.getCreditCards().getCreditCards(this);
     }
 
     public Server getDefaultServer() throws IOException, SQLException {
         // May be null when the account is canceled or not using servers
-	return table.connector.getBusinessServers().getDefaultServer(this);
+		return table.connector.getBusinessServers().getDefaultServer(this);
     }
 
+	@Override
     public boolean isDisabled() {
         return disable_log!=-1;
     }
 
+	@Override
     public DisableLog getDisableLog() throws SQLException, IOException {
         if(disable_log==-1) return null;
         DisableLog obj=table.connector.getDisableLogs().get(disable_log);
@@ -582,23 +592,23 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
     }
 
     public List<EmailForwarding> getEmailForwarding() throws SQLException, IOException {
-	return table.connector.getEmailForwardings().getEmailForwarding(this);
+		return table.connector.getEmailForwardings().getEmailForwarding(this);
     }
 
     public List<EmailList> getEmailLists() throws IOException, SQLException {
-	return table.connector.getEmailLists().getEmailLists(this);
+		return table.connector.getEmailLists().getEmailLists(this);
     }
 
     public LinuxServerGroup getLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
-	return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
+		return table.connector.getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
     }
 
     public List<LinuxAccount> getMailAccounts() throws IOException, SQLException {
-	return table.connector.getLinuxAccounts().getMailAccounts(this);
+		return table.connector.getLinuxAccounts().getMailAccounts(this);
     }
 
     public CreditCard getMonthlyCreditCard() throws IOException, SQLException {
-	return table.connector.getCreditCards().getMonthlyCreditCard(this);
+		return table.connector.getCreditCards().getMonthlyCreditCard(this);
     }
 
     public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
@@ -627,7 +637,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
     }
 
     public List<Package> getPackages() throws IOException, SQLException {
-	return table.connector.getPackages().getPackages(this);
+		return table.connector.getPackages().getPackages(this);
     }
 
     public Business getParentBusiness() throws IOException, SQLException {
@@ -641,6 +651,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
         return table.connector.getEmailDomains().getEmailDomains(this);
     }
 
+	@Override
     public SchemaTable.TableID getTableID() {
         return SchemaTable.TableID.BUSINESSES;
     }
@@ -731,8 +742,8 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             out.attributesOff();
             out.flush();
         }
-        List<LinuxServerGroup> fromLinuxServerGroups=new ArrayList<LinuxServerGroup>();
-        List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<LinuxServerGroup>();
+        List<LinuxServerGroup> fromLinuxServerGroups=new ArrayList<>();
+        List<LinuxServerGroup> toLinuxServerGroups=new SortedArrayList<>();
         {
             for(LinuxServerGroup lsg : table.connector.getLinuxServerGroups().getRows()) {
                 Package pk=lsg.getLinuxGroup().getPackage();
@@ -743,19 +754,18 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
                 }
             }
         }
-        for(int c=0;c<fromLinuxServerGroups.size();c++) {
-            LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
-            if(!toLinuxServerGroups.contains(lsg)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsg.name);
-                    out.print(" to ");
-                    out.println(to.getHostname());
-                    out.flush();
-                }
-                lsg.getLinuxGroup().addLinuxServerGroup(to);
-            }
-        }
+		for (LinuxServerGroup lsg : fromLinuxServerGroups) {
+			if(!toLinuxServerGroups.contains(lsg)) {
+				if(out!=null) {
+					out.print("    ");
+					out.print(lsg.name);
+					out.print(" to ");
+					out.println(to.getHostname());
+					out.flush();
+				}
+				lsg.getLinuxGroup().addLinuxServerGroup(to);
+			}
+		}
 
         // Add the LinuxServerAccounts
         if(out!=null) {
@@ -764,33 +774,31 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             out.attributesOff();
             out.flush();
         }
-        List<LinuxServerAccount> fromLinuxServerAccounts=new ArrayList<LinuxServerAccount>();
-        List<LinuxServerAccount> toLinuxServerAccounts=new SortedArrayList<LinuxServerAccount>();
+        List<LinuxServerAccount> fromLinuxServerAccounts=new ArrayList<>();
+        List<LinuxServerAccount> toLinuxServerAccounts=new SortedArrayList<>();
         {
             List<LinuxServerAccount> lsas=table.connector.getLinuxServerAccounts().getRows();
-            for(int c=0;c<lsas.size();c++) {
-                LinuxServerAccount lsa=lsas.get(c);
-                Package pk=lsa.getLinuxAccount().getUsername().getPackage();
-                if(pk!=null && pk.getBusiness().equals(this)) {
-                    AOServer ao=lsa.getAOServer();
-                    if(ao.equals(from)) fromLinuxServerAccounts.add(lsa);
-                    else if(ao.equals(to)) toLinuxServerAccounts.add(lsa);
-                }
-            }
+			for (LinuxServerAccount lsa : lsas) {
+				Package pk=lsa.getLinuxAccount().getUsername().getPackage();
+				if(pk!=null && pk.getBusiness().equals(this)) {
+					AOServer ao=lsa.getAOServer();
+					if(ao.equals(from)) fromLinuxServerAccounts.add(lsa);
+					else if(ao.equals(to)) toLinuxServerAccounts.add(lsa);
+				}
+			}
         }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(!toLinuxServerAccounts.contains(lsa)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" to ");
-                    out.println(to.getHostname());
-                    out.flush();
-                }
-                lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
-            }
-        }
+		for (LinuxServerAccount lsa : fromLinuxServerAccounts) {
+			if(!toLinuxServerAccounts.contains(lsa)) {
+				if(out!=null) {
+					out.print("    ");
+					out.print(lsa.username);
+					out.print(" to ");
+					out.println(to.getHostname());
+					out.flush();
+				}
+				lsa.getLinuxAccount().addLinuxServerAccount(to, lsa.getHome());
+			}
+		}
 
         // Wait for Linux Account rebuild
         if(out!=null) {
@@ -810,25 +818,24 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             out.attributesOff();
             out.flush();
         }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(!toLinuxServerAccounts.contains(lsa)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" to ");
-                    out.print(to.getHostname());
-                    out.print(": ");
-                    out.flush();
-                }
-                long byteCount=lsa.copyHomeDirectory(to);
-                if(out!=null) {
-                    out.print(byteCount);
-                    out.println(byteCount==1?" byte":" bytes");
-                    out.flush();
-                }
-            }
-        }
+		for (LinuxServerAccount lsa : fromLinuxServerAccounts) {
+			if(!toLinuxServerAccounts.contains(lsa)) {
+				if(out!=null) {
+					out.print("    ");
+					out.print(lsa.username);
+					out.print(" to ");
+					out.print(to.getHostname());
+					out.print(": ");
+					out.flush();
+				}
+				long byteCount=lsa.copyHomeDirectory(to);
+				if(out!=null) {
+					out.print(byteCount);
+					out.println(byteCount==1?" byte":" bytes");
+					out.flush();
+				}
+			}
+		}
 
         // Copy the cron tables
         if(out!=null) {
@@ -837,26 +844,25 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             out.attributesOff();
             out.flush();
         }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(!toLinuxServerAccounts.contains(lsa)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" to ");
-                    out.print(to.getHostname());
-                    out.print(": ");
-                    out.flush();
-                }
-                String cronTable=lsa.getCronTable();
-                lsa.getLinuxAccount().getLinuxServerAccount(to).setCronTable(cronTable);
-                if(out!=null) {
-                    out.print(cronTable.length());
-                    out.println(cronTable.length()==1?" byte":" bytes");
-                    out.flush();
-                }
-            }
-        }
+		for (LinuxServerAccount lsa : fromLinuxServerAccounts) {
+			if(!toLinuxServerAccounts.contains(lsa)) {
+				if(out!=null) {
+					out.print("    ");
+					out.print(lsa.username);
+					out.print(" to ");
+					out.print(to.getHostname());
+					out.print(": ");
+					out.flush();
+				}
+				String cronTable=lsa.getCronTable();
+				lsa.getLinuxAccount().getLinuxServerAccount(to).setCronTable(cronTable);
+				if(out!=null) {
+					out.print(cronTable.length());
+					out.println(cronTable.length()==1?" byte":" bytes");
+					out.flush();
+				}
+			}
+		}
 
         // Copy the passwords
         if(out!=null) {
@@ -865,20 +871,19 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             out.attributesOff();
             out.flush();
         }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(!toLinuxServerAccounts.contains(lsa)) {
-                if(out!=null) {
-                    out.print("    ");
-                    out.print(lsa.username);
-                    out.print(" to ");
-                    out.println(to.getHostname());
-                    out.flush();
-                }
-
-                lsa.copyPassword(lsa.getLinuxAccount().getLinuxServerAccount(to));
-            }
-        }
+		for (LinuxServerAccount lsa : fromLinuxServerAccounts) {
+			if(!toLinuxServerAccounts.contains(lsa)) {
+				if(out!=null) {
+					out.print("    ");
+					out.print(lsa.username);
+					out.print(" to ");
+					out.println(to.getHostname());
+					out.flush();
+				}
+				
+				lsa.copyPassword(lsa.getLinuxAccount().getLinuxServerAccount(to));
+			}
+		}
 
         // Move IP Addresses
         if(out!=null) {
@@ -888,22 +893,21 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             out.flush();
         }
         List<IPAddress> ips=table.connector.getIpAddresses().getRows();
-        for(int c=0;c<ips.size();c++) {
-            IPAddress ip=ips.get(c);
-            InetAddress inetAddress = ip.getInetAddress();
-            if(
-                ip.isAlias()
-                && !inetAddress.isUnspecified()
-                && !ip.getNetDevice().getNetDeviceID().isLoopback()
-                && ip.getPackage().accounting.equals(pkey)
-            ) {
-                out.print("    ");
-                out.println(ip);
-                ip.moveTo(to.getServer());
-            }
-        }
-
-        // TODO: Continue development here
+		for (IPAddress ip : ips) {
+			InetAddress inetAddress = ip.getInetAddress();
+			if(
+				ip.isAlias()
+				&& !inetAddress.isUnspecified()
+				&& !ip.getNetDevice().getNetDeviceID().isLoopback()
+				&& ip.getPackage().accounting.equals(pkey)
+			) {
+				if(out!=null) {
+					out.print("    ");
+					out.println(ip);
+				}
+				ip.moveTo(to.getServer());
+			}
+		} // TODO: Continue development here
 
 
 
@@ -914,17 +918,16 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             out.attributesOff();
             out.flush();
         }
-        for(int c=0;c<fromLinuxServerAccounts.size();c++) {
-            LinuxServerAccount lsa=fromLinuxServerAccounts.get(c);
-            if(out!=null) {
-                out.print("    ");
-                out.print(lsa.username);
-                out.print(" on ");
-                out.println(from.getHostname());
-                out.flush();
-            }
-            lsa.remove();
-        }
+		for (LinuxServerAccount lsa : fromLinuxServerAccounts) {
+			if(out!=null) {
+				out.print("    ");
+				out.print(lsa.username);
+				out.print(" on ");
+				out.println(from.getHostname());
+				out.flush();
+			}
+			lsa.remove();
+		}
 
         // Remove the LinuxServerGroups
         if(out!=null) {
@@ -933,17 +936,16 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             out.attributesOff();
             out.flush();
         }
-        for(int c=0;c<fromLinuxServerGroups.size();c++) {
-            LinuxServerGroup lsg=fromLinuxServerGroups.get(c);
-            if(out!=null) {
-                out.print("    ");
-                out.print(lsg.name);
-                out.print(" on ");
-                out.println(from.getHostname());
-                out.flush();
-            }
-            lsg.remove();
-        }
+		for (LinuxServerGroup lsg : fromLinuxServerGroups) {
+			if(out!=null) {
+				out.print("    ");
+				out.print(lsg.name);
+				out.print(" on ");
+				out.println(from.getHostname());
+				out.flush();
+			}
+			lsg.remove();
+		}
 
         // Remove access to the old server
         if(out!=null) {
@@ -957,6 +959,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
         fromBusinessServer.remove();
     }
 
+	@Override
     public void init(ResultSet result) throws SQLException {
         try {
             pkey = AccountingCode.valueOf(result.getString(1));
@@ -975,12 +978,11 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             auto_enable=result.getBoolean(12);
             bill_parent=result.getBoolean(13);
         } catch(ValidationException e) {
-            SQLException exc = new SQLException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
+            throw new SQLException(e);
         }
     }
 
+	@Override
     public void read(CompressedDataInputStream in) throws IOException {
         try {
             pkey=AccountingCode.valueOf(in.readUTF()).intern();
@@ -997,9 +999,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
             auto_enable=in.readBoolean();
             bill_parent=in.readBoolean();
         } catch(ValidationException e) {
-            IOException exc = new IOException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
+            throw new IOException(e);
         }
     }
 
@@ -1007,6 +1007,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
         table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey.toString(), accounting.toString());
     }
 
+	@Override
     public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
         out.writeUTF(pkey.toString());
         out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
@@ -1025,7 +1026,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
     }
 
     public List<Ticket> getTickets() throws SQLException, IOException {
-	return table.connector.getTickets().getTickets(this);
+		return table.connector.getTickets().getTickets(this);
     }
     
     /**
@@ -1101,10 +1102,10 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
     public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
         // Determine the active packages per category
         List<PackageCategory> allCategories = table.connector.getPackageCategories().getRows();
-        Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<PackageCategory,List<PackageDefinition>>(allCategories.size()*4/3+1);
+        Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<>(allCategories.size()*4/3+1);
         for(PackageCategory category : allCategories) {
             List<PackageDefinition> allDefinitions = getPackageDefinitions(category);
-            List<PackageDefinition> definitions = new ArrayList<PackageDefinition>(allDefinitions.size());
+            List<PackageDefinition> definitions = new ArrayList<>(allDefinitions.size());
             for(PackageDefinition definition : allDefinitions) {
                 if(definition.isActive()) definitions.add(definition);
             }
@@ -1113,6 +1114,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
         return Collections.unmodifiableMap(categories);
     }
 
+	@Override
     public int compareTo(Business o) {
         return pkey.compareTo(o.pkey);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -41,9 +41,10 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
 
 	private boolean is_loopback;
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==COLUMN_NAME) return pkey;
-		if(i==1) return is_loopback?Boolean.TRUE:Boolean.FALSE;
+		if(i==1) return is_loopback;
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
@@ -51,10 +52,12 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
 		return pkey;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.NET_DEVICE_IDS;
 	}
 
+	@Override
 	public void init(ResultSet results) throws SQLException {
 		pkey=results.getString(1);
 		is_loopback=results.getBoolean(2);
@@ -64,16 +67,19 @@ final public class NetDeviceID extends GlobalObjectStringKey<NetDeviceID> implem
 		return is_loopback;
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 		is_loopback=in.readBoolean();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 		out.writeBoolean(is_loopback);
 	}
 
+	@Override
 	public int compareTo(NetDeviceID other) {
 		return pkey.compareTo(other.pkey);
 	}

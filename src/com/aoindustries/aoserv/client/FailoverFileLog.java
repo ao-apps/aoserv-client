@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -24,7 +24,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	static final String COLUMN_REPLICATION_name = "replication";
 	static final String COLUMN_END_TIME_name = "end_time";
 
-	protected AOServTable<Integer,FailoverFileLog> table;
+	private AOServTable<Integer,FailoverFileLog> table;
 
 	private int pkey;
 	private int replication;
@@ -47,16 +47,17 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 		return bytes;
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case 0: return Integer.valueOf(pkey);
-			case 1: return Integer.valueOf(replication);
+			case 0: return pkey;
+			case 1: return replication;
 			case 2: return getStartTime();
 			case 3: return getEndTime();
-			case 4: return Integer.valueOf(scanned);
-			case 5: return Integer.valueOf(updated);
-			case 6: return Long.valueOf(bytes);
-			case 7: return is_successful?Boolean.TRUE:Boolean.FALSE;
+			case 4: return scanned;
+			case 5: return updated;
+			case 6: return bytes;
+			case 7: return is_successful;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -73,6 +74,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 		return pkey;
 	}
 
+	@Override
 	public Integer getKey() {
 		return pkey;
 	}
@@ -92,10 +94,12 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	 *
 	 * @return  the <code>AOServTable</code>.
 	 */
-	final public AOServTable<Integer,FailoverFileLog> getTable() {
+	@Override
+	public AOServTable<Integer,FailoverFileLog> getTable() {
 		return table;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.FAILOVER_FILE_LOG;
 	}
@@ -109,6 +113,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 		return pkey;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		replication=result.getInt(2);
@@ -124,6 +129,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 		return is_successful;
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		replication=in.readCompressedInt();
@@ -135,11 +141,13 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 		is_successful=in.readBoolean();
 	}
 
+	@Override
 	public void setTable(AOServTable<Integer,FailoverFileLog> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(replication);

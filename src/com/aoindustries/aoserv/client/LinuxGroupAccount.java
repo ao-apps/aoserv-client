@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2009, 2014 by AO Industries, Inc.,
+ * Copyright 2000-2009, 2014, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -46,10 +46,10 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case 1: return group_name;
 			case 2: return username;
-			case 3: return is_primary?Boolean.TRUE:Boolean.FALSE;
+			case 3: return is_primary;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}

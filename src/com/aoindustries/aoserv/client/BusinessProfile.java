@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -24,225 +24,226 @@ import java.util.List;
  */
 final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfile> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_ACCOUNTING=1
-    ;
-    static final String COLUMN_ACCOUNTING_name = "accounting";
-    static final String COLUMN_PRIORITY_name = "priority";
+	static final int
+		COLUMN_PKEY=0,
+		COLUMN_ACCOUNTING=1
+	;
+	static final String COLUMN_ACCOUNTING_name = "accounting";
+	static final String COLUMN_PRIORITY_name = "priority";
 
-    AccountingCode accounting;
-    private int priority;
+	AccountingCode accounting;
+	private int priority;
 
-    private String name;
+	private String name;
 
-    private boolean isPrivate;
-    private String phone, fax, address1, address2, city, state;
-    String country;
-    private String zip;
+	private boolean isPrivate;
+	private String phone, fax, address1, address2, city, state;
+	String country;
+	private String zip;
 
-    private boolean sendInvoice;
+	private boolean sendInvoice;
 
-    private long created;
+	private long created;
 
-    private String billingContact, billingEmail, technicalContact, technicalEmail;
+	private String billingContact, billingEmail, technicalContact, technicalEmail;
 
-    public String getAddress1() {
-	return address1;
-    }
+	public String getAddress1() {
+		return address1;
+	}
 
-    public String getAddress2() {
-	return address2;
-    }
+	public String getAddress2() {
+		return address2;
+	}
 
-    public String getBillingContact() {
-	return billingContact;
-    }
+	public String getBillingContact() {
+		return billingContact;
+	}
 
-    public List<String> getBillingEmail() {
-	return StringUtility.splitStringCommaSpace(billingEmail);
-    }
+	public List<String> getBillingEmail() {
+		return StringUtility.splitStringCommaSpace(billingEmail);
+	}
 
-    public Business getBusiness() throws SQLException, IOException {
-	Business business=table.connector.getBusinesses().get(accounting);
-        if (business == null) throw new SQLException("Unable to find Business: " + accounting);
-        return business;
-    }
+	public Business getBusiness() throws SQLException, IOException {
+		Business business=table.connector.getBusinesses().get(accounting);
+		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
+		return business;
+	}
 
-    public String getCity() {
-	return city;
-    }
+	public String getCity() {
+		return city;
+	}
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY: return Integer.valueOf(pkey);
-            case COLUMN_ACCOUNTING: return accounting;
-            case 2: return Integer.valueOf(priority);
-            case 3: return name;
-            case 4: return isPrivate?Boolean.TRUE:Boolean.FALSE;
-            case 5: return phone;
-            case 6: return fax;
-            case 7: return address1;
-            case 8: return address2;
-            case 9: return city;
-            case 10: return state;
-            case 11: return country;
-            case 12: return zip;
-            case 13: return sendInvoice?Boolean.TRUE:Boolean.FALSE;
-            case 14: return getCreated();
-            case 15: return billingContact;
-            case 16: return billingEmail;
-            case 17: return technicalContact;
-            case 18: return technicalEmail;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_PKEY: return pkey;
+			case COLUMN_ACCOUNTING: return accounting;
+			case 2: return priority;
+			case 3: return name;
+			case 4: return isPrivate;
+			case 5: return phone;
+			case 6: return fax;
+			case 7: return address1;
+			case 8: return address2;
+			case 9: return city;
+			case 10: return state;
+			case 11: return country;
+			case 12: return zip;
+			case 13: return sendInvoice;
+			case 14: return getCreated();
+			case 15: return billingContact;
+			case 16: return billingEmail;
+			case 17: return technicalContact;
+			case 18: return technicalEmail;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
 
-    public CountryCode getCountry() throws SQLException, IOException {
-        CountryCode countryCode = table.connector.getCountryCodes().get(country);
-        if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
-        return countryCode;
-    }
+	public CountryCode getCountry() throws SQLException, IOException {
+		CountryCode countryCode = table.connector.getCountryCodes().get(country);
+		if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
+		return countryCode;
+	}
 
-    public Timestamp getCreated() {
-	return new Timestamp(created);
-    }
+	public Timestamp getCreated() {
+		return new Timestamp(created);
+	}
 
-    public String getFax() {
-	return fax;
-    }
+	public String getFax() {
+		return fax;
+	}
 
-    public String getName() {
-	return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getPhone() {
-	return phone;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public int getPriority() {
-	return priority;
-    }
+	public int getPriority() {
+		return priority;
+	}
 
-    public String getState() {
-	return state;
-    }
+	public String getState() {
+		return state;
+	}
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.BUSINESS_PROFILES;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.BUSINESS_PROFILES;
+	}
 
-    public String getTechnicalContact() {
-	return technicalContact;
-    }
+	public String getTechnicalContact() {
+		return technicalContact;
+	}
 
-    public List<String> getTechnicalEmail() {
-	return StringUtility.splitStringCommaSpace(technicalEmail);
-    }
+	public List<String> getTechnicalEmail() {
+		return StringUtility.splitStringCommaSpace(technicalEmail);
+	}
 
-    public String getZIP() {
-	return zip;
-    }
+	public String getZIP() {
+		return zip;
+	}
 
-    public void init(ResultSet result) throws SQLException {
-        try {
-            pkey = result.getInt(1);
-            accounting = AccountingCode.valueOf(result.getString(2));
-            priority = result.getInt(3);
-            name = result.getString(4);
-            isPrivate = result.getBoolean(5);
-            phone = result.getString(6);
-            fax = result.getString(7);
-            address1 = result.getString(8);
-            address2 = result.getString(9);
-            city = result.getString(10);
-            state = result.getString(11);
-            country = result.getString(12);
-            zip = result.getString(13);
-            sendInvoice = result.getBoolean(14);
-            created = result.getTimestamp(15).getTime();
-            billingContact = result.getString(16);
-            billingEmail = result.getString(17);
-            technicalContact = result.getString(18);
-            technicalEmail = result.getString(19);
-        } catch(ValidationException e) {
-            SQLException exc = new SQLException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
-        }
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		try {
+			pkey = result.getInt(1);
+			accounting = AccountingCode.valueOf(result.getString(2));
+			priority = result.getInt(3);
+			name = result.getString(4);
+			isPrivate = result.getBoolean(5);
+			phone = result.getString(6);
+			fax = result.getString(7);
+			address1 = result.getString(8);
+			address2 = result.getString(9);
+			city = result.getString(10);
+			state = result.getString(11);
+			country = result.getString(12);
+			zip = result.getString(13);
+			sendInvoice = result.getBoolean(14);
+			created = result.getTimestamp(15).getTime();
+			billingContact = result.getString(16);
+			billingEmail = result.getString(17);
+			technicalContact = result.getString(18);
+			technicalEmail = result.getString(19);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
+	}
 
-    public boolean isPrivate() {
-	return isPrivate;
-    }
+	public boolean isPrivate() {
+		return isPrivate;
+	}
 
-    /*
-    private static String makeEmailList(String[] addresses) {
+	/*
+	private static String makeEmailList(String[] addresses) {
 	StringBuilder SB=new StringBuilder();
 	int len=addresses.length;
 	for(int c=0;c<len;c++) {
-            if(c>0) SB.append(' ');
-            SB.append(addresses[c]);
+			if(c>0) SB.append(' ');
+			SB.append(addresses[c]);
 	}
 	return SB.toString();
-    }*/
+	}*/
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        try {
-            pkey=in.readCompressedInt();
-            accounting=AccountingCode.valueOf(in.readUTF()).intern();
-            priority=in.readCompressedInt();
-            name=in.readUTF();
-            isPrivate=in.readBoolean();
-            phone=in.readUTF();
-            fax=in.readNullUTF();
-            address1=in.readUTF();
-            address2=in.readNullUTF();
-            city=in.readUTF();
-            state=InternUtils.intern(in.readNullUTF());
-            country=in.readUTF().intern();
-            zip=in.readNullUTF();
-            sendInvoice=in.readBoolean();
-            created=in.readLong();
-            billingContact=in.readUTF();
-            billingEmail=in.readUTF();
-            technicalContact=in.readUTF();
-            technicalEmail=in.readUTF();
-        } catch(ValidationException e) {
-            IOException exc = new IOException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
-        }
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey=in.readCompressedInt();
+			accounting=AccountingCode.valueOf(in.readUTF()).intern();
+			priority=in.readCompressedInt();
+			name=in.readUTF();
+			isPrivate=in.readBoolean();
+			phone=in.readUTF();
+			fax=in.readNullUTF();
+			address1=in.readUTF();
+			address2=in.readNullUTF();
+			city=in.readUTF();
+			state=InternUtils.intern(in.readNullUTF());
+			country=in.readUTF().intern();
+			zip=in.readNullUTF();
+			sendInvoice=in.readBoolean();
+			created=in.readLong();
+			billingContact=in.readUTF();
+			billingEmail=in.readUTF();
+			technicalContact=in.readUTF();
+			technicalEmail=in.readUTF();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
 
-    public boolean sendInvoice() {
-	return sendInvoice;
-    }
+	public boolean sendInvoice() {
+		return sendInvoice;
+	}
 
-    @Override
-    String toStringImpl() {
-	return name + " ("+priority+')';
-    }
+	@Override
+	String toStringImpl() {
+		return name + " ("+priority+')';
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeCompressedInt(pkey);
-	out.writeUTF(accounting.toString());
-	out.writeCompressedInt(priority);
-	out.writeUTF(name);
-	out.writeBoolean(isPrivate);
-	out.writeUTF(phone);
-	out.writeNullUTF(fax);
-	out.writeUTF(address1);
-	out.writeNullUTF(address2);
-	out.writeUTF(city);
-	out.writeNullUTF(state);
-	out.writeUTF(country);
-	out.writeNullUTF(zip);
-	out.writeBoolean(sendInvoice);
-	out.writeLong(created);
-	out.writeUTF(billingContact);
-	out.writeUTF(billingEmail);
-	out.writeUTF(technicalContact);
-	out.writeUTF(technicalEmail);
-    }
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeUTF(accounting.toString());
+		out.writeCompressedInt(priority);
+		out.writeUTF(name);
+		out.writeBoolean(isPrivate);
+		out.writeUTF(phone);
+		out.writeNullUTF(fax);
+		out.writeUTF(address1);
+		out.writeNullUTF(address2);
+		out.writeUTF(city);
+		out.writeNullUTF(state);
+		out.writeUTF(country);
+		out.writeNullUTF(zip);
+		out.writeBoolean(sendInvoice);
+		out.writeLong(created);
+		out.writeUTF(billingContact);
+		out.writeUTF(billingEmail);
+		out.writeUTF(technicalContact);
+		out.writeUTF(technicalEmail);
+	}
 }
