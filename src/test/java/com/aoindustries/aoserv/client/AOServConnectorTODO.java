@@ -17,11 +17,13 @@ import junit.framework.TestSuite;
 /**
  * Tests various aspects of the AOServConnector class.
  *
+ * TODO: This test does not run without a master setup.
+ *
  * @author  AO Industries, Inc.
  */
-public class AOServConnectorTest extends TestCase {
+public class AOServConnectorTODO extends TestCase {
 
-	private static final Logger logger = Logger.getLogger(AOServConnectorTest.class.getName());
+	private static final Logger logger = Logger.getLogger(AOServConnectorTODO.class.getName());
 
 	static final String REGULAR_USER_USERNAME="testuser";
 	static final String REGULAR_USER_PASSWORD="T3st1234";
@@ -41,7 +43,7 @@ public class AOServConnectorTest extends TestCase {
 
 	private List<AOServConnector> conns;
 
-	public AOServConnectorTest(String testName) {
+	public AOServConnectorTODO(String testName) {
 		super(testName);
 	}
 
@@ -56,7 +58,7 @@ public class AOServConnectorTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AOServConnectorTest.class);
+		TestSuite suite = new TestSuite(AOServConnectorTODO.class);
 
 		return suite;
 	}
