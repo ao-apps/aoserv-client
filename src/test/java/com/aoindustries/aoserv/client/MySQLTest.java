@@ -48,7 +48,7 @@ public class MySQLTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		conn=AOServConnector.getConnector(AOServConnectorTest.REGULAR_USER_USERNAME, AOServConnectorTest.REGULAR_USER_PASSWORD, logger);
+		conn=AOServConnector.getConnector(AOServConnectorTODO.REGULAR_USER_USERNAME, AOServConnectorTODO.REGULAR_USER_PASSWORD, logger);
 	}
 
 	@Override
