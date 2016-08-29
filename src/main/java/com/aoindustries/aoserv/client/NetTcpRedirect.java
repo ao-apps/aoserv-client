@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2013 by AO Industries, Inc.,
+ * Copyright 2004-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -28,13 +28,14 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 	private HostAddress destination_host;
 	private int destination_port;
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_NET_BIND: return Integer.valueOf(pkey);
-			case 1: return Integer.valueOf(cps);
-			case 2: return Integer.valueOf(cps_overload_sleep_time);
+			case COLUMN_NET_BIND: return pkey;
+			case 1: return cps;
+			case 2: return cps_overload_sleep_time;
 			case 3: return destination_host;
-			case 4: return Integer.valueOf(destination_port);
+			case 4: return destination_port;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -63,10 +64,12 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 		return np;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.NET_TCP_REDIRECTS;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
@@ -75,12 +78,11 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 			destination_host=HostAddress.valueOf(result.getString(4));
 			destination_port=result.getInt(5);
 		} catch(ValidationException e) {
-			SQLException exc = new SQLException(e.getLocalizedMessage());
-			exc.initCause(e);
-			throw exc;
+			throw new SQLException(e);
 		}
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
@@ -89,9 +91,7 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 			destination_host=HostAddress.valueOf(in.readUTF()).intern();
 			destination_port=in.readCompressedInt();
 		} catch(ValidationException e) {
-			IOException exc = new IOException(e.getLocalizedMessage());
-			exc.initCause(e);
-			throw exc;
+			throw new IOException(e);
 		}
 	}
 
@@ -100,6 +100,7 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 		return getNetBind().toStringImpl()+"->"+destination_host.toBracketedString()+':'+destination_port;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(cps);

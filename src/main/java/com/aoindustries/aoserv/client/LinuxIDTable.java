@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2009, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import java.util.AbstractList;
 import java.util.List;
 
@@ -14,74 +14,75 @@ import java.util.List;
  *
  * @see  LinuxID
  *
- * @version  1.0a
- *
  * @author  AO Industries, Inc.
  */
 final public class LinuxIDTable extends AOServTable<Integer,LinuxID> {
 
-    private static final List<LinuxID> ids=new AbstractList<LinuxID>() {
-        public LinuxID get(int index) {
-            if(index<0) throw new IndexOutOfBoundsException("Index below zero: "+index);
-            if(index>65535) throw new IndexOutOfBoundsException("Index above 65535: "+index);
-            return new LinuxID(index);
-        }
-        
-        public int size() {
-            return 65536;
-        }
-        
-        @Override
-        public int indexOf(Object o) {
-            if(o!=null && (o instanceof LinuxID)) {
-                return ((LinuxID)o).getID();
-            }
-            return -1;
-        }
+	private static final List<LinuxID> ids = new AbstractList<LinuxID>() {
 
-        @Override
-        public int lastIndexOf(Object o) {
-            return indexOf(o);
-        }
-    };
+		@Override
+		public LinuxID get(int index) {
+			if(index<0) throw new IndexOutOfBoundsException("Index below zero: "+index);
+			if(index>65535) throw new IndexOutOfBoundsException("Index above 65535: "+index);
+			return new LinuxID(index);
+		}
 
-    LinuxIDTable(AOServConnector connector) {
-	super(connector, LinuxID.class);
-    }
+		@Override
+		public int size() {
+			return 65536;
+		}
 
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return null;
-    }
+		@Override
+		public int indexOf(Object o) {
+			if(o!=null && (o instanceof LinuxID)) {
+				return ((LinuxID)o).getID();
+			}
+			return -1;
+		}
 
-    @Override
-    public LinuxID get(Object id) {
-        return get(((Integer)id).intValue());
-    }
+		@Override
+		public int lastIndexOf(Object o) {
+			return indexOf(o);
+		}
+	};
 
-    public LinuxID get(int id) {
-        if(id>=0 && id<=65535) return new LinuxID(id);
-        return null;
-    }
+	LinuxIDTable(AOServConnector connector) {
+		super(connector, LinuxID.class);
+	}
 
-    @Override
-    public List<LinuxID> getRows() {
-        return ids;
-    }
+	@Override
+	OrderBy[] getDefaultOrderBy() {
+		return null;
+	}
 
-    @Override
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.LINUX_IDS;
-    }
+	@Override
+	public LinuxID get(Object id) {
+		return get(((Integer)id).intValue());
+	}
 
-    @Override
-    protected LinuxID getUniqueRowImpl(int col, Object value) {
-        if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
-        return get(value);
-    }
+	public LinuxID get(int id) {
+		if(id>=0 && id<=65535) return new LinuxID(id);
+		return null;
+	}
 
-    @Override
-    public boolean isLoaded() {
-        return true;
-    }
+	@Override
+	public List<LinuxID> getRows() {
+		return ids;
+	}
+
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.LINUX_IDS;
+	}
+
+	@Override
+	protected LinuxID getUniqueRowImpl(int col, Object value) {
+		if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
+		return get(value);
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return true;
+	}
 }

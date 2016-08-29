@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -44,6 +44,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 		);
 	}
 
+	@Override
 	public LinuxAccAddress get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(LinuxAccAddress.COLUMN_PKEY, pkey);
 	}
@@ -52,7 +53,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 		// Start with the index
 		List<LinuxAccAddress> cached = getLinuxAccAddresses(lsa);
 		int len = cached.size();
-		List<EmailAddress> matches=new ArrayList<EmailAddress>(len);
+		List<EmailAddress> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			LinuxAccAddress acc=cached.get(c);
 			matches.add(acc.getEmailAddress());
@@ -80,7 +81,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 		int aoPKey=ao.pkey;
 		List<LinuxAccAddress> cached = getRows();
 		int len = cached.size();
-		List<LinuxAccAddress> matches=new ArrayList<LinuxAccAddress>(len);
+		List<LinuxAccAddress> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			LinuxAccAddress acc = cached.get(c);
 			if(acc.getEmailAddress().getDomain().ao_server==aoPKey) matches.add(acc);
@@ -92,7 +93,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 		int pkey=address.pkey;
 		List<LinuxAccAddress> cached = getRows();
 		int len = cached.size();
-		List<LinuxServerAccount> matches=new ArrayList<LinuxServerAccount>(len);
+		List<LinuxServerAccount> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			LinuxAccAddress acc = cached.get(c);
 			if (acc.email_address==pkey) {
@@ -107,8 +108,9 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 		return getIndexedRows(LinuxAccAddress.COLUMN_EMAIL_ADDRESS, address.pkey);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.LINUX_ACC_ADDRESSES;
+		return SchemaTable.TableID.LINUX_ACC_ADDRESSES;
 	}
 
 	@Override

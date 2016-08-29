@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2009, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -19,23 +19,25 @@ import java.sql.SQLException;
  */
 final public class TicketActionTypeTable extends GlobalTableStringKey<TicketActionType> {
 
-    TicketActionTypeTable(AOServConnector connector) {
-        super(connector, TicketActionType.class);
-    }
+	TicketActionTypeTable(AOServConnector connector) {
+		super(connector, TicketActionType.class);
+	}
 
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(TicketActionType.COLUMN_TYPE_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
+	private static final OrderBy[] defaultOrderBy = {
+		new OrderBy(TicketActionType.COLUMN_TYPE_name, ASCENDING)
+	};
+	@Override
+	OrderBy[] getDefaultOrderBy() {
+		return defaultOrderBy;
+	}
 
-    public TicketActionType get(String type) throws IOException, SQLException {
-        return getUniqueRow(TicketActionType.COLUMN_TYPE, type);
-    }
+	@Override
+	public TicketActionType get(String type) throws IOException, SQLException {
+		return getUniqueRow(TicketActionType.COLUMN_TYPE, type);
+	}
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.TICKET_ACTION_TYPES;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.TICKET_ACTION_TYPES;
+	}
 }

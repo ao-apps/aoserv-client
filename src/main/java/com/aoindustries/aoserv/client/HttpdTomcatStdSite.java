@@ -34,7 +34,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_TOMCAT_SITE: return pkey;
-			case 1: return tomcat4_shutdown_port==-1?null:Integer.valueOf(tomcat4_shutdown_port);
+			case 1: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
 			case 2: return tomcat4_shutdown_key;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}

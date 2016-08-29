@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2009, 2015 by AO Industries, Inc.,
+ * Copyright 2006-2009, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -52,7 +52,7 @@ public class GetUniqueRowTest extends TestCase {
 		for(AOServConnector conn : conns) {
 			String username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
-			Map<Object,AOServObject> uniqueMap=new HashMap<Object,AOServObject>();
+			Map<Object,AOServObject> uniqueMap=new HashMap<>();
 			int numTables = SchemaTable.TableID.values().length;
 			for(int c=0;c<numTables;c++) {
 				// Excluded for testing speed
@@ -61,7 +61,7 @@ public class GetUniqueRowTest extends TestCase {
 				) continue;
 				AOServTable table=conn.getTable(c);
 				System.out.print("        "+table.getTableName()+": ");
-				List<AOServObject> rows=new ArrayList<AOServObject>();
+				List<AOServObject> rows=new ArrayList<>();
 				rows.addAll(table.getRows());
 				System.out.println(rows.size()+" rows");
 				System.out.println("            Shuffling rows");

@@ -210,7 +210,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
 						if(orderExpressions.size()>0) {
 							SQLExpression[] exprs=orderExpressions.toArray(new SQLExpression[orderExpressions.size()]);
 							boolean[] orders=new boolean[exprs.length];
-							for(int d=0;d<orders.length;d++) orders[d]=sortOrders.get(d).booleanValue();
+							for(int d=0;d<orders.length;d++) orders[d]=sortOrders.get(d);
 							rows = new ArrayList<>(rows);
 							connector.getSchemaTypes().sort(JavaSort.getInstance(), rows, exprs, orders);
 						}

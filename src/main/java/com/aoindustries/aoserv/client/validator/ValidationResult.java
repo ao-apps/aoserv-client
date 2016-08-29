@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 by AO Industries, Inc.,
+ * Copyright 2011-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -17,15 +17,15 @@ import java.io.Serializable;
  */
 public interface ValidationResult extends Serializable {
 
-    /**
-     * Gets the validation result.
-     */
-    boolean isValid();
+	/**
+	 * Gets the validation result.
+	 */
+	boolean isValid();
 
-    /**
-     * Gets a description of why invalid in the current thread's locale.
-     * Should be simply "Valid" (or translation) for valid.
-     */
-    @Override
-    String toString();
+	/**
+	 * Gets a description of why invalid in the current thread's locale.
+	 * Should be simply "Valid" (or translation) for valid.
+	 */
+	@Override
+	String toString();
 }

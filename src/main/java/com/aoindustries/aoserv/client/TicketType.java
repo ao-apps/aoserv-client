@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2009, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -21,51 +21,56 @@ import java.sql.SQLException;
  */
 final public class TicketType extends GlobalObjectStringKey<TicketType> {
 
-    static final int COLUMN_TYPE=0;
-    static final String COLUMN_TYPE_name = "type";
+	static final int COLUMN_TYPE=0;
+	static final String COLUMN_TYPE_name = "type";
 
-    /**
-     * The types of <code>Ticket</code>s.
-     */
-    public static final String
-        CONTACT="contact",
-        LOGS="logs",
-        SUPPORT="support",
-        PROJECTS="projects",
-        INTERNAL="internal"
-    ;
+	/**
+	 * The types of <code>Ticket</code>s.
+	 */
+	public static final String
+		CONTACT="contact",
+		LOGS="logs",
+		SUPPORT="support",
+		PROJECTS="projects",
+		INTERNAL="internal"
+	;
 
-    Object getColumnImpl(int i) {
-        if(i==COLUMN_TYPE) return pkey;
-        throw new IllegalArgumentException("Invalid index: "+i);
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		if(i==COLUMN_TYPE) return pkey;
+		throw new IllegalArgumentException("Invalid index: "+i);
+	}
 
-    @Override
-    String toStringImpl() {
-        return accessor.getMessage("TicketType."+pkey+".toString");
-    }
+	@Override
+	String toStringImpl() {
+		return accessor.getMessage("TicketType."+pkey+".toString");
+	}
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.TICKET_TYPES;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.TICKET_TYPES;
+	}
 
-    public String getType() {
-        return pkey;
-    }
+	public String getType() {
+		return pkey;
+	}
 
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		pkey = result.getString(1);
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey=in.readUTF().intern();
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) {
-            out.writeUTF(pkey); // description
-            out.writeBoolean(false); // client_view
-        }
-    }
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeUTF(pkey);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) {
+			out.writeUTF(pkey); // description
+			out.writeBoolean(false); // client_view
+		}
+	}
 }

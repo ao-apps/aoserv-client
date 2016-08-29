@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -73,6 +73,7 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 		this.description=description;
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==0) return name;
 		if(i==1) return value;
@@ -88,6 +89,7 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 		return name;
 	}
 
+	@Override
 	public String getKey() {
 		return name;
 	}
@@ -97,10 +99,12 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 	 *
 	 * @return  the <code>AOServTable</code>.
 	 */
-	final public AOServTable<String,MasterServerStat> getTable() {
+	@Override
+	public AOServTable<String,MasterServerStat> getTable() {
 		return table;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.MASTER_SERVER_STATS;
 	}
@@ -109,21 +113,25 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 		return value;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		throw new SQLException("Should not be read from the database, should be generated.");
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		name=in.readUTF().intern();
 		value=in.readNullUTF();
 		description=in.readUTF();
 	}
 
+	@Override
 	public void setTable(AOServTable<String,MasterServerStat> table) {
 		if(this.table!=null) throw new IllegalStateException("table already set");
 		this.table=table;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(name);
 		out.writeNullUTF(value);

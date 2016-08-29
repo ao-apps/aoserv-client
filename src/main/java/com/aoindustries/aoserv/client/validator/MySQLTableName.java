@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 by AO Industries, Inc.,
+ * Copyright 2010-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -25,112 +25,112 @@ import java.io.Serializable;
  * @author  AO Industries, Inc.
  */
 final public class MySQLTableName implements
-    Comparable<MySQLTableName>,
-    Serializable,
-    ObjectInputValidation,
-    DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
+	Comparable<MySQLTableName>,
+	Serializable,
+	ObjectInputValidation,
+	DtoFactory<com.aoindustries.aoserv.client.dto.MySQLTableName>
 {
 
-    private static final long serialVersionUID = -4427431696460618301L;
+	private static final long serialVersionUID = -4427431696460618301L;
 
-    /**
-     * The longest name allowed for a MySQL table name.
-     */
-    public static final int MAX_LENGTH = 64;
+	/**
+	 * The longest name allowed for a MySQL table name.
+	 */
+	public static final int MAX_LENGTH = 64;
 
-    /**
-     * Validates a MySQL table name.
-     */
-    public static ValidationResult validate(String name) {
-        if(name==null) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.isNull");
-    	int len = name.length();
-        if(len==0) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.isEmpty");
-        if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.tooLong", MAX_LENGTH, len);
+	/**
+	 * Validates a MySQL table name.
+	 */
+	public static ValidationResult validate(String name) {
+		if(name==null) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.isNull");
+		int len = name.length();
+		if(len==0) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.isEmpty");
+		if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.tooLong", MAX_LENGTH, len);
 
-        // The first character must be [a-z], [A-Z], [0-9], or _
-        char ch = name.charAt(0);
-        if(
-               (ch < 'a' || ch > 'z')
-            && (ch < 'A' || ch > 'Z')
-            && (ch < '0' || ch > '9')
-            && ch != '_'
-        ) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.badFirstCharacter");
+		// The first character must be [a-z], [A-Z], [0-9], or _
+		char ch = name.charAt(0);
+		if(
+			   (ch < 'a' || ch > 'z')
+			&& (ch < 'A' || ch > 'Z')
+			&& (ch < '0' || ch > '9')
+			&& ch != '_'
+		) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.badFirstCharacter");
 
-        // The rest may have additional characters
-        for (int c = 1; c < len; c++) {
-            ch = name.charAt(c);
-            if (
-                   (ch<'a' || ch>'z')
-                && (ch<'A' || ch>'Z')
-                && (ch<'0' || ch>'9')
-                && ch != '_'
-                && ch != '-'
-            ) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.illegalCharacter");
-    	}
-        return ValidResult.getInstance();
-    }
+		// The rest may have additional characters
+		for (int c = 1; c < len; c++) {
+			ch = name.charAt(c);
+			if (
+				   (ch<'a' || ch>'z')
+				&& (ch<'A' || ch>'Z')
+				&& (ch<'0' || ch>'9')
+				&& ch != '_'
+				&& ch != '-'
+			) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.illegalCharacter");
+		}
+		return ValidResult.getInstance();
+	}
 
-    public static MySQLTableName valueOf(String name) throws ValidationException {
-        return new MySQLTableName(name);
-    }
+	public static MySQLTableName valueOf(String name) throws ValidationException {
+		return new MySQLTableName(name);
+	}
 
-    final private String name;
+	final private String name;
 
-    private MySQLTableName(String name) throws ValidationException {
-        this.name = name;
-        validate();
-    }
+	private MySQLTableName(String name) throws ValidationException {
+		this.name = name;
+		validate();
+	}
 
-    private void validate() throws ValidationException {
-        ValidationResult result = validate(name);
-        if(!result.isValid()) throw new ValidationException(result);
-    }
+	private void validate() throws ValidationException {
+		ValidationResult result = validate(name);
+		if(!result.isValid()) throw new ValidationException(result);
+	}
 
-    /**
-     * Perform same validation as constructor on readObject.
-     */
-    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        ois.defaultReadObject();
-        validateObject();
-    }
+	/**
+	 * Perform same validation as constructor on readObject.
+	 */
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		ois.defaultReadObject();
+		validateObject();
+	}
 
-    @Override
-    public void validateObject() throws InvalidObjectException {
-        try {
-            validate();
-        } catch(ValidationException err) {
-            InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-            newErr.initCause(err);
-            throw newErr;
-        }
-    }
+	@Override
+	public void validateObject() throws InvalidObjectException {
+		try {
+			validate();
+		} catch(ValidationException err) {
+			InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+			newErr.initCause(err);
+			throw newErr;
+		}
+	}
 
-    @Override
-    public boolean equals(Object O) {
-    	return
-            O!=null
-            && O instanceof MySQLTableName
-            && name.equals(((MySQLTableName)O).name)
-    	;
-    }
+	@Override
+	public boolean equals(Object O) {
+		return
+			O!=null
+			&& O instanceof MySQLTableName
+			&& name.equals(((MySQLTableName)O).name)
+		;
+	}
 
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
 
-    @Override
-    public int compareTo(MySQLTableName other) {
-        return this==other ? 0 : name.compareTo(other.name);
-    }
+	@Override
+	public int compareTo(MySQLTableName other) {
+		return this==other ? 0 : name.compareTo(other.name);
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 
-    @Override
-    public com.aoindustries.aoserv.client.dto.MySQLTableName getDto() {
-        return new com.aoindustries.aoserv.client.dto.MySQLTableName(name);
-    }
+	@Override
+	public com.aoindustries.aoserv.client.dto.MySQLTableName getDto() {
+		return new com.aoindustries.aoserv.client.dto.MySQLTableName(name);
+	}
 }

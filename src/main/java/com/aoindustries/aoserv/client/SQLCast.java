@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2013 by AO Industries, Inc.,
+ * Copyright 2002-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -16,28 +16,31 @@ import java.util.List;
  */
 final public class SQLCast extends SQLExpression {
 
-    private SQLExpression expression;
-    private SchemaType castToType;
+	private SQLExpression expression;
+	private SchemaType castToType;
 
-    public SQLCast(SQLExpression expression, SchemaType castToType) {
-        this.expression=expression;
-        this.castToType=castToType;
-    }
+	public SQLCast(SQLExpression expression, SchemaType castToType) {
+		this.expression=expression;
+		this.castToType=castToType;
+	}
 
-    public String getColumnName() {
-        return castToType.getType();
-    }
+	@Override
+	public String getColumnName() {
+		return castToType.getType();
+	}
 
-    public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
-        return expression.getType().cast(conn, expression.getValue(conn, obj), castToType);
-    }
+	@Override
+	public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
+		return expression.getType().cast(conn, expression.getValue(conn, obj), castToType);
+	}
 
-    public SchemaType getType() {
-        return castToType;
-    }
+	@Override
+	public SchemaType getType() {
+		return castToType;
+	}
 
-    @Override
-    public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
-        expression.getReferencedTables(conn, tables);
-    }
+	@Override
+	public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
+		expression.getReferencedTables(conn, tables);
+	}
 }

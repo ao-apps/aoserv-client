@@ -148,7 +148,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			case 6: return linuxGroup;
 			case 7: return serverAdmin;
 			case 8: return contentSrc;
-			case 9: return disable_log==-1?null:Integer.valueOf(disable_log);
+			case 9: return disable_log==-1?null:disable_log;
 			case 10: return isManual;
 			case 11: return awstatsSkipFiles;
 			case 12: return phpVersion==-1 ? null : phpVersion;

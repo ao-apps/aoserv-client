@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -30,53 +30,54 @@ import java.sql.SQLException;
  */
 final public class DNSTLD extends GlobalObjectDomainNameKey<DNSTLD> {
 
-    static final int COLUMN_DOMAIN=0;
-    static final String COLUMN_DOMAIN_name = "domain";
+	static final int COLUMN_DOMAIN=0;
+	static final String COLUMN_DOMAIN_name = "domain";
 
-    private String description;
+	private String description;
 
-    Object getColumnImpl(int i) {
-	if(i==COLUMN_DOMAIN) return pkey;
-	if(i==1) return description;
-	throw new IllegalArgumentException("Invalid index: "+i);
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		if(i==COLUMN_DOMAIN) return pkey;
+		if(i==1) return description;
+		throw new IllegalArgumentException("Invalid index: "+i);
+	}
 
-    public String getDescription() {
-	return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public DomainName getDomain() {
-	return pkey;
-    }
+	public DomainName getDomain() {
+		return pkey;
+	}
 
-    public SchemaTable.TableID getTableID() {
-	return SchemaTable.TableID.DNS_TLDS;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.DNS_TLDS;
+	}
 
-    public void init(ResultSet result) throws SQLException {
-        try {
-            pkey=DomainName.valueOf(result.getString(1));
-            description=result.getString(2);
-        } catch(ValidationException e) {
-            SQLException exc = new SQLException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
-        }
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		try {
+			pkey=DomainName.valueOf(result.getString(1));
+			description=result.getString(2);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        try {
-            pkey=DomainName.valueOf(in.readUTF()).intern();
-            description=in.readUTF();
-        } catch(ValidationException e) {
-            IOException exc = new IOException(e.getLocalizedMessage());
-            exc.initCause(e);
-            throw exc;
-        }
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey=DomainName.valueOf(in.readUTF()).intern();
+			description=in.readUTF();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-	out.writeUTF(pkey.toString());
-	out.writeUTF(description);
-    }
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeUTF(pkey.toString());
+		out.writeUTF(description);
+	}
 }

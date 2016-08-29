@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2008-2009 by AO Industries, Inc.,
+ * Copyright 2008-2009, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -15,24 +15,26 @@ import java.sql.SQLException;
  */
 final public class RackTable extends CachedTableIntegerKey<Rack> {
 
-    RackTable(AOServConnector connector) {
+	RackTable(AOServConnector connector) {
 	super(connector, Rack.class);
-    }
+	}
 
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(Rack.COLUMN_FARM_name, ASCENDING),
-        new OrderBy(Rack.COLUMN_NAME_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
+	private static final OrderBy[] defaultOrderBy = {
+		new OrderBy(Rack.COLUMN_FARM_name, ASCENDING),
+		new OrderBy(Rack.COLUMN_NAME_name, ASCENDING)
+	};
+	@Override
+	OrderBy[] getDefaultOrderBy() {
+		return defaultOrderBy;
+	}
 
-    public Rack get(int pkey) throws IOException, SQLException {
-        return getUniqueRow(Rack.COLUMN_PKEY, pkey);
-    }
+	@Override
+	public Rack get(int pkey) throws IOException, SQLException {
+		return getUniqueRow(Rack.COLUMN_PKEY, pkey);
+	}
 
-    public SchemaTable.TableID getTableID() {
-    	return SchemaTable.TableID.RACKS;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.RACKS;
+	}
 }

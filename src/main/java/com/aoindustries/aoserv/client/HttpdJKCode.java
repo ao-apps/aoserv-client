@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -29,23 +29,28 @@ final public class HttpdJKCode extends GlobalObjectStringKey<HttpdJKCode> {
 		return pkey;
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==COLUMN_CODE) return pkey;
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_JK_CODES;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getString(1);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 	}

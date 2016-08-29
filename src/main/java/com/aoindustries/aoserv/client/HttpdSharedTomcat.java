@@ -123,9 +123,9 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 			case 5: return linux_server_group;
 			case 6: return isSecure;
 			case 7: return isOverflow;
-			case 8: return disable_log==-1?null:Integer.valueOf(disable_log);
-			case COLUMN_TOMCAT4_WORKER: return tomcat4_worker==-1?null:Integer.valueOf(tomcat4_worker);
-			case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:Integer.valueOf(tomcat4_shutdown_port);
+			case 8: return disable_log==-1?null:disable_log;
+			case COLUMN_TOMCAT4_WORKER: return tomcat4_worker==-1?null:tomcat4_worker;
+			case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
 			case 11: return tomcat4_shutdown_key;
 			case 12: return isManual;
 			default: throw new IllegalArgumentException("Invalid index: "+i);

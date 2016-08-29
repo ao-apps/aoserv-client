@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -34,14 +34,15 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 		hypersonicBind,
 		jmxBind;
 
+	@Override
 	Object getColumnImpl(int i) {
-		if(i==COLUMN_TOMCAT_SITE) return Integer.valueOf(pkey);
-		if(i==1) return Integer.valueOf(version);	
-		if(i==2) return Integer.valueOf(jnpBind);
-		if(i==3) return Integer.valueOf(webserverBind);
-		if(i==4) return Integer.valueOf(rmiBind);
-		if(i==5) return Integer.valueOf(hypersonicBind);
-		if(i==6) return Integer.valueOf(jmxBind);
+		if(i==COLUMN_TOMCAT_SITE) return pkey;
+		if(i==1) return version;	
+		if(i==2) return jnpBind;
+		if(i==3) return webserverBind;
+		if(i==4) return rmiBind;
+		if(i==5) return hypersonicBind;
+		if(i==6) return jmxBind;
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
@@ -81,6 +82,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 		return obj;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_JBOSS_SITES;
 	}
@@ -91,6 +93,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 		return obj;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		version=result.getInt(2);
@@ -101,6 +104,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 		jmxBind=result.getInt(7);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		version=in.readCompressedInt();
@@ -116,6 +120,7 @@ final public class HttpdJBossSite extends CachedObjectIntegerKey<HttpdJBossSite>
 		return getHttpdTomcatSite().toStringImpl();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(version);

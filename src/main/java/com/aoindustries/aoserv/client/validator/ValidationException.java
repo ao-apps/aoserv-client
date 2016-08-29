@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 by AO Industries, Inc.,
+ * Copyright 2010-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -14,24 +14,24 @@ import com.aoindustries.lang.LocalizedIllegalArgumentException;
  */
 public class ValidationException extends Exception {
 
-    private static final long serialVersionUID = -1153407618428602416L;
+	private static final long serialVersionUID = -1153407618428602416L;
 
-    final ValidationResult result;
+	final ValidationResult result;
 
-    public ValidationException(ValidationResult result) {
-        super(result.toString()); // Conversion done in server
-        if(result.isValid()) throw new LocalizedIllegalArgumentException(ApplicationResources.accessor, "ValidationException.init.validResult");
-        this.result = result;
-    }
+	public ValidationException(ValidationResult result) {
+		super(result.toString()); // Conversion done in server
+		if(result.isValid()) throw new LocalizedIllegalArgumentException(ApplicationResources.accessor, "ValidationException.init.validResult");
+		this.result = result;
+	}
 
-    public ValidationException(Throwable cause, ValidationResult result) {
-        super(result.toString(), cause); // Conversion done in server
-        if(result.isValid()) throw new LocalizedIllegalArgumentException(ApplicationResources.accessor, "ValidationException.init.validResult");
-        this.result = result;
-    }
+	public ValidationException(Throwable cause, ValidationResult result) {
+		super(result.toString(), cause); // Conversion done in server
+		if(result.isValid()) throw new LocalizedIllegalArgumentException(ApplicationResources.accessor, "ValidationException.init.validResult");
+		this.result = result;
+	}
 
-    @Override
-    public String getLocalizedMessage() {
-        return result.toString(); // Conversion done in client
-    }
+	@Override
+	public String getLocalizedMessage() {
+		return result.toString(); // Conversion done in client
+	}
 }

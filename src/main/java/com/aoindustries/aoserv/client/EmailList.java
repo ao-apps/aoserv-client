@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -101,11 +101,11 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case 1: return path;
-			case COLUMN_LINUX_SERVER_ACCOUNT: return Integer.valueOf(linux_server_account);
-			case 3: return Integer.valueOf(linux_server_group);
-			case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
+			case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
+			case 3: return linux_server_group;
+			case 4: return disable_log==-1?null:disable_log;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}

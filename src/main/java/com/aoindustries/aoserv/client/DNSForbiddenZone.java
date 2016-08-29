@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -25,11 +25,13 @@ final public class DNSForbiddenZone extends GlobalObjectStringKey<DNSForbiddenZo
 	static final int COLUMN_ZONE=0;
 	static final String COLUMN_ZONE_name = "zone";
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==COLUMN_ZONE) return pkey;
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.DNS_FORBIDDEN_ZONES;
 	}
@@ -38,14 +40,17 @@ final public class DNSForbiddenZone extends GlobalObjectStringKey<DNSForbiddenZo
 		return pkey;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getString(1);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 	}

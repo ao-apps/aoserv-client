@@ -41,7 +41,7 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 			case 2: return version;
 			case 3: return getUpdated();
 			case 4: return owner;
-			case 5: return operating_system_version == -1 ? null : Integer.valueOf(operating_system_version);
+			case 5: return operating_system_version == -1 ? null : operating_system_version;
 			case 6: return getDisableTime();
 			case 7: return disable_reason;
 			default: throw new IllegalArgumentException("Invalid index: "+i);

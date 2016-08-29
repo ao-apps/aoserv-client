@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2013 by AO Industries, Inc.,
+ * Copyright 2008-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -52,16 +52,17 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 
 	private UpsType upsType;
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_SERVER: return Integer.valueOf(pkey);
-			case 1: return rack==-1 ? null : Integer.valueOf(rack);
-			case 2: return rackUnits==-1 ? null : Short.valueOf(rackUnits);
-			case 3: return ram==-1 ? null : Integer.valueOf(ram);
+			case COLUMN_SERVER: return pkey;
+			case 1: return rack==-1 ? null : rack;
+			case 2: return rackUnits==-1 ? null : rackUnits;
+			case 3: return ram==-1 ? null : ram;
 			case 4: return processorType;
-			case 5: return processorSpeed==-1 ? null : Integer.valueOf(processorSpeed);
-			case 6: return processorCores==-1 ? null : Integer.valueOf(processorCores);
-			case 7: return Float.isNaN(maxPower) ? null : Float.valueOf(maxPower);
+			case 5: return processorSpeed==-1 ? null : processorSpeed;
+			case 6: return processorCores==-1 ? null : processorCores;
+			case 7: return Float.isNaN(maxPower) ? null : maxPower;
 			case 8: return supports_hvm;
 			case 9: return upsType.name();
 			default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -145,10 +146,12 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 		return upsType;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.PHYSICAL_SERVERS;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		int pos = 1;
 		pkey = result.getInt(pos++);
@@ -170,6 +173,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 		upsType = UpsType.valueOf(result.getString(pos++));
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey = in.readCompressedInt();
 		rack = in.readCompressedInt();
@@ -184,10 +188,11 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	}
 
 	@Override
-	protected String toStringImpl() throws SQLException, IOException {
+	String toStringImpl() throws SQLException, IOException {
 		return getServer().toStringImpl();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(rack);

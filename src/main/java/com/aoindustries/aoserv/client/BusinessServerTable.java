@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -37,6 +37,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 		return connector.requestIntQueryIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.BUSINESS_SERVERS, business.pkey.toString(), server.pkey);
 	}
 
+	@Override
 	public BusinessServer get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(BusinessServer.COLUMN_PKEY, pkey);
 	}
@@ -53,7 +54,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 		// Use the cache and convert
 		List<BusinessServer> cached=getBusinessServers(server);
 		int size=cached.size();
-		List<Business> businesses=new ArrayList<Business>(size);
+		List<Business> businesses=new ArrayList<>(size);
 		for(int c=0;c<size;c++) businesses.add(cached.get(c).getBusiness());
 		return businesses;
 	}
@@ -82,6 +83,7 @@ final public class BusinessServerTable extends CachedTableIntegerKey<BusinessSer
 		return null;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.BUSINESS_SERVERS;
 	}

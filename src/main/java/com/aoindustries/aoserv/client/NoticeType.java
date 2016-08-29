@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -32,6 +32,7 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
 		ENABLED="enabled"
 	;
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==COLUMN_TYPE) return pkey;
 		if(i==1) return description;
@@ -42,6 +43,7 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
 		return description;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.NOTICE_TYPES;
 	}
@@ -50,16 +52,19 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
 		return pkey;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey = result.getString(1);
 		description = result.getString(2);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 		description=in.readUTF();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);

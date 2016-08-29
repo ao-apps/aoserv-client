@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2014 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -54,16 +54,16 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case COLUMN_ZONE: return zone;
 			case 2: return domain;
 			case 3: return type;
-			case 4: return priority==NO_PRIORITY ? null : Integer.valueOf(priority);
-			case 5: return weight==NO_WEIGHT     ? null : Integer.valueOf(weight);
-			case 6: return port==NO_PORT         ? null : Integer.valueOf(port);
+			case 4: return priority==NO_PRIORITY ? null : priority;
+			case 5: return weight==NO_WEIGHT     ? null : weight;
+			case 6: return port==NO_PORT         ? null : port;
 			case 7: return destination;
-			case 8: return dhcpAddress==-1       ? null : Integer.valueOf(dhcpAddress);
-			case 9: return ttl==NO_TTL           ? null : Integer.valueOf(ttl);
+			case 8: return dhcpAddress==-1       ? null : dhcpAddress;
+			case 9: return ttl==NO_TTL           ? null : ttl;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}

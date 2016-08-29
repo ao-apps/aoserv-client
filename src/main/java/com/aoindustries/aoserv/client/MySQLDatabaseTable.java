@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -53,6 +53,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 		return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_MYSQL_DATABASE_NAME, template_base, template_added);
 	}
 
+	@Override
 	public MySQLDatabase get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(MySQLDatabase.COLUMN_PKEY, pkey);
 	}
@@ -71,6 +72,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 		return getIndexedRows(MySQLDatabase.COLUMN_MYSQL_SERVER, ms.pkey);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.MYSQL_DATABASES;
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -44,6 +44,7 @@ final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass
 
 	private String description;
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==COLUMN_NAME) return pkey;
 		if(i==1) return description;
@@ -58,20 +59,24 @@ final public class TechnologyClass extends GlobalObjectStringKey<TechnologyClass
 		return pkey;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.TECHNOLOGY_CLASSES;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey = result.getString(1);
 		description = result.getString(2);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 		description=in.readUTF();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);

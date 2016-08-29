@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -27,10 +27,12 @@ final public class DistroFileTypeTable extends GlobalTableStringKey<DistroFileTy
 		return defaultOrderBy;
 	}
 
+	@Override
 	public DistroFileType get(String type) throws IOException, SQLException {
 		return getUniqueRow(DistroFileType.COLUMN_TYPE, type);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.DISTRO_FILE_TYPES;
 	}

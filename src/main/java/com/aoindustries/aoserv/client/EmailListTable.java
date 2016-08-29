@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -50,6 +50,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 		);
 	}
 
+	@Override
 	public EmailList get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(EmailList.COLUMN_PKEY, pkey);
 	}
@@ -58,7 +59,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 		AccountingCode accounting=business.pkey;
 		List<EmailList> cached = getRows();
 		int len = cached.size();
-		List<EmailList> matches=new ArrayList<EmailList>(len);
+		List<EmailList> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			EmailList list = cached.get(c);
 			if (
@@ -78,7 +79,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 
 		List<EmailList> cached=getRows();
 		int size=cached.size();
-		List<EmailList> matches=new ArrayList<EmailList>(size);
+		List<EmailList> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			EmailList list=cached.get(c);
 			if(list.getLinuxServerGroup().getLinuxGroup().packageName.equals(packName)) matches.add(list);
@@ -101,6 +102,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 		return null;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.EMAIL_LISTS;
 	}

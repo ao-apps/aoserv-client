@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -50,8 +50,8 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
-			case COLUMN_SERVER: return Integer.valueOf(server);
+			case COLUMN_PKEY: return pkey;
+			case COLUMN_SERVER: return server;
 			case 2: return device_id;
 			case 3: return description;
 			case 4: return delete_route;
@@ -59,11 +59,11 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 			case 6: return network;
 			case 7: return broadcast;
 			case 8: return mac_address;
-			case 9: return max_bit_rate==-1 ? null : Long.valueOf(max_bit_rate);
-			case 10: return monitoring_bit_rate_low==-1 ? null : Long.valueOf(monitoring_bit_rate_low);
-			case 11: return monitoring_bit_rate_medium==-1 ? null : Long.valueOf(monitoring_bit_rate_medium);
-			case 12: return monitoring_bit_rate_high==-1 ? null : Long.valueOf(monitoring_bit_rate_high);
-			case 13: return monitoring_bit_rate_critical==-1 ? null : Long.valueOf(monitoring_bit_rate_critical);
+			case 9: return max_bit_rate==-1 ? null : max_bit_rate;
+			case 10: return monitoring_bit_rate_low==-1 ? null : monitoring_bit_rate_low;
+			case 11: return monitoring_bit_rate_medium==-1 ? null : monitoring_bit_rate_medium;
+			case 12: return monitoring_bit_rate_high==-1 ? null : monitoring_bit_rate_high;
+			case 13: return monitoring_bit_rate_critical==-1 ? null : monitoring_bit_rate_critical;
 			case 14: return monitoring_enabled;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
@@ -91,7 +91,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
 	public NetDeviceID getNetDeviceID() throws SQLException, IOException {
 		NetDeviceID ndi=table.connector.getNetDeviceIDs().get(device_id);
-		if(ndi==null) new SQLException("Unable to find NetDeviceID: "+device_id);
+		if(ndi==null) throw new SQLException("Unable to find NetDeviceID: "+device_id);
 		return ndi;
 	}
 
@@ -157,9 +157,8 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
 	public IPAddress getPrimaryIPAddress() throws SQLException, IOException {
 		List<IPAddress> ips=getIPAddresses();
-		List<IPAddress> matches=new ArrayList<IPAddress>();
-		for(int c=0;c<ips.size();c++) {
-			IPAddress ip=ips.get(c);
+		List<IPAddress> matches=new ArrayList<>();
+		for (IPAddress ip : ips) {
 			if(!ip.isAlias()) matches.add(ip);
 		}
 		if(matches.isEmpty()) throw new SQLException("Unable to find primary IPAddress for NetDevice: "+device_id+" on "+server);
@@ -203,9 +202,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 			if(result.wasNull()) monitoring_bit_rate_critical = -1;
 			monitoring_enabled = result.getBoolean(pos++);
 		} catch(ValidationException e) {
-			SQLException exc = new SQLException(e.getLocalizedMessage());
-			exc.initCause(e);
-			throw exc;
+			throw new SQLException(e);
 		}
 	}
 
@@ -228,9 +225,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 			monitoring_bit_rate_critical = in.readLong();
 			monitoring_enabled = in.readBoolean();
 		} catch(ValidationException e) {
-			IOException exc = new IOException(e.getLocalizedMessage());
-			exc.initCause(e);
-			throw exc;
+			throw new IOException(e);
 		}
 	}
 

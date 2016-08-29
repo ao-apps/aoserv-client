@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -24,7 +24,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> {
 
 	private static final String GLOBAL_COMMANDS="[[GLOBAL]]";
 
-	private final Map<String,List<AOSHCommand>> tableCommands=new HashMap<String,List<AOSHCommand>>();
+	private final Map<String,List<AOSHCommand>> tableCommands=new HashMap<>();
 
 	AOSHCommandTable(AOServConnector connector) {
 		super(connector, AOSHCommand.class);
@@ -46,7 +46,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> {
 			if(list!=null) return list;
 
 			List<AOSHCommand> cached=getRows();
-			List<AOSHCommand> matches=new ArrayList<AOSHCommand>();
+			List<AOSHCommand> matches=new ArrayList<>();
 			int size=cached.size();
 			for(int c=0;c<size;c++) {
 				AOSHCommand command=cached.get(c);
@@ -66,6 +66,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> {
 		return getAOSHCommands(null);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.AOSH_COMMANDS;
 	}
@@ -151,6 +152,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> {
 		}
 	}
 
+	@Override
 	public AOSHCommand get(String command) throws IOException, SQLException {
 		return getUniqueRow(AOSHCommand.COLUMN_COMMAND, command);
 	}

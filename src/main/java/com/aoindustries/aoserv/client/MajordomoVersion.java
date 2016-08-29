@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -34,6 +34,7 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 
 	private long created;
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==COLUMN_VERSION) return pkey;
 		if(i==1) return getCreated();
@@ -44,6 +45,7 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 		return new Timestamp(created);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.MAJORDOMO_VERSIONS;
 	}
@@ -52,16 +54,19 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 		return pkey;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getString(1);
 		created=result.getTimestamp(2).getTime();
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 		created=in.readLong();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeLong(created);

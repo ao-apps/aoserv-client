@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -995,7 +995,7 @@ abstract public class AOServConnector {
 		this.logger=logger;
 
 		// These must match the table IDs in SchemaTable
-		ArrayList<AOServTable> newTables = new ArrayList<AOServTable>();
+		ArrayList<AOServTable> newTables = new ArrayList<>();
 		newTables.add(aoServerDaemonHosts=new AOServerDaemonHostTable(this));
 		newTables.add(aoServers=new AOServerTable(this));
 		newTables.add(aoservPermissions=new AOServPermissionTable(this));
@@ -1451,11 +1451,13 @@ abstract public class AOServConnector {
 			true,
 			new UpdateRequest() {
 				IntList tableList;
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
 					out.writeCompressedInt(tableID);
 					out.writeCompressedInt(server);
 				}
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) tableList=readInvalidateList(in);
@@ -1464,6 +1466,7 @@ abstract public class AOServConnector {
 						throw new IOException("Unknown response code: "+code);
 					}
 				}
+				@Override
 				public void afterRelease() {
 					tablesUpdated(tableList);
 				}
@@ -1531,7 +1534,7 @@ abstract public class AOServConnector {
 	static void writeParams(Object[] params, CompressedDataOutputStream out) throws IOException {
 		for(Object param : params) {
 			if(param==null) throw new NullPointerException("param is null");
-			else if(param instanceof Integer) out.writeCompressedInt(((Integer)param).intValue());
+			else if(param instanceof Integer) out.writeCompressedInt(((Integer)param));
 			else if(param instanceof SchemaTable.TableID) out.writeCompressedInt(((SchemaTable.TableID)param).ordinal());
 			else if(param instanceof AOServProtocol.CommandID) out.writeCompressedInt(((AOServProtocol.CommandID)param).ordinal());
 			else if(param instanceof String) out.writeUTF((String)param);
@@ -1588,23 +1591,16 @@ abstract public class AOServConnector {
 
 					CompressedDataInputStream in=connection.getInputStream();
 					resultRequest.readResponse(in);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
 				return resultRequest.afterRelease();
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1636,22 +1632,15 @@ abstract public class AOServConnector {
 					if(code==AOServProtocol.DONE) return in.readBoolean();
 					AOServProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1689,10 +1678,7 @@ abstract public class AOServConnector {
 						AOServProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1700,13 +1686,9 @@ abstract public class AOServConnector {
 				}
 				tablesUpdated(invalidateList);
 				return result;
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1738,22 +1720,15 @@ abstract public class AOServConnector {
 					if(code==AOServProtocol.DONE) return in.readCompressedInt();
 					AOServProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1791,10 +1766,7 @@ abstract public class AOServConnector {
 						AOServProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1802,13 +1774,9 @@ abstract public class AOServConnector {
 				}
 				tablesUpdated(invalidateList);
 				return result;
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1840,22 +1808,15 @@ abstract public class AOServConnector {
 					if(code==AOServProtocol.DONE) return in.readLong();
 					AOServProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1887,22 +1848,15 @@ abstract public class AOServConnector {
 					if(code==AOServProtocol.DONE) return in.readShort();
 					AOServProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1940,10 +1894,7 @@ abstract public class AOServConnector {
 						AOServProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -1951,13 +1902,9 @@ abstract public class AOServConnector {
 				}
 				tablesUpdated(invalidateList);
 				return result;
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -1989,22 +1936,15 @@ abstract public class AOServConnector {
 					if(code==AOServProtocol.DONE) return in.readUTF();
 					AOServProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -2039,22 +1979,15 @@ abstract public class AOServConnector {
 					if(code==AOServProtocol.DONE) return in.readLongUTF();
 					AOServProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -2090,22 +2023,15 @@ abstract public class AOServConnector {
 					if(code==AOServProtocol.DONE) return in.readNullLongUTF();
 					AOServProtocol.checkResult(code, in);
 					throw new IOException("Unexpected response code: "+code);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -2157,10 +2083,7 @@ abstract public class AOServConnector {
 
 					CompressedDataInputStream in=connection.getInputStream();
 					updateRequest.readResponse(in);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -2168,13 +2091,9 @@ abstract public class AOServConnector {
 				}
 				updateRequest.afterRelease();
 				return;
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -2204,23 +2123,16 @@ abstract public class AOServConnector {
 					CompressedDataInputStream in=connection.getInputStream();
 					int code=in.readByte();
 					if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, in);
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
 					releaseConnection(connection);
 				}
 				return;
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -2255,10 +2167,7 @@ abstract public class AOServConnector {
 						AOServProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-				} catch(RuntimeException err) {
-					connection.close();
-					throw err;
-				} catch(IOException err) {
+				} catch(RuntimeException | IOException err) {
 					connection.close();
 					throw err;
 				} finally {
@@ -2266,13 +2175,9 @@ abstract public class AOServConnector {
 				}
 				tablesUpdated(invalidateList);
 				return;
-			} catch(RuntimeException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			} catch(InterruptedIOException err) {
 				throw err;
-			} catch(IOException err) {
-				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
-			} catch(SQLException err) {
+			} catch(RuntimeException | IOException | SQLException err) {
 				if(Thread.interrupted() || attempt>=attempts || isImmediateFail(err)) throw err;
 			}
 			try {
@@ -2320,9 +2225,11 @@ abstract public class AOServConnector {
 			requestUpdate(
 				true,
 				new UpdateRequest() {
+					@Override
 					public void writeRequest(CompressedDataOutputStream out) throws IOException {
 						out.writeCompressedInt(AOServProtocol.CommandID.TEST_CONNECTION.ordinal());
 					}
+					@Override
 					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 						int code=in.readByte();
 						if(code!=AOServProtocol.DONE) {
@@ -2330,6 +2237,7 @@ abstract public class AOServConnector {
 							throw new IOException("Unexpected response code: "+code);
 						}
 					}
+					@Override
 					public void afterRelease() {
 					}
 				}
@@ -2357,11 +2265,13 @@ abstract public class AOServConnector {
 			new ResultRequest<Integer>() {
 				int numObtained;
 
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.GET_MASTER_ENTROPY.ordinal());
 					out.writeCompressedInt(numBytes);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) {
@@ -2373,6 +2283,7 @@ abstract public class AOServConnector {
 					}
 				}
 
+				@Override
 				public Integer afterRelease() {
 					return numObtained;
 				}
@@ -2394,11 +2305,13 @@ abstract public class AOServConnector {
 		requestUpdate(
 			true,
 			new UpdateRequest() {
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.ADD_MASTER_ENTROPY.ordinal());
 					out.writeCompressedInt(numBytes);
 					for(int c=0;c<numBytes;c++) out.writeByte(buff[c]);
 				}
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code!=AOServProtocol.DONE) {
@@ -2406,6 +2319,7 @@ abstract public class AOServConnector {
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
+				@Override
 				public void afterRelease() {
 				}
 			}

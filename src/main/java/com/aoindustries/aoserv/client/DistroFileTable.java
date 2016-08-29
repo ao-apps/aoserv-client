@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -30,6 +30,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 		return defaultOrderBy;
 	}
 
+	@Override
 	public DistroFile get(Object pkey) throws IOException, SQLException {
 		return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
 	}
@@ -38,6 +39,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 		return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
 	}
 
+	@Override
 	public int getRecordLength() {
 		return
 			  4                                             // pkey
@@ -66,6 +68,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 		else return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.DISTRO_FILES;
 	}
