@@ -25,7 +25,7 @@ public class GetDefaultOrderBySQLExpressionsTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		conns = AOServConnectorTest.getTestConnectors();
+		conns = AOServConnectorTODO.getTestConnectors();
 	}
 
 	@Override
