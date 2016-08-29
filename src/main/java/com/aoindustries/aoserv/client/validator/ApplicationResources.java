@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 by AO Industries, Inc.,
+ * Copyright 2010-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -20,24 +20,24 @@ import java.util.Locale;
  */
 public final class ApplicationResources extends EditableResourceBundle {
 
-    static final EditableResourceBundleSet bundleSet = new EditableResourceBundleSet(
-        ApplicationResources.class.getName(),
-        Arrays.asList(
-            Locale.ROOT,
-            Locale.JAPANESE
-        )
-    );
+	static final EditableResourceBundleSet bundleSet = new EditableResourceBundleSet(
+		ApplicationResources.class.getName(),
+		Arrays.asList(
+			Locale.ROOT,
+			Locale.JAPANESE
+		)
+	);
 
-    /**
-     * Do not use directly.
-     */
-    public ApplicationResources() {
-        super(
-            Locale.ROOT,
-            bundleSet,
-            new File(System.getProperty("user.home")+"/common/ao/cvswork/aoserv-client/src/com/aoindustries/aoserv/client/validator/ApplicationResources.properties")
-        );
-    }
+	/**
+	 * Do not use directly.
+	 */
+	public ApplicationResources() {
+		super(
+			Locale.ROOT,
+			bundleSet,
+			new File(System.getProperty("user.home")+"/common/ao/cvswork/aoserv-client/src/com/aoindustries/aoserv/client/validator/ApplicationResources.properties")
+		);
+	}
 
-    static final ApplicationResourcesAccessor accessor = ApplicationResourcesAccessor.getInstance(bundleSet.getBaseName());
+	static final ApplicationResourcesAccessor accessor = ApplicationResourcesAccessor.getInstance(bundleSet.getBaseName());
 }

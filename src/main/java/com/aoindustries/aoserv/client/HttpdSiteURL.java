@@ -41,6 +41,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	private DomainName hostname;
 	boolean isPrimary;
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason> reasons=new ArrayList<>();
 

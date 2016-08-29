@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2014 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2014, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -131,8 +131,8 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 			case 1: return file;
 			case COLUMN_PACKAGE: return packageName;
 			case 3: return hostmaster;
-			case 4: return Long.valueOf(serial);
-			case 5: return Integer.valueOf(ttl);
+			case 4: return serial;
+			case 5: return ttl;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -390,7 +390,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 
 	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() {
-		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+		List<CannotRemoveReason> reasons=new ArrayList<>();
 		if(pkey.equals(API_ZONE)) reasons.add(new CannotRemoveReason<DNSZone>("Not allowed to remove the API Zone: "+API_ZONE));
 		return reasons;
 	}

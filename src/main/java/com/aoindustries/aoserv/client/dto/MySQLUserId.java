@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2011, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,20 +10,20 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class MySQLUserId {
 
-    private String id;
+	private String id;
 
-    public MySQLUserId() {
-    }
+	public MySQLUserId() {
+	}
 
-    public MySQLUserId(String id) {
-        this.id = id;
-    }
+	public MySQLUserId(String id) {
+		this.id = id;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 }

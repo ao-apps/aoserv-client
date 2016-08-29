@@ -193,6 +193,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 		disable_log=in.readCompressedInt();
 	}
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason> reasons=new ArrayList<>();
 		for(PostgresServerUser psu : getPostgresServerUsers()) reasons.addAll(psu.getCannotRemoveReasons());

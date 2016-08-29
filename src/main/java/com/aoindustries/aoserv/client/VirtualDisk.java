@@ -1,5 +1,5 @@
 /*
- * Copyright 2008, 2009, 2014 by AO Industries, Inc.,
+ * Copyright 2008, 2009, 2014, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -42,8 +42,8 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_VIRTUAL_SERVER : return virtualServer;
 			case COLUMN_DEVICE : return device;
-			case 3 : return minimumDiskSpeed==-1 ? null : Integer.valueOf(minimumDiskSpeed);
-			case 4 : return minimumDiskSpeedTarget==-1 ? null : Integer.valueOf(minimumDiskSpeedTarget);
+			case 3 : return minimumDiskSpeed==-1 ? null : minimumDiskSpeed;
+			case 4 : return minimumDiskSpeedTarget==-1 ? null : minimumDiskSpeedTarget;
 			case 5 : return extents;
 			case 6 : return weight;
 			case 7 : return weightTarget;
@@ -201,6 +201,6 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	 * @return  The time the verification began, which may be in the past if a verification was already in progress
 	 */
 	public long verify() throws SQLException, IOException {
-        return table.connector.requestLongQuery(true, AOServProtocol.CommandID.VERIFY_VIRTUAL_DISK, this.pkey);
-    }
+		return table.connector.requestLongQuery(true, AOServProtocol.CommandID.VERIFY_VIRTUAL_DISK, this.pkey);
+	}
 }

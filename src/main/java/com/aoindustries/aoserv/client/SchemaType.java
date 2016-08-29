@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -207,7 +207,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case BOOLEAN:
 					{
-						boolean bvalue=value==null?false:((Boolean)value).booleanValue();
+						boolean bvalue=value==null?false:((Boolean)value);
 						switch(castToType.getNum()) {
 							case BOOLEAN: return value;
 							case DECIMAL_2: return value==null?null:Integer.valueOf(bvalue?-100:0);
@@ -244,9 +244,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case DECIMAL_2:
 					{
-						int ivalue=value==null?0:((Integer)value).intValue();
+						int ivalue=value==null?0:((Integer)value);
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:ivalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:ivalue!=0;
 							case DECIMAL_2: return value;
 							case DECIMAL_3: return value==null?null:Integer.valueOf(ivalue*10);
 							case DOUBLE: return value==null?null:new Double((double)ivalue/100);
@@ -263,9 +263,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case DECIMAL_3:
 					{
-						int ivalue=value==null?0:((Integer)value).intValue();
+						int ivalue=value==null?0:((Integer)value);
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:ivalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:ivalue!=0;
 							case DECIMAL_2: return value==null?null:Integer.valueOf(ivalue/10);
 							case DECIMAL_3: return value;
 							case DOUBLE: return value==null?null:new Double((double)ivalue/1000);
@@ -282,9 +282,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case DOUBLE:
 					{
-						double dvalue=value==null?0:((Double)value).doubleValue();
+						double dvalue=value==null?0:((Double)value);
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:dvalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:dvalue!=0;
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(dvalue*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(dvalue*1000));
 							case DOUBLE: return value;
@@ -320,9 +320,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case FLOAT:
 					{
-						float fvalue=value==null?0:((Float)value).floatValue();
+						float fvalue=value==null?0:((Float)value);
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:fvalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:fvalue!=0;
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(fvalue*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(fvalue*1000));
 							case DOUBLE: return value==null?null:new Double(fvalue);
@@ -348,9 +348,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case INT:
 					{
-						int ivalue=value==null?0:((Integer)value).intValue();
+						int ivalue=value==null?0:((Integer)value);
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:ivalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:ivalue!=0;
 							case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays(ivalue));
 							case DECIMAL_2: return value==null?null:Integer.valueOf(ivalue*100);
 							case DECIMAL_3: return value==null?null:Integer.valueOf(ivalue*1000);
@@ -372,7 +372,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case INTERVAL:
 					{
-						long lvalue=value==null?0:((Long)value).longValue();
+						long lvalue=value==null?0:((Long)value);
 						switch(castToType.getNum()) {
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(lvalue*1000));
@@ -396,9 +396,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case LONG:
 					{
-						long lvalue=value==null?0:((Long)value).longValue();
+						long lvalue=value==null?0:((Long)value);
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:lvalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:lvalue!=0;
 							case DATE: return value==null?null:new java.sql.Date(lvalue);
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(lvalue*1000));
@@ -417,9 +417,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case OCTAL_LONG:
 					{
-						long lvalue=value==null?0:((Long)value).longValue();
+						long lvalue=value==null?0:((Long)value);
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:lvalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:lvalue!=0;
 							case DATE: return value==null?null:new java.sql.Date(lvalue);
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(lvalue*1000));
@@ -465,9 +465,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case SHORT:
 					{
-						short svalue=value==null?0:((Short)value).shortValue();
+						short svalue=value==null?0:((Short)value);
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:svalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:svalue!=0;
 							case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays(svalue));
 							case DECIMAL_2: return value==null?null:Integer.valueOf(svalue*100);
 							case DECIMAL_3: return value==null?null:Integer.valueOf(svalue*1000);
@@ -529,7 +529,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					{
 						BigDecimal bvalue = (BigDecimal)value;
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:bvalue.compareTo(BigDecimal.ZERO)!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:bvalue.compareTo(BigDecimal.ZERO)!=0;
 							case DECIMAL_2: return value==null?null:bvalue.multiply(bigDecimal100).intValue();
 							case DECIMAL_3: return value==null?null:bvalue.multiply(bigDecimal1000).intValue();
 							case DOUBLE: return value==null?null:bvalue.doubleValue();
@@ -605,7 +605,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					{
 						int ivalue=value==null?0:((LinuxId)value).getId();
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:ivalue!=0?Boolean.TRUE:Boolean.FALSE;
+							case BOOLEAN: return value==null?null:ivalue!=0;
 							case INT: return value==null?null:Integer.valueOf(ivalue);
 							case STRING: return value==null?null:value.toString();
 							case LINUX_ID: return value;

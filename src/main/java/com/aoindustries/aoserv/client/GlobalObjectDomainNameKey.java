@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 by AO Industries, Inc.,
+ * Copyright 2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -14,28 +14,29 @@ import com.aoindustries.aoserv.client.validator.DomainName;
  */
 public abstract class GlobalObjectDomainNameKey<T extends GlobalObjectDomainNameKey<T>> extends GlobalObject<DomainName,T> {
 
-    protected DomainName pkey;
+	protected DomainName pkey;
 
-    @Override
-    boolean equalsImpl(Object O) {
-	return
-            O!=null
-            && O.getClass()==getClass()
-            && ((GlobalObjectDomainNameKey)O).pkey.equals(pkey)
-	;
-    }
+	@Override
+	boolean equalsImpl(Object O) {
+		return
+			O!=null
+			&& O.getClass()==getClass()
+			&& ((GlobalObjectDomainNameKey)O).pkey.equals(pkey)
+		;
+	}
 
-    public DomainName getKey() {
-	return pkey;
-    }
+	@Override
+	public DomainName getKey() {
+		return pkey;
+	}
 
-    @Override
-    int hashCodeImpl() {
-	return pkey.hashCode();
-    }
+	@Override
+	int hashCodeImpl() {
+		return pkey.hashCode();
+	}
 
-    @Override
-    String toStringImpl() {
-	return pkey.toString();
-    }
+	@Override
+	String toStringImpl() {
+		return pkey.toString();
+	}
 }

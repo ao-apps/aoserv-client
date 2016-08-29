@@ -3874,14 +3874,14 @@ final public class SimpleAOClient {
 		}
 
 		// Wait for rebuilds
-		for(int c=0;c<linuxAccountServers.size();c++) {
-			linuxAccountServers.get(c).waitForLinuxAccountRebuild();
+		for (AOServer linuxAccountServer : linuxAccountServers) {
+			linuxAccountServer.waitForLinuxAccountRebuild();
 		}
-		for(int c=0;c<mysqlServers.size();c++) {
-			mysqlServers.get(c).waitForMySQLUserRebuild();
+		for (AOServer mysqlServer : mysqlServers) {
+			mysqlServer.waitForMySQLUserRebuild();
 		}
-		for(int c=0;c<postgresServers.size();c++) {
-			postgresServers.get(c).waitForPostgresUserRebuild();
+		for (AOServer postgresServer : postgresServers) {
+			postgresServer.waitForPostgresUserRebuild();
 		}
 
 		// Start up the web sites

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 by AO Industries, Inc.,
+ * Copyright 2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -27,10 +27,12 @@ final public class DistroReportTypeTable extends GlobalTableStringKey<DistroRepo
 		return defaultOrderBy;
 	}
 
+	@Override
 	public DistroReportType get(String name) throws IOException, SQLException {
 		return getUniqueRow(DistroReportType.COLUMN_NAME, name);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.DISTRO_REPORT_TYPES;
 	}

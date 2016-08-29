@@ -66,7 +66,7 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
 		switch(i) {
 			case COLUMN_VERSION: return pkey;
 			case 1: return minorVersion;
-			case 2: return postgisVersion == -1 ? null : Integer.valueOf(postgisVersion);
+			case 2: return postgisVersion == -1 ? null : postgisVersion;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}

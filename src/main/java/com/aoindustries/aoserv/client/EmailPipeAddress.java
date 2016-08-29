@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -35,10 +35,11 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 	int email_address;
 	int email_pipe;
 
+	@Override
 	Object getColumnImpl(int i) {
-		if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
-		if(i==COLUMN_EMAIL_ADDRESS) return Integer.valueOf(email_address);
-		if(i==2) return Integer.valueOf(email_pipe);
+		if(i==COLUMN_PKEY) return pkey;
+		if(i==COLUMN_EMAIL_ADDRESS) return email_address;
+		if(i==2) return email_pipe;
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
@@ -54,24 +55,28 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 		return emailPipeObject;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.EMAIL_PIPE_ADDRESSES;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		email_address=result.getInt(2);
 		email_pipe=result.getInt(3);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		email_address=in.readCompressedInt();
 		email_pipe=in.readCompressedInt();
 	}
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+		List<CannotRemoveReason> reasons=new ArrayList<>();
 
 		// Cannot be used as any part of a majordomo list
 		for(MajordomoList ml : table.connector.getMajordomoLists().getRows()) {
@@ -80,7 +85,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 				|| ml.getListRequestPipeAddress().pkey==pkey
 			) {
 				EmailDomain ed=ml.getMajordomoServer().getDomain();
-				reasons.add(new CannotRemoveReason<MajordomoList>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
 			}
 		}
 
@@ -95,6 +100,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 		return reasons;
 	}
 
+	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(
 			true,
@@ -109,6 +115,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 		return getEmailAddress().toStringImpl()+"->"+getEmailPipe().getPath();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(email_address);

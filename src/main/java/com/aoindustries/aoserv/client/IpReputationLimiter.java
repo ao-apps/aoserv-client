@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 by AO Industries, Inc.,
+ * Copyright 2012, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -19,79 +19,84 @@ import java.util.List;
  */
 final public class IpReputationLimiter extends CachedObjectIntegerKey<IpReputationLimiter> {
 
-    static final int
-        COLUMN_PKEY=0,
-        COLUMN_NET_DEVICE=1
-    ;
+	static final int
+		COLUMN_PKEY=0,
+		COLUMN_NET_DEVICE=1
+	;
 
-    static final String COLUMN_NET_DEVICE_name= "net_device";
-    static final String COLUMN_IDENTIFIER_name= "identifier";
+	static final String COLUMN_NET_DEVICE_name= "net_device";
+	static final String COLUMN_IDENTIFIER_name= "identifier";
 
-    int netDevice;
-    private String identifier;
-    private String description;
+	int netDevice;
+	private String identifier;
+	private String description;
 
-    public SchemaTable.TableID getTableID() {
+	@Override
+	public SchemaTable.TableID getTableID() {
 	return SchemaTable.TableID.IP_REPUTATION_LIMITERS;
-    }
+	}
 
-    public void init(ResultSet result) throws SQLException {
-        int pos = 1;
-        pkey        = result.getInt(pos++);
-        netDevice   = result.getInt(pos++);
-        identifier  = result.getString(pos++);
-        description = result.getString(pos++);
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		int pos = 1;
+		pkey        = result.getInt(pos++);
+		netDevice   = result.getInt(pos++);
+		identifier  = result.getString(pos++);
+		description = result.getString(pos++);
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeCompressedInt(pkey);
-        out.writeCompressedInt(netDevice);
-        out.writeUTF          (identifier);
-        out.writeNullUTF      (description);
-    }
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeCompressedInt(netDevice);
+		out.writeUTF          (identifier);
+		out.writeNullUTF      (description);
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey        = in.readCompressedInt();
-        netDevice   = in.readCompressedInt();
-        identifier  = in.readUTF();
-        description = in.readNullUTF();
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey        = in.readCompressedInt();
+		netDevice   = in.readCompressedInt();
+		identifier  = in.readUTF();
+		description = in.readNullUTF();
+	}
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_PKEY :       return pkey;
-            case COLUMN_NET_DEVICE : return netDevice;
-            case 2 :                 return identifier;
-            case 3 :                 return description;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_PKEY :       return pkey;
+			case COLUMN_NET_DEVICE : return netDevice;
+			case 2 :                 return identifier;
+			case 3 :                 return description;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
 
-    public NetDevice getNetDevice() throws SQLException, IOException {
-        NetDevice nd = table.connector.getNetDevices().get(netDevice);
-        if(nd==null) throw new SQLException("Unable to find NetDevice: " + netDevice);
-        return nd;
-    }
+	public NetDevice getNetDevice() throws SQLException, IOException {
+		NetDevice nd = table.connector.getNetDevices().get(netDevice);
+		if(nd==null) throw new SQLException("Unable to find NetDevice: " + netDevice);
+		return nd;
+	}
 
-    /**
-     * Gets the per-net device unique identifier for this reputation limiter.
-     */
-    public String getIdentifier() {
-        return identifier;
-    }
+	/**
+	 * Gets the per-net device unique identifier for this reputation limiter.
+	 */
+	public String getIdentifier() {
+		return identifier;
+	}
 
-    /**
-     * Gets the optional description of the limiter.
-     */
-    public String getDescription() {
-        return description;
-    }
+	/**
+	 * Gets the optional description of the limiter.
+	 */
+	public String getDescription() {
+		return description;
+	}
 
-    public List<IpReputationLimiterLimit> getLimits() throws IOException, SQLException {
-        return table.connector.getIpReputationLimiterLimits().getLimits(this);
-    }
+	public List<IpReputationLimiterLimit> getLimits() throws IOException, SQLException {
+		return table.connector.getIpReputationLimiterLimits().getLimits(this);
+	}
 
-    public List<IpReputationLimiterSet> getSets() throws IOException, SQLException {
-        return table.connector.getIpReputationLimiterSets().getSets(this);
-    }
+	public List<IpReputationLimiterSet> getSets() throws IOException, SQLException {
+		return table.connector.getIpReputationLimiterSets().getSets(this);
+	}
 }

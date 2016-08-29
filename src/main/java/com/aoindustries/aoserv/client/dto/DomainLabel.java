@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2011, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,20 +10,20 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class DomainLabel {
 
-    private String label;
+	private String label;
 
-    public DomainLabel() {
-    }
+	public DomainLabel() {
+	}
 
-    public DomainLabel(String label) {
-        this.label = label;
-    }
+	public DomainLabel(String label) {
+		this.label = label;
+	}
 
-    public String getLabel() {
-        return label;
-    }
+	public String getLabel() {
+		return label;
+	}
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+	public void setLabel(String label) {
+		this.label = label;
+	}
 }

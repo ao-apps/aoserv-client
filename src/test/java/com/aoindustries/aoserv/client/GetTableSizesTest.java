@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2009, 2015 by AO Industries, Inc.,
+ * Copyright 2006-2009, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -60,7 +60,7 @@ public class GetTableSizesTest extends TestCase {
 				System.out.print("        Pass"+(d<9?"  ":" ")+(d+1)+" of "+PASSES+": ");
 				for(int c=0;c<numTables;c++) {
 					System.out.print('.');
-					AOServTable table=conn.getTable(c);
+					AOServTable<?,?> table=conn.getTable(c);
 					String tableName=table.getTableName();
 					int size=table.size();
 					if(size<0) fail("Table size < 0 for table "+tableName+": "+size);
@@ -81,7 +81,7 @@ public class GetTableSizesTest extends TestCase {
 					if(
 						d!=SchemaTable.TableID.MASTER_PROCESSES.ordinal()
 					) {
-						AOServTable table=conn.getTable(d);
+						AOServTable<?,?> table=conn.getTable(d);
 						String tableName=table.getTableName();
 						assertEquals("Mismatched counts from different passes on table "+tableName+": ", counts[0][d], counts[c][d]);
 					}

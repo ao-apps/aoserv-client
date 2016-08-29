@@ -1,16 +1,16 @@
 /*
- * Copyright 2003-2013, 2014, 2015 by AO Industries, Inc.,
+ * Copyright 2003-2013, 2014, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.client;
 
+import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.HostAddress;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.ValidationException;
-import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -217,25 +217,25 @@ final public class AOServer
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_SERVER: return Integer.valueOf(pkey);
+			case COLUMN_SERVER: return pkey;
 			case COLUMN_HOSTNAME: return hostname;
-			case 2: return daemon_bind==-1?null:Integer.valueOf(daemon_bind);
+			case 2: return daemon_bind==-1?null:daemon_bind;
 			case 3: return daemon_key;
-			case 4: return Integer.valueOf(pool_size);
-			case 5: return Integer.valueOf(distro_hour);
+			case 4: return pool_size;
+			case 5: return distro_hour;
 			case 6: return getLastDistroTime();
-			case 7: return failover_server==-1?null:Integer.valueOf(failover_server);
+			case 7: return failover_server==-1?null:failover_server;
 			case 8: return daemon_device_id;
-			case 9: return daemon_connect_bind==-1?null:Integer.valueOf(daemon_connect_bind);
+			case 9: return daemon_connect_bind==-1?null:daemon_connect_bind;
 			case 10: return time_zone;
 			case 11: return jilter_bind;
 			case 12: return restrict_outbound_email;
 			case 13: return daemon_connect_address;
 			case 14: return failover_batch_size;
-			case 15: return Float.isNaN(monitoring_load_low) ? null : Float.valueOf(monitoring_load_low);
-			case 16: return Float.isNaN(monitoring_load_medium) ? null : Float.valueOf(monitoring_load_medium);
-			case 17: return Float.isNaN(monitoring_load_high) ? null : Float.valueOf(monitoring_load_high);
-			case 18: return Float.isNaN(monitoring_load_critical) ? null : Float.valueOf(monitoring_load_critical);
+			case 15: return Float.isNaN(monitoring_load_low) ? null : monitoring_load_low;
+			case 16: return Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium;
+			case 17: return Float.isNaN(monitoring_load_high) ? null : monitoring_load_high;
+			case 18: return Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -576,8 +576,7 @@ final public class AOServer
 		// Look for the most-preferred version that has an instance on the server
 		List<MySQLServer> pss=getMySQLServers();
 		for(String versionPrefix : MySQLServer.PREFERRED_VERSION_PREFIXES) {
-			for(int d=0;d<pss.size();d++) {
-				MySQLServer ps=pss.get(d);
+			for (MySQLServer ps : pss) {
 				if(ps.getVersion().getVersion().startsWith(versionPrefix)) {
 					return ps;
 				}
@@ -609,8 +608,7 @@ final public class AOServer
 		List<PostgresServer> pss=getPostgresServers();
 		String[] preferredMinorVersions=PostgresVersion.getPreferredMinorVersions();
 		for(String version : preferredMinorVersions) {
-			for(int d=0;d<pss.size();d++) {
-				PostgresServer ps=pss.get(d);
+			for (PostgresServer ps : pss) {
 				if(ps.getPostgresVersion().getMinorVersion().equals(version)) {
 					return ps;
 				}
@@ -1578,7 +1576,7 @@ final public class AOServer
 					// Check pvCount
 					int expectedPvCount = volumeGroup.getPvCount();
 					Integer actualPvCountI = vgPhysicalVolumeCounts.get(vgName);
-					int actualPvCount = actualPvCountI==null ? 0 : actualPvCountI.intValue();
+					int actualPvCount = actualPvCountI==null ? 0 : actualPvCountI;
 					if(expectedPvCount!=actualPvCount) throw new ParseException(
 						accessor.getMessage(
 							"AOServer.LvmReport.PhysicalVolume.parsePvsReport.mismatchPvCount",
@@ -1589,7 +1587,7 @@ final public class AOServer
 					// Check vgExtentCount
 					long expectedVgExtentCount = volumeGroup.getVgExtentCount();
 					Long actualVgExtentCountL = vgExtentCountTotals.get(vgName);
-					long actualVgExtentCount = actualVgExtentCountL==null ? 0 : actualVgExtentCountL.longValue();
+					long actualVgExtentCount = actualVgExtentCountL==null ? 0 : actualVgExtentCountL;
 					if(expectedVgExtentCount!=actualVgExtentCount) throw new ParseException(
 						accessor.getMessage(
 							"AOServer.LvmReport.PhysicalVolume.parsePvsReport.badVgExtentCount",
@@ -2359,7 +2357,7 @@ final public class AOServer
 		for(int i=0, numLines=lines.size(); i<numLines; i++) {
 			String line = lines.get(i);
 			List<String> columns = StringUtility.splitString(line, "\",\"");
-            if(columns.size() != 15) throw new IOException("Line does not have 15 columns: " + columns.size());
+			if(columns.size() != 15) throw new IOException("Line does not have 15 columns: " + columns.size());
 			String mountPoint = columns.get(0);
 			if(!mountPoint.startsWith("\"")) throw new AssertionError();
 			mountPoint = mountPoint.substring(1);
@@ -2473,23 +2471,23 @@ final public class AOServer
 		return new com.aoindustries.aoserv.client.dto.AOServer(
 			getPkey(),
 			getDto(hostname),
-			daemon_bind==-1 ? null : Integer.valueOf(daemon_bind),
+			daemon_bind==-1 ? null : daemon_bind,
 			getDto(daemon_key),
 			pool_size,
 			distro_hour,
-			last_distro_time==-1 ? null : Long.valueOf(last_distro_time),
-			failover_server==-1 ? null : Integer.valueOf(failover_server),
+			last_distro_time==-1 ? null : last_distro_time,
+			failover_server==-1 ? null : failover_server,
 			daemon_device_id,
-			daemon_connect_bind==-1 ? null : Integer.valueOf(daemon_connect_bind),
+			daemon_connect_bind==-1 ? null : daemon_connect_bind,
 			time_zone,
-			jilter_bind==-1 ? null : Integer.valueOf(jilter_bind),
+			jilter_bind==-1 ? null : jilter_bind,
 			restrict_outbound_email,
 			getDto(daemon_connect_address),
 			failover_batch_size,
-			Float.isNaN(monitoring_load_low) ? null : Float.valueOf(monitoring_load_low),
-			Float.isNaN(monitoring_load_medium) ? null : Float.valueOf(monitoring_load_medium),
-			Float.isNaN(monitoring_load_high) ? null : Float.valueOf(monitoring_load_high),
-			Float.isNaN(monitoring_load_critical) ? null : Float.valueOf(monitoring_load_critical)
+			Float.isNaN(monitoring_load_low) ? null : monitoring_load_low,
+			Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium,
+			Float.isNaN(monitoring_load_high) ? null : monitoring_load_high,
+			Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical
 		);
 	}
 	// </editor-fold>

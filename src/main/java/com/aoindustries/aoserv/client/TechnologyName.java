@@ -37,8 +37,8 @@ final public class TechnologyName extends GlobalObjectStringKey<TechnologyName> 
 	Object getColumnImpl(int i) {
 		if(i == COLUMN_NAME) return pkey;
 		if(i == 1) return image_filename;
-		if(i == 2) return image_width==-1?null:Integer.valueOf(image_width);
-		if(i == 3) return image_height==-1?null:Integer.valueOf(image_height);
+		if(i == 2) return image_width==-1?null:image_width;
+		if(i == 3) return image_height==-1?null:image_height;
 		if(i == 4) return image_alt;
 		if(i == 5) return home_page_url;
 		throw new IllegalArgumentException("Invalid index: "+i);

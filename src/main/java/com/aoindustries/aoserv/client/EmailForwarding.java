@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -34,10 +34,11 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
 	int email_address;
 	String destination;
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
-			case COLUMN_EMAIL_ADDRESS: return Integer.valueOf(email_address);
+			case COLUMN_PKEY: return pkey;
+			case COLUMN_EMAIL_ADDRESS: return email_address;
 			case 2: return destination;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
@@ -59,26 +60,31 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
 		return emailAddressObject;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.EMAIL_FORWARDING;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		email_address=result.getInt(2);
 		destination=result.getString(3);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		email_address=in.readCompressedInt();
 		destination=in.readUTF();
 	}
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 
+	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(
 			true,
@@ -93,6 +99,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
 		return getEmailAddress().toStringImpl()+" -> "+destination;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(email_address);

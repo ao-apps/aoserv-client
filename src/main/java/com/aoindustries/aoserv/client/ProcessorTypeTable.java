@@ -1,11 +1,10 @@
-package com.aoindustries.aoserv.client;
-
-
 /*
- * Copyright 2008-2009 by AO Industries, Inc.,
+ * Copyright 2008-2009, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -16,23 +15,25 @@ import java.sql.SQLException;
  */
 final public class ProcessorTypeTable extends GlobalTableStringKey<ProcessorType> {
 
-    ProcessorTypeTable(AOServConnector connector) {
-	super(connector, ProcessorType.class);
-    }
+	ProcessorTypeTable(AOServConnector connector) {
+		super(connector, ProcessorType.class);
+	}
 
-    private static final OrderBy[] defaultOrderBy = {
-        new OrderBy(ProcessorType.COLUMN_SORT_ORDER_name, ASCENDING)
-    };
-    @Override
-    OrderBy[] getDefaultOrderBy() {
-        return defaultOrderBy;
-    }
+	private static final OrderBy[] defaultOrderBy = {
+		new OrderBy(ProcessorType.COLUMN_SORT_ORDER_name, ASCENDING)
+	};
+	@Override
+	OrderBy[] getDefaultOrderBy() {
+		return defaultOrderBy;
+	}
 
-    public ProcessorType get(String type) throws IOException, SQLException {
-        return getUniqueRow(ProcessorType.COLUMN_TYPE, type);
-    }
+	@Override
+	public ProcessorType get(String type) throws IOException, SQLException {
+		return getUniqueRow(ProcessorType.COLUMN_TYPE, type);
+	}
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.PROCESSOR_TYPES;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.PROCESSOR_TYPES;
+	}
 }

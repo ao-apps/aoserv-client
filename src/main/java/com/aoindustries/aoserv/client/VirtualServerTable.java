@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2012, 2014 by AO Industries, Inc.,
+ * Copyright 2008-2012, 2014, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -30,10 +30,12 @@ final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServe
 		return defaultOrderBy;
 	}
 
+	@Override
 	public VirtualServer get(int server) throws IOException, SQLException {
 		return getUniqueRow(VirtualServer.COLUMN_SERVER, server);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.VIRTUAL_SERVERS;
 	}

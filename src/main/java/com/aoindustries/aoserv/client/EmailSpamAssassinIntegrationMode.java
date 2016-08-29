@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2013 by AO Industries, Inc.,
+ * Copyright 2005-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -21,60 +21,65 @@ import java.sql.SQLException;
  */
 public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKey<EmailSpamAssassinIntegrationMode> {
 
-    static final int COLUMN_NAME=0;
-    static final String COLUMN_SORT_ORDER_name = "sort_order";
+	static final int COLUMN_NAME=0;
+	static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-    public static final String
-        NONE="none",
-        POP3="pop3",
-        IMAP="imap"
-    ;
+	public static final String
+		NONE="none",
+		POP3="pop3",
+		IMAP="imap"
+	;
 
-    public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE=POP3;
+	public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE=POP3;
 
-    private String display;
-    private int sort_order;
+	private String display;
+	private int sort_order;
 
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_NAME: return pkey;
-            case 1: return display;
-            case 2: return Integer.valueOf(sort_order);
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_NAME: return pkey;
+			case 1: return display;
+			case 2: return sort_order;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
 
-    public String getName() {
-        return pkey;
-    }
+	public String getName() {
+		return pkey;
+	}
 
-    public String getDisplay() {
-        return display;
-    }
+	public String getDisplay() {
+		return display;
+	}
 
-    public int getSortOrder() {
-        return sort_order;
-    }
+	public int getSortOrder() {
+		return sort_order;
+	}
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.EMAIL_SPAMASSASSIN_INTEGRATION_MODES;
+	}
 
-    public void init(ResultSet results) throws SQLException {
-        pkey=results.getString(1);
-        display=results.getString(2);
-        sort_order=results.getInt(3);
-    }
+	@Override
+	public void init(ResultSet results) throws SQLException {
+		pkey=results.getString(1);
+		display=results.getString(2);
+		sort_order=results.getInt(3);
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        display=in.readUTF();
-        sort_order=in.readCompressedInt();
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey=in.readUTF().intern();
+		display=in.readUTF();
+		sort_order=in.readCompressedInt();
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeUTF(display);
-        out.writeCompressedInt(sort_order);
-    }
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeUTF(pkey);
+		out.writeUTF(display);
+		out.writeCompressedInt(sort_order);
+	}
 }

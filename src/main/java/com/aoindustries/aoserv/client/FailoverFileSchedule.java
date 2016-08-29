@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2013 by AO Industries, Inc.,
+ * Copyright 2003-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -32,10 +32,11 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
 	private short minute;
 	private boolean enabled;
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
-			case COLUMN_REPLICATION: return Integer.valueOf(replication);
+			case COLUMN_PKEY: return pkey;
+			case COLUMN_REPLICATION: return replication;
 			case 2: return hour;
 			case 3: return minute;
 			case 4: return enabled;
@@ -61,10 +62,12 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
 		return enabled;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.FAILOVER_FILE_SCHEDULE;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		replication=result.getInt(2);
@@ -73,6 +76,7 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
 		enabled=result.getBoolean(5);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		replication=in.readCompressedInt();
@@ -94,6 +98,7 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
 		return SB.toString();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(replication);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2011 by AO Industries, Inc.,
+ * Copyright 2010-2011, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -10,20 +10,20 @@ package com.aoindustries.aoserv.client.dto;
  */
 public class Gecos {
 
-    private String value;
+	private String value;
 
-    public Gecos() {
-    }
+	public Gecos() {
+	}
 
-    public Gecos(String value) {
-        this.value = value;
-    }
+	public Gecos(String value) {
+		this.value = value;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 }

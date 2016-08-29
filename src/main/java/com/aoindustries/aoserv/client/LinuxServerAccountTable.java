@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -99,14 +99,14 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 				int len=list.size();
 				for(int c=0; c<len; c++) {
 					LinuxServerAccount lsa=list.get(c);
-					Integer I=Integer.valueOf(lsa.getAOServer().pkey);
+					Integer I=lsa.getAOServer().pkey;
 					Map<String,LinuxServerAccount> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
-					if(serverHash.put(lsa.username, lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.username+" on "+I.intValue());
+					if(serverHash.put(lsa.username, lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.username+" on "+I);
 				}
 				nameHashBuilt=true;
 			}
-			Map<String,LinuxServerAccount> serverHash=nameHash.get(Integer.valueOf(aoServer.pkey));
+			Map<String,LinuxServerAccount> serverHash=nameHash.get(aoServer.pkey);
 			if(serverHash==null) return null;
 			return serverHash.get(username);
 		}
@@ -213,18 +213,18 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 					int lsaUID=lsa.getUid().getID();
 					// Only hash the root user for uid of 0
 					if(lsaUID!=LinuxServerAccount.ROOT_UID || lsa.username.equals(LinuxAccount.ROOT)) {
-						Integer aoI=Integer.valueOf(lsa.getAOServer().pkey);
+						Integer aoI=lsa.getAOServer().pkey;
 						Map<Integer,LinuxServerAccount> serverHash=uidHash.get(aoI);
 						if(serverHash==null) uidHash.put(aoI, serverHash=new HashMap<>());
-						Integer I=Integer.valueOf(lsaUID);
+						Integer I=lsaUID;
 						if(!serverHash.containsKey(I)) serverHash.put(I, lsa);
 					}
 				}
 				uidHashBuilt=true;
 			}
-			Map<Integer,LinuxServerAccount> serverHash=uidHash.get(Integer.valueOf(aoServer.pkey));
+			Map<Integer,LinuxServerAccount> serverHash=uidHash.get(aoServer.pkey);
 			if(serverHash==null) return null;
-			return serverHash.get(Integer.valueOf(uid));
+			return serverHash.get(uid);
 		}
 	}
 

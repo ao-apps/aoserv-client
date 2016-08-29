@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -30,6 +30,7 @@ final public class NetProtocol extends GlobalObjectStringKey<NetProtocol> {
 		TCP="tcp"
 	;
 
+	@Override
 	Object getColumnImpl(int i) {
 		if(i==COLUMN_PROTOCOL) return pkey;
 		throw new IllegalArgumentException("Invalid index: "+i);
@@ -39,18 +40,22 @@ final public class NetProtocol extends GlobalObjectStringKey<NetProtocol> {
 		return pkey;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.NET_PROTOCOLS;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getString(1);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readUTF().intern();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 	}

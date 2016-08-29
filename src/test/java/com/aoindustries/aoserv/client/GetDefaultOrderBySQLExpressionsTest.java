@@ -1,9 +1,9 @@
-package com.aoindustries.aoserv.client;
 /*
- * Copyright 2006-2009 by AO Industries, Inc.,
+ * Copyright 2006-2009, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
 
 import java.util.List;
 import junit.framework.Test;
@@ -16,44 +16,44 @@ import junit.framework.TestSuite;
  * @author  AO Industries, Inc.
  */
 public class GetDefaultOrderBySQLExpressionsTest extends TestCase {
-    
-    private List<AOServConnector> conns;
 
-    public GetDefaultOrderBySQLExpressionsTest(String testName) {
-        super(testName);
-    }
+	private List<AOServConnector> conns;
 
-    @Override
-    protected void setUp() throws Exception {
-        conns = AOServConnectorTest.getTestConnectors();
-    }
+	public GetDefaultOrderBySQLExpressionsTest(String testName) {
+		super(testName);
+	}
 
-    @Override
-    protected void tearDown() throws Exception {
-        conns = null;
-    }
+	@Override
+	protected void setUp() throws Exception {
+		conns = AOServConnectorTest.getTestConnectors();
+	}
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(GetDefaultOrderBySQLExpressionsTest.class);
-        
-        return suite;
-    }
+	@Override
+	protected void tearDown() throws Exception {
+		conns = null;
+	}
 
-    /**
-     * Test the size() method of each AOServTable.
-     */
-    public void testTableSizes() throws Exception {
-        System.out.println("Testing getTable(tableID).getDefaultOrderBySQLExpressions()");
-        for(AOServConnector conn : conns) {
-            String username = conn.getThisBusinessAdministrator().pkey;
-            System.out.print("    "+username+": ");
-            int numTables = SchemaTable.TableID.values().length;
-            for(int c=0;c<numTables;c++) {
-                System.out.print('.');
-                AOServTable table=conn.getTable(c);
-                table.getDefaultOrderBySQLExpressions();
-            }
-            System.out.println(" Done");
-        }
-    }
+	public static Test suite() {
+		TestSuite suite = new TestSuite(GetDefaultOrderBySQLExpressionsTest.class);
+
+		return suite;
+	}
+
+	/**
+	 * Test the size() method of each AOServTable.
+	 */
+	public void testTableSizes() throws Exception {
+		System.out.println("Testing getTable(tableID).getDefaultOrderBySQLExpressions()");
+		for(AOServConnector conn : conns) {
+			String username = conn.getThisBusinessAdministrator().pkey;
+			System.out.print("    "+username+": ");
+			int numTables = SchemaTable.TableID.values().length;
+			for(int c=0;c<numTables;c++) {
+				System.out.print('.');
+				AOServTable<?,?> table=conn.getTable(c);
+				table.getDefaultOrderBySQLExpressions();
+			}
+			System.out.println(" Done");
+		}
+	}
 }

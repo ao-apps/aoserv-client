@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2013, 2015 by AO Industries, Inc.,
+ * Copyright 2003-2013, 2015, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -51,7 +51,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 	}
 
 	public void setBitRate(Long bitRate) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate==null ? -1 : bitRate.longValue());
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_FAILOVER_FILE_REPLICATION_BIT_RATE, pkey, bitRate==null ? -1 : bitRate);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case COLUMN_SERVER: return server;
 			case 2: return backup_partition;
 			case 3: return max_bit_rate;
@@ -71,7 +71,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 			case 6: return connect_address;
 			case 7: return connect_from;
 			case 8: return enabled;
-			case 9: return quota_gid==-1?null:Integer.valueOf(quota_gid);
+			case 9: return quota_gid==-1?null:quota_gid;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -176,9 +176,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 			quota_gid=result.getInt(pos++);
 			if(result.wasNull()) quota_gid=-1;
 		} catch(ValidationException e) {
-			SQLException exc = new SQLException(e.getLocalizedMessage());
-			exc.initCause(e);
-			throw exc;
+			throw new SQLException(e);
 		}
 	}
 
@@ -197,9 +195,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 			enabled=in.readBoolean();
 			quota_gid=in.readCompressedInt();
 		} catch(ValidationException e) {
-			IOException exc = new IOException(e.getLocalizedMessage());
-			exc.initCause(e);
-			throw exc;
+			throw new IOException(e);
 		}
 	}
 
@@ -287,9 +283,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 								in.readLong()
 							);
 						} catch(ValidationException e) {
-							IOException exc = new IOException(e.getLocalizedMessage());
-							exc.initCause(e);
-							throw exc;
+							throw new IOException(e);
 						}
 					} else {
 						AOServProtocol.checkResult(code, in);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -31,8 +31,9 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 	private String username;
 	private InetAddress host;
 
+	@Override
 	Object getColumnImpl(int i) {
-		if(i==COLUMN_PKEY) return Integer.valueOf(pkey);
+		if(i==COLUMN_PKEY) return pkey;
 		if(i==1) return username;
 		if(i==2) return host;
 		throw new IllegalArgumentException("Invalid index: "+i);
@@ -48,34 +49,34 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 		return obj;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.MASTER_HOSTS;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
 			username=result.getString(2);
 			host=InetAddress.valueOf(result.getString(3));
 		} catch(ValidationException e) {
-			SQLException exc = new SQLException(e.getLocalizedMessage());
-			exc.initCause(e);
-			throw exc;
+			throw new SQLException(e);
 		}
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			username=in.readUTF().intern();
 			host=InetAddress.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
-			IOException exc = new IOException(e.getLocalizedMessage());
-			exc.initCause(e);
-			throw exc;
+			throw new IOException(e);
 		}
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username);

@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.client;
-
 /*
- * Copyright 2008-2009 by AO Industries, Inc.,
+ * Copyright 2008-2009, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.client;
+
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -18,47 +18,51 @@ import java.sql.SQLException;
  */
 final public class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
 
-    static final int COLUMN_TYPE = 0;
-    static final int COLUMN_SORT_ORDER = 1;
-    
-    static final String COLUMN_SORT_ORDER_name = "sort_order";
+	static final int COLUMN_TYPE = 0;
+	static final int COLUMN_SORT_ORDER = 1;
 
-    private short sortOrder;
+	static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-    @Override
-    Object getColumnImpl(int i) {
-        switch(i) {
-            case COLUMN_TYPE: return pkey;
-            case COLUMN_SORT_ORDER : return sortOrder;
-            default: throw new IllegalArgumentException("Invalid index: "+i);
-        }
-    }
+	private short sortOrder;
 
-    public SchemaTable.TableID getTableID() {
-        return SchemaTable.TableID.PROCESSOR_TYPES;
-    }
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_TYPE: return pkey;
+			case COLUMN_SORT_ORDER : return sortOrder;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
 
-    public String getType() {
-        return pkey;
-    }
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.PROCESSOR_TYPES;
+	}
 
-    public short getSortOrder() {
-        return sortOrder;
-    }
+	public String getType() {
+		return pkey;
+	}
+
+	public short getSortOrder() {
+		return sortOrder;
+	}
 
 
-    public void init(ResultSet result) throws SQLException {
-        pkey = result.getString(1);
-        sortOrder = result.getShort(2);
-    }
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		pkey = result.getString(1);
+		sortOrder = result.getShort(2);
+	}
 
-    public void read(CompressedDataInputStream in) throws IOException {
-        pkey=in.readUTF().intern();
-        sortOrder = in.readShort();
-    }
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey=in.readUTF().intern();
+		sortOrder = in.readShort();
+	}
 
-    public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-        out.writeUTF(pkey);
-        out.writeShort(sortOrder);
-    }
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+		out.writeUTF(pkey);
+		out.writeShort(sortOrder);
+	}
 }

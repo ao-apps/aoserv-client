@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -54,6 +54,7 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 				int pkey;
 				IntList invalidateList;
 
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_STD_SITES.ordinal());
@@ -73,6 +74,7 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 					if (contentSrc!=null) out.writeUTF(contentSrc);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) {
@@ -84,6 +86,7 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 					}
 				}
 
+				@Override
 				public Integer afterRelease() {
 					connector.tablesUpdated(invalidateList);
 					return pkey;
@@ -92,6 +95,7 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 		);
 	}
 
+	@Override
 	public HttpdTomcatStdSite get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(HttpdTomcatStdSite.COLUMN_TOMCAT_SITE, pkey);
 	}
@@ -108,6 +112,7 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 		return null;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_TOMCAT_STD_SITES;
 	}

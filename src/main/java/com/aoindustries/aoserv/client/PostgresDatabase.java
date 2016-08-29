@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -72,6 +72,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		return allow_conn;
 	}
 
+	@Override
 	public void dump(PrintWriter out) throws IOException, SQLException {
 		dump((Writer)out);
 	}
@@ -81,11 +82,13 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 			false,
 			new AOServConnector.UpdateRequest() {
 
+				@Override
 				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
 					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
 					masterOut.writeCompressedInt(pkey);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
 					int code;
 					byte[] buff=BufferManager.getBytes();
@@ -110,6 +113,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 					}
 				}
 
+				@Override
 				public void afterRelease() {
 				}
 			}
@@ -123,6 +127,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		return enable_postgis;
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
@@ -143,10 +148,12 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		return obj;
 	}
 
+	@Override
 	public String getJdbcDriver() {
 		return JDBC_DRIVER;
 	}
 
+	@Override
 	public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
 		AOServer ao=getPostgresServer().getAOServer();
 		return
@@ -162,6 +169,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		;
 	}
 
+	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
 		String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(table.connector).getVersion();
 		return "https://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
@@ -191,10 +199,12 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		return obj;
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.POSTGRES_DATABASES;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		name=result.getString(2);
@@ -210,6 +220,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		return is_template;
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		name=in.readUTF();
@@ -221,21 +232,23 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		enable_postgis=in.readBoolean();
 	}
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
+		List<CannotRemoveReason> reasons=new ArrayList<>();
 
 		PostgresServer ps=getPostgresServer();
-		if(!allow_conn) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
-		if(is_template) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+		if(is_template) reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
 		if(
 			name.equals(AOINDUSTRIES)
 			|| name.equals(AOSERV)
 			|| name.equals(AOWEB)
-		) reasons.add(new CannotRemoveReason<PostgresDatabase>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+		) reasons.add(new CannotRemoveReason<>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
 
 		return reasons;
 	}
 
+	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(
 			true,
@@ -250,6 +263,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		return name;
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name);

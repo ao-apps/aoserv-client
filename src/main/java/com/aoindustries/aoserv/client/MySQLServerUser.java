@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 by AO Industries, Inc.,
+ * Copyright 2000-2013, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -80,20 +80,24 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	int max_connections;
 	int max_user_connections;
 
+	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
 		return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_MYSQL_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
 	}
 
+	@Override
 	public boolean canDisable() {
 		return disable_log==-1;
 	}
 
+	@Override
 	public boolean canEnable() throws SQLException, IOException {
 		DisableLog dl=getDisableLog();
 		if(dl==null) return false;
 		else return dl.canEnable() && getMySQLUser().disable_log==-1;
 	}
 
+	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
 		try {
 			return MySQLUser.checkPassword(MySQLUserId.valueOf(username), password);
@@ -106,21 +110,24 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		return MySQLUser.checkPasswordDescribe(username, password);
 	}
 	*/
+	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.MYSQL_SERVER_USERS, dl.pkey, pkey);
 	}
 
+	@Override
 	public void enable() throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.MYSQL_SERVER_USERS, pkey);
 	}
 
+	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return Integer.valueOf(pkey);
+			case COLUMN_PKEY: return pkey;
 			case COLUMN_USERNAME: return username;
-			case COLUMN_MYSQL_SERVER: return Integer.valueOf(mysql_server);
+			case COLUMN_MYSQL_SERVER: return mysql_server;
 			case 3: return host;
-			case 4: return disable_log==-1?null:Integer.valueOf(disable_log);
+			case 4: return disable_log==-1?null:disable_log;
 			case 5: return predisable_password;
 			case 6: return max_questions;
 			case 7: return max_updates;
@@ -130,10 +137,12 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		}
 	}
 
+	@Override
 	public boolean isDisabled() {
 		return disable_log!=-1;
 	}
 
+	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
 		DisableLog obj=table.connector.getDisableLogs().get(disable_log);
@@ -180,10 +189,12 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		return table.connector.getMysqlServers().get(mysql_server);
 	}
 
+	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.MYSQL_SERVER_USERS;
 	}
 
+	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		username=result.getString(2);
@@ -198,6 +209,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		max_user_connections=result.getInt(10);
 	}
 
+	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		username=in.readUTF().intern();
@@ -211,12 +223,14 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		max_user_connections=in.readCompressedInt();
 	}
 
+	@Override
 	public List<CannotRemoveReason> getCannotRemoveReasons() {
-		List<CannotRemoveReason> reasons=new ArrayList<CannotRemoveReason>();
-		if(username.equals(MySQLUser.ROOT)) reasons.add(new CannotRemoveReason<MySQLServerUser>("Not allowed to remove the "+MySQLUser.ROOT+" MySQL user", this));
+		List<CannotRemoveReason> reasons=new ArrayList<>();
+		if(username.equals(MySQLUser.ROOT)) reasons.add(new CannotRemoveReason<>("Not allowed to remove the "+MySQLUser.ROOT+" MySQL user", this));
 		return reasons;
 	}
 
+	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(
 			true,
@@ -226,19 +240,21 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		);
 	}
 
+	@Override
 	public void setPassword(final String password) throws IOException, SQLException {
 		AOServConnector connector=table.connector;
 		if(!connector.isSecure()) throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 
-		connector.requestUpdate(
-			true,
+		connector.requestUpdate(true,
 			new AOServConnector.UpdateRequest() {
+			@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PASSWORD.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(password);
 				}
 
+			@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code!=AOServProtocol.DONE) {
@@ -247,6 +263,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 					}
 				}
 
+			@Override
 				public void afterRelease() {
 				}
 			}
@@ -259,12 +276,14 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(password);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
@@ -274,6 +293,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 					}
 				}
 
+				@Override
 				public void afterRelease() {
 					table.connector.tablesUpdated(invalidateList);
 				}
@@ -286,6 +306,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		return username+" on "+getMySQLServer().toStringImpl();
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username);
@@ -302,6 +323,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) out.writeCompressedInt(max_user_connections);
 	}
 
+	@Override
 	public boolean canSetPassword() throws SQLException, IOException {
 		return disable_log==-1 && getMySQLUser().canSetPassword();
 	}

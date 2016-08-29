@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2009, 2014 by AO Industries, Inc.,
+ * Copyright 2003-2009, 2014, 2016 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -40,7 +40,7 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY : return Integer.valueOf(pkey);
+			case COLUMN_PKEY : return pkey;
 			case COLUMN_AO_SERVER : return ao_server==-1 ? null : ao_server;
 			case COLUMN_REPLICATION : return replication==-1 ? null : replication;
 			case COLUMN_MYSQL_SERVER : return mysql_server;
@@ -270,11 +270,13 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 			new AOServConnector.ResultRequest<SlaveStatus>() {
 				SlaveStatus result;
 
+				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_SLAVE_STATUS.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 
+				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AOServProtocol.NEXT) {
@@ -302,6 +304,7 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 					}
 				}
 
+				@Override
 				public SlaveStatus afterRelease() {
 					return result;
 				}
