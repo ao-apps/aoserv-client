@@ -25,13 +25,15 @@ import junit.framework.TestSuite;
 /**
  * Tests all of the functions related to MySQL.
  *
+ * TODO: This test does not run without a master setup.
+ *
  * TODO: Test UJIS (japanese) character set (SAKURA)
  *
  * @author  AO Industries, Inc.
  */
-public class MySQLTest extends TestCase {
+public class MySQLTODO extends TestCase {
 
-	private static final Logger logger = Logger.getLogger(MySQLTest.class.getName());
+	private static final Logger logger = Logger.getLogger(MySQLTODO.class.getName());
 
 	private AOServConnector conn;
 	private Package pack;
@@ -42,7 +44,7 @@ public class MySQLTest extends TestCase {
 	private final List<MySQLDatabase> mysqlDatabases=new ArrayList<>();
 	private final Map<MySQLDatabase,Integer> dumpSizes=new HashMap<>();
 
-	public MySQLTest(String testName) {
+	public MySQLTODO(String testName) {
 		super(testName);
 	}
 
@@ -61,7 +63,7 @@ public class MySQLTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(MySQLTest.class);
+		TestSuite suite = new TestSuite(MySQLTODO.class);
 		return suite;
 	}
 

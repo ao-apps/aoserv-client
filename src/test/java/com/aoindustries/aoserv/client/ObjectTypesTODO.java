@@ -15,13 +15,15 @@ import junit.framework.TestSuite;
 /**
  * Tests all of the types returned by AOServTable.getColumn(int) to make sure they match the types in the schema_columns table.
  *
+ * TODO: This test does not run without a master setup.
+ *
  * @author  AO Industries, Inc.
  */
-public class ObjectTypesTest extends TestCase {
+public class ObjectTypesTODO extends TestCase {
 
 	private List<AOServConnector> conns;
 
-	public ObjectTypesTest(String testName) {
+	public ObjectTypesTODO(String testName) {
 		super(testName);
 	}
 
@@ -36,7 +38,7 @@ public class ObjectTypesTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ObjectTypesTest.class);
+		TestSuite suite = new TestSuite(ObjectTypesTODO.class);
 
 		return suite;
 	}
