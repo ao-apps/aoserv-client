@@ -13,13 +13,15 @@ import junit.framework.TestSuite;
 /**
  * Gets the sizes of each table.
  *
+ * TODO: This test does not run without a master setup.
+ *
  * @author  AO Industries, Inc.
  */
-public class GetTableSizesTest extends TestCase {
+public class GetTableSizesTODO extends TestCase {
 
 	private List<AOServConnector> conns;
 
-	public GetTableSizesTest(String testName) {
+	public GetTableSizesTODO(String testName) {
 		super(testName);
 	}
 
@@ -34,7 +36,7 @@ public class GetTableSizesTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(GetTableSizesTest.class);
+		TestSuite suite = new TestSuite(GetTableSizesTODO.class);
 
 		return suite;
 	}

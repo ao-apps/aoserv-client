@@ -16,13 +16,15 @@ import junit.framework.TestSuite;
 /**
  * Tests the aoserv-client object indexing algorithms for accuracy.
  *
+ * TODO: This test does not run without a master setup.
+ *
  * @author  AO Industries, Inc.
  */
-public class GetIndexedRowTest extends TestCase {
+public class GetIndexedRowTODO extends TestCase {
 
 	private List<AOServConnector> conns;
 
-	public GetIndexedRowTest(String testName) {
+	public GetIndexedRowTODO(String testName) {
 		super(testName);
 	}
 
@@ -37,7 +39,7 @@ public class GetIndexedRowTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(GetIndexedRowTest.class);
+		TestSuite suite = new TestSuite(GetIndexedRowTODO.class);
 
 		return suite;
 	}

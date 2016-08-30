@@ -13,13 +13,15 @@ import junit.framework.TestSuite;
 /**
  * Gets the sizes of each table.
  *
+ * TODO: This test does not run without a master setup.
+ *
  * @author  AO Industries, Inc.
  */
-public class GetDefaultOrderBySQLExpressionsTest extends TestCase {
+public class GetDefaultOrderBySQLExpressionsTODO extends TestCase {
 
 	private List<AOServConnector> conns;
 
-	public GetDefaultOrderBySQLExpressionsTest(String testName) {
+	public GetDefaultOrderBySQLExpressionsTODO(String testName) {
 		super(testName);
 	}
 
@@ -34,7 +36,7 @@ public class GetDefaultOrderBySQLExpressionsTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(GetDefaultOrderBySQLExpressionsTest.class);
+		TestSuite suite = new TestSuite(GetDefaultOrderBySQLExpressionsTODO.class);
 
 		return suite;
 	}

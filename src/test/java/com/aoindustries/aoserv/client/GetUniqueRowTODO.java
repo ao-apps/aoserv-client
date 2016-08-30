@@ -17,13 +17,15 @@ import junit.framework.TestSuite;
 /**
  * Tests the accuracy of the system on all columns flagged as unique.
  *
+ * TODO: This test does not run without a master setup.
+ *
  * @author  AO Industries, Inc.
  */
-public class GetUniqueRowTest extends TestCase {
+public class GetUniqueRowTODO extends TestCase {
 
 	private List<AOServConnector> conns;
 
-	public GetUniqueRowTest(String testName) {
+	public GetUniqueRowTODO(String testName) {
 		super(testName);
 	}
 
@@ -38,7 +40,7 @@ public class GetUniqueRowTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(GetUniqueRowTest.class);
+		TestSuite suite = new TestSuite(GetUniqueRowTODO.class);
 
 		return suite;
 	}
