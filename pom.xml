@@ -30,7 +30,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 
 	<groupId>com.aoindustries</groupId>
 	<artifactId>aoserv-client</artifactId>
-	<version>1.79.2-SNAPSHOT</version>
+	<version>1.79.2</version>
 	<packaging>jar</packaging>
 
 	<name>AOServ Client</name>
@@ -57,7 +57,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		<connection>scm:git:git://github.com/aoindustries/aoserv-client.git</connection>
 		<developerConnection>scm:git:git@github.com:aoindustries/aoserv-client.git</developerConnection>
 		<url>http://github.com/aoindustries/aoserv-client</url>
-		<tag>HEAD</tag>
+		<tag>aoserv-client-1.79.2</tag>
 	</scm>
 
 	<repositories>
