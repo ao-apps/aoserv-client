@@ -380,7 +380,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 			utf8_bin,
 			utf8_general_ci,
 			utf8_unicode_ci,
-			utf8mb4_unicode_ci
+			utf8mb4_unicode_ci,
+			utf8mb4_unicode_520_ci
 		}
 
 		private final String name;
