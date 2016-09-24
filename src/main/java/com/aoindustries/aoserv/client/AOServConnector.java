@@ -35,7 +35,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -1401,9 +1400,10 @@ abstract public class AOServConnector {
 	 */
 	abstract public String getProtocol();
 
-	private static final Random random = new SecureRandom();
-	public static Random getRandom() {
-		return random;
+	private static final SecureRandom secureRandom = new SecureRandom();
+
+	public static SecureRandom getRandom() {
+		return secureRandom;
 	}
 
 	/**
