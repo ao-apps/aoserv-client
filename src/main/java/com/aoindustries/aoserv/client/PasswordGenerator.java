@@ -101,10 +101,10 @@ public class PasswordGenerator {
 		"y"
 	};
 
-	private static final Random random = new SecureRandom();
+	private static final SecureRandom secureRandom = new SecureRandom();
 
 	public static String generatePassword() throws IOException {
-		return generatePassword(random);
+		return generatePassword(secureRandom);
 	}
 
 	public static String generatePassword(Random r) throws IOException {
@@ -239,7 +239,7 @@ public class PasswordGenerator {
 		int len=from.length();
 		if(len>0) {
 			int ch=from.charAt(0);
-			if(ch>='a' && ch<='z') ch=ch-('a'-'A');
+			if(ch>='a' && ch<='z') ch -= ('a'-'A');
 			to.append((char)ch);
 			for(int c=1;c<len;c++) to.append(from.charAt(c));
 		}
