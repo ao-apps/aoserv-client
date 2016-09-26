@@ -127,7 +127,8 @@ abstract public class AOServConnector {
 	/**
 	 * @see  #getConnectorID()
 	 */
-	final Object idLock = new Object();
+	private static class IdLock {}
+	final IdLock idLock = new IdLock();
 	long id=-1; // Rename back to id
 
 	/**
@@ -168,7 +169,8 @@ abstract public class AOServConnector {
 
 	protected final String password;
 
-	private final Object testConnectLock=new Object();
+	private static class TestConnectLock {}
+	private final TestConnectLock testConnectLock=new TestConnectLock();
 
 	private final AOServerDaemonHostTable aoServerDaemonHosts;
 	public AOServerDaemonHostTable getAoServerDaemonHosts() {return aoServerDaemonHosts;}
