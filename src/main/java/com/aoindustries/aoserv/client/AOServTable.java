@@ -60,12 +60,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	//final SimpleAOClient client;
 	final Class<V> clazz;
 
-	final Object tableListenersLock = new Object() {
+	private class TableListenersLock {
 		@Override
 		public String toString() {
 			return "tableListenersLock - "+getTableID();
 		}
 	};
+	final TableListenersLock tableListenersLock = new TableListenersLock();
 
 	/**
 	 * The list of <code>TableListener</code>s.
@@ -75,12 +76,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	/**
 	 * The lock used for cache event handling.
 	 */
-	final Object eventLock=new Object() {
+	class EventLock {
 		@Override
 		public String toString() {
 			return "EventLock - "+getTableID();
 		}
-	};
+	}
+	final EventLock eventLock=new EventLock();
 
 	/**
 	 * The thread that is performing the batched updates.

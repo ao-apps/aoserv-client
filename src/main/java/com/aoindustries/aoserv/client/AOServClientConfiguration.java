@@ -39,7 +39,8 @@ import java.util.Properties;
  */
 final public class AOServClientConfiguration {
 
-	private static final Object propsLock = new Object();
+	private static class PropsLock {}
+	private static final PropsLock propsLock = new PropsLock();
 	private static Properties props;
 
 	private static String getProperty(String name) throws IOException {

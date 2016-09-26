@@ -55,9 +55,10 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	/**
 	 * Each table has its own lock because we were getting deadlocks with one lock on GlobalTable.class.
 	 */
-	private static final Object[] locks = new Object[numTables];
+	private static class Lock {}
+	private static final Lock[] locks = new Lock[numTables];
 	static {
-		for(int c=0;c<locks.length;c++) locks[c] = new Object();
+		for(int c=0;c<locks.length;c++) locks[c] = new Lock();
 	}
 
 	/**
