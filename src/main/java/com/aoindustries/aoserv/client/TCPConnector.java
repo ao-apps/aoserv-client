@@ -140,6 +140,8 @@ public class TCPConnector extends AOServConnector {
 								sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								logger.log(Level.WARNING, null, err2);
+								// Restore the interrupted status
+								Thread.currentThread().interrupt();
 							}
 						}
 					} catch(ThreadDeath TD) {
@@ -153,6 +155,8 @@ public class TCPConnector extends AOServConnector {
 								sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								logger.log(Level.WARNING, null, err2);
+								// Restore the interrupted status
+								Thread.currentThread().interrupt();
 							}
 						}
 					} finally {

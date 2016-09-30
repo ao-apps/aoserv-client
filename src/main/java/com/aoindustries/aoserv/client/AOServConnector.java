@@ -1625,6 +1625,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -1665,6 +1667,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -1713,6 +1717,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -1753,6 +1759,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -1801,6 +1809,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -1841,6 +1851,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -1881,6 +1893,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -1929,6 +1943,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -1969,6 +1985,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -2012,6 +2030,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -2056,6 +2076,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -2118,6 +2140,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -2157,6 +2181,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
@@ -2202,6 +2228,8 @@ abstract public class AOServConnector {
 			try {
 				Thread.sleep(retryAttemptDelays[attempt-1]);
 			} catch(InterruptedException err) {
+				// Restore the interrupted status
+				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException();
 				ioErr.initCause(err);
 				throw ioErr;
