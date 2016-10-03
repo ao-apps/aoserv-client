@@ -70,12 +70,11 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	/**
 	 * The URL for MySQL JDBC documentation.
-	 * TODO: put the Mandrake documentation on https://www.aoindustries.com/docs/
 	 */
 	public static final String
-		REDHAT_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
-		MANDRAKE_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html",
-		CENTOS_JDBC_DOCUMENTATION_URL="http://www.mysql.com/documentation/connector-j/index.html"
+		REDHAT_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
+		MANDRAKE_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
+		CENTOS_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/"
 	;
 
 	/**
