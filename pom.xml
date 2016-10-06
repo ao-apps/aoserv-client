@@ -78,18 +78,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>java.net2</id>
-			<name>Repository hosting the jee6 artifacts</name>
-			<url>https://maven.java.net/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
 	</repositories>
 
 	<distributionManagement>
@@ -160,17 +148,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<goals>deploy<!-- Necessary with autoReleaseAfterClose=true? nexus-staging:release--></goals>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<excludes>
-						<!-- Stay on Java EE Web API 6 -->
-						<exclude>javax.servlet:javax.servlet-api</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -239,7 +216,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<keywords>true</keywords><!-- Help internal search systems -->
 							<quiet>true</quiet>
 							<links>
-								<link>http://docs.oracle.com/javaee/6/api/</link>
 								<link>https://www.aoindustries.com/docs/aocode-public/</link>
 							</links>
 						</configuration>
@@ -273,13 +249,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 
 	<dependencies>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>6.0.4</version>
@@ -294,7 +263,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		<dependency>
 			<groupId>com.aoindustries</groupId>
 			<artifactId>aocode-public</artifactId>
-			<version>1.7.0</version>
+			<version>1.8.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
