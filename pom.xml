@@ -307,7 +307,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>6.0.4</version>
+			<version>6.0.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -319,7 +319,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		<dependency>
 			<groupId>com.aoindustries</groupId>
 			<artifactId>aocode-public</artifactId>
-			<version>1.8.1-SNAPSHOT</version>
+			<version>1.8.2</version>
 		</dependency>
 	</dependencies>
 </project>
