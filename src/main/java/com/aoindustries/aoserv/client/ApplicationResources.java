@@ -52,7 +52,7 @@ public final class ApplicationResources extends EditableResourceBundle {
 		super(
 			new Locale(""),
 			bundleSet,
-			new File(System.getProperty("user.home")+"/common/ao/cvswork/aoserv-client/src/com/aoindustries/aoserv/client/ApplicationResources.properties")
+			new File(System.getProperty("user.home")+"/maven2/ao/aoserv-client/src/com/aoindustries/aoserv/client/ApplicationResources.properties")
 		);
 	}
 
