@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		<core:child page="changelog.jspx" />
 		<core:child page="apidocs/index.jspx" />
 		<p>
-			Java client for the <core:link page="/aoserv/index.jspx" />.
+			Java client for the <core:link book="/" page="/aoserv/index.jspx" />.
 		</p>
 		<section:section label="Project Links">
 			<ul>
