@@ -50,6 +50,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>New <core:link book="/ao-oss-parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
 					<li>Project documentation moved to per-project book in <ao:a href="https://semanticcms.com/">SemanticCMS</ao:a> format.</li>
 					<li>Added changelog as top-level project link.</li>
+					<li>Default DNS zone TTL changed from 43200 (12 hours) to 3600 (1 hour).</li>
+					<li>Existing zones that were the default 43200 have been changed to 3600.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
