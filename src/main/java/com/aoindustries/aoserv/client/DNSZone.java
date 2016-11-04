@@ -51,7 +51,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	;
 	static final String COLUMN_ZONE_name= "zone";
 
-	public static final int DEFAULT_TTL = 43200;
+	public static final int DEFAULT_TTL = 3600;
 
 	/**
 	 * The maximum number of characters allowed in a line.
