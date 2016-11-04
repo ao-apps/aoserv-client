@@ -189,7 +189,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
 		String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(table.connector).getVersion();
-		return "https://www.aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
+		return "https://aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
 	}
 
 	public String getName() {
