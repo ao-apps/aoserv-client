@@ -83,6 +83,8 @@ final public class AOServer
 	private float monitoring_load_medium;
 	private float monitoring_load_high;
 	private float monitoring_load_critical;
+	private int uid_min;
+	private int gid_min;
 
 	public int addCvsRepository(
 		String path,
@@ -253,6 +255,8 @@ final public class AOServer
 			case 16: return Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium;
 			case 17: return Float.isNaN(monitoring_load_high) ? null : monitoring_load_high;
 			case 18: return Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical;
+			case 19: return uid_min;
+			case 20: return gid_min;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -355,6 +359,28 @@ final public class AOServer
 	 */
 	public float getMonitoringLoadCritical() {
 		return monitoring_load_critical;
+	}
+
+	/**
+	 * Gets the min value for automatic uid selection in useradd.
+	 *
+	 * @see  LinuxAccount#UID_MAX
+	 */
+	public LinuxID getUidMin() throws SQLException {
+		LinuxID lid = table.connector.getLinuxIDs().get(uid_min);
+		if(lid==null) throw new SQLException("Unable to find LinuxID: "+uid_min);
+		return lid;
+	}
+
+	/**
+	 * Gets the min value for automatic gid selection in groupadd.
+	 *
+	 * @see  LinuxGroup#GID_MAX
+	 */
+	public LinuxID getGidMin() throws SQLException {
+		LinuxID lid = table.connector.getLinuxIDs().get(gid_min);
+		if(lid==null) throw new SQLException("Unable to find LinuxID: "+gid_min);
+		return lid;
 	}
 
 	public NetDeviceID getDaemonDeviceID() throws SQLException, IOException {
@@ -717,6 +743,8 @@ final public class AOServer
 			if(result.wasNull()) monitoring_load_high = Float.NaN;
 			monitoring_load_critical = result.getFloat(pos++);
 			if(result.wasNull()) monitoring_load_critical = Float.NaN;
+			uid_min = result.getInt(pos++);
+			gid_min = result.getInt(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -744,6 +772,8 @@ final public class AOServer
 			monitoring_load_medium = in.readFloat();
 			monitoring_load_high = in.readFloat();
 			monitoring_load_critical = in.readFloat();
+			uid_min = in.readCompressedInt();
+			gid_min = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -933,6 +963,10 @@ final public class AOServer
 			out.writeFloat(monitoring_load_medium);
 			out.writeFloat(monitoring_load_high);
 			out.writeFloat(monitoring_load_critical);
+		}
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80)>=0) {
+			out.writeCompressedInt(uid_min);
+			out.writeCompressedInt(gid_min);
 		}
 	}
 
@@ -2506,7 +2540,9 @@ final public class AOServer
 			Float.isNaN(monitoring_load_low) ? null : monitoring_load_low,
 			Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium,
 			Float.isNaN(monitoring_load_high) ? null : monitoring_load_high,
-			Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical
+			Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical,
+			uid_min,
+			gid_min
 		);
 	}
 	// </editor-fold>
