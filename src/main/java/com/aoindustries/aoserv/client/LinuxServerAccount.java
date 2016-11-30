@@ -44,13 +44,6 @@ import java.util.List;
 final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServerAccount> implements Removable, PasswordProtected, Disablable {
 
 	/**
-	 * The minimum UID that is considered a normal user.
-	 * 
-	 * Note: Copied from UnixFile.java to avoid interproject dependency.
-	 */
-	public static final int MINIMUM_USER_UID = 1000;
-
-	/**
 	 * The UID of the root user.
 	 * 
 	 * Note: Copied from UnixFile.java to avoid interproject dependency.
@@ -109,7 +102,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		if(disable_log!=-1) return false;
 
 		// is a system user
-		if(uid<MINIMUM_USER_UID) return false;
+		if(uid < getAOServer().getUidMin().getID()) return false;
 
 		// cvs_repositories
 		for(CvsRepository cr : getCvsRepositories()) if(cr.disable_log==-1) return false;
@@ -506,7 +499,8 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason> reasons=new ArrayList<>();
 
-		if(uid<MINIMUM_USER_UID) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than "+MINIMUM_USER_UID));
+		int uid_min = getAOServer().getUidMin().getID();
+		if(uid < uid_min) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than "+uid_min));
 
 		AOServer ao=getAOServer();
 

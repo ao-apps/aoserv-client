@@ -74,6 +74,13 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 	@Deprecated
 	public static final String HTTPD="httpd";
 
+	/**
+	 * The max values for automatic gid selection in groupadd.
+	 *
+	 * @see  AOServer#getGidMin()
+	 */
+	public static final int GID_MAX = 60000;
+
 	String packageName;
 	private String type;
 	public static final int MAX_LENGTH=255;

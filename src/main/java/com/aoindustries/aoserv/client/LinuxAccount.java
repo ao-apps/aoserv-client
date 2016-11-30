@@ -75,6 +75,13 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 
 	public static final String NO_PASSWORD_CONFIG_VALUE="!!";
 
+	/**
+	 * The max value for automatic uid selection in useradd.
+	 *
+	 * @see  AOServer#getUidMin()
+	 */
+	public static final int UID_MAX = 60000;
+
 	private Gecos name;
 	private Gecos office_location;
 	private Gecos office_phone;

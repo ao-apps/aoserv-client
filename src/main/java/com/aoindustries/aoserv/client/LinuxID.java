@@ -58,7 +58,6 @@ final public class LinuxID extends AOServObject<Integer,LinuxID> {
 	@Override
 	Object getColumnImpl(int i) {
 		if(i==0) return id;
-		if(i==1) return isSystem();
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
@@ -84,10 +83,6 @@ final public class LinuxID extends AOServObject<Integer,LinuxID> {
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		throw new SQLException("Should not be read from the database, should be generated.");
-	}
-
-	public boolean isSystem() {
-		return id < 1000 || id==65534 || id==65535;
 	}
 
 	@Override
