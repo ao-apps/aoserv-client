@@ -43,6 +43,9 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	static final String COLUMN_PATH_name = "path";
 	static final String COLUMN_OPERATING_SYSTEM_VERSION_name= "operating_system_version";
 
+	// TODO: These fixed sizes being hard-coded is not very nice.  Maybe query
+	//       the master for the longest sizes before downloading the records?
+	//       Or hack the protocol a bit for this table and begin the transfer with a set of int's giving the lengths.
 	static final int
 		MAX_PATH_LENGTH=194, // select max(length(path)) from distro_files;
 		MAX_TYPE_LENGTH=10,
