@@ -68,7 +68,7 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 			+ 4+DistroFile.MAX_LINUX_ACCOUNT_LENGTH*2       // linux_account
 			+ 4+DistroFile.MAX_LINUX_GROUP_LENGTH*2         // linux_group
 			+ 8                                             // size
-			+ 1+8+8                                         // file_md5
+			+ 1+8+8+8+8                                     // file_sha256
 			+ 1+4+DistroFile.MAX_SYMLINK_TARGET_LENGTH*2    // symlink_target
 		;
 	}
