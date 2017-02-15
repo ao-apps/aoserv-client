@@ -1,6 +1,6 @@
 <!--
 aoserv-client - Java client for the AOServ platform.
-Copyright (C) 2016  AO Industries, Inc.
+Copyright (C) 2016, 2017  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2016-12-12T13:40:09-0600"
+		dateModified="2017-02-14T21:31:04-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -72,6 +72,25 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<ao:a href="https://en.wikipedia.org/wiki/Top-level_domain">Top-level domains</ao:a> change frequently these days.
 						Top reduce code maintenance, using new <core:link book="/ao-tlds" page="/index.jspx" />
 						project to have a self-updating list of top-level domains.
+					</li>
+					<li>
+						<p>
+							Changed distribution verification from MD5 to SHA-256.
+						</p>
+						<ol>
+							<li>Removed <code>DistroFile.hasFileMD5()</code></li>
+							<li>Removed <code>DistroFile.getFileMD5Hi()</code></li>
+							<li>Removed <code>DistroFile.getFileMD5Lo()</code></li>
+							<li>Added <code>DistroFile.hasFileSha256()</code></li>
+							<li>Added <code>DistroFile.getFileSha256_0()</code></li>
+							<li>Added <code>DistroFile.getFileSha256_1()</code></li>
+							<li>Added <code>DistroFile.getFileSha256_2()</code></li>
+							<li>Added <code>DistroFile.getFileSha256_3()</code></li>
+						</ol>
+						<p>
+							No MD5 data will be sent to older clients.
+							<code>DistroFile.hasFileMD5()</code> will return <code>false</code> for all files.
+						</p>
 					</li>
 				</ul>
 			</changelog:release>

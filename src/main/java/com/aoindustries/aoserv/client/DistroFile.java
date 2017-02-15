@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,7 +24,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.md5.MD5;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -66,9 +65,11 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	private String linux_account;
 	private String linux_group;
 	private long size;
-	private boolean has_file_md5;
-	private long file_md5_hi;
-	private long file_md5_lo;
+	private boolean has_file_sha256;
+	private long file_sha256_0;
+	private long file_sha256_1;
+	private long file_sha256_2;
+	private long file_sha256_3;
 	private String symlink_target;
 
 	@Override
@@ -91,9 +92,11 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 			case 6: return linux_account;
 			case 7: return linux_group;
 			case 8: return size == NULL_SIZE ? null : size;
-			case 9: return has_file_md5 ? file_md5_hi : null;
-			case 10: return has_file_md5 ? file_md5_lo : null;
-			case 11: return symlink_target;
+			case 9: return has_file_sha256 ? file_sha256_0 : null;
+			case 10: return has_file_sha256 ? file_sha256_1 : null;
+			case 11: return has_file_sha256 ? file_sha256_2 : null;
+			case 12: return has_file_sha256 ? file_sha256_3 : null;
+			case 13: return symlink_target;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -144,16 +147,24 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		return size;
 	}
 
-	public boolean hasFileMD5() {
-		return has_file_md5;
+	public boolean hasFileSha256() {
+		return has_file_sha256;
 	}
 
-	public long getFileMD5Hi() {
-		return file_md5_hi;
+	public long getFileSha256_0() {
+		return file_sha256_0;
 	}
 
-	public long getFileMD5Lo() {
-		return file_md5_lo;
+	public long getFileSha256_1() {
+		return file_sha256_1;
+	}
+
+	public long getFileSha256_2() {
+		return file_sha256_2;
+	}
+
+	public long getFileSha256_3() {
+		return file_sha256_3;
 	}
 
 	public String getSymlinkTarget() {
@@ -177,60 +188,80 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		operating_system_version=result.getInt(2);
-		path=result.getString(3);
-		optional=result.getBoolean(4);
-		type=result.getString(5);
-		mode=result.getLong(6);
-		linux_account=result.getString(7);
-		linux_group=result.getString(8);
-		size=result.getLong(9);
-		if(result.wasNull()) size=NULL_SIZE;
-		file_md5_hi=result.getLong(10);
-		has_file_md5=!result.wasNull();
-		if(has_file_md5) file_md5_lo=result.getLong(11);
-		else file_md5_hi=file_md5_lo=-1;
-		symlink_target=result.getString(12);
+		int pos = 1;
+		pkey = result.getInt(pos++);
+		operating_system_version = result.getInt(pos++);
+		path = result.getString(pos++);
+		optional = result.getBoolean(pos++);
+		type = result.getString(pos++);
+		mode = result.getLong(pos++);
+		linux_account = result.getString(pos++);
+		linux_group = result.getString(pos++);
+		size = result.getLong(pos++);
+		if(result.wasNull()) size = NULL_SIZE;
+		file_sha256_0 = result.getLong(pos++);
+		file_sha256_1 = result.getLong(pos++);
+		file_sha256_2 = result.getLong(pos++);
+		file_sha256_3 = result.getLong(pos++);
+		has_file_sha256 = !result.wasNull();
+		symlink_target = result.getString(pos++);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		operating_system_version=in.readCompressedInt();
-		path=in.readCompressedUTF();
-		optional=in.readBoolean();
-		type=in.readCompressedUTF().intern();
-		mode=in.readLong();
-		linux_account=in.readCompressedUTF().intern();
-		linux_group=in.readCompressedUTF().intern();
-		size=in.readLong();
-		has_file_md5=in.readBoolean();
-		file_md5_hi=has_file_md5?in.readLong():-1;
-		file_md5_lo=has_file_md5?in.readLong():-1;
-		symlink_target=in.readBoolean()?in.readCompressedUTF():null;
+		pkey = in.readCompressedInt();
+		operating_system_version = in.readCompressedInt();
+		path = in.readCompressedUTF();
+		optional = in.readBoolean();
+		type = in.readCompressedUTF().intern();
+		mode = in.readLong();
+		linux_account = in.readCompressedUTF().intern();
+		linux_group = in.readCompressedUTF().intern();
+		size = in.readLong();
+		has_file_sha256 = in.readBoolean();
+		if(has_file_sha256) {
+			file_sha256_0 = in.readLong();
+			file_sha256_1 = in.readLong();
+			file_sha256_2 = in.readLong();
+			file_sha256_3 = in.readLong();
+		} else {
+			file_sha256_0 = 0;
+			file_sha256_1 = 0;
+			file_sha256_2 = 0;
+			file_sha256_3 = 0;
+		}
+		symlink_target = in.readBoolean() ? in.readCompressedUTF() : null;
 	}
 
 	@Override
 	public void readRecord(DataInputStream in) throws IOException {
-		pkey=in.readInt();
-		operating_system_version=in.readInt();
-		path=in.readUTF();
-		optional=in.readBoolean();
-		type=in.readUTF().intern();
-		mode=in.readLong();
-		linux_account=in.readUTF().intern();
-		linux_group=in.readUTF().intern();
-		size=in.readLong();
-		has_file_md5=in.readBoolean();
-		file_md5_hi=has_file_md5?in.readLong():-1;
-		file_md5_lo=has_file_md5?in.readLong():-1;
-		symlink_target=in.readBoolean()?in.readUTF():null;
+		pkey = in.readInt();
+		operating_system_version = in.readInt();
+		path = in.readUTF();
+		optional = in.readBoolean();
+		type = in.readUTF().intern();
+		mode = in.readLong();
+		linux_account = in.readUTF().intern();
+		linux_group = in.readUTF().intern();
+		size = in.readLong();
+		has_file_sha256 = in.readBoolean();
+		if(has_file_sha256) {
+			file_sha256_0 = in.readLong();
+			file_sha256_1 = in.readLong();
+			file_sha256_2 = in.readLong();
+			file_sha256_3 = in.readLong();
+		} else {
+			file_sha256_0 = 0;
+			file_sha256_1 = 0;
+			file_sha256_2 = 0;
+			file_sha256_3 = 0;
+		}
+		symlink_target = in.readBoolean() ? in.readUTF() : null;
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) {
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108) >= 0) {
 			out.writeCompressedInt(pkey);
 			out.writeCompressedInt(operating_system_version);
 		}
@@ -241,15 +272,19 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		out.writeCompressedUTF(linux_account, 2);
 		out.writeCompressedUTF(linux_group, 3);
 		out.writeLong(size);
-		out.writeBoolean(has_file_md5);
-		if(has_file_md5) {
-			if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0) {
-				out.writeLong(file_md5_hi);
-				out.writeLong(file_md5_lo);
-			} else out.writeUTF(MD5.getMD5String(file_md5_hi, file_md5_lo));
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80) >= 0) {
+			out.writeBoolean(has_file_sha256);
+			if(has_file_sha256) {
+				out.writeLong(file_sha256_0);
+				out.writeLong(file_sha256_1);
+				out.writeLong(file_sha256_2);
+				out.writeLong(file_sha256_3);
+			}
+		} else {
+			out.writeBoolean(false); // has_file_md5
 		}
-		out.writeBoolean(symlink_target!=null);
-		if(symlink_target!=null) out.writeCompressedUTF(symlink_target, 4);
+		out.writeBoolean(symlink_target != null);
+		if(symlink_target != null) out.writeCompressedUTF(symlink_target, 4);
 	}
 
 	@Override
@@ -267,10 +302,12 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		if(linux_group.length()>MAX_LINUX_GROUP_LENGTH) throw new IOException("linux_group.length()>"+MAX_LINUX_GROUP_LENGTH+": "+linux_group.length());
 		out.writeUTF(linux_group);
 		out.writeLong(size);
-		out.writeBoolean(has_file_md5);
-		if(has_file_md5) {
-			out.writeLong(file_md5_hi);
-			out.writeLong(file_md5_lo);
+		out.writeBoolean(has_file_sha256);
+		if(has_file_sha256) {
+			out.writeLong(file_sha256_0);
+			out.writeLong(file_sha256_1);
+			out.writeLong(file_sha256_2);
+			out.writeLong(file_sha256_3);
 		}
 		out.writeBoolean(symlink_target!=null);
 		if(symlink_target!=null) {
