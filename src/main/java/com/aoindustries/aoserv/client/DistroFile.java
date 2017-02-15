@@ -233,16 +233,30 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		symlink_target = in.readBoolean() ? in.readCompressedUTF() : null;
 	}
 
+	private static void writeChars(String s, DataOutputStream out) throws IOException {
+		out.writeInt(s.length());
+		out.writeChars(s);
+	}
+
+	private static String readChars(DataInputStream in) throws IOException {
+		int len = in.readInt();
+		char[] chars = new char[len];
+		for(int i=0; i<len; i++) {
+			chars[i] = in.readChar();
+		}
+		return new String(chars);
+	}
+
 	@Override
 	public void readRecord(DataInputStream in) throws IOException {
 		pkey = in.readInt();
 		operating_system_version = in.readInt();
-		path = in.readUTF();
+		path = readChars(in);
 		optional = in.readBoolean();
-		type = in.readUTF().intern();
+		type = readChars(in).intern();
 		mode = in.readLong();
-		linux_account = in.readUTF().intern();
-		linux_group = in.readUTF().intern();
+		linux_account = readChars(in).intern();
+		linux_group = readChars(in).intern();
 		size = in.readLong();
 		has_file_sha256 = in.readBoolean();
 		if(has_file_sha256) {
@@ -256,7 +270,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 			file_sha256_2 = 0;
 			file_sha256_3 = 0;
 		}
-		symlink_target = in.readBoolean() ? in.readUTF() : null;
+		symlink_target = in.readBoolean() ? readChars(in) : null;
 	}
 
 	@Override
@@ -292,15 +306,15 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		out.writeInt(pkey);
 		out.writeInt(operating_system_version);
 		if(path.length()>MAX_PATH_LENGTH) throw new IOException("path.length()>"+MAX_PATH_LENGTH+": "+path.length());
-		out.writeUTF(path);
+		writeChars(path, out);
 		out.writeBoolean(optional);
 		if(type.length()>MAX_TYPE_LENGTH) throw new IOException("type.length()>"+MAX_TYPE_LENGTH+": "+type.length());
-		out.writeUTF(type);
+		writeChars(type, out);
 		out.writeLong(mode);
 		if(linux_account.length()>MAX_LINUX_ACCOUNT_LENGTH) throw new IOException("linux_account.length()>"+MAX_LINUX_ACCOUNT_LENGTH+": "+linux_account.length());
-		out.writeUTF(linux_account);
+		writeChars(linux_account, out);
 		if(linux_group.length()>MAX_LINUX_GROUP_LENGTH) throw new IOException("linux_group.length()>"+MAX_LINUX_GROUP_LENGTH+": "+linux_group.length());
-		out.writeUTF(linux_group);
+		writeChars(linux_group, out);
 		out.writeLong(size);
 		out.writeBoolean(has_file_sha256);
 		if(has_file_sha256) {
@@ -312,7 +326,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		out.writeBoolean(symlink_target!=null);
 		if(symlink_target!=null) {
 			if(symlink_target.length()>MAX_SYMLINK_TARGET_LENGTH) throw new IOException("symlink_target.length()>"+MAX_SYMLINK_TARGET_LENGTH+": "+symlink_target.length());
-			out.writeUTF(symlink_target);
+			writeChars(symlink_target, out);
 		}
 	}
 }
