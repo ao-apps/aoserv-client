@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -45,11 +45,11 @@ final public class DistroReportType extends GlobalObjectStringKey<DistroReportTy
 	 */
 	public static final String
 		BIG_DIRECTORY  = "BD",
+		DIGEST         = "DI",
 		EXTRA          = "EX",
 		GROUP_MISMATCH = "GR",
 		HIDDEN         = "HI",
 		LENGTH         = "LN",
-		MD5            = "M5",
 		MISSING        = "MI",
 		OWNER_MISMATCH = "OW",
 		NO_OWNER       = "NO",
