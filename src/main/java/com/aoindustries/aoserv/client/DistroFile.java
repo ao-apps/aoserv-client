@@ -50,8 +50,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		MAX_PATH_LENGTH=194, // select max(length(path)) from distro_files;
 		MAX_TYPE_LENGTH=10,
 		MAX_SYMLINK_TARGET_LENGTH=96, // select max(length(symlink_target)) from distro_files;
-		MAX_LINUX_ACCOUNT_LENGTH=12,
-		MAX_LINUX_GROUP_LENGTH=10
+		MAX_LINUX_ACCOUNT_LENGTH=15, // select max(length(linux_account)) from distro_files;
+		MAX_LINUX_GROUP_LENGTH=15 // select max(length(linux_group)) from distro_files;
 	;
 
 	/**
