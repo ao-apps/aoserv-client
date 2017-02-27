@@ -239,4 +239,33 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 				throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
 		}
 	}
+
+	/**
+	 * Gets the directory that contains the per-virtual-host HTTP logs or <code>null</code>
+	 * if this OS doesn't support web sites.
+	 */
+	public String getHttpdSiteLogsDirectory() {
+		return getHttpdSiteLogsDirectory(pkey);
+	}
+
+	/**
+	 * Gets the directory that contains the per-virtual-host HTTP logs or <code>null</code>
+	 * if this OS doesn't support web sites.
+	 */
+	public static String getHttpdSiteLogsDirectory(int osv) {
+		switch(osv) {
+			case MANDRIVA_2006_0_I586 :
+			case REDHAT_ES_4_X86_64 :
+			case CENTOS_5_I686_AND_X86_64 :
+				return "/logs";
+			case CENTOS_7_X86_64 :
+				return "/var/log/www";
+			case CENTOS_5_DOM0_I686 :
+			case CENTOS_5_DOM0_X86_64 :
+			case CENTOS_7_DOM0_X86_64 :
+				return null;
+			default :
+				throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
+		}
+	}
 }

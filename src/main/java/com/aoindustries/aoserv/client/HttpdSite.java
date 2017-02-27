@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -63,15 +63,6 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
 	public static final int MAX_SITE_NAME_LENGTH = 255; // Same as maximum name of a directory
-
-	/**
-	 * @deprecated  The directory for websites is now operating-system specific.
-	 * 
-	 * @see  OperatingSystemVersion#getHttpdSitesDirectory()
-	 * @see  OperatingSystemVersion#getHttpdSitesDirectory(int)
-	 */
-	@Deprecated
-	public static final String WWW_DIRECTORY = "/www";
 
 	/**
 	 * The site name used when an account is disabled.

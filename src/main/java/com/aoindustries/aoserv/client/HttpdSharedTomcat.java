@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,17 +51,6 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	;
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_AO_SERVER_name = "ao_server";
-
-	/**
-	 * The directory that www groups are stored in.
-	 *
-	 * @deprecated  The directory for shared Tomcat installations is now operating-system specific.
-	 * 
-	 * @see  OperatingSystemVersion#getHttpdSharedTomcatsDirectory()
-	 * @see  OperatingSystemVersion#getHttpdSharedTomcatsDirectory(int)
-	 */
-	@Deprecated
-	public static final String WWW_GROUP_DIR="/wwwgroup";
 
 	/**
 	 * The maximum number of sites allowed in one <code>HttpdSharedTomcat</code>.
