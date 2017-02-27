@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-02-14T21:31:04-0600"
+		dateModified="2017-02-27T14:17:26-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -92,6 +92,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<code>DistroFile.hasFileMD5()</code> will return <code>false</code> for all files.
 						</p>
 					</li>
+					<li>Multi-site Tomcat installations moved to <code>/var/opt/apache-tomcat</code> for CentOS 7.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

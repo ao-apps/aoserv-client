@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2003-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -230,7 +230,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 			case CENTOS_5_I686_AND_X86_64 :
 				return "/wwwgroup";
 			case CENTOS_7_X86_64 :
-				return "/var/tomcat";
+				return "/var/opt/apache-tomcat";
 			case CENTOS_5_DOM0_I686 :
 			case CENTOS_5_DOM0_X86_64 :
 			case CENTOS_7_DOM0_X86_64 :
