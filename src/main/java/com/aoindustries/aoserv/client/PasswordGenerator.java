@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2011, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2011, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,13 +22,21 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.security.Identifier;
+import com.aoindustries.security.SmallIdentifier;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Random;
 
 /**
- * Generates random passwords.
+ * Generates easily remembered random passwords of at least 38 bits of entropy.
+ *
+ * @see  SmallIdentifier  Stronger, but less memorable, passwords may be generated from SmallIdentifiers.
+ *                        They are eleven characters long with an unambiguous character set.
+ *
+ * @see  Identifier  And even stronger passwords may be generated from Identifiers.
+ *                   These are twenty-two characters long with an unambiguous character set.
  *
  * @author  AO Industries, Inc.
  */
@@ -36,6 +44,12 @@ public class PasswordGenerator {
 
 	private PasswordGenerator() {
 	}
+
+	/**
+	 * The minimum randomness of the generated password.
+	 * This is currently around 38.6 bits of entropy.
+	 */
+	private static final long MINIMUM_ENTROPY = 413000000000L;
 
 	private static final String[] CONS = {
 		"b",            "bl",   "br",
@@ -229,7 +243,7 @@ public class PasswordGenerator {
 				if (dig2pos==2) pw.append(dig2);
 				//pw.append(" - ").append(entropy/1000000000L);
 
-			} while(entropy<413000000000L);
+			} while(entropy < MINIMUM_ENTROPY);
 			password=pw.toString();
 		} while(PasswordChecker.hasResults(PasswordChecker.checkPassword(null, password, PasswordChecker.PasswordStrength.STRICT)));
 		return password;
