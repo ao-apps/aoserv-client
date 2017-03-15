@@ -75,7 +75,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	// <editor-fold desc="Object implementation">
 	@Override
 	String toStringImpl() {
-		return pkey+"|"+brand+'/'+accounting+'|'+status+"->"+reseller;
+		if(reseller != null) {
+			return pkey+"|"+brand+'/'+accounting+'|'+status+"->"+reseller;
+		} else {
+			return pkey+"|"+brand+'/'+accounting+'|'+status;
+		}
 	}
 	// </editor-fold>
 
@@ -151,7 +155,12 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		try {
 			pkey = in.readCompressedInt();
 			brand = AccountingCode.valueOf(in.readUTF()).intern();
-			reseller = AccountingCode.valueOf(in.readUTF()).intern();
+			String resellerStr = in.readUTF();
+			if(AOServProtocol.FILTERED.equals(resellerStr)) {
+				reseller = null;
+			} else {
+				reseller = AccountingCode.valueOf(resellerStr).intern();
+			}
 			accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
 			language = in.readUTF().intern();
 			created_by = InternUtils.intern(in.readNullUTF());
@@ -175,7 +184,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller.toString());
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller==null ? AOServProtocol.FILTERED : reseller.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
 			out.writeUTF(accounting==null ? "" : accounting.toString());
 		} else {
@@ -227,9 +236,10 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}
 
 	/**
-	 * May be filtered.
+	 * May be null when filtered.
 	 */
 	public Reseller getReseller() throws SQLException, IOException {
+		if(reseller == null) return null;
 		return table.connector.getResellers().get(reseller);
 	}
 
