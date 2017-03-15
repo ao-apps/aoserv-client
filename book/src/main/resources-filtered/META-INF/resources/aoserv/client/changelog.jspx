@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-02-27T15:06:25-0600"
+		dateModified="2017-03-15T17:01:32-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -91,6 +91,11 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							No MD5 data will be sent to older clients.
 							<code>DistroFile.hasFileMD5()</code> will return <code>false</code> for all files.
 						</p>
+					</li>
+					<li>Bug fixes:
+						<ol>
+							<li><code>Ticket</code>: Fixed handling of filtered reseller field.</li>
+						</ol>
 					</li>
 					<li>Web site resources moved to more predictable locations for CentOS 7:
 						<ol>
