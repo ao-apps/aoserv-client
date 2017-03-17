@@ -23,10 +23,10 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.InetAddress;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ShellInterpreter;
 import com.aoindustries.validation.ValidationException;

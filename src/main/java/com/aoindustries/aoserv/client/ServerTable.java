@@ -22,10 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.DomainName;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.validation.ValidationException;

@@ -23,15 +23,15 @@
 package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
-import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
-import com.aoindustries.aoserv.client.validator.HostAddress;
-import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.HttpParameters;
+import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;

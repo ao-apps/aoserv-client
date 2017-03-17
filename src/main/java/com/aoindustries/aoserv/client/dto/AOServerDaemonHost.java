@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2010-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -21,6 +21,8 @@
  * along with aoserv-client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.aoindustries.aoserv.client.dto;
+
+import com.aoindustries.net.dto.InetAddress;
 
 /**
  * @author  AO Industries, Inc.
