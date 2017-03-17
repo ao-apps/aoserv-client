@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-17T14:04:58-0500"
+		dateModified="2017-03-17T14:56:35-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -108,6 +108,26 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Moved the following classes to the new <core:link book="/ao-lang" page="/index.jspx" /> project:
 						<ol>
 							<li><code>com.aoindustries.aoserv.client.DtoFactory</code></li>
+						</ol>
+					</li>
+					<li>Moved the following classes to the new <core:link book="/ao-net-types" page="/index.jspx" /> project:
+						<ol>
+							<li><code>com.aoindustries.aoserv.client.dto.DomainLabel</code></li>
+							<li><code>com.aoindustries.aoserv.client.dto.DomainLabels</code></li>
+							<li><code>com.aoindustries.aoserv.client.dto.DomainName</code></li>
+							<li><code>com.aoindustries.aoserv.client.dto.Email</code></li>
+							<li><code>com.aoindustries.aoserv.client.dto.HostAddress</code></li>
+							<li><code>com.aoindustries.aoserv.client.dto.InetAddress</code></li>
+							<li><code>com.aoindustries.aoserv.client.dto.MacAddress</code></li>
+							<li><code>com.aoindustries.aoserv.client.dto.NetPort</code></li>
+							<li><code>com.aoindustries.aoserv.client.validator.DomainLabel</code></li>
+							<li><code>com.aoindustries.aoserv.client.validator.DomainLabels</code></li>
+							<li><code>com.aoindustries.aoserv.client.validator.DomainName</code></li>
+							<li><code>com.aoindustries.aoserv.client.validator.Email</code></li>
+							<li><code>com.aoindustries.aoserv.client.validator.HostAddress</code></li>
+							<li><code>com.aoindustries.aoserv.client.validator.InetAddress</code></li>
+							<li><code>com.aoindustries.aoserv.client.validator.MacAddress</code></li>
+							<li><code>com.aoindustries.aoserv.client.validator.NetPort</code></li>
 						</ol>
 					</li>
 				</ul>
