@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2010-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,7 +23,7 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.DtoFactory;
+import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
 import com.aoindustries.io.FastObjectOutput;
