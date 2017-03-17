@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.util.ComparatorUtils;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -123,7 +123,7 @@ final public class LinuxId implements
 
 	@Override
 	public int compareTo(LinuxId other) {
-		return this==other ? 0 : AOServObject.compare(id, other.id);
+		return this==other ? 0 : ComparatorUtils.compare(id, other.id);
 	}
 
 	@Override

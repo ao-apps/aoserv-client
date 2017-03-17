@@ -22,11 +22,11 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
 import com.aoindustries.io.FastObjectOutput;
+import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -151,7 +151,7 @@ final public class AccountingCode implements
 
 	@Override
 	public int compareTo(AccountingCode other) {
-		return this==other ? 0 : AOServObject.compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
+		return this==other ? 0 : ComparatorUtils.compareIgnoreCaseConsistentWithEquals(accounting, other.accounting);
 	}
 
 	@Override

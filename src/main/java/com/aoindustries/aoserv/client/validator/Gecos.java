@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.Internable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -151,7 +151,7 @@ final public class Gecos implements
 
 	@Override
 	public int compareTo(Gecos other) {
-		return this==other ? 0 : AOServObject.compareIgnoreCaseConsistentWithEquals(value, other.value);
+		return this==other ? 0 : ComparatorUtils.compareIgnoreCaseConsistentWithEquals(value, other.value);
 	}
 
 	@Override
