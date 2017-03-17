@@ -107,7 +107,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Moved the following classes to the new <core:link book="/ao-lang" page="/index.jspx" /> project:
 						<ol>
-							<!-- TODO: Create redirects in aoindustries.com website -->
 							<li><code>com.aoindustries.aoserv.client.DtoFactory</code></li>
 						</ol>
 					</li>
