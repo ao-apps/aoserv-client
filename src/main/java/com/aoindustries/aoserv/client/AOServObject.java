@@ -47,6 +47,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
 import com.aoindustries.table.Row;
+import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
@@ -77,24 +78,36 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Ordering">
-	private static final Collator collator = Collator.getInstance(Locale.ROOT);
-	public static int compareIgnoreCaseConsistentWithEquals(String S1, String S2) {
-		if(S1==S2) return 0;
-		int diff = collator.compare(S1, S2);
-		if(diff!=0) return diff;
-		return S1.compareTo(S2);
+	/**
+	 * @deprecated  This method moved to {@link ComparatorUtils#compareIgnoreCaseConsistentWithEquals(java.lang.String, java.lang.String)}
+	 */
+	@Deprecated
+	public static int compareIgnoreCaseConsistentWithEquals(String s1, String s2) {
+		return ComparatorUtils.compareIgnoreCaseConsistentWithEquals(s1, s2);
 	}
 
+	/**
+	 * @deprecated  This method moved to {@link ComparatorUtils#compare(int, int)}
+	 */
+	@Deprecated
 	public static int compare(int i1, int i2) {
-		return i1<i2 ? -1 : i1==i2 ? 0 : 1;
+		return ComparatorUtils.compare(i1, i2);
 	}
 
+	/**
+	 * @deprecated  This method moved to {@link ComparatorUtils#compare(short, short)}
+	 */
+	@Deprecated
 	public static int compare(short s1, short s2) {
-		return s1<s2 ? -1 : s1==s2 ? 0 : 1;
+		return ComparatorUtils.compare(s1, s2);
 	}
 
+	/**
+	 * @deprecated  This method moved to {@link ComparatorUtils#compare(long, long)}
+	 */
+	@Deprecated
 	public static int compare(long l1, long l2) {
-		return l1<l2 ? -1 : l1==l2 ? 0 : 1;
+		return ComparatorUtils.compare(l1, l2);
 	}
 
 	/**
