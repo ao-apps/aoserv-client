@@ -23,16 +23,9 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.DomainLabel;
-import com.aoindustries.aoserv.client.validator.DomainLabels;
-import com.aoindustries.aoserv.client.validator.DomainName;
-import com.aoindustries.aoserv.client.validator.Email;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
-import com.aoindustries.aoserv.client.validator.HostAddress;
-import com.aoindustries.aoserv.client.validator.InetAddress;
-import com.aoindustries.aoserv.client.validator.MacAddress;
 import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
 import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
@@ -45,6 +38,13 @@ import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
+import com.aoindustries.net.DomainLabel;
+import com.aoindustries.net.DomainLabels;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Email;
+import com.aoindustries.net.HostAddress;
+import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.MacAddress;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.WrappedException;
@@ -54,13 +54,11 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * An <code>AOServObject</code> is the lowest level object
@@ -195,7 +193,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe domain label conversion.
 	 */
-	protected static DomainLabel getDomainLabel(com.aoindustries.aoserv.client.dto.DomainLabel domainLabel) throws ValidationException {
+	protected static DomainLabel getDomainLabel(com.aoindustries.net.dto.DomainLabel domainLabel) throws ValidationException {
 		if(domainLabel==null) return null;
 		return DomainLabel.valueOf(domainLabel.getLabel());
 	}
@@ -213,7 +211,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe domain labels conversion.
 	 */
-	protected static DomainLabels getDomainLabels(com.aoindustries.aoserv.client.dto.DomainLabels domainLabels) throws ValidationException {
+	protected static DomainLabels getDomainLabels(com.aoindustries.net.dto.DomainLabels domainLabels) throws ValidationException {
 		if(domainLabels==null) return null;
 		return DomainLabels.valueOf(domainLabels.getLabels());
 	}
@@ -221,7 +219,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe domain name conversion.
 	 */
-	protected static DomainName getDomainName(com.aoindustries.aoserv.client.dto.DomainName domainName) throws ValidationException {
+	protected static DomainName getDomainName(com.aoindustries.net.dto.DomainName domainName) throws ValidationException {
 		if(domainName==null) return null;
 		return DomainName.valueOf(domainName.getDomain());
 	}
@@ -229,7 +227,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe email conversion.
 	 */
-	protected static Email getEmail(com.aoindustries.aoserv.client.dto.Email email) throws ValidationException {
+	protected static Email getEmail(com.aoindustries.net.dto.Email email) throws ValidationException {
 		if(email==null) return null;
 		return Email.valueOf(email.getLocalPart(), DomainName.valueOf(email.getDomain().getDomain()));
 	}
@@ -261,7 +259,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe hostname conversion.
 	 */
-	protected static HostAddress getHostname(com.aoindustries.aoserv.client.dto.HostAddress hostname) throws ValidationException {
+	protected static HostAddress getHostname(com.aoindustries.net.dto.HostAddress hostname) throws ValidationException {
 		if(hostname==null) return null;
 		return HostAddress.valueOf(hostname.getAddress());
 	}
@@ -269,7 +267,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe inet address conversion.
 	 */
-	protected static InetAddress getInetAddress(com.aoindustries.aoserv.client.dto.InetAddress inetAddress) throws ValidationException {
+	protected static InetAddress getInetAddress(com.aoindustries.net.dto.InetAddress inetAddress) throws ValidationException {
 		if(inetAddress==null) return null;
 		return InetAddress.valueOf(inetAddress.getAddress());
 	}
@@ -285,7 +283,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe MAC address conversion.
 	 */
-	protected static MacAddress getMacAddress(com.aoindustries.aoserv.client.dto.MacAddress macAddress) throws ValidationException {
+	protected static MacAddress getMacAddress(com.aoindustries.net.dto.MacAddress macAddress) throws ValidationException {
 		if(macAddress==null) return null;
 		return MacAddress.valueOf(macAddress.getAddress());
 	}
@@ -317,9 +315,9 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe net port conversion.
 	 */
-	protected static com.aoindustries.aoserv.client.validator.NetPort getNetPort(com.aoindustries.aoserv.client.dto.NetPort netPort) throws ValidationException {
+	protected static com.aoindustries.net.NetPort getNetPort(com.aoindustries.net.dto.NetPort netPort) throws ValidationException {
 		if(netPort==null) return null;
-		return com.aoindustries.aoserv.client.validator.NetPort.valueOf(netPort.getPort());
+		return com.aoindustries.net.NetPort.valueOf(netPort.getPort());
 	}
 
 	/**

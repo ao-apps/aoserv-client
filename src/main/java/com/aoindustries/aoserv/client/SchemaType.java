@@ -23,18 +23,18 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.DomainLabel;
-import com.aoindustries.aoserv.client.validator.DomainLabels;
-import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
-import com.aoindustries.aoserv.client.validator.HostAddress;
-import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.LinuxId;
-import com.aoindustries.aoserv.client.validator.MacAddress;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.DomainLabel;
+import com.aoindustries.net.DomainLabels;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.HostAddress;
+import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.MacAddress;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
