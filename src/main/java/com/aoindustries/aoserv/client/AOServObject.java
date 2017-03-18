@@ -313,11 +313,11 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 
 	/**
-	 * null-safe net port conversion.
+	 * null-safe port conversion.
 	 */
-	protected static com.aoindustries.net.NetPort getNetPort(com.aoindustries.net.dto.NetPort netPort) throws ValidationException {
-		if(netPort==null) return null;
-		return com.aoindustries.net.NetPort.valueOf(netPort.getPort());
+	protected static com.aoindustries.net.Port getPort(com.aoindustries.net.dto.Port port) throws ValidationException {
+		if(port==null) return null;
+		return com.aoindustries.net.Port.valueOf(port.getPort());
 	}
 
 	/**
