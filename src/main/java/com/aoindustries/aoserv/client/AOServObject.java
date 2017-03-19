@@ -316,8 +316,11 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	 * null-safe port conversion.
 	 */
 	protected static com.aoindustries.net.Port getPort(com.aoindustries.net.dto.Port port) throws ValidationException {
-		if(port==null) return null;
-		return com.aoindustries.net.Port.valueOf(port.getPort());
+		if(port == null) return null;
+		return com.aoindustries.net.Port.valueOf(
+			port.getPort(),
+			com.aoindustries.net.Protocol.valueOf(port.getProtocol())
+		);
 	}
 
 	/**
