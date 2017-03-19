@@ -139,10 +139,6 @@ final public class LinuxId implements
 		return id;
 	}
 
-	public boolean isSystem() {
-		return id < 1000 || id==65534 || id==65535;
-	}
-
 	@Override
 	public com.aoindustries.aoserv.client.dto.LinuxId getDto() {
 		return new com.aoindustries.aoserv.client.dto.LinuxId(id);
