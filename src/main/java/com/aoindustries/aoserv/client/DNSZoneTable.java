@@ -63,7 +63,15 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	}
 
 	void addDNSZone(Package packageObj, String zone, InetAddress ip, int ttl) throws IOException, SQLException {
-		connector.requestUpdateIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.DNS_ZONES, packageObj.name, zone, ip.toString(), ttl);
+		connector.requestUpdateIL(
+			true,
+			AOServProtocol.CommandID.ADD,
+			SchemaTable.TableID.DNS_ZONES,
+			packageObj.name,
+			zone,
+			ip.toString(),
+			ttl
+		);
 	}
 
 	/**
@@ -144,7 +152,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	public static String getHostTLD(String hostname, List<DomainName> tlds) throws IllegalArgumentException {
 		int hostnameLen=hostname.length();
 		if (hostnameLen>0 && hostname.charAt(hostnameLen-1)!='.') {
-			hostname = hostname+".";
+			hostname += ".";
 			hostnameLen++;
 		}
 

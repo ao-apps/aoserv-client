@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2014, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -74,7 +76,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	public static final int DEFAULT_MX_PRIORITY = 10;
 
 	private String file;
-	String packageName;
+	AccountingCode packageName;
 	private String hostmaster;
 	private long serial;
 	private int ttl;
@@ -213,12 +215,16 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		file=result.getString(2);
-		packageName=result.getString(3);
-		hostmaster=result.getString(4);
-		serial=result.getLong(5);
-		ttl=result.getInt(6);
+		try {
+			pkey=result.getString(1);
+			file=result.getString(2);
+			packageName = AccountingCode.valueOf(result.getString(3));
+			hostmaster=result.getString(4);
+			serial=result.getLong(5);
+			ttl=result.getInt(6);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isArpa() {
@@ -397,12 +403,16 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		file=in.readUTF();
-		packageName=in.readUTF().intern();
-		hostmaster=in.readUTF().intern();
-		serial=in.readLong();
-		ttl=in.readCompressedInt();
+		try {
+			pkey=in.readUTF().intern();
+			file=in.readUTF();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			hostmaster=in.readUTF().intern();
+			serial=in.readLong();
+			ttl=in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -426,7 +436,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(file);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		out.writeUTF(hostmaster);
 		out.writeLong(serial);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);

@@ -22,10 +22,12 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Port;
 import com.aoindustries.util.BufferManager;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.ResultSet;
@@ -73,7 +75,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	int ao_server;
 	String site_name;
 	private boolean list_first;
-	String packageName;
+	AccountingCode packageName;
 	String linuxAccount;
 	String linuxGroup;
 	private String
@@ -272,23 +274,27 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey = result.getInt(pos++);
-		ao_server = result.getInt(pos++);
-		site_name = result.getString(pos++);
-		list_first = result.getBoolean(pos++);
-		packageName = result.getString(pos++);
-		linuxAccount = result.getString(pos++);
-		linuxGroup = result.getString(pos++);
-		serverAdmin = result.getString(pos++);
-		contentSrc = result.getString(pos++);
-		disable_log = result.getInt(pos++);
-		if(result.wasNull()) disable_log=-1;
-		isManual = result.getBoolean(pos++);
-		awstatsSkipFiles = result.getString(pos++);
-		phpVersion = result.getInt(pos++);
-		if(result.wasNull()) phpVersion = -1;
-		enableCgi = result.getBoolean(pos++);
+		try {
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			ao_server = result.getInt(pos++);
+			site_name = result.getString(pos++);
+			list_first = result.getBoolean(pos++);
+			packageName = AccountingCode.valueOf(result.getString(pos++));
+			linuxAccount = result.getString(pos++);
+			linuxGroup = result.getString(pos++);
+			serverAdmin = result.getString(pos++);
+			contentSrc = result.getString(pos++);
+			disable_log = result.getInt(pos++);
+			if(result.wasNull()) disable_log=-1;
+			isManual = result.getBoolean(pos++);
+			awstatsSkipFiles = result.getString(pos++);
+			phpVersion = result.getInt(pos++);
+			if(result.wasNull()) phpVersion = -1;
+			enableCgi = result.getBoolean(pos++);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isManual() {
@@ -354,20 +360,24 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey = in.readCompressedInt();
-		ao_server = in.readCompressedInt();
-		site_name = in.readUTF();
-		list_first = in.readBoolean();
-		packageName = in.readUTF().intern();
-		linuxAccount = in.readUTF().intern();
-		linuxGroup = in.readUTF().intern();
-		serverAdmin = in.readUTF();
-		contentSrc = in.readNullUTF();
-		disable_log = in.readCompressedInt();
-		isManual = in.readBoolean();
-		awstatsSkipFiles = in.readNullUTF();
-		phpVersion = in.readCompressedInt();
-		enableCgi = in.readBoolean();
+		try {
+			pkey = in.readCompressedInt();
+			ao_server = in.readCompressedInt();
+			site_name = in.readUTF();
+			list_first = in.readBoolean();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			linuxAccount = in.readUTF().intern();
+			linuxGroup = in.readUTF().intern();
+			serverAdmin = in.readUTF();
+			contentSrc = in.readNullUTF();
+			disable_log = in.readCompressedInt();
+			isManual = in.readBoolean();
+			awstatsSkipFiles = in.readNullUTF();
+			phpVersion = in.readCompressedInt();
+			enableCgi = in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -394,7 +404,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		out.writeCompressedInt(ao_server);
 		out.writeUTF(site_name);
 		out.writeBoolean(list_first);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		out.writeUTF(linuxAccount);
 		out.writeUTF(linuxGroup);
 		out.writeUTF(serverAdmin);

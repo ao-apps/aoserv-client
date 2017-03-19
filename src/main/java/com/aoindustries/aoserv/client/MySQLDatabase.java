@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2014, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.IoUtils;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -97,7 +99,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	String name;
 	int mysql_server;
-	String packageName;
+	AccountingCode packageName;
 	private AlertLevel maxCheckTableAlertLevel;
 
 	public int addMySQLServerUser(
@@ -288,20 +290,28 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		name=result.getString(2);
-		mysql_server=result.getInt(3);
-		packageName=result.getString(4);
-		maxCheckTableAlertLevel = AlertLevel.valueOf(result.getString(5));
+		try {
+			pkey=result.getInt(1);
+			name=result.getString(2);
+			mysql_server=result.getInt(3);
+			packageName = AccountingCode.valueOf(result.getString(4));
+			maxCheckTableAlertLevel = AlertLevel.valueOf(result.getString(5));
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		name=in.readUTF();
-		mysql_server=in.readCompressedInt();
-		packageName=in.readUTF().intern();
-		maxCheckTableAlertLevel = AlertLevel.valueOf(in.readCompressedUTF());
+		try {
+			pkey=in.readCompressedInt();
+			name=in.readUTF();
+			mysql_server=in.readCompressedInt();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			maxCheckTableAlertLevel = AlertLevel.valueOf(in.readCompressedUTF());
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -346,7 +356,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		out.writeUTF(name);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
 		else out.writeCompressedInt(mysql_server);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);

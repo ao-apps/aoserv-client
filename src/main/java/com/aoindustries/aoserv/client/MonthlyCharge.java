@@ -54,7 +54,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	static final String COLUMN_CREATED_name = "created";
 
 	private AccountingCode accounting;
-	String packageName;
+	AccountingCode packageName;
 	private String type;
 	private String description;
 	private int quantity;
@@ -165,7 +165,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		try {
 			pkey = result.getInt(1);
 			accounting = AccountingCode.valueOf(result.getString(2));
-			packageName = result.getString(3);
+			packageName = AccountingCode.valueOf(result.getString(3));
 			type = result.getString(4);
 			description = result.getString(5);
 			quantity = SQLUtility.getMillis(result.getString(6));
@@ -187,7 +187,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		try {
 			pkey=in.readCompressedInt();
 			accounting=AccountingCode.valueOf(in.readUTF()).intern();
-			packageName=in.readUTF().intern();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			type=in.readUTF().intern();
 			description=in.readNullUTF();
 			quantity=in.readCompressedInt();
@@ -202,14 +202,14 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
 	@Override
 	String toStringImpl() {
-		return packageName+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
+		return packageName.toString()+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		out.writeUTF(type);
 		out.writeNullUTF(description);
 		out.writeCompressedInt(quantity);

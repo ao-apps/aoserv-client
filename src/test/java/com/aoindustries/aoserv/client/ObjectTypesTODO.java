@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -117,7 +117,7 @@ public class ObjectTypesTODO extends TestCase {
 										case SchemaType.LONG: {expectedType=Long.class; Long l=(Long)value; break;}
 										//case SchemaType.OCTAL_INT: {expectedType=Integer.class; Integer i=(Integer)value; break;}
 										case SchemaType.OCTAL_LONG: {expectedType=Long.class; Long l=(Long)value; break;}
-										case SchemaType.PACKAGE: {expectedType=String.class; String pack=(String)value; break;}
+										//case SchemaType.PACKAGE: {expectedType=String.class; String pack=(String)value; break;}
 										case SchemaType.PATH: {expectedType=String.class; String path=(String)value; break;}
 										case SchemaType.PHONE: {expectedType=String.class; String phone=(String)value; break;}
 										case SchemaType.PKEY: {expectedType=Integer.class; Integer pkey=(Integer)value; break;}

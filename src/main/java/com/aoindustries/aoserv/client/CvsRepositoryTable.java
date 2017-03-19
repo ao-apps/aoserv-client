@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2002-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2002-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -103,7 +104,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	}
 
 	List<CvsRepository> getCvsRepositories(Package pk) throws IOException, SQLException {
-		String pkname=pk.name;
+		AccountingCode pkname = pk.name;
 
 		List<CvsRepository> cached=getRows();
 		int size=cached.size();

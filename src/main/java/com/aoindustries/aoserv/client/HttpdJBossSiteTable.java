@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -77,7 +77,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 					out.writeCompressedInt(SchemaTable.TableID.HTTPD_JBOSS_SITES.ordinal());
 					out.writeCompressedInt(aoServer.pkey);
 					out.writeUTF(siteName);
-					out.writeUTF(packageObj.name);
+					out.writeUTF(packageObj.name.toString());
 					out.writeUTF(siteUser.pkey);
 					out.writeUTF(siteGroup.pkey);
 					out.writeUTF(serverAdmin);

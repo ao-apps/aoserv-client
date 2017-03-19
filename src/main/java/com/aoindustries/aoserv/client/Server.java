@@ -205,7 +205,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 		AOServer aoServer = getAOServer();
 		if(aoServer!=null) return aoServer.toStringImpl();
 		Package pk = getPackage();
-		if(pk!=null) return pk.getName()+'/'+name;
+		if(pk!=null) return pk.getName().toString()+'/'+name;
 		return Integer.toString(pkey);
 	}
 

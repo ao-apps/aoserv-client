@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2012-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2012-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -63,7 +64,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 	}
 
 	List<MySQLUser> getMySQLUsers(Package pack) throws IOException, SQLException {
-		String name=pack.name;
+		AccountingCode name=pack.name;
 		List<MySQLUser> cached=getRows();
 		int size=cached.size();
 		List<MySQLUser> matches=new ArrayList<>(size);

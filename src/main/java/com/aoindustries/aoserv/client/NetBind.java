@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.EmptyParameters;
@@ -64,7 +65,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	static final String COLUMN_IP_ADDRESS_name = "ip_address";
 	static final String COLUMN_PORT_name = "port";
 
-	String packageName;
+	AccountingCode packageName;
 	int server;
 	int ip_address;
 	Port port;
@@ -377,7 +378,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			packageName=result.getString(2);
+			packageName = AccountingCode.valueOf(result.getString(2));
 			server=result.getInt(3);
 			ip_address=result.getInt(4);
 			port = Port.valueOf(
@@ -476,7 +477,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			packageName=in.readUTF().intern();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			server=in.readCompressedInt();
 			ip_address=in.readCompressedInt();
 			port = Port.valueOf(
@@ -597,7 +598,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(server);
 		out.writeCompressedInt(ip_address);
 		out.writeCompressedInt(port.getPort());
