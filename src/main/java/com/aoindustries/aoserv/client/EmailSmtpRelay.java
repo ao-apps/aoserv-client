@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.HostAddress;
@@ -55,7 +56,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	 */
 	public static final int HISTORY_DAYS=92;
 
-	String packageName;
+	AccountingCode packageName;
 	int ao_server;
 	private HostAddress host;
 	String type;
@@ -172,7 +173,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			packageName=result.getString(2);
+			packageName = AccountingCode.valueOf(result.getString(2));
 			ao_server=result.getInt(3);
 			if(result.wasNull()) ao_server=-1;
 			host=HostAddress.valueOf(result.getString(4));
@@ -193,7 +194,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			packageName=in.readUTF().intern();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			host=HostAddress.valueOf(in.readUTF());
 			type=in.readUTF().intern();
@@ -239,7 +240,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(ao_server);
 		out.writeUTF(host.toString());
 		out.writeUTF(type);

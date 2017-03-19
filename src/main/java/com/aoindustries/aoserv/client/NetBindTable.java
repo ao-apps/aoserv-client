@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -77,7 +78,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.NET_BINDS.ordinal());
 					out.writeCompressedInt(se.pkey);
-					out.writeUTF(pk.name);
+					out.writeUTF(pk.name.toString());
 					out.writeCompressedInt(ia.pkey);
 					out.writeCompressedInt(port.getPort());
 					out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
@@ -121,7 +122,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	}
 
 	List<NetBind> getNetBinds(Package pk, IPAddress ip) throws IOException, SQLException {
-		String packageName=pk.name;
+		AccountingCode packageName=pk.name;
 		// Use the index first
 		List<NetBind> cached=getNetBinds(ip);
 		int size=cached.size();

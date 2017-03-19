@@ -92,7 +92,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 		LONG                   = 16, // long/java.lang.Long
 		//OCTAL_INT            = 17, // int/java.lang.Integer
 		OCTAL_LONG             = 18, // long/java.lang.Long
-		PACKAGE                = 19, // com.aoindustries.aoserv.client.validator.AccountingCode
+		//PACKAGE                = 19, // com.aoindustries.aoserv.client.validator.AccountingCode
 		PKEY                   = 20, // int/java.lang.Integer
 		PATH                   = 21, // com.aoindustries.aoserv.client.validator.UnixPath
 		PHONE                  = 22, // java.lang.String
@@ -166,72 +166,71 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	 * Casts one type of object to another.  These casts are allowed:
 	 *
 	 * <pre>
-	 *                                                                                                        P
-	 *                                                                                                        O
-	 *                                                                                                        S P
-	 *                                                                                              M         T O
-	 *                                                                                              Y         G S
-	 *                                                                                              S M       R T P
-	 *                                                                                              Q Y M     E G O
-	 *                                                                                      H       L S Y     S R S
-	 *                                                                                      A       _ Q S M   _ E T
-	 *                                                                              D       S       D L Q Y   D S G
-	 *                                                                            D O       H       A _ L S   A _ R
-	 *                                                                          B O M D     E   M   T S _ Q   T S E
-	 *                        A                       I   O                     I M A O     D   A   A E T L   A E S
-	 *                        C     D D               P   C                     G A I M     _   C   B R A _   B R _
-	 *                        C     E E         H   I _   T                 U   _ I N A   G P L _   A V B U N A V U
-	 *                      T O B   C C         O   N A   A P               S   D N _ I   R A I A   S E L S E S E S
-	 *                      O U O   I I D       S   T D   L A         S     E   E _ L N   O S N D   E R E E T E R E
-	 *                        N O   M M O E   F T   E D   _ C     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R
-	 *                        T L D A A U M F L N   R R L L K P P H H R T   N Z I A B N E P W X R O N N N N P N N N
-	 *                        I E A L L B A K O A I V E O O A K A O O I I U A O M B E A C _ O _ E N A A A A O A A A
-	 *                        N A T _ _ L I E A M N A S N N G E T N R N M R M N A E L M O I R I S E M M M M R M M M
-	 *               FROM     G N E 2 3 E L Y T E T L S G G E Y H E T G E L E E L L S E S D D D S Y E E E E T E E E
+	 *                                                                                                      P
+	 *                                                                                                      O
+	 *                                                                                                      S P
+	 *                                                                                            M         T O
+	 *                                                                                            Y         G S
+	 *                                                                                            S M       R T P
+	 *                                                                                            Q Y M     E G O
+	 *                                                                                    H       L S Y     S R S
+	 *                                                                                    A       _ Q S M   _ E T
+	 *                                                                            D       S       D L Q Y   D S G
+	 *                                                                          D O       H       A _ L S   A _ R
+	 *                                                                        B O M D     E   M   T S _ Q   T S E
+	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S
+	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _
+	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U
+	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S
+	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E
+	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R
+	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N
+	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A
+	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M
+	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E
 	 *
-	 *             ACCOUNTING X                             X         X
-	 *                BOOLEAN   X   X X X     X   X     X X         X X         X
-	 *                   DATE     X X X X     X   X     X X         X X X       X
-	 *              DECIMAL_2   X   X X X     X   X X   X X         X X         X
-	 *              DECIMAL_3   X   X X X     X   X X   X X         X X         X
-	 *                 DOUBLE   X   X X X     X   X X   X X         X X         X
-	 *                  EMAIL             X     X                     X   X X X       X
-	 *                   FKEY               X     X           X       X
-	 *                  FLOAT   X   X X X     X   X X   X X         X X         X
-	 *               HOSTNAME                   X     X               X       X       X
-	 *                    INT   X X X X X   X X   X X X X X   X     X X         X             X
-	 *               INTERVAL       X X X     X   X X   X X         X X         X
-	 *             IP_ADDRESS                         X               X
-	 *                   LONG   X X X X X     X   X X   X X         X X X       X
-	 *             OCTAL_LONG   X X X X X     X   X X   X X         X X X       X
-	 *                PACKAGE X                             X         X
-	 *                   PKEY               X     X           X       X
-	 *                   PATH                                   X     X
-	 *                  PHONE                                     X   X
-	 *                  SHORT   X X X X X     X   X X   X X         X X         X
-	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X
-	 *                   TIME     X                     X X           X X
-	 *                    URL                   X               X     X   X   X       X
-	 *               USERNAME                                         X     X                             X       X
-	 *                   ZONE                   X                     X       X       X
-	 *            BIG_DECIMAL   X   X X X     X   X X   X X         X X         X
-	 *           DOMAIN_LABEL                                         X           X X X
-	 *          DOMAIN_LABELS                                         X             X X
-	 *            DOMAIN_NAME                   X                     X       X     X X
-	 *                  GECOS                                         X                 X
-	 *               GROUP_ID                                         X                   X
-	 *        HASHED_PASSWORD                                         X                     X
-	 *               LINUX_ID   X                 X                   X                       X
-	 *            MAC_ADDRESS                                         X                         X
-	 *                  MONEY                                         X         X                 X
-	 *    MYSQL_DATABASE_NAME                                         X                             X
-	 *      MYSQL_SERVER_NAME                                         X                               X
-	 *       MYSQL_TABLE_NAME                                         X                                 X
-	 *         MYSQL_USERNAME                                         X     X                             X
-	 *               NET_PORT                     X                   X                                     X
-	 * POSTGRES_DATABASE_NAME                                         X                                       X
-	 *   POSTGRES_SERVER_NAME                                         X                                         X
-	 *      POSTGRES_USERNAME                                         X     X                                     X
+	 *             ACCOUNTING X                                     X
+	 *                BOOLEAN   X   X X X     X   X     X X       X X         X
+	 *                   DATE     X X X X     X   X     X X       X X X       X
+	 *              DECIMAL_2   X   X X X     X   X X   X X       X X         X
+	 *              DECIMAL_3   X   X X X     X   X X   X X       X X         X
+	 *                 DOUBLE   X   X X X     X   X X   X X       X X         X
+	 *                  EMAIL             X     X                   X   X X X       X
+	 *                   FKEY               X     X         X       X
+	 *                  FLOAT   X   X X X     X   X X   X X       X X         X
+	 *               HOSTNAME                   X     X             X       X       X
+	 *                    INT   X X X X X   X X   X X X X X X     X X         X             X
+	 *               INTERVAL       X X X     X   X X   X X       X X         X
+	 *             IP_ADDRESS                         X             X
+	 *                   LONG   X X X X X     X   X X   X X       X X X       X
+	 *             OCTAL_LONG   X X X X X     X   X X   X X       X X X       X
+	 *                   PKEY               X     X         X       X
+	 *                   PATH                                 X     X
+	 *                  PHONE                                   X   X
+	 *                  SHORT   X X X X X     X   X X   X X       X X         X
+	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X
+	 *                   TIME     X                     X X         X X
+	 *                    URL                   X             X     X   X   X       X
+	 *               USERNAME                                       X     X                             X       X
+	 *                   ZONE                   X                   X       X       X
+	 *            BIG_DECIMAL   X   X X X     X   X X   X X       X X         X
+	 *           DOMAIN_LABEL                                       X           X X X
+	 *          DOMAIN_LABELS                                       X             X X
+	 *            DOMAIN_NAME                   X                   X       X     X X
+	 *                  GECOS                                       X                 X
+	 *               GROUP_ID                                       X                   X
+	 *        HASHED_PASSWORD                                       X                     X
+	 *               LINUX_ID   X                 X                 X                       X
+	 *            MAC_ADDRESS                                       X                         X
+	 *                  MONEY                                       X         X                 X
+	 *    MYSQL_DATABASE_NAME                                       X                             X
+	 *      MYSQL_SERVER_NAME                                       X                               X
+	 *       MYSQL_TABLE_NAME                                       X                                 X
+	 *         MYSQL_USERNAME                                       X     X                             X
+	 *               NET_PORT                     X                 X                                     X
+	 * POSTGRES_DATABASE_NAME                                       X                                       X
+	 *   POSTGRES_SERVER_NAME                                       X                                         X
+	 *      POSTGRES_USERNAME                                       X     X                                     X
 	 * </pre>
 	 */
 	public Object cast(AOServConnector conn, Object value, SchemaType castToType) throws IOException, SQLException {
@@ -244,8 +243,6 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					switch(castToType.getNum()) {
 						case ACCOUNTING:
 							return value;
-						case PACKAGE:
-							return value==null ? null : ((AccountingCode)value).toString();
 					}
 					break;
 				case BOOLEAN:
@@ -464,13 +461,6 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 							case TIME: return value==null?null:new java.sql.Timestamp(lvalue);
 							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(lvalue);
 						}
-					}
-					break;
-				case PACKAGE:
-					// TODO: com.aoindustries.aoserv.client.validator.AccountingCode
-					switch(castToType.getNum()) {
-						case ACCOUNTING: return value == null ? null :  AccountingCode.valueOf((String)value);
-						case PACKAGE: return value;
 					}
 					break;
 				case PKEY:
@@ -759,7 +749,6 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				switch(type) {
 					case ACCOUNTING:
 						return ((AccountingCode)value1).compareTo((AccountingCode)value2);
-					case PACKAGE: // TODO: com.aoindustries.aoserv.client.validator.AccountingCode
 					case PATH: // TODO: com.aoindustries.aoserv.client.validator.UnixPath
 					case PHONE:
 					case STRING:
@@ -910,7 +899,6 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case IP_ADDRESS: return value.toString();
 			case LONG: return value.toString();
 			case OCTAL_LONG: return Long.toOctalString(((Long)value));
-			case PACKAGE: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.AccountingCode
 			case PATH: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.UnixPath
 			case PHONE: return (String)value;
 			case PKEY: return value.toString();
@@ -978,7 +966,6 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case ACCOUNTING:
 					return AccountingCode.valueOf(S);
 				case EMAIL: // TODO: com.aoindustries.net.Email
-				case PACKAGE: // TODO: com.aoindustries.aoserv.client.validator.AccountingCode
 				case PATH: // TODO: com.aoindustries.aoserv.client.validator.UnixPath
 				case PHONE:
 				case STRING:

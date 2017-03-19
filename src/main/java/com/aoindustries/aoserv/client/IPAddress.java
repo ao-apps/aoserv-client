@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -167,7 +168,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	int net_device;
 	boolean is_alias;
 	private DomainName hostname;
-	String packageName;
+	AccountingCode packageName;
 	private long created;
 	private boolean available;
 	private boolean isOverflow;
@@ -280,7 +281,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 			if(result.wasNull()) net_device=-1;
 			is_alias = result.getBoolean(4);
 			hostname = DomainName.valueOf(result.getString(5));
-			packageName = result.getString(6);
+			packageName = AccountingCode.valueOf(result.getString(6));
 			created = result.getTimestamp(7).getTime();
 			available = result.getBoolean(8);
 			isOverflow = result.getBoolean(9);
@@ -326,7 +327,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 			net_device=in.readCompressedInt();
 			is_alias=in.readBoolean();
 			hostname=DomainName.valueOf(in.readNullUTF());
-			packageName=in.readUTF().intern();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			created=in.readLong();
 			available=in.readBoolean();
 			isOverflow=in.readBoolean();
@@ -373,7 +374,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		} else {
 			out.writeNullUTF(ObjectUtils.toString(hostname));
 		}
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(0);
 		out.writeLong(created);
 		out.writeBoolean(available);

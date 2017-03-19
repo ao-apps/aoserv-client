@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -124,7 +125,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	}
 
 	List<HttpdSharedTomcat> getHttpdSharedTomcats(Package pk) throws IOException, SQLException {
-		String pkname=pk.name;
+		AccountingCode pkname=pk.name;
 
 		List<HttpdSharedTomcat> cached=getRows();
 		int size=cached.size();

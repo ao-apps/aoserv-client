@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -65,7 +66,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
-					out.writeUTF(pack.name);
+					out.writeUTF(pack.name.toString());
 					out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);
 					out.writeUTF(host);
 					out.writeUTF(type.pkey);
@@ -99,7 +100,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 	}
 
 	EmailSmtpRelay getEmailSmtpRelay(Package pk, AOServer ao, HostAddress host) throws IOException, SQLException {
-		String packageName=pk.name;
+		AccountingCode packageName=pk.name;
 		int aoPKey=ao.pkey;
 
 		List<EmailSmtpRelay> cached = getRows();

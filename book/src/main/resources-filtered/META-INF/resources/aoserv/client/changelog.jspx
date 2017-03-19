@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-19T03:24:22-0500"
+		dateModified="2017-03-19T15:51:12-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -147,7 +147,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Removed <code>protocols.zip</code> row</li>
 						</ol>
 					</li>
-					<li>Change column types to use new self-validating types:
+					<li>Changed column types to use new self-validating types:
 						<ol>
 							<li>Changed <code>failover_file_replications.quota_gid</code> to <code>linux_id</code> type</li>
 							<li>Changed <code>linux_server_accounts.uid</code> to <code>linux_id</code> type</li>
@@ -159,6 +159,30 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Changed <code>protocols.port</code> to <code>net_port</code> type</li>
 						</ol>
 					</li>
+					<li>Removed <code>package</code> type:
+						<ol>
+							<li>Changed <code>dns_zones.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>email_domains.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>email_pipes.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>email_smtp_relays.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>httpd_sites.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>ip_addresses.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>linux_groups.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>monthly_charges.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>mysql_databases.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>mysql_servers.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>net_binds.package</code> to <code>accounting</code> type</li>
+							<li>Changed <code>packages.name</code> to <code>accounting</code> type</li>
+							<li>Changed <code>usernames.package</code> to <code>accounting</code> type</li>
+						</ol>
+					</li>
+					<!-- TODO:
+					<li>Changed client-side objects to use more of the new self-validating types:
+						<ol>
+							<li>Changed <code>package</code> type implementation to <code>AccountingCode</code> class</li>
+						</ol>
+					</li>
+					-->
 				</ul>
 			</changelog:release>
 		</c:if>

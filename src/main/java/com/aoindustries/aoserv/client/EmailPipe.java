@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,7 +53,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 
 	int ao_server;
 	private String path;
-	String packageName;
+	AccountingCode packageName;
 	int disable_log;
 
 	public int addEmailAddress(EmailAddress address) throws IOException, SQLException {
@@ -128,21 +130,29 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		ao_server = result.getInt(2);
-		path = result.getString(3);
-		packageName = result.getString(4);
-		disable_log=result.getInt(5);
-		if(result.wasNull()) disable_log=-1;
+		try {
+			pkey = result.getInt(1);
+			ao_server = result.getInt(2);
+			path = result.getString(3);
+			packageName = AccountingCode.valueOf(result.getString(4));
+			disable_log=result.getInt(5);
+			if(result.wasNull()) disable_log=-1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		ao_server=in.readCompressedInt();
-		path=in.readUTF();
-		packageName=in.readUTF().intern();
-		disable_log=in.readCompressedInt();
+		try {
+			pkey=in.readCompressedInt();
+			ao_server=in.readCompressedInt();
+			path=in.readUTF();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			disable_log=in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -170,7 +180,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
 		out.writeUTF(path);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(disable_log);
 	}
 }

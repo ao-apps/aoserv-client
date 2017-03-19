@@ -86,7 +86,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	 */
 	public static final float DEFAULT_EMAIL_RELAY_RATE = .1f;
 
-	String name;
+	AccountingCode name;
 	AccountingCode accounting;
 	int package_definition;
 	private long created;
@@ -108,7 +108,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public void addLinuxGroup(String name, LinuxGroupType type) throws IOException, SQLException {
-	addLinuxGroup(name, type.pkey);
+		addLinuxGroup(name, type.pkey);
 	}
 
 	public void addLinuxGroup(String name, String type) throws IOException, SQLException {
@@ -306,7 +306,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.connector.getMysqlUsers().getMySQLUsers(this);
 	}
 
-	public String getName() {
+	public AccountingCode getName() {
 		return name;
 	}
 
@@ -362,7 +362,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		try {
 			int pos = 1;
 			pkey = result.getInt(pos++);
-			name = result.getString(pos++);
+			name = AccountingCode.valueOf(result.getString(pos++));
 			accounting = AccountingCode.valueOf(result.getString(pos++));
 			package_definition = result.getInt(pos++);
 			created = result.getTimestamp(pos++).getTime();
@@ -394,7 +394,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			name=in.readUTF().intern();
+			name = AccountingCode.valueOf(in.readUTF()).intern();
 			accounting=AccountingCode.valueOf(in.readUTF()).intern();
 			package_definition=in.readCompressedInt();
 			created=in.readLong();
@@ -414,7 +414,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(name);
+		out.writeUTF(name.toString());
 		out.writeUTF(accounting.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
 			out.writeUTF("unknown");
@@ -450,8 +450,6 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 
 	@Override
 	public int compareTo(Package o) {
-		int diff = name.compareToIgnoreCase(o.name);
-		if(diff!=0) return diff;
 		return name.compareTo(o.name);
 	}
 }

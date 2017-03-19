@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -81,7 +83,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 	 */
 	public static final int GID_MAX = 60000;
 
-	String packageName;
+	AccountingCode packageName;
 	private String type;
 	public static final int MAX_LENGTH=255;
 
@@ -133,9 +135,13 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		packageName = result.getString(2);
-		type = result.getString(3);
+		try {
+			pkey = result.getString(1);
+			packageName = AccountingCode.valueOf(result.getString(2));
+			type = result.getString(3);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	/**
@@ -177,9 +183,13 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		packageName=in.readUTF().intern();
-		type=in.readUTF().intern();
+		try {
+			pkey=in.readUTF().intern();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			type=in.readUTF().intern();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -212,7 +222,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		out.writeUTF(type);
 	}
 }

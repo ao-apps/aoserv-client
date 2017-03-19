@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,9 +23,11 @@
 package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -55,7 +57,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
 	public static final int MAX_LENGTH = 255;
 
-	String packageName;
+	AccountingCode packageName;
 	int disable_log;
 
 	public void addBusinessAdministrator(
@@ -280,10 +282,14 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		packageName = result.getString(2);
-		disable_log=result.getInt(3);
-		if(result.wasNull()) disable_log=-1;
+		try {
+			pkey = result.getString(1);
+			packageName = AccountingCode.valueOf(result.getString(2));
+			disable_log=result.getInt(3);
+			if(result.wasNull()) disable_log=-1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isUsed() throws IOException, SQLException {
@@ -361,9 +367,13 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		packageName=in.readUTF().intern();
-		disable_log=in.readCompressedInt();
+		try {
+			pkey=in.readUTF().intern();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			disable_log=in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -429,7 +439,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(disable_log);
 	}
 }

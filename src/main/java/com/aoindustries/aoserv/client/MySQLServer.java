@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.AoCollections;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -351,7 +353,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	private int version;
 	private int max_connections;
 	int net_bind;
-	String packageName;
+	AccountingCode packageName;
 
 	public int addMySQLDatabase(
 		String name,
@@ -494,13 +496,17 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		name=result.getString(2);
-		ao_server=result.getInt(3);
-		version=result.getInt(4);
-		max_connections=result.getInt(5);
-		net_bind=result.getInt(6);
-		packageName=result.getString(7);
+		try {
+			pkey=result.getInt(1);
+			name=result.getString(2);
+			ao_server=result.getInt(3);
+			version=result.getInt(4);
+			max_connections=result.getInt(5);
+			net_bind=result.getInt(6);
+			packageName = AccountingCode.valueOf(result.getString(7));
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
@@ -509,13 +515,17 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		name=in.readUTF().intern();
-		ao_server=in.readCompressedInt();
-		version=in.readCompressedInt();
-		max_connections=in.readCompressedInt();
-		net_bind=in.readCompressedInt();
-		packageName=in.readUTF().intern();
+		try {
+			pkey=in.readCompressedInt();
+			name=in.readUTF().intern();
+			ao_server=in.readCompressedInt();
+			version=in.readCompressedInt();
+			max_connections=in.readCompressedInt();
+			net_bind=in.readCompressedInt();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	public void restartMySQL() throws IOException, SQLException {
@@ -543,7 +553,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		out.writeCompressedInt(version);
 		out.writeCompressedInt(max_connections);
 		out.writeCompressedInt(net_bind);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0) out.writeUTF(packageName);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0) out.writeUTF(packageName.toString());
 	}
 
 	final public static class MasterStatus {

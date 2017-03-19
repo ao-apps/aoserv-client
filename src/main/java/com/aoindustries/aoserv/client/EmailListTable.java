@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -92,7 +92,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 	}
 
 	List<EmailList> getEmailLists(Package pack) throws IOException, SQLException {
-		String packName=pack.name;
+		AccountingCode packName=pack.name;
 
 		List<EmailList> cached=getRows();
 		int size=cached.size();

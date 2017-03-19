@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
@@ -59,7 +60,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 
 	private DomainName domain;
 	int ao_server;
-	String packageName;
+	AccountingCode packageName;
 
 	public int addEmailAddress(String address) throws SQLException, IOException {
 		return table.connector.getEmailAddresses().addEmailAddress(address, this);
@@ -128,7 +129,7 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 			pkey=result.getInt(1);
 			domain=DomainName.valueOf(result.getString(2));
 			ao_server=result.getInt(3);
-			packageName=result.getString(4);
+			packageName = AccountingCode.valueOf(result.getString(4));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -170,10 +171,10 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
-			domain=DomainName.valueOf(in.readUTF());
-			ao_server=in.readCompressedInt();
-			packageName=in.readUTF().intern();
+			pkey = in.readCompressedInt();
+			domain = DomainName.valueOf(in.readUTF());
+			ao_server = in.readCompressedInt();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -209,6 +210,6 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 		out.writeCompressedInt(pkey);
 		out.writeUTF(domain.toString());
 		out.writeCompressedInt(ao_server);
-		out.writeUTF(packageName);
+		out.writeUTF(packageName.toString());
 	}
 }
