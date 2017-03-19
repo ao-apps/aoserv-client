@@ -22,9 +22,31 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.aoserv.client.validator.HashedPassword;
+import com.aoindustries.aoserv.client.validator.LinuxId;
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
+import com.aoindustries.aoserv.client.validator.MySQLServerName;
+import com.aoindustries.aoserv.client.validator.MySQLTableName;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
+import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
+import com.aoindustries.aoserv.client.validator.PostgresServerName;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
+import com.aoindustries.net.DomainLabel;
+import com.aoindustries.net.DomainLabels;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Email;
+import com.aoindustries.net.HostAddress;
+import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.MacAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
@@ -35,6 +57,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -1548,6 +1571,34 @@ abstract public class AOServConnector {
 				out.writeCompressedInt(bytes.length);
 				out.write(bytes, 0, bytes.length);
 			}
+			// Self-validating types
+			else if(param instanceof AccountingCode) out.writeUTF(param.toString());
+			else if(param instanceof Email) out.writeUTF(param.toString());
+			else if(param instanceof HostAddress) out.writeUTF(param.toString());
+			else if(param instanceof InetAddress) out.writeUTF(param.toString());
+			else if(param instanceof UnixPath) out.writeUTF(param.toString());
+			else if(param instanceof UserId) out.writeUTF(param.toString());
+			else if(param instanceof DomainLabel) out.writeUTF(param.toString());
+			else if(param instanceof DomainLabels) out.writeUTF(param.toString());
+			else if(param instanceof DomainName) out.writeUTF(param.toString());
+			else if(param instanceof Gecos) out.writeUTF(param.toString());
+			else if(param instanceof GroupId) out.writeUTF(param.toString());
+			else if(param instanceof HashedPassword) out.writeUTF(param.toString());
+			else if(param instanceof LinuxId) out.writeCompressedInt(((LinuxId)param).getId());
+			else if(param instanceof MacAddress) out.writeUTF(param.toString());
+			else if(param instanceof MySQLDatabaseName) out.writeUTF(param.toString());
+			else if(param instanceof MySQLServerName) out.writeUTF(param.toString());
+			else if(param instanceof MySQLTableName) out.writeUTF(param.toString());
+			else if(param instanceof MySQLUserId) out.writeUTF(param.toString());
+			else if(param instanceof Port) {
+				Port port = (Port)param;
+				out.writeCompressedInt(port.getPort());
+				out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
+			}
+			else if(param instanceof PostgresDatabaseName) out.writeUTF(param.toString());
+			else if(param instanceof PostgresServerName) out.writeUTF(param.toString());
+			else if(param instanceof PostgresUserId) out.writeUTF(param.toString());
+			// Any other Streamable
 			else if(param instanceof Streamable) ((Streamable)param).write(out, AOServProtocol.Version.CURRENT_VERSION.getVersion());
 			else throw new IOException("Unknown class for param: "+param.getClass().getName());
 		}
