@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.security.AccountDisabledException;
@@ -216,9 +217,9 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 	}
 
 	private boolean uidHashBuilt=false;
-	private final Map<Integer,Map<Integer,LinuxServerAccount>> uidHash=new HashMap<>();
+	private final Map<Integer,Map<LinuxId,LinuxServerAccount>> uidHash=new HashMap<>();
 
-	LinuxServerAccount getLinuxServerAccount(AOServer aoServer, int uid) throws IOException, SQLException {
+	LinuxServerAccount getLinuxServerAccount(AOServer aoServer, LinuxId uid) throws IOException, SQLException {
 		synchronized(uidHash) {
 			if(!uidHashBuilt) {
 				uidHash.clear();
@@ -227,19 +228,19 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 				int len = list.size();
 				for (int c = 0; c < len; c++) {
 					LinuxServerAccount lsa=list.get(c);
-					int lsaUID=lsa.getUid().getID();
+					LinuxId lsaUID = lsa.getUid();
 					// Only hash the root user for uid of 0
-					if(lsaUID!=LinuxServerAccount.ROOT_UID || lsa.username.equals(LinuxAccount.ROOT)) {
+					if(lsaUID.getId() != LinuxServerAccount.ROOT_UID || lsa.username.equals(LinuxAccount.ROOT)) {
 						Integer aoI=lsa.getAOServer().pkey;
-						Map<Integer,LinuxServerAccount> serverHash=uidHash.get(aoI);
+						Map<LinuxId,LinuxServerAccount> serverHash=uidHash.get(aoI);
 						if(serverHash==null) uidHash.put(aoI, serverHash=new HashMap<>());
-						Integer I=lsaUID;
+						LinuxId I=lsaUID;
 						if(!serverHash.containsKey(I)) serverHash.put(I, lsa);
 					}
 				}
 				uidHashBuilt=true;
 			}
-			Map<Integer,LinuxServerAccount> serverHash=uidHash.get(aoServer.pkey);
+			Map<LinuxId,LinuxServerAccount> serverHash=uidHash.get(aoServer.pkey);
 			if(serverHash==null) return null;
 			return serverHash.get(uid);
 		}

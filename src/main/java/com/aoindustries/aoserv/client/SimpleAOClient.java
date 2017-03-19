@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
@@ -1932,24 +1933,18 @@ final public class SimpleAOClient {
 		String packageName,
 		InetAddress ipAddress,
 		String net_device,
-		int netPort,
-		String netProtocol,
+		Port port,
 		String appProtocol,
 		boolean openFirewall,
 		boolean monitoringEnabled
 	) throws IllegalArgumentException, SQLException, IOException {
 		IPAddress ia=getIPAddress(server, net_device, ipAddress);
-		NetPort netPortObj=connector.getNetPorts().get(netPort);
-		if(netPortObj==null) throw new IllegalArgumentException("Unable to find NetPort: "+netPort);
-		NetProtocol netProt=connector.getNetProtocols().get(netProtocol);
-		if(netProt==null) throw new IllegalArgumentException("Unable to find NetProtocol: "+netProtocol);
 		Protocol appProt=connector.getProtocols().get(appProtocol);
 		if(appProt==null) throw new IllegalArgumentException("Unable to find Protocol: "+appProtocol);
 		return getServer(server).addNetBind(
 			getPackage(packageName),
 			ia,
-			netPortObj,
-			netProt,
+			port,
 			appProt,
 			openFirewall,
 			monitoringEnabled

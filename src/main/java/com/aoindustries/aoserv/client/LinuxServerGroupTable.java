@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -127,9 +128,9 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 	}
 
 	private boolean gidHashBuilt=false;
-	private final Map<Integer,Map<Integer,LinuxServerGroup>> gidHash=new HashMap<>();
+	private final Map<Integer,Map<LinuxId,LinuxServerGroup>> gidHash=new HashMap<>();
 
-	public LinuxServerGroup getLinuxServerGroup(AOServer aoServer, int gid) throws IOException, SQLException {
+	public LinuxServerGroup getLinuxServerGroup(AOServer aoServer, LinuxId gid) throws IOException, SQLException {
 		synchronized(gidHash) {
 			if(!gidHashBuilt) {
 				gidHash.clear();
@@ -139,14 +140,14 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 				for(int c=0; c<len; c++) {
 					LinuxServerGroup lsg=list.get(c);
 					Integer serverI=lsg.ao_server;
-					Map<Integer,LinuxServerGroup> serverHash=gidHash.get(serverI);
+					Map<LinuxId,LinuxServerGroup> serverHash = gidHash.get(serverI);
 					if(serverHash==null) gidHash.put(serverI, serverHash=new HashMap<>());
-					Integer gidI=lsg.getGid().getID();
+					LinuxId gidI=lsg.getGid();
 					if(serverHash.put(gidI, lsg)!=null) throw new SQLException("GID exists more than once on server: "+gidI+" on "+serverI);
 				}
 				gidHashBuilt=true;
 			}
-			Map<Integer,LinuxServerGroup> serverHash=gidHash.get(aoServer.pkey);
+			Map<LinuxId,LinuxServerGroup> serverHash=gidHash.get(aoServer.pkey);
 			if(serverHash==null) return null;
 			return serverHash.get(gid);
 		}

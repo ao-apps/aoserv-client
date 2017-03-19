@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,7 +56,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 
 	String name;
 	int ao_server;
-	int gid;
+	LinuxId gid;
 	private long created;
 
 	public List<LinuxServerAccount> getAlternateLinuxServerAccounts() throws SQLException, IOException {
@@ -73,10 +75,8 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 		}
 	}
 
-	public LinuxID getGid() throws SQLException {
-		LinuxID obj=table.connector.getLinuxIDs().get(gid);
-		if(obj==null) throw new SQLException("Unable to find LinuxID: "+gid);
-		return obj;
+	public LinuxId getGid() {
+		return gid;
 	}
 
 	public Timestamp getCreated() {
@@ -102,20 +102,28 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		name = result.getString(2);
-		ao_server = result.getInt(3);
-		gid = result.getInt(4);
-		created = result.getTimestamp(5).getTime();
+		try {
+			pkey = result.getInt(1);
+			name = result.getString(2);
+			ao_server = result.getInt(3);
+			gid = LinuxId.valueOf(result.getInt(4));
+			created = result.getTimestamp(5).getTime();
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		name=in.readUTF().intern();
-		ao_server=in.readCompressedInt();
-		gid=in.readCompressedInt();
-		created=in.readLong();
+		try {
+			pkey=in.readCompressedInt();
+			name=in.readUTF().intern();
+			ao_server=in.readCompressedInt();
+			gid = LinuxId.valueOf(in.readCompressedInt());
+			created=in.readLong();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -179,7 +187,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name);
 		out.writeCompressedInt(ao_server);
-		out.writeCompressedInt(gid);
+		out.writeCompressedInt(gid.getId());
 		out.writeLong(created);
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,8 +37,7 @@ final public class ProtocolTable extends GlobalTableStringKey<Protocol> {
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Protocol.COLUMN_PORT_name, ASCENDING),
-		new OrderBy(Protocol.COLUMN_NET_PROTOCOL_name, ASCENDING)
+		new OrderBy(Protocol.COLUMN_PORT_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {

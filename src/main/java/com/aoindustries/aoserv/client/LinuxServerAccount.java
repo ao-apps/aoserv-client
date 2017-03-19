@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -80,7 +82,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
 	String username;
 	int ao_server;
-	int uid;
+	LinuxId uid;
 	private String home;
 	int autoresponder_from;
 	private String autoresponder_subject;
@@ -102,7 +104,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		if(disable_log!=-1) return false;
 
 		// is a system user
-		if(uid < getAOServer().getUidMin().getID()) return false;
+		if(uid.compareTo(getAOServer().getUidMin()) < 0) return false;
 
 		// cvs_repositories
 		for(CvsRepository cr : getCvsRepositories()) if(cr.disable_log==-1) return false;
@@ -426,38 +428,40 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return SchemaTable.TableID.LINUX_SERVER_ACCOUNTS;
 	}
 
-	public LinuxID getUid() throws SQLException {
-		LinuxID obj=table.connector.getLinuxIDs().get(uid);
-		if(obj==null) throw new SQLException("Unable to find LinuxID: "+uid);
-		return obj;
+	public LinuxId getUid() {
+		return uid;
 	}
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		int pos=1;
-		pkey=result.getInt(pos++);
-		username=result.getString(pos++);
-		ao_server=result.getInt(pos++);
-		uid=result.getInt(pos++);
-		home=result.getString(pos++);
-		autoresponder_from=result.getInt(pos++);
-		if(result.wasNull()) autoresponder_from=-1;
-		autoresponder_subject = result.getString(pos++);
-		autoresponder_path = result.getString(pos++);
-		is_autoresponder_enabled=result.getBoolean(pos++);
-		disable_log=result.getInt(pos++);
-		if(result.wasNull()) disable_log=-1;
-		predisable_password=result.getString(pos++);
-		created=result.getTimestamp(pos++).getTime();
-		use_inbox=result.getBoolean(pos++);
-		trash_email_retention=result.getInt(pos++);
-		if(result.wasNull()) trash_email_retention=-1;
-		junk_email_retention=result.getInt(pos++);
-		if(result.wasNull()) junk_email_retention=-1;
-		sa_integration_mode=result.getString(pos++);
-		sa_required_score=result.getFloat(pos++);
-		sa_discard_score = result.getInt(pos++);
-		if(result.wasNull()) sa_discard_score = -1;
+		try {
+			int pos=1;
+			pkey=result.getInt(pos++);
+			username=result.getString(pos++);
+			ao_server=result.getInt(pos++);
+			uid = LinuxId.valueOf(result.getInt(pos++));
+			home=result.getString(pos++);
+			autoresponder_from=result.getInt(pos++);
+			if(result.wasNull()) autoresponder_from=-1;
+			autoresponder_subject = result.getString(pos++);
+			autoresponder_path = result.getString(pos++);
+			is_autoresponder_enabled=result.getBoolean(pos++);
+			disable_log=result.getInt(pos++);
+			if(result.wasNull()) disable_log=-1;
+			predisable_password=result.getString(pos++);
+			created=result.getTimestamp(pos++).getTime();
+			use_inbox=result.getBoolean(pos++);
+			trash_email_retention=result.getInt(pos++);
+			if(result.wasNull()) trash_email_retention=-1;
+			junk_email_retention=result.getInt(pos++);
+			if(result.wasNull()) junk_email_retention=-1;
+			sa_integration_mode=result.getString(pos++);
+			sa_required_score=result.getFloat(pos++);
+			sa_discard_score = result.getInt(pos++);
+			if(result.wasNull()) sa_discard_score = -1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public int isProcmailManual() throws IOException, SQLException {
@@ -471,24 +475,28 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		username=in.readUTF().intern();
-		ao_server=in.readCompressedInt();
-		uid=in.readCompressedInt();
-		home=in.readUTF();
-		autoresponder_from=in.readCompressedInt();
-		autoresponder_subject=in.readNullUTF();
-		autoresponder_path=in.readNullUTF();
-		is_autoresponder_enabled=in.readBoolean();
-		disable_log=in.readCompressedInt();
-		predisable_password=in.readNullUTF();
-		created=in.readLong();
-		use_inbox=in.readBoolean();
-		trash_email_retention=in.readCompressedInt();
-		junk_email_retention=in.readCompressedInt();
-		sa_integration_mode=in.readUTF().intern();
-		sa_required_score=in.readFloat();
-		sa_discard_score = in.readCompressedInt();
+		try {
+			pkey=in.readCompressedInt();
+			username=in.readUTF().intern();
+			ao_server=in.readCompressedInt();
+			uid=LinuxId.valueOf(in.readCompressedInt());
+			home=in.readUTF();
+			autoresponder_from=in.readCompressedInt();
+			autoresponder_subject=in.readNullUTF();
+			autoresponder_path=in.readNullUTF();
+			is_autoresponder_enabled=in.readBoolean();
+			disable_log=in.readCompressedInt();
+			predisable_password=in.readNullUTF();
+			created=in.readLong();
+			use_inbox=in.readBoolean();
+			trash_email_retention=in.readCompressedInt();
+			junk_email_retention=in.readCompressedInt();
+			sa_integration_mode=in.readUTF().intern();
+			sa_required_score=in.readFloat();
+			sa_discard_score = in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	public List<EmailList> getEmailLists() throws IOException, SQLException {
@@ -499,8 +507,8 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason> reasons=new ArrayList<>();
 
-		int uid_min = getAOServer().getUidMin().getID();
-		if(uid < uid_min) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than "+uid_min));
+		LinuxId uidMin = getAOServer().getUidMin();
+		if(uid.compareTo(uidMin) < 0) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than " + uidMin));
 
 		AOServer ao=getAOServer();
 
@@ -679,7 +687,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username);
 		out.writeCompressedInt(ao_server);
-		out.writeCompressedInt(uid);
+		out.writeCompressedInt(uid.getId());
 		out.writeUTF(home);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);

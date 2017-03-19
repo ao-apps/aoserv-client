@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -56,7 +57,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 	private HostAddress connect_address;
 	private InetAddress connect_from;
 	private boolean enabled;
-	private int quota_gid;
+	private LinuxId quota_gid;
 
 	public int addFailoverFileLog(long startTime, long endTime, int scanned, int updated, long bytes, boolean isSuccessful) throws IOException, SQLException {
 		return table.connector.getFailoverFileLogs().addFailoverFileLog(this, startTime, endTime, scanned, updated, bytes, isSuccessful);
@@ -88,7 +89,7 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 			case 6: return connect_address;
 			case 7: return connect_from;
 			case 8: return enabled;
-			case 9: return quota_gid==-1?null:quota_gid;
+			case 9: return quota_gid;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -164,11 +165,8 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 	 * partition by group ID.  This may only be set (and must be set) when stored on a
 	 * backup_partition with quota_enabled.
 	 */
-	public LinuxID getQuotaGID() throws SQLException {
-		if(quota_gid==-1) return null;
-		LinuxID lid = table.connector.getLinuxIDs().get(quota_gid);
-		if(lid==null) throw new SQLException("Unable to find LinuxID: "+quota_gid);
-		return lid;
+	public LinuxId getQuotaGID() {
+		return quota_gid;
 	}
 
 	@Override
@@ -190,8 +188,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 			connect_address=HostAddress.valueOf(result.getString(pos++));
 			connect_from=InetAddress.valueOf(result.getString(pos++));
 			enabled=result.getBoolean(pos++);
-			quota_gid=result.getInt(pos++);
-			if(result.wasNull()) quota_gid=-1;
+			{
+				int i = result.getInt(pos++);
+				quota_gid = result.wasNull() ? null : LinuxId.valueOf(i);
+			}
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -210,7 +210,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 			connect_address=InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
 			connect_from=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
 			enabled=in.readBoolean();
-			quota_gid=in.readCompressedInt();
+			{
+				int i = in.readCompressedInt();
+				quota_gid = (i == -1) ? null : LinuxId.valueOf(i);
+			}
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -253,7 +256,9 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 			out.writeUTF("/var/backup"); // to_path (hard-coded /var/backup like found on xen2.mob.aoindustries.com)
 			out.writeBoolean(false); // chunk_always
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(quota_gid);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+			out.writeCompressedInt(quota_gid == null ? -1 : quota_gid.getId());
+		}
 	}
 
 	public int addFileBackupSetting(String path, boolean backupEnabled, boolean required) throws IOException, SQLException {

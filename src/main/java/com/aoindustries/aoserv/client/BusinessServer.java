@@ -210,8 +210,8 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 							else {
 								IPAddress ia=nb.getIPAddress();
 								NetDevice nd=ia.getNetDevice();
-								if(nd!=null) reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getInetAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), nb));
-								else reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort().getPort()+"/"+nb.getNetProtocol()+" on "+ia.getInetAddress()+" on "+se.toStringImpl(), nb));
+								if(nd!=null) reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort()+" on "+ia.getInetAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), nb));
+								else reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort()+" on "+ia.getInetAddress()+" on "+se.toStringImpl(), nb));
 							}
 						}
 					}

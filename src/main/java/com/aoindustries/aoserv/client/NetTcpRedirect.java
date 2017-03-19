@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.HostAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -43,7 +44,7 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 	private int cps;
 	private int cps_overload_sleep_time;
 	private HostAddress destination_host;
-	private int destination_port;
+	private Port destination_port;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -75,10 +76,8 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 		return destination_host;
 	}
 
-	public NetPort getDestinationPort() throws SQLException {
-		NetPort np=table.connector.getNetPorts().get(destination_port);
-		if(np==null) throw new SQLException("Unable to find NetPort: "+destination_port);
-		return np;
+	public Port getDestinationPort() {
+		return destination_port;
 	}
 
 	@Override
@@ -93,7 +92,10 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 			cps=result.getInt(2);
 			cps_overload_sleep_time=result.getInt(3);
 			destination_host=HostAddress.valueOf(result.getString(4));
-			destination_port=result.getInt(5);
+			destination_port = Port.valueOf(
+				result.getInt(5),
+				com.aoindustries.net.Protocol.TCP
+			);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -106,7 +108,10 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 			cps=in.readCompressedInt();
 			cps_overload_sleep_time=in.readCompressedInt();
 			destination_host=HostAddress.valueOf(in.readUTF()).intern();
-			destination_port=in.readCompressedInt();
+			destination_port = Port.valueOf(
+				in.readCompressedInt(),
+				com.aoindustries.net.Protocol.TCP
+			);
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -114,7 +119,7 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 
 	@Override
 	String toStringImpl() throws SQLException, IOException {
-		return getNetBind().toStringImpl()+"->"+destination_host.toBracketedString()+':'+destination_port;
+		return getNetBind().toStringImpl()+"->"+destination_host.toBracketedString()+':'+destination_port.getPort();
 	}
 
 	@Override
@@ -123,6 +128,6 @@ public final class NetTcpRedirect extends CachedObjectIntegerKey<NetTcpRedirect>
 		out.writeCompressedInt(cps);
 		out.writeCompressedInt(cps_overload_sleep_time);
 		out.writeUTF(destination_host.toString());
-		out.writeCompressedInt(destination_port);
+		out.writeCompressedInt(destination_port.getPort());
 	}
 }

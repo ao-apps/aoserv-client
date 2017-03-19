@@ -934,10 +934,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case MYSQL_SERVER_NAME: return value.toString();
 			case MYSQL_TABLE_NAME: return value.toString();
 			case MYSQL_USERNAME: return value.toString();
-			case NET_PORT: {
-				Port port = (Port)value;
-				return Integer.toString(port.getPort()) + '/' + port.getProtocol().name().toLowerCase(Locale.ROOT);
-			}
+			case NET_PORT: return value.toString();
 			case POSTGRES_DATABASE_NAME: return value.toString();
 			case POSTGRES_SERVER_NAME: return value.toString();
 			case POSTGRES_USERNAME: return value.toString();

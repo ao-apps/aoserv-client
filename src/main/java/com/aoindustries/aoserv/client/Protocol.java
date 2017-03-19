@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,9 +24,12 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Port;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * A <code>Protocol</code> represents one type of application
@@ -41,12 +44,10 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 
 	static final int COLUMN_PROTOCOL=0;
 	static final String COLUMN_PORT_name = "port";
-	static final String COLUMN_NET_PROTOCOL_name = "net_protocol";
 
-	private int port;
+	private Port port;
 	private String name;
 	private boolean is_user_service;
-	private String net_protocol;
 
 	public static final String
 		AOSERV_DAEMON="aoserv-daemon",
@@ -90,7 +91,6 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 			case 1: return port;
 			case 2: return name;
 			case 3: return is_user_service;
-			case 4: return net_protocol;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -107,16 +107,8 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 		return is_user_service;
 	}
 
-	public NetProtocol getNetProtocol(AOServConnector connector) throws SQLException, IOException {
-		NetProtocol np=connector.getNetProtocols().get(net_protocol);
-		if(np==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
-		return np;
-	}
-
-	public NetPort getPort(AOServConnector connector) throws SQLException {
-		NetPort obj=connector.getNetPorts().get(port);
-		if(obj==null) throw new SQLException("Unable to find NetPort: "+port);
-		return obj;
+	public Port getPort() {
+		return port;
 	}
 
 	/**
@@ -133,30 +125,44 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		port = result.getInt(2);
-		name = result.getString(3);
-		is_user_service = result.getBoolean(4);
-		net_protocol = result.getString(5);
+		try {
+			pkey = result.getString(1);
+			int portNum = result.getInt(2);
+			name = result.getString(3);
+			is_user_service = result.getBoolean(4);
+			port = Port.valueOf(
+				portNum,
+				com.aoindustries.net.Protocol.valueOf(result.getString(5).toUpperCase(Locale.ROOT))
+			);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		port=in.readCompressedInt();
-		name=in.readUTF();
-		is_user_service=in.readBoolean();
-		net_protocol=in.readUTF().intern();
+		try {
+			pkey=in.readUTF().intern();
+			int portNum = in.readCompressedInt();
+			name=in.readUTF();
+			is_user_service=in.readBoolean();
+			port = Port.valueOf(
+				portNum,
+				com.aoindustries.net.Protocol.valueOf(in.readUTF().toUpperCase(Locale.ROOT))
+			);
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey);
-		out.writeCompressedInt(port);
+		out.writeCompressedInt(port.getPort());
 		out.writeUTF(name);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0) {
 			out.writeBoolean(is_user_service);
-			out.writeUTF(net_protocol);
+			out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
 		}
 	}
 }

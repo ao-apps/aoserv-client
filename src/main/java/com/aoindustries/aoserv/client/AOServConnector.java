@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -604,11 +604,6 @@ abstract public class AOServConnector {
 		return linuxGroups;
 	}
 
-	private final LinuxIDTable linuxIDs;
-	public LinuxIDTable getLinuxIDs() {
-		return linuxIDs;
-	}
-
 	private final LinuxServerAccountTable linuxServerAccounts;
 	public LinuxServerAccountTable getLinuxServerAccounts() {
 		return linuxServerAccounts;
@@ -705,16 +700,6 @@ abstract public class AOServConnector {
 	private final NetDeviceTable netDevices;
 	public NetDeviceTable getNetDevices() {
 		return netDevices;
-	}
-
-	private final NetPortTable netPorts;
-	public NetPortTable getNetPorts() {
-		return netPorts;
-	}
-
-	private final NetProtocolTable netProtocols;
-	public NetProtocolTable getNetProtocols() {
-		return netProtocols;
 	}
 
 	private final NetTcpRedirectTable netTcpRedirects;
@@ -1104,7 +1089,6 @@ abstract public class AOServConnector {
 		newTables.add(linuxGroupAccounts=new LinuxGroupAccountTable(this));
 		newTables.add(linuxGroupTypes=new LinuxGroupTypeTable(this));
 		newTables.add(linuxGroups=new LinuxGroupTable(this));
-		newTables.add(linuxIDs=new LinuxIDTable(this));
 		newTables.add(linuxServerAccounts=new LinuxServerAccountTable(this));
 		newTables.add(linuxServerGroups=new LinuxServerGroupTable(this));
 		newTables.add(majordomoLists=new MajordomoListTable(this));
@@ -1125,8 +1109,6 @@ abstract public class AOServConnector {
 		newTables.add(netBinds=new NetBindTable(this));
 		newTables.add(netDeviceIDs=new NetDeviceIDTable(this));
 		newTables.add(netDevices=new NetDeviceTable(this));
-		newTables.add(netPorts=new NetPortTable(this));
-		newTables.add(netProtocols=new NetProtocolTable(this));
 		newTables.add(netTcpRedirects=new NetTcpRedirectTable(this));
 		newTables.add(noticeLogs=new NoticeLogTable(this));
 		newTables.add(noticeTypes=new NoticeTypeTable(this));
