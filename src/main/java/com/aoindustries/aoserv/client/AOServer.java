@@ -33,6 +33,7 @@ import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.HttpParameters;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
@@ -51,6 +52,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -2478,14 +2480,14 @@ final public class AOServer
 	/**
 	 * Checks a port from the daemon's point of view.  This is required for monitoring of private and loopback IPs.
 	 */
-	public String checkPort(InetAddress ipAddress, int port, String netProtocol, String appProtocol, HttpParameters monitoringParameters) throws IOException, SQLException {
+	public String checkPort(InetAddress ipAddress, Port port, String appProtocol, HttpParameters monitoringParameters) throws IOException, SQLException {
 		return table.connector.requestStringQuery(
 			true,
 			AOServProtocol.CommandID.AO_SERVER_CHECK_PORT,
 			pkey,
 			ipAddress.toString(),
-			port,
-			netProtocol,
+			port.getPort(),
+			port.getProtocol().name().toLowerCase(Locale.ROOT),
 			appProtocol,
 			NetBind.encodeParameters(monitoringParameters)
 		);
