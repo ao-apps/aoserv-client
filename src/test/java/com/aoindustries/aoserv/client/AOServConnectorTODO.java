@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -158,7 +158,7 @@ public class AOServConnectorTODO extends TestCase {
 		for(AOServConnector conn : conns) {
 			String username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
-			assertEquals(NetProtocol.TCP, conn.getProtocol());
+			assertEquals(TCPConnector.PROTOCOL, conn.getProtocol());
 		}
 	}
 

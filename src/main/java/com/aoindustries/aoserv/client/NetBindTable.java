@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,12 +25,14 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.Port;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @see  NetBind
@@ -48,8 +50,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 		new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
 		new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(NetBind.COLUMN_PORT_name, ASCENDING),
-		new OrderBy(NetBind.COLUMN_NET_PROTOCOL_name, ASCENDING)
+		new OrderBy(NetBind.COLUMN_PORT_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {
@@ -60,8 +61,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 		final Server se,
 		final Package pk,
 		final IPAddress ia,
-		final NetPort netPort,
-		final NetProtocol netProtocol,
+		final Port port,
 		final Protocol appProtocol,
 		final boolean openFirewall,
 		final boolean monitoringEnabled
@@ -79,8 +79,8 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 					out.writeCompressedInt(se.pkey);
 					out.writeUTF(pk.name);
 					out.writeCompressedInt(ia.pkey);
-					out.writeCompressedInt(netPort.port);
-					out.writeUTF(netProtocol.pkey);
+					out.writeCompressedInt(port.getPort());
+					out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
 					out.writeUTF(appProtocol.pkey);
 					out.writeBoolean(openFirewall);
 					out.writeBoolean(monitoringEnabled);
@@ -153,12 +153,9 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	NetBind getNetBind(
 		Server se,
 		IPAddress ip,
-		NetPort netPort,
-		NetProtocol netProtocol
+		Port port
 	) throws IOException, SQLException {
 		int sePKey=se.pkey;
-		int port=netPort.getPort();
-		String netProt=netProtocol.getProtocol();
 
 		// Use the index first
 		List<NetBind> cached=getNetBinds(ip);
@@ -168,7 +165,6 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 			if(
 				nb.server==sePKey
 				&& nb.port==port
-				&& nb.net_protocol.equals(netProt)
 			) return nb;
 		}
 		return null;
@@ -203,8 +199,10 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 					args[2],
 					AOSH.parseInetAddress(args[3], "ip_address"),
 					args[4],
-					AOSH.parseInt(args[5], "port"),
-					args[6],
+					AOSH.parsePort(
+						args[5], "port",
+						args[6], "net_protocol"
+					),
 					args[7],
 					AOSH.parseBoolean(args[8], "open_firewall"),
 					AOSH.parseBoolean(args[9], "monitoring_enabled")

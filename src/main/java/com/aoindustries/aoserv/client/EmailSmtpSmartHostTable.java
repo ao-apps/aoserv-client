@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -41,8 +41,7 @@ public final class EmailSmtpSmartHostTable extends CachedTableIntegerKey<EmailSm
 		new OrderBy(EmailSmtpSmartHost.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(EmailSmtpSmartHost.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
 		new OrderBy(EmailSmtpSmartHost.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(EmailSmtpSmartHost.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING),
-		new OrderBy(EmailSmtpSmartHost.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_NET_PROTOCOL_name, ASCENDING)
+		new OrderBy(EmailSmtpSmartHost.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {

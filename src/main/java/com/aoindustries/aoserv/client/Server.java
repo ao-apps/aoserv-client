@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Port;
 import com.aoindustries.util.WrappedException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -82,8 +83,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 	public int addNetBind(
 		Package pk,
 		IPAddress ia,
-		NetPort netPort,
-		NetProtocol netProtocol,
+		Port port,
 		Protocol appProtocol,
 		boolean openFirewall,
 		boolean monitoringEnabled
@@ -92,8 +92,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 			this,
 			pk,
 			ia,
-			netPort,
-			netProtocol,
+			port,
 			appProtocol,
 			openFirewall,
 			monitoringEnabled
@@ -261,12 +260,8 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 		return table.connector.getFailoverFileReplications().getFailoverFileReplications(this);
 	}
 
-	public NetBind getNetBind(
-		IPAddress ipAddress,
-		NetPort port,
-		NetProtocol netProtocol
-	) throws IOException, SQLException {
-		return table.connector.getNetBinds().getNetBind(this, ipAddress, port, netProtocol);
+	public NetBind getNetBind(IPAddress ipAddress, Port port) throws IOException, SQLException {
+		return table.connector.getNetBinds().getNetBind(this, ipAddress, port);
 	}
 
 	public List<NetBind> getNetBinds() throws IOException, SQLException {

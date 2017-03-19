@@ -27,6 +27,7 @@ import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ShellInterpreter;
 import com.aoindustries.validation.ValidationException;
@@ -388,6 +389,29 @@ final public class AOSH extends ShellInterpreter {
 			return InetAddress.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("invalid argument for ip_address "+field+": "+S, err);
+		}
+	}
+
+	static Port parsePort(
+		String port,
+		String portField,
+		String protocol,
+		String protocolField
+	) {
+		int portInt = parseInt(port, portField);
+		com.aoindustries.net.Protocol protocolObj;
+		try {
+			protocolObj = com.aoindustries.net.Protocol.valueOf(protocol);
+		} catch(IllegalArgumentException e) {
+			throw new IllegalArgumentException("invalid argument for protocol "+protocolField+": "+protocol, e);
+		}
+		try {
+			return Port.valueOf(
+				portInt,
+				protocolObj
+			);
+		} catch(ValidationException err) {
+			throw new IllegalArgumentException("invalid argument for port "+portField+": "+port, err);
 		}
 	}
 

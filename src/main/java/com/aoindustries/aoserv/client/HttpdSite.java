@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Port;
 import com.aoindustries.util.BufferManager;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -231,7 +232,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		if(binds.isEmpty()) return null;
 
 		// Find the first one that binds to the default HTTP port, if one exists
-		NetPort httpPort=table.connector.getProtocols().get(Protocol.HTTP).getPort(table.connector);
+		Port httpPort = table.connector.getProtocols().get(Protocol.HTTP).getPort();
 
 		int index = -1;
 		for(int c=0;c<binds.size();c++) {

@@ -50,8 +50,8 @@ public class AOServer extends AOServObject {
 	private Float monitoringLoadMedium;
 	private Float monitoringLoadHigh;
 	private Float monitoringLoadCritical;
-	private int uidMin;
-	private int gidMin;
+	private LinuxId uidMin;
+	private LinuxId gidMin;
 
 	public AOServer() {
 	}
@@ -76,8 +76,8 @@ public class AOServer extends AOServObject {
 		Float monitoringLoadMedium,
 		Float monitoringLoadHigh,
 		Float monitoringLoadCritical,
-		int uidMin,
-		int gidMin
+		LinuxId uidMin,
+		LinuxId gidMin
 	) {
 		this.server = server;
 		this.hostname = hostname;
@@ -254,19 +254,19 @@ public class AOServer extends AOServObject {
 		this.monitoringLoadCritical = monitoringLoadCritical;
 	}
 
-	int getUidMin() {
+	public LinuxId getUidMin() {
 		return uidMin;
 	}
 
-	void setUidMin(int uidMin) {
+	public void setUidMin(LinuxId uidMin) {
 		this.uidMin = uidMin;
 	}
 
-	int getGidMin() {
+	public LinuxId getGidMin() {
 		return gidMin;
 	}
 
-	void setGidMin(int gidMin) {
+	public void setGidMin(LinuxId gidMin) {
 		this.gidMin = gidMin;
 	}
 }

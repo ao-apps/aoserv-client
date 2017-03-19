@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,8 +27,10 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.EmptyParameters;
 import com.aoindustries.net.HttpParameters;
 import com.aoindustries.net.HttpParametersMap;
+import com.aoindustries.net.Port;
 import com.aoindustries.net.UnmodifiableHttpParameters;
 import com.aoindustries.util.WrappedException;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -36,6 +38,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -60,13 +63,11 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	static final String COLUMN_SERVER_name = "server";
 	static final String COLUMN_IP_ADDRESS_name = "ip_address";
 	static final String COLUMN_PORT_name = "port";
-	static final String COLUMN_NET_PROTOCOL_name = "net_protocol";
 
 	String packageName;
 	int server;
 	int ip_address;
-	int port;
-	String net_protocol;
+	Port port;
 	String app_protocol;
 	private boolean open_firewall;
 	private boolean monitoring_enabled;
@@ -86,11 +87,10 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			case COLUMN_SERVER: return server;
 			case COLUMN_IP_ADDRESS: return ip_address;
 			case 4: return port;
-			case 5: return net_protocol;
-			case 6: return app_protocol;
-			case 7: return open_firewall;
-			case 8: return monitoring_enabled;
-			case 9: return monitoring_parameters;
+			case 5: return app_protocol;
+			case 6: return open_firewall;
+			case 7: return monitoring_enabled;
+			case 8: return monitoring_parameters;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -341,12 +341,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return monitoring_enabled;
 	}
 
-	public NetProtocol getNetProtocol() throws SQLException, IOException {
-		NetProtocol obj=table.connector.getNetProtocols().get(net_protocol);
-		if(obj==null) throw new SQLException("Unable to find NetProtocol: "+net_protocol);
-		return obj;
-	}
-
 	public NetTcpRedirect getNetTcpRedirect() throws IOException, SQLException {
 		return table.connector.getNetTcpRedirects().get(pkey);
 	}
@@ -364,10 +358,8 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return table.connector.getPrivateFTPServers().get(pkey);
 	}
 
-	public NetPort getPort() throws SQLException {
-		NetPort obj=table.connector.getNetPorts().get(port);
-		if(obj==null) throw new SQLException("Unable to find NetPort: "+port);
-		return obj;
+	public Port getPort() {
+		return port;
 	}
 
 	public Server getServer() throws SQLException, IOException {
@@ -383,16 +375,22 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		packageName=result.getString(2);
-		server=result.getInt(3);
-		ip_address=result.getInt(4);
-		port=result.getInt(5);
-		net_protocol=result.getString(6);
-		app_protocol=result.getString(7);
-		open_firewall=result.getBoolean(8);
-		monitoring_enabled=result.getBoolean(9);
-		monitoring_parameters=result.getString(10);
+		try {
+			pkey=result.getInt(1);
+			packageName=result.getString(2);
+			server=result.getInt(3);
+			ip_address=result.getInt(4);
+			port = Port.valueOf(
+				result.getInt(5),
+				com.aoindustries.net.Protocol.valueOf(result.getString(6).toUpperCase(Locale.ROOT))
+			);
+			app_protocol=result.getString(7);
+			open_firewall=result.getBoolean(8);
+			monitoring_enabled=result.getBoolean(9);
+			monitoring_parameters=result.getString(10);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isFirewallOpen() {
@@ -476,16 +474,22 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		packageName=in.readUTF().intern();
-		server=in.readCompressedInt();
-		ip_address=in.readCompressedInt();
-		port=in.readCompressedInt();
-		net_protocol=in.readUTF().intern();
-		app_protocol=in.readUTF().intern();
-		open_firewall=in.readBoolean();
-		monitoring_enabled=in.readBoolean();
-		monitoring_parameters=in.readNullUTF();
+		try {
+			pkey=in.readCompressedInt();
+			packageName=in.readUTF().intern();
+			server=in.readCompressedInt();
+			ip_address=in.readCompressedInt();
+			port = Port.valueOf(
+				in.readCompressedInt(),
+				com.aoindustries.net.Protocol.valueOf(in.readUTF().toUpperCase(Locale.ROOT))
+			);
+			app_protocol=in.readUTF().intern();
+			open_firewall=in.readBoolean();
+			monitoring_enabled=in.readBoolean();
+			monitoring_parameters=in.readNullUTF();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -596,8 +600,8 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		out.writeUTF(packageName);
 		out.writeCompressedInt(server);
 		out.writeCompressedInt(ip_address);
-		out.writeCompressedInt(port);
-		out.writeUTF(net_protocol);
+		out.writeCompressedInt(port.getPort());
+		out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
 		out.writeUTF(app_protocol);
 		out.writeBoolean(open_firewall);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {

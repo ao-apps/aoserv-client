@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Port;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -97,7 +98,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	public String getURL() throws SQLException, IOException {
 		HttpdSiteBind siteBind=getHttpdSiteBind();
 		NetBind netBind=siteBind.getHttpdBind().getNetBind();
-		NetPort port=netBind.getPort();
+		Port port=netBind.getPort();
 		StringBuilder url=new StringBuilder();
 		String protocol;
 		if(siteBind.getSSLCertFile()==null) {
@@ -110,7 +111,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 			protocol=Protocol.HTTPS;
 		}
 		url.append(hostname);
-		if(!port.equals(table.connector.getProtocols().get(protocol).getPort(table.connector))) url.append(':').append(port.getPort());
+		if(!port.equals(table.connector.getProtocols().get(protocol).getPort())) url.append(':').append(port.getPort());
 		url.append('/');
 		return url.toString();
 	}
@@ -118,7 +119,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	public String getURLNoSlash() throws SQLException, IOException {
 		HttpdSiteBind siteBind=getHttpdSiteBind();
 		NetBind netBind=siteBind.getHttpdBind().getNetBind();
-		NetPort port=netBind.getPort();
+		Port port=netBind.getPort();
 		StringBuilder url=new StringBuilder();
 		String protocol;
 		if(siteBind.getSSLCertFile()==null) {
@@ -131,7 +132,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 			protocol=Protocol.HTTPS;
 		}
 		url.append(hostname);
-		if(!port.equals(table.connector.getProtocols().get(protocol).getPort(table.connector))) url.append(':').append(port.getPort());
+		if(!port.equals(table.connector.getProtocols().get(protocol).getPort())) url.append(':').append(port.getPort());
 		return url.toString();
 	}
 
