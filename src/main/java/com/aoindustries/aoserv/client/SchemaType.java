@@ -27,6 +27,13 @@ import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.LinuxId;
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
+import com.aoindustries.aoserv.client.validator.MySQLServerName;
+import com.aoindustries.aoserv.client.validator.MySQLTableName;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
+import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
+import com.aoindustries.aoserv.client.validator.PostgresServerName;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainLabel;
@@ -35,6 +42,7 @@ import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
@@ -46,6 +54,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * A <code>SchemaType</code> is a unique data type used in
@@ -73,13 +82,13 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 		DECIMAL_2              =  6, // java.math.BigDecimal
 		DECIMAL_3              =  7, // java.math.BigDecimal
 		DOUBLE                 =  8, // double/java.lang.Double
-		EMAIL                  =  9, // com.aoindustries.aoserv.client.validator.Email
+		EMAIL                  =  9, // com.aoindustries.net.Email
 		FKEY                   = 10, // int/java.lang.Integer
 		FLOAT                  = 11, // float/java.lang.Float
-		HOSTNAME               = 12, // com.aoindustries.aoserv.client.validator.HostAddress
+		HOSTNAME               = 12, // com.aoindustries.net.HostAddress
 		INT                    = 13, // int/java.lang.Integer
 		INTERVAL               = 14, // long/java.lang.Long
-		IP_ADDRESS             = 15, // com.aoindustries.aoserv.client.validator.InetAddress
+		IP_ADDRESS             = 15, // com.aoindustries.net.InetAddress
 		LONG                   = 16, // long/java.lang.Long
 		//OCTAL_INT            = 17, // int/java.lang.Integer
 		OCTAL_LONG             = 18, // long/java.lang.Long
@@ -96,20 +105,20 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 		//ZIP                  = 29, // java.lang.String
 		ZONE                   = 30, // com.aoindustries.aoserv.client.validator.Zone
 		BIG_DECIMAL            = 31, // java.math.BigDecimal
-		DOMAIN_LABEL           = 32, // com.aoindustries.aoserv.client.validator.DomainLabel
-		DOMAIN_LABELS          = 33, // com.aoindustries.aoserv.client.validator.DomainLabels
-		DOMAIN_NAME            = 34, // com.aoindustries.aoserv.client.validator.DomainName
+		DOMAIN_LABEL           = 32, // com.aoindustries.net.DomainLabel
+		DOMAIN_LABELS          = 33, // com.aoindustries.net.DomainLabels
+		DOMAIN_NAME            = 34, // com.aoindustries.net.DomainName
 		GECOS                  = 35, // com.aoindustries.aoserv.client.validator.Gecos
 		GROUP_ID               = 36, // com.aoindustries.aoserv.client.validator.GroupId
 		HASHED_PASSWORD        = 37, // com.aoindustries.aoserv.client.validator.HashedPassword
 		LINUX_ID               = 38, // com.aoindustries.aoserv.client.validator.LinuxId
-		MAC_ADDRESS            = 39, // com.aoindustries.aoserv.client.validator.MacAddress
+		MAC_ADDRESS            = 39, // com.aoindustries.net.MacAddress
 		MONEY                  = 40, // com.aoindustries.util.i18n.Money
 		MYSQL_DATABASE_NAME    = 41, // com.aoindustries.aoserv.client.validator.MySQLDatabaseName
 		MYSQL_SERVER_NAME      = 42, // com.aoindustries.aoserv.client.validator.MySQLServerName
 		MYSQL_TABLE_NAME       = 43, // com.aoindustries.aoserv.client.validator.MySQLTableName
 		MYSQL_USERNAME         = 44, // com.aoindustries.aoserv.client.validator.MySQLUserId
-		NET_PORT               = 45, // com.aoindustries.aoserv.client.validator.NetPort
+		NET_PORT               = 45, // com.aoindustries.net.NetPort
 		POSTGRES_DATABASE_NAME = 46, // com.aoindustries.aoserv.client.validator.PostgresDatabaseName
 		POSTGRES_SERVER_NAME   = 47, // com.aoindustries.aoserv.client.validator.PostgresServerName
 		POSTGRES_USERNAME      = 48  // com.aoindustries.aoserv.client.validator.PostgresUserId
@@ -157,57 +166,72 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	 * Casts one type of object to another.  These casts are allowed:
 	 *
 	 * <pre>
-	 *                                                                               H
-	 *                                                                               A
-	 *                                                                       D       S
-	 *                                                                     D O       H
-	 *                                                                   B O M D     E   M
-	 *                 A                       I   O                     I M A O     D   A
-	 *                 C     D D               P   C                     G A I M     _   C
-	 *                 C     E E         H   I _   T                 U   _ I N A   G P L _
-	 *               T O B   C C         O   N A   A P               S   D N _ I   R A I A
-	 *               O U O   I I D       S   T D   L A         S     E   E _ L N   O S N D
-	 *                 N O   M M O E   F T   E D   _ C     P S T     R   C L A _ G U S U D M
-	 *                 T L D A A U M F L N   R R L L K P P H H R T   N Z I A B N E P W X R O
-	 *                 I E A L L B A K O A I V E O O A K A O O I I U A O M B E A C _ O _ E N
-	 *                 N A T _ _ L I E A M N A S N N G E T N R N M R M N A E L M O I R I S E
-	 *        FROM     G N E 2 3 E L Y T E T L S G G E Y H E T G E L E E L L S E S D D D S Y
+	 *                                                                                                        P
+	 *                                                                                                        O
+	 *                                                                                                        S P
+	 *                                                                                              M         T O
+	 *                                                                                              Y         G S
+	 *                                                                                              S M       R T P
+	 *                                                                                              Q Y M     E G O
+	 *                                                                                      H       L S Y     S R S
+	 *                                                                                      A       _ Q S M   _ E T
+	 *                                                                              D       S       D L Q Y   D S G
+	 *                                                                            D O       H       A _ L S   A _ R
+	 *                                                                          B O M D     E   M   T S _ Q   T S E
+	 *                        A                       I   O                     I M A O     D   A   A E T L   A E S
+	 *                        C     D D               P   C                     G A I M     _   C   B R A _   B R _
+	 *                        C     E E         H   I _   T                 U   _ I N A   G P L _   A V B U N A V U
+	 *                      T O B   C C         O   N A   A P               S   D N _ I   R A I A   S E L S E S E S
+	 *                      O U O   I I D       S   T D   L A         S     E   E _ L N   O S N D   E R E E T E R E
+	 *                        N O   M M O E   F T   E D   _ C     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R
+	 *                        T L D A A U M F L N   R R L L K P P H H R T   N Z I A B N E P W X R O N N N N P N N N
+	 *                        I E A L L B A K O A I V E O O A K A O O I I U A O M B E A C _ O _ E N A A A A O A A A
+	 *                        N A T _ _ L I E A M N A S N N G E T N R N M R M N A E L M O I R I S E M M M M R M M M
+	 *               FROM     G N E 2 3 E L Y T E T L S G G E Y H E T G E L E E L L S E S D D D S Y E E E E T E E E
 	 *
-	 *      ACCOUNTING X                             X         X
-	 *         BOOLEAN   X   X X X     X   X     X X         X X         X
-	 *            DATE     X X X X     X   X     X X         X X X       X
-	 *       DECIMAL_2   X   X X X     X   X X   X X         X X         X
-	 *       DECIMAL_3   X   X X X     X   X X   X X         X X         X
-	 *          DOUBLE   X   X X X     X   X X   X X         X X         X
-	 *           EMAIL             X     X                     X   X X X       X
-	 *            FKEY               X     X           X       X
-	 *           FLOAT   X   X X X     X   X X   X X         X X         X
-	 *        HOSTNAME                   X     X               X       X       X
-	 *             INT   X X X X X   X X   X X X X X   X     X X         X             X
-	 *        INTERVAL       X X X     X   X X   X X         X X         X
-	 *      IP_ADDRESS                         X               X
-	 *            LONG   X X X X X     X   X X   X X         X X X       X
-	 *      OCTAL_LONG   X X X X X     X   X X   X X         X X X       X
-	 *         PACKAGE X                             X         X
-	 *            PKEY               X     X           X       X
-	 *            PATH                                   X     X
-	 *           PHONE                                     X   X
-	 *           SHORT   X X X X X     X   X X   X X         X X         X
-	 *          STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
-	 *            TIME     X                     X X           X X
-	 *             URL                   X               X     X   X   X       X
-	 *        USERNAME                                         X     X
-	 *            ZONE                   X                     X       X       X
-	 *     BIG_DECIMAL   X   X X X     X   X X   X X         X X         X
-	 *    DOMAIN_LABEL                                         X           X X X
-	 *   DOMAIN_LABELS                                         X             X X
-	 *     DOMAIN_NAME                   X                     X       X     X X
-	 *           GECOS                                         X                 X
-	 *        GROUP_ID                                         X                   X
-	 * HASHED_PASSWORD                                         X                     X
-	 *        LINUX_ID   X                 X                   X                       X
-	 *     MAC_ADDRESS                                         X                         X
-	 *           MONEY                                         X         X                 X
+	 *             ACCOUNTING X                             X         X
+	 *                BOOLEAN   X   X X X     X   X     X X         X X         X
+	 *                   DATE     X X X X     X   X     X X         X X X       X
+	 *              DECIMAL_2   X   X X X     X   X X   X X         X X         X
+	 *              DECIMAL_3   X   X X X     X   X X   X X         X X         X
+	 *                 DOUBLE   X   X X X     X   X X   X X         X X         X
+	 *                  EMAIL             X     X                     X   X X X       X
+	 *                   FKEY               X     X           X       X
+	 *                  FLOAT   X   X X X     X   X X   X X         X X         X
+	 *               HOSTNAME                   X     X               X       X       X
+	 *                    INT   X X X X X   X X   X X X X X   X     X X         X             X
+	 *               INTERVAL       X X X     X   X X   X X         X X         X
+	 *             IP_ADDRESS                         X               X
+	 *                   LONG   X X X X X     X   X X   X X         X X X       X
+	 *             OCTAL_LONG   X X X X X     X   X X   X X         X X X       X
+	 *                PACKAGE X                             X         X
+	 *                   PKEY               X     X           X       X
+	 *                   PATH                                   X     X
+	 *                  PHONE                                     X   X
+	 *                  SHORT   X X X X X     X   X X   X X         X X         X
+	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X
+	 *                   TIME     X                     X X           X X
+	 *                    URL                   X               X     X   X   X       X
+	 *               USERNAME                                         X     X                             X       X
+	 *                   ZONE                   X                     X       X       X
+	 *            BIG_DECIMAL   X   X X X     X   X X   X X         X X         X
+	 *           DOMAIN_LABEL                                         X           X X X
+	 *          DOMAIN_LABELS                                         X             X X
+	 *            DOMAIN_NAME                   X                     X       X     X X
+	 *                  GECOS                                         X                 X
+	 *               GROUP_ID                                         X                   X
+	 *        HASHED_PASSWORD                                         X                     X
+	 *               LINUX_ID   X                 X                   X                       X
+	 *            MAC_ADDRESS                                         X                         X
+	 *                  MONEY                                         X         X                 X
+	 *    MYSQL_DATABASE_NAME                                         X                             X
+	 *      MYSQL_SERVER_NAME                                         X                               X
+	 *       MYSQL_TABLE_NAME                                         X                                 X
+	 *         MYSQL_USERNAME                                         X     X                             X
+	 *               NET_PORT                     X                   X                                     X
+	 * POSTGRES_DATABASE_NAME                                         X                                       X
+	 *   POSTGRES_SERVER_NAME                                         X                                         X
+	 *      POSTGRES_USERNAME                                         X     X                                     X
 	 * </pre>
 	 */
 	public Object cast(AOServConnector conn, Object value, SchemaType castToType) throws IOException, SQLException {
@@ -317,6 +341,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					}
 					break;
 				case EMAIL:
+					// TODO: com.aoindustries.net.Email
 					switch(castToType.getNum()) {
 						case EMAIL:       return value;
 						case HOSTNAME:    return value==null ? null : HostAddress.valueOf(getDomainNameForEmail((String)value));
@@ -454,6 +479,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					}
 					break;
 				case PACKAGE:
+					// TODO: com.aoindustries.aoserv.client.validator.AccountingCode
 					switch(castToType.getNum()) {
 						case ACCOUNTING: return value == null ? null :  AccountingCode.valueOf((String)value);
 						case PACKAGE: return value;
@@ -469,6 +495,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					}
 					break;
 				case PATH:
+					// TODO: com.aoindustries.aoserv.client.validator.UnixPath
 					switch(castToType.getNum()) {
 						case PATH: return value;
 						case STRING: return value;
@@ -525,12 +552,16 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					}
 					break;
 				case USERNAME:
+					// TODO: com.aoindustries.aoserv.client.validator.UserId
 					switch(castToType.getNum()) {
 						case STRING: return value;
+						case MYSQL_USERNAME: return value==null ? null : MySQLUserId.valueOf((String)value);
+						case POSTGRES_USERNAME: return value==null ? null : PostgresUserId.valueOf((String)value);
 						case USERNAME: return value;
 					}
 					break;
 				case ZONE:
+					// TODO: com.aoindustries.aoserv.client.validator.Zone
 					switch(castToType.getNum()) {
 						case HOSTNAME: {
 							String hname = (String)value;
@@ -593,37 +624,33 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case GECOS:
 					{
-						Gecos gvalue = (Gecos)value;
 						switch(castToType.getNum()) {
-							case STRING: return value==null?null:gvalue.toString();
+							case STRING: return value==null?null:value.toString();
 							case GECOS: return value;
 						}
 					}
 					break;
 				case GROUP_ID:
 					{
-						GroupId gvalue = (GroupId)value;
 						switch(castToType.getNum()) {
-							case STRING: return value==null?null:gvalue.toString();
+							case STRING: return value==null?null:value.toString();
 							case GROUP_ID: return value;
 						}
 					}
 					break;
 				case HASHED_PASSWORD:
 					{
-						HashedPassword hvalue = (HashedPassword)value;
 						switch(castToType.getNum()) {
-							case STRING: return value==null?null:hvalue.toString();
+							case STRING: return value==null?null:value.toString();
 							case HASHED_PASSWORD: return value;
 						}
 					}
 					break;
 				case LINUX_ID:
 					{
-						int ivalue=value==null?0:((LinuxId)value).getId();
 						switch(castToType.getNum()) {
-							case BOOLEAN: return value==null?null:ivalue!=0;
-							case INT: return value==null?null:Integer.valueOf(ivalue);
+							case BOOLEAN: return value==null?null:((LinuxId)value).getId()!=0;
+							case INT: return value==null?null:Integer.valueOf(((LinuxId)value).getId());
 							case STRING: return value==null?null:value.toString();
 							case LINUX_ID: return value;
 						}
@@ -631,20 +658,85 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case MAC_ADDRESS:
 					{
-						MacAddress mavalue = (MacAddress)value;
 						switch(castToType.getNum()) {
-							case STRING: return value==null?null:mavalue.toString();
+							case STRING: return value==null?null:value.toString();
 							case MAC_ADDRESS: return value;
 						}
 					}
 					break;
 				case MONEY:
 					{
-						Money mvalue = (Money)value;
 						switch(castToType.getNum()) {
-							case STRING: return value==null?null:mvalue.toString();
-							case BIG_DECIMAL: return value==null?null:mvalue.getValue();
+							case STRING: return value==null?null:value.toString();
+							case BIG_DECIMAL: return value==null?null:((Money)value).getValue();
 							case MONEY: return value;
+						}
+					}
+					break;
+				case MYSQL_DATABASE_NAME:
+					{
+						switch(castToType.getNum()) {
+							case STRING: return value==null?null:value.toString();
+							case MYSQL_DATABASE_NAME: return value;
+						}
+					}
+					break;
+				case MYSQL_SERVER_NAME:
+					{
+						switch(castToType.getNum()) {
+							case STRING: return value==null?null:value.toString();
+							case MYSQL_SERVER_NAME: return value;
+						}
+					}
+					break;
+				case MYSQL_TABLE_NAME:
+					{
+						switch(castToType.getNum()) {
+							case STRING: return value==null?null:value.toString();
+							case MYSQL_TABLE_NAME: return value;
+						}
+					}
+					break;
+				case MYSQL_USERNAME:
+					{
+						switch(castToType.getNum()) {
+							case STRING: return value==null?null:value.toString();
+							case MYSQL_USERNAME: return value;
+							case USERNAME: return ((MySQLUserId)value).getUserId();
+						}
+					}
+					break;
+				case NET_PORT:
+					{
+						switch(castToType.getNum()) {
+							case INT: return value==null?null:Integer.valueOf(((Port)value).getPort());
+							case STRING: return value==null?null:value.toString();
+							case NET_PORT: return value;
+						}
+					}
+					break;
+				case POSTGRES_DATABASE_NAME:
+					{
+						switch(castToType.getNum()) {
+							case STRING: return value==null?null:value.toString();
+							case POSTGRES_DATABASE_NAME: return value;
+						}
+					}
+					break;
+				case POSTGRES_SERVER_NAME:
+					{
+						switch(castToType.getNum()) {
+							case STRING: return value==null?null:value.toString();
+							case POSTGRES_SERVER_NAME: return value;
+						}
+					}
+					break;
+				case POSTGRES_USERNAME:
+					{
+						switch(castToType.getNum()) {
+							case STRING: return value==null?null:value.toString();
+							case POSTGRES_USERNAME: return value;
+							case USERNAME: return ((PostgresUserId)value).getUserId();
 						}
 					}
 					break;
@@ -705,12 +797,13 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				switch(type) {
 					case ACCOUNTING:
 						return ((AccountingCode)value1).compareTo((AccountingCode)value2);
-					case PACKAGE:
-					case PATH:
+					case PACKAGE: // TODO: com.aoindustries.aoserv.client.validator.AccountingCode
+					case PATH: // TODO: com.aoindustries.aoserv.client.validator.UnixPath
 					case PHONE:
 					case STRING:
 					case URL:
 					case USERNAME:
+						// TODO: com.aoindustries.aoserv.client.validator.UserId
 						return StringUtility.compareToIgnoreCaseCarefulEquals((String)value1, (String)value2);
 					case BOOLEAN:
 						return
@@ -743,12 +836,14 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					case DOUBLE:
 						return ((Double)value1).compareTo((Double)value2);
 					case EMAIL:
+						// TODO: com.aoindustries.net.Email
 						return compareEmailAddresses((String)value1, (String)value2);
 					case FLOAT:
 						return ((Float)value1).compareTo((Float)value2);
 					case HOSTNAME:
 						return ((HostAddress)value1).compareTo((HostAddress)value2);
 					case ZONE:
+						// TODO: com.aoindustries.aoserv.client.validator.Zone
 						return DomainName.compareLabels((String)value1, (String)value2);
 					case INTERVAL:
 					case LONG:
@@ -780,6 +875,22 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 						return ((MacAddress)value1).compareTo((MacAddress)value2);
 					case MONEY:
 						return ((Money)value1).compareTo((Money)value2);
+					case MYSQL_DATABASE_NAME:
+						return ((MySQLDatabaseName)value1).compareTo((MySQLDatabaseName)value2);
+					case MYSQL_SERVER_NAME:
+						return ((MySQLServerName)value1).compareTo((MySQLServerName)value2);
+					case MYSQL_TABLE_NAME:
+						return ((MySQLTableName)value1).compareTo((MySQLTableName)value2);
+					case MYSQL_USERNAME:
+						return ((MySQLUserId)value1).compareTo((MySQLUserId)value2);
+					case NET_PORT:
+						return ((Port)value1).compareTo((Port)value2);
+					case POSTGRES_DATABASE_NAME:
+						return ((PostgresDatabaseName)value1).compareTo((PostgresDatabaseName)value2);
+					case POSTGRES_SERVER_NAME:
+						return ((PostgresServerName)value1).compareTo((PostgresServerName)value2);
+					case POSTGRES_USERNAME:
+						return ((PostgresUserId)value1).compareTo((PostgresUserId)value2);
 					default: throw new IllegalArgumentException("Unknown type: "+type);
 				}
 			}
@@ -828,7 +939,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case DECIMAL_2: return SQLUtility.getDecimal(((Integer)value));
 			case DECIMAL_3: return SQLUtility.getMilliDecimal(((Integer)value));
 			case DOUBLE: return value.toString();
-			case EMAIL: return (String)value;
+			case EMAIL: return (String)value; // TODO: com.aoindustries.net.Email
 			case FKEY: return value.toString();
 			case FLOAT: return value.toString();
 			case HOSTNAME: return value.toString();
@@ -837,16 +948,16 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case IP_ADDRESS: return value.toString();
 			case LONG: return value.toString();
 			case OCTAL_LONG: return Long.toOctalString(((Long)value));
-			case PACKAGE: return (String)value;
-			case PATH: return (String)value;
+			case PACKAGE: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.AccountingCode
+			case PATH: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.UnixPath
 			case PHONE: return (String)value;
 			case PKEY: return value.toString();
 			case SHORT: return value.toString();
 			case STRING: return (String)value;
 			case TIME: return SQLUtility.getDateTime(((java.sql.Timestamp)value).getTime());
 			case URL: return (String)value;
-			case USERNAME: return (String)value;
-			case ZONE: return (String)value;
+			case USERNAME: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.UserId
+			case ZONE: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.Zone
 			case BIG_DECIMAL: return value.toString();
 			case DOMAIN_LABEL: return value.toString();
 			case DOMAIN_LABELS: return value.toString();
@@ -857,6 +968,14 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case LINUX_ID: return value.toString();
 			case MAC_ADDRESS: return value.toString();
 			case MONEY: return value.toString();
+			case MYSQL_DATABASE_NAME: return value.toString();
+			case MYSQL_SERVER_NAME: return value.toString();
+			case MYSQL_TABLE_NAME: return value.toString();
+			case MYSQL_USERNAME: return value.toString();
+			case NET_PORT: return value.toString();
+			case POSTGRES_DATABASE_NAME: return value.toString();
+			case POSTGRES_SERVER_NAME: return value.toString();
+			case POSTGRES_USERNAME: return value.toString();
 			default: throw new IllegalArgumentException("Unknown SchemaType: "+type);
 		}
 	}
@@ -896,14 +1015,14 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			switch(type) {
 				case ACCOUNTING:
 					return AccountingCode.valueOf(S);
-				case EMAIL:
-				case PACKAGE:
-				case PATH:
+				case EMAIL: // TODO: com.aoindustries.net.Email
+				case PACKAGE: // TODO: com.aoindustries.aoserv.client.validator.AccountingCode
+				case PATH: // TODO: com.aoindustries.aoserv.client.validator.UnixPath
 				case PHONE:
 				case STRING:
 				case URL:
-				case USERNAME:
-				case ZONE:
+				case USERNAME: // TODO: com.aoindustries.aoserv.client.validator.UserId
+				case ZONE: // TODO: com.aoindustries.aoserv.client.validator.Zone
 					return S;
 				case HOSTNAME:
 					return HostAddress.valueOf(S);
@@ -967,6 +1086,29 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					return MacAddress.valueOf(S);
 				case MONEY:
 					throw new IllegalArgumentException("Parsing from String to Money is not supported.");
+				case MYSQL_DATABASE_NAME:
+					return MySQLDatabaseName.valueOf(S);
+				case MYSQL_SERVER_NAME:
+					return MySQLServerName.valueOf(S);
+				case MYSQL_TABLE_NAME:
+					return MySQLTableName.valueOf(S);
+				case MYSQL_USERNAME:
+					return MySQLUserId.valueOf(S);
+				case NET_PORT:
+					{
+						int slashPos = S.indexOf('/');
+						if(slashPos == -1) throw new IllegalArgumentException("Slash (/) not found for Port: " + S);
+						return Port.valueOf(
+							Integer.parseInt(S.substring(0, slashPos)),
+							com.aoindustries.net.Protocol.valueOf(S.substring(slashPos + 1))
+						);
+					}
+				case POSTGRES_DATABASE_NAME:
+					return PostgresDatabaseName.valueOf(S);
+				case POSTGRES_SERVER_NAME:
+					return PostgresServerName.valueOf(S);
+				case POSTGRES_USERNAME:
+					return PostgresUserId.valueOf(S);
 				default:
 					throw new IllegalArgumentException("Unknown SchemaType: "+type);
 			}
