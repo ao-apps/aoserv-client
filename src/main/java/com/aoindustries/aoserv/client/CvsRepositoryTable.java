@@ -23,13 +23,16 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * @see  CvsRepository
@@ -78,7 +81,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	/**
 	 * Gets one <code>CvsRepository</code> from the database.
 	 */
-	CvsRepository getCvsRepository(AOServer aoServer, String path) throws IOException, SQLException {
+	CvsRepository getCvsRepository(AOServer aoServer, UnixPath path) throws IOException, SQLException {
 		int aoPKey=aoServer.pkey;
 
 		List<CvsRepository> cached=getRows();
@@ -125,35 +128,50 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 		return SchemaTable.TableID.CVS_REPOSITORIES;
 	}
 
-	public List<String> getValidPrefixes() throws IOException, SQLException {
-		List<String> prefixes=new ArrayList<>();
+	private static final UnixPath VAR_CVS;
+	static {
+		try {
+			VAR_CVS = UnixPath.valueOf("/var/cvs").intern();
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
-		// Home directories
-		for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
-			if(lsa.getLinuxAccount().getType().getName().equals(LinuxAccountType.USER) && !lsa.isDisabled()) {
-				String dir=lsa.getHome();
-				if(!prefixes.contains(dir)) prefixes.add(dir);
+	public SortedSet<UnixPath> getValidPrefixes() throws IOException, SQLException {
+		try {
+			SortedSet<UnixPath> prefixes=new TreeSet<>();
+
+			// Home directories
+			for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
+				if(lsa.getLinuxAccount().getType().getName().equals(LinuxAccountType.USER) && !lsa.isDisabled()) {
+					prefixes.add(lsa.getHome());
+				}
 			}
+
+			// HttpdSites
+			for(HttpdSite site : connector.getHttpdSites().getRows()) {
+				if(!site.isDisabled()) prefixes.add(site.getInstallDirectory());
+			}
+
+			// HttpdSharedTomcats
+			for(HttpdSharedTomcat tomcat : connector.getHttpdSharedTomcats().getRows()) {
+				if(!tomcat.isDisabled()) {
+					prefixes.add(
+						UnixPath.valueOf(
+							tomcat.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
+							+ '/' + tomcat.getName()
+						)
+					);
+				}
+			}
+
+			// The global directory
+			prefixes.add(VAR_CVS);
+
+			return prefixes;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
 		}
-
-		// HttpdSites
-		for(HttpdSite site : connector.getHttpdSites().getRows()) {
-			String dir=site.getInstallDirectory();
-			if(!site.isDisabled() && !prefixes.contains(dir)) prefixes.add(dir);
-		}
-
-		// HttpdSharedTomcats
-		for(HttpdSharedTomcat tomcat : connector.getHttpdSharedTomcats().getRows()) {
-			String dir=tomcat.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+tomcat.getName();
-			if(!tomcat.isDisabled() && !prefixes.contains(dir)) prefixes.add(dir);
-		}
-
-		// The global directory
-		if(!prefixes.contains("/var/cvs")) prefixes.add("/var/cvs");
-
-		// Sort and return
-		Collections.sort(prefixes);
-		return prefixes;
 	}
 
 	@Override
@@ -192,7 +210,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			if(AOSH.checkParamCount(AOSHCommand.ADD_CVS_REPOSITORY, args, 2, err)) {
 				connector.getSimpleAOClient().removeCvsRepository(
 					args[1],
-					args[2]
+					AOSH.parseUnixPath(args[2], "path")
 				);
 			}
 			return true;
@@ -200,7 +218,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			if(AOSH.checkParamCount(AOSHCommand.SET_CVS_REPOSITORY_MODE, args, 3, err)) {
 				connector.getSimpleAOClient().setCvsRepositoryMode(
 					args[1],
-					args[2],
+					AOSH.parseUnixPath(args[2], "path"),
 					AOSH.parseOctalLong(args[3], "mode")
 				);
 			}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,7 +60,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 	 */
 	public static final int MAX_NAME_LENGTH=64;
 
-	String path;
+	UnixPath path;
 	int linux_server_account;
 	int linux_server_group;
 	int disable_log;
@@ -175,7 +177,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 		return table.connector.getMajordomoLists().get(pkey);
 	}
 
-	public String getPath() {
+	public UnixPath getPath() {
 		return path;
 	}
 
@@ -186,30 +188,35 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		path = result.getString(2);
-		linux_server_account = result.getInt(3);
-		linux_server_group = result.getInt(4);
-		disable_log=result.getInt(5);
-		if(result.wasNull()) disable_log=-1;
+		try {
+			pkey = result.getInt(1);
+			path = UnixPath.valueOf(result.getString(2));
+			linux_server_account = result.getInt(3);
+			linux_server_group = result.getInt(4);
+			disable_log=result.getInt(5);
+			if(result.wasNull()) disable_log=-1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	/**
 	 * Checks the validity of a list name.
 	 */
-	public static boolean isValidRegularPath(String path) {
+	public static boolean isValidRegularPath(UnixPath path) {
 		// Must start with LIST_DIRECTORY
 		if(path==null) return false;
-		if(!path.startsWith(LIST_DIRECTORY+'/')) return false;
-		path=path.substring(LIST_DIRECTORY.length()+1);
-		if(path.length()<2) return false;
-		char firstChar=path.charAt(0);
-		if(path.charAt(1)!='/') return false;
-		path=path.substring(2);
-		int len = path.length();
+		String pathStr = path.toString();
+		if(!pathStr.startsWith(LIST_DIRECTORY+'/')) return false;
+		pathStr=pathStr.substring(LIST_DIRECTORY.length()+1);
+		if(pathStr.length()<2) return false;
+		char firstChar=pathStr.charAt(0);
+		if(pathStr.charAt(1)!='/') return false;
+		pathStr=pathStr.substring(2);
+		int len = pathStr.length();
 		if (len < 1 || len > MAX_NAME_LENGTH) return false;
 		for (int c = 0; c < len; c++) {
-			char ch = path.charAt(c);
+			char ch = pathStr.charAt(c);
 			if (c == 0) {
 				if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z')) return false;
 				// First character must match with the name
@@ -224,11 +231,15 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		path=in.readUTF();
-		linux_server_account=in.readCompressedInt();
-		linux_server_group=in.readCompressedInt();
-		disable_log=in.readCompressedInt();
+		try {
+			pkey=in.readCompressedInt();
+			path = UnixPath.valueOf(in.readUTF());
+			linux_server_account=in.readCompressedInt();
+			linux_server_group=in.readCompressedInt();
+			disable_log=in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -253,7 +264,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(path);
+		out.writeUTF(path.toString());
 		out.writeCompressedInt(linux_server_account);
 		out.writeCompressedInt(linux_server_group);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {

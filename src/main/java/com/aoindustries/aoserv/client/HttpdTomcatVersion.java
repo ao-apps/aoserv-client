@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,7 +48,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 
 	static final String COLUMN_VERSION_name = "version";
 
-	private String install_dir;
+	private UnixPath install_dir;
 	private boolean requires_mod_jk;
 
 	public static final String TECHNOLOGY_NAME="jakarta-tomcat";
@@ -71,7 +73,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		}
 	}
 
-	public String getInstallDirectory() {
+	public UnixPath getInstallDirectory() {
 		return install_dir;
 	}
 
@@ -88,9 +90,13 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		install_dir = result.getString(2);
-		requires_mod_jk = result.getBoolean(3);
+		try {
+			pkey = result.getInt(1);
+			install_dir = UnixPath.valueOf(result.getString(2));
+			requires_mod_jk = result.getBoolean(3);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	/**
@@ -143,9 +149,13 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey = in.readCompressedInt();
-		install_dir = in.readUTF();
-		requires_mod_jk = in.readBoolean();
+		try {
+			pkey = in.readCompressedInt();
+			install_dir = UnixPath.valueOf(in.readUTF());
+			requires_mod_jk = in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	public boolean requiresModJK() {
@@ -155,7 +165,7 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(install_dir);
+		out.writeUTF(install_dir.toString());
 		out.writeBoolean(requires_mod_jk);
 	}
 }

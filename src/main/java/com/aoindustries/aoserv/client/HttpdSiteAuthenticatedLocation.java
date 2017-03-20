@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,24 +63,16 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 		return validateNonQuoteAscii(authName, "AuthName");
 	}
 
-	public static String validateAuthGroupFile(String authGroupFile) {
+	public static String validateAuthGroupFile(UnixPath authGroupFile) {
 		// May be empty
-		if(authGroupFile.length()==0) return null;
-		// Must start with /
-		if(authGroupFile.charAt(0)!='/') return "AuthGroupFile must start with /";
-		// Doesn't have .. in it
-		if(authGroupFile.contains("..")) return "AuthGroupFile may not contain ..";
-		return validateNonQuoteAscii(authGroupFile, "AuthGroupFile");
+		if(authGroupFile == null) return null;
+		return validateNonQuoteAscii(authGroupFile.toString(), "AuthGroupFile");
 	}
 
-	public static String validateAuthUserFile(String authUserFile) {
+	public static String validateAuthUserFile(UnixPath authUserFile) {
 		// May be empty
-		if(authUserFile.length()==0) return null;
-		// Must start with /
-		if(authUserFile.charAt(0)!='/') return "AuthUserFile must start with /";
-		// Doesn't have .. in it
-		if(authUserFile.contains("..")) return "AuthUserFile may not contain ..";
-		return validateNonQuoteAscii(authUserFile, "AuthUserFile");
+		if(authUserFile == null) return null;
+		return validateNonQuoteAscii(authUserFile.toString(), "AuthUserFile");
 	}
 
 	public static String validateRequire(String require) {
@@ -89,8 +83,8 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 	private String path;
 	private boolean is_regular_expression;
 	private String auth_name;
-	private String auth_group_file;
-	private String auth_user_file;
+	private UnixPath auth_group_file;
+	private UnixPath auth_user_file;
 	private String require;
 
 	@Override
@@ -131,11 +125,11 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 		return auth_name;
 	}
 
-	public String getAuthGroupFile() {
+	public UnixPath getAuthGroupFile() {
 		return auth_group_file;
 	}
 
-	public String getAuthUserFile() {
+	public UnixPath getAuthUserFile() {
 		return auth_user_file;
 	}
 
@@ -150,26 +144,46 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		httpd_site=result.getInt(2);
-		path=result.getString(3);
-		is_regular_expression=result.getBoolean(4);
-		auth_name=result.getString(5);
-		auth_group_file=result.getString(6);
-		auth_user_file=result.getString(7);
-		require=result.getString(8);
+		try {
+			pkey=result.getInt(1);
+			httpd_site=result.getInt(2);
+			path=result.getString(3);
+			is_regular_expression=result.getBoolean(4);
+			auth_name=result.getString(5);
+			{
+				String s = result.getString(6);
+				auth_group_file = s.isEmpty() ? null : UnixPath.valueOf(s);
+			}
+			{
+				String s = result.getString(7);
+				auth_user_file = s.isEmpty() ? null : UnixPath.valueOf(s);
+			}
+			require=result.getString(8);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		httpd_site=in.readCompressedInt();
-		path=in.readCompressedUTF();
-		is_regular_expression=in.readBoolean();
-		auth_name=in.readCompressedUTF();
-		auth_group_file=in.readCompressedUTF();
-		auth_user_file=in.readCompressedUTF();
-		require=in.readCompressedUTF().intern();
+		try {
+			pkey=in.readCompressedInt();
+			httpd_site=in.readCompressedInt();
+			path=in.readCompressedUTF();
+			is_regular_expression=in.readBoolean();
+			auth_name=in.readCompressedUTF();
+			{
+				String s = in.readCompressedUTF();
+				auth_group_file = s.isEmpty() ? null : UnixPath.valueOf(s);
+			}
+			{
+				String s = in.readCompressedUTF();
+				auth_user_file = s.isEmpty() ? null : UnixPath.valueOf(s);
+			}
+			require=in.readCompressedUTF().intern();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -181,8 +195,8 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 		String path,
 		boolean isRegularExpression,
 		String authName,
-		String authGroupFile,
-		String authUserFile,
+		UnixPath authGroupFile,
+		UnixPath authUserFile,
 		String require
 	) throws IOException, SQLException {
 		table.connector.requestUpdateIL(
@@ -192,8 +206,8 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 			path,
 			isRegularExpression,
 			authName,
-			authGroupFile,
-			authUserFile,
+			authGroupFile==null ? "" : authGroupFile.toString(),
+			authUserFile==null ? "" : authUserFile.toString(),
 			require
 		);
 	}
@@ -211,8 +225,8 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 		out.writeCompressedUTF(path, 0);
 		out.writeBoolean(is_regular_expression);
 		out.writeCompressedUTF(auth_name, 1);
-		out.writeCompressedUTF(auth_group_file, 2);
-		out.writeCompressedUTF(auth_user_file, 3);
+		out.writeCompressedUTF(auth_group_file==null ? "" : auth_group_file.toString(), 2);
+		out.writeCompressedUTF(auth_user_file==null ? "" : auth_user_file.toString(), 3);
 		out.writeCompressedUTF(require, 4);
 	}
 }

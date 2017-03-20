@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -62,24 +63,24 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 		APPLICATION="application"
 	;
 
-	private static final String[] backupShells={
+	private static final UnixPath[] backupShells={
 		Shell.BASH
 	};
 
-	private static final String[] emailShells={
+	private static final UnixPath[] emailShells={
 		Shell.PASSWD
 	};
 
-	private static final String[] ftpShells={
+	private static final UnixPath[] ftpShells={
 		Shell.FTPONLY,
 		Shell.FTPPASSWD
 	};
 
-	private static final String[] mercenaryShells={
+	private static final UnixPath[] mercenaryShells={
 		Shell.BASH
 	};
 
-	private static final String[] systemShells={
+	private static final UnixPath[] systemShells={
 		Shell.BASH,
 		Shell.FALSE,
 		Shell.NOLOGIN,
@@ -89,14 +90,14 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 		//Shell.TRUE
 	};
 
-	private static final String[] applicationShells={
+	private static final UnixPath[] applicationShells={
 		Shell.BASH,
 		Shell.FALSE//,
 		//Shell.NULL,
 		//Shell.TRUE
 	};
 
-	private static final String[] userShells={
+	private static final UnixPath[] userShells={
 		//Shell.ASH,
 		Shell.BASH,
 		//Shell.BASH2,
@@ -118,7 +119,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	}
 
 	public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
-		String[] paths=getShellList(pkey);
+		UnixPath[] paths=getShellList(pkey);
 
 		ShellTable shellTable=connector.getShells();
 		int len=paths.length;
@@ -147,7 +148,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 		return pkey;
 	}
 
-	private static String[] getShellList(String type) throws SQLException {
+	private static UnixPath[] getShellList(String type) throws SQLException {
 		if(type.equals(BACKUP)) return backupShells;
 		if(type.equals(EMAIL)) return emailShells;
 		if(type.equals(FTPONLY)) return ftpShells;
@@ -174,12 +175,12 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 		return isAllowedShell(shell.pkey);
 	}
 
-	public boolean isAllowedShell(String path) throws SQLException {
+	public boolean isAllowedShell(UnixPath path) throws SQLException {
 		return isAllowedShell(pkey, path);
 	}
 
-	public static boolean isAllowedShell(String type, String path) throws SQLException {
-		String[] paths=getShellList(type);
+	public static boolean isAllowedShell(String type, UnixPath path) throws SQLException {
+		UnixPath[] paths=getShellList(type);
 		int len=paths.length;
 		for(int c=0;c<len;c++) {
 			if(paths[c].equals(path)) return true;

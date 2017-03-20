@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2002-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,17 +64,18 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		};
 	}
 
-	public static boolean isValidPath(String path) {
-		if(
-			path==null
-			|| path.length()<=1
-			|| path.charAt(0)!='/'
-			|| path.contains("//")
-			|| path.contains("..")
-		) return false;
-		int len=path.length();
-		for(int c=1;c<len;c++) {
-			char ch=path.charAt(c);
+	/**
+	 * Allowed CVS repository paths are constrained beyond the general
+	 * requirements of {@link UnixPath}.
+	 * May only contain characters in the set:
+	 * <code>[a-z] [A-Z] [0-9] _ . - /</code>
+	 */
+	public static boolean isValidPath(UnixPath path) {
+		if(path == null) return false;
+		String pathStr = path.toString();
+		int len = pathStr.length();
+		for(int c = 1; c < len; c++) {
+			char ch = pathStr.charAt(c);
 			if(
 				(ch<'a' || ch>'z')
 				&& (ch<'A' || ch>'Z')
@@ -83,10 +86,10 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 				&& ch!='/'
 			) return false;
 		}
-		return path.charAt(path.length()-1)!='/';
+		return true;
 	}
 
-	String path;
+	UnixPath path;
 	int linux_server_account;
 	int linux_server_group;
 	private long mode;
@@ -142,7 +145,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return obj;
 	}
 
-	public String getPath() {
+	public UnixPath getPath() {
 		return path;
 	}
 
@@ -173,25 +176,33 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		path=result.getString(2);
-		linux_server_account=result.getInt(3);
-		linux_server_group=result.getInt(4);
-		mode=result.getLong(5);
-		created=result.getTimestamp(6).getTime();
-		disable_log=result.getInt(7);
-		if(result.wasNull()) disable_log=-1;
+		try {
+			pkey=result.getInt(1);
+			path = UnixPath.valueOf(result.getString(2));
+			linux_server_account=result.getInt(3);
+			linux_server_group=result.getInt(4);
+			mode=result.getLong(5);
+			created=result.getTimestamp(6).getTime();
+			disable_log=result.getInt(7);
+			if(result.wasNull()) disable_log=-1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		path=in.readUTF();
-		linux_server_account=in.readCompressedInt();
-		linux_server_group=in.readCompressedInt();
-		mode=in.readLong();
-		created=in.readLong();
-		disable_log=in.readCompressedInt();
+		try {
+			pkey=in.readCompressedInt();
+			path = UnixPath.valueOf(in.readUTF());
+			linux_server_account=in.readCompressedInt();
+			linux_server_group=in.readCompressedInt();
+			mode=in.readLong();
+			created=in.readLong();
+			disable_log=in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -211,7 +222,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(path);
+		out.writeUTF(path.toString());
 		out.writeCompressedInt(linux_server_account);
 		out.writeCompressedInt(linux_server_group);
 		out.writeLong(mode);

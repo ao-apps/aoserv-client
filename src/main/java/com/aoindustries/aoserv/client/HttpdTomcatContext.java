@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2002-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,12 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntList;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -59,7 +62,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 	public static final boolean DEFAULT_USE_NAMING=true;
 	public static final String DEFAULT_WRAPPER_CLASS=null;
 	public static final int DEFAULT_DEBUG=0;
-	public static final String DEFAULT_WORK_DIR=null;
+	public static final UnixPath DEFAULT_WORK_DIR = null;
 
 	/**
 	 * The ROOT webapp details
@@ -79,7 +82,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 	private boolean use_naming;
 	private String wrapper_class;
 	private int debug;
-	private String work_dir;
+	private UnixPath work_dir;
 
 	public int addHttpdTomcatDataSource(
 		String name,
@@ -188,7 +191,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		return debug;
 	}
 
-	public String getWorkDir() {
+	public UnixPath getWorkDir() {
 		return work_dir;
 	}
 
@@ -215,20 +218,24 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		tomcat_site=result.getInt(2);
-		class_name=result.getString(3);
-		cookies=result.getBoolean(4);
-		cross_context=result.getBoolean(5);
-		doc_base=result.getString(6);
-		override=result.getBoolean(7);
-		path=result.getString(8);
-		privileged=result.getBoolean(9);
-		reloadable=result.getBoolean(10);
-		use_naming=result.getBoolean(11);
-		wrapper_class=result.getString(12);
-		debug=result.getInt(13);
-		work_dir=result.getString(14);
+		try {
+			pkey=result.getInt(1);
+			tomcat_site=result.getInt(2);
+			class_name=result.getString(3);
+			cookies=result.getBoolean(4);
+			cross_context=result.getBoolean(5);
+			doc_base=result.getString(6);
+			override=result.getBoolean(7);
+			path=result.getString(8);
+			privileged=result.getBoolean(9);
+			reloadable=result.getBoolean(10);
+			use_naming=result.getBoolean(11);
+			wrapper_class=result.getString(12);
+			debug=result.getInt(13);
+			work_dir = UnixPath.valueOf(result.getString(14));
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public static boolean isValidDocBase(String docBase) {
@@ -254,20 +261,24 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		tomcat_site=in.readCompressedInt();
-		class_name=in.readNullUTF();
-		cookies=in.readBoolean();
-		cross_context=in.readBoolean();
-		doc_base=in.readUTF();
-		override=in.readBoolean();
-		path=in.readUTF();
-		privileged=in.readBoolean();
-		reloadable=in.readBoolean();
-		use_naming=in.readBoolean();
-		wrapper_class=in.readNullUTF();
-		debug=in.readCompressedInt();
-		work_dir=in.readNullUTF();
+		try {
+			pkey=in.readCompressedInt();
+			tomcat_site=in.readCompressedInt();
+			class_name=in.readNullUTF();
+			cookies=in.readBoolean();
+			cross_context=in.readBoolean();
+			doc_base=in.readUTF();
+			override=in.readBoolean();
+			path=in.readUTF();
+			privileged=in.readBoolean();
+			reloadable=in.readBoolean();
+			use_naming=in.readBoolean();
+			wrapper_class=in.readNullUTF();
+			debug=in.readCompressedInt();
+			work_dir = UnixPath.valueOf(in.readNullUTF());
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	public void setAttributes(
@@ -345,6 +356,6 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		out.writeBoolean(use_naming);
 		out.writeNullUTF(wrapper_class);
 		out.writeCompressedInt(debug);
-		out.writeNullUTF(work_dir);
+		out.writeNullUTF(ObjectUtils.toString(work_dir));
 	}
 }

@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.LinuxId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.security.AccountDisabledException;
@@ -57,7 +58,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 		return defaultOrderBy;
 	}
 
-	int addLinuxServerAccount(LinuxAccount linuxAccount, AOServer aoServer, String home) throws IOException, SQLException {
+	int addLinuxServerAccount(LinuxAccount linuxAccount, AOServer aoServer, UnixPath home) throws IOException, SQLException {
 		int pkey=connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD,
@@ -278,7 +279,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 				int pkey=connector.getSimpleAOClient().addLinuxServerAccount(
 					args[1],
 					args[2],
-					args[3]
+					args[3].isEmpty() ? null : AOSH.parseUnixPath(args[3], "home_directory")
 				);
 				out.println(pkey);
 				out.flush();
@@ -488,20 +489,21 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 		return false;
 	}
 
-	boolean isHomeUsed(AOServer aoServer, String directory) throws IOException, SQLException {
+	boolean isHomeUsed(AOServer aoServer, UnixPath directory) throws IOException, SQLException {
 		int pkey=aoServer.pkey;
 
-		String startsWith=directory+'/';
+		String directoryStr = directory.toString();
+		String startsWith = directoryStr + '/';
 
 		List<LinuxServerAccount> cached=getRows();
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			LinuxServerAccount lsa=cached.get(c);
 			if(lsa.ao_server==pkey) {
-				String home=lsa.getHome();
+				UnixPath home=lsa.getHome();
 				if(
 					home.equals(directory)
-					|| home.startsWith(startsWith)
+					|| home.toString().startsWith(startsWith)
 				) return true;
 			}
 		}

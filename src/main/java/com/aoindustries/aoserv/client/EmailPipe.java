@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -52,7 +53,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 	static final String COLUMN_PATH_name = "path";
 
 	int ao_server;
-	private String path;
+	private UnixPath path;
 	AccountingCode packageName;
 	int disable_log;
 
@@ -113,7 +114,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		return packageObject;
 	}
 
-	public String getPath() {
+	public UnixPath getPath() {
 		return path;
 	}
 
@@ -133,7 +134,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		try {
 			pkey = result.getInt(1);
 			ao_server = result.getInt(2);
-			path = result.getString(3);
+			path = UnixPath.valueOf(result.getString(3));
 			packageName = AccountingCode.valueOf(result.getString(4));
 			disable_log=result.getInt(5);
 			if(result.wasNull()) disable_log=-1;
@@ -147,7 +148,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		try {
 			pkey=in.readCompressedInt();
 			ao_server=in.readCompressedInt();
-			path=in.readUTF();
+			path = UnixPath.valueOf(in.readUTF());
 			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			disable_log=in.readCompressedInt();
 		} catch(ValidationException e) {
@@ -172,14 +173,14 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 
 	@Override
 	String toStringImpl() {
-		return ao_server+':'+path;
+		return ao_server+":"+path;
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
-		out.writeUTF(path);
+		out.writeUTF(path.toString());
 		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(disable_log);
 	}

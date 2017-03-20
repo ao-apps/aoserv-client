@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -108,7 +109,15 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 		LinuxAccountType typeObject,
 		Shell shellObject
 	) throws IOException, SQLException {
-		addLinuxAccount(primaryGroup.getName(), name, office_location, office_phone, home_phone, typeObject.pkey, shellObject.pkey);
+		addLinuxAccount(
+			primaryGroup.getName(),
+			name,
+			office_location,
+			office_phone,
+			home_phone,
+			typeObject.pkey,
+			shellObject.pkey
+		);
 	}
 
 	public void addLinuxAccount(
@@ -118,7 +127,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 		Gecos office_phone,
 		Gecos home_phone,
 		String type,
-		String shell
+		UnixPath shell
 	) throws IOException, SQLException {
 		table.connector.getLinuxAccounts().addLinuxAccount(
 			this,

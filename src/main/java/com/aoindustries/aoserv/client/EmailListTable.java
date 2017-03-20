@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -51,7 +52,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 	}
 
 	public int addEmailList(
-		String path,
+		UnixPath path,
 		LinuxServerAccount linuxAccountObject,
 		LinuxServerGroup linuxGroupObject
 	) throws IllegalArgumentException, IOException, SQLException {
@@ -108,7 +109,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 		return getIndexedRows(EmailList.COLUMN_LINUX_SERVER_ACCOUNT, lsa.pkey);
 	}
 
-	EmailList getEmailList(AOServer ao, String path) throws IOException, SQLException {
+	EmailList getEmailList(AOServer ao, UnixPath path) throws IOException, SQLException {
 		int aoPKey=ao.pkey;
 		List<EmailList> cached=getRows();
 		int size=cached.size();
@@ -132,7 +133,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 				out.println(
 					connector.getSimpleAOClient().addEmailList(
 						args[1],
-						args[2],
+						AOSH.parseUnixPath(args[2], "path"),
 						args[3],
 						args[4]
 					)
@@ -144,7 +145,9 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 			if(AOSH.checkMinParamCount(AOSHCommand.CHECK_EMAIL_LIST_PATH, args, 1, err)) {
 				for(int c=1;c<args.length;c++) {
 					try {
-						SimpleAOClient.checkEmailListPath(args[c]);
+						SimpleAOClient.checkEmailListPath(
+							AOSH.parseUnixPath(args[c], "path")
+						);
 						if(args.length>2) {
 							out.print(args[c]);
 							out.print(": ");
@@ -165,7 +168,7 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 			if(AOSH.checkParamCount(AOSHCommand.DISABLE_EMAIL_LIST, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().disableEmailList(
-						args[1],
+						AOSH.parseUnixPath(args[1], "path"),
 						args[2],
 						args[3]
 					)
@@ -175,23 +178,38 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_EMAIL_LIST)) {
 			if(AOSH.checkParamCount(AOSHCommand.ENABLE_EMAIL_LIST, args, 2, err)) {
-				connector.getSimpleAOClient().enableEmailList(args[1], args[2]);
+				connector.getSimpleAOClient().enableEmailList(
+					AOSH.parseUnixPath(args[1], "path"),
+					args[2]
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.GET_EMAIL_LIST)) {
 			if(AOSH.checkParamCount(AOSHCommand.GET_EMAIL_LIST, args, 2, err)) {
-				out.println(connector.getSimpleAOClient().getEmailListAddressList(args[1], args[2]));
+				out.println(
+					connector.getSimpleAOClient().getEmailListAddressList(
+						AOSH.parseUnixPath(args[1], "path"),
+						args[2]
+					)
+				);
 				out.flush();
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_EMAIL_LIST)) {
 			if(AOSH.checkParamCount(AOSHCommand.REMOVE_EMAIL_LIST, args, 2, err)) {
-				connector.getSimpleAOClient().removeEmailList(args[1], args[2]);
+				connector.getSimpleAOClient().removeEmailList(
+					AOSH.parseUnixPath(args[1], "path"),
+					args[2]
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_EMAIL_LIST)) {
 			if(AOSH.checkParamCount(AOSHCommand.SET_EMAIL_LIST, args, 3, err)) {
-				connector.getSimpleAOClient().setEmailListAddressList(args[1], args[2], args[3]);
+				connector.getSimpleAOClient().setEmailListAddressList(
+					AOSH.parseUnixPath(args[1], "path"),
+					args[2],
+					args[3]
+				);
 			}
 			return true;
 		}

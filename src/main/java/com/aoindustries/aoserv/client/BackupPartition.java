@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2002-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,7 +45,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	static final String COLUMN_PATH_name = "path";
 
 	int ao_server;
-	String path;
+	UnixPath path;
 	private boolean enabled;
 	private boolean quota_enabled;
 
@@ -73,7 +75,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 		return ao;
 	}
 
-	public String getPath() {
+	public UnixPath getPath() {
 		return path;
 	}
 
@@ -89,11 +91,15 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		ao_server=result.getInt(2);
-		path=result.getString(3);
-		enabled=result.getBoolean(4);
-		quota_enabled=result.getBoolean(5);
+		try {
+			pkey=result.getInt(1);
+			ao_server=result.getInt(2);
+			path = UnixPath.valueOf(result.getString(3));
+			enabled=result.getBoolean(4);
+			quota_enabled=result.getBoolean(5);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isEnabled() {
@@ -114,19 +120,23 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		ao_server=in.readCompressedInt();
-		path=in.readUTF().intern();
-		enabled=in.readBoolean();
-		quota_enabled=in.readBoolean();
+		try {
+			pkey=in.readCompressedInt();
+			ao_server=in.readCompressedInt();
+			path = UnixPath.valueOf(in.readUTF()).intern();
+			enabled=in.readBoolean();
+			quota_enabled=in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeUTF(path);
-		out.writeUTF(path);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeUTF(path.toString());
+		out.writeUTF(path.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeLong((long)512*1024*1024); // min free space
 			out.writeLong((long)1024*1024*1024); // desired free space

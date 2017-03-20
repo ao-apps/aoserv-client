@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,31 +27,23 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * @see  Shell
+ * @see  GlobalObjectUnixPathKey
  *
  * @author  AO Industries, Inc.
  */
-final public class ShellTable extends GlobalTableUnixPathKey<Shell> {
+public abstract class GlobalTableUnixPathKey<V extends GlobalObjectUnixPathKey<V>> extends GlobalTable<UnixPath,V> {
 
-	ShellTable(AOServConnector connector) {
-		super(connector, Shell.class);
+	GlobalTableUnixPathKey(AOServConnector connector, Class<V> clazz) {
+		super(connector, clazz);
 	}
 
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Shell.COLUMN_PATH_name, ASCENDING)
-	};
+	/**
+	 * Gets the object with the provided key.  The key must be a {@link UnixPath}.
+	 */
 	@Override
-	OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
+	public V get(Object pkey) throws IOException, SQLException {
+		return get((UnixPath)pkey);
 	}
 
-	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.SHELLS;
-	}
-
-	@Override
-	public Shell get(UnixPath path) throws IOException, SQLException {
-		return getUniqueRow(Shell.COLUMN_PATH, path);
-	}
+	abstract public V get(UnixPath pkey) throws IOException, SQLException;
 }

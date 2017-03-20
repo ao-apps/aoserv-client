@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
@@ -265,7 +266,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return AccountingCode.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("invalid argument for accounting "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for accounting ("+field+"): "+S, err);
 		}
 	}
 
@@ -293,14 +294,14 @@ final public class AOSH extends ShellInterpreter {
 			|| S.equalsIgnoreCase("nien")
 			|| S.equalsIgnoreCase("la")
 		) return false;
-		else throw new IllegalArgumentException("invalid argument for boolean "+field+": "+S);
+		else throw new IllegalArgumentException("Invalid argument for boolean ("+field+"): "+S);
 	}
 
 	static Date parseDate(String S, String field) {
 		try {
 			return SQLUtility.getDate(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for date "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for date ("+field+"): "+S, err);
 		}
 	}
 
@@ -308,7 +309,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Integer.parseInt(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for int "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for int ("+field+"): "+S, err);
 		}
 	}
 
@@ -316,7 +317,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Float.parseFloat(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for float "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for float ("+field+"): "+S, err);
 		}
 	}
 
@@ -324,7 +325,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Long.parseLong(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for long "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for long ("+field+"): "+S, err);
 		}
 	}
 
@@ -332,7 +333,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return SQLUtility.getMillis(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for decimal ("+field+"): "+S, err);
 		}
 	}
 
@@ -340,7 +341,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Integer.parseInt(S, 8);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for octal int "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for octal int ("+field+"): "+S, err);
 		}
 	}
 
@@ -348,7 +349,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Long.parseLong(S, 8);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for octal long "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for octal long ("+field+"): "+S, err);
 		}
 	}
 
@@ -356,7 +357,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return SQLUtility.getPennies(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for decimal "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for decimal ("+field+"): "+S, err);
 		}
 	}
 
@@ -364,7 +365,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Short.parseShort(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("invalid argument for short "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for short ("+field+"): "+S, err);
 		}
 	}
 
@@ -372,7 +373,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return DomainName.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("invalid argument for domain_name "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for domain_name ("+field+"): "+S, err);
 		}
 	}
 
@@ -380,7 +381,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Gecos.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("invalid argument for gecos "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for gecos ("+field+"): "+S, err);
 		}
 	}
 
@@ -388,7 +389,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return InetAddress.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("invalid argument for ip_address "+field+": "+S, err);
+			throw new IllegalArgumentException("Invalid argument for ip_address ("+field+"): "+S, err);
 		}
 	}
 
@@ -403,7 +404,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			protocolObj = com.aoindustries.net.Protocol.valueOf(protocol);
 		} catch(IllegalArgumentException e) {
-			throw new IllegalArgumentException("invalid argument for protocol "+protocolField+": "+protocol, e);
+			throw new IllegalArgumentException("Invalid argument for protocol ("+protocolField+"): "+protocol, e);
 		}
 		try {
 			return Port.valueOf(
@@ -411,7 +412,15 @@ final public class AOSH extends ShellInterpreter {
 				protocolObj
 			);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("invalid argument for port "+portField+": "+port, err);
+			throw new IllegalArgumentException("Invalid argument for port ("+portField+"): "+port, err);
+		}
+	}
+
+	static UnixPath parseUnixPath(String S, String field) {
+		try {
+			return UnixPath.valueOf(S);
+		} catch(ValidationException err) {
+			throw new IllegalArgumentException("Invalid argument for POSIX path ("+field+"): "+S, err);
 		}
 	}
 

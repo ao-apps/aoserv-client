@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -154,7 +154,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
 								connector.getSimpleAOClient().addEmailListAddress(
 									addr.substring(0, pos),
 									AOSH.parseDomainName(addr.substring(pos+1), "address"),
-									args[c+1],
+									AOSH.parseUnixPath(args[c+1], "path"),
 									args[c+2]
 								)
 							);
@@ -176,7 +176,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
 					connector.getSimpleAOClient().removeEmailListAddress(
 						addr.substring(0, pos),
 						AOSH.parseDomainName(addr.substring(pos+1), "address"),
-						args[2],
+						AOSH.parseUnixPath(args[2], "path"),
 						args[3]
 					);
 				}

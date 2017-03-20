@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
@@ -45,7 +46,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
 	static final int COLUMN_NET_BIND=0;
 	static final String COLUMN_NET_BIND_name = "net_bind";
 
-	private String logfile;
+	private UnixPath logfile;
 	private DomainName hostname;
 	private String email;
 	private long created;
@@ -84,7 +85,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
 		return nb;
 	}
 
-	public String getLogfile() {
+	public UnixPath getLogfile() {
 		return logfile;
 	}
 
@@ -108,7 +109,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
 	/**
 	 * @deprecated  use getLinuxServerAccount().getHome()
 	 */
-	public String getRoot() throws SQLException, IOException {
+	public UnixPath getRoot() throws SQLException, IOException {
 		return getLinuxServerAccount().getHome();
 	}
 
@@ -121,7 +122,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			logfile = result.getString(2);
+			logfile = UnixPath.valueOf(result.getString(2));
 			hostname = DomainName.valueOf(result.getString(3));
 			email = result.getString(4);
 			created = result.getTimestamp(5).getTime();
@@ -136,7 +137,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			logfile=in.readUTF();
+			logfile = UnixPath.valueOf(in.readUTF());
 			hostname=DomainName.valueOf(in.readUTF());
 			email=in.readUTF();
 			created=in.readLong();
@@ -157,7 +158,7 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_113)<0) throw new IOException("PrivateFTPServer on AOServProtocol version less than "+AOServProtocol.Version.VERSION_1_0_A_113.getVersion()+" is no longer supported.  Please upgrade your AOServ Client software packages.");
 		out.writeCompressedInt(pkey);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_38)<=0) out.writeUTF("Upgrade AOServClient to version "+AOServProtocol.Version.VERSION_1_39+" or newer");
-		out.writeUTF(logfile);
+		out.writeUTF(logfile.toString());
 		out.writeUTF(hostname.toString());
 		out.writeUTF(email);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);

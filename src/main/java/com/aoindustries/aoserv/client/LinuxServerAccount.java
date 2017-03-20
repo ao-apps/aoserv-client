@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.LinuxId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -83,7 +84,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	String username;
 	int ao_server;
 	LinuxId uid;
-	private String home;
+	private UnixPath home;
 	int autoresponder_from;
 	private String autoresponder_subject;
 	private String autoresponder_path;
@@ -243,10 +244,14 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_CRON_TABLE, pkey);
 	}
 
-	public static String getDefaultHomeDirectory(String username) {
+	public static UnixPath getDefaultHomeDirectory(String username) {
 		String check = Username.checkUsername(username);
 		if(check!=null) throw new IllegalArgumentException(check);
-		return "/home/"+username.charAt(0)+'/'+username;
+		try {
+			return UnixPath.valueOf("/home/"+username.charAt(0)+'/'+username);
+		} catch(ValidationException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	@Override
@@ -348,7 +353,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return table.connector.getLinuxAccAddresses().getLinuxAccAddresses(this);
 	}
 
-	public String getHome() {
+	public UnixPath getHome() {
 		return home;
 	}
 
@@ -440,7 +445,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			username=result.getString(pos++);
 			ao_server=result.getInt(pos++);
 			uid = LinuxId.valueOf(result.getInt(pos++));
-			home=result.getString(pos++);
+			home = UnixPath.valueOf(result.getString(pos++));
 			autoresponder_from=result.getInt(pos++);
 			if(result.wasNull()) autoresponder_from=-1;
 			autoresponder_subject = result.getString(pos++);
@@ -480,7 +485,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			username=in.readUTF().intern();
 			ao_server=in.readCompressedInt();
 			uid=LinuxId.valueOf(in.readCompressedInt());
-			home=in.readUTF();
+			home = UnixPath.valueOf(in.readUTF());
 			autoresponder_from=in.readCompressedInt();
 			autoresponder_subject=in.readNullUTF();
 			autoresponder_path=in.readNullUTF();
@@ -688,7 +693,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		out.writeUTF(username);
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(uid.getId());
-		out.writeUTF(home);
+		out.writeUTF(home.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);
