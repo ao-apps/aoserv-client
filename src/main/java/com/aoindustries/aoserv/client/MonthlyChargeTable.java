@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -102,7 +103,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		Map<Package,Integer> usersPerPackage=new HashMap<>();
 		{
 			for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
-				String username=lsa.username;
+				UserId username=lsa.username;
 				if(!username.equals(LinuxAccount.MAIL)) {
 					Map<Package,Integer> map;
 					LinuxAccount la=lsa.getLinuxAccount();

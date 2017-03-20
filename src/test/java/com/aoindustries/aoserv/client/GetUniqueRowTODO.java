@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class GetUniqueRowTODO extends TestCase {
 	public void testGetUniqueRows() throws Exception {
 		System.out.println("Testing all unique rows:");
 		for(AOServConnector conn : conns) {
-			String username = conn.getThisBusinessAdministrator().pkey;
+			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
 			Map<Object,AOServObject> uniqueMap=new HashMap<>();
 			int numTables = SchemaTable.TableID.values().length;

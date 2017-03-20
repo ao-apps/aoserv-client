@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2002-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,13 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
+import com.aoindustries.aoserv.client.validator.PostgresServerName;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,7 +56,14 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 	/**
 	 * The directory that contains the PostgreSQL data files.
 	 */
-	public static final String DATA_BASE_DIR="/var/lib/pgsql";
+	public static final UnixPath DATA_BASE_DIR;
+	static {
+		try {
+			DATA_BASE_DIR = UnixPath.valueOf("/var/lib/pgsql");
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
 	public enum ReservedWord {
 		ABORT,
@@ -198,12 +210,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
-	/**
-	 * The maximum length of the name.
-	 */
-	public static final int MAX_SERVER_NAME_LENGTH=31;
-
-	String name;
+	PostgresServerName name;
 	int ao_server;
 	private int version;
 	private int max_connections;
@@ -213,7 +220,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 	private boolean fsync;
 
 	public int addPostgresDatabase(
-		String name,
+		PostgresDatabaseName name,
 		PostgresServerUser datdba,
 		PostgresEncoding encoding,
 		boolean enablePostgis
@@ -225,26 +232,6 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 			encoding,
 			enablePostgis
 		);
-	}
-
-	public static void checkServerName(String name) throws IllegalArgumentException {
-		// Must be a-z or 0-9 first, then a-z or 0-9 or . or _
-		int len = name.length();
-		if (len == 0 || len > MAX_SERVER_NAME_LENGTH) throw new IllegalArgumentException("PostgreSQL server name should not exceed "+MAX_SERVER_NAME_LENGTH+" characters.");
-
-		// The first character must be [a-z] or [0-9]
-		char ch = name.charAt(0);
-		if ((ch < 'a' || ch > 'z') && (ch<'0' || ch>'9')) throw new IllegalArgumentException("PostgreSQL server names must start with [a-z] or [0-9]");
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = name.charAt(c);
-			if (
-				(ch<'a' || ch>'z')
-				&& (ch<'0' || ch>'9')
-				&& ch!='.'
-				&& ch!='_'
-			) throw new IllegalArgumentException("PostgreSQL server names may only contain [a-z], [0-9], period (.), and underscore (_)");
-		}
 	}
 
 	@Override
@@ -263,11 +250,17 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 		}
 	}
 
-	public String getDataDirectory() {
-		return DATA_BASE_DIR+'/'+name;
+	public UnixPath getDataDirectory() {
+		try {
+			return UnixPath.valueOf(DATA_BASE_DIR.toString() + '/' + name.toString());
+		} catch(ValidationException e) {
+			AssertionError ae = new AssertionError();
+			ae.initCause(e);
+			throw ae;
+		}
 	}
 
-	public String getName() {
+	public PostgresServerName getName() {
 		return name;
 	}
 
@@ -299,7 +292,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 		return nb;
 	}
 
-	public PostgresDatabase getPostgresDatabase(String name) throws IOException, SQLException {
+	public PostgresDatabase getPostgresDatabase(PostgresDatabaseName name) throws IOException, SQLException {
 		return table.connector.getPostgresDatabases().getPostgresDatabase(name, this);
 	}
 
@@ -307,7 +300,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 		return table.connector.getPostgresDatabases().getPostgresDatabases(this);
 	}
 
-	public PostgresServerUser getPostgresServerUser(String username) throws IOException, SQLException {
+	public PostgresServerUser getPostgresServerUser(PostgresUserId username) throws IOException, SQLException {
 		return table.connector.getPostgresServerUsers().getPostgresServerUser(username, this);
 	}
 
@@ -342,32 +335,40 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		name=result.getString(2);
-		ao_server=result.getInt(3);
-		version=result.getInt(4);
-		max_connections=result.getInt(5);
-		net_bind=result.getInt(6);
-		sort_mem=result.getInt(7);
-		shared_buffers=result.getInt(8);
-		fsync=result.getBoolean(9);
+		try {
+			pkey=result.getInt(1);
+			name = PostgresServerName.valueOf(result.getString(2));
+			ao_server=result.getInt(3);
+			version=result.getInt(4);
+			max_connections=result.getInt(5);
+			net_bind=result.getInt(6);
+			sort_mem=result.getInt(7);
+			shared_buffers=result.getInt(8);
+			fsync=result.getBoolean(9);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
-	public boolean isPostgresDatabaseNameAvailable(String name) throws IOException, SQLException {
+	public boolean isPostgresDatabaseNameAvailable(PostgresDatabaseName name) throws IOException, SQLException {
 		return table.connector.getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		name=in.readUTF().intern();
-		ao_server=in.readCompressedInt();
-		version=in.readCompressedInt();
-		max_connections=in.readCompressedInt();
-		net_bind=in.readCompressedInt();
-		sort_mem=in.readCompressedInt();
-		shared_buffers=in.readCompressedInt();
-		fsync=in.readBoolean();
+		try {
+			pkey=in.readCompressedInt();
+			name = PostgresServerName.valueOf(in.readUTF()).intern();
+			ao_server=in.readCompressedInt();
+			version=in.readCompressedInt();
+			max_connections=in.readCompressedInt();
+			net_bind=in.readCompressedInt();
+			sort_mem=in.readCompressedInt();
+			shared_buffers=in.readCompressedInt();
+			fsync=in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	public void restartPostgreSQL() throws IOException, SQLException {
@@ -390,7 +391,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(name);
+		out.writeUTF(name.toString());
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(version);
 		out.writeCompressedInt(max_connections);

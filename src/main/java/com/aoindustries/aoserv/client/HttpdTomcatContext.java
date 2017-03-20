@@ -238,6 +238,9 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		}
 	}
 
+	/**
+	 * TODO: Self-validating type
+	 */
 	public static boolean isValidDocBase(String docBase) {
 		return
 			docBase.length()>1
@@ -255,6 +258,9 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		return path.length()==0 || isValidDocBase(path);
 	}
 
+	/**
+	 * TODO: Self-validating type
+	 */
 	public static boolean isValidWorkDir(String workDir) {
 		return workDir==null || isValidDocBase(workDir);
 	}

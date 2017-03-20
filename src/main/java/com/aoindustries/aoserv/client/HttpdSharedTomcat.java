@@ -265,6 +265,8 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	 * directory.  The name must be 12 characters or less, and comprised of
 	 * only <code>a-z</code>,<code>0-9</code>, or <code>-</code>.  The first
 	 * character must be <code>a-z</code>.
+	 *
+	 * // TODO: Self-validating type
 	 */
 	public static boolean isValidSharedTomcatName(String name) {
 		int len = name.length();

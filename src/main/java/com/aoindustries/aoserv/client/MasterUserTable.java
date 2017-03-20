@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -30,7 +31,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterUserTable extends CachedTableStringKey<MasterUser> {
+final public class MasterUserTable extends CachedTableUserIdKey<MasterUser> {
 
 	MasterUserTable(AOServConnector connector) {
 		super(connector, MasterUser.class);
@@ -45,7 +46,7 @@ final public class MasterUserTable extends CachedTableStringKey<MasterUser> {
 	}
 
 	@Override
-	public MasterUser get(String username) throws IOException, SQLException {
+	public MasterUser get(UserId username) throws IOException, SQLException {
 		return getUniqueRow(MasterUser.COLUMN_USERNAME, username);
 	}
 

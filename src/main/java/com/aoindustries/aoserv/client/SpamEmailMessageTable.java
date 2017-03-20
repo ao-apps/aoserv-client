@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2003-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -71,6 +71,10 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
 		return SchemaTable.TableID.SPAM_EMAIL_MESSAGES;
 	}
 
+	/**
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+	 */
+	@Deprecated
 	@Override
 	public SpamEmailMessage get(Object pkey) throws IOException, SQLException {
 		return get(((Integer)pkey).intValue());

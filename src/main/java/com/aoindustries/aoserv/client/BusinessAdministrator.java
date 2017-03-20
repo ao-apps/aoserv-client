@@ -48,7 +48,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministrator extends CachedObjectStringKey<BusinessAdministrator> implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> {
+final public class BusinessAdministrator extends CachedObjectUserIdKey<BusinessAdministrator> implements PasswordProtected, Removable, Disablable, Comparable<BusinessAdministrator> {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -81,7 +81,11 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		return table.connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+		return table.connector.requestBooleanQuery(
+			true,
+			AOServProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET,
+			pkey
+		) ? PasswordProtected.ALL : PasswordProtected.NONE;
 	}
 
 	@Override
@@ -113,11 +117,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
 	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
-		try {
-			return checkPassword(UserId.valueOf(pkey), password);
-		} catch(ValidationException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return checkPassword(pkey, password);
 	}
 
 	/**
@@ -361,7 +361,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getString(1);
+			pkey = UserId.valueOf(result.getString(1));
 			password = HashedPassword.valueOf(result.getString(2));
 			name = result.getString(3);
 			title = result.getString(4);
@@ -393,7 +393,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readUTF().intern();
+			pkey = UserId.valueOf(in.readUTF()).intern();
 			password=HashedPassword.valueOf(in.readNullUTF());
 			name=in.readUTF();
 			title=in.readNullUTF();
@@ -507,7 +507,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE.ordinal());
-					out.writeUTF(pkey);
+					out.writeUTF(pkey.toString());
 					out.writeUTF(name);
 					out.writeBoolean(finalTitle!=null); if(finalTitle!=null) out.writeUTF(finalTitle);
 					out.writeLong(birthday==null ? -1 : birthday.getTime());
@@ -545,7 +545,7 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) out.writeUTF(password==null ? "*" : password.toString());
 		else out.writeNullUTF(ObjectUtils.toString(password));
 		out.writeUTF(name);
@@ -568,28 +568,6 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 		out.writeCompressedInt(disable_log);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)>=0) out.writeBoolean(can_switch_users);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(support_code);
-	}
-
-	/**
-	 * Determines if a name can be used as a username.  The same rules apply as for
-	 * Username.
-	 *
-	 * @see  Username#checkUsername
-	 */
-	public static String checkUsername(String name) {
-		return Username.checkUsername(name);
-	}
-
-	/**
-	 * Determines if a name can be used as a username.  The same rules apply as for
-	 * Username.
-	 *
-	 * @deprecated  Please use <code>checkUsername(String)</code> to give users more details when the check fails.
-	 *
-	 * @see  Username#isValidUsername
-	 */
-	public static boolean isValidUsername(String name) {
-		return Username.isValidUsername(name);
 	}
 
 	@Override
@@ -632,6 +610,6 @@ final public class BusinessAdministrator extends CachedObjectStringKey<BusinessA
 	 */
 	@Override
 	public int compareTo(BusinessAdministrator o) {
-		return pkey.compareToIgnoreCase(o.pkey);
+		return pkey.compareTo(o.pkey);
 	}
 }

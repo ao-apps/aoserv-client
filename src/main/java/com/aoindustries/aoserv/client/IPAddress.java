@@ -116,27 +116,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		;
 	}
 
-	public static boolean isValidIPAddress(String ip) {
-		// There must be four octets with . between
-		List<String> octets=StringUtility.splitString(ip, '.');
-		if(octets.size()!=4) return false;
-
-		// Each octet should be from 1 to 3 digits, all numbers
-		// and should have a value between 0 and 255 inclusive
-		for(int c=0;c<4;c++) {
-			String tet=octets.get(c);
-			int tetLen=tet.length();
-			if(tetLen<1 || tetLen>3) return false;
-			for(int d=0;d<tetLen;d++) {
-				char ch=tet.charAt(d);
-				if(ch<'0' || ch>'9') return false;
-			}
-			int val=Integer.parseInt(tet);
-			if(val<0 || val>255) return false;
-		}
-		return true;
-	}
-
 	//private static final ConcurrentMap<String,String> getReverseDnsQueryCache = new ConcurrentHashMap<String,String>();
 
 	/**

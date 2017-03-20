@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -51,8 +52,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 		return defaultOrderBy;
 	}
 
-	int addEmailDomain(String domain, AOServer ao, Package packageObject) throws SQLException, IOException {
-		if(!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid domain format: " + domain);
+	int addEmailDomain(DomainName domain, AOServer ao, Package packageObject) throws SQLException, IOException {
 		return connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD,
@@ -112,9 +112,9 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_DOMAIN, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().addEmailDomain(
-						args[1],
+						AOSH.parseDomainName(args[1], "domain"),
 						args[2],
-						args[3]
+						AOSH.parseAccountingCode(args[3], "package")
 					)
 				);
 				out.flush();
@@ -122,20 +122,25 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_EMAIL_DOMAIN)) {
 			if(AOSH.checkParamCount(AOSHCommand.CHECK_EMAIL_DOMAIN, args, 1, err)) {
-				try {
-					SimpleAOClient.checkEmailDomain(args[1]);
-					out.println("true");
-				} catch(IllegalArgumentException iae) {
-					out.print("aosh: "+AOSHCommand.CHECK_EMAIL_DOMAIN+": ");
-					out.println(iae.getMessage());
-				}
+				ValidationResult validationResult = DomainName.validate(args[1]);
+				out.println(validationResult.isValid());
 				out.flush();
+				if(!validationResult.isValid()) {
+					err.print("aosh: "+AOSHCommand.CHECK_EMAIL_DOMAIN+": ");
+					err.println(validationResult.toString());
+					err.flush();
+				}
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE)) {
 			if(AOSH.checkParamCount(AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE, args, 2, err)) {
 				try {
-					out.println(connector.getSimpleAOClient().isEmailDomainAvailable(args[1], args[2]));
+					out.println(
+						connector.getSimpleAOClient().isEmailDomainAvailable(
+							AOSH.parseDomainName(args[1], "domain"),
+							args[2]
+						)
+					);
 					out.flush();
 				} catch(IllegalArgumentException iae) {
 					err.print("aosh: "+AOSHCommand.IS_EMAIL_DOMAIN_AVAILABLE+": ");
@@ -156,8 +161,7 @@ public final class EmailDomainTable extends CachedTableIntegerKey<EmailDomain> {
 		return false;
 	}
 
-	boolean isEmailDomainAvailable(AOServer aoServer, String domain) throws SQLException, IOException {
-		if(!EmailDomain.isValidFormat(domain)) throw new SQLException("Invalid EmailDomain: "+domain);
+	boolean isEmailDomainAvailable(AOServer aoServer, DomainName domain) throws SQLException, IOException {
 		return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_EMAIL_DOMAIN_AVAILABLE, aoServer.pkey, domain);
 	}
 }

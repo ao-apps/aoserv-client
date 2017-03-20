@@ -23,8 +23,11 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -90,7 +93,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	AccountingCode accounting;
 	int package_definition;
 	private long created;
-	private String created_by;
+	private UserId created_by;
 	int disable_log;
 	private int email_in_burst;
 	private float email_in_rate;
@@ -103,19 +106,19 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		table.connector.getDnsZones().addDNSZone(this, zone, ip, ttl);
 	}
 
-	public int addEmailSmtpRelay(AOServer aoServer, String host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
+	public int addEmailSmtpRelay(AOServer aoServer, HostAddress host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
 		return table.connector.getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
 	}
 
-	public void addLinuxGroup(String name, LinuxGroupType type) throws IOException, SQLException {
+	public void addLinuxGroup(GroupId name, LinuxGroupType type) throws IOException, SQLException {
 		addLinuxGroup(name, type.pkey);
 	}
 
-	public void addLinuxGroup(String name, String type) throws IOException, SQLException {
+	public void addLinuxGroup(GroupId name, String type) throws IOException, SQLException {
 		table.connector.getLinuxGroups().addLinuxGroup(name, this, type);
 	}
 
-	public void addUsername(String username) throws IOException, SQLException {
+	public void addUsername(UserId username) throws IOException, SQLException {
 		table.connector.getUsernames().addUsername(this, username);
 	}
 
@@ -366,7 +369,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			accounting = AccountingCode.valueOf(result.getString(pos++));
 			package_definition = result.getInt(pos++);
 			created = result.getTimestamp(pos++).getTime();
-			created_by = result.getString(pos++);
+			created_by = UserId.valueOf(result.getString(pos++));
 			disable_log=result.getInt(pos++);
 			if(result.wasNull()) disable_log = -1;
 			email_in_burst=result.getInt(pos++);
@@ -386,10 +389,6 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		}
 	}
 
-	public static boolean isValidPackageName(String packageName) {
-		return AccountingCode.validate(packageName).isValid();
-	}
-
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
@@ -398,7 +397,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			accounting=AccountingCode.valueOf(in.readUTF()).intern();
 			package_definition=in.readCompressedInt();
 			created=in.readLong();
-			created_by=in.readUTF().intern();
+			created_by = UserId.valueOf(in.readUTF()).intern();
 			disable_log=in.readCompressedInt();
 			email_in_burst=in.readCompressedInt();
 			email_in_rate=in.readFloat();
@@ -424,7 +423,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			out.writeCompressedInt(package_definition);
 		}
 		out.writeLong(created);
-		out.writeUTF(created_by);
+		out.writeUTF(created_by.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
 			out.writeCompressedInt(-1);
 			out.writeCompressedInt(200);

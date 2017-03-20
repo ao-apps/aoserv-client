@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -56,7 +57,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 	static final String COLUMN_PKEY_name = "pkey";
 
 	private int ticket;
-	private String administrator;
+	private UserId administrator;
 	private long time;
 	private String action_type;
 	private AccountingCode old_accounting;
@@ -67,8 +68,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 	private String new_type;
 	private String old_status;
 	private String new_status;
-	private String old_assigned_to;
-	private String new_assigned_to;
+	private UserId old_assigned_to;
+	private UserId new_assigned_to;
 	private int old_category;
 	private int new_category;
 	private boolean oldValueLoaded;
@@ -346,7 +347,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 			int pos = 1;
 			pkey = result.getInt(pos++);
 			ticket = result.getInt(pos++);
-			administrator = result.getString(pos++);
+			administrator = UserId.valueOf(result.getString(pos++));
 			time = result.getTimestamp(pos++).getTime();
 			action_type = result.getString(pos++);
 			old_accounting = AccountingCode.valueOf(result.getString(pos++));
@@ -357,8 +358,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 			new_type = result.getString(pos++);
 			old_status = result.getString(pos++);
 			new_status = result.getString(pos++);
-			old_assigned_to = result.getString(pos++);
-			new_assigned_to = result.getString(pos++);
+			old_assigned_to = UserId.valueOf(result.getString(pos++));
+			new_assigned_to = UserId.valueOf(result.getString(pos++));
 			old_category = result.getInt(pos++);
 			if(result.wasNull()) old_category = -1;
 			new_category = result.getInt(pos++);
@@ -379,7 +380,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 		try {
 			pkey = in.readCompressedInt();
 			ticket = in.readCompressedInt();
-			administrator = InternUtils.intern(in.readNullUTF());
+			administrator = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			time = in.readLong();
 			action_type = in.readUTF().intern();
 			old_accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
@@ -390,8 +391,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 			new_type = InternUtils.intern(in.readNullUTF());
 			old_status = InternUtils.intern(in.readNullUTF());
 			new_status = InternUtils.intern(in.readNullUTF());
-			old_assigned_to = InternUtils.intern(in.readNullUTF());
-			new_assigned_to = InternUtils.intern(in.readNullUTF());
+			old_assigned_to = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			new_assigned_to = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			old_category = in.readCompressedInt();
 			new_category = in.readCompressedInt();
 			// Loaded only when needed: old_value
@@ -414,8 +415,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ticket);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_50)>=0) out.writeNullUTF(administrator);
-		else out.writeUTF(administrator==null ? "aoadmin" : administrator);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_50)>=0) out.writeNullUTF(ObjectUtils.toString(administrator));
+		else out.writeUTF(administrator==null ? "aoadmin" : administrator.toString());
 		out.writeLong(time);
 		out.writeUTF(action_type);
 		out.writeNullUTF(ObjectUtils.toString(old_accounting));
@@ -428,8 +429,8 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 		}
 		out.writeNullUTF(old_status);
 		out.writeNullUTF(new_status);
-		out.writeNullUTF(old_assigned_to);
-		out.writeNullUTF(new_assigned_to);
+		out.writeNullUTF(ObjectUtils.toString(old_assigned_to));
+		out.writeNullUTF(ObjectUtils.toString(new_assigned_to));
 		out.writeCompressedInt(old_category);
 		out.writeCompressedInt(new_category);
 		// Loaded only when needed: old_value

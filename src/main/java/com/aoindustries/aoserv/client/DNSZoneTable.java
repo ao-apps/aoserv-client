@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
 import java.io.IOException;
@@ -190,7 +191,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_DNS_ZONE)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_DNS_ZONE, args, 4, err)) {
 				connector.getSimpleAOClient().addDNSZone(
-					args[1],
+					AOSH.parseAccountingCode(args[1], "package"),
 					args[2],
 					AOSH.parseInetAddress(args[3], "ip_address"),
 					AOSH.parseInt(args[4], "ttl")
@@ -254,6 +255,9 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 		return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_DNS_ZONE_AVAILABLE, zone);
 	}
 
+	/**
+	 * TODO: Is this redundant with {@link DomainLabel}?
+	 */
 	public static boolean isValidHostnamePart(String name) {
 		// Must not be an empty string
 		int len=name.length();

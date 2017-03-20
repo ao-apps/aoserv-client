@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2014, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2014, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,7 +42,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class MasterUser extends CachedObjectStringKey<MasterUser> {
+final public class MasterUser extends CachedObjectUserIdKey<MasterUser> {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -63,20 +65,24 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey                   = result.getString(1);
-		is_active              = result.getBoolean(2);
-		can_access_accounting  = result.getBoolean(3);
-		can_access_bank_account= result.getBoolean(4);
-		can_invalidate_tables  = result.getBoolean(5);
-		can_access_admin_web   = result.getBoolean(6);
-		is_dns_admin           = result.getBoolean(7);
-		is_router              = result.getBoolean(8);
-		is_cluster_admin       = result.getBoolean(9);
+		try {
+			pkey                   = UserId.valueOf(result.getString(1));
+			is_active              = result.getBoolean(2);
+			can_access_accounting  = result.getBoolean(3);
+			can_access_bank_account= result.getBoolean(4);
+			can_invalidate_tables  = result.getBoolean(5);
+			can_access_admin_web   = result.getBoolean(6);
+			is_dns_admin           = result.getBoolean(7);
+			is_router              = result.getBoolean(8);
+			is_cluster_admin       = result.getBoolean(9);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 		out.writeBoolean(is_active);
 		out.writeBoolean(can_access_accounting);
 		out.writeBoolean(can_access_bank_account);
@@ -91,15 +97,19 @@ final public class MasterUser extends CachedObjectStringKey<MasterUser> {
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey                    = in.readUTF().intern();
-		is_active               = in.readBoolean();
-		can_access_accounting   = in.readBoolean();
-		can_access_bank_account = in.readBoolean();
-		can_invalidate_tables   = in.readBoolean();
-		can_access_admin_web    = in.readBoolean();
-		is_dns_admin            = in.readBoolean();
-		is_router               = in.readBoolean();
-		is_cluster_admin        = in.readBoolean();
+		try {
+			pkey                    = UserId.valueOf(in.readUTF()).intern();
+			is_active               = in.readBoolean();
+			can_access_accounting   = in.readBoolean();
+			can_access_bank_account = in.readBoolean();
+			can_invalidate_tables   = in.readBoolean();
+			can_access_admin_web    = in.readBoolean();
+			is_dns_admin            = in.readBoolean();
+			is_router               = in.readBoolean();
+			is_cluster_admin        = in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2003-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,6 +44,10 @@ final public class BackupRetentionTable extends GlobalTable<Short,BackupRetentio
 		return defaultOrderBy;
 	}
 
+	/**
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+	 */
+	@Deprecated
 	@Override
 	public BackupRetention get(Object days) throws IOException, SQLException {
 		return get(((Short)days).shortValue());

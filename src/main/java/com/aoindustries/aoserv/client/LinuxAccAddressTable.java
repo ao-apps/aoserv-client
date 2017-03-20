@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -146,7 +146,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 						addr.substring(0, pos),
 						AOSH.parseDomainName(addr.substring(pos+1), "address"),
 						args[2],
-						args[3]
+						AOSH.parseUserId(args[3], "username")
 					);
 					out.println(pkey);
 					out.flush();
@@ -166,7 +166,7 @@ final public class LinuxAccAddressTable extends CachedTableIntegerKey<LinuxAccAd
 						addr.substring(0, pos),
 						AOSH.parseDomainName(addr.substring(pos+1), "address"),
 						args[2],
-						args[3]
+						AOSH.parseUserId(args[3], "username")
 					);
 				}
 			}

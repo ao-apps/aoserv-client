@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,7 +51,10 @@ final public class SchemaTypeTable extends GlobalTableIntegerKey<SchemaType> {
 
 	/**
 	 * Supports both Integer (num) and String (type) keys.
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
+	@Deprecated
 	@Override
 	public SchemaType get(Object pkey) throws IOException, SQLException {
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());

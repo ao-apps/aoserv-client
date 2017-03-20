@@ -52,7 +52,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
 
-	String username;
+	PostgresUserId username;
 	int postgres_server;
 	int disable_log;
 	private String predisable_password;
@@ -79,11 +79,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 
 	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
-		try {
-			return PostgresUser.checkPassword(PostgresUserId.valueOf(username), password);
-		} catch(ValidationException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return PostgresUser.checkPassword(username, password);
 	}
 
 	/*public String checkPasswordDescribe(String password) {
@@ -151,21 +147,29 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		username=result.getString(2);
-		postgres_server=result.getInt(3);
-		disable_log=result.getInt(4);
-		if(result.wasNull()) disable_log=-1;
-		predisable_password=result.getString(5);
+		try {
+			pkey=result.getInt(1);
+			username = PostgresUserId.valueOf(result.getString(2));
+			postgres_server=result.getInt(3);
+			disable_log=result.getInt(4);
+			if(result.wasNull()) disable_log=-1;
+			predisable_password=result.getString(5);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		username=in.readUTF().intern();
-		postgres_server=in.readCompressedInt();
-		disable_log=in.readCompressedInt();
-		predisable_password=in.readNullUTF();
+		try {
+			pkey=in.readCompressedInt();
+			username = PostgresUserId.valueOf(in.readUTF()).intern();
+			postgres_server=in.readCompressedInt();
+			disable_log=in.readCompressedInt();
+			predisable_password=in.readNullUTF();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -257,7 +261,7 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(username);
+		out.writeUTF(username.toString());
 		out.writeCompressedInt(postgres_server);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)<=0) {
 			out.writeCompressedInt(-1);

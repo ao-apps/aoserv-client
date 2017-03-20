@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUser extends CachedObjectStringKey<PostgresUser> implements Removable, PasswordProtected, Disablable {
+final public class PostgresUser extends CachedObjectPostgresUserIdKey<PostgresUser> implements Removable, PasswordProtected, Disablable {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -53,12 +53,22 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 	/**
 	 * The username of the PostgreSQL special users.
 	 */
-	public static final String
-		POSTGRES="postgres",
-		AOADMIN="aoadmin",
-		AOSERV_APP="aoserv_app",
-		AOWEB_APP="aoweb_app"
+	public static final PostgresUserId
+		POSTGRES,
+		AOADMIN,
+		AOSERV_APP,
+		AOWEB_APP
 	;
+	static {
+		try {
+			POSTGRES = PostgresUserId.valueOf("postgres");
+			AOADMIN = PostgresUserId.valueOf("aoadmin");
+			AOSERV_APP = PostgresUserId.valueOf("aoserv_app");
+			AOWEB_APP = PostgresUserId.valueOf("aoweb_app");
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
 	/**
 	 * A password may be set to null, which means that the account will
@@ -113,11 +123,7 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 
 	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
-		try {
-			return checkPassword(PostgresUserId.valueOf(pkey), password);
-		} catch(ValidationException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return checkPassword(pkey, password);
 	}
 
 	public static List<PasswordChecker.Result> checkPassword(PostgresUserId username, String password) throws IOException {
@@ -180,20 +186,24 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 	}
 
 	public Username getUsername() throws SQLException, IOException {
-		Username username=table.connector.getUsernames().get(this.pkey);
+		Username username=table.connector.getUsernames().get(this.pkey.getUserId());
 		if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
 		return username;
 	}
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		createdb=result.getBoolean(2);
-		trace=result.getBoolean(3);
-		superPriv=result.getBoolean(4);
-		catupd=result.getBoolean(5);
-		disable_log=result.getInt(6);
-		if(result.wasNull()) disable_log=-1;
+		try {
+			pkey = PostgresUserId.valueOf(result.getString(1));
+			createdb=result.getBoolean(2);
+			trace=result.getBoolean(3);
+			superPriv=result.getBoolean(4);
+			catupd=result.getBoolean(5);
+			disable_log=result.getInt(6);
+			if(result.wasNull()) disable_log=-1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isDatabaseAdmin() {
@@ -202,12 +212,16 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		createdb=in.readBoolean();
-		trace=in.readBoolean();
-		superPriv=in.readBoolean();
-		catupd=in.readBoolean();
-		disable_log=in.readCompressedInt();
+		try {
+			pkey = PostgresUserId.valueOf(in.readUTF()).intern();
+			createdb=in.readBoolean();
+			trace=in.readBoolean();
+			superPriv=in.readBoolean();
+			catupd=in.readBoolean();
+			disable_log=in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -234,39 +248,12 @@ final public class PostgresUser extends CachedObjectStringKey<PostgresUser> impl
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 		out.writeBoolean(createdb);
 		out.writeBoolean(trace);
 		out.writeBoolean(superPriv);
 		out.writeBoolean(catupd);
 		out.writeCompressedInt(disable_log);
-	}
-
-	/**
-	 * Determines if a name can be used as a username.  A name is valid if
-	 * it is between 1 and 31 characters in length and uses only [a-z], [0-9], _, or -
-	 */
-	public static boolean isValidUsername(String name) {
-		if(
-			name.equals("sameuser")
-			|| name.equals("samegroup")
-			|| name.equals("all")
-		) return false;
-		int len = name.length();
-		if (len == 0 || len > MAX_USERNAME_LENGTH) return false;
-		// The first character must be [a-z]
-		char ch = name.charAt(0);
-		if (ch < 'a' || ch > 'z') return false;
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = name.charAt(c);
-			if(
-				(ch<'a' || ch>'z')
-				&& (ch<'0' || ch>'9')
-				&& ch!='_'
-			) return false;
-		}
-		return true;
 	}
 
 	@Override

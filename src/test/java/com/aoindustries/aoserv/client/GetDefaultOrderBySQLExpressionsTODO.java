@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -64,7 +65,7 @@ public class GetDefaultOrderBySQLExpressionsTODO extends TestCase {
 	public void testTableSizes() throws Exception {
 		System.out.println("Testing getTable(tableID).getDefaultOrderBySQLExpressions()");
 		for(AOServConnector conn : conns) {
-			String username = conn.getThisBusinessAdministrator().pkey;
+			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.print("    "+username+": ");
 			int numTables = SchemaTable.TableID.values().length;
 			for(int c=0;c<numTables;c++) {

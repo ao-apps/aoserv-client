@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -38,7 +38,10 @@ public abstract class CachedTableStringKey<V extends CachedObjectStringKey<V>> e
 
 	/**
 	 * Gets the object with the provided key.  The key must be a string.
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
+	@Deprecated
 	@Override
 	public V get(Object pkey) throws IOException, SQLException {
 		return get((String)pkey);

@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-19T18:14:06-0500"
+		dateModified="2017-03-19T19:10:37-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -149,14 +149,29 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Changed column types to use new self-validating types:
 						<ol>
+							<li>Changed <code>distro_files.group_name</code> to <code>group_id</code> type</li>
 							<li>Changed <code>failover_file_replications.quota_gid</code> to <code>linux_id</code> type</li>
+							<li>Changed <code>httpd_sites.group_name</code> to <code>group_id</code> type</li>
+							<li>Changed <code>linux_group_accounts.group_name</code> to <code>group_id</code> type</li>
+							<li>Changed <code>linux_groups.name</code> to <code>group_id</code> type</li>
+							<li>Changed <code>linux_server_groups.name</code> to <code>group_id</code> type</li>
 							<li>Changed <code>linux_server_accounts.uid</code> to <code>linux_id</code> type</li>
 							<li>Changed <code>linux_server_groups.gid</code> to <code>linux_id</code> type</li>
+							<li>Changed <code>mysql_databases.name</code> to <code>mysql_database_name</code> type</li>
+							<li>Changed <code>mysql_servers.name</code> to <code>mysql_server_name</code> type</li>
+							<li>Changed <code>mysql_server_users.username</code> to <code>mysql_username</code> type</li>
+							<li>Changed <code>mysql_users.username</code> to <code>mysql_username</code> type</li>
 							<li>Changed <code>net_binds.port</code> to <code>net_port</code> type</li>
 							<li>Removed <code>net_binds.net_protocol</code> column</li>
 							<li>Changed <code>net_tcp_redirects.destination_port</code> to <code>net_port</code> type</li>
+							<li>Changed <code>postgres_databases.name</code> to <code>postgres_database_name</code> type</li>
+							<li>Changed <code>postgres_servers.name</code> to <code>postgres_server_name</code> type</li>
+							<li>Changed <code>postgres_server_users.username</code> to <code>postgres_username</code> type</li>
+							<li>Changed <code>postgres_users.username</code> to <code>postgres_username</code> type</li>
 							<li>Removed <code>protocols.net_protocol</code> column</li>
 							<li>Changed <code>protocols.port</code> to <code>net_port</code> type</li>
+							<li>Changed <code>ticket_actions.old_assigned_to</code> to <code>username</code> type</li>
+							<li>Changed <code>ticket_actions.new_assigned_to</code> to <code>username</code> type</li>
 						</ol>
 					</li>
 					<li>Removed <code>package</code> type:
@@ -179,8 +194,19 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Changed client-side objects to use more of the new self-validating types:
 						<ol>
 							<li>Changed <code>path</code> type implementation to <code>UnixPath</code> class</li>
+							<li>Changed <code>username</code> type implementation to <code>UserId</code> class</li>
 						</ol>
 					</li>
+					<li>Removed AOSH commands covered by self-validating types:
+						<ol>
+							<li>Removed <code>check_business_administrator_username</code> command.</li>
+							<li>Removed <code>check_email_forwarding</code> command.</li>
+							<li>Removed <code>check_ip_address</code> command.</li>
+							<li>Removed <code>check_linux_account_username</code> command.</li>
+							<li>Removed <code>check_package_name</code> command.</li>
+						</ol>
+					</li>
+					<!-- TODO: Remove reserved words tables -->
 				</ul>
 			</changelog:release>
 		</c:if>

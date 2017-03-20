@@ -23,7 +23,10 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -52,7 +55,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 	}
 
 	int addPostgresDatabase(
-		String name,
+		PostgresDatabaseName name,
 		PostgresServer postgresServer,
 		PostgresServerUser datdba,
 		PostgresEncoding encoding,
@@ -71,8 +74,12 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 		return pkey;
 	}
 
-	public String generatePostgresDatabaseName(String template_base, String template_added) throws IOException, SQLException {
-		return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added);
+	public PostgresDatabaseName generatePostgresDatabaseName(String template_base, String template_added) throws IOException, SQLException {
+		try {
+			return PostgresDatabaseName.valueOf(connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added));
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -80,14 +87,14 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 		return getUniqueRow(PostgresDatabase.COLUMN_PKEY, pkey);
 	}
 
-	PostgresDatabase getPostgresDatabase(String name, PostgresServer postgresServer) throws IOException, SQLException {
+	PostgresDatabase getPostgresDatabase(PostgresDatabaseName name, PostgresServer postgresServer) throws IOException, SQLException {
 		// Use the index first
 		for(PostgresDatabase pd : getPostgresDatabases(postgresServer)) if(pd.name.equals(name)) return pd;
 		return null;
 	}
 
 	List<PostgresDatabase> getPostgresDatabases(Package pack) throws IOException, SQLException {
-		AccountingCode name=pack.name;
+		AccountingCode name = pack.name;
 
 		List<PostgresDatabase> cached=getRows();
 		int size=cached.size();
@@ -118,10 +125,10 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_POSTGRES_DATABASE)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_POSTGRES_DATABASE, args, 5, err)) {
 				int pkey=connector.getSimpleAOClient().addPostgresDatabase(
-					args[1],
-					args[2],
+					AOSH.parsePostgresDatabaseName(args[1], "database_name"),
+					AOSH.parsePostgresServerName(args[2], "postgres_server"),
 					args[3],
-					args[4],
+					AOSH.parsePostgresUserId(args[4], "datdba"),
 					args[5],
 					AOSH.parseBoolean(args[6], "enable_postgis")
 				);
@@ -131,13 +138,12 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_POSTGRES_DATABASE_NAME)) {
 			if(AOSH.checkParamCount(AOSHCommand.CHECK_POSTGRES_DATABASE_NAME, args, 1, err)) {
-				try {
-					connector.getSimpleAOClient().checkPostgresDatabaseName(args[1]);
-					out.println("true");
-					out.flush();
-				} catch(IllegalArgumentException iae) {
+				ValidationResult validationResult = PostgresDatabaseName.validate(args[1]);
+				out.println(validationResult.isValid());
+				out.flush();
+				if(!validationResult.isValid()) {
 					err.print("aosh: "+AOSHCommand.CHECK_POSTGRES_DATABASE_NAME+": ");
-					err.println(iae.getMessage());
+					err.println(validationResult.toString());
 					err.flush();
 				}
 			}
@@ -145,7 +151,12 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 		} else if(command.equalsIgnoreCase(AOSHCommand.DUMP_POSTGRES_DATABASE)) {
 			if(AOSH.checkParamCount(AOSHCommand.DUMP_POSTGRES_DATABASE, args, 3, err)) {
 				try {
-					connector.getSimpleAOClient().dumpPostgresDatabase(args[1], args[2], args[3], out);
+					connector.getSimpleAOClient().dumpPostgresDatabase(
+						AOSH.parsePostgresDatabaseName(args[1], "database_name"),
+						AOSH.parsePostgresServerName(args[2], "postgres_server"),
+						args[3],
+						out
+					);
 					out.flush();
 				} catch(IllegalArgumentException iae) {
 					err.print("aosh: "+AOSHCommand.DUMP_POSTGRES_DATABASE+": ");
@@ -165,8 +176,8 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 				try {
 					out.println(
 						connector.getSimpleAOClient().isPostgresDatabaseNameAvailable(
-							args[1],
-							args[2],
+							AOSH.parsePostgresDatabaseName(args[1], "database_name"),
+							AOSH.parsePostgresServerName(args[2], "postgres_server"),
 							args[3]
 						)
 					);
@@ -180,7 +191,11 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_POSTGRES_DATABASE)) {
 			if(AOSH.checkParamCount(AOSHCommand.REMOVE_POSTGRES_DATABASE, args, 3, err)) {
-				connector.getSimpleAOClient().removePostgresDatabase(args[1], args[2], args[3]);
+				connector.getSimpleAOClient().removePostgresDatabase(
+					AOSH.parsePostgresDatabaseName(args[1], "database_name"),
+					AOSH.parsePostgresServerName(args[2], "postgres_server"),
+					args[3]
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_POSTGRES_DATABASE_REBUILD)) {
@@ -192,38 +207,13 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 		return false;
 	}
 
-	boolean isPostgresDatabaseNameAvailable(String name, PostgresServer postgresServer) throws IOException, SQLException {
+	boolean isPostgresDatabaseNameAvailable(PostgresDatabaseName name, PostgresServer postgresServer) throws IOException, SQLException {
 		return connector.requestBooleanQuery(
 			true,
 			AOServProtocol.CommandID.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
 			name,
 			postgresServer.pkey
 		);
-	}
-
-	public boolean isValidDatabaseName(String name) throws IOException, SQLException {
-		return isValidDatabaseName(name, connector.getPostgresReservedWords().getRows());
-	}
-
-	public static boolean isValidDatabaseName(String name, List<?> reservedWords) {
-		// Must be a-z first, then a-z or 0-9 or _
-		int len = name.length();
-		if (len == 0 || len > PostgresDatabase.MAX_DATABASE_NAME_LENGTH) return false;
-		// The first character must be [a-z]
-		char ch = name.charAt(0);
-		if (ch < 'a' || ch > 'z') return false;
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = name.charAt(c);
-			if ((ch < 'a' || ch > 'z') && (ch < '0' || ch > '9') && ch != '_') return false;
-		}
-
-		// Also must not be a reserved word
-		int size=reservedWords.size();
-		for(int c=0;c<size;c++) {
-			if(name.equalsIgnoreCase(reservedWords.get(c).toString())) return false;
-		}
-		return true;
 	}
 
 	void waitForRebuild(AOServer aoServer) throws IOException, SQLException {

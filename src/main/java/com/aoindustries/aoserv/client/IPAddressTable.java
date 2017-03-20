@@ -115,19 +115,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 	@Override
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.CHECK_IP_ADDRESS)) {
-			if(AOSH.checkParamCount(AOSHCommand.CHECK_IP_ADDRESS, args, 1, err)) {
-				try {
-					SimpleAOClient.checkIPAddress(args[1]);
-					out.println("true");
-				} catch(IllegalArgumentException iae) {
-					out.print("aosh: "+AOSHCommand.CHECK_IP_ADDRESS+": ");
-					out.println(iae.getMessage());
-				}
-				out.flush();
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.IS_IP_ADDRESS_USED)) {
+		if(command.equalsIgnoreCase(AOSHCommand.IS_IP_ADDRESS_USED)) {
 			if(AOSH.checkParamCount(AOSHCommand.IS_IP_ADDRESS_USED, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().isIPAddressUsed(
@@ -173,7 +161,7 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 					AOSH.parseInetAddress(args[1], "ip_address"),
 					args[2],
 					args[3],
-					args[4]
+					AOSH.parseAccountingCode(args[4], "package")
 				);
 			}
 			return true;

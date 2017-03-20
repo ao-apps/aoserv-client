@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements PasswordProtected, Removable, Disablable {
+final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> implements PasswordProtected, Removable, Disablable {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -54,7 +54,14 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 	/**
 	 * The username of the MySQL super user.
 	 */
-	public static final String ROOT="root";
+	public static final MySQLUserId ROOT;
+	static {
+		try {
+			ROOT = MySQLUserId.valueOf("root").intern();
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
 	/**
 	 * A password may be set to null, which means that the account will
@@ -234,11 +241,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
 	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
-		try {
-			return checkPassword(MySQLUserId.valueOf(pkey), password);
-		} catch(ValidationException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return checkPassword(pkey, password);
 	}
 
 	public static List<PasswordChecker.Result> checkPassword(MySQLUserId username, String password) throws IOException {
@@ -327,78 +330,86 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 	}
 
 	public Username getUsername() throws SQLException, IOException {
-		Username obj=table.connector.getUsernames().get(pkey);
+		Username obj=table.connector.getUsernames().get(pkey.getUserId());
 		if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
 		return obj;
 	}
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
-		select_priv=result.getBoolean(2);
-		insert_priv=result.getBoolean(3);
-		update_priv=result.getBoolean(4);
-		delete_priv=result.getBoolean(5);
-		create_priv=result.getBoolean(6);
-		drop_priv=result.getBoolean(7);
-		reload_priv=result.getBoolean(8);
-		shutdown_priv=result.getBoolean(9);
-		process_priv=result.getBoolean(10);
-		file_priv=result.getBoolean(11);
-		grant_priv=result.getBoolean(12);
-		references_priv=result.getBoolean(13);
-		index_priv=result.getBoolean(14);
-		alter_priv=result.getBoolean(15);
-		show_db_priv=result.getBoolean(16);
-		super_priv=result.getBoolean(17);
-		create_tmp_table_priv=result.getBoolean(18);
-		lock_tables_priv=result.getBoolean(19);
-		execute_priv=result.getBoolean(20);
-		repl_slave_priv=result.getBoolean(21);
-		repl_client_priv=result.getBoolean(22);
-		create_view_priv=result.getBoolean(23);
-		show_view_priv=result.getBoolean(24);
-		create_routine_priv=result.getBoolean(25);
-		alter_routine_priv=result.getBoolean(26);
-		create_user_priv=result.getBoolean(27);
-		event_priv=result.getBoolean(28);
-		trigger_priv=result.getBoolean(29);
-		disable_log=result.getInt(30);
-		if(result.wasNull()) disable_log=-1;
+		try {
+			pkey = MySQLUserId.valueOf(result.getString(1));
+			select_priv=result.getBoolean(2);
+			insert_priv=result.getBoolean(3);
+			update_priv=result.getBoolean(4);
+			delete_priv=result.getBoolean(5);
+			create_priv=result.getBoolean(6);
+			drop_priv=result.getBoolean(7);
+			reload_priv=result.getBoolean(8);
+			shutdown_priv=result.getBoolean(9);
+			process_priv=result.getBoolean(10);
+			file_priv=result.getBoolean(11);
+			grant_priv=result.getBoolean(12);
+			references_priv=result.getBoolean(13);
+			index_priv=result.getBoolean(14);
+			alter_priv=result.getBoolean(15);
+			show_db_priv=result.getBoolean(16);
+			super_priv=result.getBoolean(17);
+			create_tmp_table_priv=result.getBoolean(18);
+			lock_tables_priv=result.getBoolean(19);
+			execute_priv=result.getBoolean(20);
+			repl_slave_priv=result.getBoolean(21);
+			repl_client_priv=result.getBoolean(22);
+			create_view_priv=result.getBoolean(23);
+			show_view_priv=result.getBoolean(24);
+			create_routine_priv=result.getBoolean(25);
+			alter_routine_priv=result.getBoolean(26);
+			create_user_priv=result.getBoolean(27);
+			event_priv=result.getBoolean(28);
+			trigger_priv=result.getBoolean(29);
+			disable_log=result.getInt(30);
+			if(result.wasNull()) disable_log=-1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		select_priv=in.readBoolean();
-		insert_priv=in.readBoolean();
-		update_priv=in.readBoolean();
-		delete_priv=in.readBoolean();
-		create_priv=in.readBoolean();
-		drop_priv=in.readBoolean();
-		reload_priv=in.readBoolean();
-		shutdown_priv=in.readBoolean();
-		process_priv=in.readBoolean();
-		file_priv=in.readBoolean();
-		grant_priv=in.readBoolean();
-		references_priv=in.readBoolean();
-		index_priv=in.readBoolean();
-		alter_priv=in.readBoolean();
-		show_db_priv=in.readBoolean();
-		super_priv=in.readBoolean();
-		create_tmp_table_priv=in.readBoolean();
-		lock_tables_priv=in.readBoolean();
-		execute_priv=in.readBoolean();
-		repl_slave_priv=in.readBoolean();
-		repl_client_priv=in.readBoolean();
-		create_view_priv=in.readBoolean();
-		show_view_priv=in.readBoolean();
-		create_routine_priv=in.readBoolean();
-		alter_routine_priv=in.readBoolean();
-		create_user_priv=in.readBoolean();
-		event_priv=in.readBoolean();
-		trigger_priv=in.readBoolean();
-		disable_log=in.readCompressedInt();
+		try {
+			pkey = MySQLUserId.valueOf(in.readUTF()).intern();
+			select_priv=in.readBoolean();
+			insert_priv=in.readBoolean();
+			update_priv=in.readBoolean();
+			delete_priv=in.readBoolean();
+			create_priv=in.readBoolean();
+			drop_priv=in.readBoolean();
+			reload_priv=in.readBoolean();
+			shutdown_priv=in.readBoolean();
+			process_priv=in.readBoolean();
+			file_priv=in.readBoolean();
+			grant_priv=in.readBoolean();
+			references_priv=in.readBoolean();
+			index_priv=in.readBoolean();
+			alter_priv=in.readBoolean();
+			show_db_priv=in.readBoolean();
+			super_priv=in.readBoolean();
+			create_tmp_table_priv=in.readBoolean();
+			lock_tables_priv=in.readBoolean();
+			execute_priv=in.readBoolean();
+			repl_slave_priv=in.readBoolean();
+			repl_client_priv=in.readBoolean();
+			create_view_priv=in.readBoolean();
+			show_view_priv=in.readBoolean();
+			create_routine_priv=in.readBoolean();
+			alter_routine_priv=in.readBoolean();
+			create_user_priv=in.readBoolean();
+			event_priv=in.readBoolean();
+			trigger_priv=in.readBoolean();
+			disable_log=in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -425,7 +436,7 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 		out.writeBoolean(select_priv);
 		out.writeBoolean(insert_priv);
 		out.writeBoolean(update_priv);
@@ -461,28 +472,6 @@ final public class MySQLUser extends CachedObjectStringKey<MySQLUser> implements
 			out.writeBoolean(trigger_priv);
 		}
 		out.writeCompressedInt(disable_log);
-	}
-
-	/**
-	 * Determines if a name can be used as a username.  A name is valid if
-	 * it is between 1 and 16 characters in length and uses only [a-z], [0-9], or _
-	 */
-	public static boolean isValidUsername(String name) {
-		int len = name.length();
-		if (len == 0 || len > MAX_USERNAME_LENGTH) return false;
-		// The first character must be [a-z]
-		char ch = name.charAt(0);
-		if (ch < 'a' || ch > 'z') return false;
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = name.charAt(c);
-			if(
-				(ch<'a' || ch>'z')
-				&& (ch<'0' || ch>'9')
-				&& ch!='_'
-			) return false;
-		}
-		return true;
 	}
 
 	@Override

@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -117,7 +118,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	private String postalCode;
 	private String countryCode;
 	private long created;
-	private String createdBy;
+	private UserId createdBy;
 	private String principalName;
 	private boolean useMonthly;
 	private boolean isActive;
@@ -391,7 +392,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			postalCode = result.getString(pos++);
 			countryCode = result.getString(pos++);
 			created = result.getTimestamp(pos++).getTime();
-			createdBy = result.getString(pos++);
+			createdBy = UserId.valueOf(result.getString(pos++));
 			principalName = result.getString(pos++);
 			useMonthly = result.getBoolean(pos++);
 			isActive = result.getBoolean(pos++);
@@ -441,7 +442,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			postalCode=in.readNullUTF();
 			countryCode=in.readUTF().intern();
 			created=in.readLong();
-			createdBy=in.readUTF().intern();
+			createdBy = UserId.valueOf(in.readUTF()).intern();
 			principalName=in.readNullUTF();
 			useMonthly=in.readBoolean();
 			isActive=in.readBoolean();
@@ -508,7 +509,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			out.writeUTF(countryCode);
 		}
 		out.writeLong(created);
-		out.writeUTF(createdBy);
+		out.writeUTF(createdBy.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(principalName);
 		out.writeBoolean(useMonthly);
 		out.writeBoolean(isActive);

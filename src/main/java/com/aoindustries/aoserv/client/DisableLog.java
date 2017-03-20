@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -45,7 +46,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
 	private long time;
 	private AccountingCode accounting;
-	private String disabled_by;
+	private UserId disabled_by;
 	private String disable_reason;
 
 	/**
@@ -89,7 +90,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		return new Timestamp(time);
 	}
 
-	public String getDisabledByUsername() {
+	public UserId getDisabledByUsername() {
 		return disabled_by;
 	}
 
@@ -113,7 +114,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 			pkey=result.getInt(1);
 			time=result.getTimestamp(2).getTime();
 			accounting=AccountingCode.valueOf(result.getString(3));
-			disabled_by=result.getString(4);
+			disabled_by = UserId.valueOf(result.getString(4));
 			disable_reason=result.getString(5);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -126,7 +127,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 			pkey=in.readCompressedInt();
 			time=in.readLong();
 			accounting=AccountingCode.valueOf(in.readUTF()).intern();
-			disabled_by=in.readUTF().intern();
+			disabled_by = UserId.valueOf(in.readUTF()).intern();
 			disable_reason=in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -138,7 +139,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		out.writeCompressedInt(pkey);
 		out.writeLong(time);
 		out.writeUTF(accounting.toString());
-		out.writeUTF(disabled_by);
+		out.writeUTF(disabled_by.toString());
 		out.writeNullUTF(disable_reason);
 	}
 }

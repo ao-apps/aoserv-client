@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
@@ -40,7 +41,7 @@ import java.util.Map;
 final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServerGroup> {
 
 	LinuxServerGroupTable(AOServConnector connector) {
-	super(connector, LinuxServerGroup.class);
+		super(connector, LinuxServerGroup.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
@@ -102,9 +103,9 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 	}
 
 	private boolean nameHashBuilt=false;
-	private final Map<Integer,Map<String,LinuxServerGroup>> nameHash=new HashMap<>();
+	private final Map<Integer,Map<GroupId,LinuxServerGroup>> nameHash=new HashMap<>();
 
-	LinuxServerGroup getLinuxServerGroup(AOServer aoServer, String group_name) throws IOException, SQLException {
+	LinuxServerGroup getLinuxServerGroup(AOServer aoServer, GroupId group_name) throws IOException, SQLException {
 		synchronized(nameHash) {
 			if(!nameHashBuilt) {
 				nameHash.clear();
@@ -114,14 +115,14 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 				for(int c=0; c<len; c++) {
 					LinuxServerGroup lsg=list.get(c);
 					Integer I=lsg.ao_server;
-					Map<String,LinuxServerGroup> serverHash=nameHash.get(I);
+					Map<GroupId,LinuxServerGroup> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
 					if(serverHash.put(lsg.name, lsg)!=null) throw new SQLException("LinuxServerGroup name exists more than once on server: "+lsg.name+" on "+I);
 
 				}
 				nameHashBuilt=true;
 			}
-			Map<String,LinuxServerGroup> serverHash=nameHash.get(aoServer.pkey);
+			Map<GroupId,LinuxServerGroup> serverHash=nameHash.get(aoServer.pkey);
 			if(serverHash==null) return null;
 			return serverHash.get(group_name);
 		}
@@ -191,7 +192,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_SERVER_GROUP)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_SERVER_GROUP, args, 2, err)) {
 				int pkey=connector.getSimpleAOClient().addLinuxServerGroup(
-					args[1],
+					AOSH.parseGroupId(args[1], "group"),
 					args[2]
 				);
 				out.println(pkey);
@@ -201,7 +202,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_SERVER_GROUP)) {
 			if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_SERVER_GROUP, args, 2, err)) {
 				connector.getSimpleAOClient().removeLinuxServerGroup(
-					args[1],
+					AOSH.parseGroupId(args[1], "group"),
 					args[2]
 				);
 			}

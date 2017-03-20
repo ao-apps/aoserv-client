@@ -39,7 +39,10 @@ public abstract class GlobalTableDomainNameKey<V extends GlobalObjectDomainNameK
 
 	/**
 	 * Gets the object with the provided key.  The key must be a DomainName.
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
+	@Deprecated
 	@Override
 	public V get(Object pkey) throws IOException, SQLException {
 		return get((DomainName)pkey);

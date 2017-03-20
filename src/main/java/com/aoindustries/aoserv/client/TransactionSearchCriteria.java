@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;
@@ -54,7 +55,7 @@ final public class TransactionSearchCriteria implements Streamable {
 	int transid;
 	private AccountingCode business;
 	private AccountingCode sourceBusiness;
-	String business_administrator;
+	UserId business_administrator;
 	String type;
 	String description;
 	String paymentType;
@@ -156,7 +157,7 @@ final public class TransactionSearchCriteria implements Streamable {
 		transid = ANY;
 		business = business_administrator == null ? null : business_administrator.getUsername().getPackage().getBusiness().pkey;
 		sourceBusiness = null;
-		business_administrator = null;
+		this.business_administrator = null;
 		type = null;
 		description = null;
 		paymentType = null;
@@ -180,7 +181,7 @@ final public class TransactionSearchCriteria implements Streamable {
 		return sourceBusiness;
 	}
 
-	public String getBusinessAdministrator() {
+	public UserId getBusinessAdministrator() {
 		return business_administrator;
 	}
 
@@ -228,7 +229,7 @@ final public class TransactionSearchCriteria implements Streamable {
 			transid=in.readCompressedInt();
 			business=InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
 			sourceBusiness=InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
-			business_administrator=InternUtils.intern(in.readNullUTF());
+			business_administrator=InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			type=InternUtils.intern(in.readNullUTF());
 			description=in.readNullUTF();
 			paymentType=InternUtils.intern(in.readNullUTF());
@@ -258,8 +259,8 @@ final public class TransactionSearchCriteria implements Streamable {
 		this.sourceBusiness=sourceBusiness;
 	}
 
-	public void setBusinessAdministrator(String business_administrator) {
-		this.business_administrator=business_administrator;
+	public void setBusinessAdministrator(UserId business_administrator) {
+		this.business_administrator = business_administrator;
 	}
 
 	public void setDescription(String description) {
@@ -308,7 +309,7 @@ final public class TransactionSearchCriteria implements Streamable {
 	 * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
 	 */
 	@Override
-	final public void write(CompressedDataOutputStream out, String version) throws IOException {
+	public void write(CompressedDataOutputStream out, String version) throws IOException {
 		write(out, AOServProtocol.Version.getVersion(version));
 	}
 

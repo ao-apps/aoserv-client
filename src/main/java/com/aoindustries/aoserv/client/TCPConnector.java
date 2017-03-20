@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,10 +23,14 @@
 package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.HostAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
 import java.io.EOFException;
@@ -203,18 +207,19 @@ public class TCPConnector extends AOServConnector {
 	private CacheMonitor cacheMonitor;
 
 	protected TCPConnector(
-		String hostname,
-		String local_ip,
-		int port,
-		String connectAs,
-		String authenticateAs,
+		HostAddress hostname,
+		com.aoindustries.net.InetAddress local_ip,
+		Port port,
+		UserId connectAs,
+		UserId authenticateAs,
 		String password,
-		String daemonServer,
+		DomainName daemonServer,
 		int poolSize,
 		long maxConnectionAge,
 		Logger logger
 	) throws IOException {
 		super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, logger);
+		if(port.getProtocol() != com.aoindustries.net.Protocol.TCP) throw new IllegalArgumentException("Only TCP supported: " + port);
 		this.poolSize=poolSize;
 		this.maxConnectionAge=maxConnectionAge;
 		this.pool=new SocketConnectionPool(this, logger);
@@ -249,19 +254,19 @@ public class TCPConnector extends AOServConnector {
 		socket.setKeepAlive(true);
 		socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
 		//socket.setTcpNoDelay(true);
-		if(local_ip!=null) socket.bind(new InetSocketAddress(local_ip, 0));
-		socket.connect(new InetSocketAddress(hostname, port), AOPool.DEFAULT_CONNECT_TIMEOUT);
+		if(local_ip!=null) socket.bind(new InetSocketAddress(local_ip.toString(), 0));
+		socket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
 		return socket;
 	}
 
 	public static synchronized TCPConnector getTCPConnector(
-		String hostname,
-		String local_ip,
-		int port,
-		String connectAs,
-		String authenticateAs,
+		HostAddress hostname,
+		com.aoindustries.net.InetAddress local_ip,
+		Port port,
+		UserId connectAs,
+		UserId authenticateAs,
 		String password,
-		String daemonServer,
+		DomainName daemonServer,
 		int poolSize,
 		long maxConnectionAge,
 		Logger logger
@@ -306,7 +311,7 @@ public class TCPConnector extends AOServConnector {
 
 	@Override
 	public boolean isSecure() throws UnknownHostException, IOException {
-		byte[] address=InetAddress.getByName(hostname).getAddress();
+		byte[] address=InetAddress.getByName(hostname.toString()).getAddress();
 		if(
 			address[0]==(byte)127
 			|| address[0]==(byte)10
@@ -345,7 +350,7 @@ public class TCPConnector extends AOServConnector {
 	}
 
 	@Override
-	public AOServConnector switchUsers(String username) throws IOException {
+	public AOServConnector switchUsers(UserId username) throws IOException {
 		if(username.equals(connectAs)) return this;
 		return getTCPConnector(
 			hostname,

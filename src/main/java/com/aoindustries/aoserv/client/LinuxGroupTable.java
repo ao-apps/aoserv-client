@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -33,7 +35,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
+final public class LinuxGroupTable extends CachedTableGroupIdKey<LinuxGroup> {
 
 	LinuxGroupTable(AOServConnector connector) {
 		super(connector, LinuxGroup.class);
@@ -47,7 +49,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 		return defaultOrderBy;
 	}
 
-	void addLinuxGroup(String name, Package packageObject, String type) throws IOException, SQLException {
+	void addLinuxGroup(GroupId name, Package packageObject, String type) throws IOException, SQLException {
 		connector.requestUpdateIL(
 			true,
 			AOServProtocol.CommandID.ADD,
@@ -59,7 +61,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 	}
 
 	@Override
-	public LinuxGroup get(String name) throws IOException, SQLException {
+	public LinuxGroup get(GroupId name) throws IOException, SQLException {
 		return getUniqueRow(LinuxGroup.COLUMN_NAME, name);
 	}
 
@@ -78,28 +80,32 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_GROUP)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_GROUP, args, 3, err)) {
 				connector.getSimpleAOClient().addLinuxGroup(
-					args[1],
-					args[2],
+					AOSH.parseGroupId(args[1], "group"),
+					AOSH.parseAccountingCode(args[2], "package"),
 					args[3]
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_LINUX_GROUP_NAME)) {
 			if(AOSH.checkParamCount(AOSHCommand.CHECK_LINUX_GROUP_NAME, args, 1, err)) {
-				try {
-					SimpleAOClient.checkLinuxGroupname(args[1]);
-					out.println("true");
-				} catch(IllegalArgumentException iae) {
-					out.print("aosh: "+AOSHCommand.CHECK_LINUX_GROUP_NAME+": ");
-					out.println(iae.getMessage());
-				}
+				ValidationResult validationResult = GroupId.validate(args[1]);
+				out.println(validationResult.isValid());
 				out.flush();
+				if(!validationResult.isValid()) {
+					err.print("aosh: "+AOSHCommand.CHECK_LINUX_GROUP_NAME+": ");
+					err.println(validationResult.toString());
+					err.flush();
+				}
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE)) {
 			if(AOSH.checkParamCount(AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE, args, 1, err)) {
 				try {
-					out.println(connector.getSimpleAOClient().isLinuxGroupNameAvailable(args[1]));
+					out.println(
+						connector.getSimpleAOClient().isLinuxGroupNameAvailable(
+							AOSH.parseGroupId(args[1], "groupname")
+						)
+					);
 					out.flush();
 				} catch(IllegalArgumentException iae) {
 					err.print("aosh: "+AOSHCommand.IS_LINUX_GROUP_NAME_AVAILABLE+": ");
@@ -111,7 +117,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_GROUP)) {
 			if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_GROUP, args, 1, err)) {
 				connector.getSimpleAOClient().removeLinuxGroup(
-					args[1]
+					AOSH.parseGroupId(args[1], "group")
 				);
 			}
 			return true;
@@ -119,8 +125,7 @@ final public class LinuxGroupTable extends CachedTableStringKey<LinuxGroup> {
 		return false;
 	}
 
-	public boolean isLinuxGroupNameAvailable(String groupname) throws SQLException, IOException {
-		if(!LinuxGroup.isValidGroupname(groupname)) throw new SQLException("Invalid groupname: "+groupname);
+	public boolean isLinuxGroupNameAvailable(GroupId groupname) throws SQLException, IOException {
 		return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_LINUX_GROUP_NAME_AVAILABLE, groupname);
 	}
 }

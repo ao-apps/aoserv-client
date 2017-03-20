@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.InetAddress;
@@ -45,7 +46,7 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_HOST_name = "host";
 
-	private String username;
+	private UserId username;
 	private InetAddress host;
 
 	@Override
@@ -75,7 +76,7 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			username=result.getString(2);
+			username = UserId.valueOf(result.getString(2));
 			host=InetAddress.valueOf(result.getString(3));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -86,7 +87,7 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			username=in.readUTF().intern();
+			username = UserId.valueOf(in.readUTF()).intern();
 			host=InetAddress.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -96,7 +97,7 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(username);
+		out.writeUTF(username.toString());
 		out.writeUTF(host.toString());
 	}
 }

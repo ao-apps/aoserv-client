@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -60,7 +61,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	private int quantity;
 	private int rate;
 	private long created;
-	private String created_by;
+	private UserId created_by;
 	private boolean active;
 
 	public MonthlyCharge() {
@@ -171,7 +172,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			quantity = SQLUtility.getMillis(result.getString(6));
 			rate = SQLUtility.getPennies(result.getString(7));
 			created = result.getTimestamp(8).getTime();
-			created_by = result.getString(9);
+			created_by = UserId.valueOf(result.getString(9));
 			active = result.getBoolean(10);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -193,7 +194,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			quantity=in.readCompressedInt();
 			rate=in.readCompressedInt();
 			created=in.readLong();
-			created_by=in.readUTF().intern();
+			created_by = UserId.valueOf(in.readUTF()).intern();
 			active=in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -215,7 +216,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		out.writeCompressedInt(quantity);
 		out.writeCompressedInt(rate);
 		out.writeLong(created);
-		out.writeUTF(created_by);
+		out.writeUTF(created_by.toString());
 		out.writeBoolean(active);
 	}
 }

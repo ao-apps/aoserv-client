@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -869,8 +869,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	/**
 	 * Gets the value for the associated key or <code>null</code> if the data
 	 * doesn't exist or is filtered.
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
-	// TODO: Rename me
+	@Deprecated
 	abstract public V get(Object key) throws IOException, SQLException;
 
 	private final Map<K,V> map = new Map<K,V>() {
