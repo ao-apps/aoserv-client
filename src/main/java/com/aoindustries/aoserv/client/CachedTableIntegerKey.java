@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,11 +42,14 @@ public abstract class CachedTableIntegerKey<V extends CachedObjectIntegerKey<V>>
 	 *
 	 * @exception IllegalArgumentException if pkey is neither an Integer nor a String.
 	 * @exception NumberFormatException if String cannot be parsed to an Integer
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
+	@Deprecated
 	@Override
 	public V get(Object pkey) throws IOException, SQLException, IllegalArgumentException, NumberFormatException {
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-		else if(pkey instanceof String) return get(new Integer((String)pkey));
+		else if(pkey instanceof String) return get(Integer.parseInt((String)pkey));
 		else throw new IllegalArgumentException("pkey is neither an Integer nor a String: "+pkey);
 	}
 

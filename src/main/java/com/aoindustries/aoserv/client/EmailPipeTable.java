@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -48,7 +49,7 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 		return defaultOrderBy;
 	}
 
-	int addEmailPipe(AOServer ao, String path, Package packageObject) throws IOException, SQLException {
+	int addEmailPipe(AOServer ao, UnixPath path, Package packageObject) throws IOException, SQLException {
 		int pkey=connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD,
@@ -85,8 +86,8 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_PIPE, args, 3, err)) {
 				int pkey=connector.getSimpleAOClient().addEmailPipe(
 					args[1],
-					args[2],
-					args[3]
+					AOSH.parseUnixPath(args[2], "path"),
+					AOSH.parseAccountingCode(args[3], "package")
 				);
 				out.println(pkey);
 				out.flush();

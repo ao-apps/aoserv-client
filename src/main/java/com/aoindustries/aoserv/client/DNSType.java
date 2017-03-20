@@ -24,6 +24,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.AddressFamily;
+import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -77,14 +79,14 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 		if(type.equals(A)) {
 			try {
 				InetAddress parsed = InetAddress.valueOf(destination);
-				if(!parsed.isIPv4()) throw new IllegalArgumentException("A type requires IPv4 address: "+destination);
+				if(parsed.getAddressFamily() != AddressFamily.INET) throw new IllegalArgumentException("A type requires IPv4 address: "+destination);
 			} catch(ValidationException e) {
 				throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 			}
 		} else if(type.equals(AAAA)) {
 			try {
 				InetAddress parsed = InetAddress.valueOf(destination);
-				if(!parsed.isIPv6()) throw new IllegalArgumentException("AAAA type requires IPv6 address: "+destination);
+				if(parsed.getAddressFamily() != AddressFamily.INET6) throw new IllegalArgumentException("AAAA type requires IPv6 address: "+destination);
 			} catch(ValidationException e) {
 				throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 			}
@@ -93,7 +95,7 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 			if(destination.charAt(destination.length()-1)=='.') destination=destination.substring(0, destination.length()-1);
 			if(
 				!DNSZoneTable.isValidHostnamePart(destination)
-				&& !EmailDomain.isValidFormat(destination)
+				&& !DomainName.validate(destination).isValid()
 			) throw new IllegalArgumentException("Invalid destination hostname: "+origDest);
 		}
 	}

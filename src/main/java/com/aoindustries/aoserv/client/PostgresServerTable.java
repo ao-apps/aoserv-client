@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2002-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2002-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -49,7 +51,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 	}
 
 	int addPostgresServer(
-		String name,
+		PostgresServerName name,
 		AOServer aoServer,
 		PostgresVersion version,
 		int maxConnections,
@@ -84,7 +86,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 		return getIndexedRows(PostgresServer.COLUMN_AO_SERVER, ao.pkey);
 	}
 
-	PostgresServer getPostgresServer(String name, AOServer ao) throws IOException, SQLException {
+	PostgresServer getPostgresServer(PostgresServerName name, AOServer ao) throws IOException, SQLException {
 		// Use the index first
 		List<PostgresServer> table=getPostgresServers(ao);
 		int size=table.size();
@@ -105,13 +107,12 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.CHECK_POSTGRES_SERVER_NAME)) {
 			if(AOSH.checkParamCount(AOSHCommand.CHECK_POSTGRES_SERVER_NAME, args, 1, err)) {
-				try {
-					SimpleAOClient.checkPostgresServerName(args[1]);
-					out.println("true");
-					out.flush();
-				} catch(IllegalArgumentException iae) {
+				ValidationResult validationResult = PostgresServerName.validate(args[1]);
+				out.println(validationResult.isValid());
+				out.flush();
+				if(!validationResult.isValid()) {
 					err.print("aosh: "+AOSHCommand.CHECK_POSTGRES_SERVER_NAME+": ");
-					err.println(iae.getMessage());
+					err.println(validationResult.toString());
 					err.flush();
 				}
 			}
@@ -121,7 +122,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 				try {
 					out.println(
 						connector.getSimpleAOClient().isPostgresServerNameAvailable(
-							args[1],
+							AOSH.parsePostgresServerName(args[1], "server_name"),
 							args[2]
 						)
 					);
@@ -136,7 +137,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 		} else if(command.equalsIgnoreCase(AOSHCommand.RESTART_POSTGRESQL)) {
 			if(AOSH.checkParamCount(AOSHCommand.RESTART_POSTGRESQL, args, 2, err)) {
 				connector.getSimpleAOClient().restartPostgreSQL(
-					args[1],
+					AOSH.parsePostgresServerName(args[1], "postgres_server"),
 					args[2]
 				);
 			}
@@ -144,7 +145,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 		} else if(command.equalsIgnoreCase(AOSHCommand.START_POSTGRESQL)) {
 			if(AOSH.checkParamCount(AOSHCommand.START_POSTGRESQL, args, 2, err)) {
 				connector.getSimpleAOClient().startPostgreSQL(
-					args[1],
+					AOSH.parsePostgresServerName(args[1], "postgres_server"),
 					args[2]
 				);
 			}
@@ -152,7 +153,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 		} else if(command.equalsIgnoreCase(AOSHCommand.STOP_POSTGRESQL)) {
 			if(AOSH.checkParamCount(AOSHCommand.STOP_POSTGRESQL, args, 2, err)) {
 				connector.getSimpleAOClient().stopPostgreSQL(
-					args[1],
+					AOSH.parsePostgresServerName(args[1], "postgres_server"),
 					args[2]
 				);
 			}
@@ -166,7 +167,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 		return false;
 	}
 
-	boolean isPostgresServerNameAvailable(String name, AOServer ao) throws IOException, SQLException {
+	boolean isPostgresServerNameAvailable(PostgresServerName name, AOServer ao) throws IOException, SQLException {
 		return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_POSTGRES_SERVER_NAME_AVAILABLE, name, ao.pkey);
 	}
 

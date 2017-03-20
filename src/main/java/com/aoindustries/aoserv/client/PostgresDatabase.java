@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.BufferManager;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -62,22 +64,26 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	/**
 	 * Special databases.
 	 */
-	public static final String
-		AOINDUSTRIES="aoindustries",
-		AOSERV="aoserv",
-		AOWEB="aoweb",
-		TEMPLATE0="template0",
-		TEMPLATE1="template1"
+	public static final PostgresDatabaseName
+		AOINDUSTRIES,
+		AOSERV,
+		AOWEB,
+		TEMPLATE0,
+		TEMPLATE1
 	;
+	static {
+		try {
+			AOINDUSTRIES = PostgresDatabaseName.valueOf("aoindustries");
+			AOSERV = PostgresDatabaseName.valueOf("aoserv");
+			AOWEB = PostgresDatabaseName.valueOf("aoweb");
+			TEMPLATE0 = PostgresDatabaseName.valueOf("template0");
+			TEMPLATE1 = PostgresDatabaseName.valueOf("template1");
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
-	/**
-	 * The name of a database is limited by the internal data type of
-	 * the <code>pg_database</code> table.  The type is <code>name</code>
-	 * which has a maximum length of 31 characters.
-	 */
-	public static final int MAX_DATABASE_NAME_LENGTH=31;
-
-	String name;
+	PostgresDatabaseName name;
 	int postgres_server;
 	int datdba;
 	private int encoding;
@@ -192,7 +198,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		return "https://aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
 	}
 
-	public String getName() {
+	public PostgresDatabaseName getName() {
 		return name;
 	}
 
@@ -223,14 +229,18 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		name=result.getString(2);
-		postgres_server=result.getInt(3);
-		datdba=result.getInt(4);
-		encoding=result.getInt(5);
-		is_template=result.getBoolean(6);
-		allow_conn=result.getBoolean(7);
-		enable_postgis=result.getBoolean(8);
+		try {
+			pkey=result.getInt(1);
+			name = PostgresDatabaseName.valueOf(result.getString(2));
+			postgres_server=result.getInt(3);
+			datdba=result.getInt(4);
+			encoding=result.getInt(5);
+			is_template=result.getBoolean(6);
+			allow_conn=result.getBoolean(7);
+			enable_postgis=result.getBoolean(8);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isTemplate() {
@@ -239,14 +249,18 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		name=in.readUTF();
-		postgres_server=in.readCompressedInt();
-		datdba=in.readCompressedInt();
-		encoding=in.readCompressedInt();
-		is_template=in.readBoolean();
-		allow_conn=in.readBoolean();
-		enable_postgis=in.readBoolean();
+		try {
+			pkey=in.readCompressedInt();
+			name = PostgresDatabaseName.valueOf(in.readUTF());
+			postgres_server=in.readCompressedInt();
+			datdba=in.readCompressedInt();
+			encoding=in.readCompressedInt();
+			is_template=in.readBoolean();
+			allow_conn=in.readBoolean();
+			enable_postgis=in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -277,13 +291,13 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
 	@Override
 	String toStringImpl() {
-		return name;
+		return name.toString();
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(name);
+		out.writeUTF(name.toString());
 		out.writeCompressedInt(postgres_server);
 		out.writeCompressedInt(datdba);
 		out.writeCompressedInt(encoding);

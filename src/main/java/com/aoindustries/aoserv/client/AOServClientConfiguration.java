@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,15 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.AOPool;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.HostAddress;
+import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.util.PropertiesUtils;
 import com.aoindustries.util.StringUtility;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -60,27 +66,42 @@ final public class AOServClientConfiguration {
 	/**
 	 * Gets the non-SSL hostname.
 	 */
-	static String getTcpHostname() throws IOException {
-		return getProperty("aoserv.client.tcp.hostname");
+	static HostAddress getTcpHostname() throws IOException {
+		try {
+			return HostAddress.valueOf(getProperty("aoserv.client.tcp.hostname"));
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	/**
 	 * Gets the non-SSL local IP to connect from or <code>null</code> if not configured.
 	 */
-	static String getTcpLocalIp() throws IOException {
+	static InetAddress getTcpLocalIp() throws IOException {
 		String S = getProperty("aoserv.client.tcp.local_ip");
 		if(
 			S==null
 			|| (S=S.trim()).length()==0
 		) return null;
-		return S;
+		try {
+			return InetAddress.valueOf(S);
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	/**
 	 * Gets the non-SSL port.
 	 */
-	static int getTcpPort() throws IOException {
-		return Integer.parseInt(getProperty("aoserv.client.tcp.port"));
+	static Port getTcpPort() throws IOException {
+		try {
+			return Port.valueOf(
+				Integer.parseInt(getProperty("aoserv.client.tcp.port")),
+				com.aoindustries.net.Protocol.TCP
+			);
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	/**
@@ -101,27 +122,42 @@ final public class AOServClientConfiguration {
 	/**
 	 * Gets the SSL hostname to connect to.
 	 */
-	static String getSslHostname() throws IOException {
-		return getProperty("aoserv.client.ssl.hostname");
+	static HostAddress getSslHostname() throws IOException {
+		try {
+			return HostAddress.valueOf(getProperty("aoserv.client.ssl.hostname"));
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	/**
 	 * Gets the SSL local IP to connect from or <code>null</code> if not configured.
 	 */
-	static String getSslLocalIp() throws IOException {
+	static InetAddress getSslLocalIp() throws IOException {
 		String S = getProperty("aoserv.client.ssl.local_ip");
 		if(
 			S==null
 			|| (S=S.trim()).length()==0
 		) return null;
-		return S;
+		try {
+			return InetAddress.valueOf(S);
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	/**
 	 * Gets the SSL port to connect to.
 	 */
-	static int getSslPort() throws IOException {
-		return Integer.parseInt(getProperty("aoserv.client.ssl.port"));
+	static Port getSslPort() throws IOException {
+		try {
+			return Port.valueOf(
+				Integer.parseInt(getProperty("aoserv.client.ssl.port")),
+				com.aoindustries.net.Protocol.TCP
+			);
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	/**
@@ -160,8 +196,17 @@ final public class AOServClientConfiguration {
 	/**
 	 * Gets the optional default username.
 	 */
-	public static String getUsername() throws IOException {
-		return getProperty("aoserv.client.username");
+	public static UserId getUsername() throws IOException {
+		String username = getProperty("aoserv.client.username");
+		if(
+			username == null
+			|| (username = username.trim()).isEmpty()
+		) return null;
+		try {
+			return UserId.valueOf(username);
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	/**
@@ -175,8 +220,17 @@ final public class AOServClientConfiguration {
 	 * Gets the hostname of this daemon for daemon-specific locking.  Leave
 	 * this blank for non-AOServDaemon connections.
 	 */
-	static String getDaemonServer() throws IOException {
-		return getProperty("aoserv.client.daemon.server");
+	static DomainName getDaemonServer() throws IOException {
+		String domainServer = getProperty("aoserv.client.daemon.server");
+		if(
+			domainServer == null
+			|| (domainServer = domainServer.trim()).isEmpty()
+		) return null;
+		try {
+			return DomainName.valueOf(domainServer);
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	/**

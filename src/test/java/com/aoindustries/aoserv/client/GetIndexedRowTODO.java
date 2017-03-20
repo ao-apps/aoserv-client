@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +70,7 @@ public class GetIndexedRowTODO extends TestCase {
 		System.out.println("+ means supported");
 		System.out.println("- means unsupported");
 		for(AOServConnector conn : conns) {
-			String username = conn.getThisBusinessAdministrator().pkey;
+			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
 			int numTables = SchemaTable.TableID.values().length;
 			for(int c=0;c<numTables;c++) {

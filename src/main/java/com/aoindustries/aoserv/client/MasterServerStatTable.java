@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,6 +43,10 @@ final public class MasterServerStatTable extends AOServTable<String,MasterServer
 		return null;
 	}
 
+	/**
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+	 */
+	@Deprecated
 	@Override
 	public MasterServerStat get(Object name) throws IOException, SQLException {
 		List<MasterServerStat> table=getRows();

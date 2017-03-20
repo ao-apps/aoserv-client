@@ -23,7 +23,9 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -35,7 +37,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
+final public class MySQLUserTable extends CachedTableMySQLUserIdKey<MySQLUser> {
 
 	MySQLUserTable(AOServConnector connector) {
 		super(connector, MySQLUser.class);
@@ -49,7 +51,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 		return defaultOrderBy;
 	}
 
-	void addMySQLUser(String username) throws IOException, SQLException {
+	void addMySQLUser(MySQLUserId username) throws IOException, SQLException {
 		connector.requestUpdateIL(
 			true,
 			AOServProtocol.CommandID.ADD,
@@ -59,7 +61,7 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 	}
 
 	@Override
-	public MySQLUser get(String username) throws IOException, SQLException {
+	public MySQLUser get(MySQLUserId username) throws IOException, SQLException {
 		return getUniqueRow(MySQLUser.COLUMN_USERNAME, username);
 	}
 
@@ -86,13 +88,15 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_USER)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_USER, args, 1, err)) {
 				connector.getSimpleAOClient().addMySQLUser(
-					args[1]
+					AOSH.parseMySQLUserId(args[1], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.ARE_MYSQL_USER_PASSWORDS_SET)) {
 			if(AOSH.checkParamCount(AOSHCommand.ARE_MYSQL_USER_PASSWORDS_SET, args, 1, err)) {
-				int result=connector.getSimpleAOClient().areMySQLUserPasswordsSet(args[1]);
+				int result=connector.getSimpleAOClient().areMySQLUserPasswordsSet(
+					AOSH.parseMySQLUserId(args[1], "username")
+				);
 				if(result==PasswordProtected.NONE) out.println("none");
 				else if(result==PasswordProtected.SOME) out.println("some");
 				else if(result==PasswordProtected.ALL) out.println("all");
@@ -102,7 +106,10 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_PASSWORD)) {
 			if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_PASSWORD, args, 2, err)) {
-				List<PasswordChecker.Result> results=SimpleAOClient.checkMySQLPassword(args[1], args[2]);
+				List<PasswordChecker.Result> results=SimpleAOClient.checkMySQLPassword(
+					AOSH.parseMySQLUserId(args[1], "username"),
+					args[2]
+				);
 				if(PasswordChecker.hasResults(results)) {
 					PasswordChecker.printResults(results, out);
 					out.flush();
@@ -111,14 +118,21 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_USERNAME)) {
 			if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_USERNAME, args, 1, err)) {
-				SimpleAOClient.checkMySQLUsername(args[1]);
+				ValidationResult validationResult = MySQLUserId.validate(args[1]);
+				out.println(validationResult.isValid());
+				out.flush();
+				if(!validationResult.isValid()) {
+					err.print("aosh: "+AOSHCommand.CHECK_MYSQL_USERNAME+": ");
+					err.println(validationResult.toString());
+					err.flush();
+				}
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_MYSQL_USER)) {
 			if(AOSH.checkParamCount(AOSHCommand.DISABLE_MYSQL_USER, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().disableMySQLUser(
-						args[1],
+						AOSH.parseMySQLUserId(args[1], "username"),
 						args[2]
 					)
 				);
@@ -127,20 +141,22 @@ final public class MySQLUserTable extends CachedTableStringKey<MySQLUser> {
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_MYSQL_USER)) {
 			if(AOSH.checkParamCount(AOSHCommand.ENABLE_MYSQL_USER, args, 1, err)) {
-				connector.getSimpleAOClient().enableMySQLUser(args[1]);
+				connector.getSimpleAOClient().enableMySQLUser(
+					AOSH.parseMySQLUserId(args[1], "username")
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_USER)) {
 			if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_USER, args, 1, err)) {
 				connector.getSimpleAOClient().removeMySQLUser(
-					args[1]
+					AOSH.parseMySQLUserId(args[1], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_MYSQL_USER_PASSWORD)) {
 			if(AOSH.checkParamCount(AOSHCommand.SET_MYSQL_USER_PASSWORD, args, 2, err)) {
 				connector.getSimpleAOClient().setMySQLUserPassword(
-					args[1],
+					AOSH.parseMySQLUserId(args[1], "username"),
 					args[2]
 				);
 			}

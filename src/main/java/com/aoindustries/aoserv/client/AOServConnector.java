@@ -157,29 +157,29 @@ abstract public class AOServConnector {
 	/**
 	 * @see  #getHostname()
 	 */
-	final String hostname;
+	final HostAddress hostname;
 
 	/**
 	 * @see  #getLocalIp()
 	 */
-	final String local_ip;
+	final InetAddress local_ip;
 
 	/**
 	 * @see  #getPort()
 	 */
-	final int port;
+	final Port port;
 
 	/**
 	 * @see  #getConnectedAs()
 	 */
-	final String connectAs;
+	final UserId connectAs;
 
 	/**
 	 * @see  #getAuthenticatedAs()
 	 */
-	final String authenticateAs;
+	final UserId authenticateAs;
 
-	final String daemonServer;
+	final DomainName daemonServer;
 
 	final Logger logger;
 
@@ -1002,23 +1002,23 @@ abstract public class AOServConnector {
 	final List<AOServTable> tables;
 
 	protected AOServConnector(
-		String hostname,
-		String local_ip,
-		int port,
-		String connectAs,
-		String authenticateAs,
+		HostAddress hostname,
+		InetAddress local_ip,
+		Port port,
+		UserId connectAs,
+		UserId authenticateAs,
 		String password,
-		String daemonServer,
+		DomainName daemonServer,
 		Logger logger
 	) throws IOException {
-		this.hostname=hostname;
-		this.local_ip=local_ip;
-		this.port=port;
-		this.connectAs=connectAs;
-		this.authenticateAs=authenticateAs;
-		this.password=password;
-		this.daemonServer=daemonServer;
-		this.logger=logger;
+		this.hostname = hostname;
+		this.local_ip = local_ip;
+		this.port = port;
+		this.connectAs = connectAs;
+		this.authenticateAs = authenticateAs;
+		this.password = password;
+		this.daemonServer = daemonServer;
+		this.logger = logger;
 
 		// These must match the table IDs in SchemaTable
 		ArrayList<AOServTable> newTables = new ArrayList<>();
@@ -1268,9 +1268,8 @@ abstract public class AOServConnector {
 	 * @exception  IOException  if no connection can be established
 	 */
 	public static AOServConnector getConnector(Logger logger) throws IOException {
-		String username=AOServClientConfiguration.getUsername();
-		String daemonServer=AOServClientConfiguration.getDaemonServer();
-		if(daemonServer==null || daemonServer.length()==0) daemonServer=null;
+		UserId username = AOServClientConfiguration.getUsername();
+		DomainName daemonServer = AOServClientConfiguration.getDaemonServer();
 		return getConnector(
 			username,
 			username,
@@ -1294,7 +1293,7 @@ abstract public class AOServConnector {
 	 *
 	 * @exception  IOException  if no connection can be established
 	 */
-	public static AOServConnector getConnector(String username, String password, Logger logger) throws IOException {
+	public static AOServConnector getConnector(UserId username, String password, Logger logger) throws IOException {
 		return getConnector(username, username, password, null, logger);
 	}
 
@@ -1315,7 +1314,13 @@ abstract public class AOServConnector {
 	 *
 	 * @exception  IOException  if no connection can be established
 	 */
-	public static AOServConnector getConnector(String connectAs, String authenticateAs, String password, String daemonServer, Logger logger) throws IOException {
+	public static AOServConnector getConnector(
+		UserId connectAs,
+		UserId authenticateAs,
+		String password,
+		DomainName daemonServer,
+		Logger logger
+	) throws IOException {
 		List<String> protocols=AOServClientConfiguration.getProtocols();
 		int size=protocols.size();
 		for(int c=0;c<size;c++) {
@@ -1384,21 +1389,21 @@ abstract public class AOServConnector {
 	/**
 	 * Gets the hostname of the server that is connected to.
 	 */
-	final public String getHostname() {
+	final public HostAddress getHostname() {
 		return hostname;
 	}
 
 	/**
 	 * Gets the optional local IP address that connections are made from.
 	 */
-	final public String getLocalIp() {
+	final public InetAddress getLocalIp() {
 		return local_ip;
 	}
 
 	/**
 	 * Gets the server port that is connected to.
 	 */
-	final public int getPort() {
+	final public Port getPort() {
 		return port;
 	}
 
@@ -2272,7 +2277,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	public abstract AOServConnector switchUsers(String username) throws IOException;
+	public abstract AOServConnector switchUsers(UserId username) throws IOException;
 
 	protected final void tablesUpdated(IntList invalidateList) {
 		if(invalidateList!=null) {

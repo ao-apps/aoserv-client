@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,7 +49,7 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_SERVER_name = "server";
 
-	private String username;
+	private UserId username;
 	private int server;
 
 	@Override
@@ -83,22 +85,30 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		username=result.getString(2);
-		server=result.getInt(3);
+		try {
+			pkey = result.getInt(1);
+			username = UserId.valueOf(result.getString(2));
+			server = result.getInt(3);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		username=in.readUTF().intern();
-		server=in.readCompressedInt();
+		try {
+			pkey = in.readCompressedInt();
+			username = UserId.valueOf(in.readUTF()).intern();
+			server = in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(username);
+		out.writeUTF(username.toString());
 		out.writeCompressedInt(server);
 	}
 }

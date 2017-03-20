@@ -134,8 +134,8 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 					connector.getSimpleAOClient().addEmailList(
 						args[1],
 						AOSH.parseUnixPath(args[2], "path"),
-						args[3],
-						args[4]
+						AOSH.parseUserId(args[3], "username"),
+						AOSH.parseGroupId(args[4], "group")
 					)
 				);
 				out.flush();

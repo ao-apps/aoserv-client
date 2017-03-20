@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2007-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -141,7 +141,7 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
 					out.writeNullUTF(invoiceNumber);
 					out.writeNullUTF(purchaseOrderNumber);
 					out.writeNullUTF(description);
-					out.writeUTF(creditCardCreatedBy.pkey);
+					out.writeUTF(creditCardCreatedBy.pkey.toString());
 					out.writeNullUTF(creditCardPrincipalName);
 					out.writeUTF(creditCardAccounting.getAccounting().toString());
 					out.writeNullUTF(creditCardGroupName);

@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -50,7 +51,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
 
 	private int ticket;
 	private AccountingCode reseller;
-	private String administrator;
+	private UserId administrator;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -95,7 +96,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
 			pkey = result.getInt(1);
 			ticket = result.getInt(2);
 			reseller = AccountingCode.valueOf(result.getString(3));
-			administrator = result.getString(4);
+			administrator = UserId.valueOf(result.getString(4));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -107,7 +108,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
 			pkey = in.readCompressedInt();
 			ticket = in.readCompressedInt();
 			reseller = AccountingCode.valueOf(in.readUTF()).intern();
-			administrator = in.readUTF().intern();
+			administrator = UserId.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -123,6 +124,6 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ticket);
 		out.writeUTF(reseller.toString());
-		out.writeUTF(administrator);
+		out.writeUTF(administrator.toString());
 	}
 }

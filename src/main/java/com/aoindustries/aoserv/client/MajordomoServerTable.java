@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -96,8 +96,8 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 				connector.getSimpleAOClient().addMajordomoServer(
 					AOSH.parseDomainName(args[1], "domain"),
 					args[2],
-					args[3],
-					args[4],
+					AOSH.parseUserId(args[3], "linux_account"),
+					AOSH.parseGroupId(args[4], "linux_group"),
 					args[5]
 				);
 			}

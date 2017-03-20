@@ -55,7 +55,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 		return defaultOrderBy;
 	}
 
-	int addEmailSmtpRelay(final Package pack, final AOServer aoServer, final String host, final EmailSmtpRelayType type, final long duration) throws IOException, SQLException {
+	int addEmailSmtpRelay(final Package pack, final AOServer aoServer, final HostAddress host, final EmailSmtpRelayType type, final long duration) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
 			new AOServConnector.ResultRequest<Integer>() {
@@ -68,7 +68,7 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 					out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
 					out.writeUTF(pack.name.toString());
 					out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);
-					out.writeUTF(host);
+					out.writeUTF(host.toString());
 					out.writeUTF(type.pkey);
 					out.writeLong(duration);
 				}
@@ -145,9 +145,9 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 			if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_SMTP_RELAY, args, 5, err)) {
 				String S=args[5].trim();
 				int pkey=connector.getSimpleAOClient().addEmailSmtpRelay(
-					args[1],
+					AOSH.parseAccountingCode(args[1], "package"),
 					args[2],
-					args[3],
+					AOSH.parseHostAddress(args[3], "host"),
 					args[4],
 					S.length()==0?-1:AOSH.parseLong(S, "duration")
 				);

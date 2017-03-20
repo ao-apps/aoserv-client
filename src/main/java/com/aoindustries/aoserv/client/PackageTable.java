@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -48,7 +50,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	}
 
 	int addPackage(
-		String name,
+		AccountingCode name,
 		Business business,
 		PackageDefinition packageDefinition
 	) throws IOException, SQLException {
@@ -63,13 +65,16 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	}
 
 	/**
-	 * Supports both Integer (pkey) and String (name) keys.
+	 * Supports both {@link Integer} (pkey) and {@link AccountingCode} (name) keys.
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
+	@Deprecated
 	@Override
 	public Package get(Object pkey) throws IOException, SQLException {
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-		if(pkey instanceof String) return get((String)pkey);
-		throw new IllegalArgumentException("pkey must be either an Integer or a String");
+		if(pkey instanceof AccountingCode) return get((AccountingCode)pkey);
+		throw new IllegalArgumentException("pkey must be either an Integer or an AccountingCode");
 	}
 
 	@Override
@@ -77,12 +82,16 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 		return getUniqueRow(Package.COLUMN_PKEY, pkey);
 	}
 
-	public Package get(String name) throws IOException, SQLException {
+	public Package get(AccountingCode name) throws IOException, SQLException {
 		return getUniqueRow(Package.COLUMN_NAME, name);
 	}
 
-	public String generatePackageName(String template) throws IOException, SQLException {
-		return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_PACKAGE_NAME, template);
+	public AccountingCode generatePackageName(String template) throws IOException, SQLException {
+		try {
+			return AccountingCode.valueOf(connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_PACKAGE_NAME, template));
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	List<Package> getPackages(Business business) throws IOException, SQLException {
@@ -106,7 +115,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 				try {
 					out.println(
 						connector.getSimpleAOClient().addPackage(
-							args[1],
+							AOSH.parseAccountingCode(args[1], "package"),
 							AOSH.parseAccountingCode(args[2], "business"),
 							AOSH.parseInt(args[3], "package_definition")
 						)
@@ -119,23 +128,11 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 				}
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_PACKAGE_NAME)) {
-			if(AOSH.checkParamCount(AOSHCommand.CHECK_PACKAGE_NAME, args, 1, err)) {
-				try {
-					SimpleAOClient.checkPackageName(args[1]);
-					out.println("true");
-				} catch(IllegalArgumentException iae) {
-					out.print("aosh: "+AOSHCommand.CHECK_PACKAGE_NAME+": ");
-					out.println(iae.getMessage());
-				}
-				out.flush();
-			}
-			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_PACKAGE)) {
 			if(AOSH.checkParamCount(AOSHCommand.DISABLE_PACKAGE, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().disablePackage(
-						args[1],
+						AOSH.parseAccountingCode(args[1], "name"),
 						args[2]
 					)
 				);
@@ -144,7 +141,9 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_PACKAGE)) {
 			if(AOSH.checkParamCount(AOSHCommand.ENABLE_PACKAGE, args, 1, err)) {
-				connector.getSimpleAOClient().enablePackage(args[1]);
+				connector.getSimpleAOClient().enablePackage(
+					AOSH.parseAccountingCode(args[1], "name")
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_PACKAGE_NAME)) {
@@ -156,7 +155,11 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 		} else if(command.equalsIgnoreCase(AOSHCommand.IS_PACKAGE_NAME_AVAILABLE)) {
 			if(AOSH.checkParamCount(AOSHCommand.IS_PACKAGE_NAME_AVAILABLE, args, 1, err)) {
 				try {
-					out.println(connector.getSimpleAOClient().isPackageNameAvailable(args[1]));
+					out.println(
+						connector.getSimpleAOClient().isPackageNameAvailable(
+							AOSH.parseAccountingCode(args[1], "package")
+						)
+					);
 					out.flush();
 				} catch(IllegalArgumentException iae) {
 					err.print("aosh: "+AOSHCommand.IS_PACKAGE_NAME_AVAILABLE+": ");
@@ -168,8 +171,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 		} else return false;
 	}
 
-	public boolean isPackageNameAvailable(String packageName) throws SQLException, IOException {
-		if(!Package.isValidPackageName(packageName)) throw new SQLException("Invalid package name: "+packageName);
+	public boolean isPackageNameAvailable(AccountingCode packageName) throws SQLException, IOException {
 		return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_PACKAGE_NAME_AVAILABLE, packageName);
 	}
 }

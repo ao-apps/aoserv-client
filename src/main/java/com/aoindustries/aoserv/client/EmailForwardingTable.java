@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.Email;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -53,8 +54,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 		return defaultOrderBy;
 	}
 
-	int addEmailForwarding(EmailAddress emailAddressObject, String destination) throws IOException, SQLException {
-		if (!EmailAddress.isValidEmailAddress(destination)) throw new SQLException("Invalid destination: " + destination);
+	int addEmailForwarding(EmailAddress emailAddressObject, Email destination) throws IOException, SQLException {
 		return connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD,
@@ -95,13 +95,13 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 		else return Collections.emptyList();
 	}
 
-	EmailForwarding getEmailForwarding(EmailAddress ea, String destination) throws IOException, SQLException {
+	EmailForwarding getEmailForwarding(EmailAddress ea, Email destination) throws IOException, SQLException {
 		// Use index first
 		List<EmailForwarding> cached=getEmailForwardings(ea);
 		int len=cached.size();
 		for (int c=0;c<len;c++) {
 			EmailForwarding forward=cached.get(c);
-			if(forward.destination.equals(destination)) return forward;
+			if(forward.destination.equals(destination.toString())) return forward;
 		}
 		return null;
 	}
@@ -145,52 +145,11 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 									addr.substring(0, pos),
 									AOSH.parseDomainName(addr.substring(pos+1), "address"),
 									args[c+1],
-									args[c+2]
+									AOSH.parseEmail(args[c+2], "to_address")
 								)
 							);
 							out.flush();
 						}
-					}
-				}
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_EMAIL_FORWARDING)) {
-			if(AOSH.checkMinParamCount(AOSHCommand.CHECK_EMAIL_FORWARDING, args, 2, err)) {
-				if((args.length&1)==0) {
-					err.println("aosh: "+AOSHCommand.CHECK_EMAIL_FORWARDING+": must have even number of parameters");
-					err.flush();
-				} else {
-					for(int c=1;c<args.length;c+=2) {
-						String addr=args[c];
-						int pos=addr.indexOf('@');
-						if(pos==-1) {
-							if(args.length>3) {
-								out.print(addr);
-								out.print(": ");
-							}
-							out.print("invalid email address: ");
-							out.println(addr);
-						} else {
-							try {
-								SimpleAOClient.checkEmailForwarding(
-									addr.substring(0, pos),
-									addr.substring(pos+1),
-									args[c+1]
-								);
-								if(args.length>3) {
-									out.print(addr);
-									out.print(": ");
-								}
-								out.println("true");
-							} catch(IllegalArgumentException ia) {
-								if(args.length>3) {
-									out.print(addr);
-									out.print(": ");
-								}
-								out.println(ia.getMessage());
-							}
-						}
-						out.flush();
 					}
 				}
 			}
@@ -208,7 +167,7 @@ final public class EmailForwardingTable extends CachedTableIntegerKey<EmailForwa
 						addr.substring(0, pos),
 						AOSH.parseDomainName(addr.substring(pos+1), "domain"),
 						args[2],
-						args[3]
+						AOSH.parseEmail(args[3], "destination")
 					);
 				}
 			}

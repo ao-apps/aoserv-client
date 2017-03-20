@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -65,7 +66,7 @@ public class GetTableSizesTODO extends TestCase {
 		final int PASSES=10;
 		System.out.println("Testing getTable(tableID).size()");
 		for(AOServConnector conn : conns) {
-			String username = conn.getThisBusinessAdministrator().pkey;
+			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
 			int numTables = SchemaTable.TableID.values().length;
 			int[][] counts=new int[PASSES][numTables];

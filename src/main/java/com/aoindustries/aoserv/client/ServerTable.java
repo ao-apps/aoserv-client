@@ -22,6 +22,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -61,7 +63,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		final String description,
 		final int backup_hour,
 		final OperatingSystemVersion os_version,
-		final String username,
+		final UserId username,
 		final String password,
 		final String contact_phone,
 		final String contact_email
@@ -82,7 +84,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 					out.writeUTF(description);
 					out.writeCompressedInt(backup_hour);
 					out.writeCompressedInt(os_version.getPkey());
-					out.writeUTF(username);
+					out.writeUTF(username.toString());
 					out.writeUTF(password);
 					out.writeUTF(contact_phone);
 					out.writeUTF(contact_email);
@@ -111,7 +113,10 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 
 	/**
 	 * Supports both Integer (pkey) and String (server) keys.
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
+	@Deprecated
 	@Override
 	public Server get(Object pkey) throws IOException, SQLException {
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
@@ -154,10 +159,16 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		int slashPos = server.indexOf('/');
 		if(slashPos!=-1) {
 			String packageName = server.substring(0, slashPos);
-			String name = server.substring(slashPos+1);
-			Package pk = connector.getPackages().get(packageName);
-			if(pk==null) return null;
-			return pk.getServer(name);
+			if(AccountingCode.validate(packageName).isValid()) {
+				try {
+					String name = server.substring(slashPos+1);
+					Package pk = connector.getPackages().get(AccountingCode.valueOf(packageName));
+					if(pk==null) return null;
+					return pk.getServer(name);
+				} catch(ValidationException e) {
+					throw new AssertionError("Already validated", e);
+				}
+			}
 		}
 
 		// Is it an exact server pkey
@@ -198,13 +209,13 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 					connector.getSimpleAOClient().addBackupServer(
 						args[1],
 						args[2],
-						args[3],
+						AOSH.parseAccountingCode(args[3], "owner"),
 						args[4],
 						AOSH.parseInt(args[5], "backup_hour"),
 						args[6],
 						args[7],
 						args[8],
-						args[9],
+						AOSH.parseUserId(args[9], "username"),
 						args[10],
 						args[11],
 						args[12]

@@ -76,8 +76,8 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 					out.writeUTF(name);
 					out.writeCompressedInt(aoServer.pkey);
 					out.writeCompressedInt(tvPkey);
-					out.writeUTF(lsa.username);
-					out.writeUTF(lsg.name);
+					out.writeUTF(lsa.username.toString());
+					out.writeUTF(lsg.name.toString());
 					out.writeBoolean(isSecure);
 					out.writeBoolean(isOverflow);
 				}
@@ -168,8 +168,8 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 						args[1],
 						args[2],
 						args[3],
-						args[4],
-						args[5],
+						AOSH.parseUserId(args[4], "linux_server_account"),
+						AOSH.parseGroupId(args[5], "linux_server_group"),
 						AOSH.parseBoolean(args[6], "is_secure"),
 						AOSH.parseBoolean(args[7], "is_overflow")
 					)

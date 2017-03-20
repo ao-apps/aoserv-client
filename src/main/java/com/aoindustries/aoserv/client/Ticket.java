@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -52,7 +53,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	private AccountingCode reseller;
 	private AccountingCode accounting;
 	private String language;
-	private String created_by;
+	private UserId created_by;
 	private int category;
 	private String ticket_type;
 	private String from_address;
@@ -132,7 +133,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			reseller = AccountingCode.valueOf(result.getString(pos++));
 			accounting = AccountingCode.valueOf(result.getString(pos++));
 			language = result.getString(pos++);
-			created_by = result.getString(pos++);
+			created_by = UserId.valueOf(result.getString(pos++));
 			category = result.getInt(pos++); if(result.wasNull()) category = -1;
 			ticket_type = result.getString(pos++);
 			from_address = result.getString(pos++);
@@ -163,7 +164,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			}
 			accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
 			language = in.readUTF().intern();
-			created_by = InternUtils.intern(in.readNullUTF());
+			created_by = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			category = in.readCompressedInt();
 			ticket_type = in.readUTF().intern();
 			from_address = in.readNullUTF();
@@ -192,9 +193,9 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		}
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(language);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
-			out.writeUTF(created_by==null ? "" : created_by);
+			out.writeUTF(created_by==null ? "" : created_by.toString());
 		} else {
-			out.writeNullUTF(created_by);
+			out.writeNullUTF(ObjectUtils.toString(created_by));
 		}
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeCompressedInt(category);
 		out.writeUTF(ticket_type);
@@ -258,7 +259,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}
 
 	public BusinessAdministrator getCreatedBy() throws IOException, SQLException {
-		if(created_by==null) return null;
+		if(created_by == null) return null;
 		// Data may be filtered by APIs
 		return table.connector.getBusinessAdministrators().get(created_by);
 	}

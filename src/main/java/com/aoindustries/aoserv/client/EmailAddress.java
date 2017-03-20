@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Email;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,7 +57,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	String address;
 	int domain;
 
-	public int addEmailForwarding(String destination) throws IOException, SQLException {
+	public int addEmailForwarding(Email destination) throws IOException, SQLException {
 		return table.connector.getEmailForwardings().addEmailForwarding(this, destination);
 	}
 
@@ -92,7 +93,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 		return table.connector.getEmailForwardings().getEnabledEmailForwardings(this);
 	}
 
-	public EmailForwarding getEmailForwarding(String destination) throws IOException, SQLException {
+	public EmailForwarding getEmailForwarding(Email destination) throws IOException, SQLException {
 		return table.connector.getEmailForwardings().getEmailForwarding(this, destination);
 	}
 
@@ -161,37 +162,6 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 			|| !getEmailPipeAddresses().isEmpty()
 			|| !getLinuxAccAddresses().isEmpty()
 		;
-	}
-
-	/**
-	 * Determines if an email address is in a valid <code>name@domain.com</code>
-	 * format.
-	 */
-	public static boolean isValidEmailAddress(String name) {
-		int pos=name.indexOf('@');
-		if(pos==-1) return false;
-		String address=name.substring(0, pos);
-		if(!isValidFormat(address)) return false;
-		return EmailDomain.isValidFormat(name.substring(pos+1));
-	}
-
-	public static boolean isValidFormat(String name) {
-		int len = name.length();
-		// May not be empty (previously used for catch-all addresses)
-		if(len<=0) return false;
-		for (int c = 0; c < len; c++) {
-			char ch = name.charAt(c);
-			if (
-				(ch < 'a' || ch > 'z')
-				&& (ch < '0' || ch > '9')
-				&& ch != '.'
-				&& ch != '-'
-				&& ch != '&'
-				&& ch != '+'
-				&& ch != '_'
-			) return false;
-		}
-		return true;
 	}
 
 	@Override

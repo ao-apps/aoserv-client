@@ -135,39 +135,6 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 		}
 	}
 
-	/**
-	 * @deprecated  Use DomainName.validate instead.
-	 */
-	@Deprecated
-	public static boolean isValidFormat(String name) {
-		if("localhost".equals(name)) return false;
-
-		// Must contain at least one period
-		int pos = name.indexOf('.');
-		// Must have something before
-		if (pos > 0) {
-			// The first character must not be -
-			if (name.charAt(0) == '-') return false;
-			// Must have something afterwards
-			int len = name.length();
-			if (pos < (len - 1)) {
-				// Must not end with .
-				if (name.charAt(len - 1) != '.') {
-					// Must not have ..
-					if (name.indexOf("..") == -1) {
-						// All remaining characters must be [a-z,0-9,.,-]
-						for (int c = 0; c < len; c++) {
-							char ch = name.charAt(c);
-							if ((ch < 'a' || ch > 'z') && (ch < '0' || ch > '9') && ch != '.' && ch != '-') return false;
-						}
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {

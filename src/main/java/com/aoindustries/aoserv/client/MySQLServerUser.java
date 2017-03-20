@@ -87,7 +87,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		ANY_LOCAL_HOST=null
 	;
 
-	String username;
+	MySQLUserId username;
 	int mysql_server;
 	String host;
 	int disable_log;
@@ -116,11 +116,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 
 	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
-		try {
-			return MySQLUser.checkPassword(MySQLUserId.valueOf(username), password);
-		} catch(ValidationException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return MySQLUser.checkPassword(username, password);
 	}
 	/*
 	public String checkPasswordDescribe(String password) {
@@ -213,31 +209,39 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		username=result.getString(2);
-		mysql_server=result.getInt(3);
-		host=result.getString(4);
-		disable_log=result.getInt(5);
-		if(result.wasNull()) disable_log=-1;
-		predisable_password=result.getString(6);
-		max_questions=result.getInt(7);
-		max_updates=result.getInt(8);
-		max_connections=result.getInt(9);
-		max_user_connections=result.getInt(10);
+		try {
+			pkey=result.getInt(1);
+			username = MySQLUserId.valueOf(result.getString(2));
+			mysql_server=result.getInt(3);
+			host=result.getString(4);
+			disable_log=result.getInt(5);
+			if(result.wasNull()) disable_log=-1;
+			predisable_password=result.getString(6);
+			max_questions=result.getInt(7);
+			max_updates=result.getInt(8);
+			max_connections=result.getInt(9);
+			max_user_connections=result.getInt(10);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		username=in.readUTF().intern();
-		mysql_server=in.readCompressedInt();
-		host=InternUtils.intern(in.readNullUTF());
-		disable_log=in.readCompressedInt();
-		predisable_password=in.readNullUTF();
-		max_questions=in.readCompressedInt();
-		max_updates=in.readCompressedInt();
-		max_connections=in.readCompressedInt();
-		max_user_connections=in.readCompressedInt();
+		try {
+			pkey=in.readCompressedInt();
+			username = MySQLUserId.valueOf(in.readUTF()).intern();
+			mysql_server=in.readCompressedInt();
+			host=InternUtils.intern(in.readNullUTF());
+			disable_log=in.readCompressedInt();
+			predisable_password=in.readNullUTF();
+			max_questions=in.readCompressedInt();
+			max_updates=in.readCompressedInt();
+			max_connections=in.readCompressedInt();
+			max_user_connections=in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -326,7 +330,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(username);
+		out.writeUTF(username.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
 		else out.writeCompressedInt(mysql_server);
 		out.writeNullUTF(host);

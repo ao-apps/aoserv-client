@@ -23,14 +23,19 @@
 package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.LinuxId;
+import com.aoindustries.aoserv.client.validator.MySQLServerName;
+import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.HttpParameters;
 import com.aoindustries.net.InetAddress;
@@ -92,7 +97,7 @@ final public class AOServer
 	private LinuxId gid_min;
 
 	public int addCvsRepository(
-		String path,
+		UnixPath path,
 		LinuxServerAccount lsa,
 		LinuxServerGroup lsg,
 		long mode
@@ -106,11 +111,11 @@ final public class AOServer
 		);
 	}
 
-	public int addEmailDomain(String domain, Package packageObject) throws SQLException, IOException {
+	public int addEmailDomain(DomainName domain, Package packageObject) throws SQLException, IOException {
 		return table.connector.getEmailDomains().addEmailDomain(domain, this, packageObject);
 	}
 
-	public int addEmailPipe(String path, Package packageObject) throws IOException, SQLException {
+	public int addEmailPipe(UnixPath path, Package packageObject) throws IOException, SQLException {
 		return table.connector.getEmailPipes().addEmailPipe(this, path, packageObject);
 	}
 
@@ -119,13 +124,13 @@ final public class AOServer
 		Package packageObj,
 		LinuxAccount siteUser,
 		LinuxGroup siteGroup,
-		String serverAdmin,
+		Email serverAdmin,
 		boolean useApache,
 		IPAddress ipAddress,
-		String primaryHttpHostname,
-		String[] altHttpHostnames,
+		DomainName primaryHttpHostname,
+		DomainName[] altHttpHostnames,
 		int jBossVersion,
-		String contentSrc
+		UnixPath contentSrc
 	) throws IOException, SQLException {
 		return table.connector.getHttpdJBossSites().addHttpdJBossSite(
 			this,
@@ -167,14 +172,14 @@ final public class AOServer
 		Package packageObj,
 		LinuxAccount siteUser,
 		LinuxGroup siteGroup,
-		String serverAdmin,
+		Email serverAdmin,
 		boolean useApache,
 		IPAddress ipAddress,
-		String primaryHttpHostname,
-		String[] altHttpHostnames,
+		DomainName primaryHttpHostname,
+		DomainName[] altHttpHostnames,
 		String sharedTomcatName,
 		HttpdTomcatVersion version,
-		String contentSrc
+		UnixPath contentSrc
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
 			this,
@@ -198,13 +203,13 @@ final public class AOServer
 		Package packageObj,
 		LinuxAccount jvmUser,
 		LinuxGroup jvmGroup,
-		String serverAdmin,
+		Email serverAdmin,
 		boolean useApache,
 		IPAddress ipAddress,
-		String primaryHttpHostname,
-		String[] altHttpHostnames,
+		DomainName primaryHttpHostname,
+		DomainName[] altHttpHostnames,
 		HttpdTomcatVersion tomcatVersion,
-		String contentSrc
+		UnixPath contentSrc
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatStdSites().addHttpdTomcatStdSite(
 			this,
@@ -514,7 +519,7 @@ final public class AOServer
 		return lg;
 	}
 
-	public LinuxServerAccount getLinuxServerAccount(String username) throws IOException, SQLException {
+	public LinuxServerAccount getLinuxServerAccount(UserId username) throws IOException, SQLException {
 		return table.connector.getLinuxServerAccounts().getLinuxServerAccount(this, username);
 	}
 
@@ -530,7 +535,7 @@ final public class AOServer
 		return table.connector.getLinuxServerGroups().getLinuxServerGroup(this, gid);
 	}
 
-	public LinuxServerGroup getLinuxServerGroup(String groupName) throws IOException, SQLException {
+	public LinuxServerGroup getLinuxServerGroup(GroupId groupName) throws IOException, SQLException {
 		return table.connector.getLinuxServerGroups().getLinuxServerGroup(this, groupName);
 	}
 
@@ -610,7 +615,7 @@ final public class AOServer
 		}
 	}
 
-	public MySQLServer getMySQLServer(String name) throws IOException, SQLException {
+	public MySQLServer getMySQLServer(MySQLServerName name) throws IOException, SQLException {
 		return table.connector.getMysqlServers().getMySQLServer(name, this);
 	}
 
@@ -641,7 +646,7 @@ final public class AOServer
 		return pool_size;
 	}
 
-	public PostgresServer getPostgresServer(String name) throws IOException, SQLException {
+	public PostgresServer getPostgresServer(PostgresServerName name) throws IOException, SQLException {
 		return table.connector.getPostgresServers().getPostgresServer(name, this);
 	}
 
@@ -697,7 +702,7 @@ final public class AOServer
 		return SchemaTable.TableID.AO_SERVERS;
 	}
 
-	public boolean isEmailDomainAvailable(String domain) throws SQLException, IOException {
+	public boolean isEmailDomainAvailable(DomainName domain) throws SQLException, IOException {
 		return table.connector.getEmailDomains().isEmailDomainAvailable(this, domain);
 	}
 
@@ -705,11 +710,11 @@ final public class AOServer
 		return table.connector.getLinuxServerAccounts().isHomeUsed(this, directory);
 	}
 
-	public boolean isMySQLServerNameAvailable(String name) throws IOException, SQLException {
+	public boolean isMySQLServerNameAvailable(MySQLServerName name) throws IOException, SQLException {
 		return table.connector.getMysqlServers().isMySQLServerNameAvailable(name, this);
 	}
 
-	public boolean isPostgresServerNameAvailable(String name) throws IOException, SQLException {
+	public boolean isPostgresServerNameAvailable(PostgresServerName name) throws IOException, SQLException {
 		return table.connector.getPostgresServers().isPostgresServerNameAvailable(name, this);
 	}
 

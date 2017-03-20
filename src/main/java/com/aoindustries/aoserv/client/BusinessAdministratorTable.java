@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -37,7 +38,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BusinessAdministratorTable extends CachedTableStringKey<BusinessAdministrator> {
+final public class BusinessAdministratorTable extends CachedTableUserIdKey<BusinessAdministrator> {
 
 	BusinessAdministratorTable(AOServConnector connector) {
 		super(connector, BusinessAdministrator.class);
@@ -98,7 +99,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.BUSINESS_ADMINISTRATORS.ordinal());
-					out.writeUTF(username.pkey);
+					out.writeUTF(username.pkey.toString());
 					out.writeUTF(name);
 					out.writeBoolean(finalTitle!=null); if(finalTitle!=null) out.writeUTF(finalTitle);
 					out.writeLong(birthday==null ? -1 : birthday.getTime());
@@ -139,7 +140,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
 	 * Gets one BusinessAdministrator from the database.
 	 */
 	@Override
-	public BusinessAdministrator get(String username) throws IOException, SQLException {
+	public BusinessAdministrator get(UserId username) throws IOException, SQLException {
 		return getUniqueRow(BusinessAdministrator.COLUMN_USERNAME, username);
 	}
 
@@ -155,7 +156,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_ADMINISTRATOR, args, 17, err)) {
 				connector.getSimpleAOClient().addBusinessAdministrator(
-					args[1],
+					AOSH.parseUserId(args[1], "username"),
 					args[2],
 					args[3],
 					args[4].length()==0?null:AOSH.parseDate(args[4], "birthday"),
@@ -178,7 +179,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
 		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD)) {
 			if(AOSH.checkParamCount(AOSHCommand.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
 				List<PasswordChecker.Result> results = SimpleAOClient.checkBusinessAdministratorPassword(
-					args[1],
+					AOSH.parseUserId(args[1], "username"),
 					args[2]
 				);
 				if(PasswordChecker.hasResults(results)) {
@@ -187,16 +188,11 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
 				}
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_BUSINESS_ADMINISTRATOR_USERNAME)) {
-			if(AOSH.checkParamCount(AOSHCommand.CHECK_BUSINESS_ADMINISTRATOR_USERNAME, args, 1, err)) {
-				SimpleAOClient.checkBusinessAdministratorUsername(args[1]);
-			}
-			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(AOSHCommand.DISABLE_BUSINESS_ADMINISTRATOR, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().disableBusinessAdministrator(
-						args[1],
+						AOSH.parseUserId(args[1], "username"),
 						args[2]
 					)
 				);
@@ -205,14 +201,16 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(AOSHCommand.ENABLE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
-				connector.getSimpleAOClient().enableBusinessAdministrator(args[1]);
+				connector.getSimpleAOClient().enableBusinessAdministrator(
+					AOSH.parseUserId(args[1], "username")
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET)) {
 			if(AOSH.checkParamCount(AOSHCommand.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, args, 1, err)) {
 				out.println(
 					connector.getSimpleAOClient().isBusinessAdministratorPasswordSet(
-						args[1]
+						AOSH.parseUserId(args[1], "username")
 					)
 				);
 				out.flush();
@@ -220,13 +218,15 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(AOSHCommand.REMOVE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
-				connector.getSimpleAOClient().removeBusinessAdministrator(args[1]);
+				connector.getSimpleAOClient().removeBusinessAdministrator(
+					AOSH.parseUserId(args[1], "username")
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_BUSINESS_ADMINISTRATOR_PASSWORD)) {
 			if(AOSH.checkParamCount(AOSHCommand.SET_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
 				connector.getSimpleAOClient().setBusinessAdministratorPassword(
-					args[1],
+					AOSH.parseUserId(args[1], "username"),
 					args[2]
 				);
 			}
@@ -234,7 +234,7 @@ final public class BusinessAdministratorTable extends CachedTableStringKey<Busin
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_BUSINESS_ADMINISTRATOR_PROFILE)) {
 			if(AOSH.checkParamCount(AOSHCommand.SET_BUSINESS_ADMINISTRATOR_PROFILE, args, 16, err)) {
 				connector.getSimpleAOClient().setBusinessAdministratorProfile(
-					args[1],
+					AOSH.parseUserId(args[1], "username"),
 					args[2],
 					args[3],
 					AOSH.parseDate(args[4], "birthday"),

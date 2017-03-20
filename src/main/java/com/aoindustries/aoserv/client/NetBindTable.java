@@ -197,7 +197,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_NET_BIND, args, 9, err)) {
 				connector.getSimpleAOClient().addNetBind(
 					args[1],
-					args[2],
+					AOSH.parseAccountingCode(args[2], "package"),
 					AOSH.parseInetAddress(args[3], "ip_address"),
 					args[4],
 					AOSH.parsePort(

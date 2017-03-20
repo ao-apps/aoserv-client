@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
-import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -51,7 +53,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 	}
 
 	int addMySQLDatabase(
-		String name,
+		MySQLDatabaseName name,
 		MySQLServer mysqlServer,
 		Package packageObj
 	) throws IOException, SQLException {
@@ -66,8 +68,12 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 		return pkey;
 	}
 
-	public String generateMySQLDatabaseName(String template_base, String template_added) throws IOException, SQLException {
-		return connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_MYSQL_DATABASE_NAME, template_base, template_added);
+	public MySQLDatabaseName generateMySQLDatabaseName(String template_base, String template_added) throws IOException, SQLException {
+		try {
+			return MySQLDatabaseName.valueOf(connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_MYSQL_DATABASE_NAME, template_base, template_added));
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -75,7 +81,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 		return getUniqueRow(MySQLDatabase.COLUMN_PKEY, pkey);
 	}
 
-	MySQLDatabase getMySQLDatabase(String name, MySQLServer ms) throws IOException, SQLException {
+	MySQLDatabase getMySQLDatabase(MySQLDatabaseName name, MySQLServer ms) throws IOException, SQLException {
 		// Use index first
 		for(MySQLDatabase md : getMySQLDatabases(ms)) if(md.name.equals(name)) return md;
 		return null;
@@ -100,10 +106,10 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DATABASE)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DATABASE, args, 4, err)) {
 				int pkey=connector.getSimpleAOClient().addMySQLDatabase(
-					args[1],
-					args[2],
+					AOSH.parseMySQLDatabaseName(args[1], "database_name"),
+					AOSH.parseMySQLServerName(args[2], "mysql_server"),
 					args[3],
-					args[4]
+					AOSH.parseAccountingCode(args[4], "package")
 				);
 				out.println(pkey);
 				out.flush();
@@ -111,13 +117,12 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MYSQL_DATABASE_NAME)) {
 			if(AOSH.checkParamCount(AOSHCommand.CHECK_MYSQL_DATABASE_NAME, args, 1, err)) {
-				try {
-					connector.getSimpleAOClient().checkMySQLDatabaseName(args[1]);
-					out.println("true");
-					out.flush();
-				} catch(IllegalArgumentException iae) {
+				ValidationResult validationResult = MySQLDatabaseName.validate(args[1]);
+				out.println(validationResult.isValid());
+				out.flush();
+				if(!validationResult.isValid()) {
 					err.print("aosh: "+AOSHCommand.CHECK_MYSQL_DATABASE_NAME+": ");
-					err.println(iae.getMessage());
+					err.println(validationResult.toString());
 					err.flush();
 				}
 			}
@@ -125,7 +130,12 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 		} else if(command.equalsIgnoreCase(AOSHCommand.DUMP_MYSQL_DATABASE)) {
 			if(AOSH.checkParamCount(AOSHCommand.DUMP_MYSQL_DATABASE, args, 3, err)) {
 				try {
-					connector.getSimpleAOClient().dumpMySQLDatabase(args[1], args[2], args[3], out);
+					connector.getSimpleAOClient().dumpMySQLDatabase(
+						AOSH.parseMySQLDatabaseName(args[1], "database_name"),
+						AOSH.parseMySQLServerName(args[2], "mysql_server"),
+						args[3],
+						out
+					);
 					out.flush();
 				} catch(IllegalArgumentException iae) {
 					err.print("aosh: "+AOSHCommand.DUMP_MYSQL_DATABASE+": ");
@@ -143,7 +153,13 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 		} else if(command.equalsIgnoreCase(AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE)) {
 			if(AOSH.checkParamCount(AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE, args, 3, err)) {
 				try {
-					out.println(connector.getSimpleAOClient().isMySQLDatabaseNameAvailable(args[1], args[2], args[3]));
+					out.println(
+						connector.getSimpleAOClient().isMySQLDatabaseNameAvailable(
+							AOSH.parseMySQLDatabaseName(args[1], "database_name"),
+							AOSH.parseMySQLServerName(args[2], "mysql_server"),
+							args[3]
+						)
+					);
 					out.flush();
 				} catch(IllegalArgumentException iae) {
 					err.print("aosh: "+AOSHCommand.IS_MYSQL_DATABASE_NAME_AVAILABLE+": ");
@@ -154,7 +170,11 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MYSQL_DATABASE)) {
 			if(AOSH.checkParamCount(AOSHCommand.REMOVE_MYSQL_DATABASE, args, 3, err)) {
-				connector.getSimpleAOClient().removeMySQLDatabase(args[1], args[2], args[3]);
+				connector.getSimpleAOClient().removeMySQLDatabase(
+					AOSH.parseMySQLDatabaseName(args[1], "database_name"),
+					AOSH.parseMySQLServerName(args[2], "mysql_server"),
+					args[3]
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.WAIT_FOR_MYSQL_DATABASE_REBUILD)) {
@@ -166,43 +186,8 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 		return false;
 	}
 
-	boolean isMySQLDatabaseNameAvailable(String name, MySQLServer mysqlServer) throws IOException, SQLException {
+	boolean isMySQLDatabaseNameAvailable(MySQLDatabaseName name, MySQLServer mysqlServer) throws IOException, SQLException {
 		return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_MYSQL_DATABASE_NAME_AVAILABLE, name, mysqlServer.pkey);
-	}
-
-	/**
-	 * Checks the validity of the name.
-	 * @return  <code>null</code> if the name is valid, or a localized message on why it is not valid
-	 */
-	public String isValidDatabaseName(String name) throws IOException, SQLException {
-		return isValidDatabaseName(name, connector.getMysqlReservedWords().getRows());
-	}
-
-	/**
-	 * Checks the validity of the name.
-	 * @return  <code>null</code> if the name is valid, or a localized message on why it is not valid
-	 */
-	public static String isValidDatabaseName(String name, List<?> reservedWords) {
-		// Must be a-z first, then a-z or 0-9 or _
-		int len = name.length();
-		if(len==0) return accessor.getMessage("MySQLDatabaseTable.isValidDatabaseName.empty");
-		if(len>MySQLDatabase.MAX_DATABASE_NAME_LENGTH) return accessor.getMessage("MySQLDatabaseTable.isValidDatabaseName.tooLong", len, MySQLDatabase.MAX_DATABASE_NAME_LENGTH);
-		// The first character must be [a-z]
-		char ch = name.charAt(0);
-		if (ch < 'a' || ch > 'z') return accessor.getMessage("MySQLDatabaseTable.isValidDatabaseName.firstChar");
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = name.charAt(c);
-			if ((ch < 'a' || ch > 'z') && (ch < '0' || ch > '9') && ch != '_') return accessor.getMessage("MySQLDatabaseTable.isValidDatabaseName.invalidChar", ch);
-		}
-
-		// Also must not be a reserved word
-		int size=reservedWords.size();
-		for(int c=0;c<size;c++) {
-			String reservedWord = reservedWords.get(c).toString();
-			if(name.equalsIgnoreCase(reservedWord)) return accessor.getMessage("MySQLDatabaseTable.isValidDatabaseName.reservedWord", reservedWord);
-		}
-		return null;
 	}
 
 	void waitForRebuild(AOServer aoServer) throws IOException, SQLException {

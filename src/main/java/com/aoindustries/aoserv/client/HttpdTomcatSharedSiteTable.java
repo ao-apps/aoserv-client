@@ -22,9 +22,12 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.io.Reader;
@@ -57,14 +60,14 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 		final Package packageObj,
 		final LinuxAccount siteUser,
 		final LinuxGroup siteGroup,
-		final String serverAdmin,
+		final Email serverAdmin,
 		final boolean useApache,
 		final IPAddress ipAddress,
-		final String primaryHttpHostname,
-		final String[] altHttpHostnames,
+		final DomainName primaryHttpHostname,
+		final DomainName[] altHttpHostnames,
 		final String sharedTomcatName,
 		HttpdTomcatVersion version,
-		final String contentSrc
+		final UnixPath contentSrc
 	) throws IOException, SQLException {
 		final int tv = version==null?-1:version.getTechnologyVersion(connector).getPkey();
 		return connector.requestResult(
@@ -80,19 +83,19 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 					out.writeCompressedInt(aoServer.pkey);
 					out.writeUTF(siteName);
 					out.writeUTF(packageObj.name.toString());
-					out.writeUTF(siteUser.pkey);
-					out.writeUTF(siteGroup.pkey);
-					out.writeUTF(serverAdmin);
+					out.writeUTF(siteUser.pkey.toString());
+					out.writeUTF(siteGroup.pkey.toString());
+					out.writeUTF(serverAdmin.toString());
 					out.writeBoolean(useApache);
 					out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);
-					out.writeUTF(primaryHttpHostname);
+					out.writeUTF(primaryHttpHostname.toString());
 					out.writeCompressedInt(altHttpHostnames.length);
-					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
+					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c].toString());
 					out.writeBoolean(sharedTomcatName!=null);
 					if(sharedTomcatName!=null) out.writeUTF(sharedTomcatName);
 					out.writeCompressedInt(tv);
 					out.writeBoolean(contentSrc!=null);
-					if (contentSrc!=null) out.writeUTF(contentSrc);
+					if (contentSrc!=null) out.writeUTF(contentSrc.toString());
 				}
 
 				@Override
@@ -142,24 +145,26 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE)) {
 			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE, args, 13, err)) {
 				// Create an array of all the alternate hostnames
-				String[] altHostnames=new String[args.length-14];
-				System.arraycopy(args, 14, altHostnames, 0, args.length-14);
+				DomainName[] altHostnames=new DomainName[args.length-14];
+				for(int i=14; i<args.length; i++) {
+					altHostnames[i-14] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
+				}
 				out.println(
 					connector.getSimpleAOClient().addHttpdTomcatSharedSite(
 						args[1],
 						args[2],
-						args[3],
-						args[4],
-						args[5],
-						args[6],
+						AOSH.parseAccountingCode(args[3], "package"),
+						AOSH.parseUserId(args[4], "username"),
+						AOSH.parseGroupId(args[5], "group"),
+						AOSH.parseEmail(args[6], "server_admin_email"),
 						AOSH.parseBoolean(args[7], "use_apache"),
 						args[8].length()==0 ? null : AOSH.parseInetAddress(args[8], "ip_address"),
 						args[9],
-						args[12],
+						AOSH.parseDomainName(args[12], "primary_http_hostname"),
 						altHostnames,
 						args[10],
 						args[11],
-						args[13]
+						args[13].isEmpty() ? null : AOSH.parseUnixPath(args[13], "content_source")
 					)
 				);
 				out.flush();

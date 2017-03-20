@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,7 +42,10 @@ public abstract class CachedTableLongKey<V extends CachedObjectLongKey<V>> exten
 	 *
 	 * @exception IllegalArgumentException if pkey is neither a Long nor a String.
 	 * @exception NumberFormatException if String cannot be parsed to a Long
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
+	@Deprecated
 	@Override
 	public V get(Object pkey) throws IOException, SQLException, IllegalArgumentException, NumberFormatException {
 		if(pkey instanceof Long) return get(((Long)pkey).longValue());

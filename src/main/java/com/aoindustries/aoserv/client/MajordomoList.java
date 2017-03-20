@@ -215,6 +215,8 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 
 	/**
 	 * Checks the validity of a list name.
+	 *
+	 * // TODO: Self-validating type
 	 */
 	public static boolean isValidListName(String name) {
 		int len = name.length();

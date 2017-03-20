@@ -44,7 +44,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> implements PasswordProtected, Removable, Disablable {
+final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> implements PasswordProtected, Removable, Disablable {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -52,27 +52,48 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 	/**
 	 * Some commonly used system and application account usernames.
 	 */
-	public static final String
-		APACHE="apache",
-		AWSTATS="awstats",
-		BIN="bin",
-		CYRUS="cyrus",
-		EMAILMON="emailmon",
-		FTP="ftp",
-		FTPMON="ftpmon",
-		INTERBASE="interbase",
-		MAIL="mail",
-		NOBODY="nobody",
-		OPERATOR="operator",
-		POSTGRES="postgres",
-		ROOT="root"
+	public static final UserId
+		APACHE,
+		AWSTATS,
+		BIN,
+		CYRUS,
+		EMAILMON,
+		FTP,
+		FTPMON,
+		INTERBASE,
+		MAIL,
+		NOBODY,
+		OPERATOR,
+		POSTGRES,
+		ROOT
 	;
 
 	/**
 	 * @deprecated  User httpd no longer used.
 	 */
 	@Deprecated
-	public static final String HTTPD="httpd";
+	public static final UserId HTTPD;
+	static {
+		try {
+			APACHE = UserId.valueOf("apache");
+			AWSTATS = UserId.valueOf("awstats");
+			BIN = UserId.valueOf("bin");
+			CYRUS = UserId.valueOf("cyrus");
+			EMAILMON = UserId.valueOf("emailmon");
+			FTP = UserId.valueOf("ftp");
+			FTPMON = UserId.valueOf("ftpmon");
+			INTERBASE = UserId.valueOf("interbase");
+			MAIL = UserId.valueOf("mail");
+			NOBODY = UserId.valueOf("nobody");
+			OPERATOR = UserId.valueOf("operator");
+			POSTGRES = UserId.valueOf("postgres");
+			ROOT = UserId.valueOf("root");
+			// Now unused
+			HTTPD = UserId.valueOf("httpd");
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
 	public static final String NO_PASSWORD_CONFIG_VALUE="!!";
 
@@ -129,11 +150,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 
 	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException {
-		try {
-			return checkPassword(UserId.valueOf(pkey), type, password);
-		} catch(ValidationException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
+		return checkPassword(pkey, type, password);
 	}
 
 	/**
@@ -254,7 +271,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 		return getValidHomeDirectories(pkey, ao);
 	}
 
-	public static List<UnixPath> getValidHomeDirectories(String username, AOServer ao) throws SQLException, IOException {
+	public static List<UnixPath> getValidHomeDirectories(UserId username, AOServer ao) throws SQLException, IOException {
 		try {
 			List<UnixPath> dirs=new ArrayList<>();
 			if(username!=null) dirs.add(LinuxServerAccount.getDefaultHomeDirectory(username));
@@ -290,7 +307,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getString(1);
+			pkey = UserId.valueOf(result.getString(1));
 			name = Gecos.valueOf(result.getString(2));
 			office_location = Gecos.valueOf(result.getString(3));
 			office_phone = Gecos.valueOf(result.getString(4));
@@ -308,7 +325,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readUTF().intern();
+			pkey = UserId.valueOf(in.readUTF()).intern();
 			name=Gecos.valueOf(in.readUTF());
 			office_location=Gecos.valueOf(in.readNullUTF());
 			office_phone=Gecos.valueOf(in.readNullUTF());
@@ -377,7 +394,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 		out.writeUTF(name.toString());
 		out.writeNullUTF(ObjectUtils.toString(office_location));
 		out.writeNullUTF(ObjectUtils.toString(office_phone));
@@ -386,25 +403,6 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 		out.writeUTF(shell.toString());
 		out.writeLong(created);
 		out.writeCompressedInt(disable_log);
-	}
-
-	/**
-	 * Determines if a name can be used as a username.  The username restrictions are
-	 * inherited from <code>Username</code>, with the addition of not allowing
-	 * <code>postmaster</code> and <code>mailer-daemon</code>.  This is to prevent a
-	 * user from interfering with the delivery of system messages in qmail.
-	 *
-	 * @see  Username#isValidUsername
-	 */
-	public static boolean isValidUsername(String username) {
-		return
-			Username.checkUsername(username)==null
-			&& !"bin".equals(username)
-			&& !"etc".equals(username)
-			&& !"lib".equals(username)
-			&& !"postmaster".equals(username)
-			&& !"mailer-daemon".equals(username)
-		;
 	}
 
 	@Override

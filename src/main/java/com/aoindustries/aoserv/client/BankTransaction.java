@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,10 +22,12 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.InternUtils;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,8 +48,9 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	private int transID;
 	private String
 		bankAccount,
-		processor,
-		administrator,
+		processor;
+	private UserId administrator;
+	private String
 		type,
 		expenseCode,
 		description,
@@ -161,17 +164,21 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		time = result.getTimestamp(1).getTime();
-		transID = result.getInt(2);
-		bankAccount = result.getString(3);
-		processor = result.getString(4);
-		administrator = result.getString(5);
-		type = result.getString(6);
-		expenseCode = result.getString(7);
-		description = result.getString(8);
-		checkNo = result.getString(9);
-		amount = SQLUtility.getPennies(result.getString(10));
-		confirmed = result.getBoolean(11);
+		try {
+			time = result.getTimestamp(1).getTime();
+			transID = result.getInt(2);
+			bankAccount = result.getString(3);
+			processor = result.getString(4);
+			administrator = UserId.valueOf(result.getString(5));
+			type = result.getString(6);
+			expenseCode = result.getString(7);
+			description = result.getString(8);
+			checkNo = result.getString(9);
+			amount = SQLUtility.getPennies(result.getString(10));
+			confirmed = result.getBoolean(11);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isConfirmed() {
@@ -180,17 +187,21 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		time = in.readLong();
-		transID = in.readCompressedInt();
-		bankAccount = in.readUTF().intern();
-		processor = InternUtils.intern(in.readNullUTF());
-		administrator = in.readUTF().intern();
-		type = in.readUTF().intern();
-		expenseCode = InternUtils.intern(in.readNullUTF());
-		description = in.readUTF();
-		checkNo = in.readNullUTF();
-		amount = in.readCompressedInt();
-		confirmed = in.readBoolean();
+		try {
+			time = in.readLong();
+			transID = in.readCompressedInt();
+			bankAccount = in.readUTF().intern();
+			processor = InternUtils.intern(in.readNullUTF());
+			administrator = UserId.valueOf(in.readUTF()).intern();
+			type = in.readUTF().intern();
+			expenseCode = InternUtils.intern(in.readNullUTF());
+			description = in.readUTF();
+			checkNo = in.readNullUTF();
+			amount = in.readCompressedInt();
+			confirmed = in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -214,7 +225,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		} else {
 			out.writeNullUTF(processor);
 		}
-		out.writeUTF(administrator);
+		out.writeUTF(administrator.toString());
 		out.writeUTF(type);
 		out.writeNullUTF(expenseCode);
 		out.writeUTF(description);

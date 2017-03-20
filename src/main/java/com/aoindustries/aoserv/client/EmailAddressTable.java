@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,6 +23,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.Email;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -51,7 +53,8 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
 	}
 
 	int addEmailAddress(String address, EmailDomain domainObject) throws SQLException, IOException {
-		if (!EmailAddress.isValidFormat(address)) throw new SQLException("Invalid email address: " + address);
+		ValidationResult result = Email.validate(address, domainObject.getDomain());
+		if (!result.isValid()) throw new SQLException("Invalid email address: " + result.toString());
 		return connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD,
@@ -102,30 +105,21 @@ final public class EmailAddressTable extends CachedTableIntegerKey<EmailAddress>
 			if(AOSH.checkMinParamCount(AOSHCommand.CHECK_EMAIL_ADDRESS, args, 1, err)) {
 				for(int c=1;c<args.length;c++) {
 					String addr=args[c];
-					int pos=addr.indexOf('@');
-					if(pos==-1) {
+					ValidationResult validationResult = Email.validate(addr);
+					if(args.length>2) {
+						out.print(addr);
+						out.print(": ");
+					}
+					out.println(validationResult.isValid());
+					out.flush();
+					if(!validationResult.isValid()) {
 						err.print("aosh: "+AOSHCommand.CHECK_EMAIL_ADDRESS+": invalid email address: ");
-						err.println(addr);
-						err.flush();
-					} else {
-						try {
-							SimpleAOClient.checkEmailAddress(
-								addr.substring(0, pos),
-								addr.substring(pos+1)
-							);
-							if(args.length>2) {
-								out.print(addr);
-								out.print(": ");
-							}
-							out.println("true");
-						} catch(IllegalArgumentException serr) {
-							if(args.length>2) {
-								out.print(addr);
-								out.print(": ");
-							}
-							out.println(serr.getMessage());
+						if(args.length>2) {
+							err.print(addr);
+							err.print(": ");
 						}
-						out.flush();
+						err.println(validationResult.toString());
+						err.flush();
 					}
 				}
 			}
