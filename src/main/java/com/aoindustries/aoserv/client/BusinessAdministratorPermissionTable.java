@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2007-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ final public class BusinessAdministratorPermissionTable extends CachedTableInteg
 	/**
 	 * Caches the permission lookups for speed.
 	 */
-	private Map<String,SortedSet<String>> cachedPermissions;
+	private Map<UserId,SortedSet<String>> cachedPermissions;
 
 	@Override
 	public void clearCache() {
@@ -80,10 +81,10 @@ final public class BusinessAdministratorPermissionTable extends CachedTableInteg
 	boolean hasPermission(BusinessAdministrator ba, String permission) throws IOException, SQLException {
 		synchronized(this) {
 			if(cachedPermissions==null) {
-				Map<String,SortedSet<String>> newCachedPermissions = new HashMap<>();
+				Map<UserId,SortedSet<String>> newCachedPermissions = new HashMap<>();
 				List<BusinessAdministratorPermission> baps = getRows();
 				for(BusinessAdministratorPermission bap : baps) {
-					String bapUsername = bap.username;
+					UserId bapUsername = bap.username;
 					String bapPermission = bap.permission;
 					SortedSet<String> perms = newCachedPermissions.get(bapUsername);
 					if(perms==null) newCachedPermissions.put(bapUsername, perms = new TreeSet<>());

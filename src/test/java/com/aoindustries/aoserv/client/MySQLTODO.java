@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2006-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
+import com.aoindustries.aoserv.client.validator.UserId;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -108,15 +111,15 @@ public class MySQLTODO extends TestCase {
 	private void addMySQLServerUsers() throws Exception {
 		System.out.println("Testing adding MySQLUser to each MySQLServer");
 		System.out.print("    Resolving TEST Package: ");
-		pack=conn.getPackages().get("TEST");
+		pack=conn.getPackages().get(AccountingCode.valueOf("TEST"));
 		assertNotNull("Unable to find Package: TEST", pack);
 		System.out.println("Done");
 
 		System.out.print("    Generating random username: ");
 		Random random=AOServConnector.getRandom();
-		String randomUsername=null;
+		UserId randomUsername=null;
 		while(randomUsername==null) {
-			String temp=
+			UserId temp = UserId.valueOf(
 				"test_"
 				+(char)('0'+random.nextInt(10))
 				+(char)('0'+random.nextInt(10))
@@ -126,7 +129,7 @@ public class MySQLTODO extends TestCase {
 				+(char)('0'+random.nextInt(10))
 				+(char)('0'+random.nextInt(10))
 				+(char)('0'+random.nextInt(10))
-			;
+			);
 			if(conn.getUsernames().isUsernameAvailable(temp)) randomUsername=temp;
 		}
 		System.out.println(randomUsername);
@@ -199,9 +202,9 @@ public class MySQLTODO extends TestCase {
 		Random random=AOServConnector.getRandom();
 		for(MySQLServer mysqlServer : conn.getMysqlServers()) {
 			System.out.print("    Generating random database name on "+mysqlServer+": ");
-			String randomName=null;
+			MySQLDatabaseName randomName=null;
 			while(randomName==null) {
-				String temp=
+				MySQLDatabaseName temp=MySQLDatabaseName.valueOf(
 					"test_"
 					+(char)('0'+random.nextInt(10))
 					+(char)('0'+random.nextInt(10))
@@ -211,7 +214,7 @@ public class MySQLTODO extends TestCase {
 					+(char)('0'+random.nextInt(10))
 					+(char)('0'+random.nextInt(10))
 					+(char)('0'+random.nextInt(10))
-				;
+				);
 				boolean found=false;
 				if(mysqlServer.isMySQLDatabaseNameAvailable(temp)) randomName=temp;
 			}
@@ -249,7 +252,11 @@ public class MySQLTODO extends TestCase {
 		try {
 			assertEquals(md.getMySQLServer(), msu.getMySQLServer());
 			Class.forName(md.getJdbcDriver()).newInstance();
-			return DriverManager.getConnection(md.getJdbcUrl(true), msu.getMySQLUser().getUsername().getUsername(), mysqlServerUserPasswords.get(msu));
+			return DriverManager.getConnection(
+				md.getJdbcUrl(true),
+				msu.getMySQLUser().getUsername().getUsername().toString(),
+				mysqlServerUserPasswords.get(msu)
+			);
 		} catch(ClassNotFoundException | InstantiationException | IllegalAccessException err) {
 			fail(err.toString());
 			return null;

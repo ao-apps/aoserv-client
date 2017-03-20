@@ -22,10 +22,13 @@
  */
 package com.aoindustries.aoserv.client;
 
-import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -48,15 +51,13 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Username extends CachedObjectStringKey<Username> implements PasswordProtected, Removable, Disablable {
+final public class Username extends CachedObjectUserIdKey<Username> implements PasswordProtected, Removable, Disablable {
 
 	static final int
 		COLUMN_USERNAME=0,
 		COLUMN_PACKAGE=1
 	;
 	static final String COLUMN_USERNAME_name = "username";
-
-	public static final int MAX_LENGTH = 255;
 
 	AccountingCode packageName;
 	int disable_log;
@@ -121,7 +122,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	}
 
 	public void addLinuxAccount(
-		String primaryGroup,
+		GroupId primaryGroup,
 		Gecos name,
 		Gecos office_location,
 		Gecos office_phone,
@@ -142,11 +143,23 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	}
 
 	public void addMySQLUser() throws IOException, SQLException {
-		table.connector.getMysqlUsers().addMySQLUser(pkey);
+		try {
+			table.connector.getMysqlUsers().addMySQLUser(
+				MySQLUserId.valueOf(pkey.toString())
+			);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public void addPostgresUser() throws IOException, SQLException {
-		table.connector.getPostgresUsers().addPostgresUser(pkey);
+		try {
+			table.connector.getPostgresUsers().addPostgresUser(
+				PostgresUserId.valueOf(pkey.toString())
+			);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
@@ -257,7 +270,16 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	}
 
 	public MySQLUser getMySQLUser() throws IOException, SQLException {
-		return table.connector.getMysqlUsers().get(pkey);
+		String username = pkey.toString();
+		if(MySQLUserId.validate(username).isValid()) {
+			try {
+				return table.connector.getMysqlUsers().get(MySQLUserId.valueOf(username));
+			} catch(ValidationException e) {
+				throw new AssertionError("Already validated", e);
+			}
+		} else {
+			return null;
+		}
 	}
 
 	public Package getPackage() throws SQLException, IOException {
@@ -267,7 +289,16 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	}
 
 	public PostgresUser getPostgresUser() throws IOException, SQLException {
-		return table.connector.getPostgresUsers().get(pkey);
+		String username = pkey.toString();
+		if(PostgresUserId.validate(username).isValid()) {
+			try {
+				return table.connector.getPostgresUsers().get(PostgresUserId.valueOf(username));
+			} catch(ValidationException e) {
+				throw new AssertionError("Already validated", e);
+			}
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -275,7 +306,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 		return SchemaTable.TableID.USERNAMES;
 	}
 
-	public String getUsername() {
+	public UserId getUsername() {
 		return pkey;
 	}
 
@@ -292,7 +323,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getString(1);
+			pkey = UserId.valueOf(result.getString(1));
 			packageName = AccountingCode.valueOf(result.getString(2));
 			disable_log=result.getInt(3);
 			if(result.wasNull()) disable_log=-1;
@@ -310,74 +341,10 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 		;
 	}
 
-	/**
-	 * Determines if a name can be used as a username.  A name is valid if
-	 * it is between 1 and 255 characters in length and uses only ASCII 0x21
-	 * through 0x7f, excluding the following characters:
-	 * <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code>
-	 *
-	 * @return  <code>null</code> if the username is valid or a locale-specific reason why it is not valid
-	 */
-	public static String checkUsername(String username) {
-		int len = username.length();
-		if(len==0) return accessor.getMessage("Username.checkUsername.noUsername");
-		if(len > MAX_LENGTH) return accessor.getMessage("Username.checkUsername.tooLong");
-
-		// The first character must be [a-z]
-		char ch = username.charAt(0);
-		if (ch < 'a' || ch > 'z') return accessor.getMessage("Username.checkUsername.startAToZ");
-
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = username.charAt(c);
-			if(ch==' ') return accessor.getMessage("Username.checkUsername.noSpace");
-			if(ch<=0x21 || ch>0x7f) return accessor.getMessage("Username.checkUsername.specialCharacter");
-			if(ch>='A' && ch<='Z') return accessor.getMessage("Username.checkUsername.noCapital");
-			if(ch==',') return accessor.getMessage("Username.checkUsername.comma");
-			if(ch==':') return accessor.getMessage("Username.checkUsername.colon");
-			if(ch=='(') return accessor.getMessage("Username.checkUsername.leftParen");
-			if(ch==')') return accessor.getMessage("Username.checkUsername.rightParen");
-			if(ch=='[') return accessor.getMessage("Username.checkUsername.leftSquare");
-			if(ch==']') return accessor.getMessage("Username.checkUsername.rightSquare");
-			if(ch=='\'') return accessor.getMessage("Username.checkUsername.apostrophe");
-			if(ch=='"') return accessor.getMessage("Username.checkUsername.quote");
-			if(ch=='|') return accessor.getMessage("Username.checkUsername.verticalBar");
-			if(ch=='&') return accessor.getMessage("Username.checkUsername.ampersand");
-			if(ch==';') return accessor.getMessage("Username.checkUsername.semicolon");
-			if(ch=='\\') return accessor.getMessage("Username.checkUsername.backslash");
-			if(ch=='/') return accessor.getMessage("Username.checkUsername.slash");
-		}
-
-		// More strict at sign control is required for user@domain structure in Cyrus virtdomains.
-		int atPos = username.indexOf('@');
-		if(atPos!=-1) {
-			if(atPos==0) return accessor.getMessage("Username.checkUsername.startWithAt");
-			if(atPos==(len-1)) return accessor.getMessage("Username.checkUsername.endWithAt");
-			int atPos2 = username.indexOf('@', atPos+1);
-			if(atPos2!=-1) return accessor.getMessage("Username.checkUsername.onlyOneAt");
-			if(username.startsWith("cyrus@")) return accessor.getMessage("Username.checkUsername.startWithCyrusAt");
-			if(username.endsWith("@default")) return accessor.getMessage("Username.checkUsername.endWithAtDefault");
-		}
-
-		return null;
-	}
-
-	/**
-	 * Determines if a name can be used as a username.  A name is valid if
-	 * it is between 1 and 255 characters in length and uses only ASCII 0x21
-	 * through 0x7f, excluding the following characters:
-	 * <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code>
-	 *
-	 * @deprecated  Please use <code>checkUsername(String)</code> instead to provide user with specific problems.
-	 */
-	public static boolean isValidUsername(String username) {
-		return checkUsername(username)==null;
-	}
-
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readUTF().intern();
+			pkey = UserId.valueOf(in.readUTF()).intern();
 			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			disable_log=in.readCompressedInt();
 		} catch(ValidationException e) {
@@ -447,7 +414,7 @@ final public class Username extends CachedObjectStringKey<Username> implements P
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(disable_log);
 	}

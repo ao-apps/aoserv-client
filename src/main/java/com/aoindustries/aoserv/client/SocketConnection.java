@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -74,9 +74,9 @@ final public class SocketConnection extends AOServConnection {
 
 			out.writeUTF(AOServProtocol.Version.CURRENT_VERSION.getVersion());
 			out.writeBoolean(connector.daemonServer != null);
-			if(connector.daemonServer != null) out.writeUTF(connector.daemonServer);
-			out.writeUTF(connector.connectAs);
-			out.writeUTF(connector.authenticateAs);
+			if(connector.daemonServer != null) out.writeUTF(connector.daemonServer.toString());
+			out.writeUTF(connector.connectAs.toString());
+			out.writeUTF(connector.authenticateAs.toString());
 			out.writeUTF(connector.password);
 			boolean hadConnectorId;
 			long connectorId;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.util.Tuple2;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -39,14 +42,14 @@ import java.util.Map;
 final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGroupAccount> {
 
 	private boolean hashBuilt=false;
-	private final Map<String,LinuxGroupAccount> hash=new HashMap<>();
+	private final Map<Tuple2<GroupId,UserId>,LinuxGroupAccount> hash=new HashMap<>();
 
 	/**
 	 * The group name of the primary group is hashed on first use for fast
 	 * lookups.
 	 */
 	private boolean primaryHashBuilt=false;
-	private final Map<String,LinuxGroupAccount> primaryHash=new HashMap<>();
+	private final Map<UserId,LinuxGroupAccount> primaryHash=new HashMap<>();
 
 	LinuxGroupAccountTable(AOServConnector connector) {
 		super(connector, LinuxGroupAccount.class);
@@ -81,8 +84,8 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 	}
 
 	LinuxGroupAccount getLinuxGroupAccount(
-		String groupName,
-		String username
+		GroupId groupName,
+		UserId username
 	) throws IOException, SQLException {
 		synchronized(hash) {
 			if(!hashBuilt) {
@@ -91,16 +94,16 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 				int len=list.size();
 				for(int c=0;c<len;c++) {
 					LinuxGroupAccount lga=list.get(c);
-					hash.put(lga.group_name+':'+lga.username, lga);
+					hash.put(new Tuple2<>(lga.group_name, lga.username), lga);
 				}
 				hashBuilt=true;
 			}
-			return hash.get(groupName+':'+username);
+			return hash.get(new Tuple2<>(groupName, username));
 		}
 	}
 
 	List<LinuxGroup> getLinuxGroups(LinuxAccount linuxAccount) throws IOException, SQLException {
-		String username = linuxAccount.pkey;
+		UserId username = linuxAccount.pkey;
 		List<LinuxGroupAccount> cached = getRows();
 		int len = cached.size();
 		List<LinuxGroup> matches=new ArrayList<>(LinuxGroupAccount.MAX_GROUPS);
@@ -143,24 +146,24 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_GROUP_ACCOUNT)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
 				connector.getSimpleAOClient().addLinuxGroupAccount(
-					args[1],
-					args[2]
+					AOSH.parseGroupId(args[1], "group"),
+					AOSH.parseUserId(args[2], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_GROUP_ACCOUNT)) {
 			if(AOSH.checkParamCount(AOSHCommand.REMOVE_LINUX_GROUP_ACCOUNT, args, 2, err)) {
 				connector.getSimpleAOClient().removeLinuxGroupAccount(
-					args[1],
-					args[2]
+					AOSH.parseGroupId(args[1], "group"),
+					AOSH.parseUserId(args[2], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_PRIMARY_LINUX_GROUP_ACCOUNT)) {
 			if(AOSH.checkParamCount(AOSHCommand.SET_PRIMARY_LINUX_GROUP_ACCOUNT, args, 2, err)) {
 				connector.getSimpleAOClient().setPrimaryLinuxGroupAccount(
-					args[1],
-					args[2]
+					AOSH.parseGroupId(args[1], "group"),
+					AOSH.parseUserId(args[2], "username")
 				);
 			}
 			return true;

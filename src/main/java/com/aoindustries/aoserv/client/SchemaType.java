@@ -35,6 +35,7 @@ import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainLabel;
@@ -335,7 +336,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					switch(castToType.getNum()) {
 						case HOSTNAME:    return value==null ? null : HostAddress.valueOf(getDomainNameForEmail((String)value));
 						case URL:         return value==null ? null : "mailto:"+((String)value);
-						case USERNAME:    return value==null ? null : getUsernameForEmail((String)value);
+						case USERNAME:    return value==null ? null : UserId.valueOf(getUsernameForEmail((String)value));
 						case ZONE:        return value==null ? null : getZoneForDomainName(conn, getDomainNameForEmail((String)value));
 						case DOMAIN_NAME: return value==null ? null : getDomainNameForEmail((String)value);
 					}
@@ -503,8 +504,8 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case USERNAME:
 					// TODO: com.aoindustries.aoserv.client.validator.UserId
 					switch(castToType.getNum()) {
-						case MYSQL_USERNAME: return value==null ? null : MySQLUserId.valueOf((String)value);
-						case POSTGRES_USERNAME: return value==null ? null : PostgresUserId.valueOf((String)value);
+						case MYSQL_USERNAME: return value==null ? null : MySQLUserId.valueOf(value.toString());
+						case POSTGRES_USERNAME: return value==null ? null : PostgresUserId.valueOf(value.toString());
 					}
 					break;
 				case ZONE:
@@ -682,8 +683,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					case PHONE:
 					case STRING:
 					case URL:
-					case USERNAME: // TODO: com.aoindustries.aoserv.client.validator.UserId
 						return StringUtility.compareToIgnoreCaseCarefulEquals((String)value1, (String)value2);
+					case USERNAME:
+						return ((UserId)value1).compareTo((UserId)value2);
 					case PATH:
 						return ((UnixPath)value1).compareTo((UnixPath)value2);
 					case BOOLEAN:
@@ -836,7 +838,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case STRING: return (String)value;
 			case TIME: return SQLUtility.getDateTime(((java.sql.Timestamp)value).getTime());
 			case URL: return (String)value;
-			case USERNAME: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.UserId
+			case USERNAME: return value.toString();
 			case ZONE: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.Zone
 			case BIG_DECIMAL: return value.toString();
 			case DOMAIN_LABEL: return value.toString();
@@ -899,9 +901,10 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case PHONE:
 				case STRING:
 				case URL:
-				case USERNAME: // TODO: com.aoindustries.aoserv.client.validator.UserId
 				case ZONE: // TODO: com.aoindustries.aoserv.client.validator.Zone
 					return S;
+				case USERNAME:
+					return UserId.valueOf(S);
 				case PATH:
 					return UnixPath.valueOf(S);
 				case HOSTNAME:

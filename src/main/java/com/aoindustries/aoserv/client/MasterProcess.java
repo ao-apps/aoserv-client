@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -64,8 +66,8 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 
 	long process_id;
 	private long connector_id=-1;
-	private String authenticated_user;
-	private String effective_user;
+	private UserId authenticated_user;
+	private UserId effective_user;
 	private int daemon_server;
 	private InetAddress host;
 	private String protocol;
@@ -163,7 +165,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 		return connector_id;
 	}
 
-	public String getAuthenticatedUser() {
+	public UserId getAuthenticatedUser() {
 		return authenticated_user;
 	}
 
@@ -172,7 +174,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 		return table.connector.getBusinessAdministrators().get(authenticated_user);
 	}
 
-	public String getEffectiveUser() {
+	public UserId getEffectiveUser() {
 		return effective_user;
 	}
 
@@ -252,8 +254,8 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 		try {
 			process_id=in.readLong();
 			connector_id=in.readLong();
-			authenticated_user=InternUtils.intern(in.readNullUTF());
-			effective_user=InternUtils.intern(in.readNullUTF());
+			authenticated_user = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			effective_user = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			daemon_server=in.readCompressedInt();
 			host=InetAddress.valueOf(in.readUTF()).intern();
 			protocol=in.readUTF().intern();
@@ -304,8 +306,8 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 		return SB.toString();
 	}
 
-	public void setAuthenticatedUser(String username) {
-		authenticated_user=username;
+	public void setAuthenticatedUser(UserId username) {
+		authenticated_user = username;
 	}
 
 	public void setConnectorID(long id) {
@@ -316,8 +318,8 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 		daemon_server=server;
 	}
 
-	public void setEffectiveUser(String username) {
-		effective_user=username;
+	public void setEffectiveUser(UserId username) {
+		effective_user = username;
 	}
 
 	public void setPriority(int priority) {
@@ -339,8 +341,8 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeLong(process_id);
 		out.writeLong(connector_id);
-		out.writeNullUTF(authenticated_user);
-		out.writeNullUTF(effective_user);
+		out.writeNullUTF(ObjectUtils.toString(authenticated_user));
+		out.writeNullUTF(ObjectUtils.toString(effective_user));
 		out.writeCompressedInt(daemon_server);
 		out.writeUTF(host.toString());
 		out.writeUTF(protocol);

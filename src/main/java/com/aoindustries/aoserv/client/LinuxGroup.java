@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -40,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implements Removable {
+final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> implements Removable {
 
 	static final int
 		COLUMN_NAME=0,
@@ -51,30 +52,55 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 	/**
 	 * Some commonly used system and application groups.
 	 */
-	public static final String
-		ADM="adm",
-		APACHE="apache",
-		AWSTATS="awstats",
-		BIN="bin",
-		DAEMON="daemon",
-		FTP="ftp",
-		FTPONLY="ftponly",
-		MAIL="mail",
-		MAILONLY="mailonly",
-		NAMED="named",
-		NOGROUP="nogroup",
-		POSTGRES="postgres",
-		PROFTPD_JAILED="proftpd_jailed",
-		ROOT="root",
-		SYS="sys",
-		TTY="tty"
+	public static final GroupId
+		ADM,
+		APACHE,
+		AWSTATS,
+		BIN,
+		DAEMON,
+		FTP,
+		FTPONLY,
+		MAIL,
+		MAILONLY,
+		NAMED,
+		NOGROUP,
+		POSTGRES,
+		PROFTPD_JAILED,
+		ROOT,
+		SYS,
+		TTY
 	;
 
 	/**
 	 * @deprecated  Group httpd no longer used.
 	 */
 	@Deprecated
-	public static final String HTTPD="httpd";
+	public static final GroupId HTTPD;
+
+	static {
+		try {
+			ADM = GroupId.valueOf("adm");
+			APACHE = GroupId.valueOf("apache");
+			AWSTATS = GroupId.valueOf("awstats");
+			BIN = GroupId.valueOf("bin");
+			DAEMON = GroupId.valueOf("daemon");
+			FTP = GroupId.valueOf("ftp");
+			FTPONLY = GroupId.valueOf("ftponly");
+			MAIL = GroupId.valueOf("mail");
+			MAILONLY = GroupId.valueOf("mailonly");
+			NAMED = GroupId.valueOf("named");
+			NOGROUP = GroupId.valueOf("nogroup");
+			POSTGRES = GroupId.valueOf("postgres");
+			PROFTPD_JAILED = GroupId.valueOf("proftpd_jailed");
+			ROOT = GroupId.valueOf("root");
+			SYS = GroupId.valueOf("sys");
+			TTY = GroupId.valueOf("tty");
+			// Unused ones
+			HTTPD = GroupId.valueOf("httpd");
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
 	/**
 	 * The max values for automatic gid selection in groupadd.
@@ -85,7 +111,6 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
 	AccountingCode packageName;
 	private String type;
-	public static final int MAX_LENGTH=255;
 
 	public int addLinuxAccount(LinuxAccount account) throws IOException, SQLException {
 		return table.connector.getLinuxGroupAccounts().addLinuxGroupAccount(this, account);
@@ -119,7 +144,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 		return table.connector.getLinuxServerGroups().getLinuxServerGroups(this);
 	}
 
-	public String getName() {
+	public GroupId getName() {
 		return pkey;
 	}
 
@@ -136,7 +161,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getString(1);
+			pkey = GroupId.valueOf(result.getString(1));
 			packageName = AccountingCode.valueOf(result.getString(2));
 			type = result.getString(3);
 		} catch(ValidationException e) {
@@ -144,47 +169,10 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 		}
 	}
 
-	/**
-	 * Determines if a name can be used as a group name.  A name is valid if
-	 * it is between 1 and 255 characters in length and uses only ASCII 0x21
-	 * through 0x7f, excluding the following characters:
-	 * <code>space , : ( ) [ ] ' " | & ; A-Z</code>
-	 */
-	public static boolean isValidGroupname(String name) {
-		int len = name.length();
-		if (len == 0 || len > MAX_LENGTH)
-				return false;
-		// The first character must be [a-z]
-		char ch = name.charAt(0);
-		if (ch < 'a' || ch > 'z')
-				return false;
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = name.charAt(c);
-			if(
-				ch<0x21
-				|| ch>0x7f
-				|| (ch>='A' && ch<='Z')
-				|| ch==','
-				|| ch==':'
-				|| ch=='('
-				|| ch==')'
-				|| ch=='['
-				|| ch==']'
-				|| ch=='\''
-				|| ch=='"'
-				|| ch=='|'
-				|| ch=='&'
-				|| ch==';'
-			) return false;
-		}
-		return true;
-	}
-
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readUTF().intern();
+			pkey = GroupId.valueOf(in.readUTF()).intern();
 			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			type=in.readUTF().intern();
 		} catch(ValidationException e) {
@@ -221,7 +209,7 @@ final public class LinuxGroup extends CachedObjectStringKey<LinuxGroup> implemen
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 		out.writeUTF(packageName.toString());
 		out.writeUTF(type);
 	}

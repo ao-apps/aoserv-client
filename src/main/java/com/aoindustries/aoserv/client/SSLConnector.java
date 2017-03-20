@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,13 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.HostAddress;
+import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.Port;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -63,13 +68,13 @@ public class SSLConnector extends TCPConnector {
 	private static final List<SSLConnector> connectors=new ArrayList<>();
 
 	protected SSLConnector(
-		String hostname,
-		String local_ip,
-		int port,
-		String connectAs,
-		String authenticateAs,
+		HostAddress hostname,
+		InetAddress local_ip,
+		Port port,
+		UserId connectAs,
+		UserId authenticateAs,
 		String password,
-		String daemonServer,
+		DomainName daemonServer,
 		int poolSize,
 		long maxConnectionAge,
 		String trustStorePath,
@@ -114,22 +119,22 @@ public class SSLConnector extends TCPConnector {
 
 		SSLSocketFactory sslFact=(SSLSocketFactory)SSLSocketFactory.getDefault();
 		Socket regSocket = new Socket();
-		if(local_ip!=null) regSocket.bind(new InetSocketAddress(local_ip, 0));
-		regSocket.connect(new InetSocketAddress(hostname, port), AOPool.DEFAULT_CONNECT_TIMEOUT);
+		if(local_ip!=null) regSocket.bind(new InetSocketAddress(local_ip.toString(), 0));
+		regSocket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
 		regSocket.setKeepAlive(true);
 		regSocket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
 		//regSocket.setTcpNoDelay(true);
-		return sslFact.createSocket(regSocket, hostname, port, true);
+		return sslFact.createSocket(regSocket, hostname.toString(), port.getPort(), true);
 	}
 
 	public static synchronized SSLConnector getSSLConnector(
-		String hostname,
-		String local_ip,
-		int port,
-		String connectAs,
-		String authenticateAs,
+		HostAddress hostname,
+		InetAddress local_ip,
+		Port port,
+		UserId connectAs,
+		UserId authenticateAs,
 		String password,
-		String daemonServer,
+		DomainName daemonServer,
 		int poolSize,
 		long maxConnectionAge,
 		String trustStorePath,
@@ -184,7 +189,7 @@ public class SSLConnector extends TCPConnector {
 	}
 
 	@Override
-	public AOServConnector switchUsers(String username) throws IOException {
+	public AOServConnector switchUsers(UserId username) throws IOException {
 		if(username.equals(connectAs)) return this;
 		return getSSLConnector(
 			hostname,

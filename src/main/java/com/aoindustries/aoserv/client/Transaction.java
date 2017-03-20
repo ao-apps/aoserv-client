@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -63,7 +64,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	private int transid;
 	private AccountingCode accounting;
 	private AccountingCode source_accounting;
-	private String username;
+	private UserId username;
 	private String type;
 	private String description;
 
@@ -350,7 +351,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 			transid = result.getInt(pos++);
 			accounting = AccountingCode.valueOf(result.getString(pos++));
 			source_accounting = AccountingCode.valueOf(result.getString(pos++));
-			username = result.getString(pos++);
+			username = UserId.valueOf(result.getString(pos++));
 			type = result.getString(pos++);
 			description = result.getString(pos++);
 			quantity = SQLUtility.getMillis(result.getString(pos++));
@@ -377,7 +378,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 			transid=in.readCompressedInt();
 			accounting=AccountingCode.valueOf(in.readCompressedUTF()).intern();
 			source_accounting=AccountingCode.valueOf(in.readCompressedUTF()).intern();
-			username=in.readCompressedUTF().intern();
+			username = UserId.valueOf(in.readCompressedUTF()).intern();
 			type=in.readCompressedUTF().intern();
 			description=in.readCompressedUTF();
 			quantity=in.readCompressedInt();
@@ -427,7 +428,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		out.writeCompressedInt(transid);
 		out.writeCompressedUTF(accounting.toString(), 0);
 		out.writeCompressedUTF(source_accounting.toString(), 1);
-		out.writeCompressedUTF(username, 2);
+		out.writeCompressedUTF(username.toString(), 2);
 		out.writeCompressedUTF(type, 3);
 		out.writeCompressedUTF(description, 4);
 		out.writeCompressedInt(quantity);

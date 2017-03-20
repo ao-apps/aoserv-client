@@ -202,6 +202,8 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 
 	/**
 	 * Checks the validity of a list name.
+	 *
+	 * TODO: Self-validating type
 	 */
 	public static boolean isValidRegularPath(UnixPath path) {
 		// Must start with LIST_DIRECTORY

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -113,14 +113,14 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		//CHANGE_TICKET_TYPE="change_ticket_type",
 		CHECK_ACCOUNTING="check_accounting",
 		CHECK_BUSINESS_ADMINISTRATOR_PASSWORD="check_business_administrator_password",
-		CHECK_BUSINESS_ADMINISTRATOR_USERNAME="check_business_administrator_username",
+		//CHECK_BUSINESS_ADMINISTRATOR_USERNAME="check_business_administrator_username",
 		CHECK_DNS_ZONE="check_dns_zone",
 		CHECK_EMAIL_ADDRESS="check_email_address",
 		CHECK_EMAIL_DOMAIN="check_email_domain",
-		CHECK_EMAIL_FORWARDING="check_email_forwarding",
+		//CHECK_EMAIL_FORWARDING="check_email_forwarding",
 		CHECK_EMAIL_LIST_PATH="check_email_list_path",
-		CHECK_IP_ADDRESS="check_ip_address",
-		CHECK_LINUX_ACCOUNT_USERNAME="check_linux_account_username",
+		//CHECK_IP_ADDRESS="check_ip_address",
+		//CHECK_LINUX_ACCOUNT_USERNAME="check_linux_account_username",
 		CHECK_LINUX_ACCOUNT_NAME="check_linux_account_name",
 		CHECK_LINUX_ACCOUNT_PASSWORD="check_linux_account_password",
 		CHECK_LINUX_GROUP_NAME="check_linux_group_name",
@@ -129,7 +129,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		CHECK_MYSQL_PASSWORD="check_mysql_user_password",
 		CHECK_MYSQL_SERVER_NAME="check_mysql_server_name",
 		CHECK_MYSQL_USERNAME="check_mysql_username",
-		CHECK_PACKAGE_NAME="check_package_name",
+		//CHECK_PACKAGE_NAME="check_package_name",
 		CHECK_POSTGRES_DATABASE_NAME="check_postgres_database_name",
 		CHECK_POSTGRES_PASSWORD="check_postgres_password",
 		CHECK_POSTGRES_SERVER_NAME="check_postgres_server_name",

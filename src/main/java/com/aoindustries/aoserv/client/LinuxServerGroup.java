@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -54,7 +55,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
-	String name;
+	GroupId name;
 	int ao_server;
 	LinuxId gid;
 	private long created;
@@ -104,7 +105,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			name = result.getString(2);
+			name = GroupId.valueOf(result.getString(2));
 			ao_server = result.getInt(3);
 			gid = LinuxId.valueOf(result.getInt(4));
 			created = result.getTimestamp(5).getTime();
@@ -117,7 +118,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			name=in.readUTF().intern();
+			name = GroupId.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			gid = LinuxId.valueOf(in.readCompressedInt());
 			created=in.readLong();
@@ -179,13 +180,13 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 
 	@Override
 	String toStringImpl() {
-		return name;
+		return name.toString();
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(name);
+		out.writeUTF(name.toString());
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(gid.getId());
 		out.writeLong(created);

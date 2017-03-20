@@ -22,9 +22,12 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.io.Reader;
@@ -57,13 +60,13 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 		final Package packageObj,
 		final LinuxAccount siteUser,
 		final LinuxGroup siteGroup,
-		final String serverAdmin,
+		final Email serverAdmin,
 		final boolean useApache,
 		final IPAddress ipAddress,
-		final String primaryHttpHostname,
-		final String[] altHttpHostnames,
+		final DomainName primaryHttpHostname,
+		final DomainName[] altHttpHostnames,
 		final int jBossVersion,
-		final String contentSrc
+		final UnixPath contentSrc
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
@@ -78,17 +81,17 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 					out.writeCompressedInt(aoServer.pkey);
 					out.writeUTF(siteName);
 					out.writeUTF(packageObj.name.toString());
-					out.writeUTF(siteUser.pkey);
-					out.writeUTF(siteGroup.pkey);
-					out.writeUTF(serverAdmin);
+					out.writeUTF(siteUser.pkey.toString());
+					out.writeUTF(siteGroup.pkey.toString());
+					out.writeUTF(serverAdmin.toString());
 					out.writeBoolean(useApache);
 					out.writeCompressedInt(ipAddress==null?-1:ipAddress.pkey);
-					out.writeUTF(primaryHttpHostname);
+					out.writeUTF(primaryHttpHostname.toString());
 					out.writeCompressedInt(altHttpHostnames.length);
-					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c]);
+					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c].toString());
 					out.writeCompressedInt(jBossVersion);
 					out.writeBoolean(contentSrc!=null);
-					if (contentSrc!=null) out.writeUTF(contentSrc);
+					if (contentSrc!=null) out.writeUTF(contentSrc.toString());
 				}
 
 				@Override
@@ -188,23 +191,25 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_JBOSS_SITE)) {
 			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_JBOSS_SITE, args, 12, err)) {
 				// Create an array of all the alternate hostnames
-				String[] altHostnames=new String[args.length-13];
-				System.arraycopy(args, 13, altHostnames, 0, args.length-13);
+				DomainName[] altHostnames=new DomainName[args.length-13];
+				for(int i=13; i<args.length; i++) {
+					altHostnames[i-13] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
+				}
 				out.println(
 					connector.getSimpleAOClient().addHttpdJBossSite(
 						args[1],
 						args[2],
-						args[3],
-						args[4],
-						args[5],
-						args[6],
+						AOSH.parseAccountingCode(args[3], "package"),
+						AOSH.parseUserId(args[4], "username"),
+						AOSH.parseGroupId(args[5], "group"),
+						AOSH.parseEmail(args[6], "server_admin_email"),
 						AOSH.parseBoolean(args[7], "use_apache"),
 						args[8].length()==0 ? null : AOSH.parseInetAddress(args[8], "ip_address"),
 						args[9],
-						args[11],
+						AOSH.parseDomainName(args[11], "primary_http_hostname"),
 						altHostnames,
 						args[10],
-						args[12]
+						args[12].isEmpty() ? null : AOSH.parseUnixPath(args[12], "content_source")
 					)
 				);
 				out.flush();

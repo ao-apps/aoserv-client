@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2009, 2014, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2014, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,8 +59,8 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 	 */
 	public static final int MAX_GROUPS = 65536;
 
-	String group_name;
-	String username;
+	GroupId group_name;
+	UserId username;
 	boolean is_primary;
 
 	@Override
@@ -90,10 +93,14 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		group_name = result.getString(2);
-		username = result.getString(3);
-		is_primary = result.getBoolean(4);
+		try {
+			pkey = result.getInt(1);
+			group_name = GroupId.valueOf(result.getString(2));
+			username = UserId.valueOf(result.getString(3));
+			is_primary = result.getBoolean(4);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isPrimary() {
@@ -102,10 +109,14 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		group_name=in.readUTF().intern();
-		username=in.readUTF().intern();
-		is_primary=in.readBoolean();
+		try {
+			pkey = in.readCompressedInt();
+			group_name = GroupId.valueOf(in.readUTF()).intern();
+			username = UserId.valueOf(in.readUTF()).intern();
+			is_primary=in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -135,14 +146,14 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 
 	@Override
 	String toStringImpl() {
-		return group_name+'|'+username+(is_primary?"|p":"|a");
+		return group_name.toString()+'|'+username.toString()+(is_primary?"|p":"|a");
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(group_name);
-		out.writeUTF(username);
+		out.writeUTF(group_name.toString());
+		out.writeUTF(username.toString());
 		out.writeBoolean(is_primary);
 	}
 }

@@ -308,7 +308,7 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
 	}
 
 	public int addPackage(
-		String name,
+		AccountingCode name,
 		PackageDefinition packageDefinition
 	) throws IOException, SQLException {
 		return table.connector.getPackages().addPackage(

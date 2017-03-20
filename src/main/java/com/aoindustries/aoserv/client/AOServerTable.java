@@ -52,7 +52,9 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
 
 	/**
 	 * Supports both Integer (server) and DomainName (hostname) keys.
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */
+	@Deprecated
 	@Override
 	public AOServer get(Object pkey) throws IOException, SQLException {
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());

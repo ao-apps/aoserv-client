@@ -56,7 +56,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 
 	int addCvsRepository(
 		AOServer ao,
-		String path,
+		UnixPath path,
 		LinuxServerAccount lsa,
 		LinuxServerGroup lsg,
 		long mode
@@ -181,9 +181,9 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			if(AOSH.checkParamCount(AOSHCommand.ADD_CVS_REPOSITORY, args, 5, err)) {
 				int pkey=connector.getSimpleAOClient().addCvsRepository(
 					args[1],
-					args[2],
-					args[3],
-					args[4],
+					AOSH.parseUnixPath(args[2], "path"),
+					AOSH.parseUserId(args[3], "username"),
+					AOSH.parseGroupId(args[4], "group"),
 					AOSH.parseOctalLong(args[5], "mode")
 				);
 				out.println(pkey);

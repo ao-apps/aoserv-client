@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> implements Removable {
+final public class FTPGuestUser extends CachedObjectUserIdKey<FTPGuestUser> implements Removable {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -64,12 +66,20 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
+		try {
+			pkey = UserId.valueOf(result.getString(1));
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
+		try {
+			pkey = UserId.valueOf(in.readUTF()).intern();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -89,6 +99,6 @@ final public class FTPGuestUser extends CachedObjectStringKey<FTPGuestUser> impl
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 	}
 }

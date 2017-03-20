@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -81,7 +82,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	 */
 	public static final int DEFAULT_SPAM_ASSASSIN_DISCARD_SCORE = 20;
 
-	String username;
+	UserId username;
 	int ao_server;
 	LinuxId uid;
 	private UnixPath home;
@@ -244,11 +245,10 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_CRON_TABLE, pkey);
 	}
 
-	public static UnixPath getDefaultHomeDirectory(String username) {
-		String check = Username.checkUsername(username);
-		if(check!=null) throw new IllegalArgumentException(check);
+	public static UnixPath getDefaultHomeDirectory(UserId username) {
 		try {
-			return UnixPath.valueOf("/home/"+username.charAt(0)+'/'+username);
+			String usernameStr = username.toString();
+			return UnixPath.valueOf("/home/"+usernameStr.charAt(0)+'/'+usernameStr);
 		} catch(ValidationException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -442,7 +442,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		try {
 			int pos=1;
 			pkey=result.getInt(pos++);
-			username=result.getString(pos++);
+			username = UserId.valueOf(result.getString(pos++));
 			ao_server=result.getInt(pos++);
 			uid = LinuxId.valueOf(result.getInt(pos++));
 			home = UnixPath.valueOf(result.getString(pos++));
@@ -482,7 +482,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			username=in.readUTF().intern();
+			username = UserId.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			uid=LinuxId.valueOf(in.readCompressedInt());
 			home = UnixPath.valueOf(in.readUTF());
@@ -690,7 +690,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(username);
+		out.writeUTF(username.toString());
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(uid.getId());
 		out.writeUTF(home.toString());

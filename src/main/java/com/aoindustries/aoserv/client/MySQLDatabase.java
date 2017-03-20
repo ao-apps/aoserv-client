@@ -23,6 +23,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
+import com.aoindustries.aoserv.client.validator.MySQLTableName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.IoUtils;
@@ -80,24 +82,29 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	;
 
 	/**
-	 * The longest name allowed for a MySQL database.
-	 */
-	public static final int MAX_DATABASE_NAME_LENGTH=64;
-
-	/**
 	 * The root database for a mysql installation.
 	 */
-	public static final String MYSQL="mysql";
+	public static final MySQLDatabaseName MYSQL;
 
 	/**
 	 * Special databases that are never removed.
 	 */
-	public static final String
-		INFORMATION_SCHEMA="information_schema",
-		PERFORMANCE_SCHEMA="performance_schema"
+	public static final MySQLDatabaseName
+		INFORMATION_SCHEMA,
+		PERFORMANCE_SCHEMA
 	;
 
-	String name;
+	static {
+		try {
+			MYSQL = MySQLDatabaseName.valueOf("mysql");
+			INFORMATION_SCHEMA = MySQLDatabaseName.valueOf("information_schema");
+			PERFORMANCE_SCHEMA = MySQLDatabaseName.valueOf("performance_schema");
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
+
+	MySQLDatabaseName name;
 	int mysql_server;
 	AccountingCode packageName;
 	private AlertLevel maxCheckTableAlertLevel;
@@ -263,7 +270,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		return table.connector.getMysqlDBUsers().getMySQLServerUsers(this);
 	}
 
-	public String getName() {
+	public MySQLDatabaseName getName() {
 		return name;
 	}
 
@@ -292,7 +299,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			name=result.getString(2);
+			name = MySQLDatabaseName.valueOf(result.getString(2));
 			mysql_server=result.getInt(3);
 			packageName = AccountingCode.valueOf(result.getString(4));
 			maxCheckTableAlertLevel = AlertLevel.valueOf(result.getString(5));
@@ -305,7 +312,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			name=in.readUTF();
+			name = MySQLDatabaseName.valueOf(in.readUTF());
 			mysql_server=in.readCompressedInt();
 			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			maxCheckTableAlertLevel = AlertLevel.valueOf(in.readCompressedUTF());
@@ -347,13 +354,13 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	@Override
 	String toStringImpl() {
-		return name;
+		return name.toString();
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(name);
+		out.writeUTF(name.toString());
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
 		else out.writeCompressedInt(mysql_server);
 		out.writeUTF(packageName.toString());
@@ -393,7 +400,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 			utf8mb4_unicode_520_ci
 		}
 
-		private final String name;
+		private final MySQLTableName name;
 		private final Engine engine;
 		private final Integer version;
 		private final RowFormat rowFormat;
@@ -413,7 +420,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		private final String comment;
 
 		public TableStatus(
-			String name,
+			MySQLTableName name,
 			Engine engine,
 			Integer version,
 			RowFormat rowFormat,
@@ -455,7 +462,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		/**
 		 * @return the name
 		 */
-		public String getName() {
+		public MySQLTableName getName() {
 			return name;
 		}
 
@@ -609,28 +616,32 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 						int size = in.readCompressedInt();
 						List<TableStatus> tableStatuses = new ArrayList<>(size);
 						for(int c=0;c<size;c++) {
-							tableStatuses.add(
-								new TableStatus(
-									in.readUTF(), // name
-									in.readNullEnum(Engine.class), // engine
-									in.readNullInteger(), // version
-									in.readNullEnum(TableStatus.RowFormat.class), // rowFormat
-									in.readNullLong(), // rows
-									in.readNullLong(), // avgRowLength
-									in.readNullLong(), // dataLength
-									in.readNullLong(), // maxDataLength
-									in.readNullLong(), // indexLength
-									in.readNullLong(), // dataFree
-									in.readNullLong(), // autoIncrement
-									in.readNullUTF(), // createTime
-									in.readNullUTF(), // updateTime
-									in.readNullUTF(), // checkTime
-									in.readNullEnum(TableStatus.Collation.class), // collation
-									in.readNullUTF(), // checksum
-									in.readNullUTF(), // createOptions
-									in.readNullUTF() // comment
-								)
-							);
+							try {
+								tableStatuses.add(
+									new TableStatus(
+										MySQLTableName.valueOf(in.readUTF()), // name
+										in.readNullEnum(Engine.class), // engine
+										in.readNullInteger(), // version
+										in.readNullEnum(TableStatus.RowFormat.class), // rowFormat
+										in.readNullLong(), // rows
+										in.readNullLong(), // avgRowLength
+										in.readNullLong(), // dataLength
+										in.readNullLong(), // maxDataLength
+										in.readNullLong(), // indexLength
+										in.readNullLong(), // dataFree
+										in.readNullLong(), // autoIncrement
+										in.readNullUTF(), // createTime
+										in.readNullUTF(), // updateTime
+										in.readNullUTF(), // checkTime
+										in.readNullEnum(TableStatus.Collation.class), // collation
+										in.readNullUTF(), // checksum
+										in.readNullUTF(), // createOptions
+										in.readNullUTF() // comment
+									)
+								);
+							} catch(ValidationException e) {
+								throw new IOException(e);
+							}
 						}
 						this.result = tableStatuses;
 					} else {
@@ -659,13 +670,13 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 			Error
 		}
 
-		private final String table;
+		private final MySQLTableName table;
 		private final long duration;
 		private final MsgType msgType;
 		private final String msgText;
 
 		public CheckTableResult(
-			String table,
+			MySQLTableName table,
 			long duration,
 			MsgType msgType,
 			String msgText
@@ -679,7 +690,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		/**
 		 * @return the table
 		 */
-		public String getTable() {
+		public MySQLTableName getTable() {
 			return table;
 		}
 
@@ -708,14 +719,14 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	/**
 	 * Gets the table status on the master server.
 	 */
-	public List<CheckTableResult> checkTables(final Collection<String> tableNames) throws IOException, SQLException {
+	public List<CheckTableResult> checkTables(final Collection<MySQLTableName> tableNames) throws IOException, SQLException {
 		return checkTables(null, tableNames);
 	}
 
 	/**
 	 * Gets the table status on the master server or provided slave server.
 	 */
-	public List<CheckTableResult> checkTables(final FailoverMySQLReplication mysqlSlave, final Collection<String> tableNames) throws IOException, SQLException {
+	public List<CheckTableResult> checkTables(final FailoverMySQLReplication mysqlSlave, final Collection<MySQLTableName> tableNames) throws IOException, SQLException {
 		if(tableNames.isEmpty()) return Collections.emptyList();
 		return table.connector.requestResult(
 			true,
@@ -730,9 +741,9 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 					int size = tableNames.size();
 					out.writeCompressedInt(size);
 					int count = 0;
-					Iterator<String> iter = tableNames.iterator();
+					Iterator<MySQLTableName> iter = tableNames.iterator();
 					while(count<size && iter.hasNext()) {
-						out.writeUTF(iter.next());
+						out.writeUTF(iter.next().toString());
 						count++;
 					}
 					if(count!=size) throw new ConcurrentModificationException("count!=size");
@@ -745,14 +756,18 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 						int size = in.readCompressedInt();
 						List<CheckTableResult> checkTableResults = new ArrayList<>(size);
 						for(int c=0;c<size;c++) {
-							checkTableResults.add(
-								new CheckTableResult(
-									in.readUTF(), // table
-									in.readLong(), // duration
-									in.readNullEnum(CheckTableResult.MsgType.class), // msgType
-									in.readNullUTF() // msgText
-								)
-							);
+							try {
+								checkTableResults.add(
+									new CheckTableResult(
+										MySQLTableName.valueOf(in.readUTF()), // table
+										in.readLong(), // duration
+										in.readNullEnum(CheckTableResult.MsgType.class), // msgType
+										in.readNullUTF() // msgText
+									)
+								);
+							} catch(ValidationException e) {
+								throw new IOException(e);
+							}
 						}
 						this.result = checkTableResults;
 					} else {
@@ -772,6 +787,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	/**
 	 * Determines if a name is safe for use as a table/column name, the name identifier
 	 * should be enclosed with backticks (`).
+	 *
+	 * TODO: Is this more restrictive than {@link MySQLDatabaseName} and {@link MySQLTableName}?
 	 */
 	public static boolean isSafeName(String name) {
 		// Must be a-z first, then a-z or 0-9 or _ or -

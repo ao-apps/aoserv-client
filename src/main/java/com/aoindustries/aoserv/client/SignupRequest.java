@@ -23,8 +23,10 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
@@ -75,7 +77,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 	private String ba_state;
 	private String ba_country;
 	private String ba_zip;
-	private String ba_username;
+	private UserId ba_username;
 	private String billing_contact;
 	private String billing_email;
 	private boolean billing_use_monthly;
@@ -83,7 +85,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 	private String encrypted_data;
 	private int encryption_from;
 	private int encryption_recipient;
-	private String completed_by;
+	private UserId completed_by;
 	private long completed_time;
 
 	// These are not pulled from the database, but are decrypted from encrypted_data by GPG
@@ -178,7 +180,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 			ba_state=result.getString(pos++);
 			ba_country=result.getString(pos++);
 			ba_zip=result.getString(pos++);
-			ba_username=result.getString(pos++);
+			ba_username = UserId.valueOf(result.getString(pos++));
 			billing_contact=result.getString(pos++);
 			billing_email=result.getString(pos++);
 			billing_use_monthly=result.getBoolean(pos++);
@@ -186,7 +188,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 			encrypted_data=result.getString(pos++);
 			encryption_from=result.getInt(pos++);
 			encryption_recipient=result.getInt(pos++);
-			completed_by=result.getString(pos++);
+			completed_by = UserId.valueOf(result.getString(pos++));
 			Timestamp T = result.getTimestamp(pos++);
 			completed_time = T==null ? -1 : T.getTime();
 		} catch(ValidationException e) {
@@ -224,7 +226,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 			ba_state=InternUtils.intern(in.readNullUTF());
 			ba_country=InternUtils.intern(in.readNullUTF());
 			ba_zip=in.readNullUTF();
-			ba_username=in.readUTF().intern();
+			ba_username = UserId.valueOf(in.readUTF()).intern();
 			billing_contact=in.readUTF();
 			billing_email=in.readUTF();
 			billing_use_monthly=in.readBoolean();
@@ -232,7 +234,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 			encrypted_data=in.readUTF();
 			encryption_from=in.readCompressedInt();
 			encryption_recipient=in.readCompressedInt();
-			completed_by=InternUtils.intern(in.readNullUTF());
+			completed_by = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			completed_time=in.readLong();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -268,7 +270,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 		out.writeNullUTF(ba_state);
 		out.writeNullUTF(ba_country);
 		out.writeNullUTF(ba_zip);
-		out.writeUTF(ba_username);
+		out.writeUTF(ba_username.toString());
 		out.writeUTF(billing_contact);
 		out.writeUTF(billing_email);
 		out.writeBoolean(billing_use_monthly);
@@ -276,7 +278,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 		out.writeUTF(encrypted_data);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(encryption_from);
 		out.writeCompressedInt(encryption_recipient); // Used to be called encryption_key
-		out.writeNullUTF(completed_by);
+		out.writeNullUTF(ObjectUtils.toString(completed_by));
 		out.writeLong(completed_time);
 	}
 
@@ -388,7 +390,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 		return ba_zip;
 	}
 
-	public String getBaUsername() {
+	public UserId getBaUsername() {
 		return ba_username;
 	}
 
@@ -421,7 +423,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 	}
 
 	public BusinessAdministrator getCompletedBy() throws IOException, SQLException {
-		if(completed_by==null) return null;
+		if(completed_by == null) return null;
 		// May be filtered, null is OK
 		return table.connector.getBusinessAdministrators().get(completed_by);
 	}

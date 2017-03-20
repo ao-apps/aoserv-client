@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -87,7 +87,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 					out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
 					out.writeUTF(business.pkey.toString());
 					out.writeUTF(sourceBusiness.pkey.toString());
-					out.writeUTF(business_administrator.pkey);
+					out.writeUTF(business_administrator.pkey.toString());
 					out.writeUTF(type);
 					out.writeUTF(description);
 					out.writeCompressedInt(quantity);
@@ -187,6 +187,10 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 		return SchemaTable.TableID.TRANSACTIONS;
 	}
 
+	/**
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+	 */
+	@Deprecated
 	@Override
 	public Transaction get(Object transid) throws IOException, SQLException {
 		return get(((Integer)transid).intValue());
@@ -209,7 +213,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
 
 	@Override
-	final public List<Transaction> getIndexedRows(int col, Object value) throws IOException, SQLException {
+	public List<Transaction> getIndexedRows(int col, Object value) throws IOException, SQLException {
 		if(col==Transaction.COLUMN_TRANSID) {
 			Transaction tr=get(value);
 			if(tr==null) return Collections.emptyList();
@@ -238,7 +242,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 				int transid=connector.getSimpleAOClient().addTransaction(
 					AOSH.parseAccountingCode(args[1], "business"),
 					AOSH.parseAccountingCode(args[2], "source_business"),
-					args[3],
+					AOSH.parseUserId(args[3], "business_administrator"),
 					args[4],
 					args[5],
 					AOSH.parseMillis(args[6], "quantity"),

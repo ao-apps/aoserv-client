@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +47,7 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 
 	String name, version;
 	long updated;
-	private String owner;
+	private UserId owner;
 	int operating_system_version;
 	private long disable_time;
 	private String disable_reason;
@@ -117,28 +119,36 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		name = result.getString(2);
-		version = result.getString(3);
-		updated = result.getTimestamp(4).getTime();
-		owner = result.getString(5);
-		operating_system_version = result.getInt(6);
-		if(result.wasNull()) operating_system_version = -1;
-		Timestamp T = result.getTimestamp(7);
-		disable_time = T == null ? -1 : T.getTime();
-		disable_reason = result.getString(8);
+		try {
+			pkey = result.getInt(1);
+			name = result.getString(2);
+			version = result.getString(3);
+			updated = result.getTimestamp(4).getTime();
+			owner = UserId.valueOf(result.getString(5));
+			operating_system_version = result.getInt(6);
+			if(result.wasNull()) operating_system_version = -1;
+			Timestamp T = result.getTimestamp(7);
+			disable_time = T == null ? -1 : T.getTime();
+			disable_reason = result.getString(8);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey = in.readCompressedInt();
-		name = in.readUTF().intern();
-		version = in.readUTF();
-		updated = in.readLong();
-		owner = in.readUTF().intern();
-		operating_system_version = in.readCompressedInt();
-		disable_time = in.readLong();
-		disable_reason = in.readNullUTF();
+		try {
+			pkey = in.readCompressedInt();
+			name = in.readUTF().intern();
+			version = in.readUTF();
+			updated = in.readLong();
+			owner = UserId.valueOf(in.readUTF()).intern();
+			operating_system_version = in.readCompressedInt();
+			disable_time = in.readLong();
+			disable_reason = in.readNullUTF();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -147,7 +157,7 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 		out.writeUTF(name);
 		out.writeUTF(version);
 		out.writeLong(updated);
-		out.writeUTF(owner);
+		out.writeUTF(owner.toString());
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108) >= 0) {
 			out.writeCompressedInt(operating_system_version);
 		}

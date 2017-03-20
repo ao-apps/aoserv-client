@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -76,7 +77,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 	private String invoiceNumber;
 	private String purchaseOrderNumber;
 	private String description;
-	private String creditCardCreatedBy;
+	private UserId creditCardCreatedBy;
 	private String creditCardPrincipalName;
 	private AccountingCode creditCardAccounting;
 	private String creditCardGroupName;
@@ -97,7 +98,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 	private String creditCardCountryCode;
 	private String creditCardComments;
 	private long authorizationTime;
-	private String authorizationUsername;
+	private UserId authorizationUsername;
 	private String authorizationPrincipalName;
 	private String authorizationCommunicationResult;
 	private String authorizationProviderErrorCode;
@@ -116,7 +117,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 	private String authorizationAvsResult;
 	private String authorizationApprovalCode;
 	private long captureTime;
-	private String captureUsername;
+	private UserId captureUsername;
 	private String capturePrincipalName;
 	private String captureCommunicationResult;
 	private String captureProviderErrorCode;
@@ -124,7 +125,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 	private String captureProviderErrorMessage;
 	private String captureProviderUniqueId;
 	private long voidTime;
-	private String voidUsername;
+	private UserId voidUsername;
 	private String voidPrincipalName;
 	private String voidCommunicationResult;
 	private String voidProviderErrorCode;
@@ -696,7 +697,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 			invoiceNumber = result.getString(pos++);
 			purchaseOrderNumber = result.getString(pos++);
 			description = result.getString(pos++);
-			creditCardCreatedBy = result.getString(pos++);
+			creditCardCreatedBy = UserId.valueOf(result.getString(pos++));
 			creditCardPrincipalName = result.getString(pos++);
 			creditCardAccounting = AccountingCode.valueOf(result.getString(pos++));
 			creditCardGroupName = result.getString(pos++);
@@ -717,7 +718,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 			creditCardCountryCode = result.getString(pos++);
 			creditCardComments = result.getString(pos++);
 			authorizationTime = result.getTimestamp(pos++).getTime();
-			authorizationUsername = result.getString(pos++);
+			authorizationUsername = UserId.valueOf(result.getString(pos++));
 			authorizationPrincipalName = result.getString(pos++);
 			authorizationCommunicationResult = result.getString(pos++);
 			authorizationProviderErrorCode = result.getString(pos++);
@@ -737,7 +738,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 			authorizationApprovalCode = result.getString(pos++);
 			Timestamp T = result.getTimestamp(pos++);
 			captureTime = T==null ? -1 : T.getTime();
-			captureUsername = result.getString(pos++);
+			captureUsername = UserId.valueOf(result.getString(pos++));
 			capturePrincipalName = result.getString(pos++);
 			captureCommunicationResult = result.getString(pos++);
 			captureProviderErrorCode = result.getString(pos++);
@@ -746,7 +747,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 			captureProviderUniqueId = result.getString(pos++);
 			T = result.getTimestamp(pos++);
 			voidTime = T==null ? -1 : T.getTime();
-			voidUsername = result.getString(pos++);
+			voidUsername = UserId.valueOf(result.getString(pos++));
 			voidPrincipalName = result.getString(pos++);
 			voidCommunicationResult = result.getString(pos++);
 			voidProviderErrorCode = result.getString(pos++);
@@ -792,7 +793,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 			invoiceNumber = in.readNullUTF();
 			purchaseOrderNumber = in.readNullUTF();
 			description = in.readNullUTF();
-			creditCardCreatedBy = in.readUTF().intern();
+			creditCardCreatedBy = UserId.valueOf(in.readUTF()).intern();
 			creditCardPrincipalName = in.readNullUTF();
 			creditCardAccounting = AccountingCode.valueOf(in.readUTF()).intern();
 			creditCardGroupName = in.readNullUTF();
@@ -813,7 +814,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 			creditCardCountryCode = in.readUTF().intern();
 			creditCardComments = in.readNullUTF();
 			authorizationTime = in.readLong();
-			authorizationUsername = InternUtils.intern(in.readNullUTF());
+			authorizationUsername = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			authorizationPrincipalName = InternUtils.intern(in.readNullUTF());
 			authorizationCommunicationResult = InternUtils.intern(in.readNullUTF());
 			authorizationProviderErrorCode = InternUtils.intern(in.readNullUTF());
@@ -832,7 +833,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 			authorizationAvsResult = InternUtils.intern(in.readNullUTF());
 			authorizationApprovalCode = in.readNullUTF();
 			captureTime = in.readLong();
-			captureUsername = InternUtils.intern(in.readNullUTF());
+			captureUsername = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			capturePrincipalName = InternUtils.intern(in.readNullUTF());
 			captureCommunicationResult = InternUtils.intern(in.readNullUTF());
 			captureProviderErrorCode = InternUtils.intern(in.readNullUTF());
@@ -840,7 +841,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 			captureProviderErrorMessage = in.readNullUTF();
 			captureProviderUniqueId = in.readNullUTF();
 			voidTime = in.readLong();
-			voidUsername = InternUtils.intern(in.readNullUTF());
+			voidUsername = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
 			voidPrincipalName = InternUtils.intern(in.readNullUTF());
 			voidCommunicationResult = InternUtils.intern(in.readNullUTF());
 			voidProviderErrorCode = InternUtils.intern(in.readNullUTF());
@@ -882,7 +883,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 		out.writeNullUTF(invoiceNumber);
 		out.writeNullUTF(purchaseOrderNumber);
 		out.writeNullUTF(description);
-		out.writeUTF(creditCardCreatedBy);
+		out.writeUTF(creditCardCreatedBy.toString());
 		out.writeNullUTF(creditCardPrincipalName);
 		out.writeUTF(creditCardAccounting.toString());
 		out.writeNullUTF(creditCardGroupName);
@@ -903,7 +904,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 		out.writeUTF(creditCardCountryCode);
 		out.writeNullUTF(creditCardComments);
 		out.writeLong(authorizationTime);
-		out.writeNullUTF(authorizationUsername);
+		out.writeNullUTF(ObjectUtils.toString(authorizationUsername));
 		out.writeNullUTF(authorizationPrincipalName);
 		out.writeNullUTF(authorizationCommunicationResult);
 		out.writeNullUTF(authorizationProviderErrorCode);
@@ -922,7 +923,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 		out.writeNullUTF(authorizationAvsResult);
 		out.writeNullUTF(authorizationApprovalCode);
 		out.writeLong(captureTime);
-		out.writeNullUTF(captureUsername);
+		out.writeNullUTF(ObjectUtils.toString(captureUsername));
 		out.writeNullUTF(capturePrincipalName);
 		out.writeNullUTF(captureCommunicationResult);
 		out.writeNullUTF(captureProviderErrorCode);
@@ -930,7 +931,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 		out.writeNullUTF(captureProviderErrorMessage);
 		out.writeNullUTF(captureProviderUniqueId);
 		out.writeLong(voidTime);
-		out.writeNullUTF(voidUsername);
+		out.writeNullUTF(ObjectUtils.toString(voidUsername));
 		out.writeNullUTF(voidPrincipalName);
 		out.writeNullUTF(voidCommunicationResult);
 		out.writeNullUTF(voidProviderErrorCode);

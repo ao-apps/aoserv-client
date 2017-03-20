@@ -23,6 +23,10 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
+import com.aoindustries.aoserv.client.validator.MySQLServerName;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.AoCollections;
@@ -63,9 +67,16 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	;
 
 	/**
-	 * The directory that contains the MySQLSQL data files.
+	 * The directory that contains the MySQL data files.
 	 */
-	public static final String DATA_BASE_DIR="/var/lib/mysql";
+	public static final UnixPath DATA_BASE_DIR;
+	static {
+		try {
+			DATA_BASE_DIR = UnixPath.valueOf("/var/lib/mysql");
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
 	/**
 	 * Gets the versions of MySQL in order of
@@ -348,7 +359,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	 */
 	public static final int MAX_SERVER_NAME_LENGTH=31;
 
-	String name;
+	MySQLServerName name;
 	int ao_server;
 	private int version;
 	private int max_connections;
@@ -356,7 +367,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	AccountingCode packageName;
 
 	public int addMySQLDatabase(
-		String name,
+		MySQLDatabaseName name,
 		Package pack
 	) throws IOException, SQLException {
 		return table.connector.getMysqlDatabases().addMySQLDatabase(
@@ -364,26 +375,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 			this,
 			pack
 		);
-	}
-
-	public static void checkServerName(String name) throws IllegalArgumentException {
-		// Must be a-z or 0-9 first, then a-z or 0-9 or . or _
-		int len = name.length();
-		if (len == 0 || len > MAX_SERVER_NAME_LENGTH) throw new IllegalArgumentException("MySQL server name should not exceed "+MAX_SERVER_NAME_LENGTH+" characters.");
-
-		// The first character must be [a-z] or [0-9]
-		char ch = name.charAt(0);
-		if ((ch < 'a' || ch > 'z') && (ch<'0' || ch>'9')) throw new IllegalArgumentException("MySQL server names must start with [a-z] or [0-9]");
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = name.charAt(c);
-			if (
-				(ch<'a' || ch>'z')
-				&& (ch<'0' || ch>'9')
-				&& ch!='.'
-				&& ch!='_'
-			) throw new IllegalArgumentException("MySQL server names may only contain [a-z], [0-9], period (.), and underscore (_)");
-		}
 	}
 
 	@Override
@@ -400,11 +391,17 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		}
 	}
 
-	public String getDataDirectory() {
-		return DATA_BASE_DIR+'/'+name;
+	public UnixPath getDataDirectory() {
+		try {
+			return UnixPath.valueOf(DATA_BASE_DIR.toString() + '/' + name.toString());
+		} catch(ValidationException e) {
+			AssertionError ae = new AssertionError();
+			ae.initCause(e);
+			throw ae;
+		}
 	}
 
-	public String getName() {
+	public MySQLServerName getName() {
 		return name;
 	}
 
@@ -457,7 +454,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		return pk;
 	}
 
-	public MySQLDatabase getMySQLDatabase(String name) throws IOException, SQLException {
+	public MySQLDatabase getMySQLDatabase(MySQLDatabaseName name) throws IOException, SQLException {
 		return table.connector.getMysqlDatabases().getMySQLDatabase(name, this);
 	}
 
@@ -473,7 +470,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		return table.connector.getMysqlDBUsers().getMySQLDBUsers(this);
 	}
 
-	public MySQLServerUser getMySQLServerUser(String username) throws IOException, SQLException {
+	public MySQLServerUser getMySQLServerUser(MySQLUserId username) throws IOException, SQLException {
 		return table.connector.getMysqlServerUsers().getMySQLServerUser(username, this);
 	}
 
@@ -498,7 +495,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			name=result.getString(2);
+			name = MySQLServerName.valueOf(result.getString(2));
 			ao_server=result.getInt(3);
 			version=result.getInt(4);
 			max_connections=result.getInt(5);
@@ -509,7 +506,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		}
 	}
 
-	public boolean isMySQLDatabaseNameAvailable(String name) throws IOException, SQLException {
+	public boolean isMySQLDatabaseNameAvailable(MySQLDatabaseName name) throws IOException, SQLException {
 		return table.connector.getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
 	}
 
@@ -517,7 +514,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			name=in.readUTF().intern();
+			name = MySQLServerName.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			version=in.readCompressedInt();
 			max_connections=in.readCompressedInt();
@@ -548,7 +545,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(name);
+		out.writeUTF(name.toString());
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(version);
 		out.writeCompressedInt(max_connections);

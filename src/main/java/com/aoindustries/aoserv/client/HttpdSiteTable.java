@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.WriterOutputStream;
 import java.io.IOException;
@@ -101,8 +102,8 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	}
 
 	List<HttpdSite> getHttpdSites(LinuxServerAccount lsa) throws IOException, SQLException {
-		String lsaUsername=lsa.username;
-		int aoServer=lsa.ao_server;
+		UserId lsaUsername = lsa.username;
+		int aoServer = lsa.ao_server;
 
 		List<HttpdSite> cached=getRows();
 		int size=cached.size();
@@ -196,7 +197,11 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_SERVER_ADMIN)) {
 			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_SERVER_ADMIN, args, 3, err)) {
-				connector.getSimpleAOClient().setHttpdSiteServerAdmin(args[1], args[2], args[3]);
+				connector.getSimpleAOClient().setHttpdSiteServerAdmin(
+					args[1],
+					args[2],
+					AOSH.parseEmail(args[3], "email_address")
+				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_IS_MANUAL)) {

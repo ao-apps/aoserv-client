@@ -23,10 +23,13 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.net.Port;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.validation.ValidationException;
@@ -78,8 +81,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	String site_name;
 	private boolean list_first;
 	AccountingCode packageName;
-	String linuxAccount;
-	String linuxGroup;
+	UserId linuxAccount;
+	GroupId linuxGroup;
 	private String serverAdmin;
 	private UnixPath contentSrc;
 	int disable_log;
@@ -288,8 +291,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			site_name = result.getString(pos++);
 			list_first = result.getBoolean(pos++);
 			packageName = AccountingCode.valueOf(result.getString(pos++));
-			linuxAccount = result.getString(pos++);
-			linuxGroup = result.getString(pos++);
+			linuxAccount = UserId.valueOf(result.getString(pos++));
+			linuxGroup = GroupId.valueOf(result.getString(pos++));
 			serverAdmin = result.getString(pos++);
 			contentSrc = UnixPath.valueOf(result.getString(pos++));
 			disable_log = result.getInt(pos++);
@@ -329,6 +332,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	 * directory.  The site name must be 255 characters or less, and comprised of
 	 * only <code>a-z</code>, <code>0-9</code>, <code>.</code> or <code>-</code>.  The first
 	 * character must be <code>a-z</code> or <code>0-9</code>.
+	 *
+	 * TODO: Self-validating type for site names
 	 */
 	public static boolean isValidSiteName(String name) {
 		// These are the other files/directories that may exist under /www.  To avoid
@@ -337,6 +342,12 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			"lost+found".equals(name)
 			|| ".backup".equals(name)
 			|| "aquota.user".equals(name)
+			// Some other things that exist in /var/www
+			|| "cgi-bin".equals(name)
+			|| "mrtg".equals(name)
+			|| "html".equals(name)
+			|| "icons".equals(name)
+			// TODO: "disabled" once packaged as an RPM and not an actual HttpdSite entry
 		) return false;
 
 		int len = name.length();
@@ -373,8 +384,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			site_name = in.readUTF();
 			list_first = in.readBoolean();
 			packageName = AccountingCode.valueOf(in.readUTF()).intern();
-			linuxAccount = in.readUTF().intern();
-			linuxGroup = in.readUTF().intern();
+			linuxAccount = UserId.valueOf(in.readUTF()).intern();
+			linuxGroup = GroupId.valueOf(in.readUTF()).intern();
 			serverAdmin = in.readUTF();
 			contentSrc = UnixPath.valueOf(in.readNullUTF());
 			disable_log = in.readCompressedInt();
@@ -396,7 +407,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_IS_MANUAL, pkey, isManual);
 	}
 
-	public void setServerAdmin(String address) throws IOException, SQLException {
+	public void setServerAdmin(Email address) throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
 	}
 
@@ -412,8 +423,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		out.writeUTF(site_name);
 		out.writeBoolean(list_first);
 		out.writeUTF(packageName.toString());
-		out.writeUTF(linuxAccount);
-		out.writeUTF(linuxGroup);
+		out.writeUTF(linuxAccount.toString());
+		out.writeUTF(linuxGroup.toString());
 		out.writeUTF(serverAdmin);
 		out.writeNullUTF(ObjectUtils.toString(contentSrc));
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {

@@ -22,7 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -67,8 +69,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	private boolean optional;
 	private String type;
 	private long mode;
-	private String linux_account;
-	private String linux_group;
+	private UserId linux_account;
+	private GroupId linux_group;
 	private long size;
 	private boolean has_file_sha256;
 	private long file_sha256_0;
@@ -201,8 +203,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 			optional = result.getBoolean(pos++);
 			type = result.getString(pos++);
 			mode = result.getLong(pos++);
-			linux_account = result.getString(pos++);
-			linux_group = result.getString(pos++);
+			linux_account = UserId.valueOf(result.getString(pos++));
+			linux_group = GroupId.valueOf(result.getString(pos++));
 			size = result.getLong(pos++);
 			if(result.wasNull()) size = NULL_SIZE;
 			file_sha256_0 = result.getLong(pos++);
@@ -225,8 +227,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 			optional = in.readBoolean();
 			type = in.readCompressedUTF().intern();
 			mode = in.readLong();
-			linux_account = in.readCompressedUTF().intern();
-			linux_group = in.readCompressedUTF().intern();
+			linux_account = UserId.valueOf(in.readCompressedUTF()).intern();
+			linux_group = GroupId.valueOf(in.readCompressedUTF()).intern();
 			size = in.readLong();
 			has_file_sha256 = in.readBoolean();
 			if(has_file_sha256) {
@@ -269,8 +271,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 			optional = in.readBoolean();
 			type = readChars(in).intern();
 			mode = in.readLong();
-			linux_account = readChars(in).intern();
-			linux_group = readChars(in).intern();
+			linux_account = UserId.valueOf(readChars(in)).intern();
+			linux_group = GroupId.valueOf(readChars(in)).intern();
 			size = in.readLong();
 			has_file_sha256 = in.readBoolean();
 			if(has_file_sha256) {
@@ -300,8 +302,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		out.writeBoolean(optional);
 		out.writeCompressedUTF(type, 1);
 		out.writeLong(mode);
-		out.writeCompressedUTF(linux_account, 2);
-		out.writeCompressedUTF(linux_group, 3);
+		out.writeCompressedUTF(linux_account.toString(), 2);
+		out.writeCompressedUTF(linux_group.toString(), 3);
 		out.writeLong(size);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_80) >= 0) {
 			out.writeBoolean(has_file_sha256);
@@ -329,10 +331,16 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		if(type.length()>MAX_TYPE_LENGTH) throw new IOException("type.length()>"+MAX_TYPE_LENGTH+": "+type.length());
 		writeChars(type, out);
 		out.writeLong(mode);
-		if(linux_account.length()>MAX_LINUX_ACCOUNT_LENGTH) throw new IOException("linux_account.length()>"+MAX_LINUX_ACCOUNT_LENGTH+": "+linux_account.length());
-		writeChars(linux_account, out);
-		if(linux_group.length()>MAX_LINUX_GROUP_LENGTH) throw new IOException("linux_group.length()>"+MAX_LINUX_GROUP_LENGTH+": "+linux_group.length());
-		writeChars(linux_group, out);
+		{
+			String linux_accountStr = linux_account.toString();
+			if(linux_accountStr.length()>MAX_LINUX_ACCOUNT_LENGTH) throw new IOException("linux_account.length()>"+MAX_LINUX_ACCOUNT_LENGTH+": "+linux_accountStr.length());
+			writeChars(linux_accountStr, out);
+		}
+		{
+			String linux_groupStr = linux_group.toString();
+			if(linux_groupStr.length()>MAX_LINUX_GROUP_LENGTH) throw new IOException("linux_group.length()>"+MAX_LINUX_GROUP_LENGTH+": "+linux_groupStr.length());
+			writeChars(linux_groupStr, out);
+		}
 		out.writeLong(size);
 		out.writeBoolean(has_file_sha256);
 		if(has_file_sha256) {
