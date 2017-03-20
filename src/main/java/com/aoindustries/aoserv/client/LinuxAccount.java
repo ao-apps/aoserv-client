@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -87,7 +88,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 	private Gecos office_phone;
 	private Gecos home_phone;
 	private String type;
-	private String shell;
+	private UnixPath shell;
 	private long created;
 	int disable_log;
 
@@ -99,7 +100,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 		table.connector.getLinuxGroupAccounts().addLinuxGroupAccount(group, this);
 	}
 
-	public int addLinuxServerAccount(AOServer aoServer, String home) throws IOException, SQLException {
+	public int addLinuxServerAccount(AOServer aoServer, UnixPath home) throws IOException, SQLException {
 		return table.connector.getLinuxServerAccounts().addLinuxServerAccount(this, aoServer, home);
 	}
 
@@ -249,30 +250,41 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 		return usernameObject;
 	}
 
-	public List<String> getValidHomeDirectories(AOServer ao) throws SQLException, IOException {
+	public List<UnixPath> getValidHomeDirectories(AOServer ao) throws SQLException, IOException {
 		return getValidHomeDirectories(pkey, ao);
 	}
 
-	public static List<String> getValidHomeDirectories(String username, AOServer ao) throws SQLException, IOException {
-		List<String> dirs=new ArrayList<>();
-		if(username!=null) dirs.add(LinuxServerAccount.getDefaultHomeDirectory(username));
+	public static List<UnixPath> getValidHomeDirectories(String username, AOServer ao) throws SQLException, IOException {
+		try {
+			List<UnixPath> dirs=new ArrayList<>();
+			if(username!=null) dirs.add(LinuxServerAccount.getDefaultHomeDirectory(username));
 
-		List<HttpdSite> hss=ao.getHttpdSites();
-		int hsslen=hss.size();
-		for(int c=0;c<hsslen;c++) {
-			HttpdSite hs=hss.get(c);
-			String siteDir=hs.getInstallDirectory();
-			dirs.add(siteDir);
-			if(hs.getHttpdTomcatSite()!=null) dirs.add(siteDir+"/webapps");
-		}
+			List<HttpdSite> hss=ao.getHttpdSites();
+			int hsslen=hss.size();
+			for(int c=0;c<hsslen;c++) {
+				HttpdSite hs=hss.get(c);
+				UnixPath siteDir=hs.getInstallDirectory();
+				dirs.add(siteDir);
+				if(hs.getHttpdTomcatSite()!=null) {
+					dirs.add(UnixPath.valueOf(siteDir.toString() + "/webapps"));
+				}
+			}
 
-		List<HttpdSharedTomcat> hsts=ao.getHttpdSharedTomcats();
-		int hstslen=hsts.size();
-		for(int c=0;c<hstslen;c++) {
-			HttpdSharedTomcat hst=hsts.get(c);
-			dirs.add(hst.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+hst.getName());
+			List<HttpdSharedTomcat> hsts=ao.getHttpdSharedTomcats();
+			int hstslen=hsts.size();
+			for(int c=0;c<hstslen;c++) {
+				HttpdSharedTomcat hst=hsts.get(c);
+				dirs.add(
+					UnixPath.valueOf(
+						hst.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
+						+ '/' + hst.getName()
+					)
+				);
+			}
+			return dirs;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
 		}
-		return dirs;
 	}
 
 	@Override
@@ -284,7 +296,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 			office_phone = Gecos.valueOf(result.getString(4));
 			home_phone = Gecos.valueOf(result.getString(5));
 			type = result.getString(6);
-			shell = result.getString(7);
+			shell = UnixPath.valueOf(result.getString(7));
 			created = result.getTimestamp(8).getTime();
 			disable_log=result.getInt(9);
 			if(result.wasNull()) disable_log=-1;
@@ -302,7 +314,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 			office_phone=Gecos.valueOf(in.readNullUTF());
 			home_phone=Gecos.valueOf(in.readNullUTF());
 			type=in.readUTF().intern();
-			shell=in.readUTF().intern();
+			shell = UnixPath.valueOf(in.readUTF()).intern();
 			created=in.readLong();
 			disable_log=in.readCompressedInt();
 		} catch(ValidationException e) {
@@ -371,7 +383,7 @@ final public class LinuxAccount extends CachedObjectStringKey<LinuxAccount> impl
 		out.writeNullUTF(ObjectUtils.toString(office_phone));
 		out.writeNullUTF(ObjectUtils.toString(home_phone));
 		out.writeUTF(type);
-		out.writeUTF(shell);
+		out.writeUTF(shell.toString());
 		out.writeLong(created);
 		out.writeCompressedInt(disable_log);
 	}

@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -114,8 +116,15 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
 	}
 
-	public String getInstallDirectory() throws SQLException, IOException {
-		return getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory()+'/'+name;
+	public UnixPath getInstallDirectory() throws SQLException, IOException {
+		try {
+			return UnixPath.valueOf(
+				getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
+				+ '/' + name
+			);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override

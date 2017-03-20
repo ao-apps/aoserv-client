@@ -27,6 +27,7 @@ import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
@@ -120,7 +121,7 @@ final public class SimpleAOClient {
 		return ed;
 	}
 
-	private EmailList getEmailList(String aoServer, String path) throws IllegalArgumentException, IOException, SQLException {
+	private EmailList getEmailList(String aoServer, UnixPath path) throws IllegalArgumentException, IOException, SQLException {
 		EmailList el=getAOServer(aoServer).getEmailList(path);
 		if(el==null) throw new IllegalArgumentException("Unable to find EmailList: "+path+" on "+aoServer);
 		return el;
@@ -806,7 +807,7 @@ final public class SimpleAOClient {
 	 */
 	public int addEmailList(
 		String aoServer,
-		String path,
+		UnixPath path,
 		String username,
 		String group
 	) throws IllegalArgumentException, IOException, SQLException {
@@ -840,7 +841,7 @@ final public class SimpleAOClient {
 	public int addEmailListAddress(
 		String address,
 		DomainName domain,
-		String path,
+		UnixPath path,
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
 		EmailDomain sd=getEmailDomain(aoServer, domain);
@@ -1532,7 +1533,7 @@ final public class SimpleAOClient {
 		Gecos office_phone,
 		Gecos home_phone,
 		String type,
-		String shell
+		UnixPath shell
 	) throws IllegalArgumentException, IOException, SQLException {
 		Username un=getUsername(username);
 		checkLinuxAccountUsername(username);
@@ -1642,15 +1643,11 @@ final public class SimpleAOClient {
 	public int addLinuxServerAccount(
 		String username,
 		String aoServer,
-		String home
+		UnixPath home
 	) throws IllegalArgumentException, IOException, SQLException {
 		LinuxAccount la=getLinuxAccount(username);
 		AOServer ao=getAOServer(aoServer);
-		if(
-			home==null
-			|| home.length()==0
-			|| home.equals("~")
-		) home=LinuxServerAccount.getDefaultHomeDirectory(username);
+		if(home == null) home = LinuxServerAccount.getDefaultHomeDirectory(username);
 		return la.addLinuxServerAccount(ao, home);
 	}
 
@@ -2809,7 +2806,7 @@ final public class SimpleAOClient {
 	 * @see  EmailList#isValidRegularPath
 	 */
 	public static void checkEmailListPath(
-		String path
+		UnixPath path
 	) throws IllegalArgumentException {
 		if(!EmailList.isValidRegularPath(path)) throw new IllegalArgumentException("Invalid EmailList path: "+path);
 	}
@@ -3521,7 +3518,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the <code>EmailList</code>
 	 */
 	public int disableEmailList(
-		String path,
+		UnixPath path,
 		String aoServer,
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
@@ -4000,7 +3997,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the <code>EmailList</code>
 	 */
 	public void enableEmailList(
-		String path,
+		UnixPath path,
 		String aoServer
 	) throws IllegalArgumentException, SQLException, IOException {
 		EmailList el=getEmailList(aoServer, path);
@@ -4540,7 +4537,7 @@ final public class SimpleAOClient {
 	 * @see  EmailList
 	 */
 	public String getEmailListAddressList(
-		String path,
+		UnixPath path,
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
 		return getEmailList(aoServer, path).getAddressList();
@@ -5577,7 +5574,7 @@ final public class SimpleAOClient {
 	 */
 	public void removeCvsRepository(
 		String aoServer,
-		String path
+		UnixPath path
 	) throws IllegalArgumentException, IOException, SQLException {
 		AOServer ao=getAOServer(aoServer);
 		CvsRepository cr=ao.getCvsRepository(path);
@@ -5747,7 +5744,7 @@ final public class SimpleAOClient {
 	 * @see  #addEmailList
 	 */
 	public void removeEmailList(
-		String path,
+		UnixPath path,
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
 		getEmailList(aoServer, path).remove();
@@ -5774,7 +5771,7 @@ final public class SimpleAOClient {
 	public void removeEmailListAddress(
 		String address,
 		DomainName domain,
-		String path,
+		UnixPath path,
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
 		EmailAddress addr=getEmailAddress(aoServer, domain, address);
@@ -6711,7 +6708,7 @@ final public class SimpleAOClient {
 	 */
 	public void setCvsRepositoryMode(
 		String aoServer,
-		String path,
+		UnixPath path,
 		long mode
 	) throws IOException, SQLException {
 		AOServer ao=getAOServer(aoServer);
@@ -6765,7 +6762,7 @@ final public class SimpleAOClient {
 	 * @see  #addEmailList
 	 */
 	public void setEmailListAddressList(
-		String path,
+		UnixPath path,
 		String aoServer,
 		String addresses
 	) throws IllegalArgumentException, IOException, SQLException {

@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -61,7 +63,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 
 	private int pkey;
 	private int operating_system_version;
-	private String path;
+	private UnixPath path;
 	private boolean optional;
 	private String type;
 	private long mode;
@@ -114,7 +116,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		return osv;
 	}
 
-	public String getPath() {
+	public UnixPath getPath() {
 		return path;
 	}
 
@@ -191,49 +193,57 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey = result.getInt(pos++);
-		operating_system_version = result.getInt(pos++);
-		path = result.getString(pos++);
-		optional = result.getBoolean(pos++);
-		type = result.getString(pos++);
-		mode = result.getLong(pos++);
-		linux_account = result.getString(pos++);
-		linux_group = result.getString(pos++);
-		size = result.getLong(pos++);
-		if(result.wasNull()) size = NULL_SIZE;
-		file_sha256_0 = result.getLong(pos++);
-		file_sha256_1 = result.getLong(pos++);
-		file_sha256_2 = result.getLong(pos++);
-		file_sha256_3 = result.getLong(pos++);
-		has_file_sha256 = !result.wasNull();
-		symlink_target = result.getString(pos++);
+		try {
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			operating_system_version = result.getInt(pos++);
+			path = UnixPath.valueOf(result.getString(pos++));
+			optional = result.getBoolean(pos++);
+			type = result.getString(pos++);
+			mode = result.getLong(pos++);
+			linux_account = result.getString(pos++);
+			linux_group = result.getString(pos++);
+			size = result.getLong(pos++);
+			if(result.wasNull()) size = NULL_SIZE;
+			file_sha256_0 = result.getLong(pos++);
+			file_sha256_1 = result.getLong(pos++);
+			file_sha256_2 = result.getLong(pos++);
+			file_sha256_3 = result.getLong(pos++);
+			has_file_sha256 = !result.wasNull();
+			symlink_target = result.getString(pos++);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey = in.readCompressedInt();
-		operating_system_version = in.readCompressedInt();
-		path = in.readCompressedUTF();
-		optional = in.readBoolean();
-		type = in.readCompressedUTF().intern();
-		mode = in.readLong();
-		linux_account = in.readCompressedUTF().intern();
-		linux_group = in.readCompressedUTF().intern();
-		size = in.readLong();
-		has_file_sha256 = in.readBoolean();
-		if(has_file_sha256) {
-			file_sha256_0 = in.readLong();
-			file_sha256_1 = in.readLong();
-			file_sha256_2 = in.readLong();
-			file_sha256_3 = in.readLong();
-		} else {
-			file_sha256_0 = 0;
-			file_sha256_1 = 0;
-			file_sha256_2 = 0;
-			file_sha256_3 = 0;
+		try {
+			pkey = in.readCompressedInt();
+			operating_system_version = in.readCompressedInt();
+			path = UnixPath.valueOf(in.readCompressedUTF());
+			optional = in.readBoolean();
+			type = in.readCompressedUTF().intern();
+			mode = in.readLong();
+			linux_account = in.readCompressedUTF().intern();
+			linux_group = in.readCompressedUTF().intern();
+			size = in.readLong();
+			has_file_sha256 = in.readBoolean();
+			if(has_file_sha256) {
+				file_sha256_0 = in.readLong();
+				file_sha256_1 = in.readLong();
+				file_sha256_2 = in.readLong();
+				file_sha256_3 = in.readLong();
+			} else {
+				file_sha256_0 = 0;
+				file_sha256_1 = 0;
+				file_sha256_2 = 0;
+				file_sha256_3 = 0;
+			}
+			symlink_target = in.readBoolean() ? in.readCompressedUTF() : null;
+		} catch(ValidationException e) {
+			throw new IOException(e);
 		}
-		symlink_target = in.readBoolean() ? in.readCompressedUTF() : null;
 	}
 
 	private static void writeChars(String s, DataOutputStream out) throws IOException {
@@ -252,28 +262,32 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 
 	@Override
 	public void readRecord(DataInputStream in) throws IOException {
-		pkey = in.readInt();
-		operating_system_version = in.readInt();
-		path = readChars(in);
-		optional = in.readBoolean();
-		type = readChars(in).intern();
-		mode = in.readLong();
-		linux_account = readChars(in).intern();
-		linux_group = readChars(in).intern();
-		size = in.readLong();
-		has_file_sha256 = in.readBoolean();
-		if(has_file_sha256) {
-			file_sha256_0 = in.readLong();
-			file_sha256_1 = in.readLong();
-			file_sha256_2 = in.readLong();
-			file_sha256_3 = in.readLong();
-		} else {
-			file_sha256_0 = 0;
-			file_sha256_1 = 0;
-			file_sha256_2 = 0;
-			file_sha256_3 = 0;
+		try {
+			pkey = in.readInt();
+			operating_system_version = in.readInt();
+			path = UnixPath.valueOf(readChars(in));
+			optional = in.readBoolean();
+			type = readChars(in).intern();
+			mode = in.readLong();
+			linux_account = readChars(in).intern();
+			linux_group = readChars(in).intern();
+			size = in.readLong();
+			has_file_sha256 = in.readBoolean();
+			if(has_file_sha256) {
+				file_sha256_0 = in.readLong();
+				file_sha256_1 = in.readLong();
+				file_sha256_2 = in.readLong();
+				file_sha256_3 = in.readLong();
+			} else {
+				file_sha256_0 = 0;
+				file_sha256_1 = 0;
+				file_sha256_2 = 0;
+				file_sha256_3 = 0;
+			}
+			symlink_target = in.readBoolean() ? readChars(in) : null;
+		} catch(ValidationException e) {
+			throw new IOException(e);
 		}
-		symlink_target = in.readBoolean() ? readChars(in) : null;
 	}
 
 	@Override
@@ -282,7 +296,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 			out.writeCompressedInt(pkey);
 			out.writeCompressedInt(operating_system_version);
 		}
-		out.writeCompressedUTF(path, 0);
+		out.writeCompressedUTF(path.toString(), 0);
 		out.writeBoolean(optional);
 		out.writeCompressedUTF(type, 1);
 		out.writeLong(mode);
@@ -308,8 +322,9 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	public void writeRecord(DataOutputStream out) throws IOException {
 		out.writeInt(pkey);
 		out.writeInt(operating_system_version);
-		if(path.length()>MAX_PATH_LENGTH) throw new IOException("path.length()>"+MAX_PATH_LENGTH+": "+path.length());
-		writeChars(path, out);
+		String pathStr = path.toString();
+		if(pathStr.length()>MAX_PATH_LENGTH) throw new IOException("path.length()>"+MAX_PATH_LENGTH+": "+pathStr.length());
+		writeChars(pathStr, out);
 		out.writeBoolean(optional);
 		if(type.length()>MAX_TYPE_LENGTH) throw new IOException("type.length()>"+MAX_TYPE_LENGTH+": "+type.length());
 		writeChars(type, out);

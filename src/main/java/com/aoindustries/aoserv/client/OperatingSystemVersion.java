@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -186,22 +188,32 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that stores websites for this operating system or <code>null</code>
 	 * if this OS doesn't support web sites.
 	 */
-	public String getHttpdSitesDirectory() {
+	public UnixPath getHttpdSitesDirectory() {
 		return getHttpdSitesDirectory(pkey);
+	}
+
+	private static final UnixPath WWW, VAR_WWW;
+	static {
+		try {
+			WWW = UnixPath.valueOf("/www").intern();
+			VAR_WWW = UnixPath.valueOf("/var/www").intern();
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
 	}
 
 	/**
 	 * Gets the directory that stores websites for this operating system or <code>null</code>
 	 * if this OS doesn't support web sites.
 	 */
-	public static String getHttpdSitesDirectory(int osv) {
+	public static UnixPath getHttpdSitesDirectory(int osv) {
 		switch(osv) {
 			case MANDRIVA_2006_0_I586 :
 			case REDHAT_ES_4_X86_64 :
 			case CENTOS_5_I686_AND_X86_64 :
-				return "/www";
+				return WWW;
 			case CENTOS_7_X86_64 :
-				return "/var/www";
+				return VAR_WWW;
 			case CENTOS_5_DOM0_I686 :
 			case CENTOS_5_DOM0_X86_64 :
 			case CENTOS_7_DOM0_X86_64 :
@@ -215,22 +227,32 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that contains the shared tomcat directories or <code>null</code>
 	 * if this OS doesn't support shared tomcats.
 	 */
-	public String getHttpdSharedTomcatsDirectory() {
+	public UnixPath getHttpdSharedTomcatsDirectory() {
 		return getHttpdSharedTomcatsDirectory(pkey);
 	}
 
+	private static final UnixPath WWWGROUP, VAR_OPT_APACHE_TOMCAT;
+	static {
+		try {
+			WWWGROUP = UnixPath.valueOf("/wwwgroup").intern();
+			VAR_OPT_APACHE_TOMCAT = UnixPath.valueOf("/var/opt/apache-tomcat").intern();
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
+
 	/**
 	 * Gets the directory that contains the shared tomcat directories or <code>null</code>
 	 * if this OS doesn't support shared tomcats.
 	 */
-	public static String getHttpdSharedTomcatsDirectory(int osv) {
+	public static UnixPath getHttpdSharedTomcatsDirectory(int osv) {
 		switch(osv) {
 			case MANDRIVA_2006_0_I586 :
 			case REDHAT_ES_4_X86_64 :
 			case CENTOS_5_I686_AND_X86_64 :
-				return "/wwwgroup";
+				return WWWGROUP;
 			case CENTOS_7_X86_64 :
-				return "/var/opt/apache-tomcat";
+				return VAR_OPT_APACHE_TOMCAT;
 			case CENTOS_5_DOM0_I686 :
 			case CENTOS_5_DOM0_X86_64 :
 			case CENTOS_7_DOM0_X86_64 :
@@ -244,22 +266,32 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that contains the per-virtual-host HTTP logs or <code>null</code>
 	 * if this OS doesn't support web sites.
 	 */
-	public String getHttpdSiteLogsDirectory() {
+	public UnixPath getHttpdSiteLogsDirectory() {
 		return getHttpdSiteLogsDirectory(pkey);
+	}
+
+	private static final UnixPath LOGS, VAR_LOG_WWW;
+	static {
+		try {
+			LOGS = UnixPath.valueOf("/logs").intern();
+			VAR_LOG_WWW = UnixPath.valueOf("/var/log/www").intern();
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
 	}
 
 	/**
 	 * Gets the directory that contains the per-virtual-host HTTP logs or <code>null</code>
 	 * if this OS doesn't support web sites.
 	 */
-	public static String getHttpdSiteLogsDirectory(int osv) {
+	public static UnixPath getHttpdSiteLogsDirectory(int osv) {
 		switch(osv) {
 			case MANDRIVA_2006_0_I586 :
 			case REDHAT_ES_4_X86_64 :
 			case CENTOS_5_I686_AND_X86_64 :
-				return "/logs";
+				return LOGS;
 			case CENTOS_7_X86_64 :
-				return "/var/log/www";
+				return VAR_LOG_WWW;
 			case CENTOS_5_DOM0_I686 :
 			case CENTOS_5_DOM0_X86_64 :
 			case CENTOS_7_DOM0_X86_64 :

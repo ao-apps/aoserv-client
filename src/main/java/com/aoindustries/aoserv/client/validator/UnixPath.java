@@ -84,7 +84,11 @@ final public class UnixPath implements
 
 	private static final ConcurrentMap<String,UnixPath> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param path  when {@code null}, returns {@code null}
+	 */
 	public static UnixPath valueOf(String path) throws ValidationException {
+		if(path == null) return null;
 		//UnixPath existing = interned.get(path);
 		//return existing!=null ? existing : new UnixPath(path);
 		return new UnixPath(path);

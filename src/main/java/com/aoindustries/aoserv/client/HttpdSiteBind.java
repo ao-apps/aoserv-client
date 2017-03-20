@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,12 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntList;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,10 +49,10 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 	int httpd_site;
 	private int httpd_bind;
-	private String access_log;
-	private String error_log;
-	private String sslCertFile;
-	private String sslCertKeyFile;
+	private UnixPath access_log;
+	private UnixPath error_log;
+	private UnixPath sslCertFile;
+	private UnixPath sslCertKeyFile;
 	int disable_log;
 	private String predisable_config;
 	private boolean isManual;
@@ -81,7 +84,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, pkey);
 	}
 
-	public String getAccessLog() {
+	public UnixPath getAccessLog() {
 		return access_log;
 	}
 
@@ -120,7 +123,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		return obj;
 	}
 
-	public String getErrorLog() {
+	public UnixPath getErrorLog() {
 		return error_log;
 	}
 
@@ -148,11 +151,11 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		return table.connector.getHttpdSiteURLs().getPrimaryHttpdSiteURL(this);
 	}
 
-	public String getSSLCertFile() {
+	public UnixPath getSSLCertFile() {
 		return sslCertFile;
 	}
 
-	public String getSSLCertKeyFile() {
+	public UnixPath getSSLCertKeyFile() {
 		return sslCertKeyFile;
 	}
 
@@ -163,18 +166,22 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		httpd_site=result.getInt(2);
-		httpd_bind=result.getInt(3);
-		access_log=result.getString(4);
-		error_log=result.getString(5);
-		sslCertFile=result.getString(6);
-		sslCertKeyFile=result.getString(7);
-		disable_log=result.getInt(8);
-		if(result.wasNull()) disable_log=-1;
-		predisable_config=result.getString(9);
-		isManual=result.getBoolean(10);
-		redirect_to_primary_hostname=result.getBoolean(11);
+		try {
+			pkey=result.getInt(1);
+			httpd_site=result.getInt(2);
+			httpd_bind=result.getInt(3);
+			access_log = UnixPath.valueOf(result.getString(4));
+			error_log = UnixPath.valueOf(result.getString(5));
+			sslCertFile = UnixPath.valueOf(result.getString(6));
+			sslCertKeyFile = UnixPath.valueOf(result.getString(7));
+			disable_log=result.getInt(8);
+			if(result.wasNull()) disable_log=-1;
+			predisable_config=result.getString(9);
+			isManual=result.getBoolean(10);
+			redirect_to_primary_hostname=result.getBoolean(11);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isManual() {
@@ -187,17 +194,21 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		httpd_site=in.readCompressedInt();
-		httpd_bind=in.readCompressedInt();
-		access_log=in.readUTF();
-		error_log=in.readUTF();
-		sslCertFile=in.readNullUTF();
-		sslCertKeyFile=in.readNullUTF();
-		disable_log=in.readCompressedInt();
-		predisable_config=in.readNullUTF();
-		isManual=in.readBoolean();
-		redirect_to_primary_hostname=in.readBoolean();
+		try {
+			pkey=in.readCompressedInt();
+			httpd_site=in.readCompressedInt();
+			httpd_bind=in.readCompressedInt();
+			access_log = UnixPath.valueOf(in.readUTF());
+			error_log = UnixPath.valueOf(in.readUTF());
+			sslCertFile = UnixPath.valueOf(in.readNullUTF());
+			sslCertKeyFile = UnixPath.valueOf(in.readNullUTF());
+			disable_log=in.readCompressedInt();
+			predisable_config=in.readNullUTF();
+			isManual=in.readBoolean();
+			redirect_to_primary_hostname=in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	public void setIsManual(boolean isManual) throws IOException, SQLException {
@@ -251,10 +262,10 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_site);
 		out.writeCompressedInt(httpd_bind);
-		out.writeUTF(access_log);
-		out.writeUTF(error_log);
-		out.writeNullUTF(sslCertFile);
-		out.writeNullUTF(sslCertKeyFile);
+		out.writeUTF(access_log.toString());
+		out.writeUTF(error_log.toString());
+		out.writeNullUTF(ObjectUtils.toString(sslCertFile));
+		out.writeNullUTF(ObjectUtils.toString(sslCertKeyFile));
 		out.writeCompressedInt(disable_log);
 		out.writeNullUTF(predisable_config);
 		out.writeBoolean(isManual);

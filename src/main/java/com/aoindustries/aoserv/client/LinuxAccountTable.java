@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -63,7 +64,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
 		final Gecos office_phone,
 		final Gecos home_phone,
 		final String type,
-		final String shell
+		final UnixPath shell
 	) throws IOException, SQLException {
 		connector.requestUpdate(
 			true,
@@ -81,7 +82,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
 					out.writeNullUTF(ObjectUtils.toString(office_phone));
 					out.writeNullUTF(ObjectUtils.toString(home_phone));
 					out.writeUTF(type);
-					out.writeUTF(shell);
+					out.writeUTF(shell.toString());
 				}
 
 				@Override
@@ -151,7 +152,7 @@ final public class LinuxAccountTable extends CachedTableStringKey<LinuxAccount> 
 					args[5].length()==0 ? null : AOSH.parseGecos(args[5], "office_phone"),
 					args[6].length()==0 ? null : AOSH.parseGecos(args[6], "home_phone"),
 					args[7],
-					args[8]
+					AOSH.parseUnixPath(args[8], "shell")
 				);
 			}
 			return true;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,25 +39,43 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Shell extends GlobalObjectStringKey<Shell> {
+final public class Shell extends GlobalObjectUnixPathKey<Shell> {
 
 	static final int COLUMN_PATH=0;
 	static final String COLUMN_PATH_name = "path";
 
-	public static final String
-		BASH="/bin/bash",
-		FALSE="/bin/false",
-		KSH="/bin/ksh",
-		SH="/bin/sh",
-		SYNC="/bin/sync",
-		TCSH="/bin/tcsh",
-		HALT="/sbin/halt",
-		NOLOGIN="/sbin/nologin",
-		SHUTDOWN="/sbin/shutdown",
-		FTPONLY="/usr/bin/ftponly",
-		FTPPASSWD="/usr/bin/ftppasswd",
-		PASSWD="/usr/bin/passwd"
+	public static final UnixPath
+		BASH,
+		FALSE,
+		KSH,
+		SH,
+		SYNC,
+		TCSH,
+		HALT,
+		NOLOGIN,
+		SHUTDOWN,
+		FTPONLY,
+		FTPPASSWD,
+		PASSWD
 	;
+	static {
+		try {
+			BASH = UnixPath.valueOf("/bin/bash").intern();
+			FALSE = UnixPath.valueOf("/bin/false").intern();
+			KSH = UnixPath.valueOf("/bin/ksh").intern();
+			SH = UnixPath.valueOf("/bin/sh").intern();
+			SYNC = UnixPath.valueOf("/bin/sync").intern();
+			TCSH = UnixPath.valueOf("/bin/tcsh").intern();
+			HALT = UnixPath.valueOf("/sbin/halt").intern();
+			NOLOGIN = UnixPath.valueOf("/sbin/nologin").intern();
+			SHUTDOWN = UnixPath.valueOf("/sbin/shutdown").intern();
+			FTPONLY = UnixPath.valueOf("/usr/bin/ftponly").intern();
+			FTPPASSWD = UnixPath.valueOf("/usr/bin/ftppasswd").intern();
+			PASSWD = UnixPath.valueOf("/usr/bin/passwd").intern();
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
 	private boolean is_login;
 	private boolean is_system;
@@ -68,7 +88,7 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
-	public String getPath() {
+	public UnixPath getPath() {
 		return pkey;
 	}
 
@@ -79,9 +99,13 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		is_login = result.getBoolean(2);
-		is_system = result.getBoolean(3);
+		try {
+			pkey = UnixPath.valueOf(result.getString(1));
+			is_login = result.getBoolean(2);
+			is_system = result.getBoolean(3);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	public boolean isLogin() {
@@ -94,14 +118,18 @@ final public class Shell extends GlobalObjectStringKey<Shell> {
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
-		is_login=in.readBoolean();
-		is_system=in.readBoolean();
+		try {
+			pkey = UnixPath.valueOf(in.readUTF()).intern();
+			is_login=in.readBoolean();
+			is_system=in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		out.writeUTF(pkey);
+		out.writeUTF(pkey.toString());
 		out.writeBoolean(is_login);
 		out.writeBoolean(is_system);
 	}

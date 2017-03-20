@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,35 +23,37 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UnixPath;
-import java.io.IOException;
-import java.sql.SQLException;
 
 /**
- * @see  Shell
+ * An object that is cached and uses a {@link UnixPath} as its primary key,
  *
  * @author  AO Industries, Inc.
  */
-final public class ShellTable extends GlobalTableUnixPathKey<Shell> {
+public abstract class GlobalObjectUnixPathKey<T extends GlobalObjectUnixPathKey<T>> extends GlobalObject<UnixPath,T> {
 
-	ShellTable(AOServConnector connector) {
-		super(connector, Shell.class);
-	}
-
-	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Shell.COLUMN_PATH_name, ASCENDING)
-	};
-	@Override
-	OrderBy[] getDefaultOrderBy() {
-		return defaultOrderBy;
-	}
+	protected UnixPath pkey;
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.SHELLS;
+	boolean equalsImpl(Object O) {
+		return
+			O!=null
+			&& O.getClass()==getClass()
+			&& ((GlobalObjectUnixPathKey)O).pkey.equals(pkey)
+		;
 	}
 
 	@Override
-	public Shell get(UnixPath path) throws IOException, SQLException {
-		return getUniqueRow(Shell.COLUMN_PATH, path);
+	public UnixPath getKey() {
+		return pkey;
+	}
+
+	@Override
+	int hashCodeImpl() {
+		return pkey.hashCode();
+	}
+
+	@Override
+	String toStringImpl() {
+		return pkey.toString();
 	}
 }

@@ -23,8 +23,10 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Port;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.validation.ValidationException;
@@ -78,10 +80,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	AccountingCode packageName;
 	String linuxAccount;
 	String linuxGroup;
-	private String
-		serverAdmin,
-		contentSrc
-	;
+	private String serverAdmin;
+	private UnixPath contentSrc;
 	int disable_log;
 	private boolean isManual;
 	private String awstatsSkipFiles;
@@ -143,8 +143,15 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	/**
 	 * Gets the directory where this site is installed.
 	 */
-	public String getInstallDirectory() throws SQLException, IOException {
-		return getAOServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory()+'/'+site_name;
+	public UnixPath getInstallDirectory() throws SQLException, IOException {
+		try {
+			return UnixPath.valueOf(
+				getAOServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory().toString()
+				+ "/" + site_name
+			);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
@@ -168,7 +175,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		}
 	}
 
-	public String getContentSrc() {
+	public UnixPath getContentSrc() {
 		return contentSrc;
 	}
 
@@ -284,7 +291,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			linuxAccount = result.getString(pos++);
 			linuxGroup = result.getString(pos++);
 			serverAdmin = result.getString(pos++);
-			contentSrc = result.getString(pos++);
+			contentSrc = UnixPath.valueOf(result.getString(pos++));
 			disable_log = result.getInt(pos++);
 			if(result.wasNull()) disable_log=-1;
 			isManual = result.getBoolean(pos++);
@@ -369,7 +376,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			linuxAccount = in.readUTF().intern();
 			linuxGroup = in.readUTF().intern();
 			serverAdmin = in.readUTF();
-			contentSrc = in.readNullUTF();
+			contentSrc = UnixPath.valueOf(in.readNullUTF());
 			disable_log = in.readCompressedInt();
 			isManual = in.readBoolean();
 			awstatsSkipFiles = in.readNullUTF();
@@ -408,7 +415,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		out.writeUTF(linuxAccount);
 		out.writeUTF(linuxGroup);
 		out.writeUTF(serverAdmin);
-		out.writeNullUTF(contentSrc);
+		out.writeNullUTF(ObjectUtils.toString(contentSrc));
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);

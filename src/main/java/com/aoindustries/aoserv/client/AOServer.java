@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.LinuxId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -265,7 +266,7 @@ final public class AOServer
 		}
 	}
 
-	public CvsRepository getCvsRepository(String path) throws IOException, SQLException {
+	public CvsRepository getCvsRepository(UnixPath path) throws IOException, SQLException {
 		return table.connector.getCvsRepositories().getCvsRepository(this, path);
 	}
 
@@ -431,7 +432,7 @@ final public class AOServer
 	/**
 	 * Rename to getEmailList when all uses updated.
 	 */
-	public EmailList getEmailList(String path) throws IOException, SQLException {
+	public EmailList getEmailList(UnixPath path) throws IOException, SQLException {
 		return table.connector.getEmailLists().getEmailList(this, path);
 	}
 
@@ -700,7 +701,7 @@ final public class AOServer
 		return table.connector.getEmailDomains().isEmailDomainAvailable(this, domain);
 	}
 
-	public boolean isHomeUsed(String directory) throws IOException, SQLException {
+	public boolean isHomeUsed(UnixPath directory) throws IOException, SQLException {
 		return table.connector.getLinuxServerAccounts().isHomeUsed(this, directory);
 	}
 
