@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,7 +51,14 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	/**
 	 * The directory that stores the majordomo servers.
 	 */
-	public static final String MAJORDOMO_SERVER_DIRECTORY="/etc/mail/majordomo";
+	public static final UnixPath MAJORDOMO_SERVER_DIRECTORY;
+	static {
+		try {
+			MAJORDOMO_SERVER_DIRECTORY = UnixPath.valueOf("/etc/mail/majordomo");
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
 
 	/**
 	 * The username part of the email address used to directly email majordomo.

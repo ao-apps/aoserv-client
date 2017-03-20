@@ -670,13 +670,13 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 			Error
 		}
 
-		private final String table;
+		private final MySQLTableName table;
 		private final long duration;
 		private final MsgType msgType;
 		private final String msgText;
 
 		public CheckTableResult(
-			String table,
+			MySQLTableName table,
 			long duration,
 			MsgType msgType,
 			String msgText
@@ -690,7 +690,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		/**
 		 * @return the table
 		 */
-		public String getTable() {
+		public MySQLTableName getTable() {
 			return table;
 		}
 
@@ -756,14 +756,18 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 						int size = in.readCompressedInt();
 						List<CheckTableResult> checkTableResults = new ArrayList<>(size);
 						for(int c=0;c<size;c++) {
-							checkTableResults.add(
-								new CheckTableResult(
-									in.readUTF(), // table
-									in.readLong(), // duration
-									in.readNullEnum(CheckTableResult.MsgType.class), // msgType
-									in.readNullUTF() // msgText
-								)
-							);
+							try {
+								checkTableResults.add(
+									new CheckTableResult(
+										MySQLTableName.valueOf(in.readUTF()), // table
+										in.readLong(), // duration
+										in.readNullEnum(CheckTableResult.MsgType.class), // msgType
+										in.readNullUTF() // msgText
+									)
+								);
+							} catch(ValidationException e) {
+								throw new IOException(e);
+							}
 						}
 						this.result = checkTableResults;
 					} else {
@@ -783,6 +787,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	/**
 	 * Determines if a name is safe for use as a table/column name, the name identifier
 	 * should be enclosed with backticks (`).
+	 *
+	 * TODO: Is this more restrictive than {@link MySQLDatabaseName} and {@link MySQLTableName}?
 	 */
 	public static boolean isSafeName(String name) {
 		// Must be a-z first, then a-z or 0-9 or _ or -
