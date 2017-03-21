@@ -223,7 +223,7 @@ final public class SimpleAOClient {
 	}
 
 	private MySQLUser getMySQLUser(MySQLUserId username) throws IllegalArgumentException, IOException, SQLException {
-		MySQLUser mu=getUsername(username.getUserId()).getMySQLUser();
+		MySQLUser mu=getUsername(username).getMySQLUser();
 		if(mu==null) throw new IllegalArgumentException("Unable to find MySQLUser: "+username);
 		return mu;
 	}
@@ -284,7 +284,7 @@ final public class SimpleAOClient {
 	}
 
 	private PostgresUser getPostgresUser(PostgresUserId username) throws IllegalArgumentException, IOException, SQLException {
-		PostgresUser pu=getUsername(username.getUserId()).getPostgresUser();
+		PostgresUser pu=getUsername(username).getPostgresUser();
 		if(pu==null) throw new IllegalArgumentException("Unable to find PostgresUser: "+username);
 		return pu;
 	}
@@ -1894,7 +1894,7 @@ final public class SimpleAOClient {
 	public void addMySQLUser(
 		MySQLUserId username
 	) throws IllegalArgumentException, IOException, SQLException {
-		getUsername(username.getUserId()).addMySQLUser();
+		getUsername(username).addMySQLUser();
 	}
 
 	/**
@@ -2117,7 +2117,7 @@ final public class SimpleAOClient {
 	public void addPostgresUser(
 		PostgresUserId username
 	) throws IllegalArgumentException, IOException, SQLException {
-		getUsername(username.getUserId()).addPostgresUser();
+		getUsername(username).addPostgresUser();
 	}
 
 	/**
@@ -3443,7 +3443,7 @@ final public class SimpleAOClient {
 		PostgresUserId username,
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
-		Username un=getUsername(username.getUserId());
+		Username un=getUsername(username);
 		PostgresUser pu=un.getPostgresUser();
 		if(pu==null) throw new IllegalArgumentException("Unable to find PostgresUser: "+username);
 		DisableLog dl=connector.getDisableLogs().get(un.getPackage().getBusiness().addDisableLog(disableReason));
@@ -3902,7 +3902,7 @@ final public class SimpleAOClient {
 	public void enablePostgresUser(
 		PostgresUserId username
 	) throws IllegalArgumentException, SQLException, IOException {
-		Username un=getUsername(username.getUserId());
+		Username un=getUsername(username);
 		PostgresUser pu=un.getPostgresUser();
 		if(pu==null) throw new IllegalArgumentException("Unable to find PostgresUser: "+username);
 		DisableLog dl=pu.getDisableLog();

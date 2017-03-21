@@ -59,7 +59,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserId implements
+public class UserId implements
 	Comparable<UserId>,
 	FastExternalizable,
 	ObjectInputValidation,
@@ -135,20 +135,20 @@ final public class UserId implements
 		return existing!=null ? existing : new UserId(id).intern();
 	}*/
 
-	private String id;
+	protected String id;
 
-	private UserId(String id) throws ValidationException {
+	UserId(String id) throws ValidationException {
 		this.id = id;
 		validate();
 	}
 
-	private void validate() throws ValidationException {
+	void validate() throws ValidationException {
 		ValidationResult result = validate(id);
 		if(!result.isValid()) throw new ValidationException(result);
 	}
 
 	@Override
-	public boolean equals(Object O) {
+	final public boolean equals(Object O) {
 		return
 			O!=null
 			&& O instanceof UserId
@@ -157,22 +157,38 @@ final public class UserId implements
 	}
 
 	@Override
-	public int hashCode() {
+	final public int hashCode() {
 		return id.hashCode();
 	}
 
 	@Override
-	public int compareTo(UserId other) {
+	final public int compareTo(UserId other) {
 		return this==other ? 0 : id.compareTo(other.id);
 	}
 
 	@Override
-	public String toString() {
+	final public String toString() {
 		return id;
 	}
 
 	/**
 	 * Interns this id much in the same fashion as <code>String.intern()</code>.
+	 * <p>
+	 * Because this has subtypes, two {@link UserId} that are {@link #equals(java.lang.Object)}
+	 * may not necessarily return the same instance object after interning.  Thus,
+	 * unless you know objects are of the same class, {@link #equals(java.lang.Object)} should
+	 * still be used for equality check instead of the {@code obj1 == obj2} shortcut.
+	 * </p>
+	 * <p>
+	 * To more efficiently check post-interned equivalence, one could also do
+	 * {@code obj1 == obj2 || (obj1.getClass() != obj2.getClass() && obj1.equals(obj2))},
+	 * but is it worth it?
+	 * </p>
+	 * <p>
+	 * And then if we abuse the fact that interned user ids have an interned id, one
+	 * could check equivalence of post-interned user ids as {@code obj1.getId() == obj2.getId()},
+	 * but once again, is it worth it?  Just call {@link #equals(java.lang.Object)}.
+	 * </p>
 	 *
 	 * @see  String#intern()
 	 */

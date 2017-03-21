@@ -127,7 +127,7 @@ final public class PostgresUser extends CachedObjectPostgresUserIdKey<PostgresUs
 	}
 
 	public static List<PasswordChecker.Result> checkPassword(PostgresUserId username, String password) throws IOException {
-		return PasswordChecker.checkPassword(username.getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
+		return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
 	}
 
 	/*public String checkPasswordDescribe(String password) {
@@ -186,7 +186,7 @@ final public class PostgresUser extends CachedObjectPostgresUserIdKey<PostgresUs
 	}
 
 	public Username getUsername() throws SQLException, IOException {
-		Username username=table.connector.getUsernames().get(this.pkey.getUserId());
+		Username username=table.connector.getUsernames().get(this.pkey);
 		if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
 		return username;
 	}

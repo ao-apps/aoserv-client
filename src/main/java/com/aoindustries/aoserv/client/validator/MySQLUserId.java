@@ -23,17 +23,12 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.MySQLServer;
-import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.util.Internable;
+import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
 import com.aoindustries.validation.ValidationResult;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
-import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -51,15 +46,10 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class MySQLUserId implements
-	Comparable<MySQLUserId>,
-	Serializable,
-	ObjectInputValidation,
-	DtoFactory<com.aoindustries.aoserv.client.dto.MySQLUserId>,
-	Internable<MySQLUserId>
+final public class MySQLUserId extends UserId implements
+	FastExternalizable,
+	ObjectInputValidation
 {
-
-	private static final long serialVersionUID = -2153769675565702888L;
 
 	/**
 	 * The maximum length of a MySQL username.
@@ -108,70 +98,21 @@ final public class MySQLUserId implements
 		return new MySQLUserId(id);
 	}
 
-	final private String id;
-
 	private MySQLUserId(String id) throws ValidationException {
-		this.id = id;
-		validate();
+		super(id);
 	}
 
-	private void validate() throws ValidationException {
+	@Override
+	void validate() throws ValidationException {
 		ValidationResult result = validate(id);
 		if(!result.isValid()) throw new ValidationException(result);
 	}
 
 	/**
-	 * Perform same validation as constructor on readObject.
-	 */
-	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-		ois.defaultReadObject();
-		validateObject();
-	}
-
-	@Override
-	public void validateObject() throws InvalidObjectException {
-		try {
-			validate();
-		} catch(ValidationException err) {
-			InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-			newErr.initCause(err);
-			throw newErr;
-		}
-	}
-
-	@Override
-	public boolean equals(Object O) {
-		return
-			O!=null
-			&& O instanceof MySQLUserId
-			&& id.equals(((MySQLUserId)O).id)
-		;
-	}
-
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
-
-	@Override
-	public int compareTo(MySQLUserId other) {
-		return this==other ? 0 : id.compareTo(other.id);
-	}
-
-	@Override
-	public String toString() {
-		return id;
-	}
-
-	/**
-	 * Interns this id much in the same fashion as <code>String.intern()</code>.
-	 *
-	 * @see  String#intern()
+	 * {@inheritDoc}
 	 */
 	@Override
 	public MySQLUserId intern() {
-		// Interning implies interning the eqvilalent UserId
-		getUserId().intern();
 		try {
 			MySQLUserId existing = interned.get(id);
 			if(existing==null) {
@@ -192,14 +133,15 @@ final public class MySQLUserId implements
 		return new com.aoindustries.aoserv.client.dto.MySQLUserId(id);
 	}
 
-	/**
-	 * A MySQLUserId is always a valid UserId.
-	 */
-	public UserId getUserId() {
-		try {
-			return UserId.valueOf(id);
-		} catch(ValidationException err) {
-			throw new AssertionError(err.getMessage());
-		}
+	// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+	private static final long serialVersionUID = 2L;
+
+	public MySQLUserId() {
 	}
+
+	@Override
+	public long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+	// </editor-fold>
 }
