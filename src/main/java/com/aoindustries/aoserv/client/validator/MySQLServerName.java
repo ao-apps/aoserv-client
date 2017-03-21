@@ -91,7 +91,11 @@ final public class MySQLServerName implements
 
 	private static final ConcurrentMap<String,MySQLServerName> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param name  when {@code null}, returns {@code null}
+	 */
 	public static MySQLServerName valueOf(String name) throws ValidationException {
+		if(name == null) return null;
 		//MySQLServerName existing = interned.get(name);
 		//return existing!=null ? existing : new MySQLServerName(name);
 		return new MySQLServerName(name);

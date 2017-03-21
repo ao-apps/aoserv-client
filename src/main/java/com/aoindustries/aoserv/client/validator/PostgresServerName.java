@@ -91,7 +91,11 @@ final public class PostgresServerName implements
 
 	private static final ConcurrentMap<String,PostgresServerName> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param name  when {@code null}, returns {@code null}
+	 */
 	public static PostgresServerName valueOf(String name) throws ValidationException {
+		if(name == null) return null;
 		//PostgresServerName existing = interned.get(name);
 		//return existing!=null ? existing : new PostgresServerName(name);
 		return new PostgresServerName(name);

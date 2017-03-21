@@ -98,7 +98,11 @@ final public class PostgresDatabaseName implements
 
 	private static final ConcurrentMap<String,PostgresDatabaseName> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param name  when {@code null}, returns {@code null}
+	 */
 	public static PostgresDatabaseName valueOf(String name) throws ValidationException {
+		if(name == null) return null;
 		//PostgresDatabaseName existing = interned.get(name);
 		//return existing!=null ? existing : new PostgresDatabaseName(name);
 		return new PostgresDatabaseName(name);

@@ -101,8 +101,11 @@ final public class Gecos implements
 
 	private static final ConcurrentMap<String,Gecos> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param value  when {@code null}, returns {@code null}
+	 */
 	public static Gecos valueOf(String value) throws ValidationException {
-		if(value==null) return null;
+		if(value == null) return null;
 		//Gecos existing = interned.get(value);
 		//return existing!=null ? existing : new Gecos(value);
 		return new Gecos(value);
