@@ -101,7 +101,11 @@ final public class GroupId implements
 
 	private static final ConcurrentMap<String,GroupId> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param id  when {@code null}, returns {@code null}
+	 */
 	public static GroupId valueOf(String id) throws ValidationException {
+		if(id == null) return null;
 		//GroupId existing = interned.get(id);
 		//return existing!=null ? existing : new GroupId(id);
 		return new GroupId(id);

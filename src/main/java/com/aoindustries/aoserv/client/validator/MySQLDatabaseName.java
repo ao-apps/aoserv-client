@@ -98,7 +98,11 @@ final public class MySQLDatabaseName implements
 
 	private static final ConcurrentMap<String,MySQLDatabaseName> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param name  when {@code null}, returns {@code null}
+	 */
 	public static MySQLDatabaseName valueOf(String name) throws ValidationException {
+		if(name == null) return null;
 		//MySQLDatabaseName existing = interned.get(name);
 		//return existing!=null ? existing : new MySQLDatabaseName(name);
 		return new MySQLDatabaseName(name);

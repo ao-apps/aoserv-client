@@ -97,7 +97,11 @@ final public class MySQLUserId implements
 
 	private static final ConcurrentMap<String,MySQLUserId> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param id  when {@code null}, returns {@code null}
+	 */
 	public static MySQLUserId valueOf(String id) throws ValidationException {
+		if(id == null) return null;
 		//MySQLUserId existing = interned.get(id);
 		//return existing!=null ? existing : new MySQLUserId(id);
 		return new MySQLUserId(id);

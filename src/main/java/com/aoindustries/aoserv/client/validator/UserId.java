@@ -120,10 +120,10 @@ final public class UserId implements
 	private static final ConcurrentMap<String,UserId> interned = new ConcurrentHashMap<>();
 
 	/**
-	 * If id is null, returns null.
+	 * @param id  when {@code null}, returns {@code null}
 	 */
 	public static UserId valueOf(String id) throws ValidationException {
-		if(id==null) return null;
+		if(id == null) return null;
 		//UserId existing = interned.get(id);
 		//return existing!=null ? existing : new UserId(id);
 		return new UserId(id);

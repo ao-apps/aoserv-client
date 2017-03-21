@@ -91,7 +91,11 @@ final public class MySQLTableName implements
 		return ValidResult.getInstance();
 	}
 
+	/**
+	 * @param name  when {@code null}, returns {@code null}
+	 */
 	public static MySQLTableName valueOf(String name) throws ValidationException {
+		if(name == null) return null;
 		return new MySQLTableName(name);
 	}
 

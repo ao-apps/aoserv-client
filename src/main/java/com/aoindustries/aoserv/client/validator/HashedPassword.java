@@ -99,8 +99,12 @@ final public class HashedPassword implements
 		}
 	}
 
+	/**
+	 * @param hashedPassword  when {@code null}, returns {@code null}
+	 */
 	public static HashedPassword valueOf(String hashedPassword) throws ValidationException {
-		return hashedPassword==null ? null : new HashedPassword(hashedPassword);
+		if(hashedPassword == null) return null;
+		return new HashedPassword(hashedPassword);
 	}
 
 	final private String hashedPassword;

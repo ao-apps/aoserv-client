@@ -102,7 +102,11 @@ final public class PostgresUserId implements
 
 	private static final ConcurrentMap<String,PostgresUserId> interned = new ConcurrentHashMap<>();
 
+	/**
+	 * @param id  when {@code null}, returns {@code null}
+	 */
 	public static PostgresUserId valueOf(String id) throws ValidationException {
+		if(id == null) return null;
 		//PostgresUserId existing = interned.get(id);
 		//return existing!=null ? existing : new PostgresUserId(id);
 		return new PostgresUserId(id);
