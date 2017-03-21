@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import com.aoindustries.net.dto.InetAddress;
+import com.aoindustries.net.dto.HostAddress;
 
 /**
  * @author  AO Industries, Inc.
@@ -31,7 +31,7 @@ public class AOServerDaemonHost extends AOServObject {
 
 	private int pkey;
 	private int aoServer;
-	private InetAddress host;
+	private HostAddress host;
 
 	public AOServerDaemonHost() {
 	}
@@ -39,7 +39,7 @@ public class AOServerDaemonHost extends AOServObject {
 	public AOServerDaemonHost(
 		int pkey,
 		int aoServer,
-		InetAddress host
+		HostAddress host
 	) {
 		this.pkey = pkey;
 		this.aoServer = aoServer;
@@ -62,11 +62,11 @@ public class AOServerDaemonHost extends AOServObject {
 		this.aoServer = aoServer;
 	}
 
-	public InetAddress getHost() {
+	public HostAddress getHost() {
 		return host;
 	}
 
-	public void setHost(InetAddress host) {
+	public void setHost(HostAddress host) {
 		this.host = host;
 	}
 }
