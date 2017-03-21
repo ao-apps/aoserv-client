@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2010-2011, 2016  AO Industries, Inc.
+ * Copyright (C) 2010-2011, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,22 +25,12 @@ package com.aoindustries.aoserv.client.dto;
 /**
  * @author  AO Industries, Inc.
  */
-public class MySQLUserId {
-
-	private String id;
+public class MySQLUserId extends UserId {
 
 	public MySQLUserId() {
 	}
 
 	public MySQLUserId(String id) {
-		this.id = id;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+		super(id);
 	}
 }

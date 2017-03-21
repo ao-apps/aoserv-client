@@ -245,7 +245,7 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 	}
 
 	public static List<PasswordChecker.Result> checkPassword(MySQLUserId username, String password) throws IOException {
-		return PasswordChecker.checkPassword(username.getUserId(), password, PasswordChecker.PasswordStrength.STRICT);
+		return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
 	}
 
 	/*public String checkPasswordDescribe(String password) {
@@ -330,7 +330,7 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 	}
 
 	public Username getUsername() throws SQLException, IOException {
-		Username obj=table.connector.getUsernames().get(pkey.getUserId());
+		Username obj=table.connector.getUsernames().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
 		return obj;
 	}

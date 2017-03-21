@@ -599,7 +599,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case MYSQL_USERNAME:
 					{
 						switch(castToType.getNum()) {
-							case USERNAME: return ((MySQLUserId)value).getUserId();
+							case USERNAME: return value;
 						}
 					}
 					break;
@@ -619,7 +619,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case POSTGRES_USERNAME:
 					{
 						switch(castToType.getNum()) {
-							case USERNAME: return ((PostgresUserId)value).getUserId();
+							case USERNAME: return value;
 						}
 					}
 					break;

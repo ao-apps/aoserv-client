@@ -23,17 +23,12 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.aoserv.client.PostgresServer;
-import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.util.Internable;
+import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
 import com.aoindustries.validation.ValidationResult;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
-import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -51,15 +46,10 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author  AO Industries, Inc.
  */
-final public class PostgresUserId implements
-	Comparable<PostgresUserId>,
-	Serializable,
-	ObjectInputValidation,
-	DtoFactory<com.aoindustries.aoserv.client.dto.PostgresUserId>,
-	Internable<PostgresUserId>
+final public class PostgresUserId extends UserId implements
+	FastExternalizable,
+	ObjectInputValidation
 {
-
-	private static final long serialVersionUID = -6813817717836611580L;
 
 	/**
 	 * The maximum length of a PostgreSQL username.
@@ -113,70 +103,21 @@ final public class PostgresUserId implements
 		return new PostgresUserId(id);
 	}
 
-	final private String id;
-
 	private PostgresUserId(String id) throws ValidationException {
-		this.id = id;
-		validate();
+		super(id);
 	}
 
-	private void validate() throws ValidationException {
+	@Override
+	void validate() throws ValidationException {
 		ValidationResult result = validate(id);
 		if(!result.isValid()) throw new ValidationException(result);
 	}
 
 	/**
-	 * Perform same validation as constructor on readObject.
-	 */
-	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-		ois.defaultReadObject();
-		validateObject();
-	}
-
-	@Override
-	public void validateObject() throws InvalidObjectException {
-		try {
-			validate();
-		} catch(ValidationException err) {
-			InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
-			newErr.initCause(err);
-			throw newErr;
-		}
-	}
-
-	@Override
-	public boolean equals(Object O) {
-		return
-			O!=null
-			&& O instanceof PostgresUserId
-			&& id.equals(((PostgresUserId)O).id)
-		;
-	}
-
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
-
-	@Override
-	public int compareTo(PostgresUserId other) {
-		return this==other ? 0 : id.compareTo(other.id);
-	}
-
-	@Override
-	public String toString() {
-		return id;
-	}
-
-	/**
-	 * Interns this id much in the same fashion as <code>String.intern()</code>.
-	 *
-	 * @see  String#intern()
+	 * {@inheritDoc}
 	 */
 	@Override
 	public PostgresUserId intern() {
-		// Interning implies interning the eqvilalent UserId
-		getUserId().intern();
 		try {
 			PostgresUserId existing = interned.get(id);
 			if(existing==null) {
@@ -197,14 +138,15 @@ final public class PostgresUserId implements
 		return new com.aoindustries.aoserv.client.dto.PostgresUserId(id);
 	}
 
-	/**
-	 * A PostgresUserId is always a valid UserId.
-	 */
-	public UserId getUserId() {
-		try {
-			return UserId.valueOf(id);
-		} catch(ValidationException err) {
-			throw new AssertionError(err.getMessage());
-		}
+	// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+	private static final long serialVersionUID = 2L;
+
+	public PostgresUserId() {
 	}
+
+	@Override
+	public long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+	// </editor-fold>
 }
