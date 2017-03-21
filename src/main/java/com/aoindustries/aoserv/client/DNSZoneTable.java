@@ -70,7 +70,7 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 			SchemaTable.TableID.DNS_ZONES,
 			packageObj.name,
 			zone,
-			ip.toString(),
+			ip,
 			ttl
 		);
 	}

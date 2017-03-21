@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-19T19:10:37-0500"
+		dateModified="2017-03-21T03:07:02-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -152,6 +152,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Changed <code>distro_files.group_name</code> to <code>group_id</code> type</li>
 							<li>Changed <code>failover_file_replications.quota_gid</code> to <code>linux_id</code> type</li>
 							<li>Changed <code>httpd_sites.group_name</code> to <code>group_id</code> type</li>
+							<li>Changed <code>httpd_tomcat_contexts.doc_base</code> to <code>path</code> type</li>
 							<li>Changed <code>linux_group_accounts.group_name</code> to <code>group_id</code> type</li>
 							<li>Changed <code>linux_groups.name</code> to <code>group_id</code> type</li>
 							<li>Changed <code>linux_server_groups.name</code> to <code>group_id</code> type</li>
@@ -207,6 +208,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<!-- TODO: Remove reserved words tables -->
+					<!-- TODO: net_devices.mac_address to mac_address type -->
 				</ul>
 			</changelog:release>
 		</c:if>

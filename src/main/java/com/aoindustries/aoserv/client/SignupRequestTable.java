@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.InetAddress;
@@ -90,7 +91,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
 		final String ba_state,
 		final CountryCode ba_country,
 		final String ba_zip,
-		final String ba_username,
+		final UserId ba_username,
 		final String billing_contact,
 		final String billing_email,
 		final boolean billing_use_monthly,
@@ -182,7 +183,7 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
 					out.writeBoolean(ba_state!=null); if(ba_state!=null) out.writeUTF(ba_state);
 					out.writeBoolean(ba_country!=null); if(ba_country!=null) out.writeUTF(ba_country.getCode());
 					out.writeBoolean(ba_zip!=null); if(ba_zip!=null) out.writeUTF(ba_zip);
-					out.writeUTF(ba_username);
+					out.writeUTF(ba_username.toString());
 					out.writeUTF(billing_contact);
 					out.writeUTF(billing_email);
 					out.writeBoolean(billing_use_monthly);

@@ -2513,8 +2513,8 @@ final public class AOServer
 	/**
 	 * Gets the status line of a SMTP server from the server from the provided source IP.
 	 */
-	public String checkSmtpBlacklist(InetAddress sourceIp, String connectIp) throws IOException, SQLException {
-		return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp.toString(), connectIp);
+	public String checkSmtpBlacklist(InetAddress sourceIp, InetAddress connectIp) throws IOException, SQLException {
+		return table.connector.requestStringQuery(false, AOServProtocol.CommandID.AO_SERVER_CHECK_SMTP_BLACKLIST, pkey, sourceIp, connectIp);
 	}
 
 	/**
