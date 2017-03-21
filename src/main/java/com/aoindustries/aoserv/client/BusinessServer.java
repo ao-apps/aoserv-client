@@ -228,7 +228,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 					if(ao!=null) {
 						// email_pipes
 						for(EmailPipe ep : pk.getEmailPipes()) {
-							if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by email pipe '"+ep.getPath()+"' on "+ao.getHostname(), ep));
+							if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by email pipe '"+ep.getCommand()+"' on "+ao.getHostname(), ep));
 						}
 
 						// httpd_sites

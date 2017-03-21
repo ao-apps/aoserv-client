@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -129,7 +129,7 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 
 	@Override
 	String toStringImpl() throws SQLException, IOException {
-		return getEmailAddress().toStringImpl()+"->"+getEmailPipe().getPath();
+		return getEmailAddress().toStringImpl()+"->"+getEmailPipe().getCommand();
 	}
 
 	@Override

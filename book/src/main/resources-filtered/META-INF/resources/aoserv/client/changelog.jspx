@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-21T04:49:15-0500"
+		dateModified="2017-03-21T12:19:39-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -151,6 +151,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<ol>
 							<li>Changed <code>ao_server_daemon_hosts.host</code> to <code>hostname</code> type</li>
 							<li>Changed <code>distro_files.group_name</code> to <code>group_id</code> type</li>
+							<li>Changed <code>email_pipes.path</code> to <code>string</code> type</li>
+							<li>Renamed <code>email_pipes.path</code> to <code>command</code></li>
 							<li>Changed <code>failover_file_replications.quota_gid</code> to <code>linux_id</code> type</li>
 							<li>Changed <code>httpd_sites.group_name</code> to <code>group_id</code> type</li>
 							<li>Changed <code>httpd_tomcat_contexts.doc_base</code> to <code>path</code> type</li>
