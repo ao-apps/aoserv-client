@@ -692,11 +692,6 @@ abstract public class AOServConnector {
 		return mysqlDBUsers;
 	}
 
-	private final MySQLReservedWordTable mysqlReservedWords;
-	public MySQLReservedWordTable getMysqlReservedWords() {
-		return mysqlReservedWords;
-	}
-
 	private final MySQLServerUserTable mysqlServerUsers;
 	public MySQLServerUserTable getMysqlServerUsers() {
 		return mysqlServerUsers;
@@ -784,11 +779,6 @@ abstract public class AOServConnector {
 	private final PostgresEncodingTable postgresEncodings;
 	public PostgresEncodingTable getPostgresEncodings() {
 		return postgresEncodings;
-	}
-
-	private final PostgresReservedWordTable postgresReservedWords;
-	public PostgresReservedWordTable getPostgresReservedWords() {
-		return postgresReservedWords;
 	}
 
 	private final PostgresServerUserTable postgresServerUsers;
@@ -1125,7 +1115,6 @@ abstract public class AOServConnector {
 		newTables.add(monthlyCharges=new MonthlyChargeTable(this));
 		newTables.add(mysqlDatabases=new MySQLDatabaseTable(this));
 		newTables.add(mysqlDBUsers=new MySQLDBUserTable(this));
-		newTables.add(mysqlReservedWords=new MySQLReservedWordTable(this));
 		newTables.add(mysqlServerUsers=new MySQLServerUserTable(this));
 		newTables.add(mysqlServers=new MySQLServerTable(this));
 		newTables.add(mysqlUsers=new MySQLUserTable(this));
@@ -1145,7 +1134,6 @@ abstract public class AOServConnector {
 		newTables.add(physicalServers=new PhysicalServerTable(this));
 		newTables.add(postgresDatabases=new PostgresDatabaseTable(this));
 		newTables.add(postgresEncodings=new PostgresEncodingTable(this));
-		newTables.add(postgresReservedWords=new PostgresReservedWordTable(this));
 		newTables.add(postgresServerUsers=new PostgresServerUserTable(this));
 		newTables.add(postgresServers=new PostgresServerTable(this));
 		newTables.add(postgresUsers=new PostgresUserTable(this));

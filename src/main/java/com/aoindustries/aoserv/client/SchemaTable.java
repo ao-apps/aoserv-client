@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -149,7 +149,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		MONTHLY_CHARGES,
 		MYSQL_DATABASES,
 		MYSQL_DB_USERS,
-		MYSQL_RESERVED_WORDS,
 		MYSQL_SERVER_USERS,
 		MYSQL_SERVERS,
 		MYSQL_USERS,
@@ -169,7 +168,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		PHYSICAL_SERVERS,
 		POSTGRES_DATABASES,
 		POSTGRES_ENCODINGS,
-		POSTGRES_RESERVED_WORDS,
 		POSTGRES_SERVER_USERS,
 		POSTGRES_SERVERS,
 		POSTGRES_USERS,
