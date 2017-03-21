@@ -67,7 +67,7 @@ final public class PostgresUserId implements
 	public static final int MAX_LENGTH = 31;
 
 	/**
-	 * Validates a user id.
+	 * Validates a PostgreSQL user id.
 	 */
 	public static ValidationResult validate(String id) {
 		if(id==null) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.isNull");
@@ -97,6 +97,7 @@ final public class PostgresUserId implements
 			|| id.equals("all")
 			|| PostgresServer.ReservedWord.isReservedWord(id)
 		) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.reservedWord");
+		assert UserId.validate(id).isValid() : "A PostgresUserId is always a valid UserId.";
 		return ValidResult.getInstance();
 	}
 
