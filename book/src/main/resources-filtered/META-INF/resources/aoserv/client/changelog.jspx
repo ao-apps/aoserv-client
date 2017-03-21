@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-21T12:44:47-0500"
+		dateModified="2017-03-21T13:21:22-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -163,6 +163,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Changed <code>linux_server_groups.gid</code> to <code>linux_id</code> type</li>
 							<li>Changed <code>master_hosts.host</code> to <code>hostname</code> type</li>
 							<li>Changed <code>mysql_databases.name</code> to <code>mysql_database_name</code> type</li>
+							<li>Removed <code>mysql_reserved_words</code> table</li>
 							<li>Changed <code>mysql_servers.name</code> to <code>mysql_server_name</code> type</li>
 							<li>Changed <code>mysql_server_users.username</code> to <code>mysql_username</code> type</li>
 							<li>Changed <code>mysql_users.username</code> to <code>mysql_username</code> type</li>
@@ -171,6 +172,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Changed <code>net_devices.mac_address</code> to <code>mac_address</code> type</li>
 							<li>Changed <code>net_tcp_redirects.destination_port</code> to <code>net_port</code> type</li>
 							<li>Changed <code>postgres_databases.name</code> to <code>postgres_database_name</code> type</li>
+							<li>Removed <code>postgres_reserved_words</code> table</li>
 							<li>Changed <code>postgres_servers.name</code> to <code>postgres_server_name</code> type</li>
 							<li>Changed <code>postgres_server_users.username</code> to <code>postgres_username</code> type</li>
 							<li>Changed <code>postgres_users.username</code> to <code>postgres_username</code> type</li>
@@ -212,7 +214,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Removed <code>check_package_name</code> command.</li>
 						</ol>
 					</li>
-					<!-- TODO: Remove reserved words tables -->
 				</ul>
 			</changelog:release>
 		</c:if>
