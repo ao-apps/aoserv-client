@@ -26,6 +26,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.MacAddress;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -56,7 +57,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	private InetAddress gateway;
 	private InetAddress network;
 	private InetAddress broadcast;
-	private String mac_address;
+	private MacAddress mac_address;
 	private long max_bit_rate;
 	private long monitoring_bit_rate_low;
 	private long monitoring_bit_rate_medium;
@@ -120,7 +121,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 		return broadcast;
 	}
 
-	public String getMacAddress() {
+	public MacAddress getMacAddress() {
 		return mac_address;
 	}
 
@@ -206,7 +207,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 			gateway=InetAddress.valueOf(result.getString(pos++));
 			network=InetAddress.valueOf(result.getString(pos++));
 			broadcast=InetAddress.valueOf(result.getString(pos++));
-			mac_address=result.getString(pos++);
+			mac_address = MacAddress.valueOf(result.getString(pos++));
 			max_bit_rate=result.getLong(pos++);
 			if(result.wasNull()) max_bit_rate=-1;
 			monitoring_bit_rate_low = result.getLong(pos++);
@@ -234,7 +235,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 			gateway=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
 			network=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
 			broadcast=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
-			mac_address=in.readNullUTF();
+			mac_address = MacAddress.valueOf(in.readNullUTF());
 			max_bit_rate=in.readLong();
 			monitoring_bit_rate_low = in.readLong();
 			monitoring_bit_rate_medium = in.readLong();
@@ -265,7 +266,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 			out.writeNullUTF(ObjectUtils.toString(broadcast));
 		}
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)>=0) {
-			out.writeNullUTF(mac_address);
+			out.writeNullUTF(ObjectUtils.toString(mac_address));
 		}
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) {
 			out.writeLong(max_bit_rate);

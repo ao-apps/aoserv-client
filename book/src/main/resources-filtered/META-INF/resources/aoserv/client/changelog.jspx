@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-21T12:19:39-0500"
+		dateModified="2017-03-21T12:44:47-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -168,6 +168,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Changed <code>mysql_users.username</code> to <code>mysql_username</code> type</li>
 							<li>Changed <code>net_binds.port</code> to <code>net_port</code> type</li>
 							<li>Removed <code>net_binds.net_protocol</code> column</li>
+							<li>Changed <code>net_devices.mac_address</code> to <code>mac_address</code> type</li>
 							<li>Changed <code>net_tcp_redirects.destination_port</code> to <code>net_port</code> type</li>
 							<li>Changed <code>postgres_databases.name</code> to <code>postgres_database_name</code> type</li>
 							<li>Changed <code>postgres_servers.name</code> to <code>postgres_server_name</code> type</li>
@@ -212,7 +213,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<!-- TODO: Remove reserved words tables -->
-					<!-- TODO: net_devices.mac_address to mac_address type -->
 				</ul>
 			</changelog:release>
 		</c:if>
