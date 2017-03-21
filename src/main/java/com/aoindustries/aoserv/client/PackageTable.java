@@ -59,7 +59,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 			AOServProtocol.CommandID.ADD,
 			SchemaTable.TableID.PACKAGES,
 			name,
-			business.pkey.toString(),
+			business.pkey,
 			packageDefinition.pkey
 		);
 	}
@@ -86,7 +86,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 		return getUniqueRow(Package.COLUMN_NAME, name);
 	}
 
-	public AccountingCode generatePackageName(String template) throws IOException, SQLException {
+	public AccountingCode generatePackageName(AccountingCode template) throws IOException, SQLException {
 		try {
 			return AccountingCode.valueOf(connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_PACKAGE_NAME, template));
 		} catch(ValidationException e) {
@@ -148,7 +148,11 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_PACKAGE_NAME)) {
 			if(AOSH.checkParamCount(AOSHCommand.GENERATE_PACKAGE_NAME, args, 1, err)) {
-				out.println(connector.getSimpleAOClient().generatePackageName(args[1]));
+				out.println(
+					connector.getSimpleAOClient().generatePackageName(
+						AOSH.parseAccountingCode(args[1], "template")
+					)
+				);
 				out.flush();
 			}
 			return true;

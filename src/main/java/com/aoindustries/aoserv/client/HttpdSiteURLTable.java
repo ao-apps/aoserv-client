@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -53,8 +54,14 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
 		return defaultOrderBy;
 	}
 
-	int addHttpdSiteURL(HttpdSiteBind hsb, String hostname) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_URLS, hsb.pkey, hostname);
+	int addHttpdSiteURL(HttpdSiteBind hsb, DomainName hostname) throws IOException, SQLException {
+		return connector.requestIntQueryIL(
+			true,
+			AOServProtocol.CommandID.ADD,
+			SchemaTable.TableID.HTTPD_SITE_URLS,
+			hsb.pkey,
+			hostname
+		);
 	}
 
 	@Override
@@ -99,7 +106,12 @@ final public class HttpdSiteURLTable extends CachedTableIntegerKey<HttpdSiteURL>
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_SITE_URL)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_SITE_URL, args, 2, err)) {
-				out.println(connector.getSimpleAOClient().addHttpdSiteURL(AOSH.parseInt(args[1], "httpd_site_bind_pkey"), args[2]));
+				out.println(
+					connector.getSimpleAOClient().addHttpdSiteURL(
+						AOSH.parseInt(args[1], "httpd_site_bind_pkey"),
+						AOSH.parseDomainName(args[2], "hostname")
+					)
+				);
 				out.flush();
 			}
 			return true;

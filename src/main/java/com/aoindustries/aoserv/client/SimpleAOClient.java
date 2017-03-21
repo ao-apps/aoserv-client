@@ -1120,7 +1120,7 @@ final public class SimpleAOClient {
 	 */
 	public int addHttpdSiteURL(
 		int hsbPKey,
-		String hostname
+		DomainName hostname
 	) throws IllegalArgumentException, IOException, SQLException {
 		HttpdSiteBind hsb=connector.getHttpdSiteBinds().get(hsbPKey);
 		if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+hsbPKey);
@@ -1141,7 +1141,7 @@ final public class SimpleAOClient {
 		String className,
 		boolean cookies,
 		boolean crossContext,
-		String docBase,
+		UnixPath docBase,
 		boolean override,
 		String path,
 		boolean privileged,
@@ -1149,7 +1149,7 @@ final public class SimpleAOClient {
 		boolean useNaming,
 		String wrapperClass,
 		int debug,
-		String workDir
+		UnixPath workDir
 	) throws IllegalArgumentException, IOException, SQLException {
 		HttpdSite hs=getHttpdSite(aoServer, siteName);
 		HttpdTomcatSite hts=hs.getHttpdTomcatSite();
@@ -1166,7 +1166,7 @@ final public class SimpleAOClient {
 			useNaming,
 			wrapperClass==null || (wrapperClass=wrapperClass.trim()).length()==0?null:wrapperClass,
 			debug,
-			workDir==null || (workDir=workDir.trim()).length()==0?null:workDir
+			workDir
 		);
 	}
 
@@ -4076,7 +4076,7 @@ final public class SimpleAOClient {
 	 * @see  Package
 	 */
 	public AccountingCode generatePackageName(
-		String template
+		AccountingCode template
 	) throws IOException, SQLException {
 		return connector.getPackages().generatePackageName(template);
 	}
@@ -6601,7 +6601,7 @@ final public class SimpleAOClient {
 		String className,
 		boolean cookies,
 		boolean crossContext,
-		String docBase,
+		UnixPath docBase,
 		boolean override,
 		String newPath,
 		boolean privileged,
@@ -6609,7 +6609,7 @@ final public class SimpleAOClient {
 		boolean useNaming,
 		String wrapperClass,
 		int debug,
-		String workDir
+		UnixPath workDir
 	) throws IllegalArgumentException, IOException, SQLException {
 		HttpdSite hs=getHttpdSite(aoServer, siteName);
 		HttpdTomcatSite hts=hs.getHttpdTomcatSite();

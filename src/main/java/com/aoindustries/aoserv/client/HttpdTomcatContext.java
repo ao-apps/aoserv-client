@@ -74,7 +74,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 	private String class_name;
 	private boolean cookies;
 	private boolean cross_context;
-	private String doc_base;
+	private UnixPath doc_base;
 	private boolean override;
 	String path;
 	private boolean privileged;
@@ -159,7 +159,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		return cross_context;
 	}
 
-	public String getDocBase() {
+	public UnixPath getDocBase() {
 		return doc_base;
 	}
 
@@ -224,7 +224,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 			class_name=result.getString(3);
 			cookies=result.getBoolean(4);
 			cross_context=result.getBoolean(5);
-			doc_base=result.getString(6);
+			doc_base = UnixPath.valueOf(result.getString(6));
 			override=result.getBoolean(7);
 			path=result.getString(8);
 			privileged=result.getBoolean(9);
@@ -238,30 +238,36 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		}
 	}
 
-	/**
-	 * TODO: Self-validating type
-	 */
-	public static boolean isValidDocBase(String docBase) {
+	public static boolean isValidDocBase(UnixPath docBase) {
+		String docBaseStr = docBase.toString();
 		return
+			/* UnixPath checks these:
 			docBase.length()>1
 			&& docBase.charAt(0)=='/'
 			&& !docBase.contains("//")
 			&& !docBase.contains("..")
-			&& docBase.indexOf('"')==-1
-			&& docBase.indexOf('\\')==-1
-			&& docBase.indexOf('\n')==-1
-			&& docBase.indexOf('\r')==-1
+			*/
+			docBaseStr.indexOf('"')==-1
+			&& docBaseStr.indexOf('\\')==-1
+			&& docBaseStr.indexOf('\n')==-1
+			&& docBaseStr.indexOf('\r')==-1
 		;
 	}
 
 	public static boolean isValidPath(String path) {
-		return path.length()==0 || isValidDocBase(path);
+		try {
+			return
+				path.length() == 0
+				|| (
+					UnixPath.validate(path).isValid()
+					&& isValidDocBase(UnixPath.valueOf(path))
+				);
+		} catch(ValidationException e) {
+			throw new AssertionError("Already validated", e);
+		}
 	}
 
-	/**
-	 * TODO: Self-validating type
-	 */
-	public static boolean isValidWorkDir(String workDir) {
+	public static boolean isValidWorkDir(UnixPath workDir) {
 		return workDir==null || isValidDocBase(workDir);
 	}
 
@@ -273,7 +279,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 			class_name=in.readNullUTF();
 			cookies=in.readBoolean();
 			cross_context=in.readBoolean();
-			doc_base=in.readUTF();
+			doc_base = UnixPath.valueOf(in.readUTF());
 			override=in.readBoolean();
 			path=in.readUTF();
 			privileged=in.readBoolean();
@@ -291,7 +297,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		final String className,
 		final boolean cookies,
 		final boolean crossContext,
-		final String docBase,
+		final UnixPath docBase,
 		final boolean override,
 		final String path,
 		final boolean privileged,
@@ -299,7 +305,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		final boolean useNaming,
 		final String wrapperClass,
 		final int debug,
-		final String workDir
+		final UnixPath workDir
 	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
@@ -313,7 +319,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 					out.writeNullUTF(className);
 					out.writeBoolean(cookies);
 					out.writeBoolean(crossContext);
-					out.writeUTF(docBase);
+					out.writeUTF(docBase.toString());
 					out.writeBoolean(override);
 					out.writeUTF(path);
 					out.writeBoolean(privileged);
@@ -321,7 +327,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 					out.writeBoolean(useNaming);
 					out.writeNullUTF(wrapperClass);
 					out.writeCompressedInt(debug);
-					out.writeNullUTF(workDir);
+					out.writeNullUTF(ObjectUtils.toString(workDir));
 				}
 
 				@Override
@@ -354,7 +360,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		out.writeNullUTF(class_name);
 		out.writeBoolean(cookies);
 		out.writeBoolean(cross_context);
-		out.writeUTF(doc_base);
+		out.writeUTF(doc_base.toString());
 		out.writeBoolean(override);
 		out.writeUTF(path);
 		out.writeBoolean(privileged);

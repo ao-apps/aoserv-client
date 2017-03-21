@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2002-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2002-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,9 +22,11 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.io.Reader;
@@ -57,7 +59,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 		final String className,
 		final boolean cookies,
 		final boolean crossContext,
-		final String docBase,
+		final UnixPath docBase,
 		final boolean override,
 		final String path,
 		final boolean privileged,
@@ -65,7 +67,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 		final boolean useNaming,
 		final String wrapperClass,
 		final int debug,
-		final String workDir
+		final UnixPath workDir
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
@@ -81,7 +83,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 					out.writeNullUTF(className);
 					out.writeBoolean(cookies);
 					out.writeBoolean(crossContext);
-					out.writeUTF(docBase);
+					out.writeUTF(docBase.toString());
 					out.writeBoolean(override);
 					out.writeUTF(path);
 					out.writeBoolean(privileged);
@@ -89,7 +91,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 					out.writeBoolean(useNaming);
 					out.writeNullUTF(wrapperClass);
 					out.writeCompressedInt(debug);
-					out.writeNullUTF(workDir);
+					out.writeNullUTF(ObjectUtils.toString(workDir));
 				}
 
 				@Override
@@ -150,7 +152,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 						args[3],
 						AOSH.parseBoolean(args[4], "use_cookies"),
 						AOSH.parseBoolean(args[5], "cross_context"),
-						args[6],
+						AOSH.parseUnixPath(args[6], "doc_base"),
 						AOSH.parseBoolean(args[7], "allow_override"),
 						args[8],
 						AOSH.parseBoolean(args[9], "is_privileged"),
@@ -158,7 +160,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 						AOSH.parseBoolean(args[11], "use_naming"),
 						args[12],
 						AOSH.parseInt(args[13], "debug_level"),
-						args[14]
+						args[14].isEmpty() ? null : AOSH.parseUnixPath(args[14], "work_dir")
 					)
 				);
 				out.flush();
@@ -178,7 +180,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 					args[4],
 					AOSH.parseBoolean(args[5], "use_cookies"),
 					AOSH.parseBoolean(args[6], "cross_context"),
-					args[7],
+					AOSH.parseUnixPath(args[7], "doc_base"),
 					AOSH.parseBoolean(args[8], "allow_override"),
 					args[9],
 					AOSH.parseBoolean(args[10], "is_privileged"),
@@ -186,7 +188,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 					AOSH.parseBoolean(args[12], "use_naming"),
 					args[13],
 					AOSH.parseInt(args[14], "debug_level"),
-					args[15]
+					args[15].isEmpty() ? null : AOSH.parseUnixPath(args[15], "work_dir")
 				);
 			}
 			return true;

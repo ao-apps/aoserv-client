@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.UnixPath;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -51,11 +52,22 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
 		String path,
 		boolean isRegularExpression,
 		String authName,
-		String authGroupFile,
-		String authUserFile,
+		UnixPath authGroupFile,
+		UnixPath authUserFile,
 		String require
 	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true, AOServProtocol.CommandID.ADD, SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS, hs.getPkey(), path, isRegularExpression, authName, authGroupFile, authUserFile, require);
+		return connector.requestIntQueryIL(
+			true,
+			AOServProtocol.CommandID.ADD,
+			SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS,
+			hs.getPkey(),
+			path,
+			isRegularExpression,
+			authName,
+			authGroupFile==null ? "" : authGroupFile.toString(),
+			authUserFile==null ? "" : authUserFile.toString(),
+			require
+		);
 	}
 
 	@Override

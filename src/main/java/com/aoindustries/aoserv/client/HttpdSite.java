@@ -95,8 +95,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		String path,
 		boolean isRegularExpression,
 		String authName,
-		String authGroupFile,
-		String authUserFile,
+		UnixPath authGroupFile,
+		UnixPath authUserFile,
 		String require
 	) throws IOException, SQLException {
 		return table.connector.getHttpdSiteAuthenticatedLocationTable().addHttpdSiteAuthenticatedLocation(

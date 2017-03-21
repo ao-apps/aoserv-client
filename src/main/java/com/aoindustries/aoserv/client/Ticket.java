@@ -277,6 +277,9 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return ticketTypeObject;
 	}
 
+	/**
+	 * TODO: Email self-validating type
+	 */
 	public String getFromAddress() {
 		return from_address;
 	}

@@ -26,6 +26,7 @@ import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.DomainName;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -58,7 +59,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	private boolean isManual;
 	private boolean redirect_to_primary_hostname;
 
-	public int addHttpdSiteURL(String hostname) throws IOException, SQLException {
+	public int addHttpdSiteURL(DomainName hostname) throws IOException, SQLException {
 		return table.connector.getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
 	}
 

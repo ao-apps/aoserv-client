@@ -324,7 +324,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	 * Sets the hostname for this <code>IPAddress</code>.
 	 */
 	public void setHostname(DomainName hostname) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname.toString());
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_HOSTNAME, pkey, hostname);
 	}
 
 	/**
@@ -338,7 +338,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	}
 
 	public void setDHCPAddress(InetAddress ipAddress) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress.toString());
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
 	}
 
 	@Override
