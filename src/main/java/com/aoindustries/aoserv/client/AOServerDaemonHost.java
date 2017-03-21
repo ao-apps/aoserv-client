@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.HostAddress;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -50,7 +50,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 	static final String COLUMN_HOST_name = "host";
 
 	int aoServer;
-	private InetAddress host;
+	private HostAddress host;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -62,7 +62,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 		}
 	}
 
-	public InetAddress getHost() {
+	public HostAddress getHost() {
 		return host;
 	}
 
@@ -80,9 +80,9 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey=result.getInt(1);
-			aoServer=result.getInt(2);
-			host=InetAddress.valueOf(result.getString(3));
+			pkey = result.getInt(1);
+			aoServer = result.getInt(2);
+			host = HostAddress.valueOf(result.getString(3));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -91,9 +91,9 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
-			aoServer=in.readCompressedInt();
-			host=InetAddress.valueOf(in.readUTF().intern());
+			pkey = in.readCompressedInt();
+			aoServer = in.readCompressedInt();
+			host = HostAddress.valueOf(in.readUTF().intern());
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -101,7 +101,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 
 	@Override
 	String toStringImpl() {
-		return aoServer+"|"+host.toString();
+		return aoServer+"|"+host;
 	}
 
 	@Override

@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.HostAddress;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -47,7 +47,7 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 	static final String COLUMN_HOST_name = "host";
 
 	private UserId username;
-	private InetAddress host;
+	private HostAddress host;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -57,7 +57,7 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
-	public InetAddress getHost() {
+	public HostAddress getHost() {
 		return host;
 	}
 
@@ -77,7 +77,7 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 		try {
 			pkey=result.getInt(1);
 			username = UserId.valueOf(result.getString(2));
-			host=InetAddress.valueOf(result.getString(3));
+			host = HostAddress.valueOf(result.getString(3));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -86,9 +86,9 @@ final public class MasterHost extends CachedObjectIntegerKey<MasterHost> {
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
+			pkey = in.readCompressedInt();
 			username = UserId.valueOf(in.readUTF()).intern();
-			host=InetAddress.valueOf(in.readUTF()).intern();
+			host = HostAddress.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}

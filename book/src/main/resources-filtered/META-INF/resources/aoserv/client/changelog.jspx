@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-21T03:07:02-0500"
+		dateModified="2017-03-21T04:49:15-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -149,6 +149,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Changed column types to use new self-validating types:
 						<ol>
+							<li>Changed <code>ao_server_daemon_hosts.host</code> to <code>hostname</code> type</li>
 							<li>Changed <code>distro_files.group_name</code> to <code>group_id</code> type</li>
 							<li>Changed <code>failover_file_replications.quota_gid</code> to <code>linux_id</code> type</li>
 							<li>Changed <code>httpd_sites.group_name</code> to <code>group_id</code> type</li>
@@ -158,6 +159,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Changed <code>linux_server_groups.name</code> to <code>group_id</code> type</li>
 							<li>Changed <code>linux_server_accounts.uid</code> to <code>linux_id</code> type</li>
 							<li>Changed <code>linux_server_groups.gid</code> to <code>linux_id</code> type</li>
+							<li>Changed <code>master_hosts.host</code> to <code>hostname</code> type</li>
 							<li>Changed <code>mysql_databases.name</code> to <code>mysql_database_name</code> type</li>
 							<li>Changed <code>mysql_servers.name</code> to <code>mysql_server_name</code> type</li>
 							<li>Changed <code>mysql_server_users.username</code> to <code>mysql_username</code> type</li>
