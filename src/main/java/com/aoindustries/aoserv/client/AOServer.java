@@ -115,8 +115,8 @@ final public class AOServer
 		return table.connector.getEmailDomains().addEmailDomain(domain, this, packageObject);
 	}
 
-	public int addEmailPipe(UnixPath path, Package packageObject) throws IOException, SQLException {
-		return table.connector.getEmailPipes().addEmailPipe(this, path, packageObject);
+	public int addEmailPipe(String command, Package packageObject) throws IOException, SQLException {
+		return table.connector.getEmailPipes().addEmailPipe(this, command, packageObject);
 	}
 
 	public int addHttpdJBossSite(

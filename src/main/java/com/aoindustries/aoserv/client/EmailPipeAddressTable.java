@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,7 +44,7 @@ final public class EmailPipeAddressTable extends CachedTableIntegerKey<EmailPipe
 		new OrderBy(EmailPipeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
 		new OrderBy(EmailPipeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
 		new OrderBy(EmailPipeAddress.COLUMN_EMAIL_ADDRESS_name+'.'+EmailAddress.COLUMN_ADDRESS_name, ASCENDING),
-		new OrderBy(EmailPipeAddress.COLUMN_EMAIL_PIPE_name+'.'+EmailPipe.COLUMN_PATH_name, ASCENDING)
+		new OrderBy(EmailPipeAddress.COLUMN_EMAIL_PIPE_name+'.'+EmailPipe.COLUMN_COMMAND_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {

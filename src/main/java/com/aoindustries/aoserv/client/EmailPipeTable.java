@@ -22,7 +22,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -41,7 +40,7 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(EmailPipe.COLUMN_PATH_name, ASCENDING),
+		new OrderBy(EmailPipe.COLUMN_COMMAND_name, ASCENDING),
 		new OrderBy(EmailPipe.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
@@ -49,13 +48,13 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 		return defaultOrderBy;
 	}
 
-	int addEmailPipe(AOServer ao, UnixPath path, Package packageObject) throws IOException, SQLException {
+	int addEmailPipe(AOServer ao, String command, Package packageObject) throws IOException, SQLException {
 		int pkey=connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD,
 			SchemaTable.TableID.EMAIL_PIPES,
 			ao.pkey,
-			path,
+			command,
 			packageObject.name
 		);
 		return pkey;
@@ -86,7 +85,7 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_PIPE, args, 3, err)) {
 				int pkey=connector.getSimpleAOClient().addEmailPipe(
 					args[1],
-					AOSH.parseUnixPath(args[2], "path"),
+					args[2],
 					AOSH.parseAccountingCode(args[3], "package")
 				);
 				out.println(pkey);

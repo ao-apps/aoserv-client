@@ -872,7 +872,7 @@ final public class SimpleAOClient {
 	 * the process' standard input.
 	 *
 	 * @param  aoServer  the hostname of the server that the process exists on
-	 * @param  path  the name of the executable to launch
+	 * @param  command  the full command line of the program to launch
 	 * @param  packageName  the package that this <code>EmailPipe</code> belongs to
 	 *
 	 * @return  the pkey of the new pipe
@@ -888,12 +888,12 @@ final public class SimpleAOClient {
 	 */
 	public int addEmailPipe(
 		String aoServer,
-		UnixPath path,
+		String command,
 		AccountingCode packageName
 	) throws IllegalArgumentException, IOException, SQLException {
 		return connector.getEmailPipes().addEmailPipe(
 			getAOServer(aoServer),
-			path,
+			command,
 			getPackage(packageName)
 		);
 	}

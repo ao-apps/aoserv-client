@@ -23,7 +23,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -50,10 +49,10 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		COLUMN_PACKAGE=3
 	;
 	static final String COLUMN_AO_SERVER_name = "ao_server";
-	static final String COLUMN_PATH_name = "path";
+	static final String COLUMN_COMMAND_name = "command";
 
 	int ao_server;
-	private UnixPath path;
+	private String command;
 	AccountingCode packageName;
 	int disable_log;
 
@@ -88,7 +87,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_AO_SERVER: return ao_server;
-			case 2: return path;
+			case 2: return command;
 			case COLUMN_PACKAGE: return packageName;
 			case 4: return disable_log==-1?null:disable_log;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -114,8 +113,8 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		return packageObject;
 	}
 
-	public UnixPath getPath() {
-		return path;
+	public String getCommand() {
+		return command;
 	}
 
 	public AOServer getAOServer() throws SQLException, IOException {
@@ -134,7 +133,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		try {
 			pkey = result.getInt(1);
 			ao_server = result.getInt(2);
-			path = UnixPath.valueOf(result.getString(3));
+			command = result.getString(3);
 			packageName = AccountingCode.valueOf(result.getString(4));
 			disable_log=result.getInt(5);
 			if(result.wasNull()) disable_log=-1;
@@ -148,7 +147,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 		try {
 			pkey=in.readCompressedInt();
 			ao_server=in.readCompressedInt();
-			path = UnixPath.valueOf(in.readUTF());
+			command = in.readUTF();
 			packageName = AccountingCode.valueOf(in.readUTF()).intern();
 			disable_log=in.readCompressedInt();
 		} catch(ValidationException e) {
@@ -173,14 +172,14 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 
 	@Override
 	String toStringImpl() {
-		return ao_server+":"+path;
+		return ao_server+":"+command;
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
-		out.writeUTF(path.toString());
+		out.writeUTF(command);
 		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(disable_log);
 	}
