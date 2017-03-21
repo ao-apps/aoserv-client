@@ -67,7 +67,7 @@ final public class MySQLUserId implements
 	public static final int MAX_LENGTH = 31;
 
 	/**
-	 * Validates a user id.
+	 * Validates a MySQL user id.
 	 */
 	public static ValidationResult validate(String id) {
 		if(id==null) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.isNull");
@@ -92,6 +92,7 @@ final public class MySQLUserId implements
 			) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.illegalCharacter");
 		}
 		if(MySQLServer.ReservedWord.isReservedWord(id)) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.reservedWord");
+		assert UserId.validate(id).isValid() : "A MySQLUserId is always a valid UserId.";
 		return ValidResult.getInstance();
 	}
 
