@@ -172,7 +172,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	}
 
 	@Override
-	public List<? extends CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
 		// Everything using this address must be removable
