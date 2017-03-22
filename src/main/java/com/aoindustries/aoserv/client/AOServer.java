@@ -805,10 +805,10 @@ final public class AOServer
 
 		private final String protocol;
 		private final HostAddress host;
-		private final int port;
+		private final Port port;
 		private final long key;
 
-		public DaemonAccess(String protocol, HostAddress host, int port, long key) {
+		public DaemonAccess(String protocol, HostAddress host, Port port, long key) {
 			this.protocol = protocol;
 			this.host = host;
 			this.port = port;
@@ -823,7 +823,7 @@ final public class AOServer
 			return host;
 		}
 
-		public int getPort() {
+		public Port getPort() {
 			return port;
 		}
 
