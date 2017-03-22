@@ -29,6 +29,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.net.Port;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -301,7 +302,10 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 							daemonAccess = new AOServer.DaemonAccess(
 								in.readUTF(),
 								HostAddress.valueOf(in.readUTF()),
-								in.readCompressedInt(),
+								Port.valueOf(
+									in.readCompressedInt(),
+									com.aoindustries.net.Protocol.TCP
+								),
 								in.readLong()
 							);
 						} catch(ValidationException e) {
