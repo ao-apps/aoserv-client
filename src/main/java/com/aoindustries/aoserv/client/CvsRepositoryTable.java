@@ -128,15 +128,6 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 		return SchemaTable.TableID.CVS_REPOSITORIES;
 	}
 
-	private static final UnixPath VAR_CVS;
-	static {
-		try {
-			VAR_CVS = UnixPath.valueOf("/var/cvs").intern();
-		} catch(ValidationException e) {
-			throw new AssertionError("These hard-coded values are valid", e);
-		}
-	}
-
 	public SortedSet<UnixPath> getValidPrefixes() throws IOException, SQLException {
 		try {
 			SortedSet<UnixPath> prefixes=new TreeSet<>();
@@ -166,7 +157,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			}
 
 			// The global directory
-			prefixes.add(VAR_CVS);
+			prefixes.add(CvsRepository.DEFAULT_CVS_DIRECTORY);
 
 			return prefixes;
 		} catch(ValidationException e) {
