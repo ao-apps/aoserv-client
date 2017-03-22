@@ -264,8 +264,8 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<PostgresDatabase>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<PostgresDatabase>> reasons=new ArrayList<>();
 
 		PostgresServer ps=getPostgresServer();
 		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));

@@ -120,8 +120,8 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<LinuxGroupAccount>> getCannotRemoveReasons() {
+		List<CannotRemoveReason<LinuxGroupAccount>> reasons=new ArrayList<>();
 		if(is_primary) reasons.add(new CannotRemoveReason<>("Not allowed to drop a primary group", this));
 		return reasons;
 	}

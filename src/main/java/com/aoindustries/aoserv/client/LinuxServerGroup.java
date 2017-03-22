@@ -128,8 +128,8 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		AOServer ao=getAOServer();
 

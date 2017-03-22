@@ -88,7 +88,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 	private String require;
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 

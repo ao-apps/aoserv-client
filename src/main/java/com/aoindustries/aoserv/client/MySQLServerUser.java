@@ -245,8 +245,8 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<MySQLServerUser>> getCannotRemoveReasons() {
+		List<CannotRemoveReason<MySQLServerUser>> reasons=new ArrayList<>();
 		if(username.equals(MySQLUser.ROOT)) reasons.add(new CannotRemoveReason<>("Not allowed to remove the "+MySQLUser.ROOT+" MySQL user", this));
 		return reasons;
 	}

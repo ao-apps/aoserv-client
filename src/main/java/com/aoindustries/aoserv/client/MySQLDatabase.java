@@ -322,8 +322,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<MySQLDatabase>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<MySQLDatabase>> reasons=new ArrayList<>();
 		if(name.equals(MYSQL)) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+MYSQL, this));
 		if(name.equals(INFORMATION_SCHEMA)) {
 			String version = getMySQLServer().getVersion().getVersion();

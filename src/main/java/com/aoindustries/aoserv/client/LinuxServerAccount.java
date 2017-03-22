@@ -509,11 +509,11 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		LinuxId uidMin = getAOServer().getUidMin();
-		if(uid.compareTo(uidMin) < 0) reasons.add(new CannotRemoveReason<LinuxServerAccount>("Not allowed to remove accounts with UID less than " + uidMin));
+		if(uid.compareTo(uidMin) < 0) reasons.add(new CannotRemoveReason<>("Not allowed to remove accounts with UID less than " + uidMin, this));
 
 		AOServer ao=getAOServer();
 

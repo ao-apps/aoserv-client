@@ -173,8 +173,8 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		if(username.equals(PostgresUser.POSTGRES)) reasons.add(new CannotRemoveReason<>("Not allowed to remove the "+PostgresUser.POSTGRES+" PostgreSQL user", this));
 

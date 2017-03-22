@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2014, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -203,7 +203,7 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 

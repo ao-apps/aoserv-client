@@ -140,7 +140,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	transient private short expiration_year;
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 

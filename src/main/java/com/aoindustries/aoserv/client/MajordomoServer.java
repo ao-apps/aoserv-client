@@ -87,7 +87,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 

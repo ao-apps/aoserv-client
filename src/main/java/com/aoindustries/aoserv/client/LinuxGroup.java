@@ -181,8 +181,8 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		// Cannot be the primary group for any linux accounts
 		for(LinuxGroupAccount lga : table.connector.getLinuxGroupAccounts().getRows()) {

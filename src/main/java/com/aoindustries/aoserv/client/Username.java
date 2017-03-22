@@ -353,8 +353,8 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
 		LinuxAccount la=getLinuxAccount();
 		if(la!=null) reasons.add(new CannotRemoveReason<>("Used by Linux account: "+la.getUsername().getUsername(), la));

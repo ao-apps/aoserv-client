@@ -494,8 +494,8 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		AOServConnector conn=table.connector;
 

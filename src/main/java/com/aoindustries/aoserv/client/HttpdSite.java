@@ -129,7 +129,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 
