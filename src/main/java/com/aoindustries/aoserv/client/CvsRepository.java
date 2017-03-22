@@ -48,6 +48,18 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	static final String COLUMN_PATH_name = "path";
 
 	/**
+	 * The default directory containing CVS repositories.
+	 */
+	public static final UnixPath DEFAULT_CVS_DIRECTORY;
+	static {
+		try {
+			DEFAULT_CVS_DIRECTORY = UnixPath.valueOf("/var/cvs").intern();
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
+
+	/**
 	 * The default permissions for a CVS repository.
 	 */
 	public static final long DEFAULT_MODE=0770;
