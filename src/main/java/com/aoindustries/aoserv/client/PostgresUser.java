@@ -225,8 +225,8 @@ final public class PostgresUser extends CachedObjectPostgresUserIdKey<PostgresUs
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 		for(PostgresServerUser psu : getPostgresServerUsers()) reasons.addAll(psu.getCannotRemoveReasons());
 		return reasons;
 	}

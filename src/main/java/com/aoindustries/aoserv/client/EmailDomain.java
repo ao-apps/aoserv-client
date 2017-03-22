@@ -148,8 +148,8 @@ public final class EmailDomain extends CachedObjectIntegerKey<EmailDomain> imple
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		MajordomoServer ms=getMajordomoServer();
 		if(ms!=null) {

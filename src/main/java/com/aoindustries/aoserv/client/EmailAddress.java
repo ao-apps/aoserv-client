@@ -172,8 +172,8 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<? extends CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
 		// Everything using this address must be removable
 		BlackholeEmailAddress bea=getBlackholeEmailAddress();
@@ -206,7 +206,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 				|| ms.majordomo_owner_add==pkey
 			) {
 				EmailDomain ed=ms.getDomain();
-				reasons.add(new CannotRemoveReason("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname()));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
 			}
 		}
 

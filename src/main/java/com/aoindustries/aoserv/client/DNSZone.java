@@ -427,9 +427,9 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
-		if(pkey.equals(API_ZONE)) reasons.add(new CannotRemoveReason<DNSZone>("Not allowed to remove the API Zone: "+API_ZONE));
+	public List<CannotRemoveReason<DNSZone>> getCannotRemoveReasons() {
+		List<CannotRemoveReason<DNSZone>> reasons=new ArrayList<>();
+		if(pkey.equals(API_ZONE)) reasons.add(new CannotRemoveReason<>("Not allowed to remove the API Zone: "+API_ZONE, this));
 		return reasons;
 	}
 

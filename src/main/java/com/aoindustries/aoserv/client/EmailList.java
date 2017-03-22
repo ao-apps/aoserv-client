@@ -245,7 +245,7 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 

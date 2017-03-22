@@ -114,8 +114,8 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<HttpdTomcatContext>> getCannotRemoveReasons() {
+		List<CannotRemoveReason<HttpdTomcatContext>> reasons=new ArrayList<>();
 		if(path.length()==0) reasons.add(new CannotRemoveReason<>("Not allowed to remove the root context", this));
 		return reasons;
 	}

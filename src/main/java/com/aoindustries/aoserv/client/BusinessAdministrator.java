@@ -421,8 +421,8 @@ final public class BusinessAdministrator extends CachedObjectUserIdKey<BusinessA
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		AOServConnector conn=table.connector;
 

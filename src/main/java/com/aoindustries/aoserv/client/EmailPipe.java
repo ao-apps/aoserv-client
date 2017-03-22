@@ -156,7 +156,7 @@ final public class EmailPipe extends CachedObjectIntegerKey<EmailPipe> implement
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 

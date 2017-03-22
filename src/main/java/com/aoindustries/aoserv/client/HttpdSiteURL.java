@@ -60,8 +60,8 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	boolean isPrimary;
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<HttpdSiteURL>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<HttpdSiteURL>> reasons=new ArrayList<>();
 
 		if(isPrimary) reasons.add(new CannotRemoveReason<>("Not allowed to remove the primary URL", this));
 		if(isTestURL()) reasons.add(new CannotRemoveReason<>("Not allowed to remove the test URL", this));

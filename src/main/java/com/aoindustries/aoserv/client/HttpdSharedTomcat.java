@@ -95,8 +95,8 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<HttpdTomcatSharedSite>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<HttpdTomcatSharedSite>> reasons=new ArrayList<>();
 
 		for(HttpdTomcatSharedSite htss : getHttpdTomcatSharedSites()) {
 			HttpdSite hs=htss.getHttpdTomcatSite().getHttpdSite();

@@ -123,8 +123,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 					out.writeCompressedInt(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(limits.length);
-					for(int c=0;c<limits.length;c++) {
-						PackageDefinitionLimit limit=limits[c];
+					for(PackageDefinitionLimit limit : limits) {
 						out.writeUTF(limit.resource);
 						out.writeCompressedInt(limit.soft_limit);
 						out.writeCompressedInt(limit.hard_limit);
@@ -282,8 +281,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws IOException, SQLException {
-		List<CannotRemoveReason> reasons=new ArrayList<>(1);
+	public List<CannotRemoveReason<Package>> getCannotRemoveReasons() throws IOException, SQLException {
+		List<CannotRemoveReason<Package>> reasons=new ArrayList<>(1);
 		List<Package> packs=getPackages();
 		if(!packs.isEmpty()) reasons.add(new CannotRemoveReason<>("Used by "+packs.size()+" "+(packs.size()==1?"package":"packages"), packs));
 		return reasons;

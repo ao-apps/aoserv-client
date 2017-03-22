@@ -340,8 +340,8 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		// All LinuxServerAccounts must be removable
 		for(LinuxServerAccount lsa : getLinuxServerAccounts()) {

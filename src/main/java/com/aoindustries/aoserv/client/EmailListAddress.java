@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -95,8 +95,8 @@ final public class EmailListAddress extends CachedObjectIntegerKey<EmailListAddr
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<MajordomoList>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<MajordomoList>> reasons=new ArrayList<>();
 
 		// Cannot be used as the list for a majordomo list
 		for(MajordomoList ml : table.connector.getMajordomoLists().getRows()) {

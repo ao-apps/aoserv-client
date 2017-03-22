@@ -83,7 +83,7 @@ final public class FTPGuestUser extends CachedObjectUserIdKey<FTPGuestUser> impl
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
 		return Collections.emptyList();
 	}
 

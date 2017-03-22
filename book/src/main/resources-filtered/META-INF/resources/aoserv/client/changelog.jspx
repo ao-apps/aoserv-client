@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-22T14:52:04-0500"
+		dateModified="2017-03-22T18:01:24-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -215,6 +215,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>New field <code>CvsRepository.DEFAULT_CVS_DIRECTORY</code> providing the default directory containing CVS repositories.</li>
+					<li>Completed generics for <code>CannotRemoveReason</code>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

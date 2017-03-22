@@ -92,8 +92,8 @@ final public class EmailPipeAddress extends CachedObjectIntegerKey<EmailPipeAddr
 	}
 
 	@Override
-	public List<CannotRemoveReason> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<MajordomoList>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<MajordomoList>> reasons=new ArrayList<>();
 
 		// Cannot be used as any part of a majordomo list
 		for(MajordomoList ml : table.connector.getMajordomoLists().getRows()) {
