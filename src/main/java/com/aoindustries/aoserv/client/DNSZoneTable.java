@@ -26,6 +26,7 @@ import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -146,37 +147,36 @@ final public class DNSZoneTable extends CachedTableStringKey<DNSZone> {
 	}
 
 	/**
-	 * Gets the hostname for a fully qualified hostname.  Gets a hostname in <code><i>name</i>.<i>tld</i>.</code> format.
+	 * Gets the hostname for a fully qualified hostname.  Gets a hostname in <code><i>name</i>.<i>tld</i></code> format.
 	 *
 	 * @exception  IllegalArgumentException  if hostname cannot be resolved to a top level domain
 	 */
-	public static String getHostTLD(String hostname, List<DomainName> tlds) throws IllegalArgumentException {
-		int hostnameLen=hostname.length();
-		if (hostnameLen>0 && hostname.charAt(hostnameLen-1)!='.') {
-			hostname += ".";
-			hostnameLen++;
-		}
+	public static DomainName getHostTLD(DomainName hostname, List<DomainName> tlds) throws IllegalArgumentException {
+		String hostnameStr = hostname.toLowerCase();
+		int hostnameLen = hostnameStr.length();
+		for(DomainName o : tlds) {
+			String tld = '.' + o.toLowerCase();
 
-		int len=tlds.size();
-		for(int c=0;c<len;c++) {
-			DomainName o = tlds.get(c);
-			String tld='.'+o.toString()+'.';
-
-			int tldLen=tld.length();
-			if(tldLen<hostnameLen) {
-				if(hostname.substring(hostnameLen-tldLen).equals(tld)) {
-					String name=hostname.substring(0, hostnameLen-tldLen);
-					// Take only the last hostname segment
-					int pos=name.lastIndexOf('.');
-					if(pos!=-1) name=name.substring(pos+1);
-					return name+tld;
+			int tldLen = tld.length();
+			if(
+				hostnameLen > tldLen
+				&& hostnameStr.endsWith(tld)
+			) {
+				String name = hostnameStr.substring(0, hostnameLen - tldLen);
+				// Take only the last hostname segment
+				int pos = name.lastIndexOf('.');
+				if(pos != -1) name = name.substring(pos+1);
+				try {
+					return DomainName.valueOf(name + tld);
+				} catch(ValidationException e) {
+					throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 				}
 			}
 		}
-		throw new IllegalArgumentException("Unable to determine the host.tld. format of "+hostname);
+		throw new IllegalArgumentException("Unable to determine the host.tld format of " + hostname);
 	}
 
-	public String getHostTLD(String hostname) throws IllegalArgumentException, IOException, SQLException {
+	public DomainName getHostTLD(DomainName hostname) throws IllegalArgumentException, IOException, SQLException {
 		return getHostTLD(hostname, getDNSTLDs());
 	}
 

@@ -149,7 +149,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	public UnixPath getInstallDirectory() throws SQLException, IOException {
 		try {
 			return UnixPath.valueOf(
-				getAOServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory().toString()
+				getAOServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory()
 				+ "/" + site_name
 			);
 		} catch(ValidationException e) {
