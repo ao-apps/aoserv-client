@@ -497,7 +497,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					switch(castToType.getNum()) {
 						case HOSTNAME: return value==null?null:HostAddress.valueOf(new URL((String)value).getHost());
 						case PATH: return value==null?null:UnixPath.valueOf(new URL((String)value).getPath());
-						case ZONE: return value==null?null:getZoneForHostname(conn, new URL((String)value).getHost());
+						case ZONE: return value==null?null:getZoneForDomainName(conn, DomainName.valueOf(new URL((String)value).getHost()));
 						case DOMAIN_NAME: return value==null?null:DomainName.valueOf(new URL((String)value).getHost());
 					}
 					break;
@@ -646,10 +646,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 
 	private static String getZoneForDomainName(AOServConnector conn, DomainName domainName) throws IOException, IllegalArgumentException, SQLException {
 		if(domainName==null) return null;
-		return conn.getDnsZones().getHostTLD(domainName.toString());
-	}
-	private static String getZoneForHostname(AOServConnector conn, String hostname) throws IOException, IllegalArgumentException, SQLException {
-		return conn.getDnsZones().getHostTLD(hostname);
+		return conn.getDnsZones().getHostTLD(domainName) + ".";
 	}
 
 	public int compareTo(Object value1, Object value2) throws IllegalArgumentException, SQLException, UnknownHostException {
