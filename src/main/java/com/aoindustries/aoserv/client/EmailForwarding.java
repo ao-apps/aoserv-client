@@ -49,6 +49,7 @@ final public class EmailForwarding extends CachedObjectIntegerKey<EmailForwardin
 	static final String COLUMN_DESTINATION_name = "destination";
 
 	int email_address;
+	// TODO: Email type
 	String destination;
 
 	@Override
