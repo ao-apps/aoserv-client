@@ -165,12 +165,19 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 	/**
 	 * Gets the full path that should be used for normal email lists.
 	 */
-	public static String getListPath(String name) {
-		if(name.length()>1) {
-			char ch=name.charAt(0);
-			if(ch>='A' && ch<='Z') ch+=32;
-			return LIST_DIRECTORY+'/'+ch+'/'+name;
-		} else return LIST_DIRECTORY+"//";
+	public static UnixPath getListPath(String name) throws ValidationException {
+		if(name.length() > 1) {
+			return UnixPath.valueOf(
+				LIST_DIRECTORY
+				+ '/'
+				+ Character.toLowerCase(name.charAt(0))
+				+ '/'
+				+ name
+			);
+		} else {
+			// This will always be invalid, exception expected
+			return UnixPath.valueOf(LIST_DIRECTORY+"//");
+		}
 	}
 
 	public MajordomoList getMajordomoList() throws IOException, SQLException {
