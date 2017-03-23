@@ -37,6 +37,8 @@ import java.util.List;
  * <code>LinuxAccount</code> is able to access multiple
  * <code>Server</code>s, its type will be the same on all servers.
  *
+ * TODO: Make this class an enum?  How would API version compatibility work?  Same for group type.
+ *
  * @see  LinuxAccount
  * @see  LinuxServerAccount
  *
