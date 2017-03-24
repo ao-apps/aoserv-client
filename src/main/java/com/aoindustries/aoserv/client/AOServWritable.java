@@ -35,7 +35,7 @@ public interface AOServWritable extends CompressedWritable {
 
 	/**
 	 *
-	 * @deprecated  This is maintained only for compatibility with the <code>Streamable</code> interface.
+	 * @deprecated  This is maintained only for compatibility with the {@link CompressedWritable} interface.
 	 * 
 	 * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
 	 */
