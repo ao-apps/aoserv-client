@@ -29,7 +29,6 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.Reader;
@@ -137,11 +136,12 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	public Server get(String server) throws SQLException, IOException {
 		// Is it the exact hostname of an ao_server?
 		try {
-			AOServer aoServer = DomainName.validate(server).isValid() ? connector.getAoServers().get(DomainName.valueOf(server)) : null;
-			if(aoServer!=null) return aoServer.getServer();
+			AOServer aoServer = DomainName.validate(server).isValid()
+				? connector.getAoServers().get(DomainName.valueOf(server))
+				: null;
+			if(aoServer != null) return aoServer.getServer();
 		} catch(ValidationException e) {
-			// Should not happen since validation is checked first
-			throw new WrappedException(e);
+			throw new AssertionError("Already validated", e);
 		}
 
 		// Look for matching server name (but only one server)
