@@ -32,7 +32,6 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
@@ -153,12 +152,11 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	}
 
 	/**
-	 * Dumps the database in ISO-8859-1 encoding into binary form, optionally gzipped.
+	 * Dumps the database in {@link #DUMP_ENCODING} encoding into binary form, optionally gzipped.
 	 */
 	public void dump(
-		final DumpSizeCallback onDumpSize,
-		final OutputStream out,
-		final boolean gzip
+		final boolean gzip,
+		final StreamHandler streamHandler
 	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
@@ -174,10 +172,10 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
 					long dumpSize = masterIn.readLong();
 					if(dumpSize < 0) throw new IOException("dumpSize < 0: " + dumpSize);
-					if(onDumpSize != null) onDumpSize.onDumpSize(dumpSize);
+					streamHandler.onDumpSize(dumpSize);
 					long bytesRead;
 					try (InputStream nestedIn = new NestedInputStream(masterIn)) {
-						bytesRead = IoUtils.copy(nestedIn, out);
+						bytesRead = IoUtils.copy(nestedIn, streamHandler.getOut());
 					}
 					if(bytesRead < dumpSize) throw new IOException("Too few bytes read: " + bytesRead + " < " + dumpSize);
 					if(bytesRead > dumpSize) throw new IOException("Too many bytes read: " + bytesRead + " > " + dumpSize);

@@ -4014,10 +4014,9 @@ final public class SimpleAOClient {
 		MySQLServerName mysqlServer,
 		String aoServer,
 		boolean gzip,
-		DumpSizeCallback onDumpSize,
-		OutputStream out
+		StreamHandler streamHandler
 	) throws IllegalArgumentException, IOException, SQLException {
-		getMySQLDatabase(aoServer, mysqlServer, name).dump(onDumpSize, out, gzip);
+		getMySQLDatabase(aoServer, mysqlServer, name).dump(gzip, streamHandler);
 	}
 
 	/**
@@ -4069,10 +4068,9 @@ final public class SimpleAOClient {
 		PostgresServerName postgresServer,
 		String aoServer,
 		boolean gzip,
-		DumpSizeCallback onDumpSize,
-		OutputStream out
+		StreamHandler streamHandler
 	) throws IllegalArgumentException, IOException, SQLException {
-		getPostgresDatabase(aoServer, postgresServer, name).dump(onDumpSize, out, gzip);
+		getPostgresDatabase(aoServer, postgresServer, name).dump(gzip, streamHandler);
 	}
 
 	/**

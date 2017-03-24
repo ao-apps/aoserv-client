@@ -28,6 +28,7 @@ import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationException;
 import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.List;
@@ -140,8 +141,16 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 							serverName,
 							aoServer,
 							true,
-							null, // onDumpSize
-							System.out // By-pass TerminalWriter stuff to avoid possible encoding issues.
+							new StreamHandler() {
+								@Override
+								public void onDumpSize(long dumpSize) {
+									// Do nothing
+								}
+								@Override
+								public OutputStream getOut() {
+									return System.out; // By-pass TerminalWriter stuff to avoid possible encoding issues.
+								}
+							}
 						);
 						System.out.flush();
 					} else {
