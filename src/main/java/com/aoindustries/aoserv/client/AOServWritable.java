@@ -22,20 +22,16 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.Streamable;
+import com.aoindustries.io.CompressedWritable;
 import java.io.IOException;
 
 /**
- * Streamable with a given version represented by {@link AOServProtocol.Version}.
+ * Something that can be written with a given version represented by {@link AOServProtocol.Version}.
  *
  * @author  AO Industries, Inc.
  */
-public interface AOServStreamable extends Streamable, AOServWritable {
-
-	@Override
-	void read(CompressedDataInputStream in) throws IOException;
+public interface AOServWritable extends CompressedWritable {
 
 	/**
 	 *
@@ -46,9 +42,8 @@ public interface AOServStreamable extends Streamable, AOServWritable {
 	@Deprecated
 	@Override
 	void write(CompressedDataOutputStream out, String version) throws IOException;
-	// TODO: Java 1.8: default method (or inherit from AOServWritable)
+	// TODO: Java 1.8: default method
 	// write(out, AOServProtocol.Version.getVersion(version));
 
-	@Override
 	void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
 }
