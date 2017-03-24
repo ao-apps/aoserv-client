@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
+import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationException;
 import com.aoindustries.validation.ValidationResult;
@@ -128,15 +129,29 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.DUMP_MYSQL_DATABASE)) {
-			if(AOSH.checkParamCount(AOSHCommand.DUMP_MYSQL_DATABASE, args, 3, err)) {
+			if(AOSH.checkParamCount(AOSHCommand.DUMP_MYSQL_DATABASE, args, 4, err)) {
 				try {
-					connector.getSimpleAOClient().dumpMySQLDatabase(
-						AOSH.parseMySQLDatabaseName(args[1], "database_name"),
-						AOSH.parseMySQLServerName(args[2], "mysql_server"),
-						args[3],
-						out
-					);
-					out.flush();
+					MySQLDatabaseName dbName = AOSH.parseMySQLDatabaseName(args[1], "database_name");
+					MySQLServerName serverName = AOSH.parseMySQLServerName(args[2], "mysql_server");
+					String aoServer = args[3];
+					if(AOSH.parseBoolean(args[4], "gzip")) {
+						connector.getSimpleAOClient().dumpMySQLDatabase(
+							dbName,
+							serverName,
+							aoServer,
+							true,
+							System.out // By-pass TerminalWriter stuff to avoid possible encoding issues.
+						);
+						System.out.flush();
+					} else {
+						connector.getSimpleAOClient().dumpMySQLDatabase(
+							dbName,
+							serverName,
+							aoServer,
+							out
+						);
+						out.flush();
+					}
 				} catch(IllegalArgumentException iae) {
 					err.print("aosh: "+AOSHCommand.DUMP_MYSQL_DATABASE+": ");
 					err.println(iae.getMessage());

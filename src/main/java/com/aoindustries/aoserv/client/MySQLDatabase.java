@@ -28,9 +28,12 @@ import com.aoindustries.aoserv.client.validator.MySQLTableName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.IoUtils;
+import com.aoindustries.nio.charset.Charsets;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
@@ -152,11 +155,17 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		);
 	}
 
+	/**
+	 * @see  #dump(java.io.Writer)
+	 */
 	@Override
 	public void dump(PrintWriter out) throws IOException, SQLException {
 		dump((Writer)out);
 	}
 
+	/**
+	 * Dumps the database into textual representation, not gzipped.
+	 */
 	public void dump(final Writer out) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
@@ -165,29 +174,40 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
 					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
 					masterOut.writeCompressedInt(pkey);
+					masterOut.writeBoolean(false);
 				}
 
 				@Override
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
-					/*int code;
-					byte[] buff=BufferManager.getBytes();
-					try {
-						char[] chars=BufferManager.getChars();
-						try {
-							while((code=masterIn.readByte())==AOServProtocol.NEXT) {
-								int len=masterIn.readShort();
-								masterIn.readFully(buff, 0, len);
-								for(int c=0;c<len;c++) chars[c]=(char)buff[c];
-								out.write(chars, 0, len);
-							}
-						} finally {
-							BufferManager.release(chars);
-						}
-					} finally {
-						BufferManager.release(buff);
+					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), Charsets.UTF_8)) {
+						IoUtils.copy(nestedIn, out);
 					}
-					if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, masterIn);*/
-					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), "UTF-8")) {
+				}
+
+				@Override
+				public void afterRelease() {
+				}
+			}
+		);
+	}
+
+	/**
+	 * Dumps the database in UTF-8 encoding into binary form, optionally gzipped.
+	 */
+	public void dump(final OutputStream out, final boolean gzip) throws IOException, SQLException {
+		table.connector.requestUpdate(
+			false,
+			new AOServConnector.UpdateRequest() {
+				@Override
+				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
+					masterOut.writeCompressedInt(pkey);
+					masterOut.writeBoolean(gzip);
+				}
+
+				@Override
+				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+					try (InputStream nestedIn = new NestedInputStream(masterIn)) {
 						IoUtils.copy(nestedIn, out);
 					}
 				}

@@ -25,10 +25,15 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.util.BufferManager;
+import com.aoindustries.io.IoUtils;
+import com.aoindustries.nio.charset.Charsets;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -95,44 +100,60 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		return allow_conn;
 	}
 
+	/**
+	 * @see  #dump(java.io.Writer)
+	 */
 	@Override
 	public void dump(PrintWriter out) throws IOException, SQLException {
 		dump((Writer)out);
 	}
 
+	/**
+	 * Dumps the database into textual representation, not gzipped.
+	 */
 	public void dump(final Writer out) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
 			new AOServConnector.UpdateRequest() {
-
 				@Override
 				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
 					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
 					masterOut.writeCompressedInt(pkey);
+					masterOut.writeBoolean(false);
 				}
 
 				@Override
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
-					int code;
-					byte[] buff=BufferManager.getBytes();
-					try {
-						char[] chars=BufferManager.getChars();
-						try {
-							while((code=masterIn.readByte())==AOServProtocol.NEXT) {
-								int len=masterIn.readShort();
-								masterIn.readFully(buff, 0, len);
-								for(int c=0;c<len;c++) chars[c]=(char)buff[c]; // Assumes ISO8859-1 encoding
-								out.write(chars, 0, len);
-							}
-						} finally {
-							BufferManager.release(chars, false);
-						}
-					} finally {
-						BufferManager.release(buff, false);
+					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), Charsets.ISO_8859_1)) {
+						IoUtils.copy(nestedIn, out);
 					}
-					if(code!=AOServProtocol.DONE) {
-						AOServProtocol.checkResult(code, masterIn);
-						throw new IOException("Unexpected response code: "+code);
+				}
+
+				@Override
+				public void afterRelease() {
+				}
+			}
+		);
+	}
+
+	/**
+	 * Dumps the database in ISO-8859-1 encoding into binary form, optionally gzipped.
+	 */
+	public void dump(final OutputStream out, final boolean gzip) throws IOException, SQLException {
+		table.connector.requestUpdate(
+			false,
+			new AOServConnector.UpdateRequest() {
+				@Override
+				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
+					masterOut.writeCompressedInt(pkey);
+					masterOut.writeBoolean(gzip);
+				}
+
+				@Override
+				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+					try (InputStream nestedIn = new NestedInputStream(masterIn)) {
+						IoUtils.copy(nestedIn, out);
 					}
 				}
 

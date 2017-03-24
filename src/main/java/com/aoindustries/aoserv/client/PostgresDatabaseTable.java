@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
+import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationException;
 import com.aoindustries.validation.ValidationResult;
@@ -149,15 +150,29 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.DUMP_POSTGRES_DATABASE)) {
-			if(AOSH.checkParamCount(AOSHCommand.DUMP_POSTGRES_DATABASE, args, 3, err)) {
+			if(AOSH.checkParamCount(AOSHCommand.DUMP_POSTGRES_DATABASE, args, 4, err)) {
 				try {
-					connector.getSimpleAOClient().dumpPostgresDatabase(
-						AOSH.parsePostgresDatabaseName(args[1], "database_name"),
-						AOSH.parsePostgresServerName(args[2], "postgres_server"),
-						args[3],
-						out
-					);
-					out.flush();
+					PostgresDatabaseName dbName = AOSH.parsePostgresDatabaseName(args[1], "database_name");
+					PostgresServerName serverName = AOSH.parsePostgresServerName(args[2], "postgres_server");
+					String aoServer = args[3];
+					if(AOSH.parseBoolean(args[4], "gzip")) {
+						connector.getSimpleAOClient().dumpPostgresDatabase(
+							dbName,
+							serverName,
+							aoServer,
+							true,
+							System.out // By-pass TerminalWriter stuff to avoid possible encoding issues.
+						);
+						System.out.flush();
+					} else {
+						connector.getSimpleAOClient().dumpPostgresDatabase(
+							dbName,
+							serverName,
+							aoServer,
+							out
+						);
+						out.flush();
+					}
 				} catch(IllegalArgumentException iae) {
 					err.print("aosh: "+AOSHCommand.DUMP_POSTGRES_DATABASE+": ");
 					err.println(iae.getMessage());
