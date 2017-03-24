@@ -419,7 +419,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		}
 	}
 
-	protected List<V> getObjects(boolean allowRetry, AOServProtocol.CommandID commID, AOServStreamable param1) throws IOException, SQLException {
+	protected List<V> getObjects(boolean allowRetry, AOServProtocol.CommandID commID, AOServWritable param1) throws IOException, SQLException {
 		List<V> list=new ArrayList<>();
 		getObjects(allowRetry, list, commID, param1);
 		return list;

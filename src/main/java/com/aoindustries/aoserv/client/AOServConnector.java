@@ -38,7 +38,7 @@ import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.Streamable;
+import com.aoindustries.io.CompressedWritable;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
@@ -1591,9 +1591,9 @@ abstract public class AOServConnector {
 			else if(param instanceof PostgresDatabaseName) out.writeUTF(param.toString());
 			else if(param instanceof PostgresServerName) out.writeUTF(param.toString());
 			else if(param instanceof PostgresUserId) out.writeUTF(param.toString());
-			// Any other Streamable
-			else if(param instanceof AOServStreamable) ((AOServStreamable)param).write(out, AOServProtocol.Version.CURRENT_VERSION);
-			else if(param instanceof Streamable) ((Streamable)param).write(out, AOServProtocol.Version.CURRENT_VERSION.getVersion());
+			// Any other Writable
+			else if(param instanceof AOServWritable) ((AOServWritable)param).write(out, AOServProtocol.Version.CURRENT_VERSION);
+			else if(param instanceof CompressedWritable) ((CompressedWritable)param).write(out, AOServProtocol.Version.CURRENT_VERSION.getVersion());
 			else throw new IOException("Unknown class for param: "+param.getClass().getName());
 		}
 	}
