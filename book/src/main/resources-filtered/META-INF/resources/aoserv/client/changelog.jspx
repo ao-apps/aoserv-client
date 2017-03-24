@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-23T23:42:33-0500"
+		dateModified="2017-03-24T13:20:35-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -226,6 +226,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>New constants providing dump character encoding.</li>
 							<li>Database dumps now provide the size of the dumps in bytes.</li>
 						</ol>
+					</li>
+					<li>
+						New interface <code>AOServStreamable</code> that extends <code>Streamable</code>, but
+						represents its version as <code>AOServProtocol.Version</code>.
 					</li>
 				</ul>
 			</changelog:release>

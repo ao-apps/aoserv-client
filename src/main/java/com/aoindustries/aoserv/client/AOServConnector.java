@@ -1592,6 +1592,7 @@ abstract public class AOServConnector {
 			else if(param instanceof PostgresServerName) out.writeUTF(param.toString());
 			else if(param instanceof PostgresUserId) out.writeUTF(param.toString());
 			// Any other Streamable
+			else if(param instanceof AOServStreamable) ((AOServStreamable)param).write(out, AOServProtocol.Version.CURRENT_VERSION);
 			else if(param instanceof Streamable) ((Streamable)param).write(out, AOServProtocol.Version.CURRENT_VERSION.getVersion());
 			else throw new IOException("Unknown class for param: "+param.getClass().getName());
 		}
