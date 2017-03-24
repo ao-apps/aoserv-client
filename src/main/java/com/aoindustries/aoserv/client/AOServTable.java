@@ -24,7 +24,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.Streamable;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.table.Table;
@@ -420,7 +419,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		}
 	}
 
-	protected List<V> getObjects(boolean allowRetry, AOServProtocol.CommandID commID, Streamable param1) throws IOException, SQLException {
+	protected List<V> getObjects(boolean allowRetry, AOServProtocol.CommandID commID, AOServStreamable param1) throws IOException, SQLException {
 		List<V> list=new ArrayList<>();
 		getObjects(allowRetry, list, commID, param1);
 		return list;

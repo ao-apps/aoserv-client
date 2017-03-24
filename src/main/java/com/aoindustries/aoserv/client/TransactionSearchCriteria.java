@@ -26,7 +26,6 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.Streamable;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -42,7 +41,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionSearchCriteria implements Streamable {
+final public class TransactionSearchCriteria implements AOServStreamable {
 
 	/**
 	 * Value representing any in a search.
@@ -308,11 +307,13 @@ final public class TransactionSearchCriteria implements Streamable {
 	 * 
 	 * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
 	 */
+	@Deprecated
 	@Override
 	public void write(CompressedDataOutputStream out, String version) throws IOException {
 		write(out, AOServProtocol.Version.getVersion(version));
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeLong(after);
 		out.writeLong(before);

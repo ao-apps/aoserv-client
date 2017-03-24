@@ -37,7 +37,6 @@ import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.Streamable;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
@@ -70,7 +69,7 @@ import java.util.List;
  *
  * @see  AOServTable
  */
-abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row, Streamable {
+abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row, AOServStreamable {
 
 	protected AOServObject() {
 	}
@@ -494,5 +493,6 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 		write(out, AOServProtocol.Version.getVersion(version));
 	}
 
+	@Override
 	public abstract void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
 }

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2000-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,7 +24,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.Streamable;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -33,7 +32,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class InboxAttributes implements Streamable {
+final public class InboxAttributes implements AOServStreamable {
 
 	final private AOServConnector connector;
 	final private int linuxServerAccount;
@@ -92,11 +91,13 @@ final public class InboxAttributes implements Streamable {
 	 * 
 	 * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
 	 */
+	@Deprecated
 	@Override
 	final public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
 		write(out, AOServProtocol.Version.getVersion(protocolVersion));
 	}
 
+	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(systemTime);
 		out.writeLong(fileSize);
