@@ -171,14 +171,16 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 				@Override
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
 					long dumpSize = masterIn.readLong();
-					if(dumpSize < 0) throw new IOException("dumpSize < 0: " + dumpSize);
+					if(dumpSize < -1) throw new IOException("dumpSize < -1: " + dumpSize);
 					streamHandler.onDumpSize(dumpSize);
 					long bytesRead;
 					try (InputStream nestedIn = new NestedInputStream(masterIn)) {
 						bytesRead = IoUtils.copy(nestedIn, streamHandler.getOut());
 					}
-					if(bytesRead < dumpSize) throw new IOException("Too few bytes read: " + bytesRead + " < " + dumpSize);
-					if(bytesRead > dumpSize) throw new IOException("Too many bytes read: " + bytesRead + " > " + dumpSize);
+					if(dumpSize != -1) {
+						if(bytesRead < dumpSize) throw new IOException("Too few bytes read: " + bytesRead + " < " + dumpSize);
+						if(bytesRead > dumpSize) throw new IOException("Too many bytes read: " + bytesRead + " > " + dumpSize);
+					}
 				}
 
 				@Override
