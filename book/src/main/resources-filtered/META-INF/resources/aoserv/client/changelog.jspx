@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-03-23T22:43:05-0500"
+		dateModified="2017-03-23T22:55:33-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -223,6 +223,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 								New methods to dump databases directly into an <code>OutputStream</code>
 								to avoid the additional encoding layer of the default <code>Writer</code>.
 							</li>
+							<li>New constants providing dump character encoding.</li>
 						</ol>
 					</li>
 				</ul>

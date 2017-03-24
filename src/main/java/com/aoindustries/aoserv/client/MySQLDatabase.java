@@ -37,6 +37,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -164,6 +165,11 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	}
 
 	/**
+	 * The character set used by the dumps.
+	 */
+	public static final Charset DUMP_ENCODING = Charsets.UTF_8;
+
+	/**
 	 * Dumps the database into textual representation, not gzipped.
 	 */
 	public void dump(final Writer out) throws IOException, SQLException {
@@ -179,7 +185,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 				@Override
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
-					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), Charsets.UTF_8)) {
+					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), DUMP_ENCODING)) {
 						IoUtils.copy(nestedIn, out);
 					}
 				}

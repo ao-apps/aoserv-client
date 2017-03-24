@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -109,6 +110,11 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	}
 
 	/**
+	 * The character set used by the dumps.
+	 */
+	public static final Charset DUMP_ENCODING = Charsets.ISO_8859_1;
+
+	/**
 	 * Dumps the database into textual representation, not gzipped.
 	 */
 	public void dump(final Writer out) throws IOException, SQLException {
@@ -124,7 +130,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
 				@Override
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
-					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), Charsets.ISO_8859_1)) {
+					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), DUMP_ENCODING)) {
 						IoUtils.copy(nestedIn, out);
 					}
 				}
