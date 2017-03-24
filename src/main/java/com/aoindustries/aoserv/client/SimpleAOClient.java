@@ -3993,6 +3993,33 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Dumps the contents of a <code>MySQLDatabase</code> to an {@link OutputStream}, optionally gzipped.
+	 *
+	 * @param  name  the name of the <code>MySQLDatabase</code>
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  gzip  the gzip flag
+	 * @param  out  the <code>OutputStream</code> to dump to
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity
+	 *					violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 *					<code>MySQLDatabase</code>
+	 *
+	 * @see  MySQLDatabase#dump
+	 * @see  MySQLDatabase
+	 */
+	public void dumpMySQLDatabase(
+		MySQLDatabaseName name,
+		MySQLServerName mysqlServer,
+		String aoServer,
+		boolean gzip,
+		OutputStream out
+	) throws IllegalArgumentException, IOException, SQLException {
+		getMySQLDatabase(aoServer, mysqlServer, name).dump(out, gzip);
+	}
+
+	/**
 	 * Dumps the contents of a <code>PostgresDatabase</code> to a <code>Writer</code>.
 	 *
 	 * @param  name  the name of the <code>PostgresDatabase</code>
@@ -4016,6 +4043,34 @@ final public class SimpleAOClient {
 		Writer out
 	) throws IllegalArgumentException, IOException, SQLException {
 		getPostgresDatabase(aoServer, postgresServer, name).dump(out);
+	}
+
+	/**
+	 * Dumps the contents of a <code>PostgresDatabase</code> to an {@link OutputStream}, optionally gzipped.
+	 *
+	 * @param  name  the name of the <code>PostgresDatabase</code>
+	 * @param  postgresServer  the name of the PostgreSQL server
+	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  gzip  the gzip flag
+	 * @param  out  the <code>OutputStream</code> to dump to
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity
+	 *					violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 *					<code>PostgresDatabase</code>
+	 *
+	 * @see  PostgresDatabase#dump
+	 * @see  PostgresDatabase
+	 */
+	public void dumpPostgresDatabase(
+		PostgresDatabaseName name,
+		PostgresServerName postgresServer,
+		String aoServer,
+		boolean gzip,
+		OutputStream out
+	) throws IllegalArgumentException, IOException, SQLException {
+		getPostgresDatabase(aoServer, postgresServer, name).dump(out, gzip);
 	}
 
 	/**
