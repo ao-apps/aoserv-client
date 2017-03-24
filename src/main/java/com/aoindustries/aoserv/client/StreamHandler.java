@@ -23,19 +23,23 @@
 package com.aoindustries.aoserv.client;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * Called once the dump size is known and before
- * the stream is written to.
+ * Handles a response stream.
  *
  * @author  AO Industries, Inc.
  */
-public interface DumpSizeCallback {
+public interface StreamHandler {
 
 	/**
 	 * Called once the dump size is known and before
-	 * the stream is written to.
+	 * the stream is obtained.
 	 */
 	void onDumpSize(long dumpSize) throws IOException;
 
+	/**
+	 * Gets the output to write to.  This output stream will neither be flushed nor closed.
+	 */
+	OutputStream getOut() throws IOException;
 }
