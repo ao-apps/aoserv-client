@@ -161,6 +161,7 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 							serverName,
 							aoServer,
 							true,
+							null, // onDumpSize
 							System.out // By-pass TerminalWriter stuff to avoid possible encoding issues.
 						);
 						System.out.flush();
