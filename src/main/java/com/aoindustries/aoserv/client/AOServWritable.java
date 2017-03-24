@@ -23,7 +23,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.CompressedWritable;
 import java.io.IOException;
 
 /**
@@ -31,19 +30,7 @@ import java.io.IOException;
  *
  * @author  AO Industries, Inc.
  */
-public interface AOServWritable extends CompressedWritable {
-
-	/**
-	 *
-	 * @deprecated  This is maintained only for compatibility with the {@link CompressedWritable} interface.
-	 * 
-	 * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
-	 */
-	@Deprecated
-	@Override
-	void write(CompressedDataOutputStream out, String version) throws IOException;
-	// TODO: Java 1.8: default method
-	// write(out, AOServProtocol.Version.getVersion(version));
+public interface AOServWritable {
 
 	void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
 }
