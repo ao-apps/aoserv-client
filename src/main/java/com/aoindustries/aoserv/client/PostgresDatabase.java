@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
+import com.aoindustries.io.ByteCountInputStream;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.IoUtils;
@@ -130,9 +131,18 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
 				@Override
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
-					try (Reader nestedIn = new InputStreamReader(new NestedInputStream(masterIn), DUMP_ENCODING)) {
+					long dumpSize = masterIn.readLong();
+					if(dumpSize < 0) throw new IOException("dumpSize < 0: " + dumpSize);
+					long bytesRead;
+					try (
+						ByteCountInputStream byteCountIn = new ByteCountInputStream(new NestedInputStream(masterIn));
+						Reader nestedIn = new InputStreamReader(byteCountIn, DUMP_ENCODING)
+					) {
 						IoUtils.copy(nestedIn, out);
+						bytesRead = byteCountIn.getCount();
 					}
+					if(bytesRead < dumpSize) throw new IOException("Too few bytes read: " + bytesRead + " < " + dumpSize);
+					if(bytesRead > dumpSize) throw new IOException("Too many bytes read: " + bytesRead + " > " + dumpSize);
 				}
 
 				@Override
@@ -145,7 +155,11 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	/**
 	 * Dumps the database in ISO-8859-1 encoding into binary form, optionally gzipped.
 	 */
-	public void dump(final OutputStream out, final boolean gzip) throws IOException, SQLException {
+	public void dump(
+		final DumpSizeCallback onDumpSize,
+		final OutputStream out,
+		final boolean gzip
+	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
 			new AOServConnector.UpdateRequest() {
@@ -158,9 +172,15 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
 				@Override
 				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+					long dumpSize = masterIn.readLong();
+					if(dumpSize < 0) throw new IOException("dumpSize < 0: " + dumpSize);
+					if(onDumpSize != null) onDumpSize.onDumpSize(dumpSize);
+					long bytesRead;
 					try (InputStream nestedIn = new NestedInputStream(masterIn)) {
-						IoUtils.copy(nestedIn, out);
+						bytesRead = IoUtils.copy(nestedIn, out);
 					}
+					if(bytesRead < dumpSize) throw new IOException("Too few bytes read: " + bytesRead + " < " + dumpSize);
+					if(bytesRead > dumpSize) throw new IOException("Too many bytes read: " + bytesRead + " > " + dumpSize);
 				}
 
 				@Override

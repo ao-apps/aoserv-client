@@ -140,6 +140,7 @@ final public class MySQLDatabaseTable extends CachedTableIntegerKey<MySQLDatabas
 							serverName,
 							aoServer,
 							true,
+							null, // onDumpSize
 							System.out // By-pass TerminalWriter stuff to avoid possible encoding issues.
 						);
 						System.out.flush();
