@@ -58,7 +58,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -2492,8 +2491,7 @@ final public class AOServer
 			AOServProtocol.CommandID.AO_SERVER_CHECK_PORT,
 			pkey,
 			ipAddress.toString(),
-			port.getPort(),
-			port.getProtocol().name().toLowerCase(Locale.ROOT),
+			port,
 			appProtocol,
 			NetBind.encodeParameters(monitoringParameters)
 		);

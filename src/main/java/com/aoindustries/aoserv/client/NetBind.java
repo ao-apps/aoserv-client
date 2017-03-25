@@ -482,7 +482,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			ip_address=in.readCompressedInt();
 			port = Port.valueOf(
 				in.readCompressedInt(),
-				com.aoindustries.net.Protocol.valueOf(in.readUTF().toUpperCase(Locale.ROOT))
+				in.readEnum(com.aoindustries.net.Protocol.class)
 			);
 			app_protocol=in.readUTF().intern();
 			open_firewall=in.readBoolean();
@@ -602,7 +602,11 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		out.writeCompressedInt(server);
 		out.writeCompressedInt(ip_address);
 		out.writeCompressedInt(port.getPort());
-		out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_0_SNAPSHOT) < 0) {
+			out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
+		} else {
+			out.writeEnum(port.getProtocol());
+		}
 		out.writeUTF(app_protocol);
 		out.writeBoolean(open_firewall);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {

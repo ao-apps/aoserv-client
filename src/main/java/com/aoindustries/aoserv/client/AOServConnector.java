@@ -57,7 +57,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -1559,6 +1558,7 @@ abstract public class AOServConnector {
 			else if(param instanceof Long) out.writeLong((Long)param);
 			else if(param instanceof Boolean) out.writeBoolean((Boolean)param);
 			else if(param instanceof Short) out.writeShort((Short)param);
+			else if(param instanceof Enum) out.writeEnum((Enum)param);
 			else if(param instanceof byte[]) {
 				byte[] bytes=(byte[])param;
 				out.writeCompressedInt(bytes.length);
@@ -1586,7 +1586,7 @@ abstract public class AOServConnector {
 			else if(param instanceof Port) {
 				Port port = (Port)param;
 				out.writeCompressedInt(port.getPort());
-				out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
+				out.writeEnum(port.getProtocol());
 			}
 			else if(param instanceof PostgresDatabaseName) out.writeUTF(param.toString());
 			else if(param instanceof PostgresServerName) out.writeUTF(param.toString());
