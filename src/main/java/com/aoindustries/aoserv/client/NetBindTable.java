@@ -33,7 +33,6 @@ import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @see  NetBind
@@ -81,7 +80,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 					out.writeUTF(pk.name.toString());
 					out.writeCompressedInt(ia.pkey);
 					out.writeCompressedInt(port.getPort());
-					out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
+					out.writeEnum(port.getProtocol());
 					out.writeUTF(appProtocol.pkey);
 					out.writeBoolean(openFirewall);
 					out.writeBoolean(monitoringEnabled);
