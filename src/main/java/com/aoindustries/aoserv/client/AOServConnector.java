@@ -2297,7 +2297,7 @@ abstract public class AOServConnector {
 				AOServProtocol.CommandID.TEST_CONNECTION,
 				new UpdateRequest() {
 					@Override
-					public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					public void writeRequest(CompressedDataOutputStream out) {
 					}
 					@Override
 					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
