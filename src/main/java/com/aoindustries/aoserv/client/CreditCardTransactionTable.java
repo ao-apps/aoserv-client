@@ -107,13 +107,13 @@ final public class CreditCardTransactionTable extends CachedTableIntegerKey<Cred
 
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.CREDIT_CARD_TRANSACTIONS.ordinal());
 					out.writeUTF(processor.pkey);
 					out.writeUTF(business.pkey.toString());

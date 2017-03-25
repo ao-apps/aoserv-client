@@ -304,11 +304,11 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	public AOServer.DaemonAccess requestVncConsoleAccess() throws IOException, SQLException {
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
 			new AOServConnector.ResultRequest<AOServer.DaemonAccess>() {
 				private AOServer.DaemonAccess daemonAccess;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 				@Override

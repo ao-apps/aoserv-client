@@ -379,12 +379,12 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	public void addAnnotation(final String summary, final String details) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.ADD_TICKET_ANNOTATION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD_TICKET_ANNOTATION.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeUTF(summary);
 					out.writeNullLongUTF(details);
@@ -487,13 +487,13 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	public boolean setInternalNotes(final String oldInternalNotes, final String newInternalNotes) throws IOException, SQLException {
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.SET_TICKET_INTERNAL_NOTES,
 			new AOServConnector.ResultRequest<Boolean>() {
 				boolean result;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_TICKET_INTERNAL_NOTES.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeLongUTF(oldInternalNotes);
 					out.writeLongUTF(newInternalNotes);

@@ -115,12 +115,12 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	public void setLimits(final PackageDefinitionLimit[] limits) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(limits.length);
 					for(PackageDefinitionLimit limit : limits) {
@@ -312,12 +312,12 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeUTF(business.pkey.toString());
 					out.writeUTF(category.pkey);

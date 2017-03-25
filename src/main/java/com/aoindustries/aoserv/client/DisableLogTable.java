@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2002-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,13 +55,13 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				IntList invalidateList;
 				int result;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.DISABLE_LOG.ordinal());
 					out.writeUTF(bu.pkey.toString());
 					out.writeBoolean(disableReason!=null); if(disableReason!=null) out.writeUTF(disableReason);

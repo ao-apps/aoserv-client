@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2003-2009, 2014, 2016  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2014, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -284,12 +284,12 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 	public SlaveStatus getSlaveStatus() throws IOException, SQLException {
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.GET_MYSQL_SLAVE_STATUS,
 			new AOServConnector.ResultRequest<SlaveStatus>() {
 				SlaveStatus result;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_SLAVE_STATUS.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 

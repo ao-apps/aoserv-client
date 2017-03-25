@@ -58,13 +58,13 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 	int addEmailSmtpRelay(final Package pack, final AOServer aoServer, final HostAddress host, final EmailSmtpRelayType type, final long duration) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.EMAIL_SMTP_RELAYS.ordinal());
 					out.writeUTF(pack.name.toString());
 					out.writeCompressedInt(aoServer==null?-1:aoServer.pkey);

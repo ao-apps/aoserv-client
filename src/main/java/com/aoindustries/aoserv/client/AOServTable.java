@@ -272,12 +272,12 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	protected V getObject(boolean allowRetry, final AOServProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
 		return connector.requestResult(
 			allowRetry,
+			commID,
 			new AOServConnector.ResultRequest<V>() {
 				V result;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(commID.ordinal());
 					AOServConnector.writeParams(params, out);
 				}
 
@@ -338,11 +338,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		try {
 			connector.requestUpdate(
 				allowRetry,
+				commID,
 				new AOServConnector.UpdateRequest() {
 
 					@Override
 					public void writeRequest(CompressedDataOutputStream out) throws IOException {
-						out.writeCompressedInt(commID.ordinal());
 						out.writeBoolean(listeners!=null);
 						AOServConnector.writeParams(params, out);
 					}
@@ -445,11 +445,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		try {
 			connector.requestUpdate(
 				allowRetry,
+				commID,
 				new AOServConnector.UpdateRequest() {
 
 					@Override
 					public void writeRequest(CompressedDataOutputStream out) throws IOException {
-						out.writeCompressedInt(commID.ordinal());
 						AOServConnector.writeParams(params, out);
 					}
 

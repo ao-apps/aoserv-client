@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -64,13 +64,13 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
 					out.writeUTF(brand.pkey.toString());
 					out.writeNullUTF(business==null ? null : business.pkey.toString());

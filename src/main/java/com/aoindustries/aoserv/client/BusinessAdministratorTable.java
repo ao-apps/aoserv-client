@@ -93,11 +93,11 @@ final public class BusinessAdministratorTable extends CachedTableUserIdKey<Busin
 		final String finalZip = zip;
 		connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.BUSINESS_ADMINISTRATORS.ordinal());
 					out.writeUTF(username.pkey.toString());
 					out.writeUTF(name);

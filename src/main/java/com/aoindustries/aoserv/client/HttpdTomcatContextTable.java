@@ -71,13 +71,13 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS.ordinal());
 					out.writeCompressedInt(hts.pkey);
 					out.writeNullUTF(className);

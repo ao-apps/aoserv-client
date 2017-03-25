@@ -203,10 +203,10 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 
 		connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PASSWORD,
 			new AOServConnector.UpdateRequest() {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PASSWORD.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeBoolean(password!=null); if(password!=null) out.writeUTF(password);
 				}
@@ -228,11 +228,11 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 	public void setPredisablePassword(final String password) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(password);
 				}

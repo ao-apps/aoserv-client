@@ -70,12 +70,12 @@ final public class LinuxAccountTable extends CachedTableUserIdKey<LinuxAccount> 
 	) throws IOException, SQLException {
 		connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
 					out.writeUTF(usernameObject.pkey.toString());
 					out.writeUTF(primaryGroup.toString());

@@ -150,13 +150,13 @@ final public class SignupRequestTable extends CachedTableIntegerKey<SignupReques
 		// Send the request to the master server
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.SIGNUP_REQUESTS.ordinal());
 					out.writeUTF(brand.pkey.toString());
 					out.writeUTF(ip_address.toString());

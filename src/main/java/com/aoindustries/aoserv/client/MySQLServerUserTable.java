@@ -56,13 +56,13 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
 	int addMySQLServerUser(final MySQLUserId username, final MySQLServer mysqlServer, final String host) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.MYSQL_SERVER_USERS.ordinal());
 					out.writeUTF(username.toString());
 					out.writeCompressedInt(mysqlServer.pkey);

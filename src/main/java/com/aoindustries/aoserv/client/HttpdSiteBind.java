@@ -223,12 +223,12 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	public void setPredisableConfig(final String config) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(config);
 				}

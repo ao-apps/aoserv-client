@@ -582,12 +582,12 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	public MasterStatus getMasterStatus() throws IOException, SQLException {
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.GET_MYSQL_MASTER_STATUS,
 			new AOServConnector.ResultRequest<MasterStatus>() {
 				MasterStatus result;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_MASTER_STATUS.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 

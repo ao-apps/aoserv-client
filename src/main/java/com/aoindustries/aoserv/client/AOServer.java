@@ -578,10 +578,10 @@ final public class AOServer
 		try {
 			table.connector.requestUpdate(
 				false,
+				AOServProtocol.CommandID.GET_MRTG_FILE,
 				new AOServConnector.UpdateRequest() {
 					@Override
 					public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
-						masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_MRTG_FILE.ordinal());
 						masterOut.writeCompressedInt(pkey);
 						masterOut.writeUTF(filename);
 					}
@@ -2147,13 +2147,13 @@ final public class AOServer
 		try {
 			return table.connector.requestResult(
 				true,
+				AOServProtocol.CommandID.GET_AO_SERVER_LVM_REPORT,
 				new AOServConnector.ResultRequest<LvmReport>() {
 					String vgs;
 					String pvs;
 					String lvs;
 					@Override
 					public void writeRequest(CompressedDataOutputStream out) throws IOException {
-						out.writeCompressedInt(AOServProtocol.CommandID.GET_AO_SERVER_LVM_REPORT.ordinal());
 						out.writeCompressedInt(pkey);
 					}
 					@Override

@@ -285,12 +285,12 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 	public AOServer.DaemonAccess requestReplicationDaemonAccess() throws IOException, SQLException {
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS,
 			new AOServConnector.ResultRequest<AOServer.DaemonAccess>() {
 				private AOServer.DaemonAccess daemonAccess;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 
@@ -352,12 +352,12 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 	public Activity getActivity() throws IOException, SQLException {
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
 			new AOServConnector.ResultRequest<Activity>() {
 				Activity activity;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.GET_FAILOVER_FILE_REPLICATION_ACTIVITY.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 

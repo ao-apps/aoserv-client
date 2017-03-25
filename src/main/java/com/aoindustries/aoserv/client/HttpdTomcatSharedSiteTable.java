@@ -72,13 +72,13 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 		final int tv = version==null?-1:version.getTechnologyVersion(connector).getPkey();
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_SHARED_SITES.ordinal());
 					out.writeCompressedInt(aoServer.pkey);
 					out.writeUTF(siteName);

@@ -70,13 +70,13 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.HTTPD_JBOSS_SITES.ordinal());
 					out.writeCompressedInt(aoServer.pkey);
 					out.writeUTF(siteName);

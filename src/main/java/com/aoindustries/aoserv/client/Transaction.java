@@ -98,12 +98,12 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	public void approved(final int creditCardTransaction) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.TRANSACTION_APPROVED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_APPROVED.ordinal());
 					out.writeCompressedInt(transid);
 					out.writeCompressedInt(creditCardTransaction);
 				}
@@ -129,12 +129,12 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	public void declined(final int creditCardTransaction) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.TRANSACTION_DECLINED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_DECLINED.ordinal());
 					out.writeCompressedInt(transid);
 					out.writeCompressedInt(creditCardTransaction);
 				}
@@ -160,12 +160,12 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	public void held(final int creditCardTransaction) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.TRANSACTION_HELD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.TRANSACTION_HELD.ordinal());
 					out.writeCompressedInt(transid);
 					out.writeCompressedInt(creditCardTransaction);
 				}

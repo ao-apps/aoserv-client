@@ -364,12 +364,12 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
 		final String finalCancelReason = cancelReason;
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.CANCEL_BUSINESS,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.CANCEL_BUSINESS.ordinal());
 					out.writeUTF(pkey.toString());
 					out.writeNullUTF(finalCancelReason);
 				}

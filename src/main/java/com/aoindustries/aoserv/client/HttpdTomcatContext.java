@@ -309,12 +309,12 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(className);
 					out.writeBoolean(cookies);
