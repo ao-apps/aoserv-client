@@ -72,6 +72,8 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 	}
 
 	public MasterUser getOwner(AOServConnector connector) throws SQLException, IOException {
+		// May be filtered
+		if(owner == null) return null;
 		MasterUser obj = connector.getMasterUsers().get(owner);
 		if (obj == null) throw new SQLException("Unable to find MasterUser: " + owner);
 		return obj;
@@ -124,7 +126,10 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 			name = result.getString(2);
 			version = result.getString(3);
 			updated = result.getTimestamp(4).getTime();
-			owner = UserId.valueOf(result.getString(5));
+			{
+				String s = result.getString(5);
+				owner = AOServProtocol.FILTERED.equals(s) ? null : UserId.valueOf(s);
+			}
 			operating_system_version = result.getInt(6);
 			if(result.wasNull()) operating_system_version = -1;
 			Timestamp T = result.getTimestamp(7);
@@ -142,7 +147,14 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 			name = in.readUTF().intern();
 			version = in.readUTF();
 			updated = in.readLong();
-			owner = UserId.valueOf(in.readUTF()).intern();
+			{
+				String s = in.readUTF();
+				if(AOServProtocol.FILTERED.equals(s)) {
+					owner = null;
+				} else {
+					owner = UserId.valueOf(s).intern();
+				}
+			}
 			operating_system_version = in.readCompressedInt();
 			disable_time = in.readLong();
 			disable_reason = in.readNullUTF();
@@ -157,7 +169,7 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 		out.writeUTF(name);
 		out.writeUTF(version);
 		out.writeLong(updated);
-		out.writeUTF(owner.toString());
+		out.writeUTF(owner==null ? AOServProtocol.FILTERED : owner.toString());
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108) >= 0) {
 			out.writeCompressedInt(operating_system_version);
 		}
