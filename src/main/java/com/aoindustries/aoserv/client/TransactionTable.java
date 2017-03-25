@@ -77,13 +77,13 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			false,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int transid;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
 					out.writeUTF(business.pkey.toString());
 					out.writeUTF(sourceBusiness.pkey.toString());

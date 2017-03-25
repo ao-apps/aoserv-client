@@ -143,11 +143,11 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	public long copyHomeDirectory(final AOServer toServer) throws IOException, SQLException {
 		return table.connector.requestResult(
 			false,
+			AOServProtocol.CommandID.COPY_HOME_DIRECTORY,
 			new AOServConnector.ResultRequest<Long>() {
 				long result;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.COPY_HOME_DIRECTORY.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(toServer.pkey);
 				}
@@ -277,13 +277,13 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	public InboxAttributes getInboxAttributes() throws IOException, SQLException {
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.GET_INBOX_ATTRIBUTES,
 			new AOServConnector.ResultRequest<InboxAttributes>() {
 
 				InboxAttributes result;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.GET_INBOX_ATTRIBUTES.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 
@@ -316,10 +316,10 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		if(sizes.length>0) {
 			table.connector.requestUpdate(
 				true,
+				AOServProtocol.CommandID.GET_IMAP_FOLDER_SIZES,
 				new AOServConnector.UpdateRequest() {
 					@Override
 					public void writeRequest(CompressedDataOutputStream out) throws IOException {
-						out.writeCompressedInt(AOServProtocol.CommandID.GET_IMAP_FOLDER_SIZES.ordinal());
 						out.writeCompressedInt(pkey);
 						out.writeCompressedInt(folderNames.length);
 						for (String folderName : folderNames) {
@@ -594,12 +594,12 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_AUTORESPONDER,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_AUTORESPONDER.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(from==null?-1:from.getPkey());
 					out.writeBoolean(subject!=null);
@@ -654,12 +654,12 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	public void setPredisablePassword(final String password) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(password);
 				}

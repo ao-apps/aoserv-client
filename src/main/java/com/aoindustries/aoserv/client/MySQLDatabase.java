@@ -175,10 +175,10 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	public void dump(final Writer out) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
+			AOServProtocol.CommandID.DUMP_MYSQL_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
 				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
-					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
 					masterOut.writeCompressedInt(pkey);
 					masterOut.writeBoolean(false);
 				}
@@ -215,10 +215,10 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
+			AOServProtocol.CommandID.DUMP_MYSQL_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
 				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
-					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_MYSQL_DATABASE.ordinal());
 					masterOut.writeCompressedInt(pkey);
 					masterOut.writeBoolean(gzip);
 				}
@@ -645,12 +645,12 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	public List<TableStatus> getTableStatus(final FailoverMySQLReplication mysqlSlave) throws IOException, SQLException {
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.GET_MYSQL_TABLE_STATUS,
 			new AOServConnector.ResultRequest<List<TableStatus>>() {
 				private List<TableStatus> result;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.GET_MYSQL_TABLE_STATUS.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(mysqlSlave==null ? -1 : mysqlSlave.pkey);
 				}
@@ -776,12 +776,12 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 		if(tableNames.isEmpty()) return Collections.emptyList();
 		return table.connector.requestResult(
 			true,
+			AOServProtocol.CommandID.CHECK_MYSQL_TABLES,
 			new AOServConnector.ResultRequest<List<CheckTableResult>>() {
 				private List<CheckTableResult> result;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.CHECK_MYSQL_TABLES.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(mysqlSlave==null ? -1 : mysqlSlave.pkey);
 					int size = tableNames.size();

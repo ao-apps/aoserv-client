@@ -266,11 +266,12 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		AOServConnector connector=table.connector;
 		if(!connector.isSecure()) throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
+			AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PASSWORD,
 			new AOServConnector.UpdateRequest() {
 			@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PASSWORD.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(password);
 				}
@@ -294,12 +295,12 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	public void setPredisablePassword(final String password) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_MYSQL_SERVER_USER_PREDISABLE_PASSWORD.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(password);
 				}

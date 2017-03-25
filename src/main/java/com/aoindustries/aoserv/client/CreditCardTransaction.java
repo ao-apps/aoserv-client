@@ -974,12 +974,12 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.CREDIT_CARD_TRANSACTION_SALE_COMPLETED.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(authorizationCommunicationResult);
 					out.writeNullUTF(authorizationProviderErrorCode);
@@ -1052,12 +1052,12 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(authorizationCommunicationResult);
 					out.writeNullUTF(authorizationProviderErrorCode);

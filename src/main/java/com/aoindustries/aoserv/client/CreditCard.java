@@ -594,12 +594,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION.ordinal());
 					out.writeCompressedInt(pkey);
 					out.writeUTF(maskedCardNumber);
 					out.writeNullUTF(encryptedCardNumber);

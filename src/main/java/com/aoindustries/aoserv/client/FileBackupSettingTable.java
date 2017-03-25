@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2003-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2003-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -135,12 +135,12 @@ final public class FileBackupSettingTable extends CachedTableIntegerKey<FileBack
 
 		connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE.ordinal());
 					out.writeCompressedInt(ffr.getPkey());
 					int size = paths.size();
 					out.writeCompressedInt(size);

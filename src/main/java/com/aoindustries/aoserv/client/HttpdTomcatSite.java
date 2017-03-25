@@ -194,11 +194,11 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 	public String startJVM() throws IOException, SQLException {
 		return table.connector.requestResult(
 			false,
+			AOServProtocol.CommandID.START_JVM,
 			new AOServConnector.ResultRequest<String>() {
 				String result;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.START_JVM.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 
@@ -224,11 +224,11 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 	public String stopJVM() throws IOException, SQLException {
 		return table.connector.requestResult(
 			false,
+			AOServProtocol.CommandID.STOP_JVM,
 			new AOServConnector.ResultRequest<String>() {
 				String result;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.STOP_JVM.ordinal());
 					out.writeCompressedInt(pkey);
 				}
 

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2005-2013, 2016  AO Industries, Inc.
+ * Copyright (C) 2005-2013, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -68,13 +68,13 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.PACKAGE_DEFINITIONS.ordinal());
 					out.writeUTF(business.pkey.toString());
 					out.writeUTF(category.pkey);

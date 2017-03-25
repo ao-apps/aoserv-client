@@ -453,10 +453,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	public void getAWStatsFile(final String path, final String queryString, final OutputStream out) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
+			AOServProtocol.CommandID.GET_AWSTATS_FILE,
 			new AOServConnector.UpdateRequest() {
 				@Override
 				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
-					masterOut.writeCompressedInt(AOServProtocol.CommandID.GET_AWSTATS_FILE.ordinal());
 					masterOut.writeCompressedInt(pkey);
 					masterOut.writeUTF(path);
 					masterOut.writeUTF(queryString==null ? "" : queryString);

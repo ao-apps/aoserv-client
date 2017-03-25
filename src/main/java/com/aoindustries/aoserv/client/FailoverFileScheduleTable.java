@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2003-2009, 2016  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -72,12 +72,12 @@ final public class FailoverFileScheduleTable extends CachedTableIntegerKey<Failo
 
 		connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES.ordinal());
 					out.writeCompressedInt(ffr.getPkey());
 					int size = hours.size();
 					out.writeCompressedInt(size);

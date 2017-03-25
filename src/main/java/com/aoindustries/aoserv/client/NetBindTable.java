@@ -69,13 +69,13 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD.ordinal());
 					out.writeCompressedInt(SchemaTable.TableID.NET_BINDS.ordinal());
 					out.writeCompressedInt(se.pkey);
 					out.writeUTF(pk.name.toString());

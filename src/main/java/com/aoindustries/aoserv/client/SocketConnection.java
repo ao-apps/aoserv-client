@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.io.InterruptedIOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 /**
@@ -63,6 +65,16 @@ final public class SocketConnection extends AOServConnection {
 	 */
 	private final CompressedDataInputStream in;
 
+	/**
+	 * The first command sequence for this connection.
+	 */
+	//private final long startSeq;
+
+	/**
+	 * The next command sequence that will be sent.
+	 */
+	private final AtomicLong seq;
+
 	SocketConnection(TCPConnector connector) throws InterruptedIOException, IOException {
 		super(connector);
 		socket = connector.getSocket();
@@ -73,8 +85,7 @@ final public class SocketConnection extends AOServConnection {
 			in = new CompressedDataInputStream(new BufferedInputStream(socket.getInputStream()));
 
 			out.writeUTF(AOServProtocol.Version.CURRENT_VERSION.getVersion());
-			out.writeBoolean(connector.daemonServer != null);
-			if(connector.daemonServer != null) out.writeUTF(connector.daemonServer.toString());
+			out.writeNullUTF(ObjectUtils.toString(connector.daemonServer));
 			out.writeUTF(connector.connectAs.toString());
 			out.writeUTF(connector.authenticateAs.toString());
 			out.writeUTF(connector.password);
@@ -102,6 +113,8 @@ final public class SocketConnection extends AOServConnection {
 				if(Thread.interrupted()) throw new InterruptedIOException();
 				if(!in.readBoolean()) throw new IOException(in.readUTF());
 			}
+			final long startSeq = in.readLong();
+			this.seq = new AtomicLong(startSeq);
 			successful = true;
 		} finally {
 			if(!successful) close();
@@ -154,7 +167,9 @@ final public class SocketConnection extends AOServConnection {
 	}
 
 	@Override
-	CompressedDataOutputStream getOutputStream() {
+	CompressedDataOutputStream getOutputStream(AOServProtocol.CommandID commID) throws IOException {
+		out.writeLong(seq.getAndIncrement());
+		out.writeCompressedInt(commID.ordinal());
 		return out;
 	}
 

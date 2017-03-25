@@ -120,10 +120,10 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	public void dump(final Writer out) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
+			AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
 				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
-					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
 					masterOut.writeCompressedInt(pkey);
 					masterOut.writeBoolean(false);
 				}
@@ -160,10 +160,10 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			false,
+			AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
 				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
-					masterOut.writeCompressedInt(AOServProtocol.CommandID.DUMP_POSTGRES_DATABASE.ordinal());
 					masterOut.writeCompressedInt(pkey);
 					masterOut.writeBoolean(gzip);
 				}

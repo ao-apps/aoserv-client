@@ -1466,11 +1466,11 @@ abstract public class AOServConnector {
 	public void invalidateTable(final int tableID, final int server) throws IOException, SQLException {
 		requestUpdate(
 			true,
+			AOServProtocol.CommandID.INVALIDATE_TABLE,
 			new UpdateRequest() {
 				IntList tableList;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.INVALIDATE_TABLE.ordinal());
 					out.writeCompressedInt(tableID);
 					out.writeCompressedInt(server);
 				}
@@ -1553,7 +1553,7 @@ abstract public class AOServConnector {
 			if(param==null) throw new NullPointerException("param is null");
 			else if(param instanceof Integer) out.writeCompressedInt(((Integer)param));
 			else if(param instanceof SchemaTable.TableID) out.writeCompressedInt(((SchemaTable.TableID)param).ordinal());
-			else if(param instanceof AOServProtocol.CommandID) out.writeCompressedInt(((AOServProtocol.CommandID)param).ordinal());
+			// Now passed while getting output stream: else if(param instanceof AOServProtocol.CommandID) out.writeCompressedInt(((AOServProtocol.CommandID)param).ordinal());
 			else if(param instanceof String) out.writeUTF((String)param);
 			else if(param instanceof Float) out.writeFloat((Float)param);
 			else if(param instanceof Long) out.writeLong((Long)param);
@@ -1624,14 +1624,18 @@ abstract public class AOServConnector {
 		T afterRelease();
 	}
 
-	final <T> T requestResult(boolean allowRetry, ResultRequest<T> resultRequest) throws IOException, SQLException {
+	final <T> T requestResult(
+		boolean allowRetry,
+		AOServProtocol.CommandID commID,
+		ResultRequest<T> resultRequest
+	) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					resultRequest.writeRequest(out);
 					out.flush();
 
@@ -1670,8 +1674,7 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -1714,8 +1717,7 @@ abstract public class AOServConnector {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -1762,8 +1764,7 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -1806,8 +1807,7 @@ abstract public class AOServConnector {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -1854,8 +1854,7 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -1896,8 +1895,7 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -1940,8 +1938,7 @@ abstract public class AOServConnector {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -1988,8 +1985,7 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -2033,8 +2029,7 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -2079,8 +2074,7 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -2138,14 +2132,18 @@ abstract public class AOServConnector {
 		void afterRelease();
 	}
 
-	final void requestUpdate(boolean allowRetry, UpdateRequest updateRequest) throws IOException, SQLException {
+	final void requestUpdate(
+		boolean allowRetry,
+		AOServProtocol.CommandID commID,
+		UpdateRequest updateRequest
+	) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					updateRequest.writeRequest(out);
 					out.flush();
 
@@ -2185,8 +2183,7 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -2227,8 +2224,7 @@ abstract public class AOServConnector {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out=connection.getOutputStream();
-					out.writeCompressedInt(commID.ordinal());
+					CompressedDataOutputStream out = connection.getOutputStream(commID);
 					writeParams(params, out);
 					out.flush();
 
@@ -2298,10 +2294,10 @@ abstract public class AOServConnector {
 		synchronized(testConnectLock) {
 			requestUpdate(
 				true,
+				AOServProtocol.CommandID.TEST_CONNECTION,
 				new UpdateRequest() {
 					@Override
 					public void writeRequest(CompressedDataOutputStream out) throws IOException {
-						out.writeCompressedInt(AOServProtocol.CommandID.TEST_CONNECTION.ordinal());
 					}
 					@Override
 					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
@@ -2336,12 +2332,12 @@ abstract public class AOServConnector {
 	public int getMasterEntropy(final byte[] buff, final int numBytes) throws IOException, SQLException {
 		return requestResult(
 			true,
+			AOServProtocol.CommandID.GET_MASTER_ENTROPY,
 			new ResultRequest<Integer>() {
 				int numObtained;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.GET_MASTER_ENTROPY.ordinal());
 					out.writeCompressedInt(numBytes);
 				}
 
@@ -2378,10 +2374,10 @@ abstract public class AOServConnector {
 	public void addMasterEntropy(final byte[] buff, final int numBytes) throws IOException, SQLException {
 		requestUpdate(
 			true,
+			AOServProtocol.CommandID.ADD_MASTER_ENTROPY,
 			new UpdateRequest() {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD_MASTER_ENTROPY.ordinal());
 					out.writeCompressedInt(numBytes);
 					for(int c=0;c<numBytes;c++) out.writeByte(buff[c]);
 				}

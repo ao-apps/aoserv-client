@@ -353,12 +353,12 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
 		if(size>0) {
 			table.connector.requestUpdate(
 				true,
+				AOServProtocol.CommandID.ADD_IP_REPUTATION,
 				new AOServConnector.UpdateRequest() {
 					IntList invalidateList;
 
 					@Override
 					public void writeRequest(CompressedDataOutputStream out) throws IOException {
-						out.writeCompressedInt(AOServProtocol.CommandID.ADD_IP_REPUTATION.ordinal());
 						out.writeCompressedInt(pkey);
 						out.writeCompressedInt(size);
 						int count = 0;

@@ -70,13 +70,13 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		// Create the new profile
 		return connector.requestResult(
 			true,
+			AOServProtocol.CommandID.ADD_BACKUP_SERVER,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.ADD_BACKUP_SERVER.ordinal());
 					out.writeUTF(hostname);
 					out.writeUTF(farm.getName());
 					out.writeCompressedInt(owner.getPkey());

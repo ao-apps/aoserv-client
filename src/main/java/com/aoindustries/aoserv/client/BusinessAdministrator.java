@@ -501,12 +501,12 @@ final public class BusinessAdministrator extends CachedObjectUserIdKey<BusinessA
 		final String finalZip = zip;
 		table.connector.requestUpdate(
 			true,
+			AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(AOServProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE.ordinal());
 					out.writeUTF(pkey.toString());
 					out.writeUTF(name);
 					out.writeBoolean(finalTitle!=null); if(finalTitle!=null) out.writeUTF(finalTitle);
