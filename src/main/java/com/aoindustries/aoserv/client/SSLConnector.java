@@ -122,7 +122,7 @@ public class SSLConnector extends TCPConnector {
 		regSocket.setKeepAlive(true);
 		regSocket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
 		//regSocket.setTcpNoDelay(true);
-		if(local_ip!=null) regSocket.bind(new InetSocketAddress(local_ip.toString(), 0));
+		if(local_ip != null && !local_ip.isUnspecified()) regSocket.bind(new InetSocketAddress(local_ip.toString(), 0));
 		regSocket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
 		return sslFact.createSocket(regSocket, hostname.toString(), port.getPort(), true);
 	}
