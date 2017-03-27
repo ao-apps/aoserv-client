@@ -252,7 +252,7 @@ public class TCPConnector extends AOServConnector {
 		Socket socket=new Socket();
 		socket.setKeepAlive(true);
 		socket.setSoLinger(true, AOPool.DEFAULT_SOCKET_SO_LINGER);
-		//socket.setTcpNoDelay(true);
+		socket.setTcpNoDelay(true);
 		if(local_ip != null && !local_ip.isUnspecified()) socket.bind(new InetSocketAddress(local_ip.toString(), 0));
 		socket.connect(new InetSocketAddress(hostname.toString(), port.getPort()), AOPool.DEFAULT_CONNECT_TIMEOUT);
 		return socket;
