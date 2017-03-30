@@ -157,9 +157,9 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		VERSION_1_78("1.78"),
 		VERSION_1_79("1.79"),
 		VERSION_1_80("1.80"),
-		VERSION_1_80_0_SNAPSHOT("1.80.0-SNAPSHOT");
+		VERSION_1_80_0("1.80.0");
 
-		public static final Version CURRENT_VERSION = VERSION_1_80_0_SNAPSHOT;
+		public static final Version CURRENT_VERSION = VERSION_1_80_0;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {

@@ -602,7 +602,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		out.writeCompressedInt(server);
 		out.writeCompressedInt(ip_address);
 		out.writeCompressedInt(port.getPort());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_0_SNAPSHOT) < 0) {
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_0) < 0) {
 			out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
 		} else {
 			out.writeEnum(port.getProtocol());

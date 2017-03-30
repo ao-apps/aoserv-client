@@ -162,7 +162,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 		out.writeUTF(name);
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0) {
 			out.writeBoolean(is_user_service);
-			if(version.compareTo(AOServProtocol.Version.VERSION_1_80_0_SNAPSHOT) < 0) {
+			if(version.compareTo(AOServProtocol.Version.VERSION_1_80_0) < 0) {
 				out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
 			} else {
 				out.writeEnum(port.getProtocol());
