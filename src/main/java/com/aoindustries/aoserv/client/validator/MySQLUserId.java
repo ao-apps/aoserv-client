@@ -40,6 +40,7 @@ import java.util.concurrent.ConcurrentMap;
  *   <li>Be between 1 and 16 characters</li>
  *   <li>Must start with <code>[a-z]</code></li>
  *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
+ *   <li>A special exemption is made for the <code>mysql.sys</code> system user added in MySQL 5.7.</li>
  *   <li>Must not be a MySQL reserved word</li>
  *   <li>Must be a valid <code>UserId</code> - this is implied by the above rules</li>
  * </ul>
@@ -61,27 +62,32 @@ final public class MySQLUserId extends UserId implements
 	 */
 	public static ValidationResult validate(String id) {
 		if(id==null) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.isNull");
-		int len = id.length();
-		if(len==0) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.isEmpty");
-		if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.tooLong", MAX_LENGTH, len);
-
-		// The first character must be [a-z] or [0-9]
-		char ch = id.charAt(0);
 		if(
-			(ch < 'a' || ch > 'z')
-			&& (ch<'0' || ch>'9')
-		) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.startAtoZor0to9");
+			// Allow specific system users that otherwise do not match our allowed username pattern
+			!"mysql.sys".equals(id)
+		) {
+			int len = id.length();
+			if(len==0) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.tooLong", MAX_LENGTH, len);
 
-		// The rest may have additional characters
-		for (int c = 1; c < len; c++) {
-			ch = id.charAt(c);
-			if (
-				(ch<'a' || ch>'z')
+			// The first character must be [a-z] or [0-9]
+			char ch = id.charAt(0);
+			if(
+				(ch < 'a' || ch > 'z')
 				&& (ch<'0' || ch>'9')
-				&& ch!='_'
-			) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.illegalCharacter");
+			) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.startAtoZor0to9");
+
+			// The rest may have additional characters
+			for (int c = 1; c < len; c++) {
+				ch = id.charAt(c);
+				if (
+					(ch<'a' || ch>'z')
+					&& (ch<'0' || ch>'9')
+					&& ch!='_'
+				) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.illegalCharacter");
+			}
+			if(MySQLServer.ReservedWord.isReservedWord(id)) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.reservedWord");
 		}
-		if(MySQLServer.ReservedWord.isReservedWord(id)) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.reservedWord");
 		assert UserId.validate(id).isValid() : "A MySQLUserId is always a valid UserId.";
 		return ValidResult.getInstance();
 	}

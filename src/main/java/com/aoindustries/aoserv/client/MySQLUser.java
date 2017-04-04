@@ -55,9 +55,15 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 	 * The username of the MySQL super user.
 	 */
 	public static final MySQLUserId ROOT;
+
+	/**
+	 * The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
+	 */
+	public static final MySQLUserId MYSQL_SYS;
 	static {
 		try {
 			ROOT = MySQLUserId.valueOf("root").intern();
+			MYSQL_SYS = MySQLUserId.valueOf("mysql.sys").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -415,7 +421,12 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 	@Override
 	public List<CannotRemoveReason<MySQLUser>> getCannotRemoveReasons() {
 		List<CannotRemoveReason<MySQLUser>> reasons=new ArrayList<>();
-		if(pkey.equals(ROOT)) reasons.add(new CannotRemoveReason<>("Not allowed to remove the "+ROOT+" MySQL user", this));
+		if(
+			pkey.equals(ROOT)
+			|| pkey.equals(MYSQL_SYS)
+		) {
+			reasons.add(new CannotRemoveReason<>("Not allowed to remove the " + pkey + " MySQL user", this));
+		}
 		return reasons;
 	}
 
@@ -476,6 +487,10 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 
 	@Override
 	public boolean canSetPassword() {
-		return disable_log==-1 && !pkey.equals(ROOT);
+		return
+			disable_log == -1
+			&& !pkey.equals(ROOT)
+			&& !pkey.equals(MYSQL_SYS)
+		;
 	}
 }
