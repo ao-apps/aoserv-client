@@ -95,7 +95,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	 */
 	public static final MySQLDatabaseName
 		INFORMATION_SCHEMA,
-		PERFORMANCE_SCHEMA
+		PERFORMANCE_SCHEMA,
+		SYS
 	;
 
 	static {
@@ -103,6 +104,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 			MYSQL = MySQLDatabaseName.valueOf("mysql");
 			INFORMATION_SCHEMA = MySQLDatabaseName.valueOf("information_schema");
 			PERFORMANCE_SCHEMA = MySQLDatabaseName.valueOf("performance_schema");
+			SYS = MySQLDatabaseName.valueOf("sys");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -377,13 +379,21 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 				version.startsWith(MySQLServer.VERSION_5_0_PREFIX)
 				|| version.startsWith(MySQLServer.VERSION_5_1_PREFIX)
 				|| version.startsWith(MySQLServer.VERSION_5_6_PREFIX)
+				|| version.startsWith(MySQLServer.VERSION_5_7_PREFIX)
 			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+INFORMATION_SCHEMA, this));
 		}
 		if(name.equals(PERFORMANCE_SCHEMA)) {
 			String version = getMySQLServer().getVersion().getVersion();
 			if(
 				version.startsWith(MySQLServer.VERSION_5_6_PREFIX)
+				|| version.startsWith(MySQLServer.VERSION_5_7_PREFIX)
 			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+PERFORMANCE_SCHEMA, this));
+		}
+		if(name.equals(SYS)) {
+			String version = getMySQLServer().getVersion().getVersion();
+			if(
+				version.startsWith(MySQLServer.VERSION_5_7_PREFIX)
+			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+SYS, this));
 		}
 		return reasons;
 	}
