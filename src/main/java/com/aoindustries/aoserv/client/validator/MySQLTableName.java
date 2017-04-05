@@ -40,7 +40,7 @@ import java.io.Serializable;
  *   <li>Be non-empty</li>
  *   <li>Be between 1 and 64 characters</li>
  *   <li>Must start with <code>[a-z], [A-Z], or _</code></li>
- *   <li>The rest of the characters may contain [a-z], [A-Z], [0-9], underscore (_), and hyphen (-)</li>
+ *   <li>The rest of the characters may contain [a-z], [A-Z], [0-9], underscore (_), hyphen (-), or dollar ($)</li>
  * </ul>
  *
  * @author  AO Industries, Inc.
@@ -86,6 +86,7 @@ final public class MySQLTableName implements
 				&& (ch<'0' || ch>'9')
 				&& ch != '_'
 				&& ch != '-'
+				&& ch != '$'
 			) return new InvalidResult(ApplicationResources.accessor, "MySQLTableName.validate.illegalCharacter");
 		}
 		return ValidResult.getInstance();
