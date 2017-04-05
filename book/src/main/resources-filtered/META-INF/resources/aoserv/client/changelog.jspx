@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-04T18:14:25-0500"
+		dateModified="2017-04-05T08:01:02-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -141,7 +141,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Removed <code>net_protocols</code> table</li>
 						</ol>
 					</li>
-					<li>Remove a couple protocols that referred to old <code>raw</code> net protocol:
+					<li>Removed a couple protocols that referred to old <code>raw</code> net protocol:
 						<ol>
 							<li>Removed <code>protocols.rtmp</code> row</li>
 							<li>Removed <code>protocols.zip</code> row</li>
