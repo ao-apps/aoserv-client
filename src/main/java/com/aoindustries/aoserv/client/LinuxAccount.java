@@ -326,14 +326,14 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = UserId.valueOf(in.readUTF()).intern();
-			name=Gecos.valueOf(in.readUTF());
-			office_location=Gecos.valueOf(in.readNullUTF());
-			office_phone=Gecos.valueOf(in.readNullUTF());
-			home_phone=Gecos.valueOf(in.readNullUTF());
-			type=in.readUTF().intern();
+			name = Gecos.valueOf(in.readNullUTF());
+			office_location = Gecos.valueOf(in.readNullUTF());
+			office_phone = Gecos.valueOf(in.readNullUTF());
+			home_phone = Gecos.valueOf(in.readNullUTF());
+			type = in.readUTF().intern();
 			shell = UnixPath.valueOf(in.readUTF()).intern();
-			created=in.readLong();
-			disable_log=in.readCompressedInt();
+			created = in.readLong();
+			disable_log = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -370,7 +370,12 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	}
 
 	public void setName(Gecos name) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME, pkey, name.toString());
+		table.connector.requestUpdateIL(
+			true,
+			AOServProtocol.CommandID.SET_LINUX_ACCOUNT_NAME,
+			pkey,
+			name==null ? "" : name.toString()
+		);
 	}
 
 	public void setOfficeLocation(Gecos location) throws IOException, SQLException {
@@ -395,7 +400,12 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeUTF(pkey.toString());
-		out.writeUTF(name.toString());
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) < 0) {
+			// Older clients require name, use "*" as name when none set
+			out.writeUTF(name==null ? "*" : name.toString());
+		} else {
+			out.writeNullUTF(ObjectUtils.toString(name));
+		}
 		out.writeNullUTF(ObjectUtils.toString(office_location));
 		out.writeNullUTF(ObjectUtils.toString(office_phone));
 		out.writeNullUTF(ObjectUtils.toString(home_phone));

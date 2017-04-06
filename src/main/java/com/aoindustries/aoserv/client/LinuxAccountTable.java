@@ -79,7 +79,7 @@ final public class LinuxAccountTable extends CachedTableUserIdKey<LinuxAccount> 
 					out.writeCompressedInt(SchemaTable.TableID.LINUX_ACCOUNTS.ordinal());
 					out.writeUTF(usernameObject.pkey.toString());
 					out.writeUTF(primaryGroup.toString());
-					out.writeUTF(name.toString());
+					out.writeNullUTF(ObjectUtils.toString(name));
 					out.writeNullUTF(ObjectUtils.toString(office_location));
 					out.writeNullUTF(ObjectUtils.toString(office_phone));
 					out.writeNullUTF(ObjectUtils.toString(home_phone));
@@ -149,10 +149,10 @@ final public class LinuxAccountTable extends CachedTableUserIdKey<LinuxAccount> 
 				connector.getSimpleAOClient().addLinuxAccount(
 					AOSH.parseUserId(args[1], "username"),
 					AOSH.parseGroupId(args[2], "primary_group"),
-					AOSH.parseGecos(args[3], "full_name"),
-					args[4].length()==0 ? null : AOSH.parseGecos(args[4], "office_location"),
-					args[5].length()==0 ? null : AOSH.parseGecos(args[5], "office_phone"),
-					args[6].length()==0 ? null : AOSH.parseGecos(args[6], "home_phone"),
+					args[3].isEmpty() ? null : AOSH.parseGecos(args[3], "full_name"),
+					args[4].isEmpty() ? null : AOSH.parseGecos(args[4], "office_location"),
+					args[5].isEmpty() ? null : AOSH.parseGecos(args[5], "office_phone"),
+					args[6].isEmpty() ? null : AOSH.parseGecos(args[6], "home_phone"),
 					args[7],
 					AOSH.parseUnixPath(args[8], "shell")
 				);
@@ -229,7 +229,7 @@ final public class LinuxAccountTable extends CachedTableUserIdKey<LinuxAccount> 
 			if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_HOME_PHONE, args, 2, err)) {
 				connector.getSimpleAOClient().setLinuxAccountHomePhone(
 					AOSH.parseUserId(args[1], "username"),
-					args[2].length()==0 ? null : AOSH.parseGecos(args[2], "phone_number")
+					args[2].isEmpty() ? null : AOSH.parseGecos(args[2], "phone_number")
 				);
 			}
 			return true;
@@ -237,7 +237,7 @@ final public class LinuxAccountTable extends CachedTableUserIdKey<LinuxAccount> 
 			if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_NAME, args, 2, err)) {
 				connector.getSimpleAOClient().setLinuxAccountName(
 					AOSH.parseUserId(args[1], "username"),
-					AOSH.parseGecos(args[2], "full_name")
+					args[2].isEmpty() ? null : AOSH.parseGecos(args[2], "full_name")
 				);
 			}
 			return true;
@@ -245,7 +245,7 @@ final public class LinuxAccountTable extends CachedTableUserIdKey<LinuxAccount> 
 			if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_LOCATION, args, 2, err)) {
 				connector.getSimpleAOClient().setLinuxAccountOfficeLocation(
 					AOSH.parseUserId(args[1], "username"),
-					args[2].length()==0 ? null : AOSH.parseGecos(args[2], "location")
+					args[2].isEmpty() ? null : AOSH.parseGecos(args[2], "location")
 				);
 			}
 			return true;
@@ -253,7 +253,7 @@ final public class LinuxAccountTable extends CachedTableUserIdKey<LinuxAccount> 
 			if(AOSH.checkParamCount(AOSHCommand.SET_LINUX_ACCOUNT_OFFICE_PHONE, args, 2, err)) {
 				connector.getSimpleAOClient().setLinuxAccountOfficePhone(
 					AOSH.parseUserId(args[1], "username"),
-					args[2].length()==0 ? null : AOSH.parseGecos(args[2], "phone_number")
+					args[2].isEmpty() ? null : AOSH.parseGecos(args[2], "phone_number")
 				);
 			}
 			return true;
