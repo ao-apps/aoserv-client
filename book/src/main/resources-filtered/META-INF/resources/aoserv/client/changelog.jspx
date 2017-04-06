@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-05T08:01:02-0500"
+		dateModified="2017-04-06T14:58:20-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -233,6 +233,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Extended network protocol to send randomized command sequences to help ensure stream integrity.</li>
 					<li>Now supporting MySQL 5.7.</li>
+					<li><code>linux_accounts.name</code> is now nullable.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
