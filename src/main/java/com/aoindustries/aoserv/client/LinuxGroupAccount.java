@@ -62,6 +62,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 	GroupId group_name;
 	UserId username;
 	boolean is_primary;
+	int operating_system_version;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -70,6 +71,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 			case 1: return group_name;
 			case 2: return username;
 			case 3: return is_primary;
+			case 4: return operating_system_version==-1 ? null : operating_system_version;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -98,6 +100,8 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 			group_name = GroupId.valueOf(result.getString(2));
 			username = UserId.valueOf(result.getString(3));
 			is_primary = result.getBoolean(4);
+			operating_system_version = result.getInt(5);
+			if(result.wasNull()) operating_system_version = -1;
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -107,13 +111,21 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 		return is_primary;
 	}
 
+	public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
+		if(operating_system_version == -1) return null;
+		OperatingSystemVersion osv = table.connector.getOperatingSystemVersions().get(operating_system_version);
+		if(osv == null) throw new SQLException("Unable to find OperatingSystemVersion: " + operating_system_version);
+		return osv;
+	}
+
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			group_name = GroupId.valueOf(in.readUTF()).intern();
 			username = UserId.valueOf(in.readUTF()).intern();
-			is_primary=in.readBoolean();
+			is_primary = in.readBoolean();
+			operating_system_version = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -155,5 +167,8 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 		out.writeUTF(group_name.toString());
 		out.writeUTF(username.toString());
 		out.writeBoolean(is_primary);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
+			out.writeCompressedInt(operating_system_version);
+		}
 	}
 }

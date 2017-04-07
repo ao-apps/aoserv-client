@@ -89,20 +89,31 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 	}
 
 	List<LinuxServerAccount> getAlternateLinuxServerAccounts(LinuxServerGroup group) throws SQLException, IOException {
-		int aoServer=group.getAOServer().pkey;
+		AOServer aoServer = group.getAOServer();
+		int osv = aoServer.getServer().getOperatingSystemVersion().pkey;
 		GroupId groupName = group.getLinuxGroup().pkey;
 
-		List<LinuxServerAccount> cached = getRows();
-		int cachedLen = cached.size();
+		List<LinuxServerAccount> rows = getRows();
+		int cachedLen = rows.size();
 		List<LinuxServerAccount> matches=new ArrayList<>(cachedLen);
-		for (int c = 0; c < cachedLen; c++) {
-			LinuxServerAccount linuxServerAccount = cached.get(c);
-			if(linuxServerAccount.ao_server==aoServer) {
+		for(int c = 0; c < cachedLen; c++) {
+			LinuxServerAccount linuxServerAccount = rows.get(c);
+			if(linuxServerAccount.ao_server == aoServer.pkey) {
 				UserId username = linuxServerAccount.username;
 
 				// Must also have a non-primary entry in the LinuxGroupAccounts that is also a group on this server
-				LinuxGroupAccount linuxGroupAccount = connector.getLinuxGroupAccounts().getLinuxGroupAccount(groupName, username);
-				if (linuxGroupAccount != null && !linuxGroupAccount.is_primary) matches.add(linuxServerAccount);
+				for(LinuxGroupAccount lga : connector.getLinuxGroupAccounts().getLinuxGroupAccounts(groupName, username)) {
+					if(
+						!lga.is_primary
+						&& (
+							lga.operating_system_version == -1
+							|| lga.operating_system_version == osv
+						)
+					) {
+						matches.add(linuxServerAccount);
+						break;
+					}
+				}
 			}
 		}
 		return matches;

@@ -5809,9 +5809,9 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, IOException, SQLException {
 		LinuxGroup lg=getLinuxGroup(group);
 		LinuxAccount la=getLinuxAccount(username);
-		LinuxGroupAccount lga=connector.getLinuxGroupAccounts().getLinuxGroupAccount(group, username);
-		if(lga==null) throw new IllegalArgumentException(username+" is not part of the "+group+" group");
-		lga.remove();
+		List<LinuxGroupAccount> lgas = connector.getLinuxGroupAccounts().getLinuxGroupAccounts(group, username);
+		if(lgas.isEmpty()) throw new IllegalArgumentException(username+" is not part of the "+group+" group");
+		for(LinuxGroupAccount lga : lgas) lga.remove();
 	}
 
 	/**
