@@ -54,7 +54,9 @@ import java.util.concurrent.ConcurrentMap;
  *   </li>
  *   <li>May not start with cyrus@</li>
  * </ul>
- *
+ * <p>
+ * Please note, if "+" is ever allowed, "lost+found" may need to be specifically disallowed in some contexts.
+ * </p>
  * @see Email#validate(java.lang.String)
  *
  * @author  AO Industries, Inc.

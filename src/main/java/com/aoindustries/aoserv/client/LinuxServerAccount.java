@@ -245,10 +245,24 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_CRON_TABLE, pkey);
 	}
 
+	/**
+	 * Gets the default non-hashed home directory of <code>/home/<i>username</i></code>.
+	 */
 	public static UnixPath getDefaultHomeDirectory(UserId username) {
 		try {
+			return UnixPath.valueOf("/home/" + username);
+		} catch(ValidationException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Gets the optional hashed home directory of <code>/home/<i>u</i>/<i>username</i></code>.
+	 */
+	public static UnixPath getHashedHomeDirectory(UserId username) {
+		try {
 			String usernameStr = username.toString();
-			return UnixPath.valueOf("/home/"+usernameStr.charAt(0)+'/'+usernameStr);
+			return UnixPath.valueOf("/home/" + usernameStr.charAt(0) + '/' + usernameStr);
 		} catch(ValidationException e) {
 			throw new IllegalArgumentException(e);
 		}
