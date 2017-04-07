@@ -1608,8 +1608,8 @@ final public class SimpleAOClient {
 	 *
 	 * @param  username  the username of the <code>LinuxAccount</code>
 	 * @param  aoServer  the hostname of the <code>AOServer</code>
-	 * @param  home  the home directory of the user, typically <code>/home/<i>first_letter_of_username</i>/<i>username</i></code>.
-	 *                  If <code>null</code>, <code>""</code>, or <code>"~"</code>, the default home directory for <code>username</code>
+	 * @param  home  the home directory of the user, typically <code>/home/<i>username</i></code>.
+	 *                  If {@code null}, the {@link LinuxServerAccount#getDefaultHomeDirectory(com.aoindustries.aoserv.client.validator.UserId) default home directory} for <code>username</code>
 	 *                  is used.
 	 *
 	 * @exception  IOException  if unable to contact the server

@@ -274,8 +274,10 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	public static List<UnixPath> getValidHomeDirectories(UserId username, AOServer ao) throws SQLException, IOException {
 		try {
 			List<UnixPath> dirs=new ArrayList<>();
-			if(username!=null) dirs.add(LinuxServerAccount.getDefaultHomeDirectory(username));
-
+			if(username != null) {
+				dirs.add(LinuxServerAccount.getDefaultHomeDirectory(username));
+				dirs.add(LinuxServerAccount.getHashedHomeDirectory(username));
+			}
 			List<HttpdSite> hss=ao.getHttpdSites();
 			int hsslen=hss.size();
 			for(int c=0;c<hsslen;c++) {
