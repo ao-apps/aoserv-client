@@ -362,7 +362,9 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	}
 
 	public void removeLinuxGroup(LinuxGroup group) throws IOException, SQLException {
-		table.connector.getLinuxGroupAccounts().getLinuxGroupAccount(group.pkey, pkey).remove();
+		for(LinuxGroupAccount lga : table.connector.getLinuxGroupAccounts().getLinuxGroupAccounts(group.pkey, pkey)) {
+			lga.remove();
+		}
 	}
 
 	public void setHomePhone(Gecos phone) throws IOException, SQLException {
@@ -421,8 +423,9 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	}
 
 	public void setPrimaryLinuxGroup(LinuxGroup group) throws SQLException, IOException {
-		LinuxGroupAccount lga=table.connector.getLinuxGroupAccounts().getLinuxGroupAccount(group.getName(), pkey);
-		if(lga==null) throw new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName());
-		lga.setAsPrimary();
+		List<LinuxGroupAccount> lgas = table.connector.getLinuxGroupAccounts().getLinuxGroupAccounts(group.getName(), pkey);
+		if(lgas.isEmpty()) throw new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName());
+		if(lgas.size() > 1) throw new SQLException("Found more than one LinuxGroupAccount for username="+pkey+" and group="+group.getName());
+		lgas.get(0).setAsPrimary();
 	}
 }
