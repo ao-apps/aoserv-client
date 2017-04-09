@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
 import com.aoindustries.aoserv.client.validator.LinuxId;
@@ -223,6 +224,51 @@ final public class AOServer
 			altHttpHostnames,
 			tomcatVersion,
 			contentSrc
+		);
+	}
+
+	/**
+	 * Adds a new system group.  This is for the AOServ Daemon to register newly
+	 * installed local system groups, such as those added through routine RPM
+	 * installation.  The master will check that the requested group matches
+	 * expected settings.
+	 */
+	public int addSystemGroup(GroupId groupName, int gid) throws IOException, SQLException {
+		return table.connector.getLinuxServerGroups().addSystemGroup(
+			this,
+			groupName,
+			gid
+		);
+	}
+
+	/**
+	 * Adds a new system user.  This is for the AOServ Daemon to register newly
+	 * installed local system users, such as those added through routine RPM
+	 * installation.  The master will check that the requested user matches
+	 * expected settings.
+	 */
+	public int addSystemUser(
+		UserId username,
+		int uid,
+		int gid,
+		Gecos fullName,
+		Gecos officeLocation,
+		Gecos officePhone,
+		Gecos homePhone,
+		UnixPath home,
+		UnixPath shell
+	) throws IOException, SQLException {
+		return table.connector.getLinuxServerAccounts().addSystemUser(
+			this,
+			username,
+			uid,
+			gid,
+			fullName,
+			officeLocation,
+			officePhone,
+			homePhone,
+			home,
+			shell
 		);
 	}
 

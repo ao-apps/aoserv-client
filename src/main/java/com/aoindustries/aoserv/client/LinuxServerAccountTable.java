@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
@@ -70,6 +71,33 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 			home
 		);
 		return pkey;
+	}
+
+	int addSystemUser(
+		AOServer aoServer,
+		UserId username,
+		int uid,
+		int gid,
+		Gecos fullName,
+		Gecos officeLocation,
+		Gecos officePhone,
+		Gecos homePhone,
+		UnixPath home,
+		UnixPath shell
+	) throws IOException, SQLException {
+		return connector.requestIntQueryIL(
+			true,
+			AOServProtocol.CommandID.ADD_SYSTEM_USER,
+			username,
+			uid,
+			gid,
+			fullName==null ? "" : fullName.toString(),
+			officeLocation==null ? "" : officeLocation.toString(),
+			officePhone==null ? "" : officePhone.toString(),
+			homePhone==null ? "" : homePhone.toString(),
+			home,
+			shell
+		);
 	}
 
 	@Override
