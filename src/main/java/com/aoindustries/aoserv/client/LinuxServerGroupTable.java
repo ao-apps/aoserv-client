@@ -64,6 +64,15 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 		return pkey;
 	}
 
+	int addSystemGroup(AOServer aoServer, GroupId groupName, int gid) throws IOException, SQLException {
+		return connector.requestIntQueryIL(
+			true,
+			AOServProtocol.CommandID.ADD_SYSTEM_GROUP,
+			groupName,
+			gid
+		);
+	}
+
 	@Override
 	public void clearCache() {
 		super.clearCache();

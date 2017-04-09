@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-07T16:53:11-0500"
+		dateModified="2017-04-09T18:44:24-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -238,6 +238,12 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						Linux shell accounts now support, and default to, non-hashed home directories in <code>/home/username</code> format.
 						Hashed home directories of the form <code>/home/u/username</code> are still supported when specifically selected.
+					</li>
+					<li>
+						New <code>AOServer.addSystemGroup()</code> and <code>AOServer.addSystemUser()</code> calls for
+						<core:link book="/" page="/aoserv/daemon/index.jspx" />
+						to automatically register new system groups and users with the
+						<core:link book="/" page="/aoserv/master/index.jspx" />.
 					</li>
 				</ul>
 			</changelog:release>
