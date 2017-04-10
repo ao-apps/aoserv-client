@@ -68,6 +68,7 @@ final public class LinuxServerGroupTable extends CachedTableIntegerKey<LinuxServ
 		return connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD_SYSTEM_GROUP,
+			aoServer.pkey,
 			groupName,
 			gid
 		);
