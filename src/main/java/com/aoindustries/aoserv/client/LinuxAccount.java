@@ -53,19 +53,42 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	 * Some commonly used system and application account usernames.
 	 */
 	public static final UserId
+		ADM,
 		APACHE,
+		AVAHI_AUTOIPD,
 		AWSTATS,
 		BIN,
+		CHRONY,
 		CYRUS,
+		DAEMON,
+		DBUS,
+		DHCPD,
 		EMAILMON,
 		FTP,
 		FTPMON,
+		GAMES,
+		HALT,
 		INTERBASE,
+		LP,
 		MAIL,
+		MYSQL,
+		NAMED,
+		NFSNOBODY,
 		NOBODY,
 		OPERATOR,
+		POLKITD,
 		POSTGRES,
-		ROOT
+		ROOT,
+		RPC,
+		RPCUSER,
+		SHUTDOWN,
+		SSHD,
+		SYNC,
+		SYSTEMD_BUS_PROXY,
+		SYSTEMD_NETWORK,
+		TCPDUMP,
+		TSS,
+		UNBOUND
 	;
 
 	/**
@@ -75,19 +98,42 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	public static final UserId HTTPD;
 	static {
 		try {
+			ADM = UserId.valueOf("adm");
 			APACHE = UserId.valueOf("apache");
+			AVAHI_AUTOIPD = UserId.valueOf("avahi-autoipd");
 			AWSTATS = UserId.valueOf("awstats");
 			BIN = UserId.valueOf("bin");
+			CHRONY = UserId.valueOf("chrony");
 			CYRUS = UserId.valueOf("cyrus");
+			DAEMON = UserId.valueOf("daemon");
+			DBUS = UserId.valueOf("dbus");
+			DHCPD = UserId.valueOf("dhcpd");
 			EMAILMON = UserId.valueOf("emailmon");
 			FTP = UserId.valueOf("ftp");
 			FTPMON = UserId.valueOf("ftpmon");
+			GAMES = UserId.valueOf("games");
+			HALT = UserId.valueOf("halt");
 			INTERBASE = UserId.valueOf("interbase");
+			LP = UserId.valueOf("lp");
 			MAIL = UserId.valueOf("mail");
+			MYSQL = UserId.valueOf("mysql");
+			NAMED = UserId.valueOf("named");
+			NFSNOBODY = UserId.valueOf("nfsnobody");
 			NOBODY = UserId.valueOf("nobody");
 			OPERATOR = UserId.valueOf("operator");
+			POLKITD = UserId.valueOf("polkitd");
 			POSTGRES = UserId.valueOf("postgres");
 			ROOT = UserId.valueOf("root");
+			RPC = UserId.valueOf("rpc");
+			RPCUSER = UserId.valueOf("rpcuser");
+			SHUTDOWN = UserId.valueOf("shutdown");
+			SSHD = UserId.valueOf("sshd");
+			SYNC = UserId.valueOf("sync");
+			SYSTEMD_BUS_PROXY = UserId.valueOf("systemd-bus-proxy");
+			SYSTEMD_NETWORK = UserId.valueOf("systemd-network");
+			TCPDUMP = UserId.valueOf("tcpdump");
+			TSS = UserId.valueOf("tss");
+			UNBOUND = UserId.valueOf("unbound");
 			// Now unused
 			HTTPD = UserId.valueOf("httpd");
 		} catch(ValidationException e) {
