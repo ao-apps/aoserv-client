@@ -55,20 +55,59 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 	public static final GroupId
 		ADM,
 		APACHE,
+		AUDIO,
+		AVAHI_AUTOIPD,
 		AWSTATS,
 		BIN,
+		CDROM,
+		CGRED,
+		CHRONY,
 		DAEMON,
+		DBUS,
+		DHCPD,
+		DIALOUT,
+		DIP,
+		DISK,
+		FLOPPY,
 		FTP,
 		FTPONLY,
+		GAMES,
+		INPUT,
+		KMEM,
+		LOCK,
+		LP,
 		MAIL,
 		MAILONLY,
+		MAN,
+		MEM,
+		MYSQL,
 		NAMED,
+		NFSNOBODY,
+		NOBODY,
 		NOGROUP,
+		POLKITD,
 		POSTGRES,
 		PROFTPD_JAILED,
 		ROOT,
+		RPC,
+		RPCUSER,
+		SCREEN,
+		SSH_KEYS,
+		SSHD,
 		SYS,
-		TTY
+		SYSTEMD_BUS_PROXY,
+		SYSTEMD_JOURNAL,
+		SYSTEMD_NETWORK,
+		TAPE,
+		TCPDUMP,
+		TSS,
+		TTY,
+		UNBOUND,
+		USERS,
+		UTEMPTER,
+		UTMP,
+		VIDEO,
+		WHEEL
 	;
 
 	/**
@@ -81,20 +120,59 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		try {
 			ADM = GroupId.valueOf("adm");
 			APACHE = GroupId.valueOf("apache");
+			AUDIO = GroupId.valueOf("audio");
+			AVAHI_AUTOIPD = GroupId.valueOf("avahi-autoipd");
 			AWSTATS = GroupId.valueOf("awstats");
 			BIN = GroupId.valueOf("bin");
+			CDROM = GroupId.valueOf("cdrom");
+			CGRED = GroupId.valueOf("cgred");
+			CHRONY = GroupId.valueOf("chrony");
 			DAEMON = GroupId.valueOf("daemon");
+			DBUS = GroupId.valueOf("dbus");
+			DHCPD = GroupId.valueOf("dhcpd");
+			DIALOUT = GroupId.valueOf("dialout");
+			DIP = GroupId.valueOf("dip");
+			DISK = GroupId.valueOf("disk");
+			FLOPPY = GroupId.valueOf("floppy");
 			FTP = GroupId.valueOf("ftp");
 			FTPONLY = GroupId.valueOf("ftponly");
+			GAMES = GroupId.valueOf("games");
+			INPUT = GroupId.valueOf("input");
+			KMEM = GroupId.valueOf("kmem");
+			LOCK = GroupId.valueOf("lock");
+			LP = GroupId.valueOf("lp");
 			MAIL = GroupId.valueOf("mail");
 			MAILONLY = GroupId.valueOf("mailonly");
+			MAN = GroupId.valueOf("man");
+			MEM = GroupId.valueOf("mem");
+			MYSQL = GroupId.valueOf("mysql");
 			NAMED = GroupId.valueOf("named");
+			NFSNOBODY = GroupId.valueOf("nfsnobody");
+			NOBODY = GroupId.valueOf("nobody");
 			NOGROUP = GroupId.valueOf("nogroup");
+			POLKITD = GroupId.valueOf("polkitd");
 			POSTGRES = GroupId.valueOf("postgres");
 			PROFTPD_JAILED = GroupId.valueOf("proftpd_jailed");
 			ROOT = GroupId.valueOf("root");
+			RPC = GroupId.valueOf("rpc");
+			RPCUSER = GroupId.valueOf("rpcuser");
+			SCREEN = GroupId.valueOf("screen");
+			SSH_KEYS = GroupId.valueOf("ssh_keys");
+			SSHD = GroupId.valueOf("sshd");
 			SYS = GroupId.valueOf("sys");
+			SYSTEMD_BUS_PROXY = GroupId.valueOf("systemd-bus-proxy");
+			SYSTEMD_JOURNAL = GroupId.valueOf("systemd-journal");
+			SYSTEMD_NETWORK = GroupId.valueOf("systemd-network");
+			TAPE = GroupId.valueOf("tape");
+			TCPDUMP = GroupId.valueOf("tcpdump");
+			TSS = GroupId.valueOf("tss");
 			TTY = GroupId.valueOf("tty");
+			UNBOUND = GroupId.valueOf("unbound");
+			USERS = GroupId.valueOf("users");
+			UTEMPTER = GroupId.valueOf("utempter");
+			UTMP = GroupId.valueOf("utmp");
+			VIDEO = GroupId.valueOf("video");
+			WHEEL = GroupId.valueOf("wheel");
 			// Unused ones
 			HTTPD = GroupId.valueOf("httpd");
 		} catch(ValidationException e) {
