@@ -88,6 +88,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 		return connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD_SYSTEM_USER,
+			aoServer.pkey,
 			username,
 			uid,
 			gid,
