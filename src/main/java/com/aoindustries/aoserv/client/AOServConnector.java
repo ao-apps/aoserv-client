@@ -1635,11 +1635,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					resultRequest.writeRequest(out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					resultRequest.readResponse(in);
 				} catch(RuntimeException | IOException err) {
 					connection.close();
@@ -1674,11 +1674,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) return in.readBoolean();
 					AOServProtocol.checkResult(code, in);
@@ -1717,11 +1717,11 @@ abstract public class AOServConnector {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) {
 						result = in.readBoolean();
@@ -1764,11 +1764,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) return in.readCompressedInt();
 					AOServProtocol.checkResult(code, in);
@@ -1807,11 +1807,11 @@ abstract public class AOServConnector {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) {
 						result=in.readCompressedInt();
@@ -1854,11 +1854,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) return in.readLong();
 					AOServProtocol.checkResult(code, in);
@@ -1895,11 +1895,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) return in.readShort();
 					AOServProtocol.checkResult(code, in);
@@ -1938,11 +1938,11 @@ abstract public class AOServConnector {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) {
 						result=in.readShort();
@@ -1985,11 +1985,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) return in.readUTF();
 					AOServProtocol.checkResult(code, in);
@@ -2029,11 +2029,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) return in.readLongUTF();
 					AOServProtocol.checkResult(code, in);
@@ -2074,11 +2074,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) return in.readNullLongUTF();
 					AOServProtocol.checkResult(code, in);
@@ -2143,11 +2143,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					updateRequest.writeRequest(out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					updateRequest.readResponse(in);
 				} catch(RuntimeException | IOException err) {
 					connection.close();
@@ -2183,11 +2183,11 @@ abstract public class AOServConnector {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code!=AOServProtocol.DONE) AOServProtocol.checkResult(code, in);
 				} catch(RuntimeException | IOException err) {
@@ -2224,11 +2224,11 @@ abstract public class AOServConnector {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getOutputStream(commID);
+					CompressedDataOutputStream out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getInputStream();
+					CompressedDataInputStream in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AOServProtocol.DONE) invalidateList=readInvalidateList(in);
 					else {
