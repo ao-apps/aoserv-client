@@ -83,10 +83,10 @@ public class TCPConnector extends AOServConnector {
 						try {
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
-								CompressedDataOutputStream out = conn.getOutputStream(AOServProtocol.CommandID.LISTEN_CACHES);
+								CompressedDataOutputStream out = conn.getRequestOut(AOServProtocol.CommandID.LISTEN_CACHES);
 								out.flush();
 
-								CompressedDataInputStream in=conn.getInputStream();
+								CompressedDataInputStream in=conn.getResponseIn();
 								IntList tableList=new IntArrayList();
 								while(runMore) {
 									synchronized(cacheMonitorLock) {

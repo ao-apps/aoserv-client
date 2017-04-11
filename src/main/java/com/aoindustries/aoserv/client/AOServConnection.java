@@ -56,12 +56,12 @@ abstract public class AOServConnection {
 	abstract void close();
 
 	/**
-	 * Gets the stream to read from the server.
-	 */
-	abstract CompressedDataInputStream getInputStream();
-
-	/**
 	 * Gets the stream to write to the server.
 	 */
-	abstract CompressedDataOutputStream getOutputStream(AOServProtocol.CommandID commID) throws IOException;
+	abstract CompressedDataOutputStream getRequestOut(AOServProtocol.CommandID commID) throws IOException;
+
+	/**
+	 * Gets the stream to read from the server.
+	 */
+	abstract CompressedDataInputStream getResponseIn() throws IOException;
 }

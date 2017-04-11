@@ -157,20 +157,26 @@ final public class SocketConnection extends AOServConnection {
 		isClosed=true;
 	}
 
-	@Override
-	CompressedDataInputStream getInputStream() {
-		return in;
-	}
-
 	InetAddress getLocalInetAddress() throws IOException {
 		return socket.getLocalAddress();
 	}
 
+	private long currentSeq;
+
 	@Override
-	CompressedDataOutputStream getOutputStream(AOServProtocol.CommandID commID) throws IOException {
-		out.writeLong(seq.getAndIncrement());
+	CompressedDataOutputStream getRequestOut(AOServProtocol.CommandID commID) throws IOException {
+		currentSeq = seq.getAndIncrement();
+		out.writeLong(currentSeq);
 		out.writeCompressedInt(commID.ordinal());
 		return out;
+	}
+
+	@Override
+	CompressedDataInputStream getResponseIn() throws IOException {
+		// Verify server sends matching sequence
+		long serverSeq = in.readLong();
+		if(serverSeq != currentSeq) throw new IOException("Sequence mismatch: " + serverSeq + " != " + currentSeq);
+		return in;
 	}
 
 	boolean isClosed() {
