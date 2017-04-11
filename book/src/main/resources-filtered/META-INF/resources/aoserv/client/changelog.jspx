@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-09T18:44:24-0500"
+		dateModified="2017-04-11T15:16:41-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -245,6 +245,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						to automatically register new system groups and users with the
 						<core:link book="/" page="/aoserv/master/index.jspx" />.
 					</li>
+					<li>Added <code>linux_server_accounts.sudo</code> column to configure <code>sudo</code> on a per-user and per-server basis.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

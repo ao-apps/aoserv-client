@@ -99,6 +99,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	private String sa_integration_mode;
 	private float sa_required_score;
 	private int sa_discard_score;
+	private String sudo;
 
 	@Override
 	public boolean canDisable() throws IOException, SQLException {
@@ -205,6 +206,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			case 15: return sa_integration_mode;
 			case 16: return sa_required_score;
 			case 17: return sa_discard_score==-1 ? null : sa_discard_score;
+			case 18: return sudo;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -426,6 +428,14 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	}
 
 	/**
+	 * Gets the <code>sudo</code> setting for this user or {@code null}
+	 * when no <code>sudo</code> allowed.
+	 */
+	public String getSudo() {
+		return sudo;
+	}
+
+	/**
 	 * Gets the primary <code>LinuxServerGroup</code> for this <code>LinuxServerAccount</code>
 	 *
 	 * @exception  SQLException  if the primary group is not found
@@ -478,6 +488,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			sa_required_score=result.getFloat(pos++);
 			sa_discard_score = result.getInt(pos++);
 			if(result.wasNull()) sa_discard_score = -1;
+			sudo = result.getString(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -513,6 +524,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 			sa_integration_mode=in.readUTF().intern();
 			sa_required_score=in.readFloat();
 			sa_discard_score = in.readCompressedInt();
+			sudo = in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -734,6 +746,9 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		}
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)>=0) {
 			out.writeCompressedInt(sa_discard_score);
+		}
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
+			out.writeNullUTF(sudo);
 		}
 	}
 
