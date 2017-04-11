@@ -54,6 +54,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	 */
 	public static final UserId
 		ADM,
+		AOADMIN,
 		APACHE,
 		AVAHI_AUTOIPD,
 		AWSTATS,
@@ -99,6 +100,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	static {
 		try {
 			ADM = UserId.valueOf("adm");
+			AOADMIN = UserId.valueOf("aoadmin");
 			APACHE = UserId.valueOf("apache");
 			AVAHI_AUTOIPD = UserId.valueOf("avahi-autoipd");
 			AWSTATS = UserId.valueOf("awstats");
