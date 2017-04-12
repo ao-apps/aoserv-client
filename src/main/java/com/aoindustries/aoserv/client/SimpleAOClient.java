@@ -6717,6 +6717,135 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Sets the PHP version for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  phpVersion  the new version
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or PHP version.
+	 *
+	 * @see  HttpdSite#setPhpVersion(com.aoindustries.aoserv.client.TechnologyVersion)
+	 */
+	public void setHttpdSitePhpVersion(
+		String siteName,
+		String aoServer,
+		String phpVersion
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getHttpdSite(aoServer, siteName);
+		hs.setPhpVersion(
+			findPhpVersion(hs.getAOServer(), phpVersion)
+		);
+	}
+
+	/**
+	 * Sets the <code>enable_cgi</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  enableCgi  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setEnableCgi(boolean)
+	 */
+	public void setHttpdSiteEnableCgi(
+		String siteName,
+		String aoServer,
+		boolean enableCgi
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setEnableCgi(enableCgi);
+	}
+
+	/**
+	 * Sets the <code>enable_ssi</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  enableSsi  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setEnableSsi(boolean)
+	 */
+	public void setHttpdSiteEnableSsi(
+		String siteName,
+		String aoServer,
+		boolean enableSsi
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setEnableSsi(enableSsi);
+	}
+
+	/**
+	 * Sets the <code>enable_htaccess</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  enableHtaccess  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setEnableHtaccess(boolean)
+	 */
+	public void setHttpdSiteEnableHtaccess(
+		String siteName,
+		String aoServer,
+		boolean enableHtaccess
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setEnableHtaccess(enableHtaccess);
+	}
+
+	/**
+	 * Sets the <code>enable_indexes</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  enableIndexes  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setEnableIndexes(boolean)
+	 */
+	public void setHttpdSiteEnableIndexes(
+		String siteName,
+		String aoServer,
+		boolean enableIndexes
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setEnableIndexes(enableIndexes);
+	}
+
+	/**
+	 * Sets the <code>enable_follow_symlinks</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  enableFollowSymlinks  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setEnableFollowSymlinks(boolean)
+	 */
+	public void setHttpdSiteEnableFollowSymlinks(
+		String siteName,
+		String aoServer,
+		boolean enableFollowSymlinks
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setEnableFollowSymlinks(enableFollowSymlinks);
+	}
+
+	/**
 	 * Sets the attributes for a <code>HttpdTomcatContext</code>.
 	 *
 	 * @exception  IOException  if unable to contact the server
@@ -6760,6 +6889,30 @@ final public class SimpleAOClient {
 			debug,
 			workDir
 		);
+	}
+
+	/**
+	 * Sets the <code>use_apache</code> flag for a <code>HttpdTomcatSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  useApache  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatSite</code>.
+	 *
+	 * @see  HttpdTomcatSite#setUseApache(boolean)
+	 */
+	public void setHttpdTomcatSiteUseApache(
+		String siteName,
+		String aoServer,
+		boolean useApache
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getHttpdSite(aoServer, siteName);
+		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
+		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+		hts.setUseApache(useApache);
 	}
 
 	/**

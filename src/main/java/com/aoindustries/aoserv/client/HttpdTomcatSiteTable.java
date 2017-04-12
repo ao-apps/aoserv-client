@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ platform.
- * Copyright (C) 2001-2012, 2016  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,7 +60,16 @@ final public class HttpdTomcatSiteTable extends CachedTableIntegerKey<HttpdTomca
 	@Override
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.START_JVM)) {
+		if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_SITE_USE_APACHE)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_SITE_USE_APACHE, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdTomcatSiteUseApache(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "use_apache")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.START_JVM)) {
 			if(AOSH.checkParamCount(AOSHCommand.START_JVM, args, 2, err)) {
 				String message=connector.getSimpleAOClient().startJVM(args[1], args[2]);
 				if(message!=null) {

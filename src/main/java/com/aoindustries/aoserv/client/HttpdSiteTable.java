@@ -218,6 +218,60 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 				connector.getSimpleAOClient().waitForHttpdSiteRebuild(args[1]);
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_PHP_VERSION)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_PHP_VERSION, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSitePhpVersion(
+					args[1],
+					args[2],
+					args[3]
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_ENABLE_CGI)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_ENABLE_CGI, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteEnableCgi(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "enable_cgi")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_ENABLE_SSI)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_ENABLE_SSI, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteEnableSsi(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "enable_ssi")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_ENABLE_HTACCESS)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_ENABLE_HTACCESS, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteEnableHtaccess(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "enable_htaccess")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_ENABLE_INDEXES)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_ENABLE_INDEXES, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteEnableIndexes(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "enable_indexes")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteEnableFollowSymlinks(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "enable_follow_symlinks")
+				);
+			}
+			return true;
 		} else return false;
 	}
 
