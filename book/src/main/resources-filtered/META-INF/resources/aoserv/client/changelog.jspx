@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-12T10:56:08-0500"
+		dateModified="2017-04-12T12:28:56-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -252,6 +252,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>HttpdSite.getEnableHtaccess()</code></li>
 							<li>Added <code>HttpdSite.getEnableIndexes()</code></li>
 							<li>Added <code>HttpdSite.getEnableFollowSymlinks()</code></li>
+							<li>Added parameters to <code>add_httpd_jboss_site</code> command for new settings.</li>
+							<li>Added parameters to <code>add_httpd_tomcat_shared_site</code> command for new settings.</li>
+							<li>Added parameters to <code>add_httpd_tomcat_std_site</code> command for new settings.</li>
 						</ol>
 					</li>
 				</ul>

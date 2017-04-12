@@ -26,6 +26,7 @@ import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
@@ -66,7 +67,13 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 		final DomainName primaryHttpHostname,
 		final DomainName[] altHttpHostnames,
 		final HttpdTomcatVersion tomcatVersion,
-		final UnixPath contentSrc
+		final UnixPath contentSrc,
+		final TechnologyVersion phpVersion,
+		final boolean enableCgi,
+		final boolean enableSsi,
+		final boolean enableHtaccess,
+		final boolean enableIndexes,
+		final boolean enableFollowSymlinks
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
@@ -90,8 +97,13 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 					out.writeCompressedInt(altHttpHostnames.length);
 					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c].toString());
 					out.writeCompressedInt(tomcatVersion.pkey);
-					out.writeBoolean(contentSrc!=null);
-					if (contentSrc!=null) out.writeUTF(contentSrc.toString());
+					out.writeNullUTF(ObjectUtils.toString(contentSrc));
+					out.writeCompressedInt(phpVersion==null ? -1 : phpVersion.pkey);
+					out.writeBoolean(enableCgi);
+					out.writeBoolean(enableSsi);
+					out.writeBoolean(enableHtaccess);
+					out.writeBoolean(enableIndexes);
+					out.writeBoolean(enableFollowSymlinks);
 				}
 
 				@Override
@@ -141,11 +153,11 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_STD_SITE)) {
-			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_STD_SITE, args, 12, err)) {
+			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_STD_SITE, args, 18, err)) {
 				// Create an array of all the alternate hostnames
-				DomainName[] altHostnames=new DomainName[args.length-13];
-				for(int i=13; i<args.length; i++) {
-					altHostnames[i-13] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
+				DomainName[] altHostnames=new DomainName[args.length-19];
+				for(int i=19; i<args.length; i++) {
+					altHostnames[i-19] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
 				}
 				out.println(
 					connector.getSimpleAOClient().addHttpdTomcatStdSite(
@@ -161,7 +173,13 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 						AOSH.parseDomainName(args[11], "primary_http_hostname"),
 						altHostnames,
 						args[10],
-						args[12].isEmpty() ? null : AOSH.parseUnixPath(args[12], "content_source")
+						args[12].isEmpty() ? null : AOSH.parseUnixPath(args[12], "content_source"),
+						args[13],
+						AOSH.parseBoolean(args[14], "enable_cgi"),
+						AOSH.parseBoolean(args[15], "enable_ssi"),
+						AOSH.parseBoolean(args[16], "enable_htaccess"),
+						AOSH.parseBoolean(args[17], "enable_indexes"),
+						AOSH.parseBoolean(args[18], "enable_follow_symlinks")
 					)
 				);
 				out.flush();
