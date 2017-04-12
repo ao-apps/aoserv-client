@@ -256,8 +256,20 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 		return getHttpdSite().toStringImpl();
 	}
 
+	/**
+	 * @deprecated  Use {@link #getUseApache()} instead.
+	 */
+	@Deprecated
 	public boolean useApache() {
+		return getUseApache();
+	}
+
+	public boolean getUseApache() {
 		return use_apache;
+	}
+
+	public void setUseApache(boolean useApache) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_TOMCAT_SITE_USE_APACHE, pkey, useApache);
 	}
 
 	@Override

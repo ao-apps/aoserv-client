@@ -449,6 +449,30 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_SERVER_ADMIN, pkey, address);
 	}
 
+	public void setPhpVersion(TechnologyVersion phpVersion) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_PHP_VERSION, pkey, phpVersion==null ? -1 : phpVersion.pkey);
+	}
+
+	public void setEnableCgi(boolean enableCgi) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_ENABLE_CGI, pkey, enableCgi);
+	}
+
+	public void setEnableSsi(boolean enableSsi) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_ENABLE_SSI, pkey, enableSsi);
+	}
+
+	public void setEnableHtaccess(boolean enableHtaccess) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_ENABLE_HTACCESS, pkey, enableHtaccess);
+	}
+
+	public void setEnableIndexes(boolean enableIndexes) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_ENABLE_INDEXES, pkey, enableIndexes);
+	}
+
+	public void setEnableFollowSymlinks(boolean enableFollowSymlinks) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS, pkey, enableFollowSymlinks);
+	}
+
 	@Override
 	String toStringImpl() throws SQLException, IOException {
 		return site_name+" on "+getAOServer().getHostname();
