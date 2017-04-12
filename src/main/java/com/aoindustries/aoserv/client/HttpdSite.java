@@ -320,6 +320,12 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		TechnologyVersion tv = table.connector.getTechnologyVersions().get(phpVersion);
 		if(tv == null) throw new SQLException("TechnologyVersion not found: " + phpVersion);
 		if(!tv.name.equals(TechnologyName.PHP)) throw new SQLException("Not a PHP version: " + tv.name + " #" + tv.pkey);
+		if(
+			tv.getOperatingSystemVersion(table.connector).getPkey()
+			!= getAOServer().getServer().getOperatingSystemVersion().getPkey()
+		) {
+			throw new SQLException("php/operating system version mismatch on HttpdSite: #" + pkey);
+		}
 		return tv;
 	}
 
