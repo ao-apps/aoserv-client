@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-11T15:16:41-0500"
+		dateModified="2017-04-12T10:56:08-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -246,6 +246,14 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<core:link book="/" page="/aoserv/master/index.jspx" />.
 					</li>
 					<li>Added <code>linux_server_accounts.sudo</code> column to configure <code>sudo</code> on a per-user and per-server basis.</li>
+					<li>Enabled more fine-grained control over per-site Apache settings:
+						<ol>
+							<li>Added <code>HttpdSite.getEnableSsi()</code></li>
+							<li>Added <code>HttpdSite.getEnableHtaccess()</code></li>
+							<li>Added <code>HttpdSite.getEnableIndexes()</code></li>
+							<li>Added <code>HttpdSite.getEnableFollowSymlinks()</code></li>
+						</ol>
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>

@@ -90,6 +90,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	private String awstatsSkipFiles;
 	private int phpVersion;
 	private boolean enableCgi;
+	private boolean enableSsi;
+	private boolean enableHtaccess;
+	private boolean enableIndexes;
+	private boolean enableFollowSymlinks;
 
 	public int addHttpdSiteAuthenticatedLocation(
 		String path,
@@ -174,6 +178,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			case 11: return awstatsSkipFiles;
 			case 12: return phpVersion==-1 ? null : phpVersion;
 			case 13: return enableCgi;
+			case 14: return enableSsi;
+			case 15: return enableHtaccess;
+			case 16: return enableIndexes;
+			case 17: return enableFollowSymlinks;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -302,6 +310,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			phpVersion = result.getInt(pos++);
 			if(result.wasNull()) phpVersion = -1;
 			enableCgi = result.getBoolean(pos++);
+			enableSsi = result.getBoolean(pos++);
+			enableHtaccess = result.getBoolean(pos++);
+			enableIndexes = result.getBoolean(pos++);
+			enableFollowSymlinks = result.getBoolean(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -331,6 +343,22 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
 	public boolean getEnableCgi() {
 		return enableCgi;
+	}
+
+	public boolean getEnableSsi() {
+		return enableSsi;
+	}
+
+	public boolean getEnableHtaccess() {
+		return enableHtaccess;
+	}
+
+	public boolean getEnableIndexes() {
+		return enableIndexes;
+	}
+
+	public boolean getEnableFollowSymlinks() {
+		return enableFollowSymlinks;
 	}
 
 	/**
@@ -399,6 +427,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			awstatsSkipFiles = in.readNullUTF();
 			phpVersion = in.readCompressedInt();
 			enableCgi = in.readBoolean();
+			enableSsi = in.readBoolean();
+			enableHtaccess = in.readBoolean();
+			enableIndexes = in.readBoolean();
+			enableFollowSymlinks = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -453,6 +485,12 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		}
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_79) >= 0) {
 			out.writeBoolean(enableCgi);
+		}
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
+			out.writeBoolean(enableSsi);
+			out.writeBoolean(enableHtaccess);
+			out.writeBoolean(enableIndexes);
+			out.writeBoolean(enableFollowSymlinks);
 		}
 	}
 
