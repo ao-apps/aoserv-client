@@ -51,6 +51,7 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -995,6 +996,44 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Finds a PHP version given its version, allowing prefix matches.
+	 */
+	private TechnologyVersion findPhpVersion(AOServer aoServer, String phpVersion) throws IllegalArgumentException, IOException, SQLException {
+		if(phpVersion == null || phpVersion.isEmpty()) return null;
+		String prefix = phpVersion;
+		if(!prefix.endsWith(".")) prefix += '.';
+		int osvId = aoServer.getServer().getOperatingSystemVersion().getPkey();
+		List<TechnologyVersion> matches = new ArrayList<>();
+		for(TechnologyVersion tv : connector.getTechnologyVersions()) {
+			if(
+				tv.operating_system_version == osvId
+				&& tv.name.equals(TechnologyName.PHP)
+				&& (
+					tv.version.equals(phpVersion)
+					|| tv.version.startsWith(prefix)
+				)
+			) {
+				matches.add(tv);
+			}
+		}
+		if(matches.isEmpty()) {
+			throw new IllegalArgumentException("Unable to find PHP version: " + phpVersion);
+		} else if(matches.size() > 1) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Found more than one matching PHP version, please be more specific: ");
+			boolean didOne = false;
+			for(TechnologyVersion match : matches) {
+				if(didOne) sb.append(", ");
+				else didOne = true;
+				sb.append(match.version);
+			}
+			throw new IllegalArgumentException(sb.toString());
+		} else {
+			return matches.get(0);
+		}
+	}
+
+	/**
 	 * Adds a new <code>HttpdJBossSite</code> to the system.  An <code>HttpdJBossSite</code> is
 	 * an <code>HttpdSite</code> that uses the Tomcat servlet engine and JBoss as an EJB container.
 	 *
@@ -1045,7 +1084,13 @@ final public class SimpleAOClient {
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
 		String jBossVersion,
-		UnixPath contentSrc
+		UnixPath contentSrc,
+		String phpVersion,
+		boolean enableCgi,
+		boolean enableSsi,
+		boolean enableHtaccess,
+		boolean enableIndexes,
+		boolean enableFollowSymlinks
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1071,8 +1116,14 @@ final public class SimpleAOClient {
 			ip,
 			primaryHttpHostname,
 			altHttpHostnames,
-			hjv.getTechnologyVersion(connector).getPkey(),
-			contentSrc
+			hjv,
+			contentSrc,
+			findPhpVersion(ao, phpVersion),
+			enableCgi,
+			enableSsi,
+			enableHtaccess,
+			enableIndexes,
+			enableFollowSymlinks
 		);
 	}
 
@@ -1299,7 +1350,13 @@ final public class SimpleAOClient {
 		DomainName[] altHttpHostnames,
 		String sharedTomcatName,
 		String version,
-		UnixPath contentSrc
+		UnixPath contentSrc,
+		String phpVersion,
+		boolean enableCgi,
+		boolean enableSsi,
+		boolean enableHtaccess,
+		boolean enableIndexes,
+		boolean enableFollowSymlinks
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1343,7 +1400,13 @@ final public class SimpleAOClient {
 			altHttpHostnames,
 			sharedTomcatName,
 			htv,
-			contentSrc
+			contentSrc,
+			findPhpVersion(ao, phpVersion),
+			enableCgi,
+			enableSsi,
+			enableHtaccess,
+			enableIndexes,
+			enableFollowSymlinks
 		);
 	}
 
@@ -1403,7 +1466,13 @@ final public class SimpleAOClient {
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
 		String tomcatVersion,
-		UnixPath contentSrc
+		UnixPath contentSrc,
+		String phpVersion,
+		boolean enableCgi,
+		boolean enableSsi,
+		boolean enableHtaccess,
+		boolean enableIndexes,
+		boolean enableFollowSymlinks
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1430,7 +1499,13 @@ final public class SimpleAOClient {
 			primaryHttpHostname,
 			altHttpHostnames,
 			htv,
-			contentSrc
+			contentSrc,
+			findPhpVersion(ao, phpVersion),
+			enableCgi,
+			enableSsi,
+			enableHtaccess,
+			enableIndexes,
+			enableFollowSymlinks
 		);
 	}
 

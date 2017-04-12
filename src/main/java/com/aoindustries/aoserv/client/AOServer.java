@@ -129,8 +129,14 @@ final public class AOServer
 		IPAddress ipAddress,
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
-		int jBossVersion,
-		UnixPath contentSrc
+		HttpdJBossVersion jBossVersion,
+		UnixPath contentSrc,
+		TechnologyVersion phpVersion,
+		boolean enableCgi,
+		boolean enableSsi,
+		boolean enableHtaccess,
+		boolean enableIndexes,
+		boolean enableFollowSymlinks
 	) throws IOException, SQLException {
 		return table.connector.getHttpdJBossSites().addHttpdJBossSite(
 			this,
@@ -144,7 +150,13 @@ final public class AOServer
 			primaryHttpHostname,
 			altHttpHostnames,
 			jBossVersion,
-			contentSrc
+			contentSrc,
+			phpVersion,
+			enableCgi,
+			enableSsi,
+			enableHtaccess,
+			enableIndexes,
+			enableFollowSymlinks
 		);
 	}
 
@@ -179,7 +191,13 @@ final public class AOServer
 		DomainName[] altHttpHostnames,
 		String sharedTomcatName,
 		HttpdTomcatVersion version,
-		UnixPath contentSrc
+		UnixPath contentSrc,
+		TechnologyVersion phpVersion,
+		boolean enableCgi,
+		boolean enableSsi,
+		boolean enableHtaccess,
+		boolean enableIndexes,
+		boolean enableFollowSymlinks
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
 			this,
@@ -194,7 +212,13 @@ final public class AOServer
 			altHttpHostnames,
 			sharedTomcatName,
 			version,
-			contentSrc
+			contentSrc,
+			phpVersion,
+			enableCgi,
+			enableSsi,
+			enableHtaccess,
+			enableIndexes,
+			enableFollowSymlinks
 		);
 	}
 
@@ -209,7 +233,13 @@ final public class AOServer
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
 		HttpdTomcatVersion tomcatVersion,
-		UnixPath contentSrc
+		UnixPath contentSrc,
+		TechnologyVersion phpVersion,
+		boolean enableCgi,
+		boolean enableSsi,
+		boolean enableHtaccess,
+		boolean enableIndexes,
+		boolean enableFollowSymlinks
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatStdSites().addHttpdTomcatStdSite(
 			this,
@@ -223,7 +253,13 @@ final public class AOServer
 			primaryHttpHostname,
 			altHttpHostnames,
 			tomcatVersion,
-			contentSrc
+			contentSrc,
+			phpVersion,
+			enableCgi,
+			enableSsi,
+			enableHtaccess,
+			enableIndexes,
+			enableFollowSymlinks
 		);
 	}
 
