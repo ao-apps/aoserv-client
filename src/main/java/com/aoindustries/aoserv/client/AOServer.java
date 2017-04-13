@@ -1,5 +1,5 @@
 /*
- * aoserv-client - Java client for the AOServ platform.
+ * aoserv-client - Java client for the AOServ Platform.
  * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
