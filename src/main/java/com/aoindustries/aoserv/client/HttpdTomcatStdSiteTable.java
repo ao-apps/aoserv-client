@@ -194,6 +194,24 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 				);
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdTomcatStdSiteUnpackWARs(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "unpack_wars")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdTomcatStdSiteAutoDeploy(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "auto_deploy")
+				);
+			}
+			return true;
 		}
 		return false;
 	}

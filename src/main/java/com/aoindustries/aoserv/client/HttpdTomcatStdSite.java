@@ -57,6 +57,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 	int tomcat4_shutdown_port;
 	private String tomcat4_shutdown_key;
 	private int maxPostSize;
+	private boolean unpackWARs;
+	private boolean autoDeploy;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -65,6 +67,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 			case 1: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
 			case 2: return tomcat4_shutdown_key;
 			case 3: return maxPostSize==-1 ? null: maxPostSize;
+			case 4: return unpackWARs;
+			case 5: return autoDeploy;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -117,6 +121,28 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 		);
 	}
 
+	/**
+	 * Gets the <code>unpackWARs</code> setting for this Tomcat.
+	 */
+	public boolean getUnpackWARs() {
+		return unpackWARs;
+	}
+
+	public void setUnpackWARs(boolean unpackWARs) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS, pkey, unpackWARs);
+	}
+
+	/**
+	 * Gets the <code>autoDeploy</code> setting for this Tomcat.
+	 */
+	public boolean getAutoDeploy() {
+		return autoDeploy;
+	}
+
+	public void setAutoDeploy(boolean autoDeploy) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY, pkey, autoDeploy);
+	}
+
 	public NetBind getTomcat4ShutdownPort() throws IOException, SQLException {
 		if(tomcat4_shutdown_port==-1) return null;
 		NetBind nb=table.connector.getNetBinds().get(tomcat4_shutdown_port);
@@ -137,6 +163,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 		tomcat4_shutdown_key=result.getString(3);
 		maxPostSize = result.getInt(4);
 		if(result.wasNull()) maxPostSize = -1;
+		unpackWARs = result.getBoolean(5);
+		autoDeploy = result.getBoolean(6);
 	}
 
 	@Override
@@ -145,6 +173,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 		tomcat4_shutdown_port=in.readCompressedInt();
 		tomcat4_shutdown_key=in.readNullUTF();
 		maxPostSize = in.readInt();
+		unpackWARs = in.readBoolean();
+		autoDeploy = in.readBoolean();
 	}
 
 	@Override
@@ -159,6 +189,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 		out.writeNullUTF(tomcat4_shutdown_key);
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
 			out.writeInt(maxPostSize);
+			out.writeBoolean(unpackWARs);
+			out.writeBoolean(autoDeploy);
 		}
 	}
 }

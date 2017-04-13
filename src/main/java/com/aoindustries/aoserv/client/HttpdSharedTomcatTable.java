@@ -241,6 +241,24 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 				);
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSharedTomcatIsManual(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "unpack_wars")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSharedTomcatAutoDeploy(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "auto_deploy")
+				);
+			}
+			return true;
 		}
 		return false;
 	}

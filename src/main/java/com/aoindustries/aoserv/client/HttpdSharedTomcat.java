@@ -88,6 +88,8 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	private String tomcat4_shutdown_key;
 	private boolean isManual;
 	private int maxPostSize;
+	private boolean unpackWARs;
+	private boolean autoDeploy;
 
 	@Override
 	public boolean canDisable() {
@@ -155,6 +157,8 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 			case 11: return tomcat4_shutdown_key;
 			case 12: return isManual;
 			case 13: return maxPostSize==-1 ? null : maxPostSize;
+			case 14: return unpackWARs;
+			case 15: return autoDeploy;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -254,10 +258,16 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		isManual=result.getBoolean(pos++);
 		maxPostSize = result.getInt(pos++);
 		if(result.wasNull()) maxPostSize = -1;
+		unpackWARs = result.getBoolean(pos++);
+		autoDeploy = result.getBoolean(pos++);
 	}
 
 	public boolean isManual() {
 		return isManual;
+	}
+
+	public void setIsManual(boolean isManual) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
 	}
 
 	/**
@@ -265,6 +275,59 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	 */
 	public int getMaxPostSize() {
 		return maxPostSize;
+	}
+
+	public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
+		table.connector.requestUpdate(
+			true,
+			AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
+			new AOServConnector.UpdateRequest() {
+				IntList invalidateList;
+
+				@Override
+				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					out.writeCompressedInt(pkey);
+					out.writeInt(maxPostSize);
+				}
+
+				@Override
+				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					int code=in.readByte();
+					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+					else {
+						AOServProtocol.checkResult(code, in);
+						throw new IOException("Unexpected response code: "+code);
+					}
+				}
+
+				@Override
+				public void afterRelease() {
+					table.connector.tablesUpdated(invalidateList);
+				}
+			}
+		);
+	}
+
+	/**
+	 * Gets the <code>unpackWARs</code> setting for this Tomcat.
+	 */
+	public boolean getUnpackWARs() {
+		return unpackWARs;
+	}
+
+	public void setUnpackWARs(boolean unpackWARs) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS, pkey, unpackWARs);
+	}
+
+	/**
+	 * Gets the <code>autoDeploy</code> setting for this Tomcat.
+	 */
+	public boolean getAutoDeploy() {
+		return autoDeploy;
+	}
+
+	public void setAutoDeploy(boolean autoDeploy) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY, pkey, autoDeploy);
 	}
 
 	public boolean isOverflow() {
@@ -325,46 +388,13 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		tomcat4_shutdown_key=in.readNullUTF();
 		isManual=in.readBoolean();
 		maxPostSize = in.readInt();
+		unpackWARs = in.readBoolean();
+		autoDeploy = in.readBoolean();
 	}
 
 	@Override
 	public void remove() throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_SHARED_TOMCATS, pkey);
-	}
-
-	public void setIsManual(boolean isManual) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
-	}
-
-	public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
-		table.connector.requestUpdate(
-			true,
-			AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
-			new AOServConnector.UpdateRequest() {
-				IntList invalidateList;
-
-				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(pkey);
-					out.writeInt(maxPostSize);
-				}
-
-				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-					int code=in.readByte();
-					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
-					else {
-						AOServProtocol.checkResult(code, in);
-						throw new IOException("Unexpected response code: "+code);
-					}
-				}
-
-				@Override
-				public void afterRelease() {
-					table.connector.tablesUpdated(invalidateList);
-				}
-			}
-		);
 	}
 
 	@Override
@@ -397,6 +427,8 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		out.writeBoolean(isManual);
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
 			out.writeInt(maxPostSize);
+			out.writeBoolean(unpackWARs);
+			out.writeBoolean(autoDeploy);
 		}
 	}
 }
