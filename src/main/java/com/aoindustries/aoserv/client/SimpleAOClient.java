@@ -6631,6 +6631,27 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Sets the <code>maxPostSize</code> for a <code>HttpdSharedTomcat</code>
+	 *
+	 * @param  name  the name of the JVM
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  maxPostSize  the new maximum POST size, in bytes
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
+	 *
+	 * @see  HttpdSharedTomcat#setMaxPostSize(int)
+	 */
+	public void setHttpdSharedTomcatMaxPostSize(
+		String name,
+		String aoServer,
+		int maxPostSize
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSharedTomcat(aoServer, name).setMaxPostSize(maxPostSize);
+	}
+
+	/**
 	 * Sets the <code>is_manual</code> flag for a <code>HttpdSiteBind</code>
 	 *
 	 * @param  pkey  the primary key of the <code>HttpdSiteBind</code>
@@ -6913,6 +6934,32 @@ final public class SimpleAOClient {
 		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
 		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
 		hts.setUseApache(useApache);
+	}
+
+	/**
+	 * Sets the <code>maxPostSize</code> for a <code>HttpdTomcatStdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  maxPostSize  the new maximum POST size, in bytes
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
+	 *
+	 * @see  HttpdTomcatStdSite#setMaxPostSize(int)
+	 */
+	public void setHttpdTomcatStdSiteMaxPostSize(
+		String siteName,
+		String aoServer,
+		int maxPostSize
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getHttpdSite(aoServer, siteName);
+		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
+		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+		HttpdTomcatStdSite htss = hts.getHttpdTomcatStdSite();
+		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
+		htss.setMaxPostSize(maxPostSize);
 	}
 
 	/**

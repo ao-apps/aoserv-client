@@ -232,6 +232,15 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 				);
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSharedTomcatMaxPostSize(
+					args[1],
+					args[2],
+					AOSH.parseInt(args[3], "max_post_size")
+				);
+			}
+			return true;
 		}
 		return false;
 	}
