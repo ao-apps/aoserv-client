@@ -315,6 +315,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		SET_HTTPD_SITE_ENABLE_HTACCESS = "set_httpd_site_enable_htaccess",
 		SET_HTTPD_SITE_ENABLE_INDEXES = "set_httpd_site_enable_indexes",
 		SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS = "set_httpd_site_enable_follow_symlinks",
+		SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP = "set_httpd_site_enable_anonymous_ftp",
 		SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES="set_httpd_tomcat_context_attributes",
 		SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE = "set_httpd_tomcat_std_site_max_post_size",
 		SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS = "set_httpd_tomcat_std_site_unpack_wars",

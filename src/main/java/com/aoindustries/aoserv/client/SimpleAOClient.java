@@ -6909,6 +6909,27 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Sets the <code>enable_anonymous_ftp</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  enableAnonymousFtp  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setEnableAnonymousFtp(boolean)
+	 */
+	public void setHttpdSiteEnableAnonymousFtp(
+		String siteName,
+		String aoServer,
+		boolean enableAnonymousFtp
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setEnableAnonymousFtp(enableAnonymousFtp);
+	}
+
+	/**
 	 * Sets the attributes for a <code>HttpdTomcatContext</code>.
 	 *
 	 * @exception  IOException  if unable to contact the server

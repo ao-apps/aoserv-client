@@ -94,6 +94,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	private boolean enableHtaccess;
 	private boolean enableIndexes;
 	private boolean enableFollowSymlinks;
+	private boolean enableAnonymousFtp;
 
 	public int addHttpdSiteAuthenticatedLocation(
 		String path,
@@ -182,6 +183,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			case 15: return enableHtaccess;
 			case 16: return enableIndexes;
 			case 17: return enableFollowSymlinks;
+			case 18: return enableAnonymousFtp;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -314,6 +316,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			enableHtaccess = result.getBoolean(pos++);
 			enableIndexes = result.getBoolean(pos++);
 			enableFollowSymlinks = result.getBoolean(pos++);
+			enableAnonymousFtp = result.getBoolean(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -359,6 +362,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
 	public boolean getEnableFollowSymlinks() {
 		return enableFollowSymlinks;
+	}
+
+	public boolean getEnableAnonymousFtp() {
+		return enableAnonymousFtp;
 	}
 
 	/**
@@ -431,6 +438,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			enableHtaccess = in.readBoolean();
 			enableIndexes = in.readBoolean();
 			enableFollowSymlinks = in.readBoolean();
+			enableAnonymousFtp = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -471,6 +479,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
 	public void setEnableFollowSymlinks(boolean enableFollowSymlinks) throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS, pkey, enableFollowSymlinks);
+	}
+
+	public void setEnableAnonymousFtp(boolean enableAnonymousFtp) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP, pkey, enableAnonymousFtp);
 	}
 
 	@Override
@@ -515,6 +527,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			out.writeBoolean(enableHtaccess);
 			out.writeBoolean(enableIndexes);
 			out.writeBoolean(enableFollowSymlinks);
+			out.writeBoolean(enableAnonymousFtp);
 		}
 	}
 
