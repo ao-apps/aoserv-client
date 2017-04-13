@@ -64,7 +64,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 			case COLUMN_TOMCAT_SITE: return pkey;
 			case 1: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
 			case 2: return tomcat4_shutdown_key;
-			case 3: return maxPostSize;
+			case 3: return maxPostSize==-1 ? null: maxPostSize;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -79,6 +79,9 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 		return tomcat4_shutdown_key;
 	}
 
+	/**
+	 * Gets the max post size or {@code -1} of not limited.
+	 */
 	public int getMaxPostSize() {
 		return maxPostSize;
 	}
@@ -133,6 +136,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 		if(result.wasNull()) tomcat4_shutdown_port=-1;
 		tomcat4_shutdown_key=result.getString(3);
 		maxPostSize = result.getInt(4);
+		if(result.wasNull()) maxPostSize = -1;
 	}
 
 	@Override

@@ -6635,7 +6635,7 @@ final public class SimpleAOClient {
 	 *
 	 * @param  name  the name of the JVM
 	 * @param  aoServer  the hostname of the <code>AOServer</code>
-	 * @param  maxPostSize  the new maximum POST size, in bytes
+	 * @param  maxPostSize  the new maximum POST size, in bytes, {@code -1} for none.
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
@@ -6941,7 +6941,7 @@ final public class SimpleAOClient {
 	 *
 	 * @param  siteName  the name of the site
 	 * @param  aoServer  the hostname of the <code>AOServer</code>
-	 * @param  maxPostSize  the new maximum POST size, in bytes
+	 * @param  maxPostSize  the new maximum POST size, in bytes, {@code -1} for none.
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
