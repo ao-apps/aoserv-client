@@ -154,7 +154,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 			case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
 			case 11: return tomcat4_shutdown_key;
 			case 12: return isManual;
-			case 13: return maxPostSize;
+			case 13: return maxPostSize==-1 ? null : maxPostSize;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -253,12 +253,16 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		tomcat4_shutdown_key=result.getString(pos++);
 		isManual=result.getBoolean(pos++);
 		maxPostSize = result.getInt(pos++);
+		if(result.wasNull()) maxPostSize = -1;
 	}
 
 	public boolean isManual() {
 		return isManual;
 	}
 
+	/**
+	 * Gets the max post size or {@code -1} of not limited.
+	 */
 	public int getMaxPostSize() {
 		return maxPostSize;
 	}

@@ -237,7 +237,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 				connector.getSimpleAOClient().setHttpdSharedTomcatMaxPostSize(
 					args[1],
 					args[2],
-					AOSH.parseInt(args[3], "max_post_size")
+					args[3].isEmpty() ? -1 : AOSH.parseInt(args[3], "max_post_size")
 				);
 			}
 			return true;
