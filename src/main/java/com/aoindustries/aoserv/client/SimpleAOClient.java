@@ -6652,6 +6652,48 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Sets the <code>unpackWARs</code> setting for a <code>HttpdSharedTomcat</code>
+	 *
+	 * @param  name  the name of the JVM
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  unpackWARs  the new setting
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
+	 *
+	 * @see  HttpdSharedTomcat#setUnpackWARs(boolean)
+	 */
+	public void setHttpdSharedTomcatUnpackWARs(
+		String name,
+		String aoServer,
+		boolean unpackWARs
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSharedTomcat(aoServer, name).setUnpackWARs(unpackWARs);
+	}
+
+	/**
+	 * Sets the <code>autoDeploy</code> setting for a <code>HttpdSharedTomcat</code>
+	 *
+	 * @param  name  the name of the JVM
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  autoDeploy  the new setting
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
+	 *
+	 * @see  HttpdSharedTomcat#setAutoDeploy(boolean)
+	 */
+	public void setHttpdSharedTomcatAutoDeploy(
+		String name,
+		String aoServer,
+		boolean autoDeploy
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSharedTomcat(aoServer, name).setAutoDeploy(autoDeploy);
+	}
+
+	/**
 	 * Sets the <code>is_manual</code> flag for a <code>HttpdSiteBind</code>
 	 *
 	 * @param  pkey  the primary key of the <code>HttpdSiteBind</code>
@@ -6960,6 +7002,58 @@ final public class SimpleAOClient {
 		HttpdTomcatStdSite htss = hts.getHttpdTomcatStdSite();
 		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
 		htss.setMaxPostSize(maxPostSize);
+	}
+
+	/**
+	 * Sets the <code>unpackWARs</code> setting for a <code>HttpdTomcatStdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  unpackWARs  the new setting
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
+	 *
+	 * @see  HttpdTomcatStdSite#setUnpackWARs(boolean)
+	 */
+	public void setHttpdTomcatStdSiteUnpackWARs(
+		String siteName,
+		String aoServer,
+		boolean unpackWARs
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getHttpdSite(aoServer, siteName);
+		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
+		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+		HttpdTomcatStdSite htss = hts.getHttpdTomcatStdSite();
+		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
+		htss.setUnpackWARs(unpackWARs);
+	}
+
+	/**
+	 * Sets the <code>autoDeploy</code> setting for a <code>HttpdTomcatStdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  autoDeploy  the new setting
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
+	 *
+	 * @see  HttpdTomcatStdSite#setAutoDeploy(boolean)
+	 */
+	public void setHttpdTomcatStdSiteAutoDeploy(
+		String siteName,
+		String aoServer,
+		boolean autoDeploy
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getHttpdSite(aoServer, siteName);
+		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
+		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+		HttpdTomcatStdSite htss = hts.getHttpdTomcatStdSite();
+		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
+		htss.setAutoDeploy(autoDeploy);
 	}
 
 	/**
