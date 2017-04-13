@@ -185,6 +185,15 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 				out.flush();
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdTomcatStdSiteMaxPostSize(
+					args[1],
+					args[2],
+					AOSH.parseInt(args[3], "max_post_size")
+				);
+			}
+			return true;
 		}
 		return false;
 	}

@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-12T12:41:07-0500"
+		dateModified="2017-04-12T15:12:01-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -262,6 +262,14 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>set_httpd_site_enable_indexes</code> command.</li>
 							<li>Added <code>set_httpd_site_enable_follow_symlinks</code> command.</li>
 							<li>Added <code>set_httpd_tomcat_site_use_apache</code> command.</li>
+						</ol>
+					</li>
+					<li>Enabled control over Tomcat maximum POST size:
+						<ol>
+							<li>Added <code>HttpdSharedTomcat.getMaxPostSize()</code></li>
+							<li>Added <code>HttpdTomcatStdSite.getMaxPostSize()</code></li>
+							<li>Added <code>set_httpd_shared_tomcat_max_post_size</code> command.</li>
+							<li>Added <code>set_httpd_tomcat_std_site_max_post_size</code> command.</li>
 						</ol>
 					</li>
 				</ul>

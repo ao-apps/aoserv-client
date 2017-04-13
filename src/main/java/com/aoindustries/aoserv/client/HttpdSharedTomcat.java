@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -55,13 +56,22 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
 	/**
+	 * The default setting of maxPostSize on the &lt;Connector /&gt; in server.xml.
+	 * This raises the value from the Tomcat default of 2 MiB to a more real-world
+	 * value, such as allowing uploads of pictures from modern digital cameras.
+	 *
+	 * @see  #getMaxPostSize()
+	 */
+	public static final int DEFAULT_MAX_POST_SIZE = 16 * 1024 * 1024; // 16 MiB
+
+	/**
 	 * The maximum number of sites allowed in one <code>HttpdSharedTomcat</code>.
 	 */
-	public static final int MAX_SITES=LinuxGroupAccount.MAX_GROUPS-1;
+	public static final int MAX_SITES = LinuxGroupAccount.MAX_GROUPS - 1;
 
-	public static final int MAX_NAME_LENGTH=32;
+	public static final int MAX_NAME_LENGTH = 32;
 
-	public static final String OVERFLOW_TEMPLATE="tomcat";
+	public static final String OVERFLOW_TEMPLATE = "tomcat";
 
 	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = HttpdTomcatVersion.VERSION_8_0_PREFIX;
 
@@ -77,6 +87,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	int tomcat4_shutdown_port;
 	private String tomcat4_shutdown_key;
 	private boolean isManual;
+	private int maxPostSize;
 
 	@Override
 	public boolean canDisable() {
@@ -143,6 +154,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 			case COLUMN_TOMCAT4_SHUTDOWN_PORT: return tomcat4_shutdown_port==-1?null:tomcat4_shutdown_port;
 			case 11: return tomcat4_shutdown_key;
 			case 12: return isManual;
+			case 13: return maxPostSize;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -240,10 +252,15 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		if(result.wasNull()) tomcat4_shutdown_port=-1;
 		tomcat4_shutdown_key=result.getString(pos++);
 		isManual=result.getBoolean(pos++);
+		maxPostSize = result.getInt(pos++);
 	}
 
 	public boolean isManual() {
 		return isManual;
+	}
+
+	public int getMaxPostSize() {
+		return maxPostSize;
 	}
 
 	public boolean isOverflow() {
@@ -303,6 +320,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		tomcat4_shutdown_port=in.readCompressedInt();
 		tomcat4_shutdown_key=in.readNullUTF();
 		isManual=in.readBoolean();
+		maxPostSize = in.readInt();
 	}
 
 	@Override
@@ -312,6 +330,37 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
 	public void setIsManual(boolean isManual) throws IOException, SQLException {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_IS_MANUAL, pkey, isManual);
+	}
+
+	public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
+		table.connector.requestUpdate(
+			true,
+			AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
+			new AOServConnector.UpdateRequest() {
+				IntList invalidateList;
+
+				@Override
+				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					out.writeCompressedInt(pkey);
+					out.writeInt(maxPostSize);
+				}
+
+				@Override
+				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					int code=in.readByte();
+					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+					else {
+						AOServProtocol.checkResult(code, in);
+						throw new IOException("Unexpected response code: "+code);
+					}
+				}
+
+				@Override
+				public void afterRelease() {
+					table.connector.tablesUpdated(invalidateList);
+				}
+			}
+		);
 	}
 
 	@Override
@@ -342,5 +391,8 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		out.writeCompressedInt(tomcat4_shutdown_port);
 		out.writeNullUTF(tomcat4_shutdown_key);
 		out.writeBoolean(isManual);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
+			out.writeInt(maxPostSize);
+		}
 	}
 }
