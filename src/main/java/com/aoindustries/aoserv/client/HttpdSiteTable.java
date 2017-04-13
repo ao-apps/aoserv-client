@@ -272,6 +272,15 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 				);
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteEnableAnonymousFtp(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "enable_anonymous_ftp")
+				);
+			}
+			return true;
 		} else return false;
 	}
 

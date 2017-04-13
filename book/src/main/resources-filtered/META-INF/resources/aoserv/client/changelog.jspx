@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-13T12:36:59-0500"
+		dateModified="2017-04-13T13:37:34-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -252,6 +252,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>HttpdSite.getEnableHtaccess()</code></li>
 							<li>Added <code>HttpdSite.getEnableIndexes()</code></li>
 							<li>Added <code>HttpdSite.getEnableFollowSymlinks()</code></li>
+							<li>Added <code>HttpdSite.getEnableAnonymousFtp()</code></li>
 							<li>Added parameters to <code>add_httpd_jboss_site</code> command for new settings.</li>
 							<li>Added parameters to <code>add_httpd_tomcat_shared_site</code> command for new settings.</li>
 							<li>Added parameters to <code>add_httpd_tomcat_std_site</code> command for new settings.</li>
@@ -261,6 +262,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>set_httpd_site_enable_htaccess</code> command.</li>
 							<li>Added <code>set_httpd_site_enable_indexes</code> command.</li>
 							<li>Added <code>set_httpd_site_enable_follow_symlinks</code> command.</li>
+							<li>Added <code>set_httpd_site_enable_anonymous_ftp</code> command.</li>
 							<li>Added <code>set_httpd_tomcat_site_use_apache</code> command.</li>
 						</ol>
 					</li>
