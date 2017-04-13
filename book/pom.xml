@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-aoserv-client - Java client for the AOServ platform.
+aoserv-client - Java client for the AOServ Platform.
 Copyright (C) 2016, 2017  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
@@ -43,7 +43,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		<documented.name>AOServ Client</documented.name>
 		<documented.shortTitle>Client</documented.shortTitle>
 		<documented.url>https://aoindustries.com/aoserv/client/</documented.url>
-		<documented.description>Java client for the AOServ platform.</documented.description>
+		<documented.description>Java client for the AOServ Platform.</documented.description>
 		<documented.inceptionYear>2000</documented.inceptionYear>
 		<documented.scm.url>https://github.com/aoindustries/${documented.artifactId}</documented.scm.url>
 
