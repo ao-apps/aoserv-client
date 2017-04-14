@@ -167,7 +167,7 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 		out.writeUTF(group_name.toString());
 		out.writeUTF(username.toString());
 		out.writeBoolean(is_primary);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
 			out.writeCompressedInt(operating_system_version);
 		}
 	}

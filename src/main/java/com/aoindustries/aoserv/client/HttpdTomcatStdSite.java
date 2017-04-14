@@ -187,7 +187,7 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(tomcat4_shutdown_port);
 		out.writeNullUTF(tomcat4_shutdown_key);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
 			out.writeInt(maxPostSize);
 			out.writeBoolean(unpackWARs);
 			out.writeBoolean(autoDeploy);
