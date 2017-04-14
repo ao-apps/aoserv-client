@@ -522,7 +522,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_79) >= 0) {
 			out.writeBoolean(enableCgi);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
 			out.writeBoolean(enableSsi);
 			out.writeBoolean(enableHtaccess);
 			out.writeBoolean(enableIndexes);

@@ -747,7 +747,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)>=0) {
 			out.writeCompressedInt(sa_discard_score);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1_SNAPSHOT) >= 0) {
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
 			out.writeNullUTF(sudo);
 		}
 	}
