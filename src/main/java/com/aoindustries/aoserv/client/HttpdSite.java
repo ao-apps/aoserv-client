@@ -373,22 +373,30 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	 * directory.  The site name must be 255 characters or less, and comprised of
 	 * only <code>a-z</code>, <code>0-9</code>, <code>.</code> or <code>-</code>.  The first
 	 * character must be <code>a-z</code> or <code>0-9</code>.
-	 *
+	 * <p>
+	 * Note: This matches the check constraint on the httpd_sites table.
+	 * Note: This matches keepWwwDirs in HttpdSiteManager.
+	 * </p>
 	 * TODO: Self-validating type for site names
 	 */
 	public static boolean isValidSiteName(String name) {
 		// These are the other files/directories that may exist under /www.  To avoid
 		// potential conflicts, these may not be used as site names.
 		if(
-			"lost+found".equals(name)
-			|| ".backup".equals(name)
-			|| "aquota.user".equals(name)
-			// Some other things that exist in /var/www
-			|| "cgi-bin".equals(name)
-			|| "mrtg".equals(name)
-			|| "html".equals(name)
+	        // TODO: "disabled" once packaged via RPM and not put into httpd_sites table itself
+			// CentOS 5 only
+			   "cache".equals(name) // nginx only?
+			|| "fastcgi".equals(name)
+			|| "error".equals(name)
 			|| "icons".equals(name)
-			// TODO: "disabled" once packaged as an RPM and not an actual HttpdSite entry
+			// CentOS 7
+			|| "cgi-bin".equals(name)
+			|| "html".equals(name)
+			|| "mrtg".equals(name)
+			// Other filesystem patterns
+			|| "lost+found".equals(name)
+			|| "aquota.group".equals(name)
+			|| "aquota.user".equals(name)
 		) return false;
 
 		int len = name.length();
