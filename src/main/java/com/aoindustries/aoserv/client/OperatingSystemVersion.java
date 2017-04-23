@@ -270,11 +270,11 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 		return getHttpdSiteLogsDirectory(pkey);
 	}
 
-	private static final UnixPath LOGS, VAR_LOG_WWW;
+	private static final UnixPath LOGS, VAR_LOG_HTTPD_SITES;
 	static {
 		try {
 			LOGS = UnixPath.valueOf("/logs").intern();
-			VAR_LOG_WWW = UnixPath.valueOf("/var/log/www").intern();
+			VAR_LOG_HTTPD_SITES = UnixPath.valueOf("/var/log/httpd-sites").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -291,7 +291,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 			case CENTOS_5_I686_AND_X86_64 :
 				return LOGS;
 			case CENTOS_7_X86_64 :
-				return VAR_LOG_WWW;
+				return VAR_LOG_HTTPD_SITES;
 			case CENTOS_5_DOM0_I686 :
 			case CENTOS_5_DOM0_X86_64 :
 			case CENTOS_7_DOM0_X86_64 :

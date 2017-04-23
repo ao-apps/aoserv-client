@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-13T14:00:55-0500"
+		dateModified="2017-04-23T11:30:31-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -100,7 +100,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Web site resources moved to more predictable locations for CentOS 7:
 						<ol>
 							<li>Apache virtual hosts moved from <code>/www</code> to <code>/var/www</code>.</li>
-							<li>Apache virtual hosts logs moved from <code>/logs</code> to <code>/var/log/www</code>.</li>
+							<li>Apache virtual hosts logs moved from <code>/logs</code> to <code>/var/log/httpd-sites</code>.</li>
 							<li>Multi-site Tomcat installations moved from <code>/wwwgroup</code> to <code>/var/opt/apache-tomcat</code>.</li>
 							<li>Servers that are upgraded retain compatibility links at the old paths.</li>
 						</ol>
