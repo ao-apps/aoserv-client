@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-04-23T11:30:31-0500"
+		dateModified="2017-05-04T09:15:55-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -282,6 +282,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>set_httpd_tomcat_std_site_auto_deploy</code> command.</li>
 						</ol>
 					</li>
+					<li>Disabled site now packaged in RPM and distributed via Yum.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
