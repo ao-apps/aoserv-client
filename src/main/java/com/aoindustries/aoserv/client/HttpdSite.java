@@ -383,9 +383,9 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		// These are the other files/directories that may exist under /www.  To avoid
 		// potential conflicts, these may not be used as site names.
 		if(
-	        // TODO: "disabled" once packaged via RPM and not put into httpd_sites table itself
+			   DISABLED.equals(name) // Provided by aoserv-httpd-site-disabled package
 			// CentOS 5 only
-			   "cache".equals(name) // nginx only?
+			|| "cache".equals(name) // nginx only?
 			|| "fastcgi".equals(name)
 			|| "error".equals(name)
 			|| "icons".equals(name)

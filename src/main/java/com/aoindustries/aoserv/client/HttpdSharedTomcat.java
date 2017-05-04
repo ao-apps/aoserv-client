@@ -349,10 +349,22 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 	 * directory.  The name must be 12 characters or less, and comprised of
 	 * only <code>a-z</code>,<code>0-9</code>, or <code>-</code>.  The first
 	 * character must be <code>a-z</code>.
-	 *
+	 * <p>
+	 * Note: This matches the check constraint on the httpd_shared_tomcats table.
+	 * Note: This matches keepWwwgroupDirs in HttpdSharedTomcatManager.
+	 * </p>
 	 * // TODO: Self-validating type
 	 */
 	public static boolean isValidSharedTomcatName(String name) {
+		// These are the other files/directories that may exist under /www.  To avoid
+		// potential conflicts, these may not be used as site names.
+		if(
+			// Other filesystem patterns
+			   "lost+found".equals(name)
+			|| "aquota.group".equals(name)
+			|| "aquota.user".equals(name)
+		) return false;
+
 		int len = name.length();
 		if (len == 0 || len > MAX_NAME_LENGTH)
 			return false;
