@@ -92,6 +92,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		ROOT,
 		RPC,
 		RPCUSER,
+		SASLAUTH,
 		SCREEN,
 		SSH_KEYS,
 		SSHD,
@@ -158,6 +159,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			ROOT = GroupId.valueOf("root");
 			RPC = GroupId.valueOf("rpc");
 			RPCUSER = GroupId.valueOf("rpcuser");
+			SASLAUTH = GroupId.valueOf("saslauth");
 			SCREEN = GroupId.valueOf("screen");
 			SSH_KEYS = GroupId.valueOf("ssh_keys");
 			SSHD = GroupId.valueOf("sshd");
