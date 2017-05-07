@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-05-06T15:37:25-0500"
+		dateModified="2017-05-07T00:01:02-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -284,6 +284,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Disabled site now packaged in RPM and distributed via Yum.</li>
 					<li>New system group <code>saslauth</code>.</li>
+					<li>Added <code>Protocol.RFB</code> for VNC servers.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
