@@ -70,6 +70,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 		NTALK="ntalk",
 		POP3="POP3",
 		POSTGRESQL="PostgreSQL",
+		RFB="RFB",
 		RMI="RMI",
 		SIEVE="sieve",
 		SIMAP="SIMAP",
