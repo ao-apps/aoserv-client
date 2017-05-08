@@ -55,6 +55,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 	public static final GroupId
 		ADM,
 		AOADMIN,
+		AOSERV_JILTER,
 		APACHE,
 		AUDIO,
 		AVAHI_AUTOIPD,
@@ -122,6 +123,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		try {
 			ADM = GroupId.valueOf("adm");
 			AOADMIN = GroupId.valueOf("aoadmin");
+			AOSERV_JILTER = GroupId.valueOf("aoserv-jilter");
 			APACHE = GroupId.valueOf("apache");
 			AUDIO = GroupId.valueOf("audio");
 			AVAHI_AUTOIPD = GroupId.valueOf("avahi-autoipd");
