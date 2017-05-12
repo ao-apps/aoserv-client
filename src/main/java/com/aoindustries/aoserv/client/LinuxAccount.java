@@ -73,6 +73,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 		INTERBASE,
 		LP,
 		MAIL,
+		MEMCACHED,
 		MYSQL,
 		NAMED,
 		NFSNOBODY,
@@ -120,6 +121,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 			INTERBASE = UserId.valueOf("interbase");
 			LP = UserId.valueOf("lp");
 			MAIL = UserId.valueOf("mail");
+			MEMCACHED = UserId.valueOf("memcached");
 			MYSQL = UserId.valueOf("mysql");
 			NAMED = UserId.valueOf("named");
 			NFSNOBODY = UserId.valueOf("nfsnobody");

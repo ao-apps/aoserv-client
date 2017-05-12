@@ -82,6 +82,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		MAILONLY,
 		MAN,
 		MEM,
+		MEMCACHED,
 		MYSQL,
 		NAMED,
 		NFSNOBODY,
@@ -150,6 +151,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			MAILONLY = GroupId.valueOf("mailonly");
 			MAN = GroupId.valueOf("man");
 			MEM = GroupId.valueOf("mem");
+			MEMCACHED = GroupId.valueOf("memcached");
 			MYSQL = GroupId.valueOf("mysql");
 			NAMED = GroupId.valueOf("named");
 			NFSNOBODY = GroupId.valueOf("nfsnobody");

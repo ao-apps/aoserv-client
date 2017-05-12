@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-05-08T12:50:19-0500"
+		dateModified="2017-05-12T16:02:22-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -283,8 +283,19 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>Disabled site now packaged in RPM and distributed via Yum.</li>
-					<li>New system groups: <code>saslauth</code> and <code>aoserv-jilter</code>.</li>
-					<li>New system user: <code>aoserv-jilter</code>.</li>
+					<li>New system groups:
+						<ol>
+							<li><code>aoserv-jilter</code></li>
+							<li><code>memcached</code></li>
+							<li><code>saslauth</code></li>
+						</ol>
+					</li>
+					<li>New system users:
+						<ol>
+							<li><code>aoserv-jilter</code></li>
+							<li><code>memcached</code></li>
+						</ol>
+					</li>
 					<li>Added <code>Protocol.RFB</code> for VNC servers.</li>
 				</ul>
 			</changelog:release>
