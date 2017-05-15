@@ -63,8 +63,16 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
 	 * with this site.
 	 */
 	public boolean canStart() throws SQLException, IOException {
-		HttpdSharedTomcat hst=getHttpdSharedTomcat();
-		return getHttpdSharedTomcat()==null || !hst.isDisabled();
+		// This site must be enabled
+		if(getHttpdTomcatSite().getHttpdSite().isDisabled()) return false;
+		HttpdSharedTomcat hst = getHttpdSharedTomcat();
+		if(hst == null) {
+			// Filtered, assume can start
+			return true;
+		}
+		if(hst.isDisabled()) return false;
+		// Has at least one enabled site: this one
+		return true;
 	}
 
 	@Override
