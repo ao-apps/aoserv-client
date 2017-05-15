@@ -229,23 +229,41 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	 */
 	public boolean isDisabled() throws SQLException, IOException {
 		boolean foundDisablable = false;
-		HttpdWorker hw=getHttpdWorker();
-		if(hw!=null) {
-			HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
-			if(hst!=null) {
+		HttpdWorker hw = getHttpdWorker();
+		if(hw != null) {
+			HttpdSharedTomcat hst = hw.getHttpdSharedTomcat();
+			if(hst != null) {
 				if(!hst.isDisabled()) return false;
+				// Must also have at least one enabled site
+				boolean hasEnabledSite = false;
+				for(HttpdTomcatSharedSite htss : hst.getHttpdTomcatSharedSites()) {
+					if(!htss.getHttpdTomcatSite().getHttpdSite().isDisabled()) {
+						hasEnabledSite = true;
+						break;
+					}
+				}
+				if(!hasEnabledSite) return false;
 				foundDisablable = true;
 			}
-			HttpdTomcatSite hts=hw.getHttpdTomcatSite();
-			if(hts!=null) {
+			HttpdTomcatSite hts = hw.getHttpdTomcatSite();
+			if(hts != null) {
 				if(!hts.getHttpdSite().isDisabled()) return false;
 				foundDisablable = true;
 			}
 		}
 
-		HttpdSharedTomcat hst=getHttpdSharedTomcatByShutdownPort();
-		if(hst!=null) {
+		HttpdSharedTomcat hst = getHttpdSharedTomcatByShutdownPort();
+		if(hst != null) {
 			if(!hst.isDisabled()) return false;
+			// Must also have at least one enabled site
+			boolean hasEnabledSite = false;
+			for(HttpdTomcatSharedSite htss : hst.getHttpdTomcatSharedSites()) {
+				if(!htss.getHttpdTomcatSite().getHttpdSite().isDisabled()) {
+					hasEnabledSite = true;
+					break;
+				}
+			}
+			if(!hasEnabledSite) return false;
 			foundDisablable = true;
 		}
 

@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-05-12T16:02:22-0500"
+		dateModified="2017-05-14T22:42:07-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -297,6 +297,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>Added <code>Protocol.RFB</code> for VNC servers.</li>
+					<li>Shared Tomcats now auto-shutdown when have no enabled sites.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
