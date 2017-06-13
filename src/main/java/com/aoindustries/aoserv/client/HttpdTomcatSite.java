@@ -151,7 +151,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
 		if(
 			obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
-			!= getHttpdSite().getAOServer().getServer().getOperatingSystemVersion().getPkey()
+			!= getHttpdSite().getAOServer().getServer().operating_system_version
 		) {
 			throw new SQLException("resource/operating system version mismatch on HttpdTomcatSite: #"+pkey);
 		}

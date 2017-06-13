@@ -1002,7 +1002,7 @@ final public class SimpleAOClient {
 		if(phpVersion == null || phpVersion.isEmpty()) return null;
 		String prefix = phpVersion;
 		if(!prefix.endsWith(".")) prefix += '.';
-		int osvId = aoServer.getServer().getOperatingSystemVersion().getPkey();
+		int osvId = aoServer.getServer().operating_system_version;
 		List<TechnologyVersion> matches = new ArrayList<>();
 		for(TechnologyVersion tv : connector.getTechnologyVersions()) {
 			if(
@@ -2777,16 +2777,24 @@ final public class SimpleAOClient {
 	/**
 	 * Checks the format of an email list path.
 	 *
+	 * @param  aoServer  the hostname of the server the list would be hosted on
 	 * @param  path  the path of the list
 	 *
 	 * @exception  IllegalArgumentException  if the name is not in a valid format
 	 *
 	 * @see  EmailList#isValidRegularPath
 	 */
-	public static void checkEmailListPath(
+	public void checkEmailListPath(
+		String aoServer,
 		UnixPath path
-	) throws IllegalArgumentException {
-		if(!EmailList.isValidRegularPath(path)) throw new IllegalArgumentException("Invalid EmailList path: "+path);
+	) throws IllegalArgumentException, IOException, SQLException {
+		AOServer ao = getAOServer(aoServer);
+		if(
+			!EmailList.isValidRegularPath(
+				path,
+				ao.getServer().operating_system_version
+			)
+		) throw new IllegalArgumentException("Invalid EmailList path: " + path + " on " + ao);
 	}
 
 	/**

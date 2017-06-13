@@ -119,7 +119,7 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 
 	List<LinuxServerAccount> getAlternateLinuxServerAccounts(LinuxServerGroup group) throws SQLException, IOException {
 		AOServer aoServer = group.getAOServer();
-		int osv = aoServer.getServer().getOperatingSystemVersion().pkey;
+		int osv = aoServer.getServer().operating_system_version;
 		GroupId groupName = group.getLinuxGroup().pkey;
 
 		List<LinuxServerAccount> rows = getRows();

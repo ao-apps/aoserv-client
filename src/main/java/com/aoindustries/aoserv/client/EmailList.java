@@ -164,19 +164,43 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 
 	/**
 	 * Gets the full path that should be used for normal email lists.
+	 *
+	 * @see  OperatingSystemVersion#getEmailListPath(java.lang.String)
 	 */
-	public static UnixPath getListPath(String name) throws ValidationException {
-		if(name.length() > 1) {
-			return UnixPath.valueOf(
-				LIST_DIRECTORY
-				+ '/'
-				+ Character.toLowerCase(name.charAt(0))
-				+ '/'
-				+ name
-			);
-		} else {
-			// This will always be invalid, exception expected
-			return UnixPath.valueOf(LIST_DIRECTORY+"//");
+	public static UnixPath getListPath(String name, int osv) throws ValidationException {
+		switch(osv) {
+			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
+			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
+			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
+				if(name.length() > 1) {
+					return UnixPath.valueOf(
+						LIST_DIRECTORY
+						+ '/'
+						+ Character.toLowerCase(name.charAt(0))
+						+ '/'
+						+ name
+					);
+				} else {
+					// This will always be invalid, exception expected
+					String invalidPath = LIST_DIRECTORY + "//";
+					UnixPath.valueOf(invalidPath);
+					throw new AssertionError(invalidPath + " is invalid and should have already thrown " + ValidationException.class.getName());
+				}
+			case OperatingSystemVersion.CENTOS_7_X86_64 :
+				if(name.length() > 1) {
+					return UnixPath.valueOf(
+						LIST_DIRECTORY
+						+ '/'
+						+ name
+					);
+				} else {
+					// This will always be invalid, exception expected
+					String invalidPath = LIST_DIRECTORY + "/";
+					UnixPath.valueOf(invalidPath);
+					throw new AssertionError(invalidPath + " is invalid and should have already thrown " + ValidationException.class.getName());
+				}
+			default :
+				throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
 		}
 	}
 
@@ -211,31 +235,75 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 	 * Checks the validity of a list name.
 	 *
 	 * TODO: Self-validating type
+	 *
+	 * @see  OperatingSystemVersion#isValidEmailListRegularPath(com.aoindustries.aoserv.client.validator.UnixPath)
 	 */
-	public static boolean isValidRegularPath(UnixPath path) {
+	public static boolean isValidRegularPath(UnixPath path, int osv) {
 		// Must start with LIST_DIRECTORY
-		if(path==null) return false;
+		if(path == null) return false;
 		String pathStr = path.toString();
-		if(!pathStr.startsWith(LIST_DIRECTORY+'/')) return false;
-		pathStr=pathStr.substring(LIST_DIRECTORY.length()+1);
-		if(pathStr.length()<2) return false;
-		char firstChar=pathStr.charAt(0);
-		if(pathStr.charAt(1)!='/') return false;
-		pathStr=pathStr.substring(2);
-		int len = pathStr.length();
-		if (len < 1 || len > MAX_NAME_LENGTH) return false;
-		for (int c = 0; c < len; c++) {
-			char ch = pathStr.charAt(c);
-			if (c == 0) {
-				if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z')) return false;
-				// First character must match with the name
-				if(ch>='A' && ch<='Z') ch+=32;
-				if(ch!=firstChar) return false;
-			} else {
-				if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && ch != '.' && ch != '-' && ch != '_') return false;
+		if(!pathStr.startsWith(LIST_DIRECTORY + '/')) return false;
+		pathStr = pathStr.substring(LIST_DIRECTORY.length() + 1);
+		switch(osv) {
+			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
+			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
+			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 : {
+				if(pathStr.length() < 2) return false;
+				char firstChar = pathStr.charAt(0);
+				if(pathStr.charAt(1) != '/') return false;
+				pathStr = pathStr.substring(2);
+				int len = pathStr.length();
+				if(len < 1 || len > MAX_NAME_LENGTH) return false;
+				for(int c = 0; c < len; c++) {
+					char ch = pathStr.charAt(c);
+					if(c == 0) {
+						if(
+							(ch < '0' || ch > '9')
+							&& (ch < 'a' || ch > 'z')
+							&& (ch < 'A' || ch > 'Z')
+						) return false;
+						// First character must match with the name
+						if(Character.toLowerCase(ch) != firstChar) return false;
+					} else {
+						if(
+							(ch < '0' || ch > '9')
+							&& (ch < 'a' || ch > 'z')
+							&& (ch < 'A' || ch > 'Z')
+							&& ch != '.'
+							&& ch != '-'
+							&& ch != '_'
+						) return false;
+					}
+				}
+				return true;
 			}
+			case OperatingSystemVersion.CENTOS_7_X86_64 : {
+				int len = pathStr.length();
+				if(len < 1 || len > MAX_NAME_LENGTH) return false;
+				for(int c = 0; c < len; c++) {
+					char ch = pathStr.charAt(c);
+					if(c == 0) {
+						if(
+							(ch < '0' || ch > '9')
+							&& (ch < 'a' || ch > 'z')
+							&& (ch < 'A' || ch > 'Z')
+						) return false;
+					} else {
+						if(
+							(ch < '0' || ch > '9')
+							&& (ch < 'a' || ch > 'z')
+							&& (ch < 'A' || ch > 'Z')
+							&& ch != '.'
+							&& ch != '-'
+							&& ch != '_'
+						) return false;
+					}
+				}
+				return true;
+			}
+			default :
+				throw new AssertionError("Unexpected OperatingSystemVersion: " + osv);
 		}
-		return true;
 	}
 
 	@Override

@@ -53,18 +53,26 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 
 	public int addEmailList(
 		UnixPath path,
-		LinuxServerAccount linuxAccountObject,
-		LinuxServerGroup linuxGroupObject
+		LinuxServerAccount lsa,
+		LinuxServerGroup lsg
 	) throws IllegalArgumentException, IOException, SQLException {
-		if (!EmailList.isValidRegularPath(path)) throw new IllegalArgumentException("Invalid list path: " + path);
+		AOServer lsaAO = lsa.getAOServer();
+		AOServer lsgAO = lsg.getAOServer();
+		if(!lsaAO.equals(lsgAO)) throw new IllegalArgumentException("Mismatched servers: " + lsaAO + " and " + lsgAO);
+		if(
+			!EmailList.isValidRegularPath(
+				path,
+				lsaAO.getServer().operating_system_version
+			)
+		) throw new IllegalArgumentException("Invalid list path: " + path);
 
 		return connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD,
 			SchemaTable.TableID.EMAIL_LISTS,
 			path,
-			linuxAccountObject.pkey,
-			linuxGroupObject.pkey
+			lsa.pkey,
+			lsg.pkey
 		);
 	}
 
@@ -142,26 +150,21 @@ final public class EmailListTable extends CachedTableIntegerKey<EmailList> {
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_EMAIL_LIST_PATH)) {
-			if(AOSH.checkMinParamCount(AOSHCommand.CHECK_EMAIL_LIST_PATH, args, 1, err)) {
-				for(int c=1;c<args.length;c++) {
-					try {
-						SimpleAOClient.checkEmailListPath(
-							AOSH.parseUnixPath(args[c], "path")
-						);
-						if(args.length>2) {
-							out.print(args[c]);
-							out.print(": ");
-						}
-						out.println("true");
-					} catch(IllegalArgumentException ia) {
-						if(args.length>2) {
-							out.print(args[c]);
-							out.print(": ");
-						}
-						out.println(ia.getMessage());
-					}
-					out.flush();
+			if(AOSH.checkParamCount(AOSHCommand.CHECK_EMAIL_LIST_PATH, args, 2, err)) {
+				try {
+					connector.getSimpleAOClient().checkEmailListPath(
+						args[1],
+						AOSH.parseUnixPath(args[2], "path")
+					);
+					out.print(args[2]);
+					out.print(": ");
+					out.println("true");
+				} catch(IllegalArgumentException ia) {
+					out.print(args[2]);
+					out.print(": ");
+					out.println(ia.getMessage());
 				}
+				out.flush();
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_EMAIL_LIST)) {
