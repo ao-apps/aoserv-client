@@ -54,7 +54,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 
 	String farm;
 	private String description;
-	private int operating_system_version;
+	int operating_system_version;
 	private int packageId;
 	private String name;
 	private boolean monitoring_enabled;

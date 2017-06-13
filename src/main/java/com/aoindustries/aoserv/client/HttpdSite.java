@@ -337,7 +337,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		if(!tv.name.equals(TechnologyName.PHP)) throw new SQLException("Not a PHP version: " + tv.name + " #" + tv.pkey);
 		if(
 			tv.getOperatingSystemVersion(table.connector).getPkey()
-			!= getAOServer().getServer().getOperatingSystemVersion().getPkey()
+			!= getAOServer().getServer().operating_system_version
 		) {
 			throw new SQLException("php/operating system version mismatch on HttpdSite: #" + pkey);
 		}

@@ -300,4 +300,18 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 				throw new AssertionError("Unexpected OperatingSystemVersion: "+osv);
 		}
 	}
+
+	/**
+	 * @see  EmailList#getListPath(java.lang.String, int)
+	 */
+	public UnixPath getEmailListPath(String name) throws ValidationException {
+		return EmailList.getListPath(name, pkey);
+	}
+
+	/**
+	 * @see  EmailList#isValidRegularPath(com.aoindustries.aoserv.client.validator.UnixPath, int)
+	 */
+	public boolean isValidEmailListRegularPath(UnixPath path) {
+		return EmailList.isValidRegularPath(path, pkey);
+	}
 }

@@ -269,7 +269,7 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 		if(obj==null) throw new SQLException("Unable to find PostgresVersion: "+version);
 		if(
 			obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
-			!= getAOServer().getServer().getOperatingSystemVersion().getPkey()
+			!= getAOServer().getServer().operating_system_version
 		) {
 			throw new SQLException("resource/operating system version mismatch on PostgresServer: #"+pkey);
 		}

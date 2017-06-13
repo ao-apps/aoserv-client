@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-05-14T22:42:07-0500"
+		dateModified="2017-06-12T21:08:14-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -298,6 +298,11 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Added <code>Protocol.RFB</code> for VNC servers.</li>
 					<li>Shared Tomcats now auto-shutdown when have no enabled sites.</li>
+					<li>Email lists on CentOS 7 are directly in <code>/etc/mail/lists</code> and no longer use hashed-directory format:
+						<ol>
+							<li><code>check_email_list_path</code> command altered to include <code>ao_server</code> parameter.</li>
+						</ol>
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>

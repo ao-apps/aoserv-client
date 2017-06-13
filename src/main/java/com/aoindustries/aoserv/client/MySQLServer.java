@@ -427,7 +427,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+version);
 		if(
 			obj.getOperatingSystemVersion(table.connector).getPkey()
-			!= getAOServer().getServer().getOperatingSystemVersion().getPkey()
+			!= getAOServer().getServer().operating_system_version
 		) {
 			throw new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey);
 		}
