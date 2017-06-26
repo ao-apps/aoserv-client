@@ -79,6 +79,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		LOCK,
 		LP,
 		MAIL,
+		MAILNULL,
 		MAILONLY,
 		MAN,
 		MEM,
@@ -96,6 +97,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		RPCUSER,
 		SASLAUTH,
 		SCREEN,
+		SMMSP,
 		SSH_KEYS,
 		SSHD,
 		SYS,
@@ -148,6 +150,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			LOCK = GroupId.valueOf("lock");
 			LP = GroupId.valueOf("lp");
 			MAIL = GroupId.valueOf("mail");
+			MAILNULL = GroupId.valueOf("mailnull");
 			MAILONLY = GroupId.valueOf("mailonly");
 			MAN = GroupId.valueOf("man");
 			MEM = GroupId.valueOf("mem");
@@ -165,6 +168,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			RPCUSER = GroupId.valueOf("rpcuser");
 			SASLAUTH = GroupId.valueOf("saslauth");
 			SCREEN = GroupId.valueOf("screen");
+			SMMSP = GroupId.valueOf("smmsp");
 			SSH_KEYS = GroupId.valueOf("ssh_keys");
 			SSHD = GroupId.valueOf("sshd");
 			SYS = GroupId.valueOf("sys");
