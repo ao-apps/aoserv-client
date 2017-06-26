@@ -73,6 +73,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 		INTERBASE,
 		LP,
 		MAIL,
+		MAILNULL,
 		MEMCACHED,
 		MYSQL,
 		NAMED,
@@ -84,7 +85,9 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 		ROOT,
 		RPC,
 		RPCUSER,
+		SASLAUTH,
 		SHUTDOWN,
+		SMMSP,
 		SSHD,
 		SYNC,
 		SYSTEMD_BUS_PROXY,
@@ -121,6 +124,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 			INTERBASE = UserId.valueOf("interbase");
 			LP = UserId.valueOf("lp");
 			MAIL = UserId.valueOf("mail");
+			MAILNULL = UserId.valueOf("mailnull");
 			MEMCACHED = UserId.valueOf("memcached");
 			MYSQL = UserId.valueOf("mysql");
 			NAMED = UserId.valueOf("named");
@@ -132,7 +136,9 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 			ROOT = UserId.valueOf("root");
 			RPC = UserId.valueOf("rpc");
 			RPCUSER = UserId.valueOf("rpcuser");
+			SASLAUTH = UserId.valueOf("saslauth");
 			SHUTDOWN = UserId.valueOf("shutdown");
+			SMMSP = UserId.valueOf("smmsp");
 			SSHD = UserId.valueOf("sshd");
 			SYNC = UserId.valueOf("sync");
 			SYSTEMD_BUS_PROXY = UserId.valueOf("systemd-bus-proxy");

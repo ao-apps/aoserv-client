@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-06-12T21:08:14-0500"
+		dateModified="2017-06-25T22:30:07-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -286,14 +286,19 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>New system groups:
 						<ol>
 							<li><code>aoserv-jilter</code></li>
+							<li><code>mailnull</code></li>
 							<li><code>memcached</code></li>
 							<li><code>saslauth</code></li>
+							<li><code>smmsp</code></li>
 						</ol>
 					</li>
 					<li>New system users:
 						<ol>
 							<li><code>aoserv-jilter</code></li>
+							<li><code>mailnull</code></li>
 							<li><code>memcached</code></li>
+							<li><code>saslauth</code></li>
+							<li><code>smmsp</code></li>
 						</ol>
 					</li>
 					<li>Added <code>Protocol.RFB</code> for VNC servers.</li>
