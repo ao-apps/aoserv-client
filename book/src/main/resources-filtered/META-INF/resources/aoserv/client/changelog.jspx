@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-06-25T22:30:07-0500"
+		dateModified="2017-06-27T06:04:57-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -307,6 +307,11 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<ol>
 							<li><code>check_email_list_path</code> command altered to include <code>ao_server</code> parameter.</li>
 						</ol>
+					</li>
+					<li>
+						Added <code>Protocol.SPAMD</code>, which is used to enable
+						<ao:a href="http://spamassassin.apache.org/">SpamAssassin</ao:a>
+						via the <code>net_binds</code> table.
 					</li>
 				</ul>
 			</changelog:release>
