@@ -42,7 +42,7 @@ import java.util.Locale;
  */
 final public class Protocol extends GlobalObjectStringKey<Protocol> {
 
-	static final int COLUMN_PROTOCOL=0;
+	static final int COLUMN_PROTOCOL = 0;
 	static final String COLUMN_PORT_name = "port";
 
 	private Port port;
@@ -50,39 +50,39 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 	private boolean is_user_service;
 
 	public static final String
-		AOSERV_DAEMON="aoserv-daemon",
-		AOSERV_DAEMON_SSL="aoserv-daemon-ssl",
-		AOSERV_MASTER="aoserv-master",
-		AOSERV_MASTER_SSL="aoserv-master-ssl",
-		AUTH="auth",
-		CVSPSERVER="cvspserver",
-		DNS="DNS",
-		FTP="FTP",
-		FTP_DATA="FTP-DATA",
-		HTTP="HTTP",
-		HTTPS="HTTPS",
-		HYPERSONIC="hypersonic",
-		IMAP2="IMAP2",
-		JMX="JMX",
-		JNP="JNP",
-		MILTER="milter",
-		MYSQL="MySQL",
-		NTALK="ntalk",
-		POP3="POP3",
-		POSTGRESQL="PostgreSQL",
-		RFB="RFB",
-		RMI="RMI",
-		SIEVE="sieve",
-		SIMAP="SIMAP",
-		SPOP3="SPOP3",
-		SSH="SSH",
-		SMTP="SMTP",
-		SMTPS="SMTPS",
-		SUBMISSION="submission",
-		TALK="talk",
-		TELNET="Telnet",
-		TOMCAT4_SHUTDOWN="tomcat4-shutdown",
-		WEBSERVER="webserver"
+		AOSERV_DAEMON = "aoserv-daemon",
+		AOSERV_DAEMON_SSL = "aoserv-daemon-ssl",
+		AOSERV_MASTER = "aoserv-master",
+		AOSERV_MASTER_SSL = "aoserv-master-ssl",
+		AUTH = "auth",
+		CVSPSERVER = "cvspserver",
+		DNS = "DNS",
+		FTP = "FTP",
+		FTP_DATA = "FTP-DATA",
+		HTTP = "HTTP",
+		HTTPS = "HTTPS",
+		HYPERSONIC = "hypersonic",
+		IMAP2 = "IMAP2",
+		JMX = "JMX",
+		JNP = "JNP",
+		MILTER = "milter",
+		MYSQL = "MySQL",
+		NTALK = "ntalk",
+		POP3 = "POP3",
+		POSTGRESQL = "PostgreSQL",
+		RFB = "RFB",
+		RMI = "RMI",
+		SIEVE = "sieve",
+		SIMAP = "SIMAP",
+		SPOP3 = "SPOP3",
+		SSH = "SSH",
+		SMTP = "SMTP",
+		SMTPS = "SMTPS",
+		SUBMISSION = "submission",
+		TALK = "talk",
+		TELNET = "Telnet",
+		TOMCAT4_SHUTDOWN = "tomcat4-shutdown",
+		WEBSERVER = "webserver"
 	;
 
 	@Override
@@ -92,7 +92,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 			case 1: return port;
 			case 2: return name;
 			case 3: return is_user_service;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -143,10 +143,10 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readUTF().intern();
+			pkey = in.readUTF().intern();
 			int portNum = in.readCompressedInt();
-			name=in.readUTF();
-			is_user_service=in.readBoolean();
+			name = in.readUTF();
+			is_user_service = in.readBoolean();
 			port = Port.valueOf(
 				portNum,
 				in.readEnum(com.aoindustries.net.Protocol.class)
@@ -161,7 +161,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 		out.writeUTF(pkey);
 		out.writeCompressedInt(port.getPort());
 		out.writeUTF(name);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0) {
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105) >= 0) {
 			out.writeBoolean(is_user_service);
 			if(version.compareTo(AOServProtocol.Version.VERSION_1_80_0) < 0) {
 				out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
