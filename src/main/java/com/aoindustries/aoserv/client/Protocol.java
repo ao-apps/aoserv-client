@@ -74,6 +74,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 		RMI = "RMI",
 		SIEVE = "sieve",
 		SIMAP = "SIMAP",
+		SPAMD = "spamd",
 		SPOP3 = "SPOP3",
 		SSH = "SSH",
 		SMTP = "SMTP",
