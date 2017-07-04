@@ -87,6 +87,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		MYSQL,
 		NAMED,
 		NFSNOBODY,
+		NGINX,
 		NOBODY,
 		NOGROUP,
 		POLKITD,
@@ -157,6 +158,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			MEMCACHED = GroupId.valueOf("memcached");
 			MYSQL = GroupId.valueOf("mysql");
 			NAMED = GroupId.valueOf("named");
+			NGINX = GroupId.valueOf("nginx");
 			NFSNOBODY = GroupId.valueOf("nfsnobody");
 			NOBODY = GroupId.valueOf("nobody");
 			NOGROUP = GroupId.valueOf("nogroup");

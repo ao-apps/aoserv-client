@@ -78,6 +78,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 		MYSQL,
 		NAMED,
 		NFSNOBODY,
+		NGINX,
 		NOBODY,
 		OPERATOR,
 		POLKITD,
@@ -129,6 +130,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 			MYSQL = UserId.valueOf("mysql");
 			NAMED = UserId.valueOf("named");
 			NFSNOBODY = UserId.valueOf("nfsnobody");
+			NGINX = UserId.valueOf("nginx");
 			NOBODY = UserId.valueOf("nobody");
 			OPERATOR = UserId.valueOf("operator");
 			POLKITD = UserId.valueOf("polkitd");
