@@ -233,7 +233,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		if(hw != null) {
 			HttpdSharedTomcat hst = hw.getHttpdSharedTomcat();
 			if(hst != null) {
-				if(!hst.isDisabled()) return false;
 				// Must also have at least one enabled site
 				boolean hasEnabledSite = false;
 				for(HttpdTomcatSharedSite htss : hst.getHttpdTomcatSharedSites()) {
@@ -242,7 +241,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 						break;
 					}
 				}
-				if(!hasEnabledSite) return false;
+				if(!hst.isDisabled() && hasEnabledSite) return false;
 				foundDisablable = true;
 			}
 			HttpdTomcatSite hts = hw.getHttpdTomcatSite();
@@ -254,7 +253,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 		HttpdSharedTomcat hst = getHttpdSharedTomcatByShutdownPort();
 		if(hst != null) {
-			if(!hst.isDisabled()) return false;
 			// Must also have at least one enabled site
 			boolean hasEnabledSite = false;
 			for(HttpdTomcatSharedSite htss : hst.getHttpdTomcatSharedSites()) {
@@ -263,7 +261,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 					break;
 				}
 			}
-			if(!hasEnabledSite) return false;
+			if(!hst.isDisabled() && hasEnabledSite) return false;
 			foundDisablable = true;
 		}
 
