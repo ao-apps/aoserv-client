@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-07-20T03:34:31-0500"
+		dateModified="2017-07-20T09:01:05-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -51,275 +51,284 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			>
-				<ul>
-					<li>
-						<p>
-							<code>UID_MIN</code> and <code>GID_MIN</code>, as found in <code>/etc/login.defs</code>,
-							is now set on a per-server basis.  Older servers keep this at 500 whereas newer
-							servers use the current default of 1000.
-						</p>
-						<ol>
-							<li>Added <code>AOServer.getUidMin()</code></li>
-							<li>Added <code>AOServer.getGidMin()</code></li>
-							<li>Added <code>LinuxAccount.UID_MAX</code></li>
-							<li>Added <code>LinuxGroup.GID_MAX</code></li>
-							<li>Removed <code>LinuxID.isSystem()</code></li>
-							<li>Removed <code>LinuxServerAccount.MINIMUM_USER_UID</code></li>
-						</ol>
-					</li>
-					<li>
-						<ao:a href="https://en.wikipedia.org/wiki/Top-level_domain">Top-level domains</ao:a> change frequently these days.
-						Top reduce code maintenance, using new <core:link book="/ao-tlds" page="/index.jspx" />
-						project to have a self-updating list of top-level domains.
-					</li>
-					<li>
-						<p>
-							Changed distribution verification from MD5 to SHA-256.
-						</p>
-						<ol>
-							<li>Removed <code>DistroFile.hasFileMD5()</code></li>
-							<li>Removed <code>DistroFile.getFileMD5Hi()</code></li>
-							<li>Removed <code>DistroFile.getFileMD5Lo()</code></li>
-							<li>Added <code>DistroFile.hasFileSha256()</code></li>
-							<li>Added <code>DistroFile.getFileSha256_0()</code></li>
-							<li>Added <code>DistroFile.getFileSha256_1()</code></li>
-							<li>Added <code>DistroFile.getFileSha256_2()</code></li>
-							<li>Added <code>DistroFile.getFileSha256_3()</code></li>
-						</ol>
-						<p>
-							No MD5 data will be sent to older clients.
-							<code>DistroFile.hasFileMD5()</code> will return <code>false</code> for all files.
-						</p>
-					</li>
-					<li>Bug fixes:
-						<ol>
-							<li><code>Ticket</code>: Fixed handling of filtered reseller field.</li>
-						</ol>
-					</li>
-					<li>Web site resources moved to more predictable locations for CentOS 7:
-						<ol>
-							<li>Apache virtual hosts moved from <code>/www</code> to <code>/var/www</code>.</li>
-							<li>Apache virtual hosts logs moved from <code>/logs</code> to <code>/var/log/httpd-sites</code>.</li>
-							<li>Multi-site Tomcat installations moved from <code>/wwwgroup</code> to <code>/var/opt/apache-tomcat</code>.</li>
-							<li>Servers that are upgraded retain compatibility links at the old paths.</li>
-						</ol>
-					</li>
-					<li>Moved the following classes to the new <core:link book="/ao-lang" page="/index.jspx" /> project:
-						<ol>
-							<li><code>com.aoindustries.aoserv.client.DtoFactory</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.InvalidResult</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.ValidationException</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.ValidationResult</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.ValidResult</code></li>
-						</ol>
-					</li>
-					<li>Moved the following classes to the new <core:link book="/ao-net-types" page="/index.jspx" /> project:
-						<ol>
-							<li><code>com.aoindustries.aoserv.client.dto.DomainLabel</code></li>
-							<li><code>com.aoindustries.aoserv.client.dto.DomainLabels</code></li>
-							<li><code>com.aoindustries.aoserv.client.dto.DomainName</code></li>
-							<li><code>com.aoindustries.aoserv.client.dto.Email</code></li>
-							<li><code>com.aoindustries.aoserv.client.dto.HostAddress</code></li>
-							<li><code>com.aoindustries.aoserv.client.dto.InetAddress</code></li>
-							<li><code>com.aoindustries.aoserv.client.dto.MacAddress</code></li>
-							<li><code>com.aoindustries.aoserv.client.dto.NetPort</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.DomainLabel</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.DomainLabels</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.DomainName</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.Email</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.HostAddress</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.InetAddress</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.MacAddress</code></li>
-							<li><code>com.aoindustries.aoserv.client.validator.NetPort</code></li>
-						</ol>
-					</li>
-					<li>Removed a few tables that are now represented by self-validating types:
-						<ol>
-							<li>Removed <code>linux_ids</code> table</li>
-							<li>Removed <code>net_ports</code> table</li>
-							<li>Removed <code>net_protocols</code> table</li>
-						</ol>
-					</li>
-					<li>Removed a couple protocols that referred to old <code>raw</code> net protocol:
-						<ol>
-							<li>Removed <code>protocols.rtmp</code> row</li>
-							<li>Removed <code>protocols.zip</code> row</li>
-						</ol>
-					</li>
-					<li>Changed column types to use new self-validating types:
-						<ol>
-							<li>Changed <code>ao_server_daemon_hosts.host</code> to <code>hostname</code> type</li>
-							<li>Changed <code>distro_files.group_name</code> to <code>group_id</code> type</li>
-							<li>Changed <code>email_pipes.path</code> to <code>string</code> type</li>
-							<li>Renamed <code>email_pipes.path</code> to <code>command</code></li>
-							<li>Changed <code>failover_file_replications.quota_gid</code> to <code>linux_id</code> type</li>
-							<li>Changed <code>httpd_sites.group_name</code> to <code>group_id</code> type</li>
-							<li>Changed <code>httpd_tomcat_contexts.doc_base</code> to <code>path</code> type</li>
-							<li>Changed <code>linux_group_accounts.group_name</code> to <code>group_id</code> type</li>
-							<li>Changed <code>linux_groups.name</code> to <code>group_id</code> type</li>
-							<li>Changed <code>linux_server_groups.name</code> to <code>group_id</code> type</li>
-							<li>Changed <code>linux_server_accounts.uid</code> to <code>linux_id</code> type</li>
-							<li>Changed <code>linux_server_groups.gid</code> to <code>linux_id</code> type</li>
-							<li>Changed <code>master_hosts.host</code> to <code>hostname</code> type</li>
-							<li>Changed <code>mysql_databases.name</code> to <code>mysql_database_name</code> type</li>
-							<li>Removed <code>mysql_reserved_words</code> table</li>
-							<li>Changed <code>mysql_servers.name</code> to <code>mysql_server_name</code> type</li>
-							<li>Changed <code>mysql_server_users.username</code> to <code>mysql_username</code> type</li>
-							<li>Changed <code>mysql_users.username</code> to <code>mysql_username</code> type</li>
-							<li>Changed <code>net_binds.port</code> to <code>net_port</code> type</li>
-							<li>Removed <code>net_binds.net_protocol</code> column</li>
-							<li>Changed <code>net_devices.mac_address</code> to <code>mac_address</code> type</li>
-							<li>Changed <code>net_tcp_redirects.destination_port</code> to <code>net_port</code> type</li>
-							<li>Changed <code>postgres_databases.name</code> to <code>postgres_database_name</code> type</li>
-							<li>Removed <code>postgres_reserved_words</code> table</li>
-							<li>Changed <code>postgres_servers.name</code> to <code>postgres_server_name</code> type</li>
-							<li>Changed <code>postgres_server_users.username</code> to <code>postgres_username</code> type</li>
-							<li>Changed <code>postgres_users.username</code> to <code>postgres_username</code> type</li>
-							<li>Removed <code>protocols.net_protocol</code> column</li>
-							<li>Changed <code>protocols.port</code> to <code>net_port</code> type</li>
-							<li>Changed <code>ticket_actions.old_assigned_to</code> to <code>username</code> type</li>
-							<li>Changed <code>ticket_actions.new_assigned_to</code> to <code>username</code> type</li>
-						</ol>
-					</li>
-					<li>Removed <code>package</code> type:
-						<ol>
-							<li>Changed <code>dns_zones.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>email_domains.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>email_pipes.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>email_smtp_relays.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>httpd_sites.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>ip_addresses.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>linux_groups.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>monthly_charges.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>mysql_databases.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>mysql_servers.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>net_binds.package</code> to <code>accounting</code> type</li>
-							<li>Changed <code>packages.name</code> to <code>accounting</code> type</li>
-							<li>Changed <code>usernames.package</code> to <code>accounting</code> type</li>
-						</ol>
-					</li>
-					<li>Changed client-side objects to use more of the new self-validating types:
-						<ol>
-							<li>Changed <code>path</code> type implementation to <code>UnixPath</code> class</li>
-							<li>Changed <code>username</code> type implementation to <code>UserId</code> class</li>
-						</ol>
-					</li>
-					<li>Removed AOSH commands covered by self-validating types:
-						<ol>
-							<li>Removed <code>check_business_administrator_username</code> command.</li>
-							<li>Removed <code>check_email_forwarding</code> command.</li>
-							<li>Removed <code>check_ip_address</code> command.</li>
-							<li>Removed <code>check_linux_account_username</code> command.</li>
-							<li>Removed <code>check_package_name</code> command.</li>
-						</ol>
-					</li>
-					<li>New field <code>CvsRepository.DEFAULT_CVS_DIRECTORY</code> providing the default directory containing CVS repositories.</li>
-					<li>Completed generics for <code>CannotRemoveReason</code>.</li>
-					<li>MySQL and PostgreSQL database dump improvements:
-						<ol>
-							<li>New <code>gzip</code> flag to enable Gzip compression.</li>
-							<li>
-								New methods to dump databases directly into an <code>OutputStream</code>
-								to avoid the additional encoding layer of the default <code>Writer</code>.
-							</li>
-							<li>New constants providing dump character encoding.</li>
-							<li>Database dumps now provide the size of the dumps in bytes.</li>
-						</ol>
-					</li>
-					<li>
-						New interface <code>AOServStreamable</code> that extends <code>Streamable</code>, but
-						represents its version as <code>AOServProtocol.Version</code>.
-					</li>
-					<li>Extended network protocol to send randomized command sequences to help ensure stream integrity.</li>
-					<li>Now supporting MySQL 5.7.</li>
-					<li><code>linux_accounts.name</code> is now nullable.</li>
-					<li>Added <code>linux_group_accounts.operating_system_version</code> column to limit groups on a per-operating-system-version basis.</li>
-					<li>
-						Linux shell accounts now support, and default to, non-hashed home directories in <code>/home/username</code> format.
-						Hashed home directories of the form <code>/home/u/username</code> are still supported when specifically selected.
-					</li>
-					<li>
-						New <code>AOServer.addSystemGroup()</code> and <code>AOServer.addSystemUser()</code> calls for
-						<core:link book="/" page="/aoserv/daemon/index.jspx" />
-						to automatically register new system groups and users with the
-						<core:link book="/" page="/aoserv/master/index.jspx" />.
-					</li>
-					<li>Added <code>linux_server_accounts.sudo</code> column to configure <code>sudo</code> on a per-user and per-server basis.</li>
-					<li>Enabled more fine-grained control over per-site Apache settings:
-						<ol>
-							<li>Added <code>HttpdSite.getEnableSsi()</code></li>
-							<li>Added <code>HttpdSite.getEnableHtaccess()</code></li>
-							<li>Added <code>HttpdSite.getEnableIndexes()</code></li>
-							<li>Added <code>HttpdSite.getEnableFollowSymlinks()</code></li>
-							<li>Added <code>HttpdSite.getEnableAnonymousFtp()</code></li>
-							<li>Added parameters to <code>add_httpd_jboss_site</code> command for new settings.</li>
-							<li>Added parameters to <code>add_httpd_tomcat_shared_site</code> command for new settings.</li>
-							<li>Added parameters to <code>add_httpd_tomcat_std_site</code> command for new settings.</li>
-							<li>Added <code>set_httpd_site_php_version</code> command.</li>
-							<li>Added <code>set_httpd_site_enable_cgi</code> command.</li>
-							<li>Added <code>set_httpd_site_enable_ssi</code> command.</li>
-							<li>Added <code>set_httpd_site_enable_htaccess</code> command.</li>
-							<li>Added <code>set_httpd_site_enable_indexes</code> command.</li>
-							<li>Added <code>set_httpd_site_enable_follow_symlinks</code> command.</li>
-							<li>Added <code>set_httpd_site_enable_anonymous_ftp</code> command.</li>
-							<li>Added <code>set_httpd_tomcat_site_use_apache</code> command.</li>
-						</ol>
-					</li>
-					<li>Enabled more fine-grained control over Tomcat settings:
-						<ol>
-							<li>Added <code>HttpdSharedTomcat.getMaxPostSize()</code></li>
-							<li>Added <code>HttpdSharedTomcat.getUnpackWARs()</code></li>
-							<li>Added <code>HttpdSharedTomcat.getAutoDeploy()</code></li>
-							<li>Added <code>HttpdTomcatStdSite.getMaxPostSize()</code></li>
-							<li>Added <code>HttpdTomcatStdSite.getUnpackWARs()</code></li>
-							<li>Added <code>HttpdTomcatStdSite.getAutoDeploy()</code></li>
-							<li>Added <code>set_httpd_shared_tomcat_max_post_size</code> command.</li>
-							<li>Added <code>set_httpd_shared_tomcat_unpack_wars</code> command.</li>
-							<li>Added <code>set_httpd_shared_tomcat_auto_deploy</code> command.</li>
-							<li>Added <code>set_httpd_tomcat_std_site_max_post_size</code> command.</li>
-							<li>Added <code>set_httpd_tomcat_std_site_unpack_wars</code> command.</li>
-							<li>Added <code>set_httpd_tomcat_std_site_auto_deploy</code> command.</li>
-						</ol>
-					</li>
-					<li>Disabled site now packaged in RPM and distributed via Yum.</li>
-					<li>New system groups:
-						<ol>
-							<li><code>aoserv-jilter</code></li>
-							<li><code>mailnull</code></li>
-							<li><code>memcached</code></li>
-							<li><code>nginx</code></li>
-							<li><code>saslauth</code></li>
-							<li><code>smmsp</code></li>
-						</ol>
-					</li>
-					<li>New system users:
-						<ol>
-							<li><code>aoserv-jilter</code></li>
-							<li><code>mailnull</code></li>
-							<li><code>memcached</code></li>
-							<li><code>nginx</code></li>
-							<li><code>saslauth</code></li>
-							<li><code>smmsp</code></li>
-						</ol>
-					</li>
-					<li>Added <code>Protocol.RFB</code> for VNC servers.</li>
-					<li>Shared Tomcats now auto-shutdown when have no enabled sites.</li>
-					<li>Email lists on CentOS 7 are directly in <code>/etc/mail/lists</code> and no longer use hashed-directory format:
-						<ol>
-							<li><code>check_email_list_path</code> command altered to include <code>ao_server</code> parameter.</li>
-						</ol>
-					</li>
-					<li>
-						Added <code>Protocol.SPAMD</code>, which is used to enable
-						<ao:a href="http://spamassassin.apache.org/">SpamAssassin</ao:a>
-						via the <code>net_binds</code> table.
-					</li>
-					<li>Updated dependencies.</li>
-					<li>Protocol 1.80.2 finalized.</li>
-				</ul>
-			</changelog:release>
+			/>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="1.80.2"
+			datePublished="2017-07-20T09:01:05-0500"
+			groupId="@{documented.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{documented.scm.url}"
+		>
+			<ul>
+				<li>
+					<p>
+						<code>UID_MIN</code> and <code>GID_MIN</code>, as found in <code>/etc/login.defs</code>,
+						is now set on a per-server basis.  Older servers keep this at 500 whereas newer
+						servers use the current default of 1000.
+					</p>
+					<ol>
+						<li>Added <code>AOServer.getUidMin()</code></li>
+						<li>Added <code>AOServer.getGidMin()</code></li>
+						<li>Added <code>LinuxAccount.UID_MAX</code></li>
+						<li>Added <code>LinuxGroup.GID_MAX</code></li>
+						<li>Removed <code>LinuxID.isSystem()</code></li>
+						<li>Removed <code>LinuxServerAccount.MINIMUM_USER_UID</code></li>
+					</ol>
+				</li>
+				<li>
+					<ao:a href="https://en.wikipedia.org/wiki/Top-level_domain">Top-level domains</ao:a> change frequently these days.
+					Top reduce code maintenance, using new <core:link book="/ao-tlds" page="/index.jspx" />
+					project to have a self-updating list of top-level domains.
+				</li>
+				<li>
+					<p>
+						Changed distribution verification from MD5 to SHA-256.
+					</p>
+					<ol>
+						<li>Removed <code>DistroFile.hasFileMD5()</code></li>
+						<li>Removed <code>DistroFile.getFileMD5Hi()</code></li>
+						<li>Removed <code>DistroFile.getFileMD5Lo()</code></li>
+						<li>Added <code>DistroFile.hasFileSha256()</code></li>
+						<li>Added <code>DistroFile.getFileSha256_0()</code></li>
+						<li>Added <code>DistroFile.getFileSha256_1()</code></li>
+						<li>Added <code>DistroFile.getFileSha256_2()</code></li>
+						<li>Added <code>DistroFile.getFileSha256_3()</code></li>
+					</ol>
+					<p>
+						No MD5 data will be sent to older clients.
+						<code>DistroFile.hasFileMD5()</code> will return <code>false</code> for all files.
+					</p>
+				</li>
+				<li>Bug fixes:
+					<ol>
+						<li><code>Ticket</code>: Fixed handling of filtered reseller field.</li>
+					</ol>
+				</li>
+				<li>Web site resources moved to more predictable locations for CentOS 7:
+					<ol>
+						<li>Apache virtual hosts moved from <code>/www</code> to <code>/var/www</code>.</li>
+						<li>Apache virtual hosts logs moved from <code>/logs</code> to <code>/var/log/httpd-sites</code>.</li>
+						<li>Multi-site Tomcat installations moved from <code>/wwwgroup</code> to <code>/var/opt/apache-tomcat</code>.</li>
+						<li>Servers that are upgraded retain compatibility links at the old paths.</li>
+					</ol>
+				</li>
+				<li>Moved the following classes to the new <core:link book="/ao-lang" page="/index.jspx" /> project:
+					<ol>
+						<li><code>com.aoindustries.aoserv.client.DtoFactory</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.InvalidResult</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.ValidationException</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.ValidationResult</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.ValidResult</code></li>
+					</ol>
+				</li>
+				<li>Moved the following classes to the new <core:link book="/ao-net-types" page="/index.jspx" /> project:
+					<ol>
+						<li><code>com.aoindustries.aoserv.client.dto.DomainLabel</code></li>
+						<li><code>com.aoindustries.aoserv.client.dto.DomainLabels</code></li>
+						<li><code>com.aoindustries.aoserv.client.dto.DomainName</code></li>
+						<li><code>com.aoindustries.aoserv.client.dto.Email</code></li>
+						<li><code>com.aoindustries.aoserv.client.dto.HostAddress</code></li>
+						<li><code>com.aoindustries.aoserv.client.dto.InetAddress</code></li>
+						<li><code>com.aoindustries.aoserv.client.dto.MacAddress</code></li>
+						<li><code>com.aoindustries.aoserv.client.dto.NetPort</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.DomainLabel</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.DomainLabels</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.DomainName</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.Email</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.HostAddress</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.InetAddress</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.MacAddress</code></li>
+						<li><code>com.aoindustries.aoserv.client.validator.NetPort</code></li>
+					</ol>
+				</li>
+				<li>Removed a few tables that are now represented by self-validating types:
+					<ol>
+						<li>Removed <code>linux_ids</code> table</li>
+						<li>Removed <code>net_ports</code> table</li>
+						<li>Removed <code>net_protocols</code> table</li>
+					</ol>
+				</li>
+				<li>Removed a couple protocols that referred to old <code>raw</code> net protocol:
+					<ol>
+						<li>Removed <code>protocols.rtmp</code> row</li>
+						<li>Removed <code>protocols.zip</code> row</li>
+					</ol>
+				</li>
+				<li>Changed column types to use new self-validating types:
+					<ol>
+						<li>Changed <code>ao_server_daemon_hosts.host</code> to <code>hostname</code> type</li>
+						<li>Changed <code>distro_files.group_name</code> to <code>group_id</code> type</li>
+						<li>Changed <code>email_pipes.path</code> to <code>string</code> type</li>
+						<li>Renamed <code>email_pipes.path</code> to <code>command</code></li>
+						<li>Changed <code>failover_file_replications.quota_gid</code> to <code>linux_id</code> type</li>
+						<li>Changed <code>httpd_sites.group_name</code> to <code>group_id</code> type</li>
+						<li>Changed <code>httpd_tomcat_contexts.doc_base</code> to <code>path</code> type</li>
+						<li>Changed <code>linux_group_accounts.group_name</code> to <code>group_id</code> type</li>
+						<li>Changed <code>linux_groups.name</code> to <code>group_id</code> type</li>
+						<li>Changed <code>linux_server_groups.name</code> to <code>group_id</code> type</li>
+						<li>Changed <code>linux_server_accounts.uid</code> to <code>linux_id</code> type</li>
+						<li>Changed <code>linux_server_groups.gid</code> to <code>linux_id</code> type</li>
+						<li>Changed <code>master_hosts.host</code> to <code>hostname</code> type</li>
+						<li>Changed <code>mysql_databases.name</code> to <code>mysql_database_name</code> type</li>
+						<li>Removed <code>mysql_reserved_words</code> table</li>
+						<li>Changed <code>mysql_servers.name</code> to <code>mysql_server_name</code> type</li>
+						<li>Changed <code>mysql_server_users.username</code> to <code>mysql_username</code> type</li>
+						<li>Changed <code>mysql_users.username</code> to <code>mysql_username</code> type</li>
+						<li>Changed <code>net_binds.port</code> to <code>net_port</code> type</li>
+						<li>Removed <code>net_binds.net_protocol</code> column</li>
+						<li>Changed <code>net_devices.mac_address</code> to <code>mac_address</code> type</li>
+						<li>Changed <code>net_tcp_redirects.destination_port</code> to <code>net_port</code> type</li>
+						<li>Changed <code>postgres_databases.name</code> to <code>postgres_database_name</code> type</li>
+						<li>Removed <code>postgres_reserved_words</code> table</li>
+						<li>Changed <code>postgres_servers.name</code> to <code>postgres_server_name</code> type</li>
+						<li>Changed <code>postgres_server_users.username</code> to <code>postgres_username</code> type</li>
+						<li>Changed <code>postgres_users.username</code> to <code>postgres_username</code> type</li>
+						<li>Removed <code>protocols.net_protocol</code> column</li>
+						<li>Changed <code>protocols.port</code> to <code>net_port</code> type</li>
+						<li>Changed <code>ticket_actions.old_assigned_to</code> to <code>username</code> type</li>
+						<li>Changed <code>ticket_actions.new_assigned_to</code> to <code>username</code> type</li>
+					</ol>
+				</li>
+				<li>Removed <code>package</code> type:
+					<ol>
+						<li>Changed <code>dns_zones.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>email_domains.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>email_pipes.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>email_smtp_relays.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>httpd_sites.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>ip_addresses.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>linux_groups.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>monthly_charges.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>mysql_databases.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>mysql_servers.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>net_binds.package</code> to <code>accounting</code> type</li>
+						<li>Changed <code>packages.name</code> to <code>accounting</code> type</li>
+						<li>Changed <code>usernames.package</code> to <code>accounting</code> type</li>
+					</ol>
+				</li>
+				<li>Changed client-side objects to use more of the new self-validating types:
+					<ol>
+						<li>Changed <code>path</code> type implementation to <code>UnixPath</code> class</li>
+						<li>Changed <code>username</code> type implementation to <code>UserId</code> class</li>
+					</ol>
+				</li>
+				<li>Removed AOSH commands covered by self-validating types:
+					<ol>
+						<li>Removed <code>check_business_administrator_username</code> command.</li>
+						<li>Removed <code>check_email_forwarding</code> command.</li>
+						<li>Removed <code>check_ip_address</code> command.</li>
+						<li>Removed <code>check_linux_account_username</code> command.</li>
+						<li>Removed <code>check_package_name</code> command.</li>
+					</ol>
+				</li>
+				<li>New field <code>CvsRepository.DEFAULT_CVS_DIRECTORY</code> providing the default directory containing CVS repositories.</li>
+				<li>Completed generics for <code>CannotRemoveReason</code>.</li>
+				<li>MySQL and PostgreSQL database dump improvements:
+					<ol>
+						<li>New <code>gzip</code> flag to enable Gzip compression.</li>
+						<li>
+							New methods to dump databases directly into an <code>OutputStream</code>
+							to avoid the additional encoding layer of the default <code>Writer</code>.
+						</li>
+						<li>New constants providing dump character encoding.</li>
+						<li>Database dumps now provide the size of the dumps in bytes.</li>
+					</ol>
+				</li>
+				<li>
+					New interface <code>AOServStreamable</code> that extends <code>Streamable</code>, but
+					represents its version as <code>AOServProtocol.Version</code>.
+				</li>
+				<li>Extended network protocol to send randomized command sequences to help ensure stream integrity.</li>
+				<li>Now supporting MySQL 5.7.</li>
+				<li><code>linux_accounts.name</code> is now nullable.</li>
+				<li>Added <code>linux_group_accounts.operating_system_version</code> column to limit groups on a per-operating-system-version basis.</li>
+				<li>
+					Linux shell accounts now support, and default to, non-hashed home directories in <code>/home/username</code> format.
+					Hashed home directories of the form <code>/home/u/username</code> are still supported when specifically selected.
+				</li>
+				<li>
+					New <code>AOServer.addSystemGroup()</code> and <code>AOServer.addSystemUser()</code> calls for
+					<core:link book="/" page="/aoserv/daemon/index.jspx" />
+					to automatically register new system groups and users with the
+					<core:link book="/" page="/aoserv/master/index.jspx" />.
+				</li>
+				<li>Added <code>linux_server_accounts.sudo</code> column to configure <code>sudo</code> on a per-user and per-server basis.</li>
+				<li>Enabled more fine-grained control over per-site Apache settings:
+					<ol>
+						<li>Added <code>HttpdSite.getEnableSsi()</code></li>
+						<li>Added <code>HttpdSite.getEnableHtaccess()</code></li>
+						<li>Added <code>HttpdSite.getEnableIndexes()</code></li>
+						<li>Added <code>HttpdSite.getEnableFollowSymlinks()</code></li>
+						<li>Added <code>HttpdSite.getEnableAnonymousFtp()</code></li>
+						<li>Added parameters to <code>add_httpd_jboss_site</code> command for new settings.</li>
+						<li>Added parameters to <code>add_httpd_tomcat_shared_site</code> command for new settings.</li>
+						<li>Added parameters to <code>add_httpd_tomcat_std_site</code> command for new settings.</li>
+						<li>Added <code>set_httpd_site_php_version</code> command.</li>
+						<li>Added <code>set_httpd_site_enable_cgi</code> command.</li>
+						<li>Added <code>set_httpd_site_enable_ssi</code> command.</li>
+						<li>Added <code>set_httpd_site_enable_htaccess</code> command.</li>
+						<li>Added <code>set_httpd_site_enable_indexes</code> command.</li>
+						<li>Added <code>set_httpd_site_enable_follow_symlinks</code> command.</li>
+						<li>Added <code>set_httpd_site_enable_anonymous_ftp</code> command.</li>
+						<li>Added <code>set_httpd_tomcat_site_use_apache</code> command.</li>
+					</ol>
+				</li>
+				<li>Enabled more fine-grained control over Tomcat settings:
+					<ol>
+						<li>Added <code>HttpdSharedTomcat.getMaxPostSize()</code></li>
+						<li>Added <code>HttpdSharedTomcat.getUnpackWARs()</code></li>
+						<li>Added <code>HttpdSharedTomcat.getAutoDeploy()</code></li>
+						<li>Added <code>HttpdTomcatStdSite.getMaxPostSize()</code></li>
+						<li>Added <code>HttpdTomcatStdSite.getUnpackWARs()</code></li>
+						<li>Added <code>HttpdTomcatStdSite.getAutoDeploy()</code></li>
+						<li>Added <code>set_httpd_shared_tomcat_max_post_size</code> command.</li>
+						<li>Added <code>set_httpd_shared_tomcat_unpack_wars</code> command.</li>
+						<li>Added <code>set_httpd_shared_tomcat_auto_deploy</code> command.</li>
+						<li>Added <code>set_httpd_tomcat_std_site_max_post_size</code> command.</li>
+						<li>Added <code>set_httpd_tomcat_std_site_unpack_wars</code> command.</li>
+						<li>Added <code>set_httpd_tomcat_std_site_auto_deploy</code> command.</li>
+					</ol>
+				</li>
+				<li>Disabled site now packaged in RPM and distributed via Yum.</li>
+				<li>New system groups:
+					<ol>
+						<li><code>aoserv-jilter</code></li>
+						<li><code>mailnull</code></li>
+						<li><code>memcached</code></li>
+						<li><code>nginx</code></li>
+						<li><code>saslauth</code></li>
+						<li><code>smmsp</code></li>
+					</ol>
+				</li>
+				<li>New system users:
+					<ol>
+						<li><code>aoserv-jilter</code></li>
+						<li><code>mailnull</code></li>
+						<li><code>memcached</code></li>
+						<li><code>nginx</code></li>
+						<li><code>saslauth</code></li>
+						<li><code>smmsp</code></li>
+					</ol>
+				</li>
+				<li>Added <code>Protocol.RFB</code> for VNC servers.</li>
+				<li>Shared Tomcats now auto-shutdown when have no enabled sites.</li>
+				<li>Email lists on CentOS 7 are directly in <code>/etc/mail/lists</code> and no longer use hashed-directory format:
+					<ol>
+						<li><code>check_email_list_path</code> command altered to include <code>ao_server</code> parameter.</li>
+					</ol>
+				</li>
+				<li>
+					Added <code>Protocol.SPAMD</code>, which is used to enable
+					<ao:a href="http://spamassassin.apache.org/">SpamAssassin</ao:a>
+					via the <code>net_binds</code> table.
+				</li>
+				<li>Updated dependencies.</li>
+				<li>Protocol 1.80.2 finalized.</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
