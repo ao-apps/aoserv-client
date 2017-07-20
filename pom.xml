@@ -77,7 +77,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 								<links>
 									<link>https://aoindustries.com/ao-lang/apidocs/</link>
 									<link>https://aoindustries.com/ao-net-types/apidocs/</link>
-									<link>https://aoindustries.com/ao-tlds/apidocs/</link>
 									<link>https://aoindustries.com/aocode-public/apidocs/</link>
 								</links>
 							</configuration>
@@ -109,11 +108,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 			<groupId>com.aoindustries</groupId>
 			<artifactId>ao-net-types</artifactId>
 			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.aoindustries</groupId>
-			<artifactId>ao-tlds</artifactId>
-			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId>
