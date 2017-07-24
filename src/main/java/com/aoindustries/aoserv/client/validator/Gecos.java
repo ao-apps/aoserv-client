@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Used for the various user-provided fields in the <code>/etc/passwd</code> file.
  *
- * {@link http://en.wikipedia.org/wiki/Gecos_field}
+ * <a href="http://en.wikipedia.org/wiki/Gecos_field">http://en.wikipedia.org/wiki/Gecos_field</a>
  *
  * @author  AO Industries, Inc.
  */
