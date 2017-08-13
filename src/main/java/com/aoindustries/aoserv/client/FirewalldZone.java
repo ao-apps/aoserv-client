@@ -42,10 +42,22 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 	/**
 	 * Some Firewalld Zone names used within code.
 	 */
-	public static final FirewalldZoneName PUBLIC;
+	public static final FirewalldZoneName
+		DMZ,
+		EXTERNAL,
+		HOME,
+		INTERNAL,
+		PUBLIC,
+		WORK
+	;
 	static {
 		try {
+			DMZ = FirewalldZoneName.valueOf("dmz");
+			EXTERNAL = FirewalldZoneName.valueOf("external");
+			HOME = FirewalldZoneName.valueOf("home");
+			INTERNAL = FirewalldZoneName.valueOf("internal");
 			PUBLIC = FirewalldZoneName.valueOf("public");
+			WORK = FirewalldZoneName.valueOf("work");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
