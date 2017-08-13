@@ -159,9 +159,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		VERSION_1_80("1.80"),
 		VERSION_1_80_0("1.80.0"),
 		VERSION_1_80_1("1.80.1"),
-		VERSION_1_80_2("1.80.2");
+		VERSION_1_80_2("1.80.2"),
+		VERSION_1_81_0("1.81.0");
 
-		public static final Version CURRENT_VERSION = VERSION_1_80_2;
+		public static final Version CURRENT_VERSION = VERSION_1_81_0;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
@@ -433,7 +434,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		TRANSACTION_DECLINED,
 		WAIT_FOR_REBUILD,
 		ADD_BACKUP_SERVER,
-		SET_NET_BIND_OPEN_FIREWALL,
+		@Deprecated
+		UNUSED_SET_NET_BIND_OPEN_FIREWALL, // No longer used
 		SET_NET_BIND_MONITORING,
 		@Deprecated
 		UNUSED_GET_BACKUP_DATAS_FOR_BACKUP_PARTITION, // No longer used
@@ -548,7 +550,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY,
 		SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE,
 		SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS,
-		SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY
+		SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY,
+		SET_NET_BIND_FIREWALLD_ZONES
 	}
 
 	/**

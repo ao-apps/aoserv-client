@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Port;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A <code>Server</code> stores the details about a single, physical server.
@@ -85,8 +87,8 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 		IPAddress ia,
 		Port port,
 		Protocol appProtocol,
-		boolean openFirewall,
-		boolean monitoringEnabled
+		boolean monitoringEnabled,
+		Set<FirewalldZoneName> firewalldZones
 	) throws IOException, SQLException {
 		return table.connector.getNetBinds().addNetBind(
 			this,
@@ -94,8 +96,8 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 			ia,
 			port,
 			appProtocol,
-			openFirewall,
-			monitoringEnabled
+			monitoringEnabled,
+			firewalldZones
 		);
 	}
 

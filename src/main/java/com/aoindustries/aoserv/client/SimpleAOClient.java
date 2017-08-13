@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
@@ -54,6 +55,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * <code>SimpleAOClient</code> is a simplified interface into the client
@@ -1370,13 +1372,11 @@ final public class SimpleAOClient {
 		} else {
 			throw new IllegalArgumentException("ip_address and net_device must both be null or both be not null");
 		}
-		HttpdSharedTomcat sht;
-		if(sharedTomcatName==null || sharedTomcatName.length()==0) {
-			sht=null;
-			sharedTomcatName=null;
+		if(sharedTomcatName == null || sharedTomcatName.length() == 0) {
+			sharedTomcatName = null;
 		} else {
-			sht = ao.getHttpdSharedTomcat(sharedTomcatName);
-			if (sht==null) throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: "+sharedTomcatName+" on "+aoServer);
+			HttpdSharedTomcat sht = ao.getHttpdSharedTomcat(sharedTomcatName);
+			if(sht == null) throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: " + sharedTomcatName + " on " + aoServer);
 		}
 		HttpdTomcatVersion htv;
 		if(version!=null && version.length()>0) {
@@ -1988,8 +1988,8 @@ final public class SimpleAOClient {
 		String net_device,
 		Port port,
 		String appProtocol,
-		boolean openFirewall,
-		boolean monitoringEnabled
+		boolean monitoringEnabled,
+		Set<FirewalldZoneName> firewalldZoneNames
 	) throws IllegalArgumentException, SQLException, IOException {
 		IPAddress ia=getIPAddress(server, net_device, ipAddress);
 		Protocol appProt=connector.getProtocols().get(appProtocol);
@@ -1999,8 +1999,8 @@ final public class SimpleAOClient {
 			ia,
 			port,
 			appProt,
-			openFirewall,
-			monitoringEnabled
+			monitoringEnabled,
+			firewalldZoneNames
 		);
 	}
 
@@ -6369,21 +6369,19 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, IOException, SQLException {
 		LinuxServerAccount lsa=getLinuxServerAccount(aoServer, username);
 		if(address==null) address="";
-		EmailDomain sd;
 		EmailAddress ea;
-		if(domain==null) {
-			sd=null;
-			if(address.length()>0) throw new IllegalArgumentException("Cannot have an address without a domain: "+address);
-			ea=null;
+		if(domain == null) {
+			if(address.length() > 0) throw new IllegalArgumentException("Cannot have an address without a domain: " + address);
+			ea = null;
 		} else {
-			sd=getEmailDomain(aoServer, domain);
-			ea=sd.getEmailAddress(address);
-			if(ea==null) throw new IllegalArgumentException("Unable to find EmailAddress: "+address+'@'+domain+" on "+aoServer);
+			EmailDomain sd = getEmailDomain(aoServer, domain);
+			ea = sd.getEmailAddress(address);
+			if(ea == null) throw new IllegalArgumentException("Unable to find EmailAddress: " + address + '@' + domain + " on " + aoServer);
 		}
-		if(subject!=null && subject.length()==0) subject=null;
-		if(content!=null && content.length()==0) content=null;
-		LinuxAccAddress laa=ea.getLinuxAccAddress(lsa);
-		if(laa==null) throw new IllegalArgumentException("Unable to find LinuxAccAddress: "+address+" on "+aoServer);
+		if(subject != null && subject.length() == 0) subject = null;
+		if(content != null && content.length() == 0) content = null;
+		LinuxAccAddress laa = ea == null ? null : ea.getLinuxAccAddress(lsa);
+		if(laa == null) throw new IllegalArgumentException("Unable to find LinuxAccAddress: " + address + " on " + aoServer);
 		lsa.setAutoresponder(laa, subject, content, enabled);
 	}
 
@@ -7536,22 +7534,22 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Sets the firewall status for a <code>NetBind</code>
+	 * Sets the firewalld zones enable for a <code>NetBind</code>.
 	 *
 	 * @param  pkey  the pkey of the <code>NetBind</code>
-	 * @param  open_firewall  the new firewall state
+	 * @param  firewalldZones  the set of enabled zones
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>NetBind</code>
 	 *
-	 * @see  NetBind#setOpenFirewall
+	 * @see  NetBind#setFirewalldZones(java.util.Set)
 	 */
-	public void setNetBindOpenFirewall(
+	public void setNetBindFirewalldZones(
 		int pkey,
-		boolean open_firewall
+		Set<FirewalldZoneName> firewalldZones
 	) throws IllegalArgumentException, IOException, SQLException {
-		getNetBind(pkey).setOpenFirewall(open_firewall);
+		getNetBind(pkey).setFirewalldZones(firewalldZones);
 	}
 
 	/**

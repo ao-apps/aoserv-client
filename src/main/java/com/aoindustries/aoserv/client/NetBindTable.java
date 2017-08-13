@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -32,7 +33,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @see  NetBind
@@ -63,8 +67,8 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 		final IPAddress ia,
 		final Port port,
 		final Protocol appProtocol,
-		final boolean openFirewall,
-		final boolean monitoringEnabled
+		final boolean monitoringEnabled,
+		final Set<FirewalldZoneName> firewalldZones
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
@@ -82,8 +86,15 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 					out.writeCompressedInt(port.getPort());
 					out.writeEnum(port.getProtocol());
 					out.writeUTF(appProtocol.pkey);
-					out.writeBoolean(openFirewall);
 					out.writeBoolean(monitoringEnabled);
+					int size = firewalldZones.size();
+					out.writeCompressedInt(size);
+					int count = 0;
+					for(FirewalldZoneName firewalldZone : firewalldZones) {
+						out.writeUTF(firewalldZone.toString());
+						count++;
+					}
+					if(size != count) throw new ConcurrentModificationException();
 				}
 
 				@Override
@@ -193,7 +204,15 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_NET_BIND)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_NET_BIND, args, 9, err)) {
+			if(AOSH.checkMinParamCount(AOSHCommand.ADD_NET_BIND, args, 8, err)) {
+				final int varargStart = 9;
+				Set<FirewalldZoneName> firewalldZones = new LinkedHashSet<>((args.length - varargStart)*4/3+1);
+				for(int i = varargStart; i < args.length; i++) {
+					FirewalldZoneName name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
+					if(!firewalldZones.add(name)) {
+						throw new IllegalArgumentException("Duplicate firewalld zone name: " + name);
+					}
+				}
 				connector.getSimpleAOClient().addNetBind(
 					args[1],
 					AOSH.parseAccountingCode(args[2], "package"),
@@ -204,8 +223,8 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 						args[6], "net_protocol"
 					),
 					args[7],
-					AOSH.parseBoolean(args[8], "open_firewall"),
-					AOSH.parseBoolean(args[9], "monitoring_enabled")
+					AOSH.parseBoolean(args[8], "monitoring_enabled"),
+					firewalldZones
 				);
 			}
 			return true;
@@ -216,19 +235,27 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 				);
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_NET_BIND_FIREWALLD_ZONES)) {
+			if(AOSH.checkMinParamCount(AOSHCommand.SET_NET_BIND_FIREWALLD_ZONES, args, 1, err)) {
+				final int varargStart = 2;
+				Set<FirewalldZoneName> firewalldZones = new LinkedHashSet<>((args.length - varargStart)*4/3+1);
+				for(int i = varargStart; i < args.length; i++) {
+					FirewalldZoneName name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
+					if(!firewalldZones.add(name)) {
+						throw new IllegalArgumentException("Duplicate firewalld zone name: " + name);
+					}
+				}
+				connector.getSimpleAOClient().setNetBindFirewalldZones(
+					AOSH.parseInt(args[1], "pkey"),
+					firewalldZones
+				);
+			}
+			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_NET_BIND_MONITORING_ENABLED)) {
 			if(AOSH.checkParamCount(AOSHCommand.SET_NET_BIND_MONITORING_ENABLED, args, 2, err)) {
 				connector.getSimpleAOClient().setNetBindMonitoringEnabled(
 					AOSH.parseInt(args[1], "pkey"),
 					AOSH.parseBoolean(args[2], "enabled")
-				);
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.SET_NET_BIND_OPEN_FIREWALL)) {
-			if(AOSH.checkParamCount(AOSHCommand.SET_NET_BIND_OPEN_FIREWALL, args, 2, err)) {
-				connector.getSimpleAOClient().setNetBindOpenFirewall(
-					AOSH.parseInt(args[1], "pkey"),
-					AOSH.parseBoolean(args[2], "open_firewall")
 				);
 			}
 			return true;

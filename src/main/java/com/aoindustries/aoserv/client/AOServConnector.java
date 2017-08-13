@@ -453,6 +453,11 @@ abstract public class AOServConnector {
 		return fileBackupSettings;
 	}
 
+	private final FirewalldZoneTable firewalldZones;
+	public FirewalldZoneTable getFirewalldZones() {
+		return firewalldZones;
+	}
+
 	private final FTPGuestUserTable ftpGuestUsers;
 	public FTPGuestUserTable getFtpGuestUsers() {
 		return ftpGuestUsers;
@@ -702,6 +707,11 @@ abstract public class AOServConnector {
 	private final MySQLUserTable mysqlUsers;
 	public MySQLUserTable getMysqlUsers() {
 		return mysqlUsers;
+	}
+
+	private final NetBindFirewalldZoneTable netBindFirewalldZones;
+	public NetBindFirewalldZoneTable getNetBindFirewalldZones() {
+		return netBindFirewalldZones;
 	}
 
 	private final NetBindTable netBinds;
@@ -1066,6 +1076,7 @@ abstract public class AOServConnector {
 		newTables.add(failoverFileSchedules=new FailoverFileScheduleTable(this));
 		newTables.add(failoverMySQLReplications=new FailoverMySQLReplicationTable(this));
 		newTables.add(fileBackupSettings=new FileBackupSettingTable(this));
+		newTables.add(firewalldZones=new FirewalldZoneTable(this));
 		newTables.add(ftpGuestUsers=new FTPGuestUserTable(this));
 		newTables.add(httpdBinds=new HttpdBindTable(this));
 		newTables.add(httpdJBossSites=new HttpdJBossSiteTable(this));
@@ -1117,6 +1128,7 @@ abstract public class AOServConnector {
 		newTables.add(mysqlServerUsers=new MySQLServerUserTable(this));
 		newTables.add(mysqlServers=new MySQLServerTable(this));
 		newTables.add(mysqlUsers=new MySQLUserTable(this));
+		newTables.add(netBindFirewalldZones=new NetBindFirewalldZoneTable(this));
 		newTables.add(netBinds=new NetBindTable(this));
 		newTables.add(netDeviceIDs=new NetDeviceIDTable(this));
 		newTables.add(netDevices=new NetDeviceTable(this));
@@ -1207,7 +1219,7 @@ abstract public class AOServConnector {
 	 * Clears all caches used by this connector.
 	 */
 	public void clearCaches() {
-		for(AOServTable table : tables) table.clearCache();
+		for(AOServTable<?,?> table : tables) table.clearCache();
 	}
 
 	/**
@@ -1544,7 +1556,7 @@ abstract public class AOServConnector {
 	protected abstract void releaseConnection(AOServConnection connection) throws IOException;
 
 	final public void removeFromAllTables(TableListener listener) {
-		for(AOServTable table : tables) table.removeTableListener(listener);
+		for(AOServTable<?,?> table : tables) table.removeTableListener(listener);
 	}
 
 	static void writeParams(Object[] params, CompressedDataOutputStream out) throws IOException {
