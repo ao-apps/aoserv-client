@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-07-20T09:01:05-0500"
+		dateModified="2017-08-13T14:51:17-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -52,7 +52,39 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			/>
+			>
+				<ul>
+					<li>Now managing Firewalld zone settings on a per-port basis:
+						<ol>
+							<li>New self-validating type <code>FirewalldZoneName</code>.</li>
+							<li>New schema type: <code>firewalld_zone_name</code>.</li>
+							<li>New table <code>firewalld_zones</code> that defines the zones managed on a per-server basis.</li>
+							<li>New table <code>net_bind_firewalld_zones</code> that maps each port to the specific set of zones it is added to.</li>
+							<li>
+								<code>addNetBind</code> now takes a set of <code>FirewalldZoneName</code> instead of a single boolean <code>open_firewall</code>.
+								Older clients that provide <code>true</code> for <code>open_firewall</code> will be added to the
+								"public" zone.
+							</li>
+							<li>
+								Updated the <code>add_net_bind</code> AOSH command to take a variable number of Firewall zone names instead of
+								the single boolean <code>open_firewall</code>.
+							</li>
+							<li>
+								Removed <code>net_binds.open_firewall</code> and <code>NetBind.isFirewallOpen()</code>.
+								This will be <code>true</code> on older clients when the port is in the "public" zone.
+							</li>
+							<li>
+								Removed <code>NetBind.setOpenFirewall</code>.  Older clients are supported by adding or
+								removing the "public" zone.
+							</li>
+							<li>Removed the <code>set_net_bind_open_firewall</code> AOSH command.</li>
+							<li>New method <code>NetBind.setFirewalldZones</code> for fine-grained control over zones on a per-port basis.</li>
+							<li>Added the <code>set_net_bind_firewalld_zones</code> AOSH command.</li>
+						</ol>
+					</li>
+					<li>Parsing command-line <code>com.aoindustries.net.Protocol</code> in case-insensitive manner.</li>
+				</ul>
+			</changelog:release>
 		</c:if>
 
 		<changelog:release

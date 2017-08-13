@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
@@ -54,6 +55,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -319,6 +321,14 @@ final public class AOSH extends ShellInterpreter {
 		}
 	}
 
+	static FirewalldZoneName parseFirewalldZoneName(String S, String field) {
+		try {
+			return FirewalldZoneName.valueOf(S);
+		} catch(ValidationException err) {
+			throw new IllegalArgumentException("Invalid argument for firewalld zone ("+field+"): "+S, err);
+		}
+	}
+
 	static HostAddress parseHostAddress(String S, String field) {
 		try {
 			return HostAddress.valueOf(S);
@@ -464,7 +474,7 @@ final public class AOSH extends ShellInterpreter {
 		int portInt = parseInt(port, portField);
 		com.aoindustries.net.Protocol protocolObj;
 		try {
-			protocolObj = com.aoindustries.net.Protocol.valueOf(protocol);
+			protocolObj = com.aoindustries.net.Protocol.valueOf(protocol.toUpperCase(Locale.ROOT));
 		} catch(IllegalArgumentException e) {
 			throw new IllegalArgumentException("Invalid argument for protocol ("+protocolField+"): "+protocol, e);
 		}

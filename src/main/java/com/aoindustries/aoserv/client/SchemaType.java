@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.HashedPassword;
@@ -68,7 +69,7 @@ import java.util.Locale;
  */
 final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 
-	static final int COLUMN_TYPE=0;
+	static final int COLUMN_TYPE = 0;
 	static final String DATE_name = "date";
 
 	/**
@@ -94,7 +95,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 		LONG                   = 16, // long/java.lang.Long
 		//OCTAL_INT            = 17, // int/java.lang.Integer
 		OCTAL_LONG             = 18, // long/java.lang.Long
-		//PACKAGE                = 19, // com.aoindustries.aoserv.client.validator.AccountingCode
+		//PACKAGE              = 19, // com.aoindustries.aoserv.client.validator.AccountingCode
 		PKEY                   = 20, // int/java.lang.Integer
 		PATH                   = 21, // com.aoindustries.aoserv.client.validator.UnixPath
 		PHONE                  = 22, // java.lang.String
@@ -123,7 +124,8 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 		NET_PORT               = 45, // com.aoindustries.net.NetPort
 		POSTGRES_DATABASE_NAME = 46, // com.aoindustries.aoserv.client.validator.PostgresDatabaseName
 		POSTGRES_SERVER_NAME   = 47, // com.aoindustries.aoserv.client.validator.PostgresServerName
-		POSTGRES_USERNAME      = 48  // com.aoindustries.aoserv.client.validator.PostgresUserId
+		POSTGRES_USERNAME      = 48, // com.aoindustries.aoserv.client.validator.PostgresUserId
+		FIREWALLD_ZONE_NAME    = 49  // com.aoindustries.aoserv.client.validator.FirewalldZoneName
 	;
 
 	private static final BigDecimal
@@ -171,25 +173,25 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	 *                                                                                                      P
 	 *                                                                                                      O
 	 *                                                                                                      S P
-	 *                                                                                            M         T O
-	 *                                                                                            Y         G S
-	 *                                                                                            S M       R T P
-	 *                                                                                            Q Y M     E G O
-	 *                                                                                    H       L S Y     S R S
-	 *                                                                                    A       _ Q S M   _ E T
-	 *                                                                            D       S       D L Q Y   D S G
-	 *                                                                          D O       H       A _ L S   A _ R
-	 *                                                                        B O M D     E   M   T S _ Q   T S E
-	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S
-	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _
-	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U
-	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S
-	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E
-	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R
-	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N
-	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A
-	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M
-	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E
+	 *                                                                                            M         T O   F
+	 *                                                                                            Y         G S   I
+	 *                                                                                            S M       R T P R
+	 *                                                                                            Q Y M     E G O E
+	 *                                                                                    H       L S Y     S R S W
+	 *                                                                                    A       _ Q S M   _ E T A
+	 *                                                                            D       S       D L Q Y   D S G L
+	 *                                                                          D O       H       A _ L S   A _ R L
+	 *                                                                        B O M D     E   M   T S _ Q   T S E D
+	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S _
+	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _ Z
+	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U O
+	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S N
+	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E E
+	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R _
+	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N
+	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A
+	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M
+	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E
 	 *
 	 *             ACCOUNTING X                                     X
 	 *                BOOLEAN   X   X X X     X   X     X X       X X         X
@@ -210,7 +212,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	 *                   PATH                                 X     X
 	 *                  PHONE                                   X   X
 	 *                  SHORT   X X X X X     X   X X   X X       X X         X
-	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X
+	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X X
 	 *                   TIME     X                     X X         X X
 	 *                    URL                   X             X     X   X   X       X
 	 *               USERNAME                                       X     X                             X       X
@@ -233,6 +235,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	 * POSTGRES_DATABASE_NAME                                       X                                       X
 	 *   POSTGRES_SERVER_NAME                                       X                                         X
 	 *      POSTGRES_USERNAME                                       X     X                                     X
+	 *    FIREWALLD_ZONE_NAME                                       X                                             X
 	 * </pre>
 	 */
 	public Object cast(AOServConnector conn, Object value, SchemaType castToType) throws IOException, SQLException {
@@ -623,6 +626,9 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 						}
 					}
 					break;
+				case FIREWALLD_ZONE_NAME:
+					// No special casts
+					break;
 			}
 			throw new IllegalArgumentException("Unable to cast from "+type+" to "+castToType.getType());
 		} catch(ValidationException e) {
@@ -771,6 +777,8 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 						return ((PostgresServerName)value1).compareTo((PostgresServerName)value2);
 					case POSTGRES_USERNAME:
 						return ((PostgresUserId)value1).compareTo((PostgresUserId)value2);
+					case FIREWALLD_ZONE_NAME:
+						return ((FirewalldZoneName)value1).compareTo((FirewalldZoneName)value2);
 					default: throw new IllegalArgumentException("Unknown type: "+type);
 				}
 			}
@@ -855,6 +863,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case POSTGRES_DATABASE_NAME: return value.toString();
 			case POSTGRES_SERVER_NAME: return value.toString();
 			case POSTGRES_USERNAME: return value.toString();
+			case FIREWALLD_ZONE_NAME: return value.toString();
 			default: throw new IllegalArgumentException("Unknown SchemaType: "+type);
 		}
 	}
@@ -989,6 +998,8 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					return PostgresServerName.valueOf(S);
 				case POSTGRES_USERNAME:
 					return PostgresUserId.valueOf(S);
+				case FIREWALLD_ZONE_NAME:
+					return FirewalldZoneName.valueOf(S);
 				default:
 					throw new IllegalArgumentException("Unknown SchemaType: "+type);
 			}

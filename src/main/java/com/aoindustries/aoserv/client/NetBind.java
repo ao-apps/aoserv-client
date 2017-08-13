@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.EmptyParameters;
@@ -30,6 +31,7 @@ import com.aoindustries.net.HttpParameters;
 import com.aoindustries.net.HttpParametersMap;
 import com.aoindustries.net.Port;
 import com.aoindustries.net.UnmodifiableHttpParameters;
+import com.aoindustries.util.IntList;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -38,9 +40,12 @@ import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -70,9 +75,13 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	int ip_address;
 	Port port;
 	String app_protocol;
-	private boolean open_firewall;
 	private boolean monitoring_enabled;
 	private String monitoring_parameters;
+
+	/**
+	 * For compatibility with older clients only.
+	 */
+	private boolean open_firewall;
 
 	public Protocol getAppProtocol() throws SQLException, IOException {
 		Protocol obj=table.connector.getProtocols().get(app_protocol);
@@ -89,9 +98,8 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			case COLUMN_IP_ADDRESS: return ip_address;
 			case 4: return port;
 			case 5: return app_protocol;
-			case 6: return open_firewall;
-			case 7: return monitoring_enabled;
-			case 8: return monitoring_parameters;
+			case 6: return monitoring_enabled;
+			case 7: return monitoring_parameters;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -348,6 +356,28 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return table.connector.getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
 	}
 
+	public List<NetBindFirewalldZone> getNetBindFirewalldZones() throws IOException, SQLException {
+		return table.connector.getNetBindFirewalldZones().getNetBindFirewalldZones(this);
+	}
+
+	public List<FirewalldZone> getFirewalldZones() throws IOException, SQLException {
+		List<NetBindFirewalldZone> nbfzs = getNetBindFirewalldZones();
+		List<FirewalldZone> fzs = new ArrayList<>(nbfzs.size());
+		for(NetBindFirewalldZone nbfz : nbfzs) {
+			fzs.add(nbfz.getFirewalldZone());
+		}
+		return fzs;
+	}
+
+	public Set<FirewalldZoneName> getFirewalldZoneNames() throws IOException, SQLException {
+		List<NetBindFirewalldZone> nbfzs = getNetBindFirewalldZones();
+		Set<FirewalldZoneName> fzns = new LinkedHashSet<>(nbfzs.size()*4/3+1);
+		for(NetBindFirewalldZone nbfz : nbfzs) {
+			fzns.add(nbfz.getFirewalldZone().getName());
+		}
+		return fzns;
+	}
+
 	public IPAddress getIPAddress() throws SQLException, IOException {
 		IPAddress obj=table.connector.getIpAddresses().get(ip_address);
 		if(obj==null) throw new SQLException("Unable to find IPAddress: "+ip_address);
@@ -393,25 +423,21 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey=result.getInt(1);
+			pkey = result.getInt(1);
 			packageName = AccountingCode.valueOf(result.getString(2));
-			server=result.getInt(3);
-			ip_address=result.getInt(4);
+			server = result.getInt(3);
+			ip_address = result.getInt(4);
 			port = Port.valueOf(
 				result.getInt(5),
 				com.aoindustries.net.Protocol.valueOf(result.getString(6).toUpperCase(Locale.ROOT))
 			);
-			app_protocol=result.getString(7);
-			open_firewall=result.getBoolean(8);
-			monitoring_enabled=result.getBoolean(9);
-			monitoring_parameters=result.getString(10);
+			app_protocol = result.getString(7);
+			monitoring_enabled = result.getBoolean(8);
+			monitoring_parameters = result.getString(9);
+			open_firewall = result.getBoolean(10);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
-	}
-
-	public boolean isFirewallOpen() {
-		return open_firewall;
 	}
 
 	/**
@@ -492,18 +518,17 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
+			pkey = in.readCompressedInt();
 			packageName = AccountingCode.valueOf(in.readUTF()).intern();
-			server=in.readCompressedInt();
-			ip_address=in.readCompressedInt();
+			server = in.readCompressedInt();
+			ip_address = in.readCompressedInt();
 			port = Port.valueOf(
 				in.readCompressedInt(),
 				in.readEnum(com.aoindustries.net.Protocol.class)
 			);
-			app_protocol=in.readUTF().intern();
-			open_firewall=in.readBoolean();
-			monitoring_enabled=in.readBoolean();
-			monitoring_parameters=in.readNullUTF();
+			app_protocol = in.readUTF().intern();
+			monitoring_enabled = in.readBoolean();
+			monitoring_parameters = in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -602,12 +627,42 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		);
 	}
 
-	public void setOpenFirewall(boolean open_firewall) throws IOException, SQLException {
-		table.connector.requestUpdateIL(
+	public void setFirewalldZones(final Set<FirewalldZoneName> firewalldZones) throws IOException, SQLException {
+		table.connector.requestUpdate(
 			true,
-			AOServProtocol.CommandID.SET_NET_BIND_OPEN_FIREWALL,
-			pkey,
-			open_firewall
+			AOServProtocol.CommandID.SET_NET_BIND_FIREWALLD_ZONES,
+			new AOServConnector.UpdateRequest() {
+				IntList invalidateList;
+
+				@Override
+				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					out.writeCompressedInt(pkey);
+					int size = firewalldZones.size();
+					out.writeCompressedInt(size);
+					int count = 0;
+					for(FirewalldZoneName firewalldZone : firewalldZones) {
+						out.writeUTF(firewalldZone.toString());
+						count++;
+					}
+					if(size != count) throw new ConcurrentModificationException();
+				}
+
+				@Override
+				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					int code = in.readByte();
+					if(code == AOServProtocol.DONE) {
+						invalidateList = AOServConnector.readInvalidateList(in);
+					} else {
+						AOServProtocol.checkResult(code, in);
+						throw new IOException("Unexpected response code: " + code);
+					}
+				}
+
+				@Override
+				public void afterRelease() {
+					table.connector.tablesUpdated(invalidateList);
+				}
+			}
 		);
 	}
 
@@ -624,7 +679,9 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			out.writeEnum(port.getProtocol());
 		}
 		out.writeUTF(app_protocol);
-		out.writeBoolean(open_firewall);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_2) <= 0) {
+			out.writeBoolean(open_firewall);
+		}
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
 			out.writeBoolean(monitoring_enabled);
 		} else {
