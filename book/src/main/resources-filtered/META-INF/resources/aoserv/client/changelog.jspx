@@ -83,6 +83,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>Parsing command-line <code>com.aoindustries.net.Protocol</code> in case-insensitive manner.</li>
+					<li>
+						Net ports are now allocated unique-per-server, not globally unique.  It has been a full decade since we've
+						used chroot-based virtual servers.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
