@@ -38,7 +38,8 @@ public final class FirewalldZoneTable extends CachedTableIntegerKey<FirewalldZon
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(FirewalldZone.COLUMN_AO_SERVER_name + '.' + AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(FirewalldZone.COLUMN_SERVER_name + '.' + Server.COLUMN_PACKAGE_name + '.' + Package.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(FirewalldZone.COLUMN_SERVER_name + '.' + Server.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(FirewalldZone.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
@@ -51,8 +52,8 @@ public final class FirewalldZoneTable extends CachedTableIntegerKey<FirewalldZon
 		return getUniqueRow(FirewalldZone.COLUMN_PKEY, pkey);
 	}
 
-	List<FirewalldZone> getFirewalldZones(AOServer aoServer) throws IOException, SQLException {
-		return getIndexedRows(FirewalldZone.COLUMN_AO_SERVER, aoServer.pkey);
+	List<FirewalldZone> getFirewalldZones(Server server) throws IOException, SQLException {
+		return getIndexedRows(FirewalldZone.COLUMN_SERVER, server.pkey);
 	}
 
 	@Override
