@@ -262,6 +262,10 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 		return table.connector.getFailoverFileReplications().getFailoverFileReplications(this);
 	}
 
+	public List<FirewalldZone> getFirewalldZones() throws IOException, SQLException {
+		return table.connector.getFirewalldZones().getFirewalldZones(this);
+	}
+
 	public NetBind getNetBind(IPAddress ipAddress, Port port) throws IOException, SQLException {
 		return table.connector.getNetBinds().getNetBind(this, ipAddress, port);
 	}

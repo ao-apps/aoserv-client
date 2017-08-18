@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Defines a firewalld zone that exists on an {@link AOServer}.
+ * Defines a firewalld zone that exists on a {@link Server}.
  *
  * @author  AO Industries, Inc.
  */
@@ -65,12 +66,12 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 
 	static final int
 		COLUMN_PKEY = 0,
-		COLUMN_AO_SERVER = 1
+		COLUMN_SERVER = 1
 	;
-	static final String COLUMN_AO_SERVER_name = "ao_server";
+	static final String COLUMN_SERVER_name = "server";
 	static final String COLUMN_NAME_name = "name";
 
-	int aoServer;
+	int server;
 	private FirewalldZoneName name;
 	private String _short;
 	private String description;
@@ -79,7 +80,7 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
-			case COLUMN_AO_SERVER: return aoServer;
+			case COLUMN_SERVER: return server;
 			case 2: return name;
 			case 3: return _short;
 			case 4: return description;
@@ -87,10 +88,10 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 		}
 	}
 
-	public AOServer getAOServer() throws SQLException, IOException {
-		AOServer ao = table.connector.getAoServers().get(aoServer);
-		if(ao == null) throw new SQLException("Unable to find AOServer: " + aoServer);
-		return ao;
+	public Server getServer() throws SQLException, IOException {
+		Server se = table.connector.getServers().get(server);
+		if(se == null) throw new SQLException("Unable to find Server: " + server);
+		return se;
 	}
 
 	public FirewalldZoneName getName() {
@@ -127,7 +128,7 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			aoServer = result.getInt(2);
+			server = result.getInt(2);
 			name = FirewalldZoneName.valueOf(result.getString(3));
 			_short = result.getString(4);
 			description = result.getString(5);
@@ -140,10 +141,10 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			aoServer = in.readCompressedInt();
+			server = in.readCompressedInt();
 			name = FirewalldZoneName.valueOf(in.readUTF()).intern();
-			_short = in.readNullUTF();
-			description = in.readNullUTF();
+			_short = InternUtils.intern(in.readNullUTF());
+			description = InternUtils.intern(in.readNullUTF());
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -151,13 +152,13 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 
 	@Override
 	String toStringImpl() {
-		return aoServer + ":" + name;
+		return server + ":" + name;
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(aoServer);
+		out.writeCompressedInt(server);
 		out.writeUTF(name.toString());
 		out.writeNullUTF(_short);
 		out.writeNullUTF(description);

@@ -552,10 +552,6 @@ final public class AOServer
 		return se;
 	}
 
-	public List<FirewalldZone> getFirewalldZones() throws IOException, SQLException {
-		return table.connector.getFirewalldZones().getFirewalldZones(this);
-	}
-
 	public List<FTPGuestUser> getFTPGuestUsers() throws IOException, SQLException {
 		return table.connector.getFtpGuestUsers().getFTPGuestUsers(this);
 	}
