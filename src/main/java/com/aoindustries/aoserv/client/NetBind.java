@@ -104,6 +104,11 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		}
 	}
 
+	@Override
+	String toStringImpl() throws IOException, SQLException {
+		return getServer() + "|" + getIPAddress() + "|" + getPort();
+	}
+
 	public String getDetails() throws SQLException, IOException {
 		AOServer aoServer=getAOServerByDaemonNetBind();
 		if(aoServer!=null) return "AOServDaemon";
