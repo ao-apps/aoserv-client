@@ -65,6 +65,7 @@ final public class Protocol extends GlobalObjectStringKey<Protocol> {
 		IMAP2 = "IMAP2",
 		JMX = "JMX",
 		JNP = "JNP",
+		MEMCACHED = "memcached",
 		MILTER = "milter",
 		MYSQL = "MySQL",
 		NTALK = "ntalk",

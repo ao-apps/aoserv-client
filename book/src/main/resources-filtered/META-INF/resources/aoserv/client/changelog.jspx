@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-08-18T11:02:48-0500"
+		dateModified="2017-08-18T13:18:52-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -87,6 +87,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Net ports are now allocated unique-per-server, not globally unique.  It has been a full decade since we've
 						used chroot-based virtual servers.
 					</li>
+					<li>New protocol <code>memcached</code>, defaulting to port 11211.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
