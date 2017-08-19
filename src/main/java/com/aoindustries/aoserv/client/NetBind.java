@@ -106,7 +106,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 	@Override
 	String toStringImpl() throws IOException, SQLException {
-		return getServer() + "|" + getIPAddress() + "|" + getPort();
+		return getServer().toStringImpl() + "|" + getIPAddress().toStringImpl() + "|" + getPort();
 	}
 
 	public String getDetails() throws SQLException, IOException {
