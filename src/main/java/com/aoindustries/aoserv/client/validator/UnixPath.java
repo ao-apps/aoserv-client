@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client.validator;
 
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.net.Path;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
@@ -45,8 +46,14 @@ import java.util.concurrent.ConcurrentMap;
  *   <li>Start with a <code>/</code></li>
  *   <li>Not contain any null characters</li>
  *   <li>Not contain any /../ or /./ path elements</li>
+ *   <li>Not end with / unless "/"</li>
+ *   <li>Not end with /.. or /.</li>
  *   <li>Not contain any // in the path</li>
  * </ul>
+ * <p>
+ * TODO: This matches {@link Path} with the exception of disallowing trailing slash except for "/".
+ *       Remove this redundancy?  Subclass {@link Path}?
+ * </p>
  *
  * @author  AO Industries, Inc.
  */
