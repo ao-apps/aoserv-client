@@ -47,7 +47,7 @@ public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKe
 		IMAP="imap"
 	;
 
-	public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE=POP3;
+	public static final String DEFAULT_SPAMASSASSIN_INTEGRATION_MODE = NONE;
 
 	private String display;
 	private int sort_order;
