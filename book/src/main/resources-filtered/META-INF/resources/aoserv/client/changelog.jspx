@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-08-28T17:24:57-0500"
+		dateModified="2017-08-28T19:52:43-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -89,6 +89,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>New protocol <code>memcached</code>, defaulting to port 11211.</li>
 					<li><code>EmailSpamAssassinIntegrationMode.DEFAULT_SPAMASSASSIN_INTEGRATION_MODE</code> changed from <code>pop3</code> to <code>none</code>.</li>
+					<li>New "mysql.session" reserved account for MySQL 5.7: <code>MySQLUser.MYSQL_SESSION</code>.<li>
 				</ul>
 			</changelog:release>
 		</c:if>
