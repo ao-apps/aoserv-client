@@ -249,6 +249,7 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 		List<CannotRemoveReason<MySQLServerUser>> reasons=new ArrayList<>();
 		if(
 			username.equals(MySQLUser.ROOT)
+			|| username.equals(MySQLUser.MYSQL_SESSION)
 			|| username.equals(MySQLUser.MYSQL_SYS)
 		) {
 			reasons.add(new CannotRemoveReason<>("Not allowed to remove the " + username + " MySQL user", this));

@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
  *   <li>Be between 1 and 16 characters</li>
  *   <li>Must start with <code>[a-z]</code></li>
  *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
- *   <li>A special exemption is made for the <code>mysql.sys</code> system user added in MySQL 5.7.</li>
+ *   <li>A special exemption is made for the <code>mysql.session</code> and <code>mysql.sys</code> reserved users added in MySQL 5.7.</li>
  *   <li>Must not be a MySQL reserved word</li>
  *   <li>Must be a valid <code>UserId</code> - this is implied by the above rules</li>
  * </ul>
@@ -65,6 +65,7 @@ final public class MySQLUserId extends UserId implements
 		if(
 			// Allow specific system users that otherwise do not match our allowed username pattern
 			!"mysql.sys".equals(id)
+			&& !"mysql.session".equals(id)
 		) {
 			int len = id.length();
 			if(len==0) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.isEmpty");

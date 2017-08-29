@@ -57,12 +57,19 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 	public static final MySQLUserId ROOT;
 
 	/**
+	 * The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7.
+	 */
+	public static final MySQLUserId MYSQL_SESSION;
+
+	/**
 	 * The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
 	 */
 	public static final MySQLUserId MYSQL_SYS;
+
 	static {
 		try {
 			ROOT = MySQLUserId.valueOf("root").intern();
+			MYSQL_SESSION = MySQLUserId.valueOf("mysql.session").intern();
 			MYSQL_SYS = MySQLUserId.valueOf("mysql.sys").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
@@ -423,6 +430,7 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 		List<CannotRemoveReason<MySQLUser>> reasons=new ArrayList<>();
 		if(
 			pkey.equals(ROOT)
+			|| pkey.equals(MYSQL_SESSION)
 			|| pkey.equals(MYSQL_SYS)
 		) {
 			reasons.add(new CannotRemoveReason<>("Not allowed to remove the " + pkey + " MySQL user", this));
@@ -490,6 +498,7 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 		return
 			disable_log == -1
 			&& !pkey.equals(ROOT)
+			&& !pkey.equals(MYSQL_SESSION)
 			&& !pkey.equals(MYSQL_SYS)
 		;
 	}
