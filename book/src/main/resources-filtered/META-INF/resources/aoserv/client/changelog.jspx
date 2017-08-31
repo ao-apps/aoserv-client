@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-08-28T19:52:43-0500"
+		dateModified="2017-08-30T20:55:24-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -80,6 +80,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Removed the <code>set_net_bind_open_firewall</code> AOSH command.</li>
 							<li>New method <code>NetBind.setFirewalldZones</code> for fine-grained control over zones on a per-port basis.</li>
 							<li>Added the <code>set_net_bind_firewalld_zones</code> AOSH command.</li>
+							<li>New table <code>httpd_site_bind_redirects</code> that configures redirects on a per-httpd_site_bind basis.</li>
 						</ol>
 					</li>
 					<li>Parsing command-line <code>com.aoindustries.net.Protocol</code> in case-insensitive manner.</li>
