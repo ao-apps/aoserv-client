@@ -140,7 +140,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		return obj;
 	}
 
-	public List<HttpdSiteBindRedirect> HttpdSiteBindRedirects() throws IOException, SQLException {
+	public List<HttpdSiteBindRedirect> getHttpdSiteBindRedirects() throws IOException, SQLException {
 		return table.connector.getHttpdSiteBindRedirects().getHttpdSiteBindRedirects(this);
 	}
 
