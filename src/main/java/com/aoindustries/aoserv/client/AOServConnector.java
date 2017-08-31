@@ -503,6 +503,11 @@ abstract public class AOServConnector {
 		return httpdSiteAuthenticatedLocationTable;
 	}
 
+	private final HttpdSiteBindRedirectTable httpdSiteBindRedirects;
+	public HttpdSiteBindRedirectTable getHttpdSiteBindRedirects() {
+		return httpdSiteBindRedirects;
+	}
+
 	private final HttpdSiteBindTable httpdSiteBinds;
 	public HttpdSiteBindTable getHttpdSiteBinds() {
 		return httpdSiteBinds;
@@ -1086,6 +1091,7 @@ abstract public class AOServConnector {
 		newTables.add(httpdServers=new HttpdServerTable(this));
 		newTables.add(httpdSharedTomcats=new HttpdSharedTomcatTable(this));
 		newTables.add(httpdSiteAuthenticatedLocationTable=new HttpdSiteAuthenticatedLocationTable(this));
+		newTables.add(httpdSiteBindRedirects=new HttpdSiteBindRedirectTable(this));
 		newTables.add(httpdSiteBinds=new HttpdSiteBindTable(this));
 		newTables.add(httpdSiteURLs=new HttpdSiteURLTable(this));
 		newTables.add(httpdSites=new HttpdSiteTable(this));
