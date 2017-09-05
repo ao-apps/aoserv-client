@@ -63,6 +63,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 		final boolean canDelete,
 		final boolean canCreate,
 		final boolean canDrop,
+		final boolean canReference,
 		final boolean canIndex,
 		final boolean canAlter,
 		final boolean canCreateTempTable,
@@ -93,6 +94,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 					out.writeBoolean(canDelete);
 					out.writeBoolean(canCreate);
 					out.writeBoolean(canDrop);
+					out.writeBoolean(canReference);
 					out.writeBoolean(canIndex);
 					out.writeBoolean(canAlter);
 					out.writeBoolean(canCreateTempTable);
@@ -186,7 +188,7 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DB_USER)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DB_USER, args, 21, err)) {
+			if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DB_USER, args, 22, err)) {
 				int pkey=connector.getSimpleAOClient().addMySQLDBUser(
 					AOSH.parseMySQLDatabaseName(args[1], "database_name"),
 					AOSH.parseMySQLServerName(args[2], "mysql_server"),
@@ -198,17 +200,18 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 					AOSH.parseBoolean(args[8], "can_delete"),
 					AOSH.parseBoolean(args[9], "can_create"),
 					AOSH.parseBoolean(args[10], "can_drop"),
-					AOSH.parseBoolean(args[11], "can_index"),
-					AOSH.parseBoolean(args[12], "can_alter"),
-					AOSH.parseBoolean(args[13], "can_create_temp_table"),
-					AOSH.parseBoolean(args[14], "can_lock_tables"),
-					AOSH.parseBoolean(args[15], "can_create_view"),
-					AOSH.parseBoolean(args[16], "can_show_view"),
-					AOSH.parseBoolean(args[17], "can_create_routine"),
-					AOSH.parseBoolean(args[18], "can_alter_routine"),
-					AOSH.parseBoolean(args[19], "can_execute"),
-					AOSH.parseBoolean(args[20], "can_event"),
-					AOSH.parseBoolean(args[21], "can_trigger")
+					AOSH.parseBoolean(args[11], "can_reference"),
+					AOSH.parseBoolean(args[12], "can_index"),
+					AOSH.parseBoolean(args[13], "can_alter"),
+					AOSH.parseBoolean(args[14], "can_create_temp_table"),
+					AOSH.parseBoolean(args[15], "can_lock_tables"),
+					AOSH.parseBoolean(args[16], "can_create_view"),
+					AOSH.parseBoolean(args[17], "can_show_view"),
+					AOSH.parseBoolean(args[18], "can_create_routine"),
+					AOSH.parseBoolean(args[19], "can_alter_routine"),
+					AOSH.parseBoolean(args[20], "can_execute"),
+					AOSH.parseBoolean(args[21], "can_event"),
+					AOSH.parseBoolean(args[22], "can_trigger")
 				);
 				out.println(pkey);
 				out.flush();
