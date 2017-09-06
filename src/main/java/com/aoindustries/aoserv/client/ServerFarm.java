@@ -59,6 +59,9 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 		return table.connector.getPackages().get(owner);
 	}
 
+	/**
+	 * TODO: Remove this flag once all servers are CentOS 7+ with firewalld-based egress filters.
+	 */
 	public boolean useRestrictedSmtpPort() {
 		return use_restricted_smtp_port;
 	}
