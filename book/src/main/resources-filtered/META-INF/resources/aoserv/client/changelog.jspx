@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-09-05T14:31:18-0500"
+		dateModified="2017-09-09T14:37:38-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -95,6 +95,17 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Added <code>can_reference</code> parameter to <code>add_mysql_db_user</code> AOSH command.
 						Existing <code>mysql_db_users</code> granted <code>references_priv</code> matching existing <code>drop_priv</code>.
 						Old client versions granted <code>references_priv</code> matching <code>drop_priv</code>.
+					</li>
+					<li>
+						May now optionally exclude context configuration from <code>conf/server.xml</code>.
+						This then allows deployment of the context by simply overwriting the WAR file.
+						This also allows deployment through the Tomcat Manager webapp, when enabled
+						(disabled by default for static production configuration).
+						<ol>
+							<li>Added <code>httpd_tomcat_contexts.server_xml_configured</code> column, defaulting to <code>true</code> for existing contexts.</li>
+							<li>Added <code>server_xml_configured</code> parameter to the <code>add_httpd_tomcat_context</code> AOSH command.</li>
+							<li>Added <code>server_xml_configured</code> parameter to the <code>set_httpd_tomcat_context_attributes</code> AOSH command.</li>
+						</ol>
 					</li>
 				</ul>
 			</changelog:release>

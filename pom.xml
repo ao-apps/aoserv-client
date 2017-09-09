@@ -33,7 +33,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 
 	<groupId>com.aoindustries</groupId>
 	<artifactId>aoserv-client</artifactId>
-	<version>1.81.2-SNAPSHOT</version>
+	<version>1.81.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<properties>

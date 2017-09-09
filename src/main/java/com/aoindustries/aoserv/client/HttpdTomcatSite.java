@@ -71,7 +71,8 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 		boolean useNaming,
 		String wrapperClass,
 		int debug,
-		UnixPath workDir
+		UnixPath workDir,
+		boolean serverXmlConfigured
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatContexts().addHttpdTomcatContext(
 			this,
@@ -86,7 +87,8 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 			useNaming,
 			wrapperClass,
 			debug,
-			workDir
+			workDir,
+			serverXmlConfigured
 		);
 	}
 
