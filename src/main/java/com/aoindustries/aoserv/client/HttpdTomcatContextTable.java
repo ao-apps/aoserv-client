@@ -67,7 +67,8 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 		final boolean useNaming,
 		final String wrapperClass,
 		final int debug,
-		final UnixPath workDir
+		final UnixPath workDir,
+		final boolean serverXmlConfigured
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
@@ -92,6 +93,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 					out.writeNullUTF(wrapperClass);
 					out.writeCompressedInt(debug);
 					out.writeNullUTF(ObjectUtils.toString(workDir));
+					out.writeBoolean(serverXmlConfigured);
 				}
 
 				@Override
@@ -144,7 +146,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_CONTEXT)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_CONTEXT, args, 14, err)) {
+			if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_CONTEXT, args, 15, err)) {
 				out.println(
 					connector.getSimpleAOClient().addHttpdTomcatContext(
 						args[1],
@@ -160,7 +162,8 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 						AOSH.parseBoolean(args[11], "use_naming"),
 						args[12],
 						AOSH.parseInt(args[13], "debug_level"),
-						args[14].isEmpty() ? null : AOSH.parseUnixPath(args[14], "work_dir")
+						args[14].isEmpty() ? null : AOSH.parseUnixPath(args[14], "work_dir"),
+						AOSH.parseBoolean(args[15], "server_xml_configured")
 					)
 				);
 				out.flush();
@@ -172,7 +175,7 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES)) {
-			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES, args, 15, err)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES, args, 16, err)) {
 				connector.getSimpleAOClient().setHttpdTomcatContextAttributes(
 					args[1],
 					args[2],
@@ -188,7 +191,8 @@ final public class HttpdTomcatContextTable extends CachedTableIntegerKey<HttpdTo
 					AOSH.parseBoolean(args[12], "use_naming"),
 					args[13],
 					AOSH.parseInt(args[14], "debug_level"),
-					args[15].isEmpty() ? null : AOSH.parseUnixPath(args[15], "work_dir")
+					args[15].isEmpty() ? null : AOSH.parseUnixPath(args[15], "work_dir"),
+					AOSH.parseBoolean(args[16], "server_xml_configured")
 				);
 			}
 			return true;

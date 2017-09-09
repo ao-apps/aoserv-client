@@ -63,6 +63,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 	public static final String DEFAULT_WRAPPER_CLASS=null;
 	public static final int DEFAULT_DEBUG=0;
 	public static final UnixPath DEFAULT_WORK_DIR = null;
+	public static final boolean DEFAULT_SERVER_XML_CONFIGURED = true;
 
 	/**
 	 * The ROOT webapp details
@@ -83,6 +84,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 	private String wrapper_class;
 	private int debug;
 	private UnixPath work_dir;
+	private boolean server_xml_configured;
 
 	public int addHttpdTomcatDataSource(
 		String name,
@@ -137,6 +139,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 			case 11: return wrapper_class;
 			case 12: return debug;
 			case 13: return work_dir;
+			case 14: return server_xml_configured;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -195,6 +198,10 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		return work_dir;
 	}
 
+	public boolean isServerXmlConfigured() {
+		return server_xml_configured;
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_TOMCAT_CONTEXTS;
@@ -233,6 +240,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 			wrapper_class=result.getString(12);
 			debug=result.getInt(13);
 			work_dir = UnixPath.valueOf(result.getString(14));
+			server_xml_configured = result.getBoolean(15);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -288,6 +296,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 			wrapper_class=in.readNullUTF();
 			debug=in.readCompressedInt();
 			work_dir = UnixPath.valueOf(in.readNullUTF());
+			server_xml_configured = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -305,7 +314,8 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		final boolean useNaming,
 		final String wrapperClass,
 		final int debug,
-		final UnixPath workDir
+		final UnixPath workDir,
+		final boolean serverXmlConfigured
 	) throws IOException, SQLException {
 		table.connector.requestUpdate(
 			true,
@@ -328,6 +338,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 					out.writeNullUTF(wrapperClass);
 					out.writeCompressedInt(debug);
 					out.writeNullUTF(ObjectUtils.toString(workDir));
+					out.writeBoolean(serverXmlConfigured);
 				}
 
 				@Override
@@ -369,5 +380,8 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		out.writeNullUTF(wrapper_class);
 		out.writeCompressedInt(debug);
 		out.writeNullUTF(ObjectUtils.toString(work_dir));
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_81_3) >= 0) {
+			out.writeBoolean(server_xml_configured);
+		}
 	}
 }

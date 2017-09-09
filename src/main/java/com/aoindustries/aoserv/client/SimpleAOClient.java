@@ -1202,7 +1202,8 @@ final public class SimpleAOClient {
 		boolean useNaming,
 		String wrapperClass,
 		int debug,
-		UnixPath workDir
+		UnixPath workDir,
+		boolean serverXmlConfigured
 	) throws IllegalArgumentException, IOException, SQLException {
 		HttpdSite hs=getHttpdSite(aoServer, siteName);
 		HttpdTomcatSite hts=hs.getHttpdTomcatSite();
@@ -1219,7 +1220,8 @@ final public class SimpleAOClient {
 			useNaming,
 			wrapperClass==null || (wrapperClass=wrapperClass.trim()).length()==0?null:wrapperClass,
 			debug,
-			workDir
+			workDir,
+			serverXmlConfigured
 		);
 	}
 
@@ -6960,7 +6962,8 @@ final public class SimpleAOClient {
 		boolean useNaming,
 		String wrapperClass,
 		int debug,
-		UnixPath workDir
+		UnixPath workDir,
+		boolean serverXmlConfigured
 	) throws IllegalArgumentException, IOException, SQLException {
 		HttpdSite hs=getHttpdSite(aoServer, siteName);
 		HttpdTomcatSite hts=hs.getHttpdTomcatSite();
@@ -6979,7 +6982,8 @@ final public class SimpleAOClient {
 			useNaming,
 			wrapperClass,
 			debug,
-			workDir
+			workDir,
+			serverXmlConfigured
 		);
 	}
 
