@@ -42,8 +42,8 @@ import java.util.List;
 final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> implements Disablable {
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_HTTPD_SITE=1
+		COLUMN_PKEY = 0,
+		COLUMN_HTTPD_SITE = 1
 	;
 	static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 	static final String COLUMN_HTTPD_BIND_name = "httpd_bind";
@@ -54,6 +54,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	private UnixPath error_log;
 	private UnixPath sslCertFile;
 	private UnixPath sslCertKeyFile;
+	private UnixPath sslCertChainFile;
 	int disable_log;
 	private String predisable_config;
 	private boolean isManual;
@@ -65,14 +66,14 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 	@Override
 	public boolean canDisable() {
-		return disable_log==-1;
+		return disable_log == -1;
 	}
 
 	@Override
 	public boolean canEnable() throws SQLException, IOException {
-		DisableLog dl=getDisableLog();
-		if(dl==null) return false;
-		else return dl.canEnable() && getHttpdSite().disable_log==-1;
+		DisableLog dl = getDisableLog();
+		if(dl == null) return false;
+		else return dl.canEnable() && getHttpdSite().disable_log == -1;
 	}
 
 	@Override
@@ -103,24 +104,25 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 			case 4: return error_log;
 			case 5: return sslCertFile;
 			case 6: return sslCertKeyFile;
-			case 7: return disable_log == -1 ? null : disable_log;
-			case 8: return predisable_config;
-			case 9: return isManual;
-			case 10: return redirect_to_primary_hostname;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 7: return sslCertChainFile;
+			case 8: return disable_log == -1 ? null : disable_log;
+			case 9: return predisable_config;
+			case 10: return isManual;
+			case 11: return redirect_to_primary_hostname;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
 	@Override
 	public boolean isDisabled() {
-		return disable_log!=-1;
+		return disable_log != -1;
 	}
 
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
-		if(disable_log==-1) return null;
-		DisableLog obj=table.connector.getDisableLogs().get(disable_log);
-		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+		if(disable_log == -1) return null;
+		DisableLog obj = table.connector.getDisableLogs().get(disable_log);
+		if(obj == null) throw new SQLException("Unable to find DisableLog: " + disable_log);
 		return obj;
 	}
 
@@ -129,14 +131,14 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	}
 
 	public HttpdBind getHttpdBind() throws SQLException, IOException {
-		HttpdBind obj=table.connector.getHttpdBinds().get(httpd_bind);
-		if(obj==null) throw new SQLException("Unable to find HttpdBind: "+httpd_bind+" for HttpdSite="+httpd_site);
+		HttpdBind obj = table.connector.getHttpdBinds().get(httpd_bind);
+		if(obj == null) throw new SQLException("Unable to find HttpdBind: " + httpd_bind + " for HttpdSite=" + httpd_site);
 		return obj;
 	}
 
 	public HttpdSite getHttpdSite() throws SQLException, IOException {
-		HttpdSite obj=table.connector.getHttpdSites().get(httpd_site);
-		if(obj==null) throw new SQLException("Unable to find HttpdSite: "+httpd_site);
+		HttpdSite obj = table.connector.getHttpdSites().get(httpd_site);
+		if(obj == null) throw new SQLException("Unable to find HttpdSite: " + httpd_site);
 		return obj;
 	}
 
@@ -156,12 +158,32 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		return table.connector.getHttpdSiteURLs().getPrimaryHttpdSiteURL(this);
 	}
 
+	/**
+	 * @deprecated  Please use {@link #getSslCertFile()} which better matches javabeans naming conventions.
+	 */
+	@Deprecated
 	public UnixPath getSSLCertFile() {
+		return getSslCertFile();
+	}
+
+	public UnixPath getSslCertFile() {
 		return sslCertFile;
 	}
 
+	/**
+	 * @deprecated  Please use {@link #getSslCertKeyFile()} which better matches javabeans naming conventions.
+	 */
+	@Deprecated
 	public UnixPath getSSLCertKeyFile() {
+		return getSslCertKeyFile();
+	}
+
+	public UnixPath getSslCertKeyFile() {
 		return sslCertKeyFile;
+	}
+
+	public UnixPath getSslCertChainFile() {
+		return sslCertChainFile;
 	}
 
 	@Override
@@ -172,18 +194,19 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey=result.getInt(1);
-			httpd_site=result.getInt(2);
-			httpd_bind=result.getInt(3);
+			pkey = result.getInt(1);
+			httpd_site = result.getInt(2);
+			httpd_bind = result.getInt(3);
 			access_log = UnixPath.valueOf(result.getString(4));
 			error_log = UnixPath.valueOf(result.getString(5));
 			sslCertFile = UnixPath.valueOf(result.getString(6));
 			sslCertKeyFile = UnixPath.valueOf(result.getString(7));
-			disable_log=result.getInt(8);
-			if(result.wasNull()) disable_log=-1;
-			predisable_config=result.getString(9);
-			isManual=result.getBoolean(10);
-			redirect_to_primary_hostname=result.getBoolean(11);
+			sslCertChainFile = UnixPath.valueOf(result.getString(8));
+			disable_log = result.getInt(9);
+			if(result.wasNull()) disable_log = -1;
+			predisable_config = result.getString(10);
+			isManual = result.getBoolean(11);
+			redirect_to_primary_hostname = result.getBoolean(12);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -200,17 +223,18 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
-			httpd_site=in.readCompressedInt();
-			httpd_bind=in.readCompressedInt();
+			pkey = in.readCompressedInt();
+			httpd_site = in.readCompressedInt();
+			httpd_bind = in.readCompressedInt();
 			access_log = UnixPath.valueOf(in.readUTF());
 			error_log = UnixPath.valueOf(in.readUTF());
 			sslCertFile = UnixPath.valueOf(in.readNullUTF());
 			sslCertKeyFile = UnixPath.valueOf(in.readNullUTF());
-			disable_log=in.readCompressedInt();
-			predisable_config=in.readNullUTF();
-			isManual=in.readBoolean();
-			redirect_to_primary_hostname=in.readBoolean();
+			sslCertChainFile = UnixPath.valueOf(in.readNullUTF());
+			disable_log = in.readCompressedInt();
+			predisable_config = in.readNullUTF();
+			isManual = in.readBoolean();
+			redirect_to_primary_hostname = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -239,11 +263,11 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
-					int code=in.readByte();
-					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+					int code = in.readByte();
+					if(code == AOServProtocol.DONE) invalidateList = AOServConnector.readInvalidateList(in);
 					else {
 						AOServProtocol.checkResult(code, in);
-						throw new IOException("Unexpected response code: "+code);
+						throw new IOException("Unexpected response code: " + code);
 					}
 				}
 
@@ -257,9 +281,9 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 	@Override
 	String toStringImpl() throws SQLException, IOException {
-		HttpdSite site=getHttpdSite();
-		HttpdBind bind=getHttpdBind();
-		return site.toStringImpl()+'|'+bind.toStringImpl();
+		HttpdSite site = getHttpdSite();
+		HttpdBind bind = getHttpdBind();
+		return site.toStringImpl() + '|' + bind.toStringImpl();
 	}
 
 	@Override
@@ -271,9 +295,14 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		out.writeUTF(error_log.toString());
 		out.writeNullUTF(ObjectUtils.toString(sslCertFile));
 		out.writeNullUTF(ObjectUtils.toString(sslCertKeyFile));
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
+			out.writeNullUTF(ObjectUtils.toString(sslCertChainFile));
+		}
 		out.writeCompressedInt(disable_log);
 		out.writeNullUTF(predisable_config);
 		out.writeBoolean(isManual);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_19)>=0) out.writeBoolean(redirect_to_primary_hostname);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_19) >= 0) {
+			out.writeBoolean(redirect_to_primary_hostname);
+		}
 	}
 }
