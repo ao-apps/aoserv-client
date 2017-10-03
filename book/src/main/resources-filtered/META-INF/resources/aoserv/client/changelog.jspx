@@ -107,6 +107,13 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>server_xml_configured</code> parameter to the <code>set_httpd_tomcat_context_attributes</code> AOSH command.</li>
 						</ol>
 					</li>
+					<li>
+						To support <ao:a href="https://letsencrypt.org/">Let's Encrypt</ao:a> certificates,
+						added <code>httpd_site_binds.ssl_cert_chain_file</code> column.
+						<ao:a href="https://certbot.eff.org/">Certbot</ao:a> installs certificates in a structure
+						incompatible with our previous automatic chain detection.  With this new column, the
+						chain file may be specified directly.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
