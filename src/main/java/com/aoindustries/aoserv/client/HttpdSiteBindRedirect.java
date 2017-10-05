@@ -49,6 +49,7 @@ final public class HttpdSiteBindRedirect extends CachedObjectIntegerKey<HttpdSit
 	private String pattern;
 	private String substitution;
 	private String comment;
+	private boolean noEscape;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -59,6 +60,7 @@ final public class HttpdSiteBindRedirect extends CachedObjectIntegerKey<HttpdSit
 			case 3: return pattern;
 			case 4: return substitution;
 			case 5: return comment;
+			case 6: return noEscape;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -85,6 +87,10 @@ final public class HttpdSiteBindRedirect extends CachedObjectIntegerKey<HttpdSit
 		return comment;
 	}
 
+	public boolean isNoEscape() {
+		return noEscape;
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_SITE_BIND_REDIRECTS;
@@ -98,6 +104,7 @@ final public class HttpdSiteBindRedirect extends CachedObjectIntegerKey<HttpdSit
 		pattern = result.getString(4);
 		substitution = result.getString(5);
 		comment = result.getString(6);
+		noEscape = result.getBoolean(7);
 	}
 
 	@Override
@@ -108,6 +115,7 @@ final public class HttpdSiteBindRedirect extends CachedObjectIntegerKey<HttpdSit
 		pattern = in.readUTF();
 		substitution = in.readUTF();
 		comment = in.readNullUTF();
+		noEscape = in.readBoolean();
 	}
 
 	@Override
@@ -123,5 +131,8 @@ final public class HttpdSiteBindRedirect extends CachedObjectIntegerKey<HttpdSit
 		out.writeUTF(pattern);
 		out.writeUTF(substitution);
 		out.writeNullUTF(comment);
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
+			out.writeBoolean(noEscape);
+		}
 	}
 }

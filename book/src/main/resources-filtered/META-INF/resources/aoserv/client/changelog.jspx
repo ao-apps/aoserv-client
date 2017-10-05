@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-09-09T14:37:38-0500"
+		dateModified="2017-10-05T18:21:37-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -113,6 +113,11 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<ao:a href="https://certbot.eff.org/">Certbot</ao:a> installs certificates in a structure
 						incompatible with our previous automatic chain detection.  With this new column, the
 						chain file may be specified directly.
+					</li>
+					<li>
+						Added <code>httpd_site_bind_redirects.no_escape</code> column to support the
+						<ao:a href="https://httpd.apache.org/docs/2.4/rewrite/flags.html#flag_ne">noescape RewriteRule Flag</ao:a>,
+						defaulting to <code>false</code>.
 					</li>
 				</ul>
 			</changelog:release>
