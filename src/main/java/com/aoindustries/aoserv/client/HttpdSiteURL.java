@@ -101,7 +101,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 		Port port=netBind.getPort();
 		StringBuilder url=new StringBuilder();
 		String protocol;
-		if(siteBind.getSSLCertFile()==null) {
+		if(siteBind.getSslCertFile() == null) {
 			// If HTTP
 			url.append("http://");
 			protocol=Protocol.HTTP;
@@ -122,7 +122,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 		Port port=netBind.getPort();
 		StringBuilder url=new StringBuilder();
 		String protocol;
-		if(siteBind.getSSLCertFile()==null) {
+		if(siteBind.getSslCertFile() == null) {
 			// If HTTP
 			url.append("http://");
 			protocol=Protocol.HTTP;
