@@ -95,6 +95,7 @@ final public class AOServer
 	private float monitoring_load_critical;
 	private LinuxId uid_min;
 	private LinuxId gid_min;
+	private long sftp_umask;
 
 	public int addCvsRepository(
 		UnixPath path,
@@ -348,6 +349,7 @@ final public class AOServer
 			case 18: return Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical;
 			case 19: return uid_min;
 			case 20: return gid_min;
+			case 21: return sftp_umask==-1 ? null : sftp_umask;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -468,6 +470,13 @@ final public class AOServer
 	 */
 	public LinuxId getGidMin() {
 		return gid_min;
+	}
+
+	/**
+	 * Gets the optional umask for the sftp-server or <code>-1</code> for none.
+	 */
+	public long getSftpUmask() {
+		return sftp_umask;
 	}
 
 	public NetDeviceID getDaemonDeviceID() throws SQLException, IOException {
@@ -832,6 +841,8 @@ final public class AOServer
 			if(result.wasNull()) monitoring_load_critical = Float.NaN;
 			uid_min = LinuxId.valueOf(result.getInt(pos++));
 			gid_min = LinuxId.valueOf(result.getInt(pos++));
+			sftp_umask = result.getLong(pos++);
+			if(result.wasNull()) sftp_umask = -1;
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -861,6 +872,7 @@ final public class AOServer
 			monitoring_load_critical = in.readFloat();
 			uid_min = LinuxId.valueOf(in.readCompressedInt());
 			gid_min = LinuxId.valueOf(in.readCompressedInt());
+			sftp_umask = in.readLong();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -1054,6 +1066,9 @@ final public class AOServer
 		if(version.compareTo(AOServProtocol.Version.VERSION_1_80)>=0) {
 			out.writeCompressedInt(uid_min.getId());
 			out.writeCompressedInt(gid_min.getId());
+		}
+		if(version.compareTo(AOServProtocol.Version.VERSION_1_81_5) >= 0) {
+			out.writeLong(sftp_umask);
 		}
 	}
 
@@ -2628,7 +2643,8 @@ final public class AOServer
 			Float.isNaN(monitoring_load_high) ? null : monitoring_load_high,
 			Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical,
 			getDto(uid_min),
-			getDto(gid_min)
+			getDto(gid_min),
+			sftp_umask==-1 ? null : sftp_umask
 		);
 	}
 	// </editor-fold>

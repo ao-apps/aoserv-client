@@ -52,6 +52,7 @@ public class AOServer extends AOServObject {
 	private Float monitoringLoadCritical;
 	private LinuxId uidMin;
 	private LinuxId gidMin;
+	private Long sftpUmask;
 
 	public AOServer() {
 	}
@@ -77,7 +78,8 @@ public class AOServer extends AOServObject {
 		Float monitoringLoadHigh,
 		Float monitoringLoadCritical,
 		LinuxId uidMin,
-		LinuxId gidMin
+		LinuxId gidMin,
+		Long sftpUmask
 	) {
 		this.server = server;
 		this.hostname = hostname;
@@ -100,6 +102,7 @@ public class AOServer extends AOServObject {
 		this.monitoringLoadCritical = monitoringLoadCritical;
 		this.uidMin = uidMin;
 		this.gidMin = gidMin;
+		this.sftpUmask = sftpUmask;
 	}
 
 	public int getServer() {
@@ -268,5 +271,13 @@ public class AOServer extends AOServObject {
 
 	public void setGidMin(LinuxId gidMin) {
 		this.gidMin = gidMin;
+	}
+
+	public Long getSftpUmask() {
+		return sftpUmask;
+	}
+
+	public void setSftpUmask(Long sftpUmask) {
+		this.sftpUmask = sftpUmask;
 	}
 }
