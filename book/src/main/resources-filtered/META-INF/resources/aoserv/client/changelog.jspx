@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-10-05T18:21:37-0500"
+		dateModified="2017-10-14T15:13:18-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -118,6 +118,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Added <code>httpd_site_bind_redirects.no_escape</code> column to support the
 						<ao:a href="https://httpd.apache.org/docs/2.4/rewrite/flags.html#flag_ne">noescape RewriteRule Flag</ao:a>,
 						defaulting to <code>false</code>.
+					</li>
+					<li>
+						Added <code>ao_servers.sftp_umask</code> column to support the <code>-u umask</code> option for
+						<code>sftp-server</code> in <code>/etc/ssh/sshd_config</code>.
 					</li>
 				</ul>
 			</changelog:release>
