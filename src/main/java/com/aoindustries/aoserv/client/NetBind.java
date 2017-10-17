@@ -166,13 +166,18 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		HttpdBind hb=getHttpdBind();
 		if(hb!=null) {
 			HttpdServer hs=hb.getHttpdServer();
-			return
-				"Apache server #"
-				+ hs.getNumber()
-				+ " configured in /etc/httpd/conf/httpd"
-				+ hs.getNumber()
-				+ ".conf"
-			;
+			int number = hs.getNumber();
+			if(number == 1) {
+				return "Apache server configured in /etc/httpd/conf/httpd.conf";
+			} else {
+				return
+					"Apache server #"
+					+ number
+					+ " configured in /etc/httpd/conf/httpd"
+					+ number
+					+ ".conf"
+				;
+			}
 		}
 
 		HttpdJBossSite hjs=getHttpdJBossSiteByJNPPort();
