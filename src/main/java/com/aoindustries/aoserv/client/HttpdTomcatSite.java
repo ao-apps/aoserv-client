@@ -94,7 +94,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 		);
 	}
 
-	public int addHttpdTomcatSiteJkMount(
+	public int addJkMount(
 		String path,
 		boolean mount
 	) throws IOException, SQLException {
@@ -187,7 +187,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 		return table.connector.getHttpdWorkers().getHttpdWorkers(this);
 	}
 
-	public List<HttpdTomcatSiteJkMount> getHttpdTomcatSiteJkMounts() throws IOException, SQLException {
+	public List<HttpdTomcatSiteJkMount> getJkMounts() throws IOException, SQLException {
 		return table.connector.getHttpdTomcatSiteJkMounts().getHttpdTomcatSiteJkMounts(this);
 	}
 

@@ -1302,7 +1302,7 @@ final public class SimpleAOClient {
 		HttpdSite hs = getHttpdSite(aoServer, siteName);
 		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
 		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
-		return hts.addHttpdTomcatSiteJkMount(path, mount);
+		return hts.addJkMount(path, mount);
 	}
 
 	/**
@@ -1324,7 +1324,7 @@ final public class SimpleAOClient {
 		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
 		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
 		HttpdTomcatSiteJkMount match = null;
-		for(HttpdTomcatSiteJkMount htsjm : hts.getHttpdTomcatSiteJkMounts()) {
+		for(HttpdTomcatSiteJkMount htsjm : hts.getJkMounts()) {
 			if(htsjm.getPath().equals(path)) {
 				match = htsjm;
 				break;
