@@ -692,6 +692,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					case PATH:
 						return ((UnixPath)value1).compareTo((UnixPath)value2);
 					case BOOLEAN:
+						// Sorts false before true
 						return
 							((Boolean)value1)
 							?(((Boolean)value2)?0:1)
