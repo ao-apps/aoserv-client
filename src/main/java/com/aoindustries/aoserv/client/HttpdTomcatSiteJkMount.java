@@ -27,7 +27,6 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,12 +44,11 @@ final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTo
 		COLUMN_HTTPD_TOMCAT_SITE = 1
 	;
 	static final String COLUMN_HTTPD_TOMCAT_SITE_name = "httpd_tomcat_site";
-	static final String COLUMN_SORT_ORDER_name = "sort_order";
+	static final String COLUMN_PATH_name = "path";
+	static final String COLUMN_MOUNT_name = "mount";
 
 	int httpd_tomcat_site;
-	private short sortOrder;
 	private String path;
-	private String comment;
 	private boolean mount;
 
 	@Override
@@ -63,10 +61,8 @@ final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTo
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_HTTPD_TOMCAT_SITE: return httpd_tomcat_site;
-			case 2: return sortOrder;
-			case 3: return path;
-			case 4: return comment;
-			case 5: return mount;
+			case 2: return path;
+			case 3: return mount;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -77,16 +73,8 @@ final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTo
 		return obj;
 	}
 
-	public short getSortOrder() {
-		return sortOrder;
-	}
-
 	public String getPath() {
 		return path;
-	}
-
-	public String getComment() {
-		return comment;
 	}
 
 	/**
@@ -106,19 +94,15 @@ final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTo
 	public void init(ResultSet result) throws SQLException {
 		pkey = result.getInt(1);
 		httpd_tomcat_site = result.getInt(2);
-		sortOrder = result.getShort(3);
-		path = result.getString(4);
-		comment = result.getString(5);
-		mount = result.getBoolean(6);
+		path = result.getString(3);
+		mount = result.getBoolean(4);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey = in.readCompressedInt();
 		httpd_tomcat_site = in.readCompressedInt();
-		sortOrder = in.readShort();
 		path = in.readUTF();
-		comment = in.readNullUTF();
 		mount = in.readBoolean();
 	}
 
@@ -136,9 +120,7 @@ final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTo
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_tomcat_site);
-		out.writeShort(sortOrder);
 		out.writeUTF(path);
-		out.writeNullUTF(comment);
 		out.writeBoolean(mount);
 	}
 }

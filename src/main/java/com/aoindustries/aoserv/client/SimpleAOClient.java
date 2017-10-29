@@ -1291,20 +1291,18 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
 	 *                                  or <code>HttpdTomcatSite</code>
 	 *
-	 * @see  HttpdTomcatSite#addHttpdTomcatSiteJkMount(short, java.lang.String, java.lang.String, boolean)
+	 * @see  HttpdTomcatSite#addHttpdTomcatSiteJkMount(java.lang.String, boolean)
 	 */
 	public int addHttpdTomcatSiteJkMount(
 		String siteName,
 		String aoServer,
-		short sortOrder,
 		String path,
-		String comment,
 		boolean mount
 	) throws IllegalArgumentException, IOException, SQLException {
 		HttpdSite hs = getHttpdSite(aoServer, siteName);
 		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
 		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
-		return hts.addHttpdTomcatSiteJkMount(sortOrder, path, comment, mount);
+		return hts.addHttpdTomcatSiteJkMount(path, mount);
 	}
 
 	/**

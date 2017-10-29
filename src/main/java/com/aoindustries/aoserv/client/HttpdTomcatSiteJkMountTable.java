@@ -45,7 +45,8 @@ final public class HttpdTomcatSiteJkMountTable extends CachedTableIntegerKey<Htt
 	private static final OrderBy[] defaultOrderBy = {
 		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + HttpdTomcatSite.COLUMN_HTTPD_SITE_name + '.' + HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
 		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + HttpdTomcatSite.COLUMN_HTTPD_SITE_name + '.' + HttpdSite.COLUMN_AO_SERVER_name + '.' + AOServer.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_SORT_ORDER_name, ASCENDING)
+		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_MOUNT_name, DESCENDING), // JkMount before JkUnMount
+		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {
@@ -54,9 +55,7 @@ final public class HttpdTomcatSiteJkMountTable extends CachedTableIntegerKey<Htt
 
 	int addHttpdTomcatSiteJkMount(
 		final HttpdTomcatSite hts,
-		final short sortOrder,
 		final String path,
-		final String comment,
 		final boolean mount
 	) throws IOException, SQLException {
 		return connector.requestResult(
@@ -70,9 +69,7 @@ final public class HttpdTomcatSiteJkMountTable extends CachedTableIntegerKey<Htt
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(SchemaTable.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS.ordinal());
 					out.writeCompressedInt(hts.pkey);
-					out.writeShort(sortOrder);
 					out.writeUTF(path);
-					out.writeNullUTF(comment);
 					out.writeBoolean(mount);
 				}
 
@@ -115,15 +112,13 @@ final public class HttpdTomcatSiteJkMountTable extends CachedTableIntegerKey<Htt
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command = args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_SITE_JK_MOUNT)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SITE_JK_MOUNT, args, 6, err)) {
+			if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SITE_JK_MOUNT, args, 4, err)) {
 				out.println(
 					connector.getSimpleAOClient().addHttpdTomcatSiteJkMount(
 						args[1],
 						args[2],
-						args[3].isEmpty() ? -1 : AOSH.parseShort(args[3], "sort_order"),
-						args[4],
-						args[5].isEmpty() ? null : args[5],
-						AOSH.parseBoolean(args[6], "mount")
+						args[3],
+						AOSH.parseBoolean(args[4], "mount")
 					)
 				);
 				out.flush();

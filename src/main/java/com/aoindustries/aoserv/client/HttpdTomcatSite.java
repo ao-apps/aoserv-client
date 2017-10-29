@@ -95,16 +95,12 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 	}
 
 	public int addHttpdTomcatSiteJkMount(
-		short sortOrder,
 		String path,
-		String comment,
 		boolean mount
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatSiteJkMounts().addHttpdTomcatSiteJkMount(
 			this,
-			sortOrder,
 			path,
-			comment,
 			mount
 		);
 	}
