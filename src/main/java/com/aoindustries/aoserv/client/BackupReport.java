@@ -163,13 +163,13 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(server);
 		out.writeCompressedInt(packageNum);
 		out.writeLong(date);
 		out.writeInt(file_count);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeLong(0); // uncompressed_size
 			out.writeLong(0); // compressed_size
 		}

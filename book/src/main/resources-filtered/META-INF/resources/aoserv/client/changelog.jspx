@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-10-14T15:13:18-0500"
+		dateModified="2017-10-28T20:59:26-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -122,6 +122,127 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						Added <code>ao_servers.sftp_umask</code> column to support the <code>-u umask</code> option for
 						<code>sftp-server</code> in <code>/etc/ssh/sshd_config</code>.
+					</li>
+					<li>
+						Per-site features now all default to <code>false</code> to begin in the safest configuration:
+						<ol>
+							<li><code>httpd_sites.enable_cgi</code> now defaults to <code>false</code>.</li>
+							<li><code>httpd_sites.enable_ssi</code> now defaults to <code>false</code>.</li>
+							<li><code>httpd_sites.enable_htaccess</code> now defaults to <code>false</code>.</li>
+							<li><code>httpd_sites.enable_indexes</code> now defaults to <code>false</code>.</li>
+							<li><code>httpd_sites.enable_follow_symlinks</code> now defaults to <code>false</code>.</li>
+							<li><code>httpd_sites.enable_anonymous_ftp</code> now defaults to <code>false</code>.</li>
+							<li>Removed parameters from <code>add_httpd_jboss_site</code> command to use defaults.</li>
+							<li>Removed parameters from <code>add_httpd_tomcat_shared_site</code> command to use defaults.</li>
+							<li>Removed parameters from <code>add_httpd_tomcat_std_site</code> command to use defaults.</li>
+						</ol>
+					</li>
+					<li>
+						Added options to selectively disable protections that have been always on up to this point.
+						These all default to <code>true</code> to begin in the safest configuration.  When an application
+						takes full control over the URL space, these default protections might get in the way.
+						They should only be disabled with full understanding and careful consideration.
+						<ol>
+							<li>
+								<p>
+									Added <code>httpd_sites.block_trace_track</code> column, which enables the blocking of
+									<ao:a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8">TRACE</ao:a>
+									and TRACK <ao:a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">HTTP methods</ao:a>.
+								</p>
+								<p>
+									Leave this enabled unless you intend to handle these methods and understand the consequences.
+								</p>
+								<p>
+									May be configured with the <code>set_httpd_site_block_trace_track</code> AOSH command.
+								</p>
+							</li>
+							<li>
+								<p>
+									Added <code>httpd_sites.block_scm</code> column, which enables the blocking of URL
+									patterns associated with source control management systems.  It is possible for SCM
+									files, such as <code>CVS/Root</code> and <code>.git/config</code> to have authentication
+									credentials.
+								</p>
+								<p>
+									Currently has protections for <ao:a href="http://savannah.nongnu.org/projects/cvs">CVS</ao:a>,
+									<ao:a href="https://subversion.apache.org/">Subversion</ao:a>, and
+									<ao:a href="https://git-scm.com/">Git</ao:a>.
+								</p>
+								<p>
+									Leave this enabled when pulling web root content directly from revision control systems.
+								</p>
+								<p>
+									May be configured with the <code>set_httpd_site_block_scm</code> AOSH command.
+								</p>
+							</li>
+							<li>
+								<p>
+									Added <code>httpd_sites.block_core_dumps</code> column, which enables blocking of core dumps.
+									Core dumps could potentially expose sensitive information and have predictable filename patterns.
+								</p>
+								<p>
+									Leave this enabled when scripts may leave core dumps; if in doubt, leave this on.
+								</p>
+								<p>
+									May be configured with the <code>set_httpd_site_block_core_dumps</code> AOSH command.
+								</p>
+							</li>
+							<li>
+								<p>
+									Added <code>httpd_sites.block_editor_backups</code> column, which enables blocking filename patterns
+									associated with editor automatic backups.  Without this protection, it is possible for source code
+									to be leaked by accessing the URL associated with the automatic backups.
+								</p>
+								<p>
+									Currently has protections for <ao:a href="https://www.gnu.org/software/emacs/">Emacs</ao:a>
+									and <ao:a href="http://www.vim.org/">Vim</ao:a>.
+								</p>
+								<p>
+									May be configured with the <code>set_httpd_site_block_editor_backups</code> AOSH command.
+								</p>
+							</li>
+							<li>
+								<p>
+									Added <code>httpd_tomcat_sites.block_webinf</code> column, which blocks access to <code>/META-INF</code>
+									and <code>/WEB-INF</code> at the <ao:a href="https://httpd.apache.org/">Apache</ao:a> level.  When
+									<ao:a href="https://httpd.apache.org/">Apache</ao:a> serves content directly, instead of passing all
+									requests to <ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>, this helps ensure proper protection
+									of these paths.
+								</p>
+								<p>
+									Leave this enable unless trying to squeeze every last drop of performance out of a system
+									and are 100% confident <code>/META-INF</code> and <code>/WEB-INF</code> are mapped to
+									<ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>.  Just leave this on; it's only two
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/core.html#location">Location</ao:a>
+									directives for each <ao:a href="apidocs/com/aoindustries/aoserv/client/HttpdTomcatContext.html">HttpdTomcatContext</ao:a>.
+								</p>
+								<p>
+									May be configured with the <code>set_httpd_tomcat_site_block_webinf</code> AOSH command.
+								</p>
+							</li>
+						</ol>
+					</li>
+					<li>
+						New table <code>httpd_tomcat_site_jk_mounts</code> that configures the request mappings between
+						<ao:a href="https://httpd.apache.org/">Apache</ao:a> and <ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>
+						via the <ao:a href="https://tomcat.apache.org/connectors-doc/reference/apache.html">JkMount and JkUnMount directives</ao:a>:
+						<ol type="a">
+							<li>
+								Added the <code>httpd_tomcat_site_jk_mounts</code> table, with default values matching the configurations
+								derived from the old <code>httpd_tomcat_sites.use_apache</code> flag.
+							</li>
+							<li>Added the <code>add_httpd_tomcat_site_jk_mount</code> AOSH command.</li>
+							<li>Added the <code>remove_httpd_tomcat_site_jk_mount</code> AOSH command.</li>
+							<li>
+								Removed the <code>httpd_tomcat_sites.use_apache</code> column, with <code>true</code>
+								provided to older clients when <code>httpd_tomcat_site_jk_mounts</code> does not contain
+								<code>JkMount /*</code> for the site.
+							</li>
+							<li>
+								Removed the <code>set_httpd_tomcat_site_use_apache</code> AOSH command, with older clients
+								toggling the existence of <code>JkMount /*</code>.
+							</li>
+						</ol>
 					</li>
 				</ul>
 			</changelog:release>

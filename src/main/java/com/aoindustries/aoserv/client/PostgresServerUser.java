@@ -259,11 +259,11 @@ final public class PostgresServerUser extends CachedObjectIntegerKey<PostgresSer
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username.toString());
 		out.writeCompressedInt(postgres_server);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)<=0) {
 			out.writeCompressedInt(-1);
 		}
 		out.writeCompressedInt(disable_log);

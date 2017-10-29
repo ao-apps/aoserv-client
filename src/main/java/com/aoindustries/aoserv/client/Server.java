@@ -212,45 +212,45 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeUTF(name); // hostname
 		}
 		out.writeUTF(farm);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeUTF("AOINDUSTRIES"); // owner
 			out.writeUTF("orion"); // administrator
 		}
 		out.writeUTF(description);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_107)<=0) out.writeUTF(Architecture.I686);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_107)<=0) out.writeUTF(Architecture.I686);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(0); // backup_hour
 			out.writeLong(-1); // last_backup_time
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(operating_system_version==-1 ? OperatingSystemVersion.MANDRIVA_2006_0_I586 : operating_system_version);
 		} else {
 			out.writeCompressedInt(operating_system_version);
 		}
 		if(
-			version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0
-			&& version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
+			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0
+			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
 		) {
 			out.writeNullUTF(null); // asset_label
 		}
 		if(
-			version.compareTo(AOServProtocol.Version.VERSION_1_16)>=0
-			&& version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
+			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_16)>=0
+			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
 		) {
 			out.writeFloat(Float.NaN); // minimum_power
 			out.writeFloat(Float.NaN); // maximum_power
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
 			out.writeCompressedInt(packageId);
 			out.writeUTF(name);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_32)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_32)>=0) {
 			out.writeBoolean(monitoring_enabled);
 		}
 	}

@@ -132,22 +132,22 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeUTF(path.toString());
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeUTF(path.toString());
 		out.writeUTF(path.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeLong((long)512*1024*1024); // min free space
 			out.writeLong((long)1024*1024*1024); // desired free space
 		}
 		out.writeBoolean(enabled);
 		if(
-			version.compareTo(AOServProtocol.Version.VERSION_1_0_A_117)>=0
-			&& version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
+			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_117)>=0
+			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
 		) {
 			out.writeCompressedInt(1); // fill_order
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeBoolean(quota_enabled);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeBoolean(quota_enabled);
 	}
 }

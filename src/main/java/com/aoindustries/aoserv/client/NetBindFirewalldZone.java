@@ -89,7 +89,7 @@ final public class NetBindFirewalldZone extends CachedObjectIntegerKey<NetBindFi
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(net_bind);
 		out.writeCompressedInt(firewalld_zone);

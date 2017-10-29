@@ -541,6 +541,11 @@ abstract public class AOServConnector {
 		return httpdTomcatParameters;
 	}
 
+	private final HttpdTomcatSiteJkMountTable httpdTomcatSiteJkMounts;
+	public HttpdTomcatSiteJkMountTable getHttpdTomcatSiteJkMounts() {
+		return httpdTomcatSiteJkMounts;
+	}
+
 	private final HttpdTomcatSiteTable httpdTomcatSites;
 	public HttpdTomcatSiteTable getHttpdTomcatSites() {
 		return httpdTomcatSites;
@@ -1099,6 +1104,7 @@ abstract public class AOServConnector {
 		newTables.add(httpdTomcatContexts=new HttpdTomcatContextTable(this));
 		newTables.add(httpdTomcatDataSources=new HttpdTomcatDataSourceTable(this));
 		newTables.add(httpdTomcatParameters=new HttpdTomcatParameterTable(this));
+		newTables.add(httpdTomcatSiteJkMounts=new HttpdTomcatSiteJkMountTable(this));
 		newTables.add(httpdTomcatSites=new HttpdTomcatSiteTable(this));
 		newTables.add(httpdTomcatSharedSites=new HttpdTomcatSharedSiteTable(this));
 		newTables.add(httpdTomcatStdSites=new HttpdTomcatStdSiteTable(this));

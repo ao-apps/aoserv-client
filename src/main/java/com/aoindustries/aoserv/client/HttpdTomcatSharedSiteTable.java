@@ -68,13 +68,7 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 		final DomainName[] altHttpHostnames,
 		final String sharedTomcatName,
 		HttpdTomcatVersion version,
-		final UnixPath contentSrc,
-		final TechnologyVersion phpVersion,
-		final boolean enableCgi,
-		final boolean enableSsi,
-		final boolean enableHtaccess,
-		final boolean enableIndexes,
-		final boolean enableFollowSymlinks
+		final UnixPath contentSrc
 	) throws IOException, SQLException {
 		final int tv = version==null?-1:version.getTechnologyVersion(connector).getPkey();
 		return connector.requestResult(
@@ -102,12 +96,6 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 					if(sharedTomcatName!=null) out.writeUTF(sharedTomcatName);
 					out.writeCompressedInt(tv);
 					out.writeNullUTF(ObjectUtils.toString(contentSrc));
-					out.writeCompressedInt(phpVersion==null ? -1 : phpVersion.pkey);
-					out.writeBoolean(enableCgi);
-					out.writeBoolean(enableSsi);
-					out.writeBoolean(enableHtaccess);
-					out.writeBoolean(enableIndexes);
-					out.writeBoolean(enableFollowSymlinks);
 				}
 
 				@Override
@@ -155,11 +143,11 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 	) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE)) {
-			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE, args, 19, err)) {
+			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE, args, 13, err)) {
 				// Create an array of all the alternate hostnames
-				DomainName[] altHostnames=new DomainName[args.length-20];
-				for(int i=20; i<args.length; i++) {
-					altHostnames[i-20] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
+				DomainName[] altHostnames=new DomainName[args.length-14];
+				for(int i=14; i<args.length; i++) {
+					altHostnames[i-14] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
 				}
 				out.println(
 					connector.getSimpleAOClient().addHttpdTomcatSharedSite(
@@ -176,13 +164,7 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 						altHostnames,
 						args[10],
 						args[11],
-						args[13].isEmpty() ? null : AOSH.parseUnixPath(args[13], "content_source"),
-						args[14],
-						AOSH.parseBoolean(args[15], "enable_cgi"),
-						AOSH.parseBoolean(args[16], "enable_ssi"),
-						AOSH.parseBoolean(args[17], "enable_htaccess"),
-						AOSH.parseBoolean(args[18], "enable_indexes"),
-						AOSH.parseBoolean(args[19], "enable_follow_symlinks")
+						args[13].isEmpty() ? null : AOSH.parseUnixPath(args[13], "content_source")
 					)
 				);
 				out.flush();

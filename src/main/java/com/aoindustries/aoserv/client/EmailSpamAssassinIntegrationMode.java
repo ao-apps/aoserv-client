@@ -94,7 +94,7 @@ public final class EmailSpamAssassinIntegrationMode extends GlobalObjectStringKe
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(display);
 		out.writeCompressedInt(sort_order);

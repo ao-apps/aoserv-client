@@ -116,11 +116,11 @@ final public class FailoverFileSchedule extends CachedObjectIntegerKey<FailoverF
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(replication);
 		out.writeShort(hour);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeShort(minute);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeShort(minute);
 		out.writeBoolean(enabled);
 	}
 }

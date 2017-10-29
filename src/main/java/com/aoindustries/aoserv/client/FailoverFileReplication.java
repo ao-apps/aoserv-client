@@ -226,14 +226,14 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(server);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeCompressedInt(149); // to_server (hard-coded xen2.mob.aoindustries.com)
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(backup_partition);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeCompressedInt(149); // to_server (hard-coded xen2.mob.aoindustries.com)
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(backup_partition);
 		if(
-			version.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0
-			&& version.compareTo(AOServProtocol.Version.VERSION_1_61)<=0
+			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_105)>=0
+			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_61)<=0
 		) {
 			int maxBitRateInt;
 			if(max_bit_rate==null) maxBitRateInt = -1;
@@ -241,23 +241,23 @@ final public class FailoverFileReplication extends CachedObjectIntegerKey<Failov
 			else if(max_bit_rate<0) throw new IOException("Illegal bit rate: " + max_bit_rate);
 			else maxBitRateInt = max_bit_rate.intValue();
 			out.writeInt(maxBitRateInt);
-		} else if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
+		} else if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
 			out.writeLong(max_bit_rate==null ? -1 : max_bit_rate);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeLong(-1); // last_start_time
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_9)>=0) out.writeBoolean(use_compression);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_13)>=0) out.writeShort(retention);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_14)>=0) out.writeNullUTF(ObjectUtils.toString(connect_address));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_22)>=0) out.writeNullUTF(ObjectUtils.toString(connect_from));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_15)>=0) out.writeBoolean(enabled);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeLong(-1); // last_start_time
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_9)>=0) out.writeBoolean(use_compression);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_13)>=0) out.writeShort(retention);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_14)>=0) out.writeNullUTF(ObjectUtils.toString(connect_address));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_22)>=0) out.writeNullUTF(ObjectUtils.toString(connect_from));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_15)>=0) out.writeBoolean(enabled);
 		if(
-			version.compareTo(AOServProtocol.Version.VERSION_1_17)>=0
-			&& version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
+			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_17)>=0
+			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
 		) {
 			out.writeUTF("/var/backup"); // to_path (hard-coded /var/backup like found on xen2.mob.aoindustries.com)
 			out.writeBoolean(false); // chunk_always
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
 			out.writeCompressedInt(quota_gid == null ? -1 : quota_gid.getId());
 		}
 	}

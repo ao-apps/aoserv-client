@@ -475,14 +475,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeUTF(processorId);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeUTF(processorId);
 		out.writeUTF(accounting.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(0);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(groupName);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(0);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(groupName);
 		out.writeUTF(cardInfo);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) {
 			out.writeCompressedInt(0);
 			out.writeCompressedInt(0);
 			out.writeCompressedInt(0);
@@ -492,7 +492,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			else out.writeCompressedInt(0);
 			out.writeCompressedInt(0);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) {
 			out.writeUTF(providerUniqueId);
 			out.writeUTF(firstName);
 			out.writeUTF(lastName);
@@ -510,14 +510,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		}
 		out.writeLong(created);
 		out.writeUTF(createdBy.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(principalName);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(principalName);
 		out.writeBoolean(useMonthly);
 		out.writeBoolean(isActive);
 		out.writeLong(deactivatedOn);
 		out.writeNullUTF(deactivateReason);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
 		out.writeNullUTF(description);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
 			out.writeNullUTF(encrypted_card_number);
 			out.writeCompressedInt(encryption_card_number_from);
 			out.writeCompressedInt(encryption_card_number_recipient);

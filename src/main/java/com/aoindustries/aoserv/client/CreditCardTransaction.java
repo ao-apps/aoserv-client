@@ -855,7 +855,7 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(processorId);
 		out.writeUTF(accounting.toString());

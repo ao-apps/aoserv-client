@@ -105,7 +105,7 @@ public final class AOServerDaemonHost extends CachedObjectIntegerKey<AOServerDae
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(aoServer);
 		out.writeUTF(host.toString());

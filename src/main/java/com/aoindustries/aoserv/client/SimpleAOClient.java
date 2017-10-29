@@ -1086,13 +1086,7 @@ final public class SimpleAOClient {
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
 		String jBossVersion,
-		UnixPath contentSrc,
-		String phpVersion,
-		boolean enableCgi,
-		boolean enableSsi,
-		boolean enableHtaccess,
-		boolean enableIndexes,
-		boolean enableFollowSymlinks
+		UnixPath contentSrc
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1119,13 +1113,7 @@ final public class SimpleAOClient {
 			primaryHttpHostname,
 			altHttpHostnames,
 			hjv,
-			contentSrc,
-			findPhpVersion(ao, phpVersion),
-			enableCgi,
-			enableSsi,
-			enableHtaccess,
-			enableIndexes,
-			enableFollowSymlinks
+			contentSrc
 		);
 	}
 
@@ -1296,6 +1284,59 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Adds a new {@link HttpdTomcatSiteJkMount} to a {@link HttpdTomcatSite}.
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database
+	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 *                                  or <code>HttpdTomcatSite</code>
+	 *
+	 * @see  HttpdTomcatSite#addHttpdTomcatSiteJkMount(short, java.lang.String, java.lang.String, boolean)
+	 */
+	public int addHttpdTomcatSiteJkMount(
+		String siteName,
+		String aoServer,
+		short sortOrder,
+		String path,
+		String comment,
+		boolean mount
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getHttpdSite(aoServer, siteName);
+		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
+		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+		return hts.addHttpdTomcatSiteJkMount(sortOrder, path, comment, mount);
+	}
+
+	/**
+	 * Removes a {@link HttpdTomcatSiteJkMount} from a {@link HttpdTomcatSite}.
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database
+	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 *                                  or <code>HttpdTomcatSite</code>
+	 *
+	 * @see  HttpdTomcatSiteJkMount#remove()
+	 */
+	public void removeHttpdTomcatSiteJkMount(
+		String siteName,
+		String aoServer,
+		String path
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getHttpdSite(aoServer, siteName);
+		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
+		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+		HttpdTomcatSiteJkMount match = null;
+		for(HttpdTomcatSiteJkMount htsjm : hts.getHttpdTomcatSiteJkMounts()) {
+			if(htsjm.getPath().equals(path)) {
+				match = htsjm;
+				break;
+			}
+		}
+		if(match == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSiteJkMount: " + siteName + " on " + aoServer + " at " + path);
+		match.remove();
+	}
+
+	/**
 	 * Adds a new <code>HttpdTomcatSharedSite</code> to the system.  An <code>HttpdTomcatSharedSite</code> is
 	 * an <code>HttpdSite</code> that contains a Tomcat servlet engine in the standard configuration.  It
 	 * only hosts one site per Java VM, but is arranged in the stock Tomcat structure and uses no
@@ -1354,13 +1395,7 @@ final public class SimpleAOClient {
 		DomainName[] altHttpHostnames,
 		String sharedTomcatName,
 		String version,
-		UnixPath contentSrc,
-		String phpVersion,
-		boolean enableCgi,
-		boolean enableSsi,
-		boolean enableHtaccess,
-		boolean enableIndexes,
-		boolean enableFollowSymlinks
+		UnixPath contentSrc
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1402,13 +1437,7 @@ final public class SimpleAOClient {
 			altHttpHostnames,
 			sharedTomcatName,
 			htv,
-			contentSrc,
-			findPhpVersion(ao, phpVersion),
-			enableCgi,
-			enableSsi,
-			enableHtaccess,
-			enableIndexes,
-			enableFollowSymlinks
+			contentSrc
 		);
 	}
 
@@ -1468,13 +1497,7 @@ final public class SimpleAOClient {
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
 		String tomcatVersion,
-		UnixPath contentSrc,
-		String phpVersion,
-		boolean enableCgi,
-		boolean enableSsi,
-		boolean enableHtaccess,
-		boolean enableIndexes,
-		boolean enableFollowSymlinks
+		UnixPath contentSrc
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1501,13 +1524,7 @@ final public class SimpleAOClient {
 			primaryHttpHostname,
 			altHttpHostnames,
 			htv,
-			contentSrc,
-			findPhpVersion(ao, phpVersion),
-			enableCgi,
-			enableSsi,
-			enableHtaccess,
-			enableIndexes,
-			enableFollowSymlinks
+			contentSrc
 		);
 	}
 
@@ -6940,6 +6957,90 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Sets the <code>block_trace_track</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  blockTraceTrack  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setBlockTraceTrack(boolean)
+	 */
+	public void setHttpdSiteBlockTraceTrack(
+		String siteName,
+		String aoServer,
+		boolean blockTraceTrack
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setBlockTraceTrack(blockTraceTrack);
+	}
+
+	/**
+	 * Sets the <code>block_scm</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  blockScm  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setBlockScm(boolean)
+	 */
+	public void setHttpdSiteBlockScm(
+		String siteName,
+		String aoServer,
+		boolean blockScm
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setBlockScm(blockScm);
+	}
+
+	/**
+	 * Sets the <code>block_core_dumps</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  blockCoreDumps  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setBlockCoreDumps(boolean)
+	 */
+	public void setHttpdSiteBlockCoreDumps(
+		String siteName,
+		String aoServer,
+		boolean blockCoreDumps
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setBlockCoreDumps(blockCoreDumps);
+	}
+
+	/**
+	 * Sets the <code>block_editor_backups</code> flag for a <code>HttpdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  blockEditorBackups  the new flag
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 *
+	 * @see  HttpdSite#setBlockEditorBackups(boolean)
+	 */
+	public void setHttpdSiteBlockEditorBackups(
+		String siteName,
+		String aoServer,
+		boolean blockEditorBackups
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSite(aoServer, siteName).setBlockEditorBackups(blockEditorBackups);
+	}
+
+	/**
 	 * Sets the attributes for a <code>HttpdTomcatContext</code>.
 	 *
 	 * @exception  IOException  if unable to contact the server
@@ -6988,27 +7089,27 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Sets the <code>use_apache</code> flag for a <code>HttpdTomcatSite</code>
+	 * Sets the <code>block_webinf</code> flag for a <code>HttpdTomcatSite</code>
 	 *
 	 * @param  siteName  the name of the site
 	 * @param  aoServer  the hostname of the <code>AOServer</code>
-	 * @param  useApache  the new flag
+	 * @param  blockWebinf  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatSite</code>.
 	 *
-	 * @see  HttpdTomcatSite#setUseApache(boolean)
+	 * @see  HttpdTomcatSite#setBlockWebinf(boolean)
 	 */
-	public void setHttpdTomcatSiteUseApache(
+	public void setHttpdTomcatSiteBlockWebinf(
 		String siteName,
 		String aoServer,
-		boolean useApache
+		boolean blockWebinf
 	) throws IllegalArgumentException, IOException, SQLException {
 		HttpdSite hs = getHttpdSite(aoServer, siteName);
 		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
 		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
-		hts.setUseApache(useApache);
+		hts.setBlockWebinf(blockWebinf);
 	}
 
 	/**

@@ -216,11 +216,11 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(time);
 		out.writeCompressedInt(transID);
 		out.writeUTF(bankAccount);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
 			out.writeNullUTF(null);
 		} else {
 			out.writeNullUTF(processor);

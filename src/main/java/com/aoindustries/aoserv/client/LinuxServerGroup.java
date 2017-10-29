@@ -184,7 +184,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name.toString());
 		out.writeCompressedInt(ao_server);

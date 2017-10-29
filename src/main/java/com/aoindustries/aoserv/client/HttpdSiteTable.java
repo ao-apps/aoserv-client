@@ -281,6 +281,42 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 				);
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_BLOCK_TRACE_TRACK)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_BLOCK_TRACE_TRACK, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteBlockTraceTrack(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "block_trace_track")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_BLOCK_SCM)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_BLOCK_SCM, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteBlockScm(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "block_scm")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_BLOCK_CORE_DUMPS)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_BLOCK_CORE_DUMPS, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteBlockCoreDumps(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "block_core_dumps")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdSiteBlockEditorBackups(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "block_editor_backups")
+				);
+			}
+			return true;
 		} else return false;
 	}
 

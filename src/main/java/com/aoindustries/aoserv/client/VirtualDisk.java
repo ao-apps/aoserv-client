@@ -183,26 +183,26 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(virtualServer);
 		out.writeUTF(device);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumRaidType
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumRaidType
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumDiskType
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumDiskType
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumRaidType
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumRaidType
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumDiskType
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumDiskType
 		out.writeCompressedInt(minimumDiskSpeed);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumDiskSpeedTarget);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(minimumDiskSpeed);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumDiskSpeedTarget);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(minimumDiskSpeed);
 		out.writeCompressedInt(extents);
 		out.writeShort(weight);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(weightTarget);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(weight);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_42)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(weightTarget);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(weight);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_42)<=0) {
 			out.writeBoolean(false); // primaryPhysicalVolumesLocked
 			out.writeBoolean(false); // secondaryPhysicalVolumesLocked
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_72)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_72)>=0) {
 			out.writeCompressedInt(verifyDayOfWeek);
 			out.writeCompressedInt(verifyHourOfDay);
 		}

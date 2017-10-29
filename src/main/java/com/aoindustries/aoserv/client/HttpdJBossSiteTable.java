@@ -67,13 +67,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 		final DomainName primaryHttpHostname,
 		final DomainName[] altHttpHostnames,
 		final HttpdJBossVersion jBossVersion,
-		final UnixPath contentSrc,
-		final TechnologyVersion phpVersion,
-		final boolean enableCgi,
-		final boolean enableSsi,
-		final boolean enableHtaccess,
-		final boolean enableIndexes,
-		final boolean enableFollowSymlinks
+		final UnixPath contentSrc
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			true,
@@ -98,12 +92,6 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c].toString());
 					out.writeCompressedInt(jBossVersion.pkey);
 					out.writeNullUTF(ObjectUtils.toString(contentSrc));
-					out.writeCompressedInt(phpVersion==null ? -1 : phpVersion.pkey);
-					out.writeBoolean(enableCgi);
-					out.writeBoolean(enableSsi);
-					out.writeBoolean(enableHtaccess);
-					out.writeBoolean(enableIndexes);
-					out.writeBoolean(enableFollowSymlinks);
 				}
 
 				@Override
@@ -201,11 +189,11 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_JBOSS_SITE)) {
-			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_JBOSS_SITE, args, 18, err)) {
+			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_JBOSS_SITE, args, 12, err)) {
 				// Create an array of all the alternate hostnames
-				DomainName[] altHostnames=new DomainName[args.length-19];
-				for(int i=19; i<args.length; i++) {
-					altHostnames[i-19] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
+				DomainName[] altHostnames=new DomainName[args.length-13];
+				for(int i=13; i<args.length; i++) {
+					altHostnames[i-13] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
 				}
 				out.println(
 					connector.getSimpleAOClient().addHttpdJBossSite(
@@ -221,13 +209,7 @@ final public class HttpdJBossSiteTable extends CachedTableIntegerKey<HttpdJBossS
 						AOSH.parseDomainName(args[11], "primary_http_hostname"),
 						altHostnames,
 						args[10],
-						args[12].isEmpty() ? null : AOSH.parseUnixPath(args[12], "content_source"),
-						args[13],
-						AOSH.parseBoolean(args[14], "enable_cgi"),
-						AOSH.parseBoolean(args[15], "enable_ssi"),
-						AOSH.parseBoolean(args[16], "enable_htaccess"),
-						AOSH.parseBoolean(args[17], "enable_indexes"),
-						AOSH.parseBoolean(args[18], "enable_follow_symlinks")
+						args[12].isEmpty() ? null : AOSH.parseUnixPath(args[12], "content_source")
 					)
 				);
 				out.flush();

@@ -226,19 +226,19 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(zone);
 		out.writeUTF(domain);
 		out.writeUTF(type);
 		out.writeCompressedInt(priority);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_72)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_72)>=0) {
 			out.writeCompressedInt(weight);
 			out.writeCompressedInt(port);
 		}
 		out.writeUTF(destination);
 		out.writeCompressedInt(dhcpAddress);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) {
 			out.writeCompressedInt(ttl);
 		}
 	}

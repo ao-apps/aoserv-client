@@ -182,42 +182,42 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller==null ? AOServProtocol.FILTERED : reseller.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand.toString());
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller==null ? AOServProtocol.FILTERED : reseller.toString());
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
 			out.writeUTF(accounting==null ? "" : accounting.toString());
 		} else {
 			out.writeNullUTF(ObjectUtils.toString(accounting));
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(language);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(language);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
 			out.writeUTF(created_by==null ? "" : created_by.toString());
 		} else {
 			out.writeNullUTF(ObjectUtils.toString(created_by));
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeCompressedInt(category);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeCompressedInt(category);
 		out.writeUTF(ticket_type);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(from_address);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(summary);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_14)<=0) out.writeUTF("");
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_15)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeCompressedInt(0); // details
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(from_address);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(summary);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_14)<=0) out.writeUTF("");
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_15)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeCompressedInt(0); // details
 		out.writeLong(open_date);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null);
 		out.writeUTF(client_priority);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_10)<0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_10)<0) {
 			out.writeUTF(admin_priority==null ? client_priority : admin_priority);
 		} else {
 			out.writeNullUTF(admin_priority);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // technology
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // technology
 		out.writeUTF(status);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeLong(status_timeout);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // assigned_to
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeLong(status_timeout);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // assigned_to
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)>=0) {
 			out.writeUTF(contact_emails);
 			out.writeUTF(contact_phone_numbers);
 		}

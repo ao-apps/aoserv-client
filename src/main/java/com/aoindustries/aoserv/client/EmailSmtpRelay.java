@@ -238,7 +238,7 @@ public final class EmailSmtpRelay extends CachedObjectIntegerKey<EmailSmtpRelay>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(ao_server);

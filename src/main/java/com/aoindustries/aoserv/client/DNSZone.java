@@ -444,12 +444,12 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(file);
 		out.writeUTF(packageName.toString());
 		out.writeUTF(hostmaster);
 		out.writeLong(serial);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) out.writeCompressedInt(ttl);
 	}
 }

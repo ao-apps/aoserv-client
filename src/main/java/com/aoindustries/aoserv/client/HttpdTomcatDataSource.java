@@ -190,7 +190,7 @@ final public class HttpdTomcatDataSource extends CachedObjectIntegerKey<HttpdTom
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(tomcat_context);
 		out.writeUTF(name);

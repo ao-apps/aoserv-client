@@ -307,20 +307,20 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeCompressedInt(server);
 		out.writeBoolean(is_default);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_configure_backup
 		out.writeBoolean(can_control_apache);
 		out.writeBoolean(can_control_cron);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_control_interbase
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // can_control_interbase
 		out.writeBoolean(can_control_mysql);
 		out.writeBoolean(can_control_postgresql);
 		out.writeBoolean(can_control_xfs);
 		out.writeBoolean(can_control_xvfb);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeBoolean(can_vnc_console);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_64)>=0) out.writeBoolean(can_control_virtual_server);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeBoolean(can_vnc_console);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_64)>=0) out.writeBoolean(can_control_virtual_server);
 	}
 }

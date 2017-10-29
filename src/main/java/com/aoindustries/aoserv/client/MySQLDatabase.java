@@ -416,17 +416,17 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
 		else out.writeCompressedInt(mysql_server);
 		out.writeUTF(packageName.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_74) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_74) >= 0) {
 			out.writeCompressedUTF(maxCheckTableAlertLevel.name());
 		}
 	}

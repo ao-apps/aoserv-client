@@ -411,33 +411,33 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name.toString());
 		out.writeUTF(accounting.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
 			out.writeUTF("unknown");
 			out.writeCompressedInt(0);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0) {
 			out.writeCompressedInt(package_definition);
 		}
 		out.writeLong(created);
 		out.writeUTF(created_by.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
 			out.writeCompressedInt(-1);
 			out.writeCompressedInt(200);
 			out.writeCompressedInt(-1);
 			out.writeCompressedInt(100);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(256);
 			out.writeLong(64*1024*1024);
 			out.writeCompressedInt(256);
 			out.writeLong(64*1024*1024);
 		}
 		out.writeCompressedInt(disable_log);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_24)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_24)>=0) {
 			out.writeCompressedInt(email_in_burst);
 			out.writeFloat(email_in_rate);
 			out.writeCompressedInt(email_out_burst);

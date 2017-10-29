@@ -101,15 +101,15 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeUTF("192.168.0.0/16");
 			out.writeBoolean(false);
 			out.writeUTF("mob");
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeCompressedInt(owner);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeCompressedInt(owner);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
 	}
 }

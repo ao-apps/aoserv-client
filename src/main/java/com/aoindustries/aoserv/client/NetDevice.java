@@ -253,31 +253,31 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(server);
 		out.writeUTF(device_id);
 		out.writeUTF(description);
 		out.writeNullUTF(delete_route);
 		out.writeNullUTF(ObjectUtils.toString(gateway));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_37)<=0) out.writeUTF("255.255.255.0");
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_112)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_37)<=0) out.writeUTF("255.255.255.0");
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_112)>=0) {
 			out.writeNullUTF(ObjectUtils.toString(network));
 			out.writeNullUTF(ObjectUtils.toString(broadcast));
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)>=0) {
 			out.writeNullUTF(ObjectUtils.toString(mac_address));
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) {
 			out.writeLong(max_bit_rate);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
 			out.writeLong(monitoring_bit_rate_low);
 			out.writeLong(monitoring_bit_rate_medium);
 			out.writeLong(monitoring_bit_rate_high);
 			out.writeLong(monitoring_bit_rate_critical);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_70)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_70)>=0) {
 			out.writeBoolean(monitoring_enabled);
 		}
 	}

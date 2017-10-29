@@ -106,7 +106,7 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(name);
 		out.writeBoolean(charge_com_supported);

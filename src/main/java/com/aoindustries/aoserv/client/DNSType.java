@@ -168,11 +168,11 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);
 		out.writeBoolean(has_priority);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_72) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_72) >= 0) {
 			out.writeBoolean(has_weight);
 			out.writeBoolean(has_port);
 		}

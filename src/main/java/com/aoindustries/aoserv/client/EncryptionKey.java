@@ -227,14 +227,14 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(id);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_from / signup_signer
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_25)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_recipient
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_signer
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_25)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_recipient
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_from / signup_signer
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_25)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_recipient
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_signer
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_25)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_recipient
 	}
 
 	/**

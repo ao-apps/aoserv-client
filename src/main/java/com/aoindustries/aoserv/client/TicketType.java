@@ -83,9 +83,9 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) {
 			out.writeUTF(pkey); // description
 			out.writeBoolean(false); // client_view
 		}

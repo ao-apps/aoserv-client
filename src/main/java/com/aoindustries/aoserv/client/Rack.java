@@ -115,7 +115,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(farm);
 		out.writeUTF(name);

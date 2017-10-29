@@ -677,22 +677,22 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(server);
 		out.writeCompressedInt(ip_address);
 		out.writeCompressedInt(port.getPort());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_0) < 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_0) < 0) {
 			out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
 		} else {
 			out.writeEnum(port.getProtocol());
 		}
 		out.writeUTF(app_protocol);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_2) <= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_2) <= 0) {
 			out.writeBoolean(open_firewall);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
 			out.writeBoolean(monitoring_enabled);
 		} else {
 			out.writeCompressedInt(monitoring_enabled?300000:-1);
@@ -700,6 +700,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			out.writeNullUTF(null);
 			out.writeNullUTF(null);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_58)>=0) out.writeNullUTF(monitoring_parameters);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_58)>=0) out.writeNullUTF(monitoring_parameters);
 	}
 }

@@ -156,7 +156,7 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(server);
 		out.writeUTF(name.toString());

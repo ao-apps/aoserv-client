@@ -335,20 +335,20 @@ final public class MySQLServerUser extends CachedObjectIntegerKey<MySQLServerUse
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeCompressedInt(-1);
 		else out.writeCompressedInt(mysql_server);
 		out.writeNullUTF(host);
 		out.writeCompressedInt(disable_log);
 		out.writeNullUTF(predisable_password);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {
 			out.writeCompressedInt(max_questions);
 			out.writeCompressedInt(max_updates);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) out.writeCompressedInt(max_connections);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) out.writeCompressedInt(max_user_connections);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) out.writeCompressedInt(max_connections);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) out.writeCompressedInt(max_user_connections);
 	}
 
 	@Override

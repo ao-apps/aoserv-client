@@ -120,7 +120,7 @@ final public class TicketAssignment extends CachedObjectIntegerKey<TicketAssignm
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ticket);
 		out.writeUTF(reseller.toString());

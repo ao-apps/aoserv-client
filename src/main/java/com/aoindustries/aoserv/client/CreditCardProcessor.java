@@ -188,7 +188,7 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(className);
@@ -199,7 +199,7 @@ final public class CreditCardProcessor extends CachedObjectStringKey<CreditCardP
 		out.writeBoolean(enabled);
 		out.writeCompressedInt(weight);
 		out.writeNullUTF(description);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
 			out.writeCompressedInt(encryption_from);
 			out.writeCompressedInt(encryption_recipient);
 		}

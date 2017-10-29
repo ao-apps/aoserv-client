@@ -73,6 +73,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		ADD_HTTPD_TOMCAT_CONTEXT="add_httpd_tomcat_context",
 		ADD_HTTPD_TOMCAT_DATA_SOURCE="add_httpd_tomcat_data_source",
 		ADD_HTTPD_TOMCAT_PARAMETER="add_httpd_tomcat_parameter",
+		ADD_HTTPD_TOMCAT_SITE_JK_MOUNT="add_httpd_tomcat_site_jk_mount",
 		ADD_HTTPD_TOMCAT_SHARED_SITE="add_httpd_tomcat_shared_site",
 		ADD_HTTPD_TOMCAT_STD_SITE="add_httpd_tomcat_std_site",
 		ADD_INCOMING_PAYMENT="add_incoming_payment",
@@ -266,6 +267,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		REMOVE_HTTPD_TOMCAT_CONTEXT="remove_httpd_tomcat_context",
 		REMOVE_HTTPD_TOMCAT_DATA_SOURCE="remove_httpd_tomcat_data_source",
 		REMOVE_HTTPD_TOMCAT_PARAMETER="remove_httpd_tomcat_parameter",
+		REMOVE_HTTPD_TOMCAT_SITE_JK_MOUNT="remove_httpd_tomcat_site_jk_mount",
 		REMOVE_INCOMING_PAYMENT="remove_incoming_payment",
 		REMOVE_LINUX_ACC_ADDRESS="remove_linux_acc_address",
 		REMOVE_LINUX_ACCOUNT="remove_linux_account",
@@ -316,11 +318,15 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		SET_HTTPD_SITE_ENABLE_INDEXES = "set_httpd_site_enable_indexes",
 		SET_HTTPD_SITE_ENABLE_FOLLOW_SYMLINKS = "set_httpd_site_enable_follow_symlinks",
 		SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP = "set_httpd_site_enable_anonymous_ftp",
+		SET_HTTPD_SITE_BLOCK_TRACE_TRACK = "set_httpd_site_block_trace_track",
+		SET_HTTPD_SITE_BLOCK_SCM = "set_httpd_site_block_scm",
+		SET_HTTPD_SITE_BLOCK_CORE_DUMPS = "set_httpd_site_block_core_dumps",
+		SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS = "set_httpd_site_block_editor_backups",
 		SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES="set_httpd_tomcat_context_attributes",
 		SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE = "set_httpd_tomcat_std_site_max_post_size",
 		SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS = "set_httpd_tomcat_std_site_unpack_wars",
 		SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY = "set_httpd_tomcat_std_site_auto_deploy",
-		SET_HTTPD_TOMCAT_SITE_USE_APACHE = "set_httpd_tomcat_site_use_apache",
+		SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF = "set_httpd_tomcat_site_block_webinf",
 		SET_IP_ADDRESS_DHCP_ADDRESS="set_ip_address_dhcp_address",
 		SET_IP_ADDRESS_HOSTNAME="set_ip_address_hostname",
 		SET_IP_ADDRESS_PACKAGE="set_ip_address_package",
@@ -504,12 +510,12 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeNullUTF(table_name);
 		out.writeUTF(short_desc);
 		out.writeUTF(syntax);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeNullUTF(last_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeNullUTF(last_version);
 	}
 }

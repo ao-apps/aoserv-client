@@ -365,7 +365,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(tomcat_site);
 		out.writeNullUTF(class_name);
@@ -380,7 +380,7 @@ final public class HttpdTomcatContext extends CachedObjectIntegerKey<HttpdTomcat
 		out.writeNullUTF(wrapper_class);
 		out.writeCompressedInt(debug);
 		out.writeNullUTF(ObjectUtils.toString(work_dir));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_81_3) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_3) >= 0) {
 			out.writeBoolean(server_xml_configured);
 		}
 	}

@@ -155,18 +155,18 @@ final public class FailoverMySQLReplication extends CachedObjectIntegerKey<Failo
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_59)>=0) out.writeCompressedInt(ao_server);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_59)>=0) out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(replication);
 		out.writeCompressedInt(mysql_server);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_56)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_56)>=0) {
 			out.writeCompressedInt(monitoring_seconds_behind_low);
 			out.writeCompressedInt(monitoring_seconds_behind_medium);
 			out.writeCompressedInt(monitoring_seconds_behind_high);
 			out.writeCompressedInt(monitoring_seconds_behind_critical);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_74) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_74) >= 0) {
 			out.writeCompressedUTF(maxAlertLevel.name());
 		}
 	}

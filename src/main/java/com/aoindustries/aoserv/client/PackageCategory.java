@@ -88,8 +88,8 @@ public final class PackageCategory extends GlobalObjectStringKey<PackageCategory
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // display
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // display
 	}
 }

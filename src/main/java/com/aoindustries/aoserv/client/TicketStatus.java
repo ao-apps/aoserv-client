@@ -91,10 +91,10 @@ final public class TicketStatus extends GlobalObjectStringKey<TicketStatus> impl
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeUTF(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeShort(sort_order);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeUTF(pkey);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeShort(sort_order);
 	}
 
 	@Override

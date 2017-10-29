@@ -94,7 +94,7 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedUTF(accounting.toString(), 0);
 		out.writeUTF(identifier);
@@ -108,7 +108,7 @@ final public class IpReputationSet extends CachedObjectIntegerKey<IpReputationSe
 		out.writeLong(lastHostDecay);
 		out.writeCompressedInt(networkDecayInterval);
 		out.writeLong(lastNetworkDecay);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_67)>=0) out.writeLong(lastReputationAdded);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_67)>=0) out.writeLong(lastReputationAdded);
 	}
 
 	@Override

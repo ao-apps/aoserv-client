@@ -68,7 +68,7 @@ final public class HttpdJKCode extends GlobalObjectStringKey<HttpdJKCode> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 	}
 }
