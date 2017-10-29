@@ -342,26 +342,26 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) out.writeUTF(ip_address.isUnspecified() ? "0.0.0.0" : ip_address.toString());
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) out.writeUTF(ip_address.isUnspecified() ? "0.0.0.0" : ip_address.toString());
 		else out.writeUTF(ip_address.toString());
 		out.writeCompressedInt(net_device);
 		out.writeBoolean(is_alias);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) {
 			out.writeUTF(hostname==null ? "*" : hostname.toString());
 		} else {
 			out.writeNullUTF(ObjectUtils.toString(hostname));
 		}
 		out.writeUTF(packageName.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(0);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(0);
 		out.writeLong(created);
 		out.writeBoolean(available);
 		out.writeBoolean(isOverflow);
 		out.writeBoolean(isDHCP);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(ObjectUtils.toString(externalIpAddress));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_38)>=0) out.writeUTF(netmask);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_75)>=0) out.writeBoolean(checkBlacklistsOverSmtp);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(ObjectUtils.toString(externalIpAddress));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_38)>=0) out.writeUTF(netmask);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_75)>=0) out.writeBoolean(checkBlacklistsOverSmtp);
 	}
 }

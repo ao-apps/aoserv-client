@@ -162,12 +162,12 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(group_name.toString());
 		out.writeUTF(username.toString());
 		out.writeBoolean(is_primary);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
 			out.writeCompressedInt(operating_system_version);
 		}
 	}

@@ -165,7 +165,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(replication);
 		out.writeLong(startTime);

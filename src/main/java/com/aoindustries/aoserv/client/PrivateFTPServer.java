@@ -154,17 +154,17 @@ final public class PrivateFTPServer extends CachedObjectIntegerKey<PrivateFTPSer
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_113)<0) throw new IOException("PrivateFTPServer on AOServProtocol version less than "+AOServProtocol.Version.VERSION_1_0_A_113.getVersion()+" is no longer supported.  Please upgrade your AOServ Client software packages.");
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_113)<0) throw new IOException("PrivateFTPServer on AOServProtocol version less than "+AOServProtocol.Version.VERSION_1_0_A_113.getVersion()+" is no longer supported.  Please upgrade your AOServ Client software packages.");
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_38)<=0) out.writeUTF("Upgrade AOServClient to version "+AOServProtocol.Version.VERSION_1_39+" or newer");
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_38)<=0) out.writeUTF("Upgrade AOServClient to version "+AOServProtocol.Version.VERSION_1_39+" or newer");
 		out.writeUTF(logfile.toString());
 		out.writeUTF(hostname.toString());
 		out.writeUTF(email);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
 		out.writeLong(created);
 		out.writeCompressedInt(pub_linux_server_account);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_38)<=0) out.writeCompressedInt(-1);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_38)<=0) out.writeCompressedInt(-1);
 		out.writeBoolean(allow_anonymous);
 	}
 }

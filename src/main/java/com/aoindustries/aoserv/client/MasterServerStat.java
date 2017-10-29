@@ -154,7 +154,7 @@ final public class MasterServerStat extends AOServObject<String,MasterServerStat
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(name);
 		out.writeNullUTF(value);
 		out.writeUTF(description);

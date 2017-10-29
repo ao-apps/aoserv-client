@@ -158,7 +158,7 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(encoding);
 		out.writeCompressedInt(postgres_version);

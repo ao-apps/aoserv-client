@@ -412,10 +412,10 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ticket);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_50)>=0) out.writeNullUTF(ObjectUtils.toString(administrator));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_50)>=0) out.writeNullUTF(ObjectUtils.toString(administrator));
 		else out.writeUTF(administrator==null ? "aoadmin" : administrator.toString());
 		out.writeLong(time);
 		out.writeUTF(action_type);
@@ -423,7 +423,7 @@ final public class TicketAction extends CachedObjectIntegerKey<TicketAction> {
 		out.writeNullUTF(ObjectUtils.toString(new_accounting));
 		out.writeNullUTF(old_priority);
 		out.writeNullUTF(new_priority);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_49)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_49)>=0) {
 			out.writeNullUTF(old_type);
 			out.writeNullUTF(new_type);
 		}

@@ -1017,10 +1017,10 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(type);
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_69)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_69)>=0) {
 			out.writeUTF(since_version);
 			out.writeNullUTF(last_version);
 		}

@@ -242,7 +242,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(brand.toString());
 		out.writeLong(time);
@@ -276,7 +276,7 @@ final public class SignupRequest extends CachedObjectIntegerKey<SignupRequest> {
 		out.writeBoolean(billing_use_monthly);
 		out.writeBoolean(billing_pay_one_year);
 		out.writeUTF(encrypted_data);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(encryption_from);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(encryption_from);
 		out.writeCompressedInt(encryption_recipient); // Used to be called encryption_key
 		out.writeNullUTF(ObjectUtils.toString(completed_by));
 		out.writeLong(completed_time);

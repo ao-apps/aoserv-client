@@ -287,7 +287,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_site);
 		out.writeCompressedInt(httpd_bind);
@@ -295,13 +295,13 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		out.writeUTF(error_log.toString());
 		out.writeNullUTF(ObjectUtils.toString(sslCertFile));
 		out.writeNullUTF(ObjectUtils.toString(sslCertKeyFile));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
 			out.writeNullUTF(ObjectUtils.toString(sslCertChainFile));
 		}
 		out.writeCompressedInt(disable_log);
 		out.writeNullUTF(predisable_config);
 		out.writeBoolean(isManual);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_19) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_19) >= 0) {
 			out.writeBoolean(redirect_to_primary_hostname);
 		}
 	}

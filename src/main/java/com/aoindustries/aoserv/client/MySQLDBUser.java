@@ -266,7 +266,7 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(mysql_database);
 		out.writeCompressedInt(mysql_server_user);
@@ -280,18 +280,18 @@ final public class MySQLDBUser extends CachedObjectIntegerKey<MySQLDBUser> imple
 		out.writeBoolean(references_priv);
 		out.writeBoolean(index_priv);
 		out.writeBoolean(alter_priv);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_111)>=0) {
 			out.writeBoolean(create_tmp_table_priv);
 			out.writeBoolean(lock_tables_priv);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)>=0) {
 			out.writeBoolean(create_view_priv);
 			out.writeBoolean(show_view_priv);
 			out.writeBoolean(create_routine_priv);
 			out.writeBoolean(alter_routine_priv);
 			out.writeBoolean(execute_priv);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_54)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_54)>=0) {
 			out.writeBoolean(event_priv);
 			out.writeBoolean(trigger_priv);
 		}

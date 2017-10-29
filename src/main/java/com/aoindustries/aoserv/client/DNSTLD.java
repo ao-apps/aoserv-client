@@ -93,7 +93,7 @@ final public class DNSTLD extends GlobalObjectDomainNameKey<DNSTLD> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeUTF(description);
 	}

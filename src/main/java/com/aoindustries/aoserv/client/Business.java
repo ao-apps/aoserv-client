@@ -1025,17 +1025,17 @@ final public class Business extends CachedObjectAccountingCodeKey<Business> impl
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
 		out.writeLong(created);
 		out.writeLong(canceled);
 		out.writeNullUTF(cancelReason);
 		out.writeNullUTF(ObjectUtils.toString(parent));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
 		out.writeBoolean(can_add_businesses);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) out.writeBoolean(can_see_prices);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeBoolean(false);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) out.writeBoolean(can_see_prices);
 		out.writeCompressedInt(disable_log);
 		out.writeNullUTF(do_not_disable_reason);
 		out.writeBoolean(auto_enable);

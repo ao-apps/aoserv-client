@@ -207,7 +207,7 @@ final public class LinuxAccountType extends GlobalObjectStringKey<LinuxAccountTy
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);
 		out.writeBoolean(is_email);

@@ -207,7 +207,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(packageName.toString());

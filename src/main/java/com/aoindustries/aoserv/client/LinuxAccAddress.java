@@ -115,10 +115,10 @@ final public class LinuxAccAddress extends CachedObjectIntegerKey<LinuxAccAddres
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(email_address);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeUTF("TODO: Convert somehow"); // linux_account
 		} else {
 			out.writeCompressedInt(linux_server_account);

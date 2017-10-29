@@ -81,18 +81,18 @@ final public class MasterUser extends CachedObjectUserIdKey<MasterUser> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeBoolean(is_active);
 		out.writeBoolean(can_access_accounting);
 		out.writeBoolean(can_access_bank_account);
 		out.writeBoolean(can_invalidate_tables);
 		out.writeBoolean(can_access_admin_web);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)<=0)     out.writeBoolean(false); // is_ticket_admin
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0)     out.writeBoolean(false); // is_ticket_admin
 		out.writeBoolean(is_dns_admin);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)<0) out.writeBoolean(false);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_65)>=0)     out.writeBoolean(is_router);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_73)>=0)     out.writeBoolean(is_cluster_admin);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)<0) out.writeBoolean(false);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_65)>=0)     out.writeBoolean(is_router);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_73)>=0)     out.writeBoolean(is_cluster_admin);
 	}
 
 	@Override

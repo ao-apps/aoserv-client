@@ -112,7 +112,7 @@ public final class EmailAttachmentBlock extends CachedObjectIntegerKey<EmailAtta
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(linux_server_account);
 		out.writeUTF(extension);

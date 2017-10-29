@@ -462,9 +462,9 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1) < 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1) < 0) {
 			// Older clients require name, use "*" as name when none set
 			out.writeUTF(name==null ? "*" : name.toString());
 		} else {

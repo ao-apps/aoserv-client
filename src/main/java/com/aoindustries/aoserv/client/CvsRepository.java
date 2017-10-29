@@ -232,14 +232,14 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(path.toString());
 		out.writeCompressedInt(linux_server_account);
 		out.writeCompressedInt(linux_server_group);
 		out.writeLong(mode);
 		out.writeLong(created);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);
 		}

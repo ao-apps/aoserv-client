@@ -314,7 +314,7 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(after);
 		out.writeLong(before);
 		out.writeCompressedInt(transid);

@@ -126,7 +126,7 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(code);
 		out.writeCompressedInt(net_bind);

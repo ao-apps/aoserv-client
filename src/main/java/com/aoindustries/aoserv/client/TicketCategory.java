@@ -116,7 +116,7 @@ final public class TicketCategory extends CachedObjectIntegerKey<TicketCategory>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(parent);
 		out.writeUTF(name);

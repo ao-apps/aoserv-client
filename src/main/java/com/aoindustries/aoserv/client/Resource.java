@@ -115,15 +115,15 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
 			out.writeUTF(accessor.getMessage("Resource."+pkey+".singularDisplayUnit", ""));
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0 && version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
 			out.writeUTF(accessor.getMessage("Resource."+pkey+".pluralDisplayUnit", ""));
 			out.writeUTF(getPerUnit(""));
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // description
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // description
 	}
 }

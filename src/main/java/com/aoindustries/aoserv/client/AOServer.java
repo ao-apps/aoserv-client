@@ -131,13 +131,7 @@ final public class AOServer
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
 		HttpdJBossVersion jBossVersion,
-		UnixPath contentSrc,
-		TechnologyVersion phpVersion,
-		boolean enableCgi,
-		boolean enableSsi,
-		boolean enableHtaccess,
-		boolean enableIndexes,
-		boolean enableFollowSymlinks
+		UnixPath contentSrc
 	) throws IOException, SQLException {
 		return table.connector.getHttpdJBossSites().addHttpdJBossSite(
 			this,
@@ -151,13 +145,7 @@ final public class AOServer
 			primaryHttpHostname,
 			altHttpHostnames,
 			jBossVersion,
-			contentSrc,
-			phpVersion,
-			enableCgi,
-			enableSsi,
-			enableHtaccess,
-			enableIndexes,
-			enableFollowSymlinks
+			contentSrc
 		);
 	}
 
@@ -192,13 +180,7 @@ final public class AOServer
 		DomainName[] altHttpHostnames,
 		String sharedTomcatName,
 		HttpdTomcatVersion version,
-		UnixPath contentSrc,
-		TechnologyVersion phpVersion,
-		boolean enableCgi,
-		boolean enableSsi,
-		boolean enableHtaccess,
-		boolean enableIndexes,
-		boolean enableFollowSymlinks
+		UnixPath contentSrc
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
 			this,
@@ -213,13 +195,7 @@ final public class AOServer
 			altHttpHostnames,
 			sharedTomcatName,
 			version,
-			contentSrc,
-			phpVersion,
-			enableCgi,
-			enableSsi,
-			enableHtaccess,
-			enableIndexes,
-			enableFollowSymlinks
+			contentSrc
 		);
 	}
 
@@ -234,13 +210,7 @@ final public class AOServer
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
 		HttpdTomcatVersion tomcatVersion,
-		UnixPath contentSrc,
-		TechnologyVersion phpVersion,
-		boolean enableCgi,
-		boolean enableSsi,
-		boolean enableHtaccess,
-		boolean enableIndexes,
-		boolean enableFollowSymlinks
+		UnixPath contentSrc
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatStdSites().addHttpdTomcatStdSite(
 			this,
@@ -254,13 +224,7 @@ final public class AOServer
 			primaryHttpHostname,
 			altHttpHostnames,
 			tomcatVersion,
-			contentSrc,
-			phpVersion,
-			enableCgi,
-			enableSsi,
-			enableHtaccess,
-			enableIndexes,
-			enableFollowSymlinks
+			contentSrc
 		);
 	}
 
@@ -1007,9 +971,9 @@ final public class AOServer
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(1);
 			out.writeCompressedInt(2000);
 			out.writeCompressedInt(1024);
@@ -1019,12 +983,12 @@ final public class AOServer
 			out.writeBoolean(false);
 			out.writeBoolean(false);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeBoolean(true);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeBoolean(true);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeBoolean(false);
 			out.writeUTF("AOServer #"+pkey);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
 			out.writeUTF(hostname.toString());
 		}
 		out.writeCompressedInt(daemon_bind);
@@ -1033,41 +997,41 @@ final public class AOServer
 		out.writeCompressedInt(distro_hour);
 		out.writeLong(last_distro_time);
 		out.writeCompressedInt(failover_server);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(60*1000);
 			out.writeCompressedInt(5*60*1000);
 			out.writeBoolean(false);
 		}
 		out.writeNullUTF(daemon_device_id);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeNullUTF(null);
 			out.writeCompressedInt(1200*100);
 			out.writeBoolean(true);
-			if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) {
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) {
 				out.writeNullUTF(null);
 				out.writeNullUTF(null);
-			} else if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
+			} else if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
 				out.writeUTF(AOServProtocol.FILTERED);
 				out.writeUTF(AOServProtocol.FILTERED);
 			}
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(ObjectUtils.toString(daemon_connect_address));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(ObjectUtils.toString(daemon_connect_address));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
 			out.writeFloat(monitoring_load_low);
 			out.writeFloat(monitoring_load_medium);
 			out.writeFloat(monitoring_load_high);
 			out.writeFloat(monitoring_load_critical);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80)>=0) {
 			out.writeCompressedInt(uid_min.getId());
 			out.writeCompressedInt(gid_min.getId());
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_81_5) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_5) >= 0) {
 			out.writeLong(sftp_umask);
 		}
 	}

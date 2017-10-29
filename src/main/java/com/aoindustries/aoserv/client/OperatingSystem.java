@@ -106,7 +106,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(display);
 		out.writeBoolean(is_unix);

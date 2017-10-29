@@ -122,7 +122,7 @@ final public class EmailSmtpSmartHostDomain extends CachedObjectIntegerKey<Email
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(smart_host);
 		out.writeCompressedInt(domain_out_burst);

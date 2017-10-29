@@ -219,7 +219,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_site);
 		out.writeCompressedUTF(path, 0);

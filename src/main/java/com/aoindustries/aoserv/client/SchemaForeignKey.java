@@ -106,15 +106,15 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(key_column);
 		out.writeCompressedInt(foreign_column);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeBoolean(false); // is_bridge
 			out.writeCompressedInt(-1); // tied_bridge
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
 	}
 }

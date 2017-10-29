@@ -99,7 +99,7 @@ final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeShort(days);
 		out.writeUTF(display);
 	}

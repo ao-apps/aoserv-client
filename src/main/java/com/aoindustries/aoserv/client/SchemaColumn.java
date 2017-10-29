@@ -205,7 +205,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(table_name);
 		out.writeUTF(column_name);
@@ -215,7 +215,7 @@ final public class SchemaColumn extends GlobalObjectIntegerKey<SchemaColumn> {
 		out.writeBoolean(is_unique);
 		out.writeBoolean(is_public);
 		out.writeUTF(description);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
 	}
 }

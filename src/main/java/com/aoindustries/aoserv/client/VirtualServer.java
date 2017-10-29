@@ -258,30 +258,30 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(primaryRam);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(primaryRamTarget);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(primaryRamTarget);
 		out.writeCompressedInt(secondaryRam);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(secondaryRamTarget);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(secondaryRamTarget);
 		out.writeNullUTF(minimumProcessorType);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(secondaryRam==-1 ? null : minimumProcessorType);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(secondaryRam==-1 ? null : minimumProcessorType);
 		out.writeUTF(minimumProcessorArchitecture);
 		out.writeCompressedInt(minimumProcessorSpeed);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumProcessorSpeedTarget);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(secondaryRam==-1 ? -1 : minimumProcessorSpeed);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumProcessorSpeedTarget);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(secondaryRam==-1 ? -1 : minimumProcessorSpeed);
 		out.writeShort(processorCores);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(processorCoresTarget);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorCores);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(processorCoresTarget);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorCores);
 		out.writeShort(processorWeight);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(processorWeightTarget);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorWeight);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(processorWeightTarget);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorWeight);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
 		out.writeBoolean(primaryPhysicalServerLocked);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
 		out.writeBoolean(secondaryPhysicalServerLocked);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeNullUTF(vnc_password);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeNullUTF(vnc_password);
 	}
 
 	public List<VirtualDisk> getVirtualDisks() throws IOException, SQLException {

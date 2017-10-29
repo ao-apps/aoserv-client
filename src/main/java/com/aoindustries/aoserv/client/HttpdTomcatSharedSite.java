@@ -118,7 +118,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_shared_tomcat);
 	}

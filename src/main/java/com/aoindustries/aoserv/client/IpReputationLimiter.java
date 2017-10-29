@@ -63,7 +63,7 @@ final public class IpReputationLimiter extends CachedObjectIntegerKey<IpReputati
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(netDevice);
 		out.writeUTF          (identifier);

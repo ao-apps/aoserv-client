@@ -50,5 +50,5 @@ public interface AOServStreamable extends Streamable, AOServWritable {
 	// write(out, AOServProtocol.Version.getVersion(version));
 
 	@Override
-	void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
+	void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException;
 }

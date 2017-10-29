@@ -184,7 +184,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_site_bind);
 		out.writeUTF(hostname.toString());

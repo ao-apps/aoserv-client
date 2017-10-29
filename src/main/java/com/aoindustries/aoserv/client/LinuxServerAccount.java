@@ -714,13 +714,13 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username.toString());
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(uid.getId());
 		out.writeUTF(home.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);
 			out.writeShort(0);
@@ -737,17 +737,17 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		out.writeLong(created);
 		out.writeBoolean(use_inbox);
 		out.writeCompressedInt(trash_email_retention);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_120)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_120)>=0) {
 			out.writeCompressedInt(junk_email_retention);
 			out.writeUTF(sa_integration_mode);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_124)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_124)>=0) {
 			out.writeFloat(sa_required_score);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_40)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)>=0) {
 			out.writeCompressedInt(sa_discard_score);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
 			out.writeNullUTF(sudo);
 		}
 	}

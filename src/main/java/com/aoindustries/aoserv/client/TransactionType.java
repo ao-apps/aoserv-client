@@ -109,9 +109,9 @@ public final class TransactionType extends GlobalObjectStringKey<TransactionType
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
 			out.writeUTF(toStringImpl()); // display
 			out.writeUTF(getDescription()); // description
 			out.writeUTF(getUnit()); // unit

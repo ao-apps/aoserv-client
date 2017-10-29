@@ -60,12 +60,12 @@ final public class HttpdTomcatSiteTable extends CachedTableIntegerKey<HttpdTomca
 	@Override
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_SITE_USE_APACHE)) {
-			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_SITE_USE_APACHE, args, 3, err)) {
-				connector.getSimpleAOClient().setHttpdTomcatSiteUseApache(
+		if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdTomcatSiteBlockWebinf(
 					args[1],
 					args[2],
-					AOSH.parseBoolean(args[3], "use_apache")
+					AOSH.parseBoolean(args[3], "block_webinf")
 				);
 			}
 			return true;

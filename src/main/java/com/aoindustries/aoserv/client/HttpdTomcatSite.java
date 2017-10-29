@@ -47,7 +47,9 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 	static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 
 	private int version;
-	private boolean use_apache;
+	private boolean blockWebinf;
+
+	private boolean use_apache; // Only used for protocol compatibility on the server side
 
 	/**
 	 * The minimum amount of time in milliseconds between Java VM starts.
@@ -92,6 +94,21 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 		);
 	}
 
+	public int addHttpdTomcatSiteJkMount(
+		short sortOrder,
+		String path,
+		String comment,
+		boolean mount
+	) throws IOException, SQLException {
+		return table.connector.getHttpdTomcatSiteJkMounts().addHttpdTomcatSiteJkMount(
+			this,
+			sortOrder,
+			path,
+			comment,
+			mount
+		);
+	}
+
 	/**
 	 * Determines if the API user is allowed to stop the Java virtual machine associated
 	 * with this site.
@@ -116,9 +133,9 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 
 	@Override
 	Object getColumnImpl(int i) {
-		if(i==COLUMN_HTTPD_SITE) return pkey;
-		if(i==1) return version;
-		if(i==2) return use_apache;
+		if(i == COLUMN_HTTPD_SITE) return pkey;
+		if(i == 1) return version;
+		if(i == 2) return blockWebinf;
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
@@ -174,6 +191,10 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 		return table.connector.getHttpdWorkers().getHttpdWorkers(this);
 	}
 
+	public List<HttpdTomcatSiteJkMount> getHttpdTomcatSiteJkMounts() throws IOException, SQLException {
+		return table.connector.getHttpdTomcatSiteJkMounts().getHttpdTomcatSiteJkMounts(this);
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_TOMCAT_SITES;
@@ -181,16 +202,17 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		version=result.getInt(2);
-		use_apache=result.getBoolean(3);
+		pkey = result.getInt(1);
+		version = result.getInt(2);
+		blockWebinf = result.getBoolean(3);
+		use_apache = result.getBoolean(4);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		version=in.readCompressedInt();
-		use_apache=in.readBoolean();
+		pkey = in.readCompressedInt();
+		version = in.readCompressedInt();
+		blockWebinf = in.readBoolean();
 	}
 
 	public String startJVM() throws IOException, SQLException {
@@ -259,25 +281,28 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 	}
 
 	/**
-	 * @deprecated  Use {@link #getUseApache()} instead.
+	 * Blocks access to <code>/META-INF</code>
+	 * and <code>/WEB-INF</code> at the <a href="https://httpd.apache.org/">Apache</a> level.  When
+	 * <a href="https://httpd.apache.org/">Apache</a> serves content directly, instead of passing all
+	 * requests to <a href="http://tomcat.apache.org/">Tomcat</a>, this helps ensure proper protection
+	 * of these paths.
 	 */
-	@Deprecated
-	public boolean useApache() {
-		return getUseApache();
+	public boolean getBlockWebinf() {
+		return blockWebinf;
 	}
 
-	public boolean getUseApache() {
-		return use_apache;
-	}
-
-	public void setUseApache(boolean useApache) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_TOMCAT_SITE_USE_APACHE, pkey, useApache);
+	public void setBlockWebinf(boolean blockWebinf) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF, pkey, blockWebinf);
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(version);
-		out.writeBoolean(use_apache);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_6) >= 0) {
+			out.writeBoolean(blockWebinf);
+		} else  {
+			out.writeBoolean(use_apache);
+		}
 	}
 }

@@ -74,7 +74,7 @@ final public class HttpdStaticSite extends CachedObjectIntegerKey<HttpdStaticSit
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 	}
 }

@@ -423,7 +423,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(time);
 		out.writeCompressedInt(transid);
 		out.writeCompressedUTF(accounting.toString(), 0);
@@ -435,15 +435,15 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		out.writeCompressedInt(rate);
 		out.writeNullUTF(payment_type);
 		out.writeNullUTF(payment_info);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
 			out.writeNullUTF(null);
 		} else {
 			out.writeNullUTF(processor);
 			out.writeCompressedInt(creditCardTransaction);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)<0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)<0) {
 			out.writeCompressedInt(-1);
-		} else if(version.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
+		} else if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
 			out.writeNullUTF(null);
 		}
 		out.writeByte(payment_confirmed);

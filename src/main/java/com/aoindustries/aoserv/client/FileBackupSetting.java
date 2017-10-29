@@ -138,15 +138,15 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
 			out.writeCompressedInt(replication);
 		} else {
 			out.writeCompressedInt(-1); // server
 		}
 		out.writeUTF(path);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
 			out.writeBoolean(backup_enabled);
 		} else {
 			out.writeCompressedInt(308); // package (hard-coded AOINDUSTRIES)
@@ -154,7 +154,7 @@ final public class FileBackupSetting extends CachedObjectIntegerKey<FileBackupSe
 			out.writeShort(7); // backup_retention
 			out.writeBoolean(backup_enabled); // recurse
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_62)>=0) {
 			out.writeBoolean(required);
 		}
 	}

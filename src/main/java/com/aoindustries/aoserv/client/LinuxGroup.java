@@ -300,7 +300,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeUTF(packageName.toString());
 		out.writeUTF(type);

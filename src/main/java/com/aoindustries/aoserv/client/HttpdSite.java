@@ -95,6 +95,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	private boolean enableIndexes;
 	private boolean enableFollowSymlinks;
 	private boolean enableAnonymousFtp;
+	private boolean blockTraceTrack;
+	private boolean blockScm;
+	private boolean blockCoreDumps;
+	private boolean blockEditorBackups;
 
 	public int addHttpdSiteAuthenticatedLocation(
 		String path,
@@ -184,6 +188,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			case 16: return enableIndexes;
 			case 17: return enableFollowSymlinks;
 			case 18: return enableAnonymousFtp;
+			case 19: return blockTraceTrack;
+			case 20: return blockScm;
+			case 21: return blockCoreDumps;
+			case 22: return blockEditorBackups;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -317,6 +325,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			enableIndexes = result.getBoolean(pos++);
 			enableFollowSymlinks = result.getBoolean(pos++);
 			enableAnonymousFtp = result.getBoolean(pos++);
+			blockTraceTrack = result.getBoolean(pos++);
+			blockScm = result.getBoolean(pos++);
+			blockCoreDumps = result.getBoolean(pos++);
+			blockEditorBackups = result.getBoolean(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -366,6 +378,46 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 
 	public boolean getEnableAnonymousFtp() {
 		return enableAnonymousFtp;
+	}
+
+	/**
+	 * Enables the blocking of <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8">TRACE</a>
+	 * and TRACK <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">HTTP methods</a>.
+	 */
+	public boolean getBlockTraceTrack() {
+		return blockTraceTrack;
+	}
+
+	/**
+	 * Enables the blocking of URL
+	 * patterns associated with source control management systems.  It is possible for SCM
+	 * files, such as <code>CVS/Root</code> and <code>.git/config</code> to have authentication
+	 * credentials.  Leave this enabled when pulling web root content directly from revision
+	 * control systems.  Currently has protections for <a href="http://savannah.nongnu.org/projects/cvs">CVS</a>,
+	 * <a href="https://subversion.apache.org/">Subversion</a>, and
+	 * <a href="https://git-scm.com/">Git</a>.
+	 */
+	public boolean getBlockScm() {
+		return blockScm;
+	}
+
+	/**
+	 * Added <code>httpd_sites.block_core_dumps</code> column, which enables blocking of core dumps.
+	 * Core dumps could potentially expose sensitive information and have predictable filename patterns.
+	 */
+	public boolean getBlockCoreDumps() {
+		return blockCoreDumps;
+	}
+
+	/**
+	 * Enables blocking filename patterns
+	 * associated with editor automatic backups.  Without this protection, it is possible for source code
+	 * to be leaked by accessing the URL associated with the automatic backups.  Currently has
+	 * protections for <a href="https://www.gnu.org/software/emacs/">Emacs</a> and
+	 * <a href="http://www.vim.org/">Vim</a>.
+	 */
+	public boolean getBlockEditorBackups() {
+		return blockEditorBackups;
 	}
 
 	/**
@@ -447,6 +499,10 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			enableIndexes = in.readBoolean();
 			enableFollowSymlinks = in.readBoolean();
 			enableAnonymousFtp = in.readBoolean();
+			blockTraceTrack = in.readBoolean();
+			blockScm = in.readBoolean();
+			blockCoreDumps = in.readBoolean();
+			blockEditorBackups = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -493,13 +549,29 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_ENABLE_ANONYMOUS_FTP, pkey, enableAnonymousFtp);
 	}
 
+	public void setBlockTraceTrack(boolean blockTraceTrack) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BLOCK_TRACE_TRACK, pkey, blockTraceTrack);
+	}
+
+	public void setBlockScm(boolean blockScm) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BLOCK_SCM, pkey, blockScm);
+	}
+
+	public void setBlockCoreDumps(boolean blockCoreDumps) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BLOCK_CORE_DUMPS, pkey, blockCoreDumps);
+	}
+
+	public void setBlockEditorBackups(boolean blockEditorBackups) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BLOCK_EDITOR_BACKUPS, pkey, blockEditorBackups);
+	}
+
 	@Override
 	String toStringImpl() throws SQLException, IOException {
 		return site_name+" on "+getAOServer().getHostname();
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
 		out.writeUTF(site_name);
@@ -509,7 +581,7 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		out.writeUTF(linuxGroup.toString());
 		out.writeUTF(serverAdmin);
 		out.writeNullUTF(ObjectUtils.toString(contentSrc));
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);
 			out.writeShort(0);
@@ -521,21 +593,27 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		}
 		out.writeCompressedInt(disable_log);
 		out.writeBoolean(isManual);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_129) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_129) >= 0) {
 			out.writeNullUTF(awstatsSkipFiles);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_78) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_78) >= 0) {
 			out.writeCompressedInt(phpVersion);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_79) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_79) >= 0) {
 			out.writeBoolean(enableCgi);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
 			out.writeBoolean(enableSsi);
 			out.writeBoolean(enableHtaccess);
 			out.writeBoolean(enableIndexes);
 			out.writeBoolean(enableFollowSymlinks);
 			out.writeBoolean(enableAnonymousFtp);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_6) >= 0) {
+			out.writeBoolean(blockTraceTrack);
+			out.writeBoolean(blockScm);
+			out.writeBoolean(blockCoreDumps);
+			out.writeBoolean(blockEditorBackups);
 		}
 	}
 

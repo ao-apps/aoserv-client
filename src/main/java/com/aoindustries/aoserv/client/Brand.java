@@ -428,17 +428,17 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeUTF(nameserver1.toString());
 		out.writeUTF(nameserver2.toString());
 		out.writeNullUTF(ObjectUtils.toString(nameserver3));
 		out.writeNullUTF(ObjectUtils.toString(nameserver4));
 		out.writeCompressedInt(smtp_linux_server_account);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(smtp_host));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(smtp_host));
 		out.writeUTF(smtp_password);
 		out.writeCompressedInt(imap_linux_server_account);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(imap_host));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(imap_host));
 		out.writeUTF(imap_password);
 		out.writeCompressedInt(support_email_address);
 		out.writeUTF(support_email_display);
@@ -465,8 +465,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		out.writeBoolean(aoweb_struts_noindex);
 		out.writeNullUTF(aoweb_struts_google_analytics_new_tracking_code);
 		out.writeUTF(aoweb_struts_signup_admin_address);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_52)>=0) out.writeCompressedInt(aoweb_struts_vnc_bind);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_53)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_52)>=0) out.writeCompressedInt(aoweb_struts_vnc_bind);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_53)>=0) {
 			out.writeUTF(aoweb_struts_keystore_type);
 			out.writeUTF(aoweb_struts_keystore_password);
 		}

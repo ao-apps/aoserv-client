@@ -173,15 +173,15 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(operating_system);
 		out.writeUTF(version_number);
 		out.writeUTF(version_name);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeUTF(architecture);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeUTF(architecture);
 		out.writeUTF(display);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_3)>=0) out.writeShort(sort_order);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_3)>=0) out.writeShort(sort_order);
 	}
 
 	/**

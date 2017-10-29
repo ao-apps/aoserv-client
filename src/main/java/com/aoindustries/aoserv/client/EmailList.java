@@ -339,12 +339,12 @@ final public class EmailList extends CachedObjectIntegerKey<EmailList> implement
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(path.toString());
 		out.writeCompressedInt(linux_server_account);
 		out.writeCompressedInt(linux_server_group);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);
 		}

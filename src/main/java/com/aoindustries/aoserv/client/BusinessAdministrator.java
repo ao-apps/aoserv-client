@@ -544,9 +544,9 @@ final public class BusinessAdministrator extends CachedObjectUserIdKey<BusinessA
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) out.writeUTF(password==null ? "*" : password.toString());
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) out.writeUTF(password==null ? "*" : password.toString());
 		else out.writeNullUTF(ObjectUtils.toString(password));
 		out.writeUTF(name);
 		out.writeNullUTF(title);
@@ -566,8 +566,8 @@ final public class BusinessAdministrator extends CachedObjectUserIdKey<BusinessA
 		out.writeNullUTF(country);
 		out.writeNullUTF(zip);
 		out.writeCompressedInt(disable_log);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)>=0) out.writeBoolean(can_switch_users);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(support_code);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_118)>=0) out.writeBoolean(can_switch_users);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(support_code);
 	}
 
 	@Override

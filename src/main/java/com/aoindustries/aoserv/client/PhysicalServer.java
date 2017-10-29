@@ -210,7 +210,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(rack);
 		out.writeShort(rackUnits);
@@ -219,10 +219,10 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 		out.writeCompressedInt(processorSpeed);
 		out.writeCompressedInt(processorCores);
 		out.writeFloat(maxPower);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) {
 			out.writeBoolean(supports_hvm!=null);
 			if(supports_hvm!=null) out.writeBoolean(supports_hvm);
 		}
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_63)>=0) out.writeUTF(upsType.name());
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_63)>=0) out.writeUTF(upsType.name());
 	}
 }

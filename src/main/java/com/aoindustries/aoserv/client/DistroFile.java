@@ -293,8 +293,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_108) >= 0) {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108) >= 0) {
 			out.writeCompressedInt(pkey);
 			out.writeCompressedInt(operating_system_version);
 		}
@@ -305,7 +305,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		out.writeCompressedUTF(linux_account.toString(), 2);
 		out.writeCompressedUTF(linux_group.toString(), 3);
 		out.writeLong(size);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_80) >= 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80) >= 0) {
 			out.writeBoolean(has_file_sha256);
 			if(has_file_sha256) {
 				out.writeLong(file_sha256_0);

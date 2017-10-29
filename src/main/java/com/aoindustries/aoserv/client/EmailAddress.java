@@ -235,7 +235,7 @@ final public class EmailAddress extends CachedObjectIntegerKey<EmailAddress> imp
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(address);
 		out.writeCompressedInt(domain);

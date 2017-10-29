@@ -119,6 +119,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		HTTPD_TOMCAT_CONTEXTS,
 		HTTPD_TOMCAT_DATA_SOURCES,
 		HTTPD_TOMCAT_PARAMETERS,
+		HTTPD_TOMCAT_SITE_JK_MOUNTS,
 		HTTPD_TOMCAT_SITES,
 		HTTPD_TOMCAT_SHARED_SITES,
 		HTTPD_TOMCAT_STD_SITES,
@@ -425,18 +426,18 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(name);
 		out.writeCompressedInt(pkey);
 		out.writeUTF(display);
 		out.writeBoolean(is_public);
 		out.writeUTF(description);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeNullUTF(null); // dataverse_editor
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeNullUTF(null); // dataverse_editor
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
 		if(
-			version.compareTo(AOServProtocol.Version.VERSION_1_4)>=0
-			&& version.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
+			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)>=0
+			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
 		) out.writeNullUTF(null); // default_order_by
 	}
 }

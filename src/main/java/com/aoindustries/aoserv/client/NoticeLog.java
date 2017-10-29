@@ -154,7 +154,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeLong(create_time);
 		out.writeUTF(accounting.toString());

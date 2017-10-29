@@ -413,7 +413,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(disable_log);

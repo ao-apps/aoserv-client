@@ -242,7 +242,7 @@ final public class BusinessProfile extends CachedObjectIntegerKey<BusinessProfil
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeCompressedInt(priority);

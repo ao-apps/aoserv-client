@@ -338,7 +338,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(process_id);
 		out.writeLong(connector_id);
 		out.writeNullUTF(ObjectUtils.toString(authenticated_user));
@@ -346,7 +346,7 @@ final public class MasterProcess extends AOServObject<Long,MasterProcess> implem
 		out.writeCompressedInt(daemon_server);
 		out.writeUTF(host.toString());
 		out.writeUTF(protocol);
-		if(version.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
 		out.writeBoolean(is_secure);
 		out.writeLong(connect_time);
 		out.writeLong(use_count);

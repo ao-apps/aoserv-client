@@ -494,5 +494,5 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 
 	@Override
-	public abstract void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
+	public abstract void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException;
 }

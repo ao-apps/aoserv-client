@@ -32,5 +32,5 @@ import java.io.IOException;
  */
 public interface AOServWritable {
 
-	void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException;
+	void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException;
 }

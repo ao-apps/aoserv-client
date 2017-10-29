@@ -27,47 +27,53 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Each {@link HttpdSiteBind} may have redirect configurations attached to it.
+ * Each {@link HttpdTomcatSite} has independently configured <a href="https://tomcat.apache.org/connectors-doc/reference/apache.html">JkMount and JkUnMount directives</a>.
  *
- * @see  HttpdSiteBind
+ * @see  HttpdTomcatSite
  *
  * @author  AO Industries, Inc.
  */
-final public class HttpdSiteBindRedirect extends CachedObjectIntegerKey<HttpdSiteBindRedirect> {
+final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTomcatSiteJkMount> implements Removable {
 
 	static final int
 		COLUMN_PKEY = 0,
-		COLUMN_HTTPD_SITE_BIND = 1
+		COLUMN_HTTPD_TOMCAT_SITE = 1
 	;
-	static final String COLUMN_HTTPD_SITE_BIND_name = "httpd_site_bind";
+	static final String COLUMN_HTTPD_TOMCAT_SITE_name = "httpd_tomcat_site";
 	static final String COLUMN_SORT_ORDER_name = "sort_order";
 
-	int httpd_site_bind;
+	int httpd_tomcat_site;
 	private short sortOrder;
-	private String pattern;
-	private String substitution;
+	private String path;
 	private String comment;
-	private boolean noEscape;
+	private boolean mount;
+
+	@Override
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
+		return Collections.emptyList();
+	}
 
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
-			case COLUMN_HTTPD_SITE_BIND: return httpd_site_bind;
+			case COLUMN_HTTPD_TOMCAT_SITE: return httpd_tomcat_site;
 			case 2: return sortOrder;
-			case 3: return pattern;
-			case 4: return substitution;
-			case 5: return comment;
-			case 6: return noEscape;
+			case 3: return path;
+			case 4: return comment;
+			case 5: return mount;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public HttpdSiteBind getHttpdSiteBind() throws SQLException, IOException {
-		HttpdSiteBind obj = table.connector.getHttpdSiteBinds().get(httpd_site_bind);
-		if(obj == null) throw new SQLException("Unable to find HttpdSiteBind: " + httpd_site_bind);
+	public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
+		HttpdTomcatSite obj = table.connector.getHttpdTomcatSites().get(httpd_tomcat_site);
+		if(obj == null) throw new SQLException("Unable to find HttpdTomcatSite: " + httpd_tomcat_site);
 		return obj;
 	}
 
@@ -75,64 +81,64 @@ final public class HttpdSiteBindRedirect extends CachedObjectIntegerKey<HttpdSit
 		return sortOrder;
 	}
 
-	public String getPattern() {
-		return pattern;
-	}
-
-	public String getSubstitution() {
-		return substitution;
+	public String getPath() {
+		return path;
 	}
 
 	public String getComment() {
 		return comment;
 	}
 
-	public boolean isNoEscape() {
-		return noEscape;
+	/**
+	 * When {@code true} is a <code>JkMount</code> directive.
+	 * When {@code false} is a <code>JkUnMount</code> directive.
+	 */
+	public boolean isMount() {
+		return mount;
 	}
 
 	@Override
 	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.HTTPD_SITE_BIND_REDIRECTS;
+		return SchemaTable.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS;
 	}
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey = result.getInt(1);
-		httpd_site_bind = result.getInt(2);
+		httpd_tomcat_site = result.getInt(2);
 		sortOrder = result.getShort(3);
-		pattern = result.getString(4);
-		substitution = result.getString(5);
-		comment = result.getString(6);
-		noEscape = result.getBoolean(7);
+		path = result.getString(4);
+		comment = result.getString(5);
+		mount = result.getBoolean(6);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey = in.readCompressedInt();
-		httpd_site_bind = in.readCompressedInt();
+		httpd_tomcat_site = in.readCompressedInt();
 		sortOrder = in.readShort();
-		pattern = in.readUTF();
-		substitution = in.readUTF();
+		path = in.readUTF();
 		comment = in.readNullUTF();
-		noEscape = in.readBoolean();
+		mount = in.readBoolean();
 	}
 
 	@Override
 	String toStringImpl() {
-		return pattern + " -> " + substitution;
+		return (mount ? "JkMount " : "JkUnMount ") + path;
+	}
+
+	@Override
+	public void remove() throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.HTTPD_TOMCAT_SITE_JK_MOUNTS, pkey);
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(httpd_site_bind);
+		out.writeCompressedInt(httpd_tomcat_site);
 		out.writeShort(sortOrder);
-		out.writeUTF(pattern);
-		out.writeUTF(substitution);
+		out.writeUTF(path);
 		out.writeNullUTF(comment);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
-			out.writeBoolean(noEscape);
-		}
+		out.writeBoolean(mount);
 	}
 }

@@ -93,7 +93,7 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toUpperCase());
 		out.writeBoolean(ticket_auto_escalate);
 	}

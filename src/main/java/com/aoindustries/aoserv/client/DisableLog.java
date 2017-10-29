@@ -135,7 +135,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeLong(time);
 		out.writeUTF(accounting.toString());

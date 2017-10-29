@@ -106,7 +106,7 @@ final public class MasterServer extends CachedObjectIntegerKey<MasterServer> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version version) throws IOException {
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username.toString());
 		out.writeCompressedInt(server);
