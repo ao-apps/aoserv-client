@@ -58,6 +58,7 @@ final public class HttpdTomcatSiteJkMountTable extends CachedTableIntegerKey<Htt
 		final String path,
 		final boolean mount
 	) throws IOException, SQLException {
+		if(!HttpdTomcatSiteJkMount.isValidPath(path)) throw new IllegalArgumentException("Invalid path: " + path);
 		return connector.requestResult(
 			true,
 			AOServProtocol.CommandID.ADD,
