@@ -71,6 +71,35 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	private boolean use_mod_perl;
 	private int timeout;
 	private int max_concurrency;
+	private Boolean mod_access_compat;
+	private Boolean mod_actions;
+	private Boolean mod_alias;
+	private Boolean mod_auth_basic;
+	private Boolean mod_authn_core;
+	private Boolean mod_authn_file;
+	private Boolean mod_authz_core;
+	private Boolean mod_authz_groupfile;
+	private Boolean mod_authz_host;
+	private Boolean mod_authz_user;
+	private Boolean mod_autoindex;
+	private Boolean mod_deflate;
+	private Boolean mod_dir;
+	private Boolean mod_filter;
+	private Boolean mod_headers;
+	private Boolean mod_include;
+	private Boolean mod_jk;
+	private Boolean mod_log_config;
+	private Boolean mod_mime;
+	private Boolean mod_mime_magic;
+	private Boolean mod_negotiation;
+	private Boolean mod_proxy;
+	private Boolean mod_proxy_http;
+	private Boolean mod_reqtimeout;
+	private Boolean mod_rewrite;
+	private Boolean mod_setenvif;
+	private Boolean mod_socache_shmcb;
+	private Boolean mod_ssl;
+	private Boolean mod_status;
 
 	public boolean canAddSites() {
 		return can_add_sites;
@@ -94,6 +123,35 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 			case 12: return use_mod_perl;
 			case 13: return timeout;
 			case 14: return max_concurrency;
+			case 15: return mod_access_compat;
+			case 16: return mod_actions;
+			case 17: return mod_alias;
+			case 18: return mod_auth_basic;
+			case 19: return mod_authn_core;
+			case 20: return mod_authn_file;
+			case 21: return mod_authz_core;
+			case 22: return mod_authz_groupfile;
+			case 23: return mod_authz_host;
+			case 24: return mod_authz_user;
+			case 25: return mod_autoindex;
+			case 26: return mod_deflate;
+			case 27: return mod_dir;
+			case 28: return mod_filter;
+			case 29: return mod_headers;
+			case 30: return mod_include;
+			case 31: return mod_jk;
+			case 32: return mod_log_config;
+			case 33: return mod_mime;
+			case 34: return mod_mime_magic;
+			case 35: return mod_negotiation;
+			case 36: return mod_proxy;
+			case 37: return mod_proxy_http;
+			case 38: return mod_reqtimeout;
+			case 39: return mod_rewrite;
+			case 40: return mod_setenvif;
+			case 41: return mod_socache_shmcb;
+			case 42: return mod_ssl;
+			case 43: return mod_status;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -180,6 +238,122 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		return obj;
 	}
 
+	public Boolean getModAccessCompat() {
+		return mod_access_compat;
+	}
+
+	public Boolean getModActions() {
+		return mod_actions;
+	}
+
+	public Boolean getModAlias() {
+		return mod_alias;
+	}
+
+	public Boolean getModAuthBasic() {
+		return mod_auth_basic;
+	}
+
+	public Boolean getModAuthnCore() {
+		return mod_authn_core;
+	}
+
+	public Boolean getModAuthnFile() {
+		return mod_authn_file;
+	}
+
+	public Boolean getModAuthzCore() {
+		return mod_authz_core;
+	}
+
+	public Boolean getModAuthzGroupfile() {
+		return mod_authz_groupfile;
+	}
+
+	public Boolean getModAuthzHost() {
+		return mod_authz_host;
+	}
+
+	public Boolean getModAuthzUser() {
+		return mod_authz_user;
+	}
+
+	public Boolean getModAutoindex() {
+		return mod_autoindex;
+	}
+
+	public Boolean getModDeflate() {
+		return mod_deflate;
+	}
+
+	public Boolean getModDir() {
+		return mod_dir;
+	}
+
+	public Boolean getModFilter() {
+		return mod_filter;
+	}
+
+	public Boolean getModHeaders() {
+		return mod_headers;
+	}
+
+	public Boolean getModInclude() {
+		return mod_include;
+	}
+
+	public Boolean getModJk() {
+		return mod_jk;
+	}
+
+	public Boolean getModLogConfig() {
+		return mod_log_config;
+	}
+
+	public Boolean getModMime() {
+		return mod_mime;
+	}
+
+	public Boolean getModMimeMagic() {
+		return mod_mime_magic;
+	}
+
+	public Boolean getModNegotiation() {
+		return mod_negotiation;
+	}
+
+	public Boolean getModProxy() {
+		return mod_proxy;
+	}
+
+	public Boolean getModProxyHttp() {
+		return mod_proxy_http;
+	}
+
+	public Boolean getModReqtimeout() {
+		return mod_reqtimeout;
+	}
+
+	public Boolean getModRewrite() {
+		return mod_rewrite;
+	}
+
+	public Boolean getModSetenvif() {
+		return mod_setenvif;
+	}
+
+	public Boolean getModSocacheShmcb() {
+		return mod_socache_shmcb;
+	}
+
+	public Boolean getModSsl() {
+		return mod_ssl;
+	}
+
+	public Boolean getModStatus() {
+		return mod_status;
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_SERVERS;
@@ -204,6 +378,64 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		use_mod_perl=result.getBoolean(pos++);
 		timeout=result.getInt(pos++);
 		max_concurrency=result.getInt(pos++);
+		mod_access_compat=result.getBoolean(pos++);
+		if(result.wasNull()) mod_access_compat = null;
+		mod_actions=result.getBoolean(pos++);
+		if(result.wasNull()) mod_actions = null;
+		mod_alias=result.getBoolean(pos++);
+		if(result.wasNull()) mod_alias = null;
+		mod_auth_basic=result.getBoolean(pos++);
+		if(result.wasNull()) mod_auth_basic = null;
+		mod_authn_core=result.getBoolean(pos++);
+		if(result.wasNull()) mod_authn_core = null;
+		mod_authn_file=result.getBoolean(pos++);
+		if(result.wasNull()) mod_authn_file = null;
+		mod_authz_core=result.getBoolean(pos++);
+		if(result.wasNull()) mod_authz_core = null;
+		mod_authz_groupfile=result.getBoolean(pos++);
+		if(result.wasNull()) mod_authz_groupfile = null;
+		mod_authz_host=result.getBoolean(pos++);
+		if(result.wasNull()) mod_authz_host = null;
+		mod_authz_user=result.getBoolean(pos++);
+		if(result.wasNull()) mod_authz_user = null;
+		mod_autoindex=result.getBoolean(pos++);
+		if(result.wasNull()) mod_autoindex = null;
+		mod_deflate=result.getBoolean(pos++);
+		if(result.wasNull()) mod_deflate = null;
+		mod_dir=result.getBoolean(pos++);
+		if(result.wasNull()) mod_dir = null;
+		mod_filter=result.getBoolean(pos++);
+		if(result.wasNull()) mod_filter = null;
+		mod_headers=result.getBoolean(pos++);
+		if(result.wasNull()) mod_headers = null;
+		mod_include=result.getBoolean(pos++);
+		if(result.wasNull()) mod_include = null;
+		mod_jk=result.getBoolean(pos++);
+		if(result.wasNull()) mod_jk = null;
+		mod_log_config=result.getBoolean(pos++);
+		if(result.wasNull()) mod_log_config = null;
+		mod_mime=result.getBoolean(pos++);
+		if(result.wasNull()) mod_mime = null;
+		mod_mime_magic=result.getBoolean(pos++);
+		if(result.wasNull()) mod_mime_magic = null;
+		mod_negotiation=result.getBoolean(pos++);
+		if(result.wasNull()) mod_negotiation = null;
+		mod_proxy=result.getBoolean(pos++);
+		if(result.wasNull()) mod_proxy = null;
+		mod_proxy_http=result.getBoolean(pos++);
+		if(result.wasNull()) mod_proxy_http = null;
+		mod_reqtimeout=result.getBoolean(pos++);
+		if(result.wasNull()) mod_reqtimeout = null;
+		mod_rewrite=result.getBoolean(pos++);
+		if(result.wasNull()) mod_rewrite = null;
+		mod_setenvif=result.getBoolean(pos++);
+		if(result.wasNull()) mod_setenvif = null;
+		mod_socache_shmcb=result.getBoolean(pos++);
+		if(result.wasNull()) mod_socache_shmcb = null;
+		mod_ssl=result.getBoolean(pos++);
+		if(result.wasNull()) mod_ssl = null;
+		mod_status=result.getBoolean(pos++);
+		if(result.wasNull()) mod_status = null;
 	}
 
 	/**
@@ -231,6 +463,35 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		use_mod_perl=in.readBoolean();
 		timeout=in.readCompressedInt();
 		max_concurrency=in.readCompressedInt();
+		mod_access_compat = in.readNullBoolean();
+		mod_actions = in.readNullBoolean();
+		mod_alias = in.readNullBoolean();
+		mod_auth_basic = in.readNullBoolean();
+		mod_authn_core = in.readNullBoolean();
+		mod_authn_file = in.readNullBoolean();
+		mod_authz_core = in.readNullBoolean();
+		mod_authz_groupfile = in.readNullBoolean();
+		mod_authz_host = in.readNullBoolean();
+		mod_authz_user = in.readNullBoolean();
+		mod_autoindex = in.readNullBoolean();
+		mod_deflate = in.readNullBoolean();
+		mod_dir = in.readNullBoolean();
+		mod_filter = in.readNullBoolean();
+		mod_headers = in.readNullBoolean();
+		mod_include = in.readNullBoolean();
+		mod_jk = in.readNullBoolean();
+		mod_log_config = in.readNullBoolean();
+		mod_mime = in.readNullBoolean();
+		mod_mime_magic = in.readNullBoolean();
+		mod_negotiation = in.readNullBoolean();
+		mod_proxy = in.readNullBoolean();
+		mod_proxy_http = in.readNullBoolean();
+		mod_reqtimeout = in.readNullBoolean();
+		mod_rewrite = in.readNullBoolean();
+		mod_setenvif = in.readNullBoolean();
+		mod_socache_shmcb = in.readNullBoolean();
+		mod_ssl = in.readNullBoolean();
+		mod_status = in.readNullBoolean();
 	}
 
 	@Override
@@ -263,6 +524,37 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		}
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68)>=0) {
 			out.writeCompressedInt(max_concurrency);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_7) >= 0) {
+			out.writeNullBoolean(mod_access_compat);
+			out.writeNullBoolean(mod_actions);
+			out.writeNullBoolean(mod_alias);
+			out.writeNullBoolean(mod_auth_basic);
+			out.writeNullBoolean(mod_authn_core);
+			out.writeNullBoolean(mod_authn_file);
+			out.writeNullBoolean(mod_authz_core);
+			out.writeNullBoolean(mod_authz_groupfile);
+			out.writeNullBoolean(mod_authz_host);
+			out.writeNullBoolean(mod_authz_user);
+			out.writeNullBoolean(mod_autoindex);
+			out.writeNullBoolean(mod_deflate);
+			out.writeNullBoolean(mod_dir);
+			out.writeNullBoolean(mod_filter);
+			out.writeNullBoolean(mod_headers);
+			out.writeNullBoolean(mod_include);
+			out.writeNullBoolean(mod_jk);
+			out.writeNullBoolean(mod_log_config);
+			out.writeNullBoolean(mod_mime);
+			out.writeNullBoolean(mod_mime_magic);
+			out.writeNullBoolean(mod_negotiation);
+			out.writeNullBoolean(mod_proxy);
+			out.writeNullBoolean(mod_proxy_http);
+			out.writeNullBoolean(mod_reqtimeout);
+			out.writeNullBoolean(mod_rewrite);
+			out.writeNullBoolean(mod_setenvif);
+			out.writeNullBoolean(mod_socache_shmcb);
+			out.writeNullBoolean(mod_ssl);
+			out.writeNullBoolean(mod_status);
 		}
 	}
 }

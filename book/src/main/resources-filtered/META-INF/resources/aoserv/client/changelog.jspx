@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-10-28T20:59:26-0500"
+		dateModified="2017-10-31T00:08:24-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -241,6 +241,241 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>
 								Removed the <code>set_httpd_tomcat_site_use_apache</code> AOSH command, with older clients
 								toggling the existence of <code>JkMount /*</code>.
+							</li>
+						</ol>
+					</li>
+					<li>
+						<p>
+							May now manually configure which <ao:a href="https://httpd.apache.org/docs/2.4/mod/">Apache Modules</ao:a> are loaded
+							on a per-<ao:a href="https://httpd.apache.org/">Apache</ao:a>-instance basis.  Any value left at
+							<code>null</code>, the default, with be in automatic mode.  Automatic mode minimizes the number
+							of loaded modules given the current system configuration.  Automatic mode does not parse the
+							contents of <code>.htaccess</code> files, so non-default modules may be enabled manually
+							as-needed.
+						</p>
+						<p>
+							The following columns within the <code>httpd_servers</code> table control each module,
+							with default automatic behavior described for each:
+						</p>
+						<ol>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_access_compat.html">mod_access_compat</ao:a> defaults:
+								<ul>
+									<li>Enabled when <code>aoserv-httpd-config-compat</code> package is installed.</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_actions.html">mod_actions</ao:a> defaults:
+								<ul>
+									<li>Enabled when CGI-based PHP exists on a site and mod_php is not used on this instance.</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html">mod_alias</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when <code>mod_autoindex</code> enabled (for <code>/icons/</code>
+										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html#alias">Alias</ao:a>
+										in <code>/etc/httpd/aoserv.conf.d/mod_autoindex.conf</code>).
+									</li>
+									<li>
+										Enabled when any site has a secondary context (contexts other than <code>webapps/ROOT</code>
+										are added by <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html#alias">Alias</ao:a>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_auth_basic.html">mod_auth_basic</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
+										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authtype">AuthType Basic</ao:a>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html">mod_authn_core</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
+										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authtype">AuthType Basic</ao:a>).
+									</li>
+									<li>
+										Enabled when has any <code>httpd_site_authenticated_locations.auth_name</code>
+										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authname">AuthName</ao:a>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_file.html">mod_authn_file</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
+										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_file.html#authuserfile">AuthUserFile</ao:a>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html">mod_authz_core</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled by default (for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#reqall">Require all granted</ao:a>
+										and <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#reqall">Require all denied</ao:a>
+										used in <code>/etc/httpd/aoserv.conf.d/*.conf</code> and per-site and per-bind configs).
+									</li>
+								</ul>
+								<p>
+									When <code>mod_authz_core</code> is manually disabled, the server will still run, but many protections
+									will be disabled.  This might result in open proxies, unexpected access to URLs or files, and
+									other serious issues.  Only disable when all consequences are fully analyzed and understood.
+								</p>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_groupfile.html">mod_authz_groupfile</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when has any <code>httpd_site_authenticated_locations.auth_group_file</code>
+										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_groupfile.html">AuthGroupFile</ao:a>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html">mod_authz_host</ao:a> defaults:
+								<ul>
+									<li>Disabled, no auto condition currently to turn it on.</li>
+								</ul>
+								<p>
+									Might be needed for <code>.htaccess</code> or manual override for
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqip">Require ip</ao:a>,
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqhost">Require host</ao:a>,
+									or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqlocal">Require local</ao:a>.
+								</p>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html">mod_authz_user</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when has any <code>httpd_site_authenticated_locations.require</code>
+										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html#requser">Require user</ao:a>
+										or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html#reqvaliduser">Require valid-user</ao:a>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_autoindex.html">mod_autoindex</ao:a> defaults:
+								<ul>
+									<li>Enabled when has any <code>httpd_sites.enable_indexes</code>.</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_deflate.html">mod_deflate</ao:a> defaults:
+								<ul>
+									<li>Enabled by default (unless explicitly disabled).</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_dir.html">mod_dir</ao:a> defaults:
+								<ul>
+									<li>Enabled by default (unless explicitly disabled).</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_filter.html">mod_filter</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when <code>mod_deflate</code> is enabled (for
+										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_filter.html#addoutputfilterbytype">AddOutputFilterByType</ao:a>
+										in <code>/etc/httpd/aoserv.conf.d/mod_deflate.conf</code>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html">mod_headers</ao:a> defaults:
+								<ul>
+									<li>Disabled, no auto condition currently to turn it on.</li>
+								</ul>
+								<p>
+									Might be needed for <code>.htaccess</code> or manual override for
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header">Header</ao:a>
+									or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html#requestheader">RequestHeader</ao:a>.
+								</p>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_include.html">mod_include</ao:a> defaults:
+								<ul>
+									<li>Enabled when has any <code>httpd_sites.enable_ssi</code>.</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://tomcat.apache.org/connectors-doc/reference/apache.html">mod_jk</ao:a> defaults:
+								<ul>
+									<li>Enabled when any site has a <code>JkMount</code> or <code>JkUnMount</code>.</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_log_config.html">mod_log_config</ao:a> defaults:
+								<ul>
+									<li>Enabled by default (unless explicitly disabled).</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html">mod_mime</ao:a> defaults:
+								<ul>
+									<li>Enabled by default (unless explicitly disabled).</li>
+									<li>
+										Enabled when has <code>mod_php</code> (for
+										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addtype">AddType .php</ao:a>
+										and <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addtype">AddType .phps</ao:a>).
+									</li>
+									<li>
+										Enabled when <code>mod_negotiation</code> is enabled (for
+										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addhandler">AddHandler .var</ao:a>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime_magic.html">mod_mime_magic</ao:a> defaults:
+								<ul>
+									<li>Enabled by default (unless explicitly disabled).</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_negotiation.html">mod_negotiation</ao:a> defaults:
+								<ul>
+									<li>Disabled by default (unless explicitly enabled).</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy.html">mod_proxy</ao:a> defaults:
+								<ul>
+									<li>Enabled when <code>mod_proxy_http</code> is enabled.</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_http.html">mod_proxy_http</ao:a> defaults:
+								<ul>
+									<li>Disabled by default (unless explicitly enabled).</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_reqtimeout.html">mod_reqtimeout</ao:a> defaults:
+								<ul>
+									<li>Enabled by default (unless explicitly disabled).</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html">mod_rewrite</ao:a> defaults:
+								<ul>
+									<li>Enabled when has any <code>httpd_sites.block_trace_track</code>.</li>
+									<li>Enabled when has any <code>httpd_site_binds.redirect_to_primary_hostname</code>.</li>
+									<li>Enabled when has any <code>httpd_site_bind_redirects</code>.</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_setenvif.html">mod_setenvif</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when <code>mod_ssl</code> is enabled (for
+										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_setenvif.html">BrowserMatch</ao:a>
+										SSL downgrade of ancient browsers).
+									</li>
+								</ul>
+								<p>
+									It is safe to disable this module if not concerned about ancient browser support and the module
+									is otherwise not needed.
+								</p>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_socache_shmcb.html">mod_socache_shmcb</ao:a> defaults:
+								<ul>
+									<li>
+										Enabled when <code>mod_ssl</code> is enabled (for
+										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslsessioncache">SSLSessionCache shmcb:/run/httpd</ao:a>).
+									</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html">mod_ssl</ao:a> defaults:
+								<ul>
+									<li>Enabled when has any <code>httpd_site_binds.ssl_cert_file</code>.</li>
+								</ul>
+							</li>
+							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_status.html">mod_status</ao:a> defaults:
+								<ul>
+									<li>Disabled by default (unless explicitly enabled).</li>
+								</ul>
 							</li>
 						</ol>
 					</li>
