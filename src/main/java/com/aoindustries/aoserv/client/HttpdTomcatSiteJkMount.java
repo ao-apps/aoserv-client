@@ -47,6 +47,24 @@ final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTo
 	static final String COLUMN_PATH_name = "path";
 	static final String COLUMN_MOUNT_name = "mount";
 
+	/**
+	 * Checks if the path is valid for JkMount
+	 * and JkUnMount.
+	 */
+	public static boolean isValidPath(String path) {
+		return
+			path.length() > 1
+			&& path.charAt(0) == '/'
+			&& !path.contains("//")
+			&& !path.contains("..")
+			&& path.indexOf('"') == -1
+			&& path.indexOf('\\') == -1
+			&& path.indexOf('\n') == -1
+			&& path.indexOf('\r') == -1
+			&& path.indexOf('\0') == -1
+		;
+	}
+
 	int httpd_tomcat_site;
 	private String path;
 	private boolean mount;
@@ -96,6 +114,7 @@ final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTo
 		httpd_tomcat_site = result.getInt(2);
 		path = result.getString(3);
 		mount = result.getBoolean(4);
+		if(!isValidPath(path)) throw new SQLException("Invalid path: " + path);
 	}
 
 	@Override
@@ -104,6 +123,7 @@ final public class HttpdTomcatSiteJkMount extends CachedObjectIntegerKey<HttpdTo
 		httpd_tomcat_site = in.readCompressedInt();
 		path = in.readUTF();
 		mount = in.readBoolean();
+		if(!isValidPath(path)) throw new IOException("Invalid path: " + path);
 	}
 
 	@Override
