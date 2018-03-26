@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -56,6 +56,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		ADM,
 		AOADMIN,
 		AOSERV_JILTER,
+		AOSERV_XEN_MIGRATION,
 		APACHE,
 		AUDIO,
 		AVAHI_AUTOIPD,
@@ -128,6 +129,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			ADM = GroupId.valueOf("adm");
 			AOADMIN = GroupId.valueOf("aoadmin");
 			AOSERV_JILTER = GroupId.valueOf("aoserv-jilter");
+			AOSERV_XEN_MIGRATION = GroupId.valueOf("aoserv-xen-migration");
 			APACHE = GroupId.valueOf("apache");
 			AUDIO = GroupId.valueOf("audio");
 			AVAHI_AUTOIPD = GroupId.valueOf("avahi-autoipd");

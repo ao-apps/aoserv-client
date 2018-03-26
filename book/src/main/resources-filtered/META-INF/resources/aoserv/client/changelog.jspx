@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoserv-client - Java client for the AOServ Platform.
-Copyright (C) 2016, 2017  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2017-10-31T00:08:24-0500"
+		dateModified="2018-03-26T02:00:43-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -725,6 +725,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<li>New system groups:
 					<ol>
 						<li><code>aoserv-jilter</code></li>
+						<li><code>aoserv-xen-migration</code></li>
 						<li><code>mailnull</code></li>
 						<li><code>memcached</code></li>
 						<li><code>nginx</code></li>
@@ -735,6 +736,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<li>New system users:
 					<ol>
 						<li><code>aoserv-jilter</code></li>
+						<li><code>aoserv-xen-migration</code></li>
 						<li><code>mailnull</code></li>
 						<li><code>memcached</code></li>
 						<li><code>nginx</code></li>
