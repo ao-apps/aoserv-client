@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -56,6 +56,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 		ADM,
 		AOADMIN,
 		AOSERV_JILTER,
+		AOSERV_XEN_MIGRATION,
 		APACHE,
 		AVAHI_AUTOIPD,
 		AWSTATS,
@@ -108,6 +109,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 			ADM = UserId.valueOf("adm");
 			AOADMIN = UserId.valueOf("aoadmin");
 			AOSERV_JILTER = UserId.valueOf("aoserv-jilter");
+			AOSERV_XEN_MIGRATION = UserId.valueOf("aoserv-xen-migration");
 			APACHE = UserId.valueOf("apache");
 			AVAHI_AUTOIPD = UserId.valueOf("avahi-autoipd");
 			AWSTATS = UserId.valueOf("awstats");
