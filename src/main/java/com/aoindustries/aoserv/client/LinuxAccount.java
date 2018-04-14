@@ -61,6 +61,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 		AVAHI_AUTOIPD,
 		AWSTATS,
 		BIN,
+		BIRD,
 		CHRONY,
 		CYRUS,
 		DAEMON,
@@ -114,6 +115,7 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 			AVAHI_AUTOIPD = UserId.valueOf("avahi-autoipd");
 			AWSTATS = UserId.valueOf("awstats");
 			BIN = UserId.valueOf("bin");
+			BIRD = UserId.valueOf("bird");
 			CHRONY = UserId.valueOf("chrony");
 			CYRUS = UserId.valueOf("cyrus");
 			DAEMON = UserId.valueOf("daemon");
