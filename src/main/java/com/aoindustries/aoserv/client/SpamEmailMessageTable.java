@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -114,11 +114,12 @@ final public class SpamEmailMessageTable extends AOServTable<Integer,SpamEmailMe
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_SPAM_EMAIL_MESSAGE)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_SPAM_EMAIL_MESSAGE, args, 2, err)) {
-				int pkey=connector.getSimpleAOClient().addSpamEmailMessage(
-					AOSH.parseInt(args[1], "email_relay"),
-					args[2]
+				out.println(
+					connector.getSimpleAOClient().addSpamEmailMessage(
+						AOSH.parseInt(args[1], "email_relay"),
+						args[2]
+					)
 				);
-				out.println(pkey);
 				out.flush();
 			}
 			return true;

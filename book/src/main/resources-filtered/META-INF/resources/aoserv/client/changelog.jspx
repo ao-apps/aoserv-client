@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-04-14T14:50:42-0500"
+		dateModified="2018-04-14T15:06:07-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -486,6 +486,13 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 								<ol>
 									<li><code>bird</code></li>
 								</ol>
+							</li>
+							<li>Added pkey output from some AOSH commands that were otherwise quiet upon successful addition of the resource:
+								<ul>
+									<li><code>add_business_profile</code></li>
+									<li><code>add_linux_group_account</code></li>
+									<li><code>add_net_bind</code></li>
+								</ul>
 							</li>
 						</ol>
 					</li>

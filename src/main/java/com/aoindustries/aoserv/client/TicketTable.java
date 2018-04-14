@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -130,18 +130,19 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_TICKET)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_TICKET, args, 9, err)) {
-				int pkey=connector.getSimpleAOClient().addTicket(
-					args[1],
-					args[2],
-					args[3],
-					args[4],
-					args[5],
-					args[6],
-					args[7],
-					args[8],
-					args[9]
+				out.println(
+					connector.getSimpleAOClient().addTicket(
+						args[1],
+						args[2],
+						args[3],
+						args[4],
+						args[5],
+						args[6],
+						args[7],
+						args[8],
+						args[9]
+					)
 				);
-				out.println(pkey);
 				out.flush();
 			}
 			return true;

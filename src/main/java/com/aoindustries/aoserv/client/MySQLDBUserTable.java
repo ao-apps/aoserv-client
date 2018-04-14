@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -189,31 +189,32 @@ final public class MySQLDBUserTable extends CachedTableIntegerKey<MySQLDBUser> {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_DB_USER)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_DB_USER, args, 22, err)) {
-				int pkey=connector.getSimpleAOClient().addMySQLDBUser(
-					AOSH.parseMySQLDatabaseName(args[1], "database_name"),
-					AOSH.parseMySQLServerName(args[2], "mysql_server"),
-					args[3],
-					AOSH.parseMySQLUserId(args[4], "username"),
-					AOSH.parseBoolean(args[5], "can_select"),
-					AOSH.parseBoolean(args[6], "can_insert"),
-					AOSH.parseBoolean(args[7], "can_update"),
-					AOSH.parseBoolean(args[8], "can_delete"),
-					AOSH.parseBoolean(args[9], "can_create"),
-					AOSH.parseBoolean(args[10], "can_drop"),
-					AOSH.parseBoolean(args[11], "can_reference"),
-					AOSH.parseBoolean(args[12], "can_index"),
-					AOSH.parseBoolean(args[13], "can_alter"),
-					AOSH.parseBoolean(args[14], "can_create_temp_table"),
-					AOSH.parseBoolean(args[15], "can_lock_tables"),
-					AOSH.parseBoolean(args[16], "can_create_view"),
-					AOSH.parseBoolean(args[17], "can_show_view"),
-					AOSH.parseBoolean(args[18], "can_create_routine"),
-					AOSH.parseBoolean(args[19], "can_alter_routine"),
-					AOSH.parseBoolean(args[20], "can_execute"),
-					AOSH.parseBoolean(args[21], "can_event"),
-					AOSH.parseBoolean(args[22], "can_trigger")
+				out.println(
+					connector.getSimpleAOClient().addMySQLDBUser(
+						AOSH.parseMySQLDatabaseName(args[1], "database_name"),
+						AOSH.parseMySQLServerName(args[2], "mysql_server"),
+						args[3],
+						AOSH.parseMySQLUserId(args[4], "username"),
+						AOSH.parseBoolean(args[5], "can_select"),
+						AOSH.parseBoolean(args[6], "can_insert"),
+						AOSH.parseBoolean(args[7], "can_update"),
+						AOSH.parseBoolean(args[8], "can_delete"),
+						AOSH.parseBoolean(args[9], "can_create"),
+						AOSH.parseBoolean(args[10], "can_drop"),
+						AOSH.parseBoolean(args[11], "can_reference"),
+						AOSH.parseBoolean(args[12], "can_index"),
+						AOSH.parseBoolean(args[13], "can_alter"),
+						AOSH.parseBoolean(args[14], "can_create_temp_table"),
+						AOSH.parseBoolean(args[15], "can_lock_tables"),
+						AOSH.parseBoolean(args[16], "can_create_view"),
+						AOSH.parseBoolean(args[17], "can_show_view"),
+						AOSH.parseBoolean(args[18], "can_create_routine"),
+						AOSH.parseBoolean(args[19], "can_alter_routine"),
+						AOSH.parseBoolean(args[20], "can_execute"),
+						AOSH.parseBoolean(args[21], "can_event"),
+						AOSH.parseBoolean(args[22], "can_trigger")
+					)
 				);
-				out.println(pkey);
 				out.flush();
 			}
 			return true;

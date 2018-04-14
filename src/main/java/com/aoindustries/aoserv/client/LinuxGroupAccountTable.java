@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -177,10 +177,13 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_LINUX_GROUP_ACCOUNT)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
-				connector.getSimpleAOClient().addLinuxGroupAccount(
-					AOSH.parseGroupId(args[1], "group"),
-					AOSH.parseUserId(args[2], "username")
+				out.println(
+					connector.getSimpleAOClient().addLinuxGroupAccount(
+						AOSH.parseGroupId(args[1], "group"),
+						AOSH.parseUserId(args[2], "username")
+					)
 				);
+				out.flush();
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_LINUX_GROUP_ACCOUNT)) {

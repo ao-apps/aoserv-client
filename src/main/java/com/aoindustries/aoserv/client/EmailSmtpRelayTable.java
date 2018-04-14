@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -144,14 +144,15 @@ public final class EmailSmtpRelayTable extends CachedTableIntegerKey<EmailSmtpRe
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_SMTP_RELAY)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_SMTP_RELAY, args, 5, err)) {
 				String S=args[5].trim();
-				int pkey=connector.getSimpleAOClient().addEmailSmtpRelay(
-					AOSH.parseAccountingCode(args[1], "package"),
-					args[2],
-					AOSH.parseHostAddress(args[3], "host"),
-					args[4],
-					S.length()==0?-1:AOSH.parseLong(S, "duration")
+				out.println(
+					connector.getSimpleAOClient().addEmailSmtpRelay(
+						AOSH.parseAccountingCode(args[1], "package"),
+						args[2],
+						AOSH.parseHostAddress(args[3], "host"),
+						args[4],
+						S.length()==0?-1:AOSH.parseLong(S, "duration")
+					)
 				);
-				out.println(pkey);
 				out.flush();
 			}
 			return true;

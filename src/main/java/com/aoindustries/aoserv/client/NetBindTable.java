@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -213,19 +213,22 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 						throw new IllegalArgumentException("Duplicate firewalld zone name: " + name);
 					}
 				}
-				connector.getSimpleAOClient().addNetBind(
-					args[1],
-					AOSH.parseAccountingCode(args[2], "package"),
-					AOSH.parseInetAddress(args[3], "ip_address"),
-					args[4],
-					AOSH.parsePort(
-						args[5], "port",
-						args[6], "net_protocol"
-					),
-					args[7],
-					AOSH.parseBoolean(args[8], "monitoring_enabled"),
-					firewalldZones
+				out.println(
+					connector.getSimpleAOClient().addNetBind(
+						args[1],
+						AOSH.parseAccountingCode(args[2], "package"),
+						AOSH.parseInetAddress(args[3], "ip_address"),
+						args[4],
+						AOSH.parsePort(
+							args[5], "port",
+							args[6], "net_protocol"
+						),
+						args[7],
+						AOSH.parseBoolean(args[8], "monitoring_enabled"),
+						firewalldZones
+					)
 				);
+				out.flush();
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_NET_BIND)) {
