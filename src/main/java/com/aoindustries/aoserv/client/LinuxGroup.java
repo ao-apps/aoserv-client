@@ -62,6 +62,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		AVAHI_AUTOIPD,
 		AWSTATS,
 		BIN,
+		BIRD,
 		CDROM,
 		CGRED,
 		CHRONY,
@@ -135,6 +136,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			AVAHI_AUTOIPD = GroupId.valueOf("avahi-autoipd");
 			AWSTATS = GroupId.valueOf("awstats");
 			BIN = GroupId.valueOf("bin");
+			BIRD = GroupId.valueOf("bird");
 			CDROM = GroupId.valueOf("cdrom");
 			CGRED = GroupId.valueOf("cgred");
 			CHRONY = GroupId.valueOf("chrony");
