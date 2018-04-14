@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -95,12 +95,13 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_LIST)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_LIST, args, 3, err)) {
-				int pkey=connector.getSimpleAOClient().addMajordomoList(
-					AOSH.parseDomainName(args[1], "domain"),
-					args[2],
-					args[3]
+				out.println(
+					connector.getSimpleAOClient().addMajordomoList(
+						AOSH.parseDomainName(args[1], "domain"),
+						args[2],
+						args[3]
+					)
 				);
-				out.println(pkey);
 				out.flush();
 			}
 			return true;

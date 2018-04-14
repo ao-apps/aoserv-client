@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -125,13 +125,14 @@ final public class MySQLServerUserTable extends CachedTableIntegerKey<MySQLServe
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_MYSQL_SERVER_USER)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_MYSQL_SERVER_USER, args, 4, err)) {
-				int pkey=connector.getSimpleAOClient().addMySQLServerUser(
-					AOSH.parseMySQLUserId(args[1], "username"),
-					AOSH.parseMySQLServerName(args[2], "mysql_server"),
-					args[3],
-					args[4]
+				out.println(
+					connector.getSimpleAOClient().addMySQLServerUser(
+						AOSH.parseMySQLUserId(args[1], "username"),
+						AOSH.parseMySQLServerName(args[2], "mysql_server"),
+						args[3],
+						args[4]
+					)
 				);
-				out.println(pkey);
 				out.flush();
 			}
 			return true;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -239,20 +239,21 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 				else if(args[11].equals("W")) pc=Transaction.WAITING_CONFIRMATION;
 				else if(args[11].equals("N")) pc=Transaction.NOT_CONFIRMED;
 				else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: "+args[11]);
-				int transid=connector.getSimpleAOClient().addTransaction(
-					AOSH.parseAccountingCode(args[1], "business"),
-					AOSH.parseAccountingCode(args[2], "source_business"),
-					AOSH.parseUserId(args[3], "business_administrator"),
-					args[4],
-					args[5],
-					AOSH.parseMillis(args[6], "quantity"),
-					AOSH.parsePennies(args[7], "rate"),
-					args[8],
-					args[9],
-					args[10],
-					pc
+				out.println(
+					connector.getSimpleAOClient().addTransaction(
+						AOSH.parseAccountingCode(args[1], "business"),
+						AOSH.parseAccountingCode(args[2], "source_business"),
+						AOSH.parseUserId(args[3], "business_administrator"),
+						args[4],
+						args[5],
+						AOSH.parseMillis(args[6], "quantity"),
+						AOSH.parsePennies(args[7], "rate"),
+						args[8],
+						args[9],
+						args[10],
+						pc
+					)
 				);
-				out.println(transid);
 				out.flush();
 			}
 			return true;

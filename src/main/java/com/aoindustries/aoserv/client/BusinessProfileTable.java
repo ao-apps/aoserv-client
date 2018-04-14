@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -168,24 +168,27 @@ final public class BusinessProfileTable extends CachedTableIntegerKey<BusinessPr
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_BUSINESS_PROFILE)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_BUSINESS_PROFILE, args, 16, err)) {
 				try {
-					connector.getSimpleAOClient().addBusinessProfile(
-						AOSH.parseAccountingCode(args[1], "business"),
-						args[2],
-						AOSH.parseBoolean(args[3], "is_secure"),
-						args[4],
-						args[5],
-						args[6],
-						args[7],
-						args[8],
-						args[9],
-						args[10],
-						args[11],
-						AOSH.parseBoolean(args[12], "send_invoice"),
-						args[13],
-						args[14],
-						args[15],
-						args[16]
+					out.println(
+						connector.getSimpleAOClient().addBusinessProfile(
+							AOSH.parseAccountingCode(args[1], "business"),
+							args[2],
+							AOSH.parseBoolean(args[3], "is_secure"),
+							args[4],
+							args[5],
+							args[6],
+							args[7],
+							args[8],
+							args[9],
+							args[10],
+							args[11],
+							AOSH.parseBoolean(args[12], "send_invoice"),
+							args[13],
+							args[14],
+							args[15],
+							args[16]
+						)
 					);
+					out.flush();
 				} catch(IllegalArgumentException | IOException | SQLException iae) {
 					err.print("aosh: "+AOSHCommand.ADD_BUSINESS_PROFILE+": ");
 					err.println(iae.getMessage());

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -83,12 +83,13 @@ final public class EmailPipeTable extends CachedTableIntegerKey<EmailPipe> {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_PIPE)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_EMAIL_PIPE, args, 3, err)) {
-				int pkey=connector.getSimpleAOClient().addEmailPipe(
-					args[1],
-					args[2],
-					AOSH.parseAccountingCode(args[3], "package")
+				out.println(
+					connector.getSimpleAOClient().addEmailPipe(
+						args[1],
+						args[2],
+						AOSH.parseAccountingCode(args[3], "package")
+					)
 				);
-				out.println(pkey);
 				out.flush();
 			}
 			return true;

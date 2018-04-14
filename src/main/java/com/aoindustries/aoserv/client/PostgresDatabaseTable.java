@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -126,15 +126,16 @@ final public class PostgresDatabaseTable extends CachedTableIntegerKey<PostgresD
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_POSTGRES_DATABASE)) {
 			if(AOSH.checkParamCount(AOSHCommand.ADD_POSTGRES_DATABASE, args, 5, err)) {
-				int pkey=connector.getSimpleAOClient().addPostgresDatabase(
-					AOSH.parsePostgresDatabaseName(args[1], "database_name"),
-					AOSH.parsePostgresServerName(args[2], "postgres_server"),
-					args[3],
-					AOSH.parsePostgresUserId(args[4], "datdba"),
-					args[5],
-					AOSH.parseBoolean(args[6], "enable_postgis")
+				out.println(
+					connector.getSimpleAOClient().addPostgresDatabase(
+						AOSH.parsePostgresDatabaseName(args[1], "database_name"),
+						AOSH.parsePostgresServerName(args[2], "postgres_server"),
+						args[3],
+						AOSH.parsePostgresUserId(args[4], "datdba"),
+						args[5],
+						AOSH.parseBoolean(args[6], "enable_postgis")
+					)
 				);
-				out.println(pkey);
 				out.flush();
 			}
 			return true;
