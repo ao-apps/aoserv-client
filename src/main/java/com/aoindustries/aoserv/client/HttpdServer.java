@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,6 +24,8 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.nio.charset.Charsets;
+import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,7 +51,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		COLUMN_PACKAGE=10
 	;
 	static final String COLUMN_AO_SERVER_name = "ao_server";
-	static final String COLUMN_NUMBER_name = "number";
+	static final String COLUMN_NAME_name = "name";
 
 	/**
 	 * The highest recommended number of sites to bind in one server.
@@ -57,7 +59,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	public static final int RECOMMENDED_MAXIMUM_BINDS=128;
 
 	int ao_server;
-	private int number;
+	private String name;
 	private boolean can_add_sites;
 	// TODO: Remove this field
 	private boolean is_mod_jk;
@@ -110,7 +112,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_AO_SERVER: return ao_server;
-			case 2: return number;
+			case 2: return name;
 			case 3: return can_add_sites;
 			case 4: return is_mod_jk;
 			case 5: return max_binds;
@@ -228,8 +230,47 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		return max_concurrency;
 	}
 
-	public int getNumber() {
-		return number;
+	/**
+	 * Gets the name of the httpd server instance.  The default instance has a null name.
+	 * Additional instances will have non-empty names.
+	 * The name is unique per server, including only one default instance.
+	 *
+	 * @see #getSystemdEscapedName()
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Gets the <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd-encoded</a>
+	 * name of the httpd server instance.  The default instance has a null name.
+	 * Additional instances will have non-empty names.
+	 * The name is unique per server, including only one default instance.
+	 *
+	 * @see #getName()
+	 */
+	public String getSystemdEscapedName() {
+		if(name == null) return null;
+		byte[] utf8 = name.getBytes(Charsets.UTF_8);
+		StringBuilder escaped = new StringBuilder(utf8.length);
+		for(byte b : utf8) {
+			if(b == '/') {
+				// '/' to '-'
+				escaped.append('-');
+			} else if(
+				b == '_'
+				|| (b >= 'A' && b <= 'Z')
+				|| (b >= 'a' && b <= 'z')
+			) {
+				// '_' or alphanumeric
+				escaped.append((char)b);
+			} else {
+				if(b == 0) throw new IllegalStateException("Null character in httpd_server.name, pkey=" + pkey);
+				// All others
+				escaped.append('\\').append('x').append(StringUtility.getHexChar(b >>> 4)).append(StringUtility.getHexChar(b));
+			}
+		}
+		return escaped.toString();
 	}
 
 	public AOServer getAOServer() throws SQLException, IOException {
@@ -364,7 +405,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		int pos=1;
 		pkey=result.getInt(pos++);
 		ao_server=result.getInt(pos++);
-		number=result.getInt(pos++);
+		name = result.getString(pos++);
 		can_add_sites=result.getBoolean(pos++);
 		is_mod_jk=result.getBoolean(pos++);
 		max_binds=result.getInt(pos++);
@@ -450,7 +491,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey=in.readCompressedInt();
 		ao_server=in.readCompressedInt();
-		number=in.readCompressedInt();
+		name = in.readNullUTF();
 		can_add_sites=in.readBoolean();
 		is_mod_jk=in.readBoolean();
 		max_binds=in.readCompressedInt();
@@ -496,14 +537,18 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
 	@Override
 	String toStringImpl() {
-		return "httpd"+number;
+		return name==null ? "httpd" : ("httpd(" + name + ')');
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
-		out.writeCompressedInt(number);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_8) < 0) {
+			out.writeCompressedInt(name==null ? 1 : Integer.parseInt(name));
+		} else {
+			out.writeNullUTF(name);
+		}
 		out.writeBoolean(can_add_sites);
 		out.writeBoolean(is_mod_jk);
 		out.writeCompressedInt(max_binds);
