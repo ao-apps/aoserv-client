@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -142,7 +142,17 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 		}
 
 		for(HttpdServer hs : ao.getHttpdServers()) {
-			if(hs.linux_server_group==pkey) reasons.add(new CannotRemoveReason<>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hs));
+			if(hs.linux_server_group==pkey) {
+				String name = hs.getName();
+				reasons.add(
+					new CannotRemoveReason<>(
+						name==null
+							? "Used by Apache HTTP Server on " + hs.getAOServer().getHostname()
+							: "Used by Apache HTTP Server (" + name + ") on " + hs.getAOServer().getHostname(),
+						hs
+					)
+				);
+			}
 		}
 
 		for(HttpdSharedTomcat hst : ao.getHttpdSharedTomcats()) {

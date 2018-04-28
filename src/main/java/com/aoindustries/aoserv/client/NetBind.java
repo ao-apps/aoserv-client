@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -166,15 +166,15 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		HttpdBind hb=getHttpdBind();
 		if(hb!=null) {
 			HttpdServer hs=hb.getHttpdServer();
-			int number = hs.getNumber();
-			if(number == 1) {
-				return "Apache server configured in /etc/httpd/conf/httpd.conf";
+			String name = hs.getName();
+			if(name == null) {
+				return "Apache HTTP Server configured in /etc/httpd/conf/httpd.conf";
 			} else {
 				return
-					"Apache server #"
-					+ number
-					+ " configured in /etc/httpd/conf/httpd"
-					+ number
+					"Apache HTTP Server ("
+					+ name
+					+ ") configured in /etc/httpd/conf/httpd@"
+					+ hs.getSystemdEscapedName()
 					+ ".conf"
 				;
 			}
@@ -566,7 +566,15 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		for(HttpdBind hb : conn.getHttpdBinds().getRows()) {
 			if(equals(hb.getNetBind())) {
 				HttpdServer hs=hb.getHttpdServer();
-				reasons.add(new CannotRemoveReason<>("Used by Apache server #"+hs.getNumber()+" on "+hs.getAOServer().getHostname(), hb));
+				String name = hs.getName();
+				reasons.add(
+					new CannotRemoveReason<>(
+						name==null
+							? "Used by Apache HTTP Server on " + hs.getAOServer().getHostname()
+							: "Used by Apache HTTP Server (" + name + ") on " + hs.getAOServer().getHostname(),
+						hb
+					)
+				);
 			}
 		}
 
