@@ -261,6 +261,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 				b == '_'
 				|| (b >= 'A' && b <= 'Z')
 				|| (b >= 'a' && b <= 'z')
+				|| (b >= '0' && b <= '9')
 			) {
 				// '_' or alphanumeric
 				escaped.append((char)b);
