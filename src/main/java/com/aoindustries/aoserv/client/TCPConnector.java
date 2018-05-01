@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -143,8 +143,6 @@ public class TCPConnector extends AOServConnector {
 								sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								logger.log(Level.WARNING, null, err2);
-								// Restore the interrupted status
-								Thread.currentThread().interrupt();
 							}
 						}
 					} catch(ThreadDeath TD) {
@@ -158,8 +156,6 @@ public class TCPConnector extends AOServConnector {
 								sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								logger.log(Level.WARNING, null, err2);
-								// Restore the interrupted status
-								Thread.currentThread().interrupt();
 							}
 						}
 					} finally {
