@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -616,8 +616,6 @@ final public class AOServer
 						try {
 							mrtgLocks.wait(startTime + 15000 - currentTime);
 						} catch(InterruptedException err) {
-							// Restore the interrupted status
-							Thread.currentThread().interrupt();
 							InterruptedIOException ioErr = new InterruptedIOException();
 							ioErr.initCause(err);
 							throw ioErr;

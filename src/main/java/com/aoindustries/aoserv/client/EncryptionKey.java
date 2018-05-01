@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -115,8 +115,6 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 				int retCode = P.waitFor();
 				if(retCode!=0) throw new IOException("Non-zero exit value from gpg: "+retCode+", standard error was: "+cout.toString());
 			} catch(InterruptedException err) {
-				// Restore the interrupted status
-				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException("Interrupted while waiting for gpg");
 				ioErr.initCause(err);
 				throw ioErr;
@@ -164,8 +162,6 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 				int retCode = P.waitFor();
 				if(retCode!=0) throw new IOException("Non-zero exit value from gpg: "+retCode);
 			} catch(InterruptedException err) {
-				// Restore the interrupted status
-				Thread.currentThread().interrupt();
 				InterruptedIOException ioErr = new InterruptedIOException("Interrupted while waiting for gpg");
 				ioErr.initCause(err);
 				throw ioErr;
