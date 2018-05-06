@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-04-28T00:33:38-0500"
+		dateModified="2018-05-06T11:44:33-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -500,6 +500,13 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Renamed <code>httpd_servers.number</code> to <code>name</code> and changed type
 						from <code>int</code> to <code>string</code>.
 					</li>
+					<li>New constants for default ports:
+						<ul>
+							<li><code>MySQLServer.DEFAULT_PORT</code></li>
+							<li><code>PostgresServer.DEFAULT_PORT</code></li>
+						</ul>
+					</li>
+					<li>Generated JDBC URLs no longer include the port number when it is the default value.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

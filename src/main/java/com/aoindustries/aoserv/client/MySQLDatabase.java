@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,6 +29,7 @@ import com.aoindustries.io.ByteCountInputStream;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.IoUtils;
+import com.aoindustries.net.Port;
 import com.aoindustries.nio.charset.Charsets;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -278,19 +279,26 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	@Override
 	public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
-		MySQLServer ms=getMySQLServer();
-		AOServer ao=ms.getAOServer();
-		return
-			"jdbc:mysql://"
-			+ (ipOnly
-			   ?ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString()
-				:ao.getHostname()
-			)
-			+ ":"
-			+ ms.getNetBind().getPort().getPort()
-			+ "/"
-			+ getName()
-		;
+		MySQLServer ms = getMySQLServer();
+		AOServer ao = ms.getAOServer();
+		StringBuilder jdbcUrl = new StringBuilder();
+		jdbcUrl
+			.append("jdbc:mysql://")
+			.append(
+				ipOnly
+				? ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString()
+				: ao.getHostname()
+			);
+		Port port = ms.getNetBind().getPort();
+		if(!port.equals(MySQLServer.DEFAULT_PORT)) {
+			jdbcUrl
+				.append(':')
+				.append(port.getPort());
+		}
+		jdbcUrl
+			.append('/')
+			.append(getName());
+		return jdbcUrl.toString();
 	}
 
 	@Override
