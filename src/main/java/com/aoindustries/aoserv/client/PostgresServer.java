@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -28,6 +28,7 @@ import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Port;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -53,6 +54,18 @@ import java.util.Set;
 final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer> {
 
 	// <editor-fold defaultstate="collapsed" desc="Constants">
+	/**
+	 * The default PostSQL port.
+	 */
+	public static final Port DEFAULT_PORT;
+	static {
+		try {
+			DEFAULT_PORT = Port.valueOf(5432, com.aoindustries.net.Protocol.TCP);
+		} catch(ValidationException e) {
+			throw new AssertionError("These hard-coded values are valid", e);
+		}
+	}
+
 	/**
 	 * The directory that contains the PostgreSQL data files.
 	 */

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -145,7 +145,7 @@ final public class PostgresVersion extends GlobalObjectIntegerKey<PostgresVersio
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_109) <= 0) out.writeCompressedInt(5432);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_109) <= 0) out.writeCompressedInt(PostgresServer.DEFAULT_PORT.getPort());
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_121) >= 0) out.writeUTF(minorVersion);
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_27) >= 0) out.writeCompressedInt(postgisVersion);
 	}
