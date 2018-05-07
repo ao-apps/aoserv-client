@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017  AO Industries, Inc.
+ * Copyright (C) 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -75,6 +75,7 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 	private FirewalldZoneName name;
 	private String _short;
 	private String description;
+	private boolean fail2ban;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -84,6 +85,7 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 			case 2: return name;
 			case 3: return _short;
 			case 4: return description;
+			case 5: return fail2ban;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -104,6 +106,10 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public boolean getFail2ban() {
+		return fail2ban;
 	}
 
 	public List<NetBindFirewalldZone> getNetBindFirewalldZones() throws IOException, SQLException {
@@ -127,11 +133,12 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getInt(1);
-			server = result.getInt(2);
-			name = FirewalldZoneName.valueOf(result.getString(3));
-			_short = result.getString(4);
+			pkey        = result.getInt(1);
+			server      = result.getInt(2);
+			name        = FirewalldZoneName.valueOf(result.getString(3));
+			_short      = result.getString(4);
 			description = result.getString(5);
+			fail2ban    = result.getBoolean(6);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -145,6 +152,7 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 			name = FirewalldZoneName.valueOf(in.readUTF()).intern();
 			_short = InternUtils.intern(in.readNullUTF());
 			description = InternUtils.intern(in.readNullUTF());
+			fail2ban = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -162,5 +170,8 @@ public final class FirewalldZone extends CachedObjectIntegerKey<FirewalldZone> {
 		out.writeUTF(name.toString());
 		out.writeNullUTF(_short);
 		out.writeNullUTF(description);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_9) >= 0) {
+			out.writeBoolean(fail2ban);
+		}
 	}
 }
