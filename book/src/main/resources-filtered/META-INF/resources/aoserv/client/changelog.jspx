@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-05-06T11:44:33-0500"
+		dateModified="2018-05-09T17:32:03-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -220,6 +220,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 									May be configured with the <code>set_httpd_tomcat_site_block_webinf</code> AOSH command.
 								</p>
 							</li>
+							<li>Fixed bug in <code>add_email_list_address</code> AOSH command implementation.</li>
 						</ol>
 					</li>
 					<li>

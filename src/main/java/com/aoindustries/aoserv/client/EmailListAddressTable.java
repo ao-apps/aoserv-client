@@ -138,7 +138,7 @@ final public class EmailListAddressTable extends CachedTableIntegerKey<EmailList
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_EMAIL_LIST_ADDRESS)) {
 			if(AOSH.checkMinParamCount(AOSHCommand.ADD_EMAIL_LIST_ADDRESS, args, 3, err)) {
-				if((args.length%3)!=0) {
+				if((args.length%3)!=1) {
 					err.println("aosh: "+AOSHCommand.ADD_EMAIL_LIST_ADDRESS+": must have multiples of three number of parameters");
 					err.flush();
 				} else {
