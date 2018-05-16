@@ -512,7 +512,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 			out.writeNullUTF(name);
 		}
 		out.writeBoolean(can_add_sites);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) < 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_9) <= 0) {
 			out.writeBoolean(true); // is_mod_jk
 			out.writeCompressedInt(128); // max_binds
 		}
