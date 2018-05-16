@@ -393,7 +393,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		out.writeCompressedInt(version);
 		out.writeCompressedInt(linux_server_account);
 		out.writeCompressedInt(linux_server_group);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) < 0) {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_9) <= 0) {
 			out.writeBoolean(false); // is_secure
 			out.writeBoolean(false); // is_overflow
 		}
