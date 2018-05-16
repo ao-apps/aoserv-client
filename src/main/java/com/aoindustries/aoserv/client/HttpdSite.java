@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -28,7 +28,6 @@ import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.Port;
 import com.aoindustries.util.BufferManager;
@@ -84,7 +83,6 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 	UserId linuxAccount;
 	GroupId linuxGroup;
 	private String serverAdmin;
-	private UnixPath contentSrc;
 	int disable_log;
 	private boolean isManual;
 	private String awstatsSkipFiles;
@@ -177,27 +175,22 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			case 5: return linuxAccount;
 			case 6: return linuxGroup;
 			case 7: return serverAdmin;
-			case 8: return contentSrc;
-			case 9: return disable_log==-1?null:disable_log;
-			case 10: return isManual;
-			case 11: return awstatsSkipFiles;
-			case 12: return phpVersion==-1 ? null : phpVersion;
-			case 13: return enableCgi;
-			case 14: return enableSsi;
-			case 15: return enableHtaccess;
-			case 16: return enableIndexes;
-			case 17: return enableFollowSymlinks;
-			case 18: return enableAnonymousFtp;
-			case 19: return blockTraceTrack;
-			case 20: return blockScm;
-			case 21: return blockCoreDumps;
-			case 22: return blockEditorBackups;
+			case 8: return disable_log==-1?null:disable_log;
+			case 9: return isManual;
+			case 10: return awstatsSkipFiles;
+			case 11: return phpVersion==-1 ? null : phpVersion;
+			case 12: return enableCgi;
+			case 13: return enableSsi;
+			case 14: return enableHtaccess;
+			case 15: return enableIndexes;
+			case 16: return enableFollowSymlinks;
+			case 17: return enableAnonymousFtp;
+			case 18: return blockTraceTrack;
+			case 19: return blockScm;
+			case 20: return blockCoreDumps;
+			case 21: return blockEditorBackups;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
-	}
-
-	public UnixPath getContentSrc() {
-		return contentSrc;
 	}
 
 	@Override
@@ -312,7 +305,6 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			linuxAccount = UserId.valueOf(result.getString(pos++));
 			linuxGroup = GroupId.valueOf(result.getString(pos++));
 			serverAdmin = result.getString(pos++);
-			contentSrc = UnixPath.valueOf(result.getString(pos++));
 			disable_log = result.getInt(pos++);
 			if(result.wasNull()) disable_log=-1;
 			isManual = result.getBoolean(pos++);
@@ -488,7 +480,6 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			linuxAccount = UserId.valueOf(in.readUTF()).intern();
 			linuxGroup = GroupId.valueOf(in.readUTF()).intern();
 			serverAdmin = in.readUTF();
-			contentSrc = UnixPath.valueOf(in.readNullUTF());
 			disable_log = in.readCompressedInt();
 			isManual = in.readBoolean();
 			awstatsSkipFiles = in.readNullUTF();
@@ -580,7 +571,9 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		out.writeUTF(linuxAccount.toString());
 		out.writeUTF(linuxGroup.toString());
 		out.writeUTF(serverAdmin);
-		out.writeNullUTF(ObjectUtils.toString(contentSrc));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_9) <= 0) {
+			out.writeNullUTF(null); // contentSrc
+		}
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);

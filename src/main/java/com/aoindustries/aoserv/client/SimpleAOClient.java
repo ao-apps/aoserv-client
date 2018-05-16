@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -1061,8 +1061,6 @@ final public class SimpleAOClient {
 	 *					<code>null</code> for none
 	 * @param  jBossVersion  the version number of <code>JBoss</code> to install in the site
 	 *
-	 * @param  contentSrc  initial content installed to the site directory upon creation
-	 *
 	 * @return  the <code>pkey</code> of the new <code>HttpdTomcatStdSite</code>
 	 *
 	 * @exception  IOException  if unable to contact the server
@@ -1085,8 +1083,7 @@ final public class SimpleAOClient {
 		String netDevice,
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
-		String jBossVersion,
-		UnixPath contentSrc
+		String jBossVersion
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1112,8 +1109,7 @@ final public class SimpleAOClient {
 			ip,
 			primaryHttpHostname,
 			altHttpHostnames,
-			hjv,
-			contentSrc
+			hjv
 		);
 	}
 
@@ -1135,9 +1131,7 @@ final public class SimpleAOClient {
 		String aoServer,
 		String version,
 		UserId linuxServerAccount,
-		GroupId linuxServerGroup,
-		boolean isSecure,
-		boolean isOverflow
+		GroupId linuxServerGroup
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		HttpdTomcatVersion ve = connector.getHttpdTomcatVersions().getHttpdTomcatVersion(version, ao.getServer().getOperatingSystemVersion());
@@ -1146,9 +1140,7 @@ final public class SimpleAOClient {
 			name,
 			ve,
 			getLinuxServerAccount(aoServer, linuxServerAccount),
-			getLinuxServerGroup(aoServer, linuxServerGroup),
-			isSecure,
-			isOverflow
+			getLinuxServerGroup(aoServer, linuxServerGroup)
 		);
 	}
 
@@ -1336,9 +1328,8 @@ final public class SimpleAOClient {
 
 	/**
 	 * Adds a new <code>HttpdTomcatSharedSite</code> to the system.  An <code>HttpdTomcatSharedSite</code> is
-	 * an <code>HttpdSite</code> that contains a Tomcat servlet engine in the standard configuration.  It
-	 * only hosts one site per Java VM, but is arranged in the stock Tomcat structure and uses no
-	 * special code.
+	 * an <code>HttpdSite</code> that uses a shared Tomcat servlet engine in a virtual-hosting configuration.  It
+	 * hosts multiple sites per Java VM.
 	 *
 	 * @param  aoServer  the hostname of the <code>AOServer</code>
 	 * @param  siteName  the name of the <code>HttpdTomcatSharedSite</code>
@@ -1360,11 +1351,7 @@ final public class SimpleAOClient {
 	 *					HTTP protocol
 	 * @param  altHttpHostnames  any number of alternate hostnames for the HTTP protocol or
 	 *					<code>null</code> for none
-	 * @param  sharedTomcatName   the shared Tomcat JVM under which this site runs or <code>null</code>
-	 *					to use an overflow JVM
-	 * @param  version                  the version of Tomcat to support
-	 *
-	 * @param  contentSrc  initial content installed to the site directories upon creation
+	 * @param  sharedTomcatName   the shared Tomcat JVM under which this site runs
 	 *
 	 * @return  the <code>pkey</code> of the new <code>HttpdTomcatSharedSite</code>
 	 *
@@ -1391,9 +1378,7 @@ final public class SimpleAOClient {
 		String netDevice,
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
-		String sharedTomcatName,
-		String version,
-		UnixPath contentSrc
+		String sharedTomcatName
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1407,21 +1392,8 @@ final public class SimpleAOClient {
 		} else {
 			throw new IllegalArgumentException("ip_address and net_device must both be null or both be not null");
 		}
-		if(sharedTomcatName == null || sharedTomcatName.length() == 0) {
-			sharedTomcatName = null;
-		} else {
-			HttpdSharedTomcat sht = ao.getHttpdSharedTomcat(sharedTomcatName);
-			if(sht == null) throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: " + sharedTomcatName + " on " + aoServer);
-		}
-		HttpdTomcatVersion htv;
-		if(version!=null && version.length()>0) {
-			TechnologyName tn=connector.getTechnologyNames().get(HttpdTomcatVersion.TECHNOLOGY_NAME);
-			if(tn==null) throw new SQLException("Unable to find TechnologyName: "+HttpdTomcatVersion.TECHNOLOGY_NAME);
-			TechnologyVersion tv=tn.getTechnologyVersion(connector, version, ao.getServer().getOperatingSystemVersion());
-			if(tv==null) throw new IllegalArgumentException("Unable to find TechnologyVersion: "+HttpdTomcatVersion.TECHNOLOGY_NAME+" version "+version);
-			htv=tv.getHttpdTomcatVersion(connector);
-			if(htv==null) throw new IllegalArgumentException("Unable to find HttpdTomcatVersion: "+HttpdTomcatVersion.TECHNOLOGY_NAME+" version "+version);
-		} else htv=null;
+		HttpdSharedTomcat sht = ao.getHttpdSharedTomcat(sharedTomcatName);
+		if(sht == null) throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: " + sharedTomcatName + " on " + aoServer);
 
 		return ao.addHttpdTomcatSharedSite(
 			siteName,
@@ -1433,9 +1405,7 @@ final public class SimpleAOClient {
 			ip,
 			primaryHttpHostname,
 			altHttpHostnames,
-			sharedTomcatName,
-			htv,
-			contentSrc
+			sharedTomcatName
 		);
 	}
 
@@ -1467,8 +1437,6 @@ final public class SimpleAOClient {
 	 *					<code>null</code> for none
 	 * @param  tomcatVersion  the version number of <code>Tomcat</code> to install in the site
 	 *
-	 * @param  contentSrc  initial content installed to the site directory upon creation
-	 *
 	 * @return  the <code>pkey</code> of the new <code>HttpdTomcatStdSite</code>
 	 *
 	 * @exception  IOException  if unable to contact the server
@@ -1494,8 +1462,7 @@ final public class SimpleAOClient {
 		String netDevice,
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
-		String tomcatVersion,
-		UnixPath contentSrc
+		String tomcatVersion
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
 		checkSiteName(siteName);
@@ -1521,8 +1488,7 @@ final public class SimpleAOClient {
 			ip,
 			primaryHttpHostname,
 			altHttpHostnames,
-			htv,
-			contentSrc
+			htv
 		);
 	}
 

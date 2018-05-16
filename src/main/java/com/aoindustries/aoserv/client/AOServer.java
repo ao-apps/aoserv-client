@@ -130,8 +130,7 @@ final public class AOServer
 		IPAddress ipAddress,
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
-		HttpdJBossVersion jBossVersion,
-		UnixPath contentSrc
+		HttpdJBossVersion jBossVersion
 	) throws IOException, SQLException {
 		return table.connector.getHttpdJBossSites().addHttpdJBossSite(
 			this,
@@ -144,8 +143,7 @@ final public class AOServer
 			ipAddress,
 			primaryHttpHostname,
 			altHttpHostnames,
-			jBossVersion,
-			contentSrc
+			jBossVersion
 		);
 	}
 
@@ -153,18 +151,14 @@ final public class AOServer
 		String name,
 		HttpdTomcatVersion version,
 		LinuxServerAccount lsa,
-		LinuxServerGroup lsg,
-		boolean isSecure,
-		boolean isOverflow
+		LinuxServerGroup lsg
 	) throws IOException, SQLException {
 		return table.connector.getHttpdSharedTomcats().addHttpdSharedTomcat(
 			name,
 			this,
 			version,
 			lsa,
-			lsg,
-			isSecure,
-			isOverflow
+			lsg
 		);
 	}
 
@@ -178,9 +172,7 @@ final public class AOServer
 		IPAddress ipAddress,
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
-		String sharedTomcatName,
-		HttpdTomcatVersion version,
-		UnixPath contentSrc
+		String sharedTomcatName
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
 			this,
@@ -193,9 +185,7 @@ final public class AOServer
 			ipAddress,
 			primaryHttpHostname,
 			altHttpHostnames,
-			sharedTomcatName,
-			version,
-			contentSrc
+			sharedTomcatName
 		);
 	}
 
@@ -209,8 +199,7 @@ final public class AOServer
 		IPAddress ipAddress,
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
-		HttpdTomcatVersion tomcatVersion,
-		UnixPath contentSrc
+		HttpdTomcatVersion tomcatVersion
 	) throws IOException, SQLException {
 		return table.connector.getHttpdTomcatStdSites().addHttpdTomcatStdSite(
 			this,
@@ -223,8 +212,7 @@ final public class AOServer
 			ipAddress,
 			primaryHttpHostname,
 			altHttpHostnames,
-			tomcatVersion,
-			contentSrc
+			tomcatVersion
 		);
 	}
 
@@ -327,7 +315,7 @@ final public class AOServer
 	}
 
 	/**
-	 * Gets the unique hostname for this server.  Should be resolvable in DNS to ease maintenance.
+	 * Gets the unique, fully-qualified hostname for this server.  Should be resolvable in DNS to ease maintenance.
 	 */
 	public DomainName getHostname() {
 		return hostname;
@@ -470,6 +458,10 @@ final public class AOServer
 
 	public int getDistroHour() {
 		return distro_hour;
+	}
+
+	public CyrusImapdServer getCyrusImapdServer() throws IOException, SQLException {
+		return table.connector.getCyrusImapdServers().get(pkey);
 	}
 
 	public List<EmailAddress> getEmailAddresses() throws IOException, SQLException {
@@ -737,6 +729,10 @@ final public class AOServer
 
 	public List<PrivateFTPServer> getPrivateFTPServers() throws IOException, SQLException {
 		return table.connector.getPrivateFTPServers().getPrivateFTPServers(this);
+	}
+
+	public List<SendmailServer> getSendmailServers() throws IOException, SQLException {
+		return table.connector.getSendmailServers().getSendmailServers(this);
 	}
 
 	public Server getServer() throws SQLException, IOException {

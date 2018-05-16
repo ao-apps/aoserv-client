@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -59,6 +59,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	private String predisable_config;
 	private boolean isManual;
 	private boolean redirect_to_primary_hostname;
+	private String include_site_config;
 
 	public int addHttpdSiteURL(DomainName hostname) throws IOException, SQLException {
 		return table.connector.getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
@@ -109,6 +110,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 			case 9: return predisable_config;
 			case 10: return isManual;
 			case 11: return redirect_to_primary_hostname;
+			case 12: return include_site_config;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -207,6 +209,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 			predisable_config = result.getString(10);
 			isManual = result.getBoolean(11);
 			redirect_to_primary_hostname = result.getBoolean(12);
+			include_site_config = result.getString(13);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -218,6 +221,22 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 	public boolean getRedirectToPrimaryHostname() {
 		return redirect_to_primary_hostname;
+	}
+
+	/**
+	 * Controls whether this bind includes the per-site configuration file.
+	 * Will be one of:
+	 * <ul>
+	 * <li>{@code null} - Automatic mode</li>
+	 * <li>{@code "true"} - Include manually enabled</li>
+	 * <li>{@code "false"} - Include manually disabled</li>
+	 * <li>{@code "IfModule &lt;module_name&gt;"} - Include when a module is enabled</li>
+	 * <li>{@code "IfModule !&lt;module_name&gt;"} - Include when a module is disabled</li>
+	 * <li>Any future unrecognized value should be treated as equivalent to {@code null} (automatic mode)</li>
+	 * </ul>
+	 */
+	public String getIncludeSiteConfig() {
+		return include_site_config;
 	}
 
 	@Override
@@ -235,6 +254,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 			predisable_config = in.readNullUTF();
 			isManual = in.readBoolean();
 			redirect_to_primary_hostname = in.readBoolean();
+			include_site_config = in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -303,6 +323,9 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		out.writeBoolean(isManual);
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_19) >= 0) {
 			out.writeBoolean(redirect_to_primary_hostname);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
+			out.writeNullUTF(include_site_config);
 		}
 	}
 }

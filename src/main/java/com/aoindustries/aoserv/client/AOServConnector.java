@@ -89,7 +89,7 @@ abstract public class AOServConnector {
 		8,
 		12,
 		16,
-		23,
+		24,
 		32,
 		48,
 		64,
@@ -303,6 +303,16 @@ abstract public class AOServConnector {
 	private final CvsRepositoryTable cvsRepositories;
 	public CvsRepositoryTable getCvsRepositories() {
 		return cvsRepositories;
+	}
+
+	private final CyrusImapdBindTable cyrusImapdBinds;
+	public CyrusImapdBindTable getCyrusImapdBinds() {
+		return cyrusImapdBinds;
+	}
+
+	private final CyrusImapdServerTable cyrusImapdServers;
+	public CyrusImapdServerTable getCyrusImapdServers() {
+		return cyrusImapdServers;
 	}
 
 	private final DisableLogTable disableLogs;
@@ -864,6 +874,16 @@ abstract public class AOServConnector {
 		return schemaTypes;
 	}
 
+	private final SendmailBindTable sendmailBinds;
+	public SendmailBindTable getSendmailBinds() {
+		return sendmailBinds;
+	}
+
+	private final SendmailServerTable sendmailServers;
+	public SendmailServerTable getSendmailServers() {
+		return sendmailServers;
+	}
+
 	private final ServerFarmTable serverFarms;
 	public ServerFarmTable getServerFarms() {
 		return serverFarms;
@@ -1056,6 +1076,8 @@ abstract public class AOServConnector {
 		newTables.add(creditCardTransactions=new CreditCardTransactionTable(this));
 		newTables.add(creditCards=new CreditCardTable(this));
 		newTables.add(cvsRepositories=new CvsRepositoryTable(this));
+		newTables.add(cyrusImapdBinds=new CyrusImapdBindTable(this));
+		newTables.add(cyrusImapdServers=new CyrusImapdServerTable(this));
 		newTables.add(disableLogs=new DisableLogTable(this));
 		newTables.add(distroFileTypes=new DistroFileTypeTable(this));
 		newTables.add(distroFiles=new DistroFileTable(this));
@@ -1171,6 +1193,8 @@ abstract public class AOServConnector {
 		newTables.add(schemaForeignKeys=new SchemaForeignKeyTable(this));
 		newTables.add(schemaTables=new SchemaTableTable(this));
 		newTables.add(schemaTypes=new SchemaTypeTable(this));
+		newTables.add(sendmailBinds=new SendmailBindTable(this));
+		newTables.add(sendmailServers=new SendmailServerTable(this));
 		newTables.add(serverFarms=new ServerFarmTable(this));
 		newTables.add(servers=new ServerTable(this));
 		newTables.add(shells=new ShellTable(this));

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-05-09T17:32:03-0500"
+		dateModified="2018-05-15T15:33:11-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -508,6 +508,42 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ul>
 					</li>
 					<li>Generated JDBC URLs no longer include the port number when it is the default value.</li>
+					<li>Now supporting <code>mod_wsgi</code>:
+						<ul>
+							<li>Added <code>httpd_servers.mod_wsgi</code> column</li>
+						</ul>
+					</li>
+					<li>Now supporting <code>httpd_site_binds</code> that do not necessarily include the per-site configuration file:
+						<ul>
+							<li>Added <code>httpd_site_binds.include_site_config</code> column</li>
+						</ul>
+					</li>
+					<li>Now supporting per-IP/port SSL certificates on Cyrus IMAPD:
+						<ul>
+							<li>Added <code>cyrus_imapd_binds</code> table</li>
+							<li>Added <code>cyrus_imapd_servers</code> table</li>
+						</ul>
+					</li>
+					<li>Now supporting multiple instances of Sendmail on a server in order to have per-IP/port SSL certificates:
+						<ul>
+							<li>Added <code>sendmail_binds</code> table</li>
+							<li>Added <code>sendmail_servers</code> table</li>
+						</ul>
+					</li>
+					<li>Removed some old, unused features:
+						<ul>
+							<li>Removed <code>set_imap_folder_subscribed</code> AOSH command</li>
+							<li>Removed <code>httpd_servers.is_mod_jk</code> column</li>
+							<li>Removed <code>httpd_servers.max_binds</code> column</li>
+							<li>Removed <code>httpd_shared_tomcats.is_secure</code> column</li>
+							<li>Removed <code>httpd_shared_tomcats.is_overflow</code> column</li>
+							<li>Removed <code>httpd_sites.content_src</code> column</li>
+							<li>Removed <code>is_secure</code> and <code>is_overflow</code> parameters from <code>add_httpd_shared_tomcat</code> AOSH command</li>
+							<li>Removed <code>content_source</code> parameter from <code>add_httpd_jboss_site</code> AOSH command</li>
+							<li>Removed <code>tomcat_version</code> and <code>content_source</code> parameters from <code>add_httpd_tomcat_shared_site</code> AOSH command</li>
+							<li>Removed <code>content_source</code> parameter from <code>add_httpd_tomcat_std_site</code> AOSH command</li>
+						</ul>
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>

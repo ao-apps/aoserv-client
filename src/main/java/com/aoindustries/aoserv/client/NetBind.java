@@ -26,6 +26,7 @@ import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.DomainName;
 import com.aoindustries.net.EmptyParameters;
 import com.aoindustries.net.HttpParameters;
 import com.aoindustries.net.HttpParametersMap;
@@ -118,6 +119,28 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 		PostgresServer ps=getPostgresServer();
 		if(ps!=null) return "PostgreSQL version "+ps.getPostgresVersion().getTechnologyVersion(table.connector).getVersion()+" in "+ps.getDataDirectory();
+
+		CyrusImapdBind cib = getCyrusImapdBind();
+		if(cib != null) {
+			CyrusImapdServer ciServer = cib.getCyrusImapdServer();
+			DomainName servername = cib.getServername();
+			if(servername == null) servername = ciServer.getServername();
+			if(servername == null || servername.equals(ciServer.getAOServer().getHostname())) {
+				return "Cyrus IMAPD";
+			} else {
+				return "Cyrus IMAPD (" + servername + ')';
+			}
+		}
+
+		CyrusImapdServer cis = getCyrusImapdServerBySieveNetBind();
+		if(cis != null) {
+			DomainName servername = cis.getServername();
+			if(servername == null || servername.equals(cis.getAOServer().getHostname())) {
+				return "Cyrus IMAPD";
+			} else {
+				return "Cyrus IMAPD (" + servername + ')';
+			}
+		}
 
 		HttpdWorker hw=getHttpdWorker();
 		if(hw!=null) {
@@ -245,6 +268,16 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			;
 		}
 
+		SendmailBind sb = getSendmailBind();
+		if(sb != null) {
+			String name = sb.getSendmailServer().getName();
+			if(name == null) {
+				return "Sendmail";
+			} else {
+				return "Sendmail (" + name + ')';
+			}
+		}
+
 		NetTcpRedirect ntr=getNetTcpRedirect();
 		if(ntr!=null) return "Port redirected to "+ntr.getDestinationHost().toBracketedString()+':'+ntr.getDestinationPort().getPort();
 
@@ -345,6 +378,14 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return table.connector.getAoServers().getAOServerByJilterNetBind(this);
 	}
 
+	public CyrusImapdBind getCyrusImapdBind() throws IOException, SQLException {
+		return table.connector.getCyrusImapdBinds().get(pkey);
+	}
+
+	public CyrusImapdServer getCyrusImapdServerBySieveNetBind() throws IOException, SQLException {
+		return table.connector.getCyrusImapdServers().getCyrusImapdServerBySieveNetBind(this);
+	}
+
 	public HttpdBind getHttpdBind() throws IOException, SQLException {
 		return table.connector.getHttpdBinds().get(pkey);
 	}
@@ -379,6 +420,10 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 	public HttpdTomcatStdSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
 		return table.connector.getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
+	}
+
+	public SendmailBind getSendmailBind() throws IOException, SQLException {
+		return table.connector.getSendmailBinds().get(pkey);
 	}
 
 	public List<NetBindFirewalldZone> getNetBindFirewalldZones() throws IOException, SQLException {
