@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -58,9 +58,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 		final AOServer aoServer,
 		HttpdTomcatVersion version,
 		final LinuxServerAccount lsa,
-		final LinuxServerGroup lsg,
-		final boolean isSecure,
-		final boolean isOverflow
+		final LinuxServerGroup lsg
 	) throws IOException, SQLException {
 		final int tvPkey = version.getTechnologyVersion(connector).getPkey();
 		return connector.requestResult(
@@ -78,8 +76,6 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 					out.writeCompressedInt(tvPkey);
 					out.writeUTF(lsa.username.toString());
 					out.writeUTF(lsg.name.toString());
-					out.writeBoolean(isSecure);
-					out.writeBoolean(isOverflow);
 				}
 
 				@Override
@@ -161,7 +157,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_SHARED_TOMCAT)) {
-			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_SHARED_TOMCAT, args, 7, err)) {
+			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_SHARED_TOMCAT, args, 5, err)) {
 				// Create an array of all the alternate hostnames
 				out.println(
 					connector.getSimpleAOClient().addHttpdSharedTomcat(
@@ -169,9 +165,7 @@ final public class HttpdSharedTomcatTable extends CachedTableIntegerKey<HttpdSha
 						args[2],
 						args[3],
 						AOSH.parseUserId(args[4], "linux_server_account"),
-						AOSH.parseGroupId(args[5], "linux_server_group"),
-						AOSH.parseBoolean(args[6], "is_secure"),
-						AOSH.parseBoolean(args[7], "is_overflow")
+						AOSH.parseGroupId(args[5], "linux_server_group")
 					)
 				);
 				out.flush();

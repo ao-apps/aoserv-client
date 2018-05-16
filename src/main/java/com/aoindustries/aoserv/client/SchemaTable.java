@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -71,6 +71,8 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		CREDIT_CARD_TRANSACTIONS,
 		CREDIT_CARDS,
 		CVS_REPOSITORIES,
+		CYRUS_IMAPD_BINDS,
+		CYRUS_IMAPD_SERVERS,
 		DISABLE_LOG,
 		DISTRO_FILE_TYPES,
 		DISTRO_FILES,
@@ -186,6 +188,8 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		SCHEMA_FOREIGN_KEYS,
 		SCHEMA_TABLES,
 		SCHEMA_TYPES,
+		SENDMAIL_BINDS,
+		SENDMAIL_SERVERS,
 		SERVER_FARMS,
 		SERVERS,
 		SHELLS,

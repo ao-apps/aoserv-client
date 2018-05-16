@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,11 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
@@ -66,11 +64,8 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 		final IPAddress ipAddress,
 		final DomainName primaryHttpHostname,
 		final DomainName[] altHttpHostnames,
-		final String sharedTomcatName,
-		HttpdTomcatVersion version,
-		final UnixPath contentSrc
+		final String sharedTomcatName
 	) throws IOException, SQLException {
-		final int tv = version==null?-1:version.getTechnologyVersion(connector).getPkey();
 		return connector.requestResult(
 			true,
 			AOServProtocol.CommandID.ADD,
@@ -92,10 +87,7 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 					out.writeUTF(primaryHttpHostname.toString());
 					out.writeCompressedInt(altHttpHostnames.length);
 					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c].toString());
-					out.writeBoolean(sharedTomcatName!=null);
-					if(sharedTomcatName!=null) out.writeUTF(sharedTomcatName);
-					out.writeCompressedInt(tv);
-					out.writeNullUTF(ObjectUtils.toString(contentSrc));
+					out.writeUTF(sharedTomcatName);
 				}
 
 				@Override
@@ -143,11 +135,11 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 	) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE)) {
-			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE, args, 13, err)) {
+			if(AOSH.checkMinParamCount(AOSHCommand.ADD_HTTPD_TOMCAT_SHARED_SITE, args, 11, err)) {
 				// Create an array of all the alternate hostnames
-				DomainName[] altHostnames=new DomainName[args.length-14];
-				for(int i=14; i<args.length; i++) {
-					altHostnames[i-14] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
+				DomainName[] altHostnames=new DomainName[args.length-12];
+				for(int i=12; i<args.length; i++) {
+					altHostnames[i-12] = AOSH.parseDomainName(args[i], "alternate_http_hostname");
 				}
 				out.println(
 					connector.getSimpleAOClient().addHttpdTomcatSharedSite(
@@ -160,11 +152,9 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 						AOSH.parseBoolean(args[7], "use_apache"),
 						args[8].length()==0 ? null : AOSH.parseInetAddress(args[8], "ip_address"),
 						args[9],
-						AOSH.parseDomainName(args[12], "primary_http_hostname"),
+						AOSH.parseDomainName(args[11], "primary_http_hostname"),
 						altHostnames,
-						args[10],
-						args[11],
-						args[13].isEmpty() ? null : AOSH.parseUnixPath(args[13], "content_source")
+						args[10]
 					)
 				);
 				out.flush();

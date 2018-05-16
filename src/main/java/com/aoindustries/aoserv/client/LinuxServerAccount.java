@@ -607,10 +607,6 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		);
 	}
 
-	public void setImapFolderSubscribed(String folder, boolean subscribed) throws IOException, SQLException {
-		table.connector.requestUpdate(true, AOServProtocol.CommandID.SET_IMAP_FOLDER_SUBSCRIBED, pkey, folder, subscribed);
-	}
-
 	public void setCronTable(String cronTable) throws IOException, SQLException {
 		table.connector.requestUpdate(true, AOServProtocol.CommandID.SET_CRON_TABLE, pkey, cronTable);
 	}

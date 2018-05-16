@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -333,6 +333,10 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 
 	public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
 		return table.connector.getPostgresUsers().getPostgresUsers(this);
+	}
+
+	public List<SendmailServer> getSendmailServers() throws IOException, SQLException {
+		return table.connector.getSendmailServers().getSendmailServers(this);
 	}
 
 	public Server getServer(String name) throws IOException, SQLException {

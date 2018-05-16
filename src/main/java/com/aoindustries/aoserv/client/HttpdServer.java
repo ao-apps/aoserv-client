@@ -24,8 +24,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.nio.charset.Charsets;
-import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,24 +44,16 @@ import java.util.List;
 final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_AO_SERVER=1,
-		COLUMN_PACKAGE=10
+		COLUMN_PKEY = 0,
+		COLUMN_AO_SERVER = 1,
+		COLUMN_PACKAGE = 8
 	;
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 	static final String COLUMN_NAME_name = "name";
 
-	/**
-	 * The highest recommended number of sites to bind in one server.
-	 */
-	public static final int RECOMMENDED_MAXIMUM_BINDS=128;
-
 	int ao_server;
 	private String name;
 	private boolean can_add_sites;
-	// TODO: Remove this field
-	private boolean is_mod_jk;
-	private int max_binds;
 	int linux_server_account;
 	int linux_server_group;
 	private int mod_php_version;
@@ -102,6 +92,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	private Boolean mod_socache_shmcb;
 	private Boolean mod_ssl;
 	private Boolean mod_status;
+	private Boolean mod_wsgi;
 
 	public boolean canAddSites() {
 		return can_add_sites;
@@ -114,47 +105,46 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 			case COLUMN_AO_SERVER: return ao_server;
 			case 2: return name;
 			case 3: return can_add_sites;
-			case 4: return is_mod_jk;
-			case 5: return max_binds;
-			case 6: return linux_server_account;
-			case 7: return linux_server_group;
-			case 8: return mod_php_version== -1 ? null : mod_php_version;
-			case 9: return use_suexec;
+			case 4: return linux_server_account;
+			case 5: return linux_server_group;
+			case 6: return mod_php_version== -1 ? null : mod_php_version;
+			case 7: return use_suexec;
 			case COLUMN_PACKAGE: return packageNum;
-			case 11: return is_shared;
-			case 12: return use_mod_perl;
-			case 13: return timeout;
-			case 14: return max_concurrency;
-			case 15: return mod_access_compat;
-			case 16: return mod_actions;
-			case 17: return mod_alias;
-			case 18: return mod_auth_basic;
-			case 19: return mod_authn_core;
-			case 20: return mod_authn_file;
-			case 21: return mod_authz_core;
-			case 22: return mod_authz_groupfile;
-			case 23: return mod_authz_host;
-			case 24: return mod_authz_user;
-			case 25: return mod_autoindex;
-			case 26: return mod_deflate;
-			case 27: return mod_dir;
-			case 28: return mod_filter;
-			case 29: return mod_headers;
-			case 30: return mod_include;
-			case 31: return mod_jk;
-			case 32: return mod_log_config;
-			case 33: return mod_mime;
-			case 34: return mod_mime_magic;
-			case 35: return mod_negotiation;
-			case 36: return mod_proxy;
-			case 37: return mod_proxy_http;
-			case 38: return mod_reqtimeout;
-			case 39: return mod_rewrite;
-			case 40: return mod_setenvif;
-			case 41: return mod_socache_shmcb;
-			case 42: return mod_ssl;
-			case 43: return mod_status;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 9: return is_shared;
+			case 10: return use_mod_perl;
+			case 11: return timeout;
+			case 12: return max_concurrency;
+			case 13: return mod_access_compat;
+			case 14: return mod_actions;
+			case 15: return mod_alias;
+			case 16: return mod_auth_basic;
+			case 17: return mod_authn_core;
+			case 18: return mod_authn_file;
+			case 19: return mod_authz_core;
+			case 20: return mod_authz_groupfile;
+			case 21: return mod_authz_host;
+			case 22: return mod_authz_user;
+			case 23: return mod_autoindex;
+			case 24: return mod_deflate;
+			case 25: return mod_dir;
+			case 26: return mod_filter;
+			case 27: return mod_headers;
+			case 28: return mod_include;
+			case 29: return mod_jk;
+			case 30: return mod_log_config;
+			case 31: return mod_mime;
+			case 32: return mod_mime_magic;
+			case 33: return mod_negotiation;
+			case 34: return mod_proxy;
+			case 35: return mod_proxy_http;
+			case 36: return mod_reqtimeout;
+			case 37: return mod_rewrite;
+			case 38: return mod_setenvif;
+			case 39: return mod_socache_shmcb;
+			case 40: return mod_ssl;
+			case 41: return mod_status;
+			case 42: return mod_wsgi;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -168,10 +158,6 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
 	public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
 		return table.connector.getHttpdWorkers().getHttpdWorkers(this);
-	}
-
-	public int getMaxBinds() {
-		return max_binds;
 	}
 
 	public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
@@ -248,30 +234,10 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	 * The name is unique per server, including only one default instance.
 	 *
 	 * @see #getName()
+	 * @see SystemdUtil#encode(java.lang.String)
 	 */
 	public String getSystemdEscapedName() {
-		if(name == null) return null;
-		byte[] utf8 = name.getBytes(Charsets.UTF_8);
-		StringBuilder escaped = new StringBuilder(utf8.length);
-		for(byte b : utf8) {
-			if(b == '/') {
-				// '/' to '-'
-				escaped.append('-');
-			} else if(
-				b == '_'
-				|| (b >= 'A' && b <= 'Z')
-				|| (b >= 'a' && b <= 'z')
-				|| (b >= '0' && b <= '9')
-			) {
-				// '_' or alphanumeric
-				escaped.append((char)b);
-			} else {
-				if(b == 0) throw new IllegalStateException("Null character in httpd_server.name, pkey=" + pkey);
-				// All others
-				escaped.append('\\').append('x').append(StringUtility.getHexChar(b >>> 4)).append(StringUtility.getHexChar(b));
-			}
-		}
-		return escaped.toString();
+		return SystemdUtil.encode(name);
 	}
 
 	public AOServer getAOServer() throws SQLException, IOException {
@@ -396,6 +362,10 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		return mod_status;
 	}
 
+	public Boolean getModWsgi() {
+		return mod_wsgi;
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_SERVERS;
@@ -408,8 +378,6 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		ao_server=result.getInt(pos++);
 		name = result.getString(pos++);
 		can_add_sites=result.getBoolean(pos++);
-		is_mod_jk=result.getBoolean(pos++);
-		max_binds=result.getInt(pos++);
 		linux_server_account=result.getInt(pos++);
 		linux_server_group=result.getInt(pos++);
 		mod_php_version=result.getInt(pos++);
@@ -478,14 +446,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		if(result.wasNull()) mod_ssl = null;
 		mod_status=result.getBoolean(pos++);
 		if(result.wasNull()) mod_status = null;
-	}
-
-	/**
-	 * @deprecated  All servers now use mod_jk, mod_jserv is no longer supported.
-	 */
-	@Deprecated
-	public boolean isModJK() {
-		return is_mod_jk;
+		mod_wsgi=result.getBoolean(pos++);
+		if(result.wasNull()) mod_wsgi = null;
 	}
 
 	@Override
@@ -494,8 +456,6 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		ao_server=in.readCompressedInt();
 		name = in.readNullUTF();
 		can_add_sites=in.readBoolean();
-		is_mod_jk=in.readBoolean();
-		max_binds=in.readCompressedInt();
 		linux_server_account=in.readCompressedInt();
 		linux_server_group=in.readCompressedInt();
 		mod_php_version=in.readCompressedInt();
@@ -534,6 +494,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		mod_socache_shmcb = in.readNullBoolean();
 		mod_ssl = in.readNullBoolean();
 		mod_status = in.readNullBoolean();
+		mod_wsgi = in.readNullBoolean();
 	}
 
 	@Override
@@ -551,8 +512,10 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 			out.writeNullUTF(name);
 		}
 		out.writeBoolean(can_add_sites);
-		out.writeBoolean(is_mod_jk);
-		out.writeCompressedInt(max_binds);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) < 0) {
+			out.writeBoolean(true); // is_mod_jk
+			out.writeCompressedInt(128); // max_binds
+		}
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) {
 			out.writeCompressedInt(linux_server_account);
 			out.writeCompressedInt(linux_server_group);
@@ -601,6 +564,9 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 			out.writeNullBoolean(mod_socache_shmcb);
 			out.writeNullBoolean(mod_ssl);
 			out.writeNullBoolean(mod_status);
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
+				out.writeNullBoolean(mod_wsgi);
+			}
 		}
 	}
 }

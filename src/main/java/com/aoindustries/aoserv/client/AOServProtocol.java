@@ -169,9 +169,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		VERSION_1_81_6("1.81.6"),
 		VERSION_1_81_7("1.81.7"),
 		VERSION_1_81_8("1.81.8"),
-		VERSION_1_81_9("1.81.9");
+		VERSION_1_81_9("1.81.9"),
+		VERSION_1_81_10("1.81.10");
 
-		public static final Version CURRENT_VERSION = VERSION_1_81_9;
+		public static final Version CURRENT_VERSION = VERSION_1_81_10;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
@@ -466,7 +467,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION,
 		SET_LINUX_SERVER_ACCOUNT_EMAIL_SPAMASSASSIN_INTEGRATION_MODE,
 		GET_IMAP_FOLDER_SIZES,
-		SET_IMAP_FOLDER_SUBSCRIBED,
+		@Deprecated
+		UNUSED_SET_IMAP_FOLDER_SUBSCRIBED, // No longer used
 		SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE,
 		SET_TICKET_ASSIGNED_TO,
 		SET_TICKET_CONTACT_EMAILS,
