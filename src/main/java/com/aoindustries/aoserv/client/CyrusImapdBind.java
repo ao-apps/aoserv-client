@@ -22,7 +22,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -46,15 +45,14 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 
 	static final int
 		COLUMN_NET_BIND = 0,
-		COLUMN_CYRUS_IMAPD_SERVER = 1
+		COLUMN_CYRUS_IMAPD_SERVER = 1,
+		COLUMN_SSL_CERTIFICATE = 3
 	;
 	static final String COLUMN_NET_BIND_name = "net_bind";
 
 	private int cyrus_imapd_server;
 	private DomainName servername;
-	private UnixPath tlsCertFile;
-	private UnixPath tlsKeyFile;
-	private UnixPath tlsCaFile;
+	private int certificate;
 	private Boolean allowPlaintextAuth;
 
 	@Override
@@ -70,10 +68,8 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 			case COLUMN_NET_BIND: return pkey;
 			case COLUMN_CYRUS_IMAPD_SERVER: return cyrus_imapd_server;
 			case 2: return servername;
-			case 3: return tlsCertFile;
-			case 4: return tlsKeyFile;
-			case 5: return tlsCaFile;
-			case 6: return allowPlaintextAuth;
+			case COLUMN_SSL_CERTIFICATE: return certificate == -1 ? null : certificate;
+			case 4: return allowPlaintextAuth;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -90,9 +86,8 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 			pkey = result.getInt(pos++);
 			cyrus_imapd_server = result.getInt(pos++);
 			servername = DomainName.valueOf(result.getString(pos++));
-			tlsCertFile = UnixPath.valueOf(result.getString(pos++));
-			tlsKeyFile = UnixPath.valueOf(result.getString(pos++));
-			tlsCaFile = UnixPath.valueOf(result.getString(pos++));
+			certificate = result.getInt(pos++);
+			if(result.wasNull()) certificate = -1;
 			allowPlaintextAuth = result.getBoolean(pos++);
 			if(result.wasNull()) allowPlaintextAuth = null;
 		} catch(ValidationException e) {
@@ -106,9 +101,7 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 			pkey = in.readCompressedInt();
 			cyrus_imapd_server = in.readCompressedInt();
 			servername = DomainName.valueOf(in.readNullUTF());
-			tlsCertFile = UnixPath.valueOf(in.readNullUTF());
-			tlsKeyFile = UnixPath.valueOf(in.readNullUTF());
-			tlsCaFile = UnixPath.valueOf(in.readNullUTF());
+			certificate = in.readCompressedInt();
 			allowPlaintextAuth = in.readNullBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -120,9 +113,7 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(cyrus_imapd_server);
 		out.writeNullUTF(ObjectUtils.toString(servername));
-		out.writeNullUTF(ObjectUtils.toString(tlsCertFile));
-		out.writeNullUTF(ObjectUtils.toString(tlsKeyFile));
-		out.writeNullUTF(ObjectUtils.toString(tlsCaFile));
+		out.writeCompressedInt(certificate);
 		out.writeNullBoolean(allowPlaintextAuth);
 	}
 
@@ -148,30 +139,14 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 	}
 
 	/**
-	 * The path for <code>tls_cert_file</code>.
+	 * Gets the SSL certificate for this server.
 	 *
-	 * When {@code null}, defaults to {@link CyrusImapdServer#getTlsCertFile()}.
+	 * @return  the SSL certificate or {@code null} when filtered or defaulting to {@link CyrusImapdServer#getCertificate()}
 	 */
-	public UnixPath getTlsCertFile() {
-		return tlsCertFile;
-	}
-
-	/**
-	 * The path for <code>tls_key_file</code>.
-	 *
-	 * When {@code null}, defaults to {@link CyrusImapdServer#getTlsKeyFile()}.
-	 */
-	public UnixPath getTlsKeyFile() {
-		return tlsKeyFile;
-	}
-
-	/**
-	 * The path for <code>tls_ca_file</code>.
-	 *
-	 * When {@code null}, defaults to {@link CyrusImapdServer#getTlsCaFile()}.
-	 */
-	public UnixPath getTlsCaFile() {
-		return tlsCaFile;
+	public SslCertificate getCertificate() throws SQLException, IOException {
+		if(certificate == -1) return null;
+		// May be filtered
+		return table.connector.getSslCertificates().get(certificate);
 	}
 
 	/**

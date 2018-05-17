@@ -22,7 +22,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -45,7 +44,8 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 
 	static final int
 		COLUMN_AO_SERVER = 0,
-		COLUMN_SIEVE_NET_BIND = 1
+		COLUMN_SIEVE_NET_BIND = 1,
+		COLUMN_CERTIFICATE = 3
 	;
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
@@ -109,9 +109,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 
 	private int sieveNetBind;
 	private DomainName servername;
-	private UnixPath tlsCertFile;
-	private UnixPath tlsKeyFile;
-	private UnixPath tlsCaFile;
+	private int certificate;
 	private boolean allowPlaintextAuth;
 	private float deleteDuration;
 	private TimeUnit deleteDurationUnit;
@@ -131,16 +129,14 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 			case COLUMN_AO_SERVER: return pkey;
 			case COLUMN_SIEVE_NET_BIND: return sieveNetBind==-1 ? null : sieveNetBind;
 			case 2: return servername;
-			case 3: return tlsCertFile;
-			case 4: return tlsKeyFile;
-			case 5: return tlsCaFile;
-			case 6: return allowPlaintextAuth;
-			case 7: return deleteDuration;
-			case 8: return deleteDurationUnit==null ? null : String.valueOf(deleteDurationUnit.getSuffix());
-			case 9: return expireDuration;
-			case 10: return expireDurationUnit==null ? null : String.valueOf(expireDurationUnit.getSuffix());
-			case 11: return expungeDuration;
-			case 12: return expungeDurationUnit==null ? null : String.valueOf(expungeDurationUnit.getSuffix());
+			case COLUMN_CERTIFICATE: return certificate;
+			case 4: return allowPlaintextAuth;
+			case 5: return deleteDuration;
+			case 6: return deleteDurationUnit==null ? null : String.valueOf(deleteDurationUnit.getSuffix());
+			case 7: return expireDuration;
+			case 8: return expireDurationUnit==null ? null : String.valueOf(expireDurationUnit.getSuffix());
+			case 9: return expungeDuration;
+			case 10: return expungeDurationUnit==null ? null : String.valueOf(expungeDurationUnit.getSuffix());
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -158,9 +154,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 			sieveNetBind = result.getInt(pos++);
 			if(result.wasNull()) sieveNetBind = -1;
 			servername = DomainName.valueOf(result.getString(pos++));
-			tlsCertFile = UnixPath.valueOf(result.getString(pos++));
-			tlsKeyFile = UnixPath.valueOf(result.getString(pos++));
-			tlsCaFile = UnixPath.valueOf(result.getString(pos++));
+			certificate = result.getInt(pos++);
 			allowPlaintextAuth = result.getBoolean(pos++);
 			deleteDuration = result.getFloat(pos++);
 			if(result.wasNull()) deleteDuration = Float.NaN;
@@ -181,9 +175,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 			pkey = in.readCompressedInt();
 			sieveNetBind = in.readCompressedInt();
 			servername = DomainName.valueOf(in.readNullUTF());
-			tlsCertFile = UnixPath.valueOf(in.readUTF());
-			tlsKeyFile = UnixPath.valueOf(in.readUTF());
-			tlsCaFile = UnixPath.valueOf(in.readUTF());
+			certificate = in.readCompressedInt();
 			allowPlaintextAuth = in.readBoolean();
 			deleteDuration = in.readFloat();
 			deleteDurationUnit = in.readNullEnum(TimeUnit.class);
@@ -201,9 +193,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(sieveNetBind);
 		out.writeNullUTF(ObjectUtils.toString(servername));
-		out.writeUTF(tlsCertFile.toString());
-		out.writeUTF(tlsKeyFile.toString());
-		out.writeUTF(tlsCaFile.toString());
+		out.writeCompressedInt(certificate);
 		out.writeBoolean(allowPlaintextAuth);
 		out.writeFloat(deleteDuration);
 		out.writeNullEnum(deleteDurationUnit);
@@ -241,24 +231,13 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	}
 
 	/**
-	 * The path for <code>tls_cert_file</code>.
+	 * Gets the SSL certificate for this server.
+	 *
+	 * @return  the SSL certificate or {@code null} when filtered
 	 */
-	public UnixPath getTlsCertFile() {
-		return tlsCertFile;
-	}
-
-	/**
-	 * The path for <code>tls_key_file</code>.
-	 */
-	public UnixPath getTlsKeyFile() {
-		return tlsKeyFile;
-	}
-
-	/**
-	 * The path for <code>tls_ca_file</code>.
-	 */
-	public UnixPath getTlsCaFile() {
-		return tlsCaFile;
+	public SslCertificate getCertificate() throws SQLException, IOException {
+		// May be filtered
+		return table.connector.getSslCertificates().get(certificate);
 	}
 
 	/**

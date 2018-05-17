@@ -27,18 +27,17 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * @see  CyrusImapdServer
- *
  * @author  AO Industries, Inc.
  */
-final public class CyrusImapdServerTable extends CachedTableIntegerKey<CyrusImapdServer> {
+final public class SslCertificateTable extends CachedTableIntegerKey<SslCertificate> {
 
-	CyrusImapdServerTable(AOServConnector connector) {
-		super(connector, CyrusImapdServer.class);
+	SslCertificateTable(AOServConnector connector) {
+		super(connector, SslCertificate.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CyrusImapdServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+		new OrderBy(SslCertificate.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(SslCertificate.COLUMN_CERT_FILE_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {
@@ -46,20 +45,20 @@ final public class CyrusImapdServerTable extends CachedTableIntegerKey<CyrusImap
 	}
 
 	@Override
-	public CyrusImapdServer get(int ao_server) throws IOException, SQLException {
-		return getUniqueRow(CyrusImapdServer.COLUMN_AO_SERVER, ao_server);
+	public SslCertificate get(int pkey) throws IOException, SQLException {
+		return getUniqueRow(SslCertificate.COLUMN_PKEY, pkey);
 	}
 
-	CyrusImapdServer getCyrusImapdServerBySieveNetBind(NetBind nb) throws IOException, SQLException {
-		return getUniqueRow(CyrusImapdServer.COLUMN_SIEVE_NET_BIND, nb.pkey);
+	List<SslCertificate> getSslCertificates(AOServer aoServer) throws IOException, SQLException {
+		return getIndexedRows(SslCertificate.COLUMN_AO_SERVER, aoServer.pkey);
 	}
 
-	List<CyrusImapdServer> getCyrusImapdServers(SslCertificate sslCert) throws IOException, SQLException {
-		return getIndexedRows(CyrusImapdServer.COLUMN_CERTIFICATE, sslCert.pkey);
+	List<SslCertificate> getSslCertificates(Package pk) throws IOException, SQLException {
+		return getIndexedRows(SslCertificate.COLUMN_PACKAGE, pk.pkey);
 	}
 
 	@Override
 	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CYRUS_IMAPD_SERVERS;
+		return SchemaTable.TableID.SSL_CERTIFICATES;
 	}
 }
