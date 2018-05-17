@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-05-15T15:33:11-0500"
+		dateModified="2018-05-17T18:13:18-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -516,6 +516,16 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Now supporting <code>httpd_site_binds</code> that do not necessarily include the per-site configuration file:
 						<ul>
 							<li>Added <code>httpd_site_binds.include_site_config</code> column</li>
+						</ul>
+					</li>
+					<li>Now managing SSL certificates through APIs instead of manually:
+						<ul>
+							<li>Added <code>ssl_certificates</code> table</li>
+							<li>Added <code>ssl_certificate_names</code> table</li>
+							<li>Added <code>httpd_site_binds.certificate</code> column</li>
+							<li>Removed <code>httpd_site_binds.ssl_cert_file</code> column</li>
+							<li>Removed <code>httpd_site_binds.ssl_cert_key_file</code> column</li>
+							<li>Removed <code>httpd_site_binds.ssl_cert_chain_file</code> column</li>
 						</ul>
 					</li>
 					<li>Now supporting per-IP/port SSL certificates on Cyrus IMAPD:

@@ -355,6 +355,10 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.connector.getEmailSmtpRelays().getEmailSmtpRelays(this);
 	}
 
+	public List<SslCertificate> getSslCertificates() throws IOException, SQLException {
+		return table.connector.getSslCertificates().getSslCertificates(this);
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.PACKAGES;

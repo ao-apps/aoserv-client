@@ -914,6 +914,16 @@ abstract public class AOServConnector {
 		return spamEmailMessages;
 	}
 
+	private final SslCertificateNameTable sslCertificateNames;
+	public SslCertificateNameTable getSslCertificateNames() {
+		return sslCertificateNames;
+	}
+
+	private final SslCertificateTable sslCertificates;
+	public SslCertificateTable getSslCertificates() {
+		return sslCertificates;
+	}
+
 	private final SystemEmailAliasTable systemEmailAliases;
 	public SystemEmailAliasTable getSystemEmailAliases() {
 		return systemEmailAliases;
@@ -1201,6 +1211,8 @@ abstract public class AOServConnector {
 		newTables.add(signupRequestOptions=new SignupRequestOptionTable(this));
 		newTables.add(signupRequests=new SignupRequestTable(this));
 		newTables.add(spamEmailMessages=new SpamEmailMessageTable(this));
+		newTables.add(sslCertificateNames=new SslCertificateNameTable(this));
+		newTables.add(sslCertificates=new SslCertificateTable(this));
 		newTables.add(systemEmailAliases=new SystemEmailAliasTable(this));
 		newTables.add(technologies=new TechnologyTable(this));
 		newTables.add(technologyClasses=new TechnologyClassTable(this));

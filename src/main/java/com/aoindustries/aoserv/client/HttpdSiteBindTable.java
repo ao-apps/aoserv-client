@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -73,6 +73,10 @@ final public class HttpdSiteBindTable extends CachedTableIntegerKey<HttpdSiteBin
 			if(siteBind.getHttpdBind().httpd_server==serverPKey) matches.add(siteBind);
 		}
 		return matches;
+	}
+
+	List<HttpdSiteBind> getHttpdSiteBinds(SslCertificate sslCert) throws IOException, SQLException {
+		return getIndexedRows(HttpdSiteBind.COLUMN_SSL_CERTIFICATE, sslCert.pkey);
 	}
 
 	@Override

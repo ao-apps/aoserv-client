@@ -43,7 +43,8 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 	static final int
 		COLUMN_PKEY = 0,
-		COLUMN_HTTPD_SITE = 1
+		COLUMN_HTTPD_SITE = 1,
+		COLUMN_SSL_CERTIFICATE = 5
 	;
 	static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 	static final String COLUMN_HTTPD_BIND_name = "httpd_bind";
@@ -52,14 +53,17 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	private int httpd_bind;
 	private UnixPath access_log;
 	private UnixPath error_log;
-	private UnixPath sslCertFile;
-	private UnixPath sslCertKeyFile;
-	private UnixPath sslCertChainFile;
+	private int certificate;
 	int disable_log;
 	private String predisable_config;
 	private boolean isManual;
 	private boolean redirect_to_primary_hostname;
 	private String include_site_config;
+
+	// Used for protocol conversion only
+	private UnixPath oldSslCertFile;
+	private UnixPath oldSslCertKeyFile;
+	private UnixPath oldSslCertChainFile;
 
 	public int addHttpdSiteURL(DomainName hostname) throws IOException, SQLException {
 		return table.connector.getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
@@ -103,14 +107,12 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 			case 2: return httpd_bind;
 			case 3: return access_log;
 			case 4: return error_log;
-			case 5: return sslCertFile;
-			case 6: return sslCertKeyFile;
-			case 7: return sslCertChainFile;
-			case 8: return disable_log == -1 ? null : disable_log;
-			case 9: return predisable_config;
-			case 10: return isManual;
-			case 11: return redirect_to_primary_hostname;
-			case 12: return include_site_config;
+			case COLUMN_SSL_CERTIFICATE: return certificate == -1 ? null : certificate;
+			case 6: return disable_log == -1 ? null : disable_log;
+			case 7: return predisable_config;
+			case 8: return isManual;
+			case 9: return redirect_to_primary_hostname;
+			case 10: return include_site_config;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -161,31 +163,23 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	}
 
 	/**
-	 * @deprecated  Please use {@link #getSslCertFile()} which better matches javabeans naming conventions.
+	 * Gets the SSL certificate for this server.
+	 *
+	 * @return  the SSL certificate or {@code null} when filtered or not applicable
 	 */
-	@Deprecated
-	public UnixPath getSSLCertFile() {
-		return getSslCertFile();
-	}
-
-	public UnixPath getSslCertFile() {
-		return sslCertFile;
-	}
-
-	/**
-	 * @deprecated  Please use {@link #getSslCertKeyFile()} which better matches javabeans naming conventions.
-	 */
-	@Deprecated
-	public UnixPath getSSLCertKeyFile() {
-		return getSslCertKeyFile();
-	}
-
-	public UnixPath getSslCertKeyFile() {
-		return sslCertKeyFile;
-	}
-
-	public UnixPath getSslCertChainFile() {
-		return sslCertChainFile;
+	public SslCertificate getCertificate() throws SQLException, IOException {
+		// Make sure protocol and certificate present match
+		String protocol = getHttpdBind().getNetBind().getAppProtocol().getProtocol();
+		if(Protocol.HTTP.equals(protocol)) {
+			if(certificate != -1) throw new SQLException("certificate non-null on " + Protocol.HTTP + " protocol for HttpdSiteBind #" + pkey);
+		} else if(Protocol.HTTPS.equals(protocol)) {
+			if(certificate == -1) throw new SQLException("certificate null on " + Protocol.HTTPS + " protocol for HttpdSiteBind #" + pkey);
+		} else {
+			throw new SQLException("Protocol is neither " + Protocol.HTTP + " nor " + Protocol.HTTPS + " for HttpdSiteBind #" + pkey + ": " + protocol);
+		}
+		if(certificate == -1) return null;
+		// May be filtered
+		return table.connector.getSslCertificates().get(certificate);
 	}
 
 	@Override
@@ -196,20 +190,23 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getInt(1);
-			httpd_site = result.getInt(2);
-			httpd_bind = result.getInt(3);
-			access_log = UnixPath.valueOf(result.getString(4));
-			error_log = UnixPath.valueOf(result.getString(5));
-			sslCertFile = UnixPath.valueOf(result.getString(6));
-			sslCertKeyFile = UnixPath.valueOf(result.getString(7));
-			sslCertChainFile = UnixPath.valueOf(result.getString(8));
-			disable_log = result.getInt(9);
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			httpd_site = result.getInt(pos++);
+			httpd_bind = result.getInt(pos++);
+			access_log = UnixPath.valueOf(result.getString(pos++));
+			error_log = UnixPath.valueOf(result.getString(pos++));
+			certificate = result.getInt(pos++);
+			if(result.wasNull()) certificate = -1;
+			disable_log = result.getInt(pos++);
 			if(result.wasNull()) disable_log = -1;
-			predisable_config = result.getString(10);
-			isManual = result.getBoolean(11);
-			redirect_to_primary_hostname = result.getBoolean(12);
-			include_site_config = result.getString(13);
+			predisable_config = result.getString(pos++);
+			isManual = result.getBoolean(pos++);
+			redirect_to_primary_hostname = result.getBoolean(pos++);
+			include_site_config = result.getString(pos++);
+			oldSslCertFile = UnixPath.valueOf(result.getString(pos++));
+			oldSslCertKeyFile = UnixPath.valueOf(result.getString(pos++));
+			oldSslCertChainFile = UnixPath.valueOf(result.getString(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -247,9 +244,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 			httpd_bind = in.readCompressedInt();
 			access_log = UnixPath.valueOf(in.readUTF());
 			error_log = UnixPath.valueOf(in.readUTF());
-			sslCertFile = UnixPath.valueOf(in.readNullUTF());
-			sslCertKeyFile = UnixPath.valueOf(in.readNullUTF());
-			sslCertChainFile = UnixPath.valueOf(in.readNullUTF());
+			certificate = in.readCompressedInt();
 			disable_log = in.readCompressedInt();
 			predisable_config = in.readNullUTF();
 			isManual = in.readBoolean();
@@ -313,10 +308,14 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		out.writeCompressedInt(httpd_bind);
 		out.writeUTF(access_log.toString());
 		out.writeUTF(error_log.toString());
-		out.writeNullUTF(ObjectUtils.toString(sslCertFile));
-		out.writeNullUTF(ObjectUtils.toString(sslCertKeyFile));
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
-			out.writeNullUTF(ObjectUtils.toString(sslCertChainFile));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
+			out.writeCompressedInt(certificate);
+		} else {
+			out.writeNullUTF(ObjectUtils.toString(oldSslCertFile));
+			out.writeNullUTF(ObjectUtils.toString(oldSslCertKeyFile));
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
+				out.writeNullUTF(ObjectUtils.toString(oldSslCertChainFile));
+			}
 		}
 		out.writeCompressedInt(disable_log);
 		out.writeNullUTF(predisable_config);

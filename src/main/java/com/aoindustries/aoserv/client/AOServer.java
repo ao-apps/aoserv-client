@@ -741,6 +741,10 @@ final public class AOServer
 		return se;
 	}
 
+	public List<SslCertificate> getSslCertificates() throws IOException, SQLException {
+		return table.connector.getSslCertificates().getSslCertificates(this);
+	}
+
 	public List<SystemEmailAlias> getSystemEmailAliases() throws IOException, SQLException {
 		return table.connector.getSystemEmailAliases().getSystemEmailAliases(this);
 	}

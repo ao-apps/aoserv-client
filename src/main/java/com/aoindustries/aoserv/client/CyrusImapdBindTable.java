@@ -58,6 +58,10 @@ final public class CyrusImapdBindTable extends CachedTableIntegerKey<CyrusImapdB
 		return getUniqueRow(CyrusImapdBind.COLUMN_NET_BIND, pkey);
 	}
 
+	List<CyrusImapdBind> getCyrusImapdBinds(SslCertificate sslCert) throws IOException, SQLException {
+		return getIndexedRows(CyrusImapdBind.COLUMN_SSL_CERTIFICATE, sslCert.pkey);
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.CYRUS_IMAPD_BINDS;

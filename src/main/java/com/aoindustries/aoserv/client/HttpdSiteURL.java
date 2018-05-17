@@ -100,18 +100,17 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 		NetBind netBind=siteBind.getHttpdBind().getNetBind();
 		Port port=netBind.getPort();
 		StringBuilder url=new StringBuilder();
-		String protocol;
-		if(siteBind.getSslCertFile() == null) {
-			// If HTTP
+		Protocol appProtocol = siteBind.getHttpdBind().getNetBind().getAppProtocol();
+		String protocol = appProtocol.getProtocol();
+		if(Protocol.HTTP.equals(protocol)) {
 			url.append("http://");
-			protocol=Protocol.HTTP;
-		} else {
-			// Otherwise must be HTTPS
+		} else if(Protocol.HTTPS.equals(protocol)) {
 			url.append("https://");
-			protocol=Protocol.HTTPS;
+		} else {
+			throw new SQLException("Unsupported protocol: " + protocol);
 		}
 		url.append(hostname);
-		if(!port.equals(table.connector.getProtocols().get(protocol).getPort())) url.append(':').append(port.getPort());
+		if(!port.equals(appProtocol.getPort())) url.append(':').append(port.getPort());
 		url.append('/');
 		return url.toString();
 	}
@@ -121,18 +120,17 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 		NetBind netBind=siteBind.getHttpdBind().getNetBind();
 		Port port=netBind.getPort();
 		StringBuilder url=new StringBuilder();
-		String protocol;
-		if(siteBind.getSslCertFile() == null) {
-			// If HTTP
+		Protocol appProtocol = siteBind.getHttpdBind().getNetBind().getAppProtocol();
+		String protocol = appProtocol.getProtocol();
+		if(Protocol.HTTP.equals(protocol)) {
 			url.append("http://");
-			protocol=Protocol.HTTP;
-		} else {
-			// Otherwise must be HTTPS
+		} else if(Protocol.HTTPS.equals(protocol)) {
 			url.append("https://");
-			protocol=Protocol.HTTPS;
+		} else {
+			throw new SQLException("Unsupported protocol: " + protocol);
 		}
 		url.append(hostname);
-		if(!port.equals(table.connector.getProtocols().get(protocol).getPort())) url.append(':').append(port.getPort());
+		if(!port.equals(appProtocol.getPort())) url.append(':').append(port.getPort());
 		return url.toString();
 	}
 

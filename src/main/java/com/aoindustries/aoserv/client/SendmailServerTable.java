@@ -59,6 +59,14 @@ final public class SendmailServerTable extends CachedTableIntegerKey<SendmailSer
 		return getIndexedRows(SendmailServer.COLUMN_PACKAGE, pk.pkey);
 	}
 
+	List<SendmailServer> getSendmailServersByServerCertificate(SslCertificate sslCert) throws IOException, SQLException {
+		return getIndexedRows(SendmailServer.COLUMN_SERVER_CERTIFICATE, sslCert.pkey);
+	}
+
+	List<SendmailServer> getSendmailServersByClientCertificate(SslCertificate sslCert) throws IOException, SQLException {
+		return getIndexedRows(SendmailServer.COLUMN_CLIENT_CERTIFICATE, sslCert.pkey);
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.SENDMAIL_SERVERS;

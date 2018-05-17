@@ -47,7 +47,9 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	static final int
 		COLUMN_PKEY = 0,
 		COLUMN_AO_SERVER = 1,
-		COLUMN_PACKAGE = 3
+		COLUMN_PACKAGE = 3,
+		COLUMN_SERVER_CERTIFICATE = 5,
+		COLUMN_CLIENT_CERTIFICATE = 6
 	;
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 	static final String COLUMN_NAME_name = "name";
@@ -56,12 +58,8 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	private String name;
 	private int packageNum;
 	private DomainName hostname;
-	private UnixPath cacertPath;
-	private UnixPath cacert;
-	private UnixPath serverCert;
-	private UnixPath serverKey;
-	private UnixPath clientCert;
-	private UnixPath clientKey;
+	private int serverCertificate;
+	private int clientCertificate;
 	private boolean allowPlaintextAuth;
 	private int maxQueueChildren;
 	private int niceQueueRun;
@@ -89,25 +87,21 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 			case 2: return name;
 			case COLUMN_PACKAGE: return packageNum;
 			case 4: return hostname;
-			case 5: return cacertPath;
-			case 6: return cacert;
-			case 7: return serverCert;
-			case 8: return serverKey;
-			case 9: return clientCert;
-			case 10: return clientKey;
-			case 11: return allowPlaintextAuth;
-			case 12: return maxQueueChildren==-1 ? null : maxQueueChildren;
-			case 13: return niceQueueRun==-1 ? null : niceQueueRun;
-			case 14: return delayLA==-1 ? null : delayLA;
-			case 15: return queueLA==-1 ? null : queueLA;
-			case 16: return refuseLA==-1 ? null : refuseLA;
-			case 17: return maxDaemonChildren==-1 ? null : maxDaemonChildren;
-			case 18: return badRcptThrottle==-1 ? null : badRcptThrottle;
-			case 19: return connectionRateThrottle==-1 ? null : connectionRateThrottle;
-			case 20: return maxMessageSize==-1 ? null : maxMessageSize;
-			case 21: return minFreeBlocks==-1 ? null : minFreeBlocks;
-			case 22: return clientAddrInet==-1 ? null : clientAddrInet;
-			case 23: return clientAddrInet6==-1 ? null : clientAddrInet6;
+			case COLUMN_SERVER_CERTIFICATE: return serverCertificate;
+			case COLUMN_CLIENT_CERTIFICATE: return clientCertificate;
+			case 7: return allowPlaintextAuth;
+			case 8: return maxQueueChildren==-1 ? null : maxQueueChildren;
+			case 9: return niceQueueRun==-1 ? null : niceQueueRun;
+			case 10: return delayLA==-1 ? null : delayLA;
+			case 11: return queueLA==-1 ? null : queueLA;
+			case 12: return refuseLA==-1 ? null : refuseLA;
+			case 13: return maxDaemonChildren==-1 ? null : maxDaemonChildren;
+			case 14: return badRcptThrottle==-1 ? null : badRcptThrottle;
+			case 15: return connectionRateThrottle==-1 ? null : connectionRateThrottle;
+			case 16: return maxMessageSize==-1 ? null : maxMessageSize;
+			case 17: return minFreeBlocks==-1 ? null : minFreeBlocks;
+			case 18: return clientAddrInet==-1 ? null : clientAddrInet;
+			case 19: return clientAddrInet6==-1 ? null : clientAddrInet6;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -126,12 +120,8 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 			name = result.getString(pos++);
 			packageNum = result.getInt(pos++);
 			hostname = DomainName.valueOf(result.getString(pos++));
-			cacertPath = UnixPath.valueOf(result.getString(pos++));
-			cacert = UnixPath.valueOf(result.getString(pos++));
-			serverCert = UnixPath.valueOf(result.getString(pos++));
-			serverKey = UnixPath.valueOf(result.getString(pos++));
-			clientCert = UnixPath.valueOf(result.getString(pos++));
-			clientKey = UnixPath.valueOf(result.getString(pos++));
+			serverCertificate = result.getInt(pos++);
+			clientCertificate = result.getInt(pos++);
 			allowPlaintextAuth = result.getBoolean(pos++);
 			maxQueueChildren = result.getInt(pos++);
 			if(result.wasNull()) maxQueueChildren = -1;
@@ -170,12 +160,8 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 			name = in.readNullUTF();
 			packageNum = in.readCompressedInt();
 			hostname = DomainName.valueOf(in.readNullUTF());
-			cacertPath = UnixPath.valueOf(in.readUTF());
-			cacert = UnixPath.valueOf(in.readUTF());
-			serverCert = UnixPath.valueOf(in.readUTF());
-			serverKey = UnixPath.valueOf(in.readUTF());
-			clientCert = UnixPath.valueOf(in.readUTF());
-			clientKey = UnixPath.valueOf(in.readUTF());
+			serverCertificate = in.readCompressedInt();
+			clientCertificate = in.readCompressedInt();
 			allowPlaintextAuth = in.readBoolean();
 			maxQueueChildren = in.readCompressedInt();
 			niceQueueRun = in.readCompressedInt();
@@ -201,12 +187,8 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		out.writeNullUTF(name);
 		out.writeCompressedInt(packageNum);
 		out.writeNullUTF(ObjectUtils.toString(hostname));
-		out.writeUTF(cacertPath.toString());
-		out.writeUTF(cacert.toString());
-		out.writeUTF(serverCert.toString());
-		out.writeUTF(serverKey.toString());
-		out.writeUTF(clientCert.toString());
-		out.writeUTF(clientKey.toString());
+		out.writeCompressedInt(serverCertificate);
+		out.writeCompressedInt(clientCertificate);
 		out.writeBoolean(allowPlaintextAuth);
 		out.writeCompressedInt(maxQueueChildren);
 		out.writeCompressedInt(niceQueueRun);
@@ -267,45 +249,23 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	}
 
 	/**
-	 * The path for <code>confCACERT_PATH</code>.
+	 * Gets the server certificate for this server.
+	 *
+	 * @return  the server SSL certificate or {@code null} when filtered
 	 */
-	public UnixPath getCacertPath() {
-		return cacertPath;
+	public SslCertificate getServerCertificate() throws SQLException, IOException {
+		// May be filtered
+		return table.connector.getSslCertificates().get(serverCertificate);
 	}
 
 	/**
-	 * The path for <code>confCACERT</code>.
+	 * Gets the client certificate for this server.
+	 *
+	 * @return  the client SSL certificate or {@code null} when filtered
 	 */
-	public UnixPath getCacert() {
-		return cacert;
-	}
-
-	/**
-	 * The path for <code>confSERVER_CERT</code>.
-	 */
-	public UnixPath getServerCert() {
-		return serverCert;
-	}
-
-	/**
-	 * The path for <code>confSERVER_KEY</code>.
-	 */
-	public UnixPath getServerKey() {
-		return serverKey;
-	}
-
-	/**
-	 * The path for <code>confCLIENT_CERT</code>.
-	 */
-	public UnixPath getClientCert() {
-		return clientCert;
-	}
-
-	/**
-	 * The path for <code>confCLIENT_KEY</code>.
-	 */
-	public UnixPath getClientKey() {
-		return clientKey;
+	public SslCertificate getClientCertificate() throws SQLException, IOException {
+		// May be filtered
+		return table.connector.getSslCertificates().get(clientCertificate);
 	}
 
 	/**
