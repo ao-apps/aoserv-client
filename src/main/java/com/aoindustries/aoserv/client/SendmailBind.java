@@ -107,10 +107,12 @@ final public class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
 	/**
 	 * The <code>Name</code> for <code>DaemonPortOptions</code> or {@code null} if not set.
 	 * The name is unique per-{@link SendmailServer}.
+	 * The name will never contain a space.
 	 * Will default to a generated value based on {@link SendmailServer#getHostname()} or
 	 * {@link IPAddress#getHostname()} if not specified.
 	 */
 	public String getName() {
+		assert name == null || name.indexOf(' ') == -1;
 		return name;
 	}
 }
