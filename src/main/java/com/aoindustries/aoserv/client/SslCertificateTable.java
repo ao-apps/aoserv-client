@@ -75,21 +75,22 @@ final public class SslCertificateTable extends CachedTableIntegerKey<SslCertific
 					args[2]
 				);
 				int size = results.size();
-				final int COLUMNS = 3;
+				final int COLUMNS = 4;
 				Object[] values = new Object[size * COLUMNS];
 				for(int i = 0; i < size; i++) {
 					SslCertificate.Check status = results.get(i);
 					values[i * COLUMNS] = status.getCheck();
-					values[i * COLUMNS + 1] = status.getResult();
+					values[i * COLUMNS + 1] = status.getValue();
 					values[i * COLUMNS + 2] = status.getAlertLevel();
+					values[i * COLUMNS + 3] = status.getMessage();
 				}
 				// Display as a table
 				SQLUtility.printTable(
-					new String[] {"check", "result", "alert_level"},
+					new String[] {"check", "value", "alert_level", "message"},
 					values,
 					out,
 					isInteractive,
-					new boolean[] {false, false, false}
+					new boolean[] {false, false, false, false}
 				);
 				out.flush();
 			}
