@@ -22,7 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.sql.SQLUtility;
 import java.io.IOException;
+import java.io.Reader;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -60,5 +63,38 @@ final public class SslCertificateTable extends CachedTableIntegerKey<SslCertific
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.SSL_CERTIFICATES;
+	}
+
+	@Override
+	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+		String command = args[0];
+		if(command.equalsIgnoreCase(AOSHCommand.CHECK_SSL_CERTIFICATE)) {
+			if(AOSH.checkParamCount(AOSHCommand.CHECK_SSL_CERTIFICATE, args, 2, err)) {
+				List<SslCertificate.Check> results = connector.getSimpleAOClient().checkSslCertificate(
+					args[1],
+					args[2]
+				);
+				int size = results.size();
+				final int COLUMNS = 3;
+				Object[] values = new Object[size * COLUMNS];
+				for(int i = 0; i < size; i++) {
+					SslCertificate.Check status = results.get(i);
+					values[i * COLUMNS] = status.getCheck();
+					values[i * COLUMNS + 1] = status.getResult();
+					values[i * COLUMNS + 2] = status.getAlertLevel();
+				}
+				// Display as a table
+				SQLUtility.printTable(
+					new String[] {"check", "result", "alert_level"},
+					values,
+					out,
+					isInteractive,
+					new boolean[] {false, false, false}
+				);
+				out.flush();
+			}
+			return true;
+		}
+		return false;
 	}
 }

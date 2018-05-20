@@ -30,6 +30,7 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -185,5 +186,86 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 
 	public List<SendmailServer> getSendmailServersByClientCertificate() throws IOException, SQLException {
 		return table.connector.getSendmailServers().getSendmailServersByClientCertificate(this);
+	}
+
+	public static class Check {
+
+		private final String check;
+		private final String result;
+		private final AlertLevel alertLevel;
+
+		public Check(
+			String check,
+			String result,
+			AlertLevel alertLevel
+		) {
+			this.check = check;
+			this.result = result;
+			this.alertLevel = alertLevel;
+		}
+
+		/**
+		 * Gets the human-readable description of the check performed.
+		 */
+		public String getCheck() {
+			return check;
+		}
+
+		/**
+		 * Gets the human-readable result of the check.
+		 */
+		public String getResult() {
+			return result;
+		}
+
+		/**
+		 * The alert level for monitoring purposes.
+		 */
+		public AlertLevel getAlertLevel() {
+			return alertLevel;
+		}
+	}
+
+	/**
+	 * Performs a status check on this certificate.
+	 */
+	public List<Check> check() throws IOException, SQLException {
+		return table.connector.requestResult(true,
+			AOServProtocol.CommandID.CHECK_SSL_CERTIFICATE,
+			new AOServConnector.ResultRequest<List<Check>>() {
+				private List<Check> result;
+
+				@Override
+				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					out.writeCompressedInt(pkey);
+				}
+
+				@Override
+				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					int code = in.readByte();
+					if(code == AOServProtocol.NEXT) {
+						int size = in.readCompressedInt();
+						List<Check> results = new ArrayList<>(size);
+						for(int c = 0; c < size; c++) {
+							results.add(new Check(
+									in.readUTF(),
+									in.readUTF(),
+									AlertLevel.valueOf(in.readUTF())
+								)
+							);
+						}
+						this.result = results;
+					} else {
+						AOServProtocol.checkResult(code, in);
+						throw new IOException("Unexpected response code: " + code);
+					}
+				}
+
+				@Override
+				public List<Check> afterRelease() {
+					return result;
+				}
+			}
+		);
 	}
 }

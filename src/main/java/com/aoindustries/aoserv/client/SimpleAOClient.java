@@ -304,6 +304,18 @@ final public class SimpleAOClient {
 		return sf;
 	}
 
+	private SslCertificate getSslCertificate(String aoServer, String keyFileOrCertbotName) throws IllegalArgumentException, SQLException, IOException {
+		for(SslCertificate cert : getAOServer(aoServer).getSslCertificates()) {
+			if(
+				cert.getKeyFile().toString().equals(keyFileOrCertbotName)
+				|| keyFileOrCertbotName.equals(cert.getCertbotName())
+			) {
+				return cert;
+			}
+		}
+		throw new IllegalArgumentException("Unable to find SslCertificate: " + keyFileOrCertbotName + " on " + aoServer);
+	}
+
 	/**
 	 * Gets the ticket category in "/ path" form.
 	 */
@@ -8208,6 +8220,23 @@ final public class SimpleAOClient {
 	 */
 	public void waitForPostgresUserRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
 		getAOServer(aoServer).waitForPostgresUserRebuild();
+	}
+
+	/**
+	 * @see  SslCertificate#check()
+	 *
+	 * @param  aoServer  the hostname of the server
+	 * @param  keyFileOrCertbotName  Either the full path for keyFile or the per-server unique certbot name
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database
+	 * @exception  IllegalArgumentException  if unable to find the {@link AOServer} or {@link SslCertificate}
+	 */
+	public List<SslCertificate.Check> checkSslCertificate(
+		String aoServer,
+		String keyFileOrCertbotName
+	) throws IllegalArgumentException, IOException, SQLException {
+		return getSslCertificate(aoServer, keyFileOrCertbotName).check();
 	}
 
 	/**
