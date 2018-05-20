@@ -194,17 +194,20 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 		private static final long serialVersionUID = 1L;
 
 		private final String check;
-		private final String result;
+		private final String value;
 		private final AlertLevel alertLevel;
+		private final String message;
 
 		public Check(
 			String check,
-			String result,
-			AlertLevel alertLevel
+			String value,
+			AlertLevel alertLevel,
+			String message
 		) {
 			this.check = check;
-			this.result = result;
+			this.value = value;
 			this.alertLevel = alertLevel;
+			this.message = message;
 		}
 
 		/**
@@ -215,10 +218,10 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 		}
 
 		/**
-		 * Gets the human-readable result of the check.
+		 * Gets any value representing the result of the check.
 		 */
-		public String getResult() {
-			return result;
+		public String getValue() {
+			return value;
 		}
 
 		/**
@@ -226,6 +229,13 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 		 */
 		public AlertLevel getAlertLevel() {
 			return alertLevel;
+		}
+
+		/**
+		 * Gets the optional human-readable result of the check.
+		 */
+		public String getMessage() {
+			return message;
 		}
 	}
 
@@ -250,10 +260,12 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 						int size = in.readCompressedInt();
 						List<Check> results = new ArrayList<>(size);
 						for(int c = 0; c < size; c++) {
-							results.add(new Check(
+							results.add(
+								new Check(
 									in.readUTF(),
 									in.readUTF(),
-									AlertLevel.valueOf(in.readUTF())
+									AlertLevel.valueOf(in.readUTF()),
+									in.readNullUTF()
 								)
 							);
 						}
