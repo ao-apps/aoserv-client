@@ -47,8 +47,9 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 
 	private int ao_server;
 	private int packageNum;
-	private UnixPath certFile;
 	private UnixPath keyFile;
+	private UnixPath csrFile;
+	private UnixPath certFile;
 	private UnixPath chainFile;
 	private String certbotName;
 
@@ -63,10 +64,11 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_AO_SERVER: return ao_server;
 			case COLUMN_PACKAGE: return packageNum;
-			case 3: return certFile;
-			case 4: return keyFile;
-			case 5: return chainFile;
-			case 6: return certbotName;
+			case 3: return keyFile;
+			case 4: return csrFile;
+			case 5: return certFile;
+			case 6: return chainFile;
+			case 7: return certbotName;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -83,8 +85,9 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 			pkey = result.getInt(pos++);
 			ao_server = result.getInt(pos++);
 			packageNum = result.getInt(pos++);
-			certFile = UnixPath.valueOf(result.getString(pos++));
 			keyFile = UnixPath.valueOf(result.getString(pos++));
+			csrFile = UnixPath.valueOf(result.getString(pos++));
+			certFile = UnixPath.valueOf(result.getString(pos++));
 			chainFile = UnixPath.valueOf(result.getString(pos++));
 			certbotName = result.getString(pos++);
 		} catch(ValidationException e) {
@@ -98,8 +101,9 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 			pkey = in.readCompressedInt();
 			ao_server = in.readCompressedInt();
 			packageNum = in.readCompressedInt();
-			certFile = UnixPath.valueOf(in.readUTF());
 			keyFile = UnixPath.valueOf(in.readUTF());
+			csrFile = UnixPath.valueOf(in.readNullUTF());
+			certFile = UnixPath.valueOf(in.readUTF());
 			chainFile = UnixPath.valueOf(in.readNullUTF());
 			certbotName = in.readNullUTF();
 		} catch(ValidationException e) {
@@ -112,8 +116,9 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(packageNum);
-		out.writeUTF(ObjectUtils.toString(certFile));
 		out.writeUTF(ObjectUtils.toString(keyFile));
+		out.writeNullUTF(ObjectUtils.toString(csrFile));
+		out.writeUTF(ObjectUtils.toString(certFile));
 		out.writeNullUTF(ObjectUtils.toString(chainFile));
 		out.writeNullUTF(certbotName);
 	}
@@ -130,12 +135,16 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 		return obj;
 	}
 
-	public UnixPath getCertFile() {
-		return certFile;
-	}
-
 	public UnixPath getKeyFile() {
 		return keyFile;
+	}
+
+	public UnixPath getCsrFile() {
+		return csrFile;
+	}
+
+	public UnixPath getCertFile() {
+		return certFile;
 	}
 
 	public UnixPath getChainFile() {
