@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -137,6 +137,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		CHECK_POSTGRES_USERNAME="check_postgres_username",
 		CHECK_SHARED_TOMCAT_NAME="check_shared_tomcat_name",
 		CHECK_SITE_NAME="check_site_name",
+		CHECK_SSL_CERTIFICATE = "check_ssl_certificate",
 		CHECK_USERNAME="check_username",
 		CHECK_USERNAME_PASSWORD="check_username_password",
 		CLEAR="clear",
