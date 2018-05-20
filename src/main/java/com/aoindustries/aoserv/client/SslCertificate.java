@@ -28,6 +28,7 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -188,7 +189,9 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 		return table.connector.getSendmailServers().getSendmailServersByClientCertificate(this);
 	}
 
-	public static class Check {
+	public static class Check implements Serializable {
+
+		private static final long serialVersionUID = 1L;
 
 		private final String check;
 		private final String result;
