@@ -22,7 +22,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -53,6 +52,61 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	;
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 	static final String COLUMN_NAME_name = "name";
+
+	/**
+	 * Default value for sendmail_servers.allow_plaintext_auth
+	 */
+	public static final boolean DEFAULT_ALLOW_PLAINTEXT_AUTH = false;
+
+	/**
+	 * Default value for sendmail_servers.max_queue_children
+	 */
+	public static final int DEFAULT_MAX_QUEUE_CHILDREN = 100;
+
+	/**
+	 * Default value for sendmail_servers.nice_queue_run
+	 */
+	public static final int DEFAULT_NICE_QUEUE_RUN = 10;
+
+	/**
+	 * Default value for sendmail_servers.delay_la
+	 */
+	public static final int DEFAULT_DELAY_LA = 40;
+
+	/**
+	 * Default value for sendmail_servers.queue_la
+	 */
+	public static final int DEFAULT_QUEUE_LA = 50;
+
+	/**
+	 * Default value for sendmail_servers.refuse_la
+	 */
+	public static final int DEFAULT_REFUSE_LA = 80;
+
+	/**
+	 * Default value for sendmail_servers.max_daemon_children
+	 */
+	public static final int DEFAULT_MAX_DAEMON_CHILDREN = 1000;
+
+	/**
+	 * Default value for sendmail_servers.bad_rcpt_throttle
+	 */
+	public static final int DEFAULT_BAD_RCPT_THROTTLE = 10;
+
+	/**
+	 * Default value for sendmail_servers.connection_rate_throttle
+	 */
+	public static final int DEFAULT_CONNECTION_RATE_THROTTLE = 100;
+
+	/**
+	 * Default value for sendmail_servers.max_message_size
+	 */
+	public static final int DEFAULT_MAX_MESSAGE_SIZE = 100000000;
+
+	/**
+	 * Default value for sendmail_servers.min_free_blocks
+	 */
+	public static final int DEFAULT_MIN_FREE_BLOCKS = 65536;
 
 	int ao_server;
 	private String name;
