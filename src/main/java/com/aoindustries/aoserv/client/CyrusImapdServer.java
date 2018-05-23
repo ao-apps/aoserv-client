@@ -107,6 +107,41 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 		abstract float convertToDays(float duration);
 	}
 
+	/**
+	 * Default value for cyrus_imapd_servers.allow_plaintext_auth
+	 */
+	public static final boolean DEFAULT_ALLOW_PLAINTEXT_AUTH = false;
+
+	/**
+	 * Default value for cyrus_imapd_servers.delete_duration
+	 */
+	public static final boolean DEFAULT_DELETE_DURATION = false;
+
+	/**
+	 * Default value for cyrus_imapd_servers.delete_duration_unit
+	 */
+	public static final boolean DEFAULT_DELETE_DURATION_UNIT = false;
+
+	/**
+	 * Default value for cyrus_imapd_servers.expire_duration
+	 */
+	public static final boolean DEFAULT_EXPIRE_DURATION = false;
+
+	/**
+	 * Default value for cyrus_imapd_servers.expire_duration_unit
+	 */
+	public static final boolean DEFAULT_EXPIRE_DURATION_UNIT = false;
+
+	/**
+	 * Default value for cyrus_imapd_servers.expunge_duration
+	 */
+	public static final boolean DEFAULT_EXPUNGE_DURATION = false;
+
+	/**
+	 * Default value for cyrus_imapd_servers.expunge_duration_unit
+	 */
+	public static final boolean DEFAULT_EXPUNGE_DURATION_UNIT = false;
+
 	private int sieveNetBind;
 	private DomainName servername;
 	private int certificate;
