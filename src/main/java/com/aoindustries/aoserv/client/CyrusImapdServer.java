@@ -115,32 +115,32 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	/**
 	 * Default value for cyrus_imapd_servers.delete_duration
 	 */
-	public static final boolean DEFAULT_DELETE_DURATION = false;
+	public static final float DEFAULT_DELETE_DURATION = 3;
 
 	/**
 	 * Default value for cyrus_imapd_servers.delete_duration_unit
 	 */
-	public static final boolean DEFAULT_DELETE_DURATION_UNIT = false;
+	public static final TimeUnit DEFAULT_DELETE_DURATION_UNIT = TimeUnit.DAYS;
 
 	/**
 	 * Default value for cyrus_imapd_servers.expire_duration
 	 */
-	public static final boolean DEFAULT_EXPIRE_DURATION = false;
+	public static final float DEFAULT_EXPIRE_DURATION = 3;
 
 	/**
 	 * Default value for cyrus_imapd_servers.expire_duration_unit
 	 */
-	public static final boolean DEFAULT_EXPIRE_DURATION_UNIT = false;
+	public static final TimeUnit DEFAULT_EXPIRE_DURATION_UNIT = TimeUnit.DAYS;
 
 	/**
 	 * Default value for cyrus_imapd_servers.expunge_duration
 	 */
-	public static final boolean DEFAULT_EXPUNGE_DURATION = false;
+	public static final float DEFAULT_EXPUNGE_DURATION = 3;
 
 	/**
 	 * Default value for cyrus_imapd_servers.expunge_duration_unit
 	 */
-	public static final boolean DEFAULT_EXPUNGE_DURATION_UNIT = false;
+	public static final TimeUnit DEFAULT_EXPUNGE_DURATION_UNIT = TimeUnit.DAYS;
 
 	private int sieveNetBind;
 	private DomainName servername;
