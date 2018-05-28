@@ -291,7 +291,7 @@ final public class AOServer
 			case 8: return daemon_device_id;
 			case 9: return daemon_connect_bind==-1?null:daemon_connect_bind;
 			case 10: return time_zone;
-			case 11: return jilter_bind;
+			case 11: return jilter_bind == -1 ? null : jilter_bind;
 			case 12: return restrict_outbound_email;
 			case 13: return daemon_connect_address;
 			case 14: return failover_batch_size;
