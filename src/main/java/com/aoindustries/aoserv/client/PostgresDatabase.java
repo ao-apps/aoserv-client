@@ -27,6 +27,7 @@ import com.aoindustries.io.ByteCountInputStream;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.IoUtils;
+import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.nio.charset.Charsets;
 import com.aoindustries.validation.ValidationException;
@@ -229,14 +230,24 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		PostgresServer ps = getPostgresServer();
 		AOServer ao = ps.getAOServer();
 		StringBuilder jdbcUrl = new StringBuilder();
-		jdbcUrl
-			.append("jdbc:postgresql://")
-			.append(
-				ipOnly
-				? ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString()
-				: ao.getHostname()
-			);
-		Port port = ps.getNetBind().getPort();
+		jdbcUrl.append("jdbc:postgresql://");
+		NetBind nb = ps.getNetBind();
+		IPAddress ip = nb.getIPAddress();
+		InetAddress ia = ip.getInetAddress();
+		if(ipOnly) {
+			if(ia.isUnspecified()) {
+				jdbcUrl.append(ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
+			} else {
+				jdbcUrl.append(ia.toBracketedString());
+			}
+		} else {
+			if(ia.isUnspecified()) {
+				jdbcUrl.append(ao.getHostname());
+			} else {
+				jdbcUrl.append(ip.getHostname());
+			}
+		}
+		Port port = nb.getPort();
 		if(!port.equals(PostgresServer.DEFAULT_PORT)) {
 			jdbcUrl
 				.append(':')
