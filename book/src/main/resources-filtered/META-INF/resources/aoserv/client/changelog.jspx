@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-05-19T22:11:12-0500"
+		dateModified="2018-05-27T19:55:13-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -555,6 +555,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Removed <code>content_source</code> parameter from <code>add_httpd_tomcat_std_site</code> AOSH command</li>
 						</ul>
 					</li>
+					<li>Generating JDBC URLs for MySQL and PostgreSQL more precisely based on the <code>net_binds</code> settings.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
