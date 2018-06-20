@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017  AO Industries, Inc.
+ * Copyright (C) 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -46,7 +46,7 @@ public interface AOServStreamable extends Streamable, AOServWritable {
 	@Deprecated
 	@Override
 	void write(CompressedDataOutputStream out, String version) throws IOException;
-	// TODO: Java 1.8: default method (or inherit from AOServWritable)
+	// Java 1.8: default method (or inherit from AOServWritable)
 	// write(out, AOServProtocol.Version.getVersion(version));
 
 	@Override
