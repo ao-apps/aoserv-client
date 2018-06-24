@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -108,14 +108,23 @@ final public class Gecos implements
 		if(value == null) return null;
 		//Gecos existing = interned.get(value);
 		//return existing!=null ? existing : new Gecos(value);
-		return new Gecos(value);
+		return new Gecos(value, true);
 	}
 
 	final private String value;
 
-	private Gecos(String value) throws ValidationException {
+	private Gecos(String value, boolean validate) throws ValidationException {
 		this.value = value;
-		validate();
+		if(validate) validate();
+	}
+
+	/**
+	 * @param  value  Does not validate, should only be used with a known valid value.
+	 */
+	private Gecos(String value) {
+		ValidationResult result;
+		assert (result = validate(value)).isValid() : result.toString();
+		this.value = value;
 	}
 
 	private void validate() throws ValidationException {
@@ -173,19 +182,14 @@ final public class Gecos implements
 	 */
 	@Override
 	public Gecos intern() {
-		try {
-			Gecos existing = interned.get(value);
-			if(existing==null) {
-				String internedValue = value.intern();
-				Gecos addMe = value==internedValue ? this : new Gecos(internedValue); // Using identity String comparison to see if already interned
-				existing = interned.putIfAbsent(internedValue, addMe);
-				if(existing==null) existing = addMe;
-			}
-			return existing;
-		} catch(ValidationException err) {
-			// Should not fail validation since original object passed
-			throw new AssertionError(err.getMessage());
+		Gecos existing = interned.get(value);
+		if(existing==null) {
+			String internedValue = value.intern();
+			Gecos addMe = (value == internedValue) ? this : new Gecos(internedValue); // Using identity String comparison to see if already interned
+			existing = interned.putIfAbsent(internedValue, addMe);
+			if(existing==null) existing = addMe;
 		}
+		return existing;
 	}
 
 	@Override

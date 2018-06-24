@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -98,14 +98,23 @@ final public class UnixPath implements
 		if(path == null) return null;
 		//UnixPath existing = interned.get(path);
 		//return existing!=null ? existing : new UnixPath(path);
-		return new UnixPath(path);
+		return new UnixPath(path, true);
 	}
 
 	final private String path;
 
-	private UnixPath(String path) throws ValidationException {
+	private UnixPath(String path, boolean validate) throws ValidationException {
 		this.path = path;
-		validate();
+		if(validate) validate();
+	}
+
+	/**
+	 * @param  path  Does not validate, should only be used with a known valid value.
+	 */
+	private UnixPath(String path) {
+		ValidationResult result;
+		assert (result = validate(path)).isValid() : result.toString();
+		this.path = path;
 	}
 
 	private void validate() throws ValidationException {
@@ -163,23 +172,20 @@ final public class UnixPath implements
 	 */
 	@Override
 	public UnixPath intern() {
-		try {
-			UnixPath existing = interned.get(path);
-			if(existing==null) {
-				String internedPath = path.intern();
-				UnixPath addMe = path==internedPath ? this : new UnixPath(internedPath);
-				existing = interned.putIfAbsent(internedPath, addMe);
-				if(existing==null) existing = addMe;
-			}
-			return existing;
-		} catch(ValidationException err) {
-			// Should not fail validation since original object passed
-			throw new AssertionError(err.getMessage());
+		UnixPath existing = interned.get(path);
+		if(existing==null) {
+			String internedPath = path.intern();
+			UnixPath addMe = (path == internedPath) ? this : new UnixPath(internedPath);
+			existing = interned.putIfAbsent(internedPath, addMe);
+			if(existing==null) existing = addMe;
 		}
+		return existing;
 	}
 
 	@Override
 	public com.aoindustries.aoserv.client.dto.UnixPath getDto() {
 		return new com.aoindustries.aoserv.client.dto.UnixPath(path);
 	}
+
+	// TODO: subPath, prefix, suffix matching Path except watch for trailing slash
 }

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017  AO Industries, Inc.
+ * Copyright (C) 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -119,14 +119,23 @@ final public class FirewalldZoneName implements
 		if(name == null) return null;
 		//FirewalldZoneName existing = interned.get(name);
 		//return existing!=null ? existing : new FirewalldZoneName(name);
-		return new FirewalldZoneName(name);
+		return new FirewalldZoneName(name, true);
 	}
 
 	final private String name;
 
-	private FirewalldZoneName(String name) throws ValidationException {
+	private FirewalldZoneName(String name, boolean validate) throws ValidationException {
 		this.name = name;
-		validate();
+		if(validate) validate();
+	}
+
+	/**
+	 * @param  name  Does not validate, should only be used with a known valid value.
+	 */
+	private FirewalldZoneName(String name) {
+		ValidationResult result;
+		assert (result = validate(name)).isValid() : result.toString();
+		this.name = name;
 	}
 
 	private void validate() throws ValidationException {
@@ -184,19 +193,14 @@ final public class FirewalldZoneName implements
 	 */
 	@Override
 	public FirewalldZoneName intern() {
-		try {
-			FirewalldZoneName existing = interned.get(name);
-			if(existing == null) {
-				String internedName = name.intern();
-				FirewalldZoneName addMe = (name == internedName) ? this : new FirewalldZoneName(internedName);
-				existing = interned.putIfAbsent(internedName, addMe);
-				if(existing == null) existing = addMe;
-			}
-			return existing;
-		} catch(ValidationException err) {
-			// Should not fail validation since original object passed
-			throw new AssertionError(err.getMessage());
+		FirewalldZoneName existing = interned.get(name);
+		if(existing == null) {
+			String internedName = name.intern();
+			FirewalldZoneName addMe = (name == internedName) ? this : new FirewalldZoneName(internedName);
+			existing = interned.putIfAbsent(internedName, addMe);
+			if(existing == null) existing = addMe;
 		}
+		return existing;
 	}
 
 	@Override

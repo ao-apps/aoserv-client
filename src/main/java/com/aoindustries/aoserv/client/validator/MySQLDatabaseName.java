@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -105,14 +105,23 @@ final public class MySQLDatabaseName implements
 		if(name == null) return null;
 		//MySQLDatabaseName existing = interned.get(name);
 		//return existing!=null ? existing : new MySQLDatabaseName(name);
-		return new MySQLDatabaseName(name);
+		return new MySQLDatabaseName(name, true);
 	}
 
 	final private String name;
 
-	private MySQLDatabaseName(String name) throws ValidationException {
+	private MySQLDatabaseName(String name, boolean validate) throws ValidationException {
 		this.name = name;
-		validate();
+		if(validate) validate();
+	}
+
+	/**
+	 * @param  name  Does not validate, should only be used with a known valid value.
+	 */
+	private MySQLDatabaseName(String name) {
+		ValidationResult result;
+		assert (result = validate(name)).isValid() : result.toString();
+		this.name = name;
 	}
 
 	private void validate() throws ValidationException {
@@ -170,19 +179,14 @@ final public class MySQLDatabaseName implements
 	 */
 	@Override
 	public MySQLDatabaseName intern() {
-		try {
-			MySQLDatabaseName existing = interned.get(name);
-			if(existing==null) {
-				String internedName = name.intern();
-				MySQLDatabaseName addMe = name==internedName ? this : new MySQLDatabaseName(internedName);
-				existing = interned.putIfAbsent(internedName, addMe);
-				if(existing==null) existing = addMe;
-			}
-			return existing;
-		} catch(ValidationException err) {
-			// Should not fail validation since original object passed
-			throw new AssertionError(err.getMessage());
+		MySQLDatabaseName existing = interned.get(name);
+		if(existing==null) {
+			String internedName = name.intern();
+			MySQLDatabaseName addMe = (name == internedName) ? this : new MySQLDatabaseName(internedName);
+			existing = interned.putIfAbsent(internedName, addMe);
+			if(existing==null) existing = addMe;
 		}
+		return existing;
 	}
 
 	@Override

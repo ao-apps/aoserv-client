@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -72,9 +72,13 @@ final public class LinuxId implements
 
 	final private int id;
 
-	private LinuxId(int id) throws ValidationException {
+	/**
+	 * @param  id  Does not validate, should only be used with a known valid value.
+	 */
+	private LinuxId(int id) {
+		ValidationResult result;
+		assert (result = validate(id)).isValid() : result.toString();
 		this.id=id;
-		validate();
 	}
 
 	private void validate() throws ValidationException {

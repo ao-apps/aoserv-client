@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -108,14 +108,23 @@ final public class GroupId implements
 		if(id == null) return null;
 		//GroupId existing = interned.get(id);
 		//return existing!=null ? existing : new GroupId(id);
-		return new GroupId(id);
+		return new GroupId(id, true);
 	}
 
 	final private String id;
 
-	private GroupId(String id) throws ValidationException {
+	private GroupId(String id, boolean validate) throws ValidationException {
 		this.id = id;
-		validate();
+		if(validate) validate();
+	}
+
+	/**
+	 * @param  id  Does not validate, should only be used with a known valid value.
+	 */
+	private GroupId(String id) {
+		ValidationResult result;
+		assert (result = validate(id)).isValid() : result.toString();
+		this.id = id;
 	}
 
 	private void validate() throws ValidationException {
@@ -173,19 +182,14 @@ final public class GroupId implements
 	 */
 	@Override
 	public GroupId intern() {
-		try {
-			GroupId existing = interned.get(id);
-			if(existing==null) {
-				String internedId = id.intern();
-				GroupId addMe = id==internedId ? this : new GroupId(internedId); // Using identity String comparison to see if already interned
-				existing = interned.putIfAbsent(internedId, addMe);
-				if(existing==null) existing = addMe;
-			}
-			return existing;
-		} catch(ValidationException err) {
-			// Should not fail validation since original object passed
-			throw new AssertionError(err.getMessage());
+		GroupId existing = interned.get(id);
+		if(existing==null) {
+			String internedId = id.intern();
+			GroupId addMe = (id == internedId) ? this : new GroupId(internedId); // Using identity String comparison to see if already interned
+			existing = interned.putIfAbsent(internedId, addMe);
+			if(existing==null) existing = addMe;
 		}
+		return existing;
 	}
 
 	@Override
