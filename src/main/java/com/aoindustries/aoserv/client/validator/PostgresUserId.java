@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -100,10 +100,17 @@ final public class PostgresUserId extends UserId implements
 		if(id == null) return null;
 		//PostgresUserId existing = interned.get(id);
 		//return existing!=null ? existing : new PostgresUserId(id);
-		return new PostgresUserId(id);
+		return new PostgresUserId(id, true);
 	}
 
-	private PostgresUserId(String id) throws ValidationException {
+	private PostgresUserId(String id, boolean validate) throws ValidationException {
+		super(id, validate);
+	}
+
+	/**
+	 * @param  id  Does not validate, should only be used with a known valid value.
+	 */
+	private PostgresUserId(String id) {
 		super(id);
 	}
 
@@ -118,19 +125,14 @@ final public class PostgresUserId extends UserId implements
 	 */
 	@Override
 	public PostgresUserId intern() {
-		try {
-			PostgresUserId existing = interned.get(id);
-			if(existing==null) {
-				String internedId = id.intern();
-				PostgresUserId addMe = id==internedId ? this : new PostgresUserId(internedId);
-				existing = interned.putIfAbsent(internedId, addMe);
-				if(existing==null) existing = addMe;
-			}
-			return existing;
-		} catch(ValidationException err) {
-			// Should not fail validation since original object passed
-			throw new AssertionError(err.getMessage());
+		PostgresUserId existing = interned.get(id);
+		if(existing==null) {
+			String internedId = id.intern();
+			PostgresUserId addMe = (id == internedId) ? this : new PostgresUserId(internedId);
+			existing = interned.putIfAbsent(internedId, addMe);
+			if(existing==null) existing = addMe;
 		}
+		return existing;
 	}
 
 	@Override

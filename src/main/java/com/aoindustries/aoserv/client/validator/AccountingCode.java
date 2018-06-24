@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -125,13 +125,21 @@ final public class AccountingCode implements
 	private String upperAccounting;
 
 	private AccountingCode(String accounting) throws ValidationException {
-		this(accounting, accounting.toUpperCase(Locale.ROOT));
+		this.accounting = accounting;
+		this.upperAccounting = accounting.toUpperCase(Locale.ROOT);
+		validate();
 	}
 
-	private AccountingCode(String accounting, String upperAccounting) throws ValidationException {
+	/**
+	 * @param  accounting  Does not validate, should only be used with a known valid value.
+	 * @param  upperAccounting  Does not validate, should only be used with a known valid value.
+	 */
+	private AccountingCode(String accounting, String upperAccounting) {
+		ValidationResult result;
+		assert (result = validate(accounting)).isValid() : result.toString();
+		assert accounting.toUpperCase(Locale.ROOT).equals(upperAccounting);
 		this.accounting = accounting;
 		this.upperAccounting = upperAccounting;
-		validate();
 	}
 
 	private void validate() throws ValidationException {
@@ -179,20 +187,15 @@ final public class AccountingCode implements
 	 */
 	@Override
 	public AccountingCode intern() {
-		try {
-			AccountingCode existing = interned.get(accounting);
-			if(existing==null) {
-				String internedAccounting = accounting.intern();
-				String internedUpperAccounting = upperAccounting.intern();
-				AccountingCode addMe = accounting==internedAccounting && upperAccounting==internedUpperAccounting ? this : new AccountingCode(internedAccounting, upperAccounting);
-				existing = interned.putIfAbsent(internedAccounting, addMe);
-				if(existing==null) existing = addMe;
-			}
-			return existing;
-		} catch(ValidationException err) {
-			// Should not fail validation since original object passed
-			throw new AssertionError(err.getMessage());
+		AccountingCode existing = interned.get(accounting);
+		if(existing==null) {
+			String internedAccounting = accounting.intern();
+			String internedUpperAccounting = upperAccounting.intern();
+			AccountingCode addMe = (accounting == internedAccounting) && (upperAccounting == internedUpperAccounting) ? this : new AccountingCode(internedAccounting, internedUpperAccounting);
+			existing = interned.putIfAbsent(internedAccounting, addMe);
+			if(existing==null) existing = addMe;
 		}
+		return existing;
 	}
 
 	@Override

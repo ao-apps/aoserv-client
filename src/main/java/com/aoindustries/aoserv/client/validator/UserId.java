@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -128,7 +128,7 @@ public class UserId implements
 		if(id == null) return null;
 		//UserId existing = interned.get(id);
 		//return existing!=null ? existing : new UserId(id);
-		return new UserId(id);
+		return new UserId(id, true);
 	}
 
 	/*
@@ -139,9 +139,18 @@ public class UserId implements
 
 	protected String id;
 
-	UserId(String id) throws ValidationException {
+	UserId(String id, boolean validate) throws ValidationException {
 		this.id = id;
-		validate();
+		if(validate) validate();
+	}
+
+	/**
+	 * @param  id  Does not validate, should only be used with a known valid value.
+	 */
+	UserId(String id) {
+		ValidationResult result;
+		assert (result = validate(id)).isValid() : result.toString();
+		this.id = id;
 	}
 
 	void validate() throws ValidationException {
@@ -196,19 +205,14 @@ public class UserId implements
 	 */
 	@Override
 	public UserId intern() {
-		try {
-			UserId existing = interned.get(id);
-			if(existing==null) {
-				String internedId = id.intern();
-				UserId addMe = id==internedId ? this : new UserId(internedId);
-				existing = interned.putIfAbsent(internedId, addMe);
-				if(existing==null) existing = addMe;
-			}
-			return existing;
-		} catch(ValidationException err) {
-			// Should not fail validation since original object passed
-			throw new AssertionError(err.getMessage());
+		UserId existing = interned.get(id);
+		if(existing==null) {
+			String internedId = id.intern();
+			UserId addMe = (id == internedId) ? this : new UserId(internedId);
+			existing = interned.putIfAbsent(internedId, addMe);
+			if(existing==null) existing = addMe;
 		}
+		return existing;
 	}
 
 	@Override
