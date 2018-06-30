@@ -63,6 +63,10 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	private boolean use_mod_perl;
 	private int timeout;
 	private int max_concurrency;
+	private int monitoring_concurrency_low;
+	private int monitoring_concurrency_medium;
+	private int monitoring_concurrency_high;
+	private int monitoring_concurrency_critical;
 	private Boolean mod_access_compat;
 	private Boolean mod_actions;
 	private Boolean mod_alias;
@@ -107,43 +111,47 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 			case 3: return can_add_sites;
 			case 4: return linux_server_account;
 			case 5: return linux_server_group;
-			case 6: return mod_php_version== -1 ? null : mod_php_version;
+			case 6: return (mod_php_version == -1) ? null : mod_php_version;
 			case 7: return use_suexec;
 			case COLUMN_PACKAGE: return packageNum;
 			case 9: return is_shared;
 			case 10: return use_mod_perl;
 			case 11: return timeout;
 			case 12: return max_concurrency;
-			case 13: return mod_access_compat;
-			case 14: return mod_actions;
-			case 15: return mod_alias;
-			case 16: return mod_auth_basic;
-			case 17: return mod_authn_core;
-			case 18: return mod_authn_file;
-			case 19: return mod_authz_core;
-			case 20: return mod_authz_groupfile;
-			case 21: return mod_authz_host;
-			case 22: return mod_authz_user;
-			case 23: return mod_autoindex;
-			case 24: return mod_deflate;
-			case 25: return mod_dir;
-			case 26: return mod_filter;
-			case 27: return mod_headers;
-			case 28: return mod_include;
-			case 29: return mod_jk;
-			case 30: return mod_log_config;
-			case 31: return mod_mime;
-			case 32: return mod_mime_magic;
-			case 33: return mod_negotiation;
-			case 34: return mod_proxy;
-			case 35: return mod_proxy_http;
-			case 36: return mod_reqtimeout;
-			case 37: return mod_rewrite;
-			case 38: return mod_setenvif;
-			case 39: return mod_socache_shmcb;
-			case 40: return mod_ssl;
-			case 41: return mod_status;
-			case 42: return mod_wsgi;
+			case 13: return (monitoring_concurrency_low == -1) ? null : monitoring_concurrency_low;
+			case 14: return (monitoring_concurrency_medium == -1) ? null : monitoring_concurrency_medium;
+			case 15: return (monitoring_concurrency_high == -1) ? null : monitoring_concurrency_high;
+			case 16: return (monitoring_concurrency_critical == -1) ? null : monitoring_concurrency_critical;
+			case 17: return mod_access_compat;
+			case 18: return mod_actions;
+			case 19: return mod_alias;
+			case 20: return mod_auth_basic;
+			case 21: return mod_authn_core;
+			case 22: return mod_authn_file;
+			case 23: return mod_authz_core;
+			case 24: return mod_authz_groupfile;
+			case 25: return mod_authz_host;
+			case 26: return mod_authz_user;
+			case 27: return mod_autoindex;
+			case 28: return mod_deflate;
+			case 29: return mod_dir;
+			case 30: return mod_filter;
+			case 31: return mod_headers;
+			case 32: return mod_include;
+			case 33: return mod_jk;
+			case 34: return mod_log_config;
+			case 35: return mod_mime;
+			case 36: return mod_mime_magic;
+			case 37: return mod_negotiation;
+			case 38: return mod_proxy;
+			case 39: return mod_proxy_http;
+			case 40: return mod_reqtimeout;
+			case 41: return mod_rewrite;
+			case 42: return mod_setenvif;
+			case 43: return mod_socache_shmcb;
+			case 44: return mod_ssl;
+			case 45: return mod_status;
+			case 46: return mod_wsgi;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -214,6 +222,39 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	 */
 	public int getMaxConcurrency() {
 		return max_concurrency;
+	}
+
+	/**
+	 * Gets the concurrency that is considered a low-priority alert or
+	 * <code>-1</code> if no alert allowed at this level.
+	 */
+	public int getMonitoringConcurrencyLow() {
+		return monitoring_concurrency_low;
+	}
+
+	/**
+	 * Gets the concurrency that is considered a medium-priority alert or
+	 * <code>-1</code> if no alert allowed at this level.
+	 */
+	public int getMonitoringConcurrencyMedium() {
+		return monitoring_concurrency_medium;
+	}
+
+	/**
+	 * Gets the concurrency that is considered a high-priority alert or
+	 * <code>-1</code> if no alert allowed at this level.
+	 */
+	public int getMonitoringConcurrencyHigh() {
+		return monitoring_concurrency_high;
+	}
+
+	/**
+	 * Gets the concurrency that is considered a critical-priority alert or
+	 * <code>-1</code> if no alert allowed at this level.
+	 * This is the level that will alert people 24x7.
+	 */
+	public int getMonitoringConcurrencyCritical() {
+		return monitoring_concurrency_critical;
 	}
 
 	/**
@@ -388,6 +429,14 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		use_mod_perl=result.getBoolean(pos++);
 		timeout=result.getInt(pos++);
 		max_concurrency=result.getInt(pos++);
+		monitoring_concurrency_low = result.getInt(pos++);
+		if(result.wasNull()) monitoring_concurrency_low = -1;
+		monitoring_concurrency_medium = result.getInt(pos++);
+		if(result.wasNull()) monitoring_concurrency_medium = -1;
+		monitoring_concurrency_high = result.getInt(pos++);
+		if(result.wasNull()) monitoring_concurrency_high = -1;
+		monitoring_concurrency_critical = result.getInt(pos++);
+		if(result.wasNull()) monitoring_concurrency_critical = -1;
 		mod_access_compat=result.getBoolean(pos++);
 		if(result.wasNull()) mod_access_compat = null;
 		mod_actions=result.getBoolean(pos++);
@@ -465,6 +514,10 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		use_mod_perl=in.readBoolean();
 		timeout=in.readCompressedInt();
 		max_concurrency=in.readCompressedInt();
+		monitoring_concurrency_low = in.readCompressedInt();
+		monitoring_concurrency_medium = in.readCompressedInt();
+		monitoring_concurrency_high = in.readCompressedInt();
+		monitoring_concurrency_critical = in.readCompressedInt();
 		mod_access_compat = in.readNullBoolean();
 		mod_actions = in.readNullBoolean();
 		mod_alias = in.readNullBoolean();
@@ -534,6 +587,12 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68)>=0) {
 			out.writeCompressedInt(max_concurrency);
 		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_11) >= 0) {
+			out.writeCompressedInt(monitoring_concurrency_low);
+			out.writeCompressedInt(monitoring_concurrency_medium);
+			out.writeCompressedInt(monitoring_concurrency_high);
+			out.writeCompressedInt(monitoring_concurrency_critical);
+		}
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_7) >= 0) {
 			out.writeNullBoolean(mod_access_compat);
 			out.writeNullBoolean(mod_actions);
@@ -564,9 +623,20 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 			out.writeNullBoolean(mod_socache_shmcb);
 			out.writeNullBoolean(mod_ssl);
 			out.writeNullBoolean(mod_status);
-			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
-				out.writeNullBoolean(mod_wsgi);
-			}
 		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
+			out.writeNullBoolean(mod_wsgi);
+		}
+	}
+
+	/**
+	 * Gets the current concurrency of this HTTP server.
+	 */
+	public int getConcurrency() throws IOException, SQLException {
+		return table.connector.requestIntQuery(
+			true,
+			AOServProtocol.CommandID.GET_HTTPD_SERVER_CONCURRENCY,
+			pkey
+		);
 	}
 }

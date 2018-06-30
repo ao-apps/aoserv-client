@@ -36,6 +36,7 @@ import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
@@ -156,6 +157,16 @@ final public class SimpleAOClient {
 		}
 		if(replication==null) throw new IllegalArgumentException("Unable to find FailoverFileReplication: From "+fromServer+" to "+toServer+" at "+path);
 		return replication;
+	}
+
+	@SuppressWarnings("deprecation") // Java 1.7: Do not suppress
+	private HttpdServer getHttpdServer(String aoServer, String name) throws IllegalArgumentException, IOException, SQLException {
+		for(HttpdServer hs : getAOServer(aoServer).getHttpdServers()) {
+			if(ObjectUtils.equals(name, hs.getName())) {
+				return hs;
+			}
+		}
+		throw new IllegalArgumentException("Unable to find HttpdServer: " + (name == null ? "\"\"" : name) + " on " + aoServer);
 	}
 
 	private HttpdSharedTomcat getHttpdSharedTomcat(String aoServer, String name) throws IllegalArgumentException, IOException, SQLException {
@@ -4431,6 +4442,23 @@ final public class SimpleAOClient {
 		String path
 	) throws IllegalArgumentException, IOException, SQLException {
 		return getFailoverFileReplication(fromServer, toServer, path).getActivity();
+	}
+
+	/**
+	 * @see  HttpdServer#getConcurrency()
+	 *
+	 * @param  aoServer  the server hosting the account
+	 * @param  name      the name of the instance of {@code null} for the default instance
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, {@link AOServer}, or {@link HttpdServer}
+	 */
+	public int getHttpdServerConcurrency(
+		String aoServer,
+		String name
+	) throws IllegalArgumentException, IOException, SQLException {
+		return getHttpdServer(aoServer, name).getConcurrency();
 	}
 
 	/**

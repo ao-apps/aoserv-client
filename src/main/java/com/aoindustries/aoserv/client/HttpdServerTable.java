@@ -22,7 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -62,5 +64,25 @@ final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_SERVERS;
+	}
+
+	@Override
+	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
+		String command = args[0];
+		if(command.equalsIgnoreCase(AOSHCommand.GET_HTTPD_SERVER_CONCURRENCY)) {
+			if(AOSH.checkParamCount(AOSHCommand.GET_HTTPD_SERVER_CONCURRENCY, args, 2, err)) {
+				out.write(
+					Integer.toString(
+						connector.getSimpleAOClient().getHttpdServerConcurrency(
+							args[1],
+							args[2].isEmpty() ? null : args[2]
+						)
+					)
+				);
+				out.flush();
+			}
+			return true;
+		}
+		return false;
 	}
 }

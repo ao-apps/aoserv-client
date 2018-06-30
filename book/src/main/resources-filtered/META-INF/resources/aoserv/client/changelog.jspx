@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-05-27T19:55:13-0500"
+		dateModified="2018-06-29T16:11:16-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -556,6 +556,15 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ul>
 					</li>
 					<li>Generating JDBC URLs for MySQL and PostgreSQL more precisely based on the <code>net_binds</code> settings.</li>
+					<li>Now monitoring Apache concurrency:
+						<ul>
+							<li>Added <code>httpd_servers.monitoring_concurrency_low</code> column</li>
+							<li>Added <code>httpd_servers.monitoring_concurrency_medium</code> column</li>
+							<li>Added <code>httpd_servers.monitoring_concurrency_high</code> column</li>
+							<li>Added <code>httpd_servers.monitoring_concurrency_critical</code> column</li>
+							<li>Added <code>get_httpd_server_concurrency</code> AOSH command</li>
+						</ul>
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
