@@ -203,6 +203,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		GET_CRON_TABLE="get_cron_table",
 		GET_EMAIL_LIST="get_email_list",
 		GET_FAILOVER_FILE_REPLICATION_ACTIVITY = "get_failover_file_replication_activity",
+		GET_HTTPD_SERVER_CONCURRENCY = "get_httpd_server_concurrency",
 		GET_IMAP_FOLDER_SIZES="get_imap_folder_sizes",
 		GET_INBOX_ATTRIBUTES="get_inbox_attributes",
 		GET_MAJORDOMO_INFO_FILE="get_majordomo_info_file",
