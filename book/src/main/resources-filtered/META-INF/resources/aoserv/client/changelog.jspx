@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-06-29T16:11:16-0500"
+		dateModified="2018-07-06T00:54:37-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -565,6 +565,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>get_httpd_server_concurrency</code> AOSH command</li>
 						</ul>
 					</li>
+					<li>Using <code>System.console()</code> to no longer echo password during login.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

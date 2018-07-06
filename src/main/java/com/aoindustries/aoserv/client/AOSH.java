@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -46,6 +46,8 @@ import com.aoindustries.validation.ValidationException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.CharArrayReader;
+import java.io.Console;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -262,13 +264,20 @@ final public class AOSH extends ShellInterpreter {
 	}
 
 	public static String getConfigPassword(InputStream in, TerminalWriter err) throws IOException {
-		String password=AOServClientConfiguration.getPassword();
-		if(password==null || password.length()==0) {
-			// Prompt for the password
-			err.print("Password: ");
-			err.flush();
-			password=readLine(in);
-			err.flush();
+		String password = AOServClientConfiguration.getPassword();
+		if(password == null || password.isEmpty()) {
+			Console console = System.console();
+			if(console == null) {
+				// Prompt for the password
+				err.print("Password: ");
+				err.flush();
+				password = readLine(in);
+				err.flush();
+			} else {
+				char[] pwchars = console.readPassword("Password: ");
+				if(pwchars == null) throw new EOFException("End-of-file reading password");
+				password = new String(pwchars);
+			}
 		}
 		return password;
 	}
