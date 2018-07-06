@@ -114,13 +114,14 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 	}
 
 	@Override
+	@SuppressWarnings("deprecation") // Java 1.7: Do not suppress
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(packageNum);
-		out.writeUTF(ObjectUtils.toString(keyFile));
+		out.writeUTF(keyFile.toString());
 		out.writeNullUTF(ObjectUtils.toString(csrFile));
-		out.writeUTF(ObjectUtils.toString(certFile));
+		out.writeUTF(certFile.toString());
 		out.writeNullUTF(ObjectUtils.toString(chainFile));
 		out.writeNullUTF(certbotName);
 	}
@@ -137,18 +138,30 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 		return obj;
 	}
 
+	/**
+	 * The private key file.
+	 */
 	public UnixPath getKeyFile() {
 		return keyFile;
 	}
 
+	/**
+	 * The optional CSR file.
+	 */
 	public UnixPath getCsrFile() {
 		return csrFile;
 	}
 
+	/**
+	 * The public key file.
+	 */
 	public UnixPath getCertFile() {
 		return certFile;
 	}
 
+	/**
+	 * The optional certificate chain file.
+	 */
 	public UnixPath getChainFile() {
 		return chainFile;
 	}
