@@ -250,12 +250,20 @@ final public class AOSH extends ShellInterpreter {
 
 	public static UserId getConfigUsername(InputStream in, TerminalWriter err) throws IOException {
 		UserId username = AOServClientConfiguration.getUsername();
-		if(username==null) {
-			// Prompt for the username
-			err.print("Username: ");
-			err.flush();
+		if(username == null) {
 			try {
-				username = UserId.valueOf(readLine(in));
+				// Prompt for the username
+				String prompt = "Username: ";
+				Console console = System.console();
+				if(console == null) {
+					err.print(prompt);
+					err.flush();
+					username = UserId.valueOf(readLine(in));
+					err.flush();
+				} else {
+					username = UserId.valueOf(console.readLine(prompt));
+					if(username == null) throw new EOFException("End-of-file reading username");
+				}
 			} catch(ValidationException e) {
 				throw new IOException(e);
 			}
