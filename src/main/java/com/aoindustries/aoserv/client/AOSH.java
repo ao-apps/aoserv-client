@@ -266,15 +266,16 @@ final public class AOSH extends ShellInterpreter {
 	public static String getConfigPassword(InputStream in, TerminalWriter err) throws IOException {
 		String password = AOServClientConfiguration.getPassword();
 		if(password == null || password.isEmpty()) {
+			// Prompt for the password
+			String prompt = "Password: ";
 			Console console = System.console();
 			if(console == null) {
-				// Prompt for the password
-				err.print("Password: ");
+				err.print(prompt);
 				err.flush();
 				password = readLine(in);
 				err.flush();
 			} else {
-				char[] pwchars = console.readPassword("Password: ");
+				char[] pwchars = console.readPassword(prompt);
 				if(pwchars == null) throw new EOFException("End-of-file reading password");
 				password = new String(pwchars);
 			}
