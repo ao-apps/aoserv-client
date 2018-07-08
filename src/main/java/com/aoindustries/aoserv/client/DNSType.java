@@ -90,6 +90,9 @@ final public class DNSType extends GlobalObjectStringKey<DNSType> {
 			} catch(ValidationException e) {
 				throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 			}
+		} else if(type.equals(TXT)) {
+			// Pretty much anything goes?
+			// TODO: What are the rules for what is allowed in TXT?  Where do we enforce this currently?
 		} else {
 			// May end with a single .
 			if(destination.charAt(destination.length()-1)=='.') destination=destination.substring(0, destination.length()-1);
