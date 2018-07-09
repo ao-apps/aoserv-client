@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -114,10 +114,40 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	}
 
 	/**
+	 * Strips a destination of characters not allowed in TXT records.
+	 * Removes any double quotes, anything below space <code>' '</code>,
+	 * or anything <code>&gt;= (char)0x7f</code>.  Also trims the entry after
+	 * characters are escaped.
+	 */
+	static String cleanTxt(String destination) {
+		int len = destination.length();
+		StringBuilder txt = new StringBuilder(len);
+		for(int i = 0; i < len; i++) {
+			char ch = destination.charAt(i);
+			if(
+				ch != '"'
+				&& ch >= ' '
+				&& ch < (char)0x7f
+			) txt.append(ch);
+		}
+		String cleaned = txt.length() == len ? destination : txt.toString();
+		return cleaned.trim();
+	}
+
+	private static boolean isSpf1(String destination) {
+		String txt = cleanTxt(destination);
+		return txt.equals("v=spf1") || txt.startsWith("v=spf1 ");
+	}
+
+	/**
 	 * Checks if this record conflicts with the provided record, meaning they may not both exist
 	 * in a zone file at the same time.  The current conflicts checked are:
 	 * <ol>
 	 *   <li>CNAME must exist by itself, and only one CNAME maximum, per domain</li>
+	 *   <li>
+	 *     Multiple TXT entries of "v=spf1", with or without surrounded by quotes, see
+	 *     <a href="http://www.openspf.org/RFC_4408#version">4.5. Selecting Records</a>.
+	 *   </li>
 	 * </ol>
 	 *
 	 * @return <code>true</code> if there is a conflict, <code>false</code> if the records may coexist.
@@ -132,6 +162,15 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 			if(
 				type.equals(DNSType.CNAME)
 				|| other.type.equals(DNSType.CNAME)
+			) {
+				return true;
+			}
+			// If both are TXT types, and v=spf1, there is a conflict
+			if(
+				type.equals(DNSType.TXT)
+				&& other.type.equals(DNSType.TXT)
+				&& isSpf1(destination)
+				&& isSpf1(other.destination)
 			) {
 				return true;
 			}

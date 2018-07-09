@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -284,44 +284,29 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 			line.append(' ');
 		}
 		if(type.equals(DNSType.TXT)) {
-			int oneLineLength = line.length() + 1 + destination.length() + 1;
-			if(oneLineLength<MAX_LINE_LENGTH) {
-				// Double-quote TXT types and filter " and anything < (space) or >= (char)0x7f from the destination
-				line.append('"');
-				for(int d=0, dlen=destination.length(); d<dlen; d++) {
-					char ch = destination.charAt(d);
-					if(
-						ch!='"'
-						&& ch>=' '
-						&& ch<(char)0x7f
-					) line.append(ch);
-				}
-				line.append('"');
+			// Clean the TXT type
+			String txt = DNSRecord.cleanTxt(destination);
+			int oneLineLength = line.length() + 1 + txt.length() + 1;
+			if(oneLineLength < MAX_LINE_LENGTH) {
+				// Double-quote in one line
+				line.append('"').append(txt).append('"');
 				printLine(line, out);
 			} else {
 				// Begin parenthesis
 				line.append('(');
 				printLine(line, out);
-				// Double-quote TXT types and filter " and anything < (space) or >= (char)0x7f from the destination
-				final int charsPerLine = MAX_LINE_LENGTH-(linePrefix.length()+2);
-				for(int lineStart=0; lineStart<destination.length(); lineStart+=charsPerLine) {
-					line.append(linePrefix);
-					line.append('"');
-					int lineEnd=Math.min(destination.length(), lineStart+charsPerLine);
-					for(int d=lineStart; d<lineEnd; d++) {
-						char ch = destination.charAt(d);
-						if(
-							ch!='"'
-							&& ch>=' '
-							&& ch<(char)0x7f
-						) line.append(ch);
-					}
-					line.append('"');
+				// Double-quote TXT
+				final int charsPerLine = MAX_LINE_LENGTH - (linePrefix.length() + 2);
+				for(int lineStart = 0; lineStart < txt.length(); lineStart += charsPerLine) {
+					line
+						.append(linePrefix)
+						.append('"')
+						.append(txt, lineStart, Math.min(txt.length(), lineStart + charsPerLine))
+						.append('"');
 					printLine(line, out);
 				}
 				// End parenthesis
-				line.append(linePrefix);
-				line.append(')');
+				line.append(linePrefix).append(')');
 				printLine(line, out);
 			}
 		} else {

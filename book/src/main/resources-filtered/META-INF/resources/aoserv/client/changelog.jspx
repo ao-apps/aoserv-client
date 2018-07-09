@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-07-06T00:54:37-0500"
+		dateModified="2018-07-09T00:17:54-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -566,6 +566,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ul>
 					</li>
 					<li>Using <code>System.console()</code> to no longer echo password during login.</li>
+					<li>
+						Now detects multiple <code>DNSRecords</code> of type <code>TXT</code> with destination <code>"v=spf1"</code>
+						as conflicts, to help in compliance of <ao:a href="http://www.openspf.org/RFC_4408#version">SPF: RFC 4408</ao:a>.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
