@@ -287,7 +287,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 			// Clean the TXT type
 			String txt = DNSRecord.cleanTxt(destination);
 			int oneLineLength = line.length() + 1 + txt.length() + 1;
-			if(oneLineLength < MAX_LINE_LENGTH) {
+			if(oneLineLength <= MAX_LINE_LENGTH) {
 				// Double-quote in one line
 				line.append('"').append(txt).append('"');
 				printLine(line, out);
@@ -333,6 +333,8 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 				break;
 			}
 		}
+		// TODO: First NS should be from brands
+		// TODO: Default hostmaster should be from brands, and made nullable where value from brands is taken
 		line.append(firstNS==null ? "ns1.aoindustries.com." : firstNS.getDestination());
 		line.append("   ").append(hostmaster).append(" (");
 		printLine(line, out);
@@ -352,6 +354,7 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 			// Add the default nameservers because named will refuse to start without them
 			line.append("; No name servers configured, using the defaults");
 			printLine(line, out);
+			// TODO: These defaults should be pulled from Brands, but beware of which reseller values are made visible in the process
 			printRecord("", line, out, "@", ttl, DNSRecord.NO_TTL, DNSType.NS, DNSRecord.NO_PRIORITY, DNSRecord.NO_WEIGHT, DNSRecord.NO_PORT, "ns1.aoindustries.com.");
 			printRecord("", line, out, "@", ttl, DNSRecord.NO_TTL, DNSType.NS, DNSRecord.NO_PRIORITY, DNSRecord.NO_WEIGHT, DNSRecord.NO_PORT, "ns2.aoindustries.com.");
 			printRecord("", line, out, "@", ttl, DNSRecord.NO_TTL, DNSType.NS, DNSRecord.NO_PRIORITY, DNSRecord.NO_WEIGHT, DNSRecord.NO_PORT, "ns3.aoindustries.com.");
