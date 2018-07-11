@@ -63,6 +63,8 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 		BIN,
 		BIRD,
 		CHRONY,
+		CLAMSCAN,
+		CLAMUPDATE,
 		CYRUS,
 		DAEMON,
 		DBUS,
@@ -117,6 +119,8 @@ final public class LinuxAccount extends CachedObjectUserIdKey<LinuxAccount> impl
 			BIN = UserId.valueOf("bin");
 			BIRD = UserId.valueOf("bird");
 			CHRONY = UserId.valueOf("chrony");
+			CLAMSCAN = UserId.valueOf("clamscan");
+			CLAMUPDATE = UserId.valueOf("clamupdate");
 			CYRUS = UserId.valueOf("cyrus");
 			DAEMON = UserId.valueOf("daemon");
 			DBUS = UserId.valueOf("dbus");

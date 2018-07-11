@@ -66,6 +66,8 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		CDROM,
 		CGRED,
 		CHRONY,
+		CLAMSCAN,
+		CLAMUPDATE,
 		DAEMON,
 		DBUS,
 		DHCPD,
@@ -116,6 +118,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		UTEMPTER,
 		UTMP,
 		VIDEO,
+		VIRUSGROUP,
 		WHEEL
 	;
 
@@ -140,6 +143,8 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			CDROM = GroupId.valueOf("cdrom");
 			CGRED = GroupId.valueOf("cgred");
 			CHRONY = GroupId.valueOf("chrony");
+			CLAMSCAN = GroupId.valueOf("clamscan");
+			CLAMUPDATE = GroupId.valueOf("clamupdate");
 			DAEMON = GroupId.valueOf("daemon");
 			DBUS = GroupId.valueOf("dbus");
 			DHCPD = GroupId.valueOf("dhcpd");
@@ -190,6 +195,7 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 			UTEMPTER = GroupId.valueOf("utempter");
 			UTMP = GroupId.valueOf("utmp");
 			VIDEO = GroupId.valueOf("video");
+			VIRUSGROUP = GroupId.valueOf("virusgroup");
 			WHEEL = GroupId.valueOf("wheel");
 			// Unused ones
 			HTTPD = GroupId.valueOf("httpd");
