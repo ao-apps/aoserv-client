@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-07-09T00:17:54-0500"
+		dateModified="2018-07-10T23:18:14-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -481,11 +481,16 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>New system groups:
 								<ol>
 									<li><code>bird</code></li>
+									<li><code>clamscan</code></li>
+									<li><code>clamupdate</code></li>
+									<li><code>virusgroup</code></li>
 								</ol>
 							</li>
 							<li>New system users:
 								<ol>
 									<li><code>bird</code></li>
+									<li><code>clamscan</code></li>
+									<li><code>clamupdate</code></li>
 								</ol>
 							</li>
 							<li>Added pkey output from some AOSH commands that were otherwise quiet upon successful addition of the resource:
