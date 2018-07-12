@@ -128,7 +128,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			if(servername == null || servername.equals(ciServer.getAOServer().getHostname())) {
 				return "Cyrus IMAPD";
 			} else {
-				return "Cyrus IMAPD (" + servername + ')';
+				return "Cyrus IMAPD @ " + servername;
 			}
 		}
 
@@ -138,7 +138,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			if(servername == null || servername.equals(cis.getAOServer().getHostname())) {
 				return "Cyrus IMAPD";
 			} else {
-				return "Cyrus IMAPD (" + servername + ')';
+				return "Cyrus IMAPD @ " + servername;
 			}
 		}
 
@@ -270,11 +270,17 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 		SendmailBind sb = getSendmailBind();
 		if(sb != null) {
-			String name = sb.getSendmailServer().getName();
-			if(name == null) {
-				return "Sendmail";
+			SendmailServer ss = sb.getSendmailServer();
+			DomainName hostname = ss.getHostname();
+			if(hostname == null || hostname.equals(ss.getAOServer().getHostname())) {
+				String name = ss.getName();
+				if(name == null) {
+					return "Sendmail";
+				} else {
+					return "Sendmail (" + name + ')';
+				}
 			} else {
-				return "Sendmail (" + name + ')';
+				return "Sendmail @ " + hostname;
 			}
 		}
 
