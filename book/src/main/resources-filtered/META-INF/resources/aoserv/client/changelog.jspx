@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-07-10T23:18:14-0500"
+		dateModified="2018-07-14T18:46:05-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -575,6 +575,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Now detects multiple <code>DNSRecords</code> of type <code>TXT</code> with destination <code>"v=spf1"</code>
 						as conflicts, to help in compliance of <ao:a href="http://www.openspf.org/RFC_4408#version">SPF: RFC 4408</ao:a>.
 					</li>
+					<li>Added support for PostgreSQL 9.5.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
