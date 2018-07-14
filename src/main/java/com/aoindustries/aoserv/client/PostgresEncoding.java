@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,50 +53,50 @@ final public class PostgresEncoding extends GlobalObjectIntegerKey<PostgresEncod
 	public static final String
 		ALT="ALT",                      // 7.1    7.2   7.3   8.0
 		BIG5="BIG5",                    // 7.1    7.2   7.3
-		EUC_CN="EUC_CN",                // 7.1    7.2   7.3   8.0   9.4
-		EUC_JIS_2004="EUC_JIS_2004",    //                          9.4
-		EUC_JP="EUC_JP",                // 7.1    7.2   7.3   8.0   9.4
-		EUC_KR="EUC_KR",                // 7.1    7.2   7.3   8.0   9.4
-		EUC_TW="EUC_TW",                // 7.1    7.2   7.3   8.0   9.4
+		EUC_CN="EUC_CN",                // 7.1    7.2   7.3   8.0   9.4   9.5
+		EUC_JIS_2004="EUC_JIS_2004",    //                          9.4   9.5
+		EUC_JP="EUC_JP",                // 7.1    7.2   7.3   8.0   9.4   9.5
+		EUC_KR="EUC_KR",                // 7.1    7.2   7.3   8.0   9.4   9.5
+		EUC_TW="EUC_TW",                // 7.1    7.2   7.3   8.0   9.4   9.5
 		GB18030="GB18030",              //              7.3
 		GBK="GBK",                      //              7.3
-		ISO_8859_5="ISO_8859_5",        //        7.2   7.3   8.0   9.4
-		ISO_8859_6="ISO_8859_6",        //        7.2   7.3   8.0   9.4
-		ISO_8859_7="ISO_8859_7",        //        7.2   7.3   8.0   9.4
-		ISO_8859_8="ISO_8859_8",        //        7.2   7.3   8.0   9.4
+		ISO_8859_5="ISO_8859_5",        //        7.2   7.3   8.0   9.4   9.5
+		ISO_8859_6="ISO_8859_6",        //        7.2   7.3   8.0   9.4   9.5
+		ISO_8859_7="ISO_8859_7",        //        7.2   7.3   8.0   9.4   9.5
+		ISO_8859_8="ISO_8859_8",        //        7.2   7.3   8.0   9.4   9.5
 		JOHAB="JOHAB",                  //              7.3   8.0
 		KOI8="KOI8",                    // 7.1    7.2   7.3   8.0
-		KOI8R="KOI8R",                  //                          9.4
-		KOI8U="KOI8U",                  //                          9.4
-		LATIN1="LATIN1",                // 7.1    7.2   7.3   8.0   9.4
-		LATIN2="LATIN2",                // 7.1    7.2   7.3   8.0   9.4
-		LATIN3="LATIN3",                // 7.1    7.2   7.3   8.0   9.4
-		LATIN4="LATIN4",                // 7.1    7.2   7.3   8.0   9.4
-		LATIN5="LATIN5",                // 7.1    7.2   7.3   8.0   9.4
-		LATIN6="LATIN6",                //        7.2   7.3   8.0   9.4
-		LATIN7="LATIN7",                //        7.2   7.3   8.0   9.4
-		LATIN8="LATIN8",                //        7.2   7.3   8.0   9.4
-		LATIN9="LATIN9",                //        7.2   7.3   8.0   9.4
-		LATIN10="LATIN10",              //        7.2   7.3   8.0   9.4
-		MULE_INTERNAL="MULE_INTERNAL",  // 7.1    7.2   7.3   8.0   9.4
+		KOI8R="KOI8R",                  //                          9.4   9.5
+		KOI8U="KOI8U",                  //                          9.4   9.5
+		LATIN1="LATIN1",                // 7.1    7.2   7.3   8.0   9.4   9.5
+		LATIN2="LATIN2",                // 7.1    7.2   7.3   8.0   9.4   9.5
+		LATIN3="LATIN3",                // 7.1    7.2   7.3   8.0   9.4   9.5
+		LATIN4="LATIN4",                // 7.1    7.2   7.3   8.0   9.4   9.5
+		LATIN5="LATIN5",                // 7.1    7.2   7.3   8.0   9.4   9.5
+		LATIN6="LATIN6",                //        7.2   7.3   8.0   9.4   9.5
+		LATIN7="LATIN7",                //        7.2   7.3   8.0   9.4   9.5
+		LATIN8="LATIN8",                //        7.2   7.3   8.0   9.4   9.5
+		LATIN9="LATIN9",                //        7.2   7.3   8.0   9.4   9.5
+		LATIN10="LATIN10",              //        7.2   7.3   8.0   9.4   9.5
+		MULE_INTERNAL="MULE_INTERNAL",  // 7.1    7.2   7.3   8.0   9.4   9.5
 		SJIS="SJIS",                    // 7.1    7.2   7.3
-		SQL_ASCII="SQL_ASCII",          // 7.1    7.2   7.3   8.0   9.4
-		UTF8="UTF8",                    //                          9.4
+		SQL_ASCII="SQL_ASCII",          // 7.1    7.2   7.3   8.0   9.4   9.5
+		UTF8="UTF8",                    //                          9.4   9.5
 		TCVN="TCVN",                    //              7.3   8.0
 		UHC="UHC",                      //              7.3
 		UNICODE="UNICODE",              // 7.1    7.2   7.3   8.0
 		WIN="WIN",                      // 7.1    7.2   7.3   8.0
-		WIN866="WIN866",                //                          9.4
-		WIN874="WIN874",                //              7.3   8.0   9.4
-		WIN1250="WIN1250",              // 7.1    7.2   7.3   8.0   9.4
-		WIN1251="WIN1251",              //                          9.4
-		WIN1252="WIN1252",              //                          9.4
-		WIN1253="WIN1253",              //                          9.4
-		WIN1254="WIN1254",              //                          9.4
-		WIN1255="WIN1255",              //                          9.4
-		WIN1256="WIN1256",              //              7.3   8.0   9.4
-		WIN1257="WIN1257",              //                          9.4
-		WIN1258="WIN1258"               //                          9.4
+		WIN866="WIN866",                //                          9.4   9.5
+		WIN874="WIN874",                //              7.3   8.0   9.4   9.5
+		WIN1250="WIN1250",              // 7.1    7.2   7.3   8.0   9.4   9.5
+		WIN1251="WIN1251",              //                          9.4   9.5
+		WIN1252="WIN1252",              //                          9.4   9.5
+		WIN1253="WIN1253",              //                          9.4   9.5
+		WIN1254="WIN1254",              //                          9.4   9.5
+		WIN1255="WIN1255",              //                          9.4   9.5
+		WIN1256="WIN1256",              //              7.3   8.0   9.4   9.5
+		WIN1257="WIN1257",              //                          9.4   9.5
+		WIN1258="WIN1258"               //                          9.4   9.5
 	;
 
 	/**
