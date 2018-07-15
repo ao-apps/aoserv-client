@@ -576,6 +576,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						as conflicts, to help in compliance of <ao:a href="http://www.openspf.org/RFC_4408#version">SPF: RFC 4408</ao:a>.
 					</li>
 					<li>Added support for PostgreSQL 9.5.</li>
+					<li>Added support for PostgreSQL 9.6.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
