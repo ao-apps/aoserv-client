@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentMap;
  * <ul>
  *   <li>Be non-null</li>
  *   <li>Be non-empty</li>
- *   <li>Be between 1 and 16 characters</li>
+ *   <li>Be between 1 and 32 characters</li>
  *   <li>Must start with <code>[a-z]</code></li>
  *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
  *   <li>A special exemption is made for the <code>mysql.session</code> and <code>mysql.sys</code> reserved users added in MySQL 5.7.</li>
@@ -54,8 +54,10 @@ final public class MySQLUserId extends UserId implements
 
 	/**
 	 * The maximum length of a MySQL username.
+	 *
+	 * @implNote  32 characters as of <a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</a>
 	 */
-	public static final int MAX_LENGTH = 31;
+	public static final int MAX_LENGTH = 32;
 
 	/**
 	 * Validates a MySQL user id.
