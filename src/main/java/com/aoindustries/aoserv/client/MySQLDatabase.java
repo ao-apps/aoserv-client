@@ -401,6 +401,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 				|| version.startsWith(MySQLServer.VERSION_5_1_PREFIX)
 				|| version.startsWith(MySQLServer.VERSION_5_6_PREFIX)
 				|| version.startsWith(MySQLServer.VERSION_5_7_PREFIX)
+				|| version.startsWith(MySQLServer.VERSION_8_0_PREFIX)
 			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+INFORMATION_SCHEMA, this));
 		}
 		if(name.equals(PERFORMANCE_SCHEMA)) {
@@ -408,12 +409,14 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 			if(
 				version.startsWith(MySQLServer.VERSION_5_6_PREFIX)
 				|| version.startsWith(MySQLServer.VERSION_5_7_PREFIX)
+				|| version.startsWith(MySQLServer.VERSION_8_0_PREFIX)
 			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+PERFORMANCE_SCHEMA, this));
 		}
 		if(name.equals(SYS)) {
 			String version = getMySQLServer().getVersion().getVersion();
 			if(
 				version.startsWith(MySQLServer.VERSION_5_7_PREFIX)
+				|| version.startsWith(MySQLServer.VERSION_8_0_PREFIX)
 			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+SYS, this));
 		}
 		return reasons;
