@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,8 +48,11 @@ final public class MySQLUser extends CachedObjectMySQLUserIdKey<MySQLUser> imple
 
 	/**
 	 * The maximum length of a MySQL username.
+	 *
+	 * @deprecated  Please use {@link MySQLUserId#MAX_LENGTH} instead.
 	 */
-	public static final int MAX_USERNAME_LENGTH=16;
+	@Deprecated
+	public static final int MAX_USERNAME_LENGTH = MySQLUserId.MAX_LENGTH;
 
 	/**
 	 * The username of the MySQL super user.
