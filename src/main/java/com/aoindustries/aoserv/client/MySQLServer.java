@@ -371,8 +371,11 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
 	/**
 	 * The maximum length of the name.
+	 *
+	 * @deprecated  Please use {@link MySQLServerName#MAX_LENGTH} instead.
 	 */
-	public static final int MAX_SERVER_NAME_LENGTH=31;
+	@Deprecated
+	public static final int MAX_SERVER_NAME_LENGTH = MySQLServerName.MAX_LENGTH;
 
 	MySQLServerName name;
 	int ao_server;

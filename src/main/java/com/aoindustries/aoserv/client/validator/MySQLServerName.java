@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentMap;
  * <ul>
  *   <li>Be non-null</li>
  *   <li>Be non-empty</li>
- *   <li>Be between 1 and 31 characters</li>
+ *   <li>Be between 1 and 255 characters</li>
  *   <li>Must start with <code>[a-z]</code> or <code>[0-9]</code></li>
  *   <li>The rest of the characters may contain [a-z], [0-9], period (.), hyphen (-), and underscore (_)</li>
  * </ul>
@@ -58,7 +58,7 @@ final public class MySQLServerName implements
 
 	private static final long serialVersionUID = 6148467549389988813L;
 
-	public static final int MAX_LENGTH=255;
+	public static final int MAX_LENGTH = 255;
 
 	/**
 	 * Validates a MySQL server name.
