@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,7 +60,8 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		VERSION_5_5_PREFIX = "5.5.",
 		VERSION_6_0_PREFIX = "6.0.",
 		VERSION_7_0_PREFIX = "7.0.",
-		VERSION_8_0_PREFIX = "8.0."
+		VERSION_8_0_PREFIX = "8.0.",
+		VERSION_8_5_PREFIX = "8.5."
 	;
 
 	@Override
@@ -145,6 +146,11 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 	public boolean isTomcat8_0_X(AOServConnector connector) throws SQLException, IOException {
 		String version = getTechnologyVersion(connector).getVersion();
 		return version.startsWith(VERSION_8_0_PREFIX);
+	}
+
+	public boolean isTomcat8_5_X(AOServConnector connector) throws SQLException, IOException {
+		String version = getTechnologyVersion(connector).getVersion();
+		return version.startsWith(VERSION_8_5_PREFIX);
 	}
 
 	@Override

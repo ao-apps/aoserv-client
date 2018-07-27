@@ -66,7 +66,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
 	public static final int MAX_NAME_LENGTH = 32;
 
-	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = HttpdTomcatVersion.VERSION_8_0_PREFIX;
+	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = HttpdTomcatVersion.VERSION_8_5_PREFIX;
 
 	private String name;
 	int ao_server;
