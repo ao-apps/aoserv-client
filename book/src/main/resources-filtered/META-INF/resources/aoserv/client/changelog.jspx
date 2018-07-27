@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-07-27T00:12:24-0500"
+		dateModified="2018-07-27T03:42:57-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -587,6 +587,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Added support for newer versions of Apache Tomcat:
 						<ol>
 							<li>Added support for Apache Tomcat 8.5.</li>
+							<li>Added support for Apache Tomcat 9.0.</li>
 						</ol>
 					</li>
 				</ul>
