@@ -61,7 +61,8 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		VERSION_6_0_PREFIX = "6.0.",
 		VERSION_7_0_PREFIX = "7.0.",
 		VERSION_8_0_PREFIX = "8.0.",
-		VERSION_8_5_PREFIX = "8.5."
+		VERSION_8_5_PREFIX = "8.5.",
+		VERSION_9_0_PREFIX = "9.0."
 	;
 
 	@Override
@@ -151,6 +152,11 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 	public boolean isTomcat8_5_X(AOServConnector connector) throws SQLException, IOException {
 		String version = getTechnologyVersion(connector).getVersion();
 		return version.startsWith(VERSION_8_5_PREFIX);
+	}
+
+	public boolean isTomcat9_0_X(AOServConnector connector) throws SQLException, IOException {
+		String version = getTechnologyVersion(connector).getVersion();
+		return version.startsWith(VERSION_9_0_PREFIX);
 	}
 
 	@Override

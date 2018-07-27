@@ -47,7 +47,7 @@ final public class HttpdTomcatSharedSite extends CachedObjectIntegerKey<HttpdTom
 
 	int httpd_shared_tomcat;
 
-	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = HttpdTomcatVersion.VERSION_8_5_PREFIX;
+	public static final String DEFAULT_TOMCAT_VERSION_PREFIX = HttpdTomcatVersion.VERSION_9_0_PREFIX;
 
 	/**
 	 * Determines if the API user is allowed to stop the Java virtual machine associated
