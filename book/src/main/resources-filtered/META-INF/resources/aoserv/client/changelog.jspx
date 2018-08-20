@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-07-27T03:42:57-0500"
+		dateModified="2018-08-19T22:06:11-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -584,10 +584,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Maximum MySQL username is now 32 characters as of <ao:a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</ao:a>.</li>
 					<li>Added support for MySQL 8.0.</li>
-					<li>Added support for newer versions of Apache Tomcat:
+					<li>Added support for newer versions of <ao:a href="https://tomcat.apache.org/">Apache Tomcat</ao:a>:
 						<ol>
-							<li>Added support for Apache Tomcat 8.5.</li>
-							<li>Added support for Apache Tomcat 9.0.</li>
+							<li>Added support for <ao:a href="https://tomcat.apache.org/tomcat-8.5-doc/">Apache Tomcat 8.5</ao:a>.</li>
+							<li>Added support for <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/">Apache Tomcat 9.0</ao:a>.</li>
 						</ol>
 					</li>
 				</ul>
