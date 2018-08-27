@@ -181,6 +181,10 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 		return obj;
 	}
 
+	public void setHttpdTomcatVersion(HttpdTomcatVersion version) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_VERSION, pkey, version.pkey);
+	}
+
 	public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
 		LinuxServerAccount obj=table.connector.getLinuxServerAccounts().get(linux_server_account);
 		if(obj==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);

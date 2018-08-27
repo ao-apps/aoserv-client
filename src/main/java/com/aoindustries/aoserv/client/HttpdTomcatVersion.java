@@ -65,13 +65,37 @@ final public class HttpdTomcatVersion extends GlobalObjectIntegerKey<HttpdTomcat
 		VERSION_9_0_PREFIX = "9.0."
 	;
 
+	/**
+	 * In-place upgrades are supported from Tomcat 4.1 and newer.
+	 * In-place downgrades are supported from Tomcat 8.5 and newer.
+	 */
+	public static boolean canUpgradeFrom(String version) {
+		return
+			!version.equals(VERSION_3_1)
+			&& !version.equals(VERSION_3_2_4);
+	}
+
+	/**
+	 * In-place upgrades and downgrades are supported to Tomcat 8.5 and newer.
+	 */
+	public static boolean canUpgradeTo(String version) {
+		return
+			!version.equals(VERSION_3_1)
+			&& !version.equals(VERSION_3_2_4)
+			&& !version.startsWith(VERSION_4_1_PREFIX)
+			&& !version.startsWith(VERSION_5_5_PREFIX)
+			&& !version.startsWith(VERSION_6_0_PREFIX)
+			&& !version.startsWith(VERSION_7_0_PREFIX)
+			&& !version.startsWith(VERSION_8_0_PREFIX);
+	}
+
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_VERSION: return pkey;
 			case 1: return install_dir;
 			case 2: return requires_mod_jk;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

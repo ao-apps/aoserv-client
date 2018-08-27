@@ -1059,6 +1059,43 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Finds a Tomcat version given its version, allowing prefix matches.
+	 */
+	private HttpdTomcatVersion findTomcatVersion(AOServer aoServer, String version) throws IllegalArgumentException, IOException, SQLException {
+		String prefix = version;
+		if(!prefix.endsWith(".")) prefix += '.';
+		int osvId = aoServer.getServer().operating_system_version;
+		List<HttpdTomcatVersion> matches = new ArrayList<>();
+		for(HttpdTomcatVersion htv : connector.getHttpdTomcatVersions()) {
+			TechnologyVersion tv = htv.getTechnologyVersion(connector);
+			if(
+				tv.operating_system_version == osvId
+				&& (
+					tv.version.equals(version)
+					|| tv.version.startsWith(prefix)
+				)
+			) {
+				matches.add(htv);
+			}
+		}
+		if(matches.isEmpty()) {
+			throw new IllegalArgumentException("Unable to find Tomcat version: " + version);
+		} else if(matches.size() > 1) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Found more than one matching Tomcat version, please be more specific: ");
+			boolean didOne = false;
+			for(HttpdTomcatVersion match : matches) {
+				if(didOne) sb.append(", ");
+				else didOne = true;
+				sb.append(match.getTechnologyVersion(connector).version);
+			}
+			throw new IllegalArgumentException(sb.toString());
+		} else {
+			return matches.get(0);
+		}
+	}
+
+	/**
 	 * Adds a new <code>HttpdJBossSite</code> to the system.  An <code>HttpdJBossSite</code> is
 	 * an <code>HttpdSite</code> that uses the Tomcat servlet engine and JBoss as an EJB container.
 	 *
@@ -1157,11 +1194,9 @@ final public class SimpleAOClient {
 		GroupId linuxServerGroup
 	) throws IllegalArgumentException, SQLException, IOException {
 		AOServer ao=getAOServer(aoServer);
-		HttpdTomcatVersion ve = connector.getHttpdTomcatVersions().getHttpdTomcatVersion(version, ao.getServer().getOperatingSystemVersion());
-		if (ve==null) throw new IllegalArgumentException("Unable to find HttpdTomcatVersion: "+version);
 		return ao.addHttpdSharedTomcat(
 			name,
-			ve,
+			findTomcatVersion(ao, version),
 			getLinuxServerAccount(aoServer, linuxServerAccount),
 			getLinuxServerGroup(aoServer, linuxServerGroup)
 		);
@@ -1499,8 +1534,6 @@ final public class SimpleAOClient {
 		} else {
 			throw new IllegalArgumentException("ip_address and net_device must both be null or both be not null");
 		}
-		HttpdTomcatVersion htv=connector.getHttpdTomcatVersions().getHttpdTomcatVersion(tomcatVersion, ao.getServer().getOperatingSystemVersion());
-		if(htv==null) throw new IllegalArgumentException("Unable to find HttpdTomcatVersion: "+tomcatVersion);
 		return ao.addHttpdTomcatStdSite(
 			siteName,
 			getPackage(packageName),
@@ -1511,7 +1544,7 @@ final public class SimpleAOClient {
 			ip,
 			primaryHttpHostname,
 			altHttpHostnames,
-			htv
+			findTomcatVersion(ao, tomcatVersion)
 		);
 	}
 
@@ -6725,6 +6758,30 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Sets the Tomcat version for a {@link HttpdSharedTomcat}
+	 *
+	 * @param  name  the name of the JVM
+	 * @param  aoServer  the hostname of the {@link AOServer}
+	 * @param  version  the new version
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the {@link AOServer}, {@link HttpdSharedTomcat}, or {@link HttpdTomcatVersion}.
+	 *
+	 * @see  HttpdSharedTomcat#setHttpdTomcatVersion(com.aoindustries.aoserv.client.HttpdTomcatVersion)
+	 */
+	public void setHttpdSharedTomcatVersion(
+		String name,
+		String aoServer,
+		String version
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSharedTomcat hst = getHttpdSharedTomcat(aoServer, name);
+		hst.setHttpdTomcatVersion(
+			findTomcatVersion(hst.getAOServer(), version)
+		);
+	}
+
+	/**
 	 * Sets the <code>is_manual</code> flag for a <code>HttpdSiteBind</code>
 	 *
 	 * @param  pkey  the primary key of the <code>HttpdSiteBind</code>
@@ -7192,6 +7249,34 @@ final public class SimpleAOClient {
 		HttpdTomcatStdSite htss = hts.getHttpdTomcatStdSite();
 		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
 		htss.setAutoDeploy(autoDeploy);
+	}
+
+	/**
+	 * Sets the Tomcat version for a {@link HttpdTomcatStdSite}
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the {@link AOServer}
+	 * @param  version  the new version
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the {@link AOServer}, {@link HttpdSite}, {@link HttpdTomcatStdSite}, or {@link HttpdTomcatVersion}.
+	 *
+	 * @see  HttpdTomcatStdSite#setHttpdTomcatVersion(com.aoindustries.aoserv.client.HttpdTomcatVersion)
+	 */
+	public void setHttpdTomcatStdSiteVersion(
+		String siteName,
+		String aoServer,
+		String version
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getHttpdSite(aoServer, siteName);
+		HttpdTomcatSite hts = hs.getHttpdTomcatSite();
+		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+		HttpdTomcatStdSite htss = hts.getHttpdTomcatStdSite();
+		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
+		htss.setHttpdTomcatVersion(
+			findTomcatVersion(hs.getAOServer(), version)
+		);
 	}
 
 	/**
