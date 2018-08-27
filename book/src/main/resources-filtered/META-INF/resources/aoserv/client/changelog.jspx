@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-08-19T22:06:11-0500"
+		dateModified="2018-08-25T05:54:35-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -588,6 +588,18 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<ol>
 							<li>Added support for <ao:a href="https://tomcat.apache.org/tomcat-8.5-doc/">Apache Tomcat 8.5</ao:a>.</li>
 							<li>Added support for <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/">Apache Tomcat 9.0</ao:a>.</li>
+						</ol>
+					</li>
+					<li>May now update Tomcat versions in-place.
+						<ol>
+							<li>In-place upgrades are supported from Tomcat versions 4.1 and above.</li>
+							<li>In-place upgrades and downgrades are supported to Tomcat versions 8.5 and above.</li>
+							<li>Added the following AOSH commands:
+								<ol type="a">
+									<li><code>set_httpd_shared_tomcat_version</code></li>
+									<li><code>set_httpd_tomcat_std_site_version</code></li>
+								</ol>
+							</li>
 						</ol>
 					</li>
 				</ul>

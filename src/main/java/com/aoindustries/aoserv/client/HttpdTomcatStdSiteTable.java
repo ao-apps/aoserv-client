@@ -189,6 +189,15 @@ final public class HttpdTomcatStdSiteTable extends CachedTableIntegerKey<HttpdTo
 				);
 			}
 			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_TOMCAT_STD_SITE_VERSION)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_TOMCAT_STD_SITE_VERSION, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdTomcatStdSiteVersion(
+					args[1],
+					args[2],
+					args[3]
+				);
+			}
+			return true;
 		}
 		return false;
 	}

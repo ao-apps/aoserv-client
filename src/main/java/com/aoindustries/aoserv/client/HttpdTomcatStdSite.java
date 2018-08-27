@@ -193,4 +193,8 @@ final public class HttpdTomcatStdSite extends CachedObjectIntegerKey<HttpdTomcat
 			out.writeBoolean(autoDeploy);
 		}
 	}
+
+	public void setHttpdTomcatVersion(HttpdTomcatVersion version) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_VERSION, pkey, version.pkey);
+	}
 }
