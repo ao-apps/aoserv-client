@@ -104,7 +104,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		String authName,
 		UnixPath authGroupFile,
 		UnixPath authUserFile,
-		String require
+		String require,
+		String handler
 	) throws IOException, SQLException {
 		return table.connector.getHttpdSiteAuthenticatedLocationTable().addHttpdSiteAuthenticatedLocation(
 			this,
@@ -113,7 +114,8 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 			authName,
 			authGroupFile,
 			authUserFile,
-			require
+			require,
+			handler
 		);
 	}
 

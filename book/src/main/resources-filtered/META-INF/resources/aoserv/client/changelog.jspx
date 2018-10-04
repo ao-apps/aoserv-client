@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-08-25T05:54:35-0500"
+		dateModified="2018-10-04T12:12:54-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -600,6 +600,13 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 									<li><code>set_httpd_tomcat_std_site_version</code></li>
 								</ol>
 							</li>
+						</ol>
+					</li>
+					<li>Now supporting per-location Apache handlers:
+						<ol>
+							<li>Added <code>httpd_site_authenticated_locations.handler</code> column</li>
+							<li>Added <code>add_httpd_site_authenticated_location</code> AOSH command</li>
+							<li>Added <code>set_httpd_site_authenticated_location_attributes</code> AOSH command</li>
 						</ol>
 					</li>
 				</ul>

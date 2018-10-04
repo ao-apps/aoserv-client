@@ -1219,6 +1219,60 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Adds a new {@link HttpdSiteAuthenticatedLocation} to a {@link HttpdSite}.
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database
+	 * @exception  IllegalArgumentException  if unable to find the {@link HttpdSite}
+	 */
+	public int addHttpdSiteAuthenticatedLocation(
+		String siteName,
+		String aoServer,
+		String path,
+		boolean isRegularExpression,
+		String authName,
+		UnixPath authGroupFile,
+		UnixPath authUserFile,
+		String require,
+		String handler
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getAOServer(aoServer).getHttpdSite(siteName);
+		if(hs == null) throw new IllegalArgumentException("Unable to find HttpdSite: " + siteName + " on " + aoServer);
+		return hs.addHttpdSiteAuthenticatedLocation(path, isRegularExpression, authName, authGroupFile, authUserFile, require, handler);
+	}
+
+	/**
+	 * Updates a {@link HttpdSiteAuthenticatedLocation}.
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database
+	 * @exception  IllegalArgumentException  if unable to find the {@link HttpdSite}
+	 */
+	public void setHttpdSiteAuthenticatedLocationAttributes(
+		String siteName,
+		String aoServer,
+		String path,
+		boolean isRegularExpression,
+		String authName,
+		UnixPath authGroupFile,
+		UnixPath authUserFile,
+		String require,
+		String handler
+	) throws IllegalArgumentException, IOException, SQLException {
+		HttpdSite hs = getAOServer(aoServer).getHttpdSite(siteName);
+		if(hs == null) throw new IllegalArgumentException("Unable to find HttpdSite: " + siteName + " on " + aoServer);
+		HttpdSiteAuthenticatedLocation hsal = null;
+		for(HttpdSiteAuthenticatedLocation location : hs.getHttpdSiteAuthenticatedLocations()) {
+			if(path.equals(location.getPath())) {
+				hsal = location;
+				break;
+			}
+		}
+		if(hsal == null) throw new IllegalArgumentException("Unable to find HttpdSiteAuthenticatedLocation: " + siteName + " on " + aoServer + " at " + path);
+		hsal.setAttributes(path, isRegularExpression, authName, authGroupFile, authUserFile, require, handler);
+	}
+
+	/**
 	 * Adds a new <code>HttpdTomcatContext</code> to a <code>HttpdTomcatSite</code>.
 	 *
 	 * @exception  IOException  if unable to contact the server
