@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,7 +23,9 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -54,7 +56,8 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
 		String authName,
 		UnixPath authGroupFile,
 		UnixPath authUserFile,
-		String require
+		String require,
+		String handler
 	) throws IOException, SQLException {
 		return connector.requestIntQueryIL(
 			true,
@@ -66,7 +69,8 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
 			authName,
 			authGroupFile==null ? "" : authGroupFile.toString(),
 			authUserFile==null ? "" : authUserFile.toString(),
-			require
+			require,
+			handler==null ? "" : handler
 		);
 	}
 
@@ -82,5 +86,45 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
+	}
+
+	@Override
+	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
+		String command = args[0];
+		if(command.equalsIgnoreCase(AOSHCommand.ADD_HTTPD_SITE_AUTHENTICATED_LOCATION)) {
+			if(AOSH.checkParamCount(AOSHCommand.ADD_HTTPD_SITE_AUTHENTICATED_LOCATION, args, 9, err)) {
+				out.println(
+					connector.getSimpleAOClient().addHttpdSiteAuthenticatedLocation(
+						args[1],
+						args[2],
+						args[3],
+						AOSH.parseBoolean(args[4], "is_regular_expression"),
+						args[5],
+						args[6].isEmpty() ? null : AOSH.parseUnixPath(args[6], "auth_group_file"),
+						args[7].isEmpty() ? null : AOSH.parseUnixPath(args[7], "auth_user_file"),
+						args[8],
+						args[9].isEmpty() ? null : args[9]
+					)
+				);
+				out.flush();
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES, args, 9, err)) {
+				connector.getSimpleAOClient().setHttpdSiteAuthenticatedLocationAttributes(
+					args[1],
+					args[2],
+					args[3],
+					AOSH.parseBoolean(args[4], "is_regular_expression"),
+					args[5],
+					args[6].isEmpty() ? null : AOSH.parseUnixPath(args[6], "auth_group_file"),
+					args[7].isEmpty() ? null : AOSH.parseUnixPath(args[7], "auth_user_file"),
+					args[8],
+					args[9].isEmpty() ? null : args[9]
+				);
+				out.flush();
+			}
+			return true;
+		} else return false;
 	}
 }

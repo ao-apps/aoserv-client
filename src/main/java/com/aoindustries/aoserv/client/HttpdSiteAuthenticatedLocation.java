@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,6 +33,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * TODO: Since this now has a "handler", should this become "HttpdSiteLocation"
+ * with the authentication aspect optional?
+ *
  * @see  HttpdSite
  *
  * @author  AO Industries, Inc.
@@ -44,6 +47,26 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 		COLUMN_HTTPD_SITE=1
 	;
 	static final String COLUMN_HTTPD_SITE_name = "httpd_site";
+
+	/**
+	 * The set of expected handlers.  This is not an enum because others may be
+	 * added at any time while older clients are still running.
+	 */
+	public static final class Handler {
+
+		/**
+		 * Enables <a href="https://httpd.apache.org/docs/2.4/mod/mod_status.html#enable">Apache Status Support</a>.
+		 */
+		public static final String SERVER_STATUS = "server-status";
+
+		/**
+		 * Represents the current value.  Used when setting attributes and not wanting to update
+		 * the handler.
+		 */
+		public static final String CURRENT = "*";
+
+		private Handler() {}
+	}
 
 	private static String validateNonQuoteAscii(String s, String label) {
 		// Is only comprised of space through ~ (ASCII), not including "
@@ -86,6 +109,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 	private UnixPath auth_group_file;
 	private UnixPath auth_user_file;
 	private String require;
+	private String handler;
 
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
@@ -103,6 +127,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 			case 5: return auth_group_file;
 			case 6: return auth_user_file;
 			case 7: return require;
+			case 8: return handler;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -137,6 +162,15 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 		return require;
 	}
 
+	/**
+	 * Gets the optional handler for <code>SetHandler</code>.
+	 * May be one of the values in {@link Handler} or any other value added
+	 * in the future.
+	 */
+	public String getHandler() {
+		return handler;
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.HTTPD_SITE_AUTHENTICATED_LOCATIONS;
@@ -159,6 +193,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 				auth_user_file = s.isEmpty() ? null : UnixPath.valueOf(s);
 			}
 			require=result.getString(8);
+			handler = result.getString(9);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -181,6 +216,7 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 				auth_user_file = s.isEmpty() ? null : UnixPath.valueOf(s);
 			}
 			require=in.readCompressedUTF().intern();
+			handler = in.readBoolean() ? in.readCompressedUTF().intern() : null;
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -197,7 +233,8 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 		String authName,
 		UnixPath authGroupFile,
 		UnixPath authUserFile,
-		String require
+		String require,
+		String handler
 	) throws IOException, SQLException {
 		table.connector.requestUpdateIL(
 			true,
@@ -208,7 +245,8 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 			authName,
 			authGroupFile==null ? "" : authGroupFile.toString(),
 			authUserFile==null ? "" : authUserFile.toString(),
-			require
+			require,
+			handler==null ? "" : handler
 		);
 	}
 
@@ -228,5 +266,9 @@ final public class HttpdSiteAuthenticatedLocation extends CachedObjectIntegerKey
 		out.writeCompressedUTF(auth_group_file==null ? "" : auth_group_file.toString(), 2);
 		out.writeCompressedUTF(auth_user_file==null ? "" : auth_user_file.toString(), 3);
 		out.writeCompressedUTF(require, 4);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_13) >= 0) {
+			out.writeBoolean(handler != null);
+			if(handler != null) out.writeCompressedUTF(handler, 5);
+		}
 	}
 }
