@@ -122,7 +122,6 @@ final public class HttpdSiteAuthenticatedLocationTable extends CachedTableIntege
 					args[8],
 					args[9].isEmpty() ? null : args[9]
 				);
-				out.flush();
 			}
 			return true;
 		} else return false;
