@@ -256,20 +256,87 @@ final public class HttpdSite extends CachedObjectIntegerKey<HttpdSite> implement
 		List<HttpdSiteBind> binds=getHttpdSiteBinds();
 		if(binds.isEmpty()) return null;
 
-		// Find the first one that binds to the default HTTP port, if one exists
 		Port httpPort = table.connector.getProtocols().get(Protocol.HTTP).getPort();
+		Port httpsPort = table.connector.getProtocols().get(Protocol.HTTPS).getPort();
 
-		int index = -1;
-		for(int c=0;c<binds.size();c++) {
-			HttpdSiteBind bind=binds.get(c);
-			if(bind.getHttpdBind().getNetBind().getPort().equals(httpPort)) {
-				index=c;
-				break;
+		// Find first in null (default) HTTPS on default port, if any
+		for(HttpdSiteBind bind : binds) {
+			if(bind.getName() == null) {
+				NetBind nb = bind.getHttpdBind().getNetBind();
+				if(
+					Protocol.HTTPS.equals(nb.getAppProtocol().getProtocol())
+					&& nb.getPort().equals(httpsPort)
+				) {
+					return bind.getPrimaryHttpdSiteURL();
+				}
 			}
 		}
-		if(index == -1) index=0;
-
-		return binds.get(index).getPrimaryHttpdSiteURL();
+		// Find first in null (default) HTTP on default port, if any
+		for(HttpdSiteBind bind : binds) {
+			if(bind.getName() == null) {
+				NetBind nb = bind.getHttpdBind().getNetBind();
+				if(
+					Protocol.HTTP.equals(nb.getAppProtocol().getProtocol())
+					&& nb.getPort().equals(httpPort)
+				) {
+					return bind.getPrimaryHttpdSiteURL();
+				}
+			}
+		}
+		// Find first in null (default) HTTPS on any port, if any
+		for(HttpdSiteBind bind : binds) {
+			if(bind.getName() == null) {
+				NetBind nb = bind.getHttpdBind().getNetBind();
+				if(Protocol.HTTPS.equals(nb.getAppProtocol().getProtocol())) {
+					return bind.getPrimaryHttpdSiteURL();
+				}
+			}
+		}
+		// Find first in null (default) HTTP on any port, if any
+		for(HttpdSiteBind bind : binds) {
+			if(bind.getName() == null) {
+				NetBind nb = bind.getHttpdBind().getNetBind();
+				if(Protocol.HTTP.equals(nb.getAppProtocol().getProtocol())) {
+					return bind.getPrimaryHttpdSiteURL();
+				}
+			}
+		}
+		// Find first HTTPS on default port, if any
+		for(HttpdSiteBind bind : binds) {
+			NetBind nb = bind.getHttpdBind().getNetBind();
+			if(
+				Protocol.HTTPS.equals(nb.getAppProtocol().getProtocol())
+				&& nb.getPort().equals(httpsPort)
+			) {
+				return bind.getPrimaryHttpdSiteURL();
+			}
+		}
+		// Find first HTTP on default port, if any
+		for(HttpdSiteBind bind : binds) {
+			NetBind nb = bind.getHttpdBind().getNetBind();
+			if(
+				Protocol.HTTP.equals(nb.getAppProtocol().getProtocol())
+				&& nb.getPort().equals(httpPort)
+			) {
+				return bind.getPrimaryHttpdSiteURL();
+			}
+		}
+		// Find first HTTPS on any port, if any
+		for(HttpdSiteBind bind : binds) {
+			NetBind nb = bind.getHttpdBind().getNetBind();
+			if(Protocol.HTTPS.equals(nb.getAppProtocol().getProtocol())) {
+				return bind.getPrimaryHttpdSiteURL();
+			}
+		}
+		// Find first HTTP on any port, if any
+		for(HttpdSiteBind bind : binds) {
+			NetBind nb = bind.getHttpdBind().getNetBind();
+			if(Protocol.HTTP.equals(nb.getAppProtocol().getProtocol())) {
+				return bind.getPrimaryHttpdSiteURL();
+			}
+		}
+		// Take first without any regard for protocols and ports
+		return binds.get(0).getPrimaryHttpdSiteURL();
 	}
 
 	public AOServer getAOServer() throws SQLException, IOException {
