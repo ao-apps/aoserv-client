@@ -34,6 +34,7 @@ class SystemdUtil {
 
 	/**
 	 * Implements <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd-encoded</a> encoding.
+	 * Note: "." is only escaped when in the first position of the string.
 	 *
 	 * @see  HttpdServer#getSystemdEscapedName()
 	 * @see  SendmailServer#getSystemdEscapedName()
@@ -42,7 +43,8 @@ class SystemdUtil {
 		if(value == null) return null;
 		byte[] utf8 = value.getBytes(Charsets.UTF_8);
 		StringBuilder escaped = new StringBuilder(utf8.length);
-		for(byte b : utf8) {
+		for(int i = 0; i < utf8.length; i++) {
+			byte b = utf8[i];
 			if(b == '/') {
 				// '/' to '-'
 				escaped.append('-');
@@ -51,6 +53,7 @@ class SystemdUtil {
 				|| (b >= 'A' && b <= 'Z')
 				|| (b >= 'a' && b <= 'z')
 				|| (b >= '0' && b <= '9')
+				|| (b == '.' && i > 0) // '.' only escaped at beginning of string
 			) {
 				// '_' or alphanumeric
 				escaped.append((char)b);
