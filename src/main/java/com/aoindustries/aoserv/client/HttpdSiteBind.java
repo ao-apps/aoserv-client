@@ -44,13 +44,15 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	static final int
 		COLUMN_PKEY = 0,
 		COLUMN_HTTPD_SITE = 1,
-		COLUMN_SSL_CERTIFICATE = 5
+		COLUMN_SSL_CERTIFICATE = 6
 	;
 	static final String COLUMN_HTTPD_SITE_name = "httpd_site";
 	static final String COLUMN_HTTPD_BIND_name = "httpd_bind";
+	static final String COLUMN_NAME_name = "name";
 
 	int httpd_site;
 	private int httpd_bind;
+	private String name;
 	private UnixPath access_log;
 	private UnixPath error_log;
 	private int certificate;
@@ -65,8 +67,190 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	private UnixPath oldSslCertKeyFile;
 	private UnixPath oldSslCertChainFile;
 
-	public int addHttpdSiteURL(DomainName hostname) throws IOException, SQLException {
-		return table.connector.getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
+	@Override
+	String toStringImpl() throws SQLException, IOException {
+		HttpdSite site = getHttpdSite();
+		HttpdBind bind = getHttpdBind();
+		if(name == null) {
+			return site.toStringImpl() + '|' + bind.toStringImpl();
+		} else {
+			return site.toStringImpl() + '|' + bind.toStringImpl() + '(' + name + ')';
+		}
+	}
+
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_PKEY: return pkey;
+			case COLUMN_HTTPD_SITE: return httpd_site;
+			case 2: return httpd_bind;
+			case 3: return name;
+			case 4: return access_log;
+			case 5: return error_log;
+			case COLUMN_SSL_CERTIFICATE: return certificate == -1 ? null : certificate;
+			case 7: return disable_log == -1 ? null : disable_log;
+			case 8: return predisable_config;
+			case 9: return isManual;
+			case 10: return redirect_to_primary_hostname;
+			case 11: return include_site_config;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
+		}
+	}
+
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.HTTPD_SITE_BINDS;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		try {
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			httpd_site = result.getInt(pos++);
+			httpd_bind = result.getInt(pos++);
+			name = result.getString(pos++);
+			access_log = UnixPath.valueOf(result.getString(pos++));
+			error_log = UnixPath.valueOf(result.getString(pos++));
+			certificate = result.getInt(pos++);
+			if(result.wasNull()) certificate = -1;
+			disable_log = result.getInt(pos++);
+			if(result.wasNull()) disable_log = -1;
+			predisable_config = result.getString(pos++);
+			isManual = result.getBoolean(pos++);
+			redirect_to_primary_hostname = result.getBoolean(pos++);
+			include_site_config = result.getString(pos++);
+			oldSslCertFile = UnixPath.valueOf(result.getString(pos++));
+			oldSslCertKeyFile = UnixPath.valueOf(result.getString(pos++));
+			oldSslCertChainFile = UnixPath.valueOf(result.getString(pos++));
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey = in.readCompressedInt();
+			httpd_site = in.readCompressedInt();
+			httpd_bind = in.readCompressedInt();
+			name = in.readNullUTF();
+			access_log = UnixPath.valueOf(in.readUTF());
+			error_log = UnixPath.valueOf(in.readUTF());
+			certificate = in.readCompressedInt();
+			disable_log = in.readCompressedInt();
+			predisable_config = in.readNullUTF();
+			isManual = in.readBoolean();
+			redirect_to_primary_hostname = in.readBoolean();
+			include_site_config = in.readNullUTF();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeCompressedInt(httpd_site);
+		out.writeCompressedInt(httpd_bind);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_14) >= 0) {
+			out.writeNullUTF(name);
+		}
+		out.writeUTF(access_log.toString());
+		out.writeUTF(error_log.toString());
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
+			out.writeCompressedInt(certificate);
+		} else {
+			out.writeNullUTF(ObjectUtils.toString(oldSslCertFile));
+			out.writeNullUTF(ObjectUtils.toString(oldSslCertKeyFile));
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
+				out.writeNullUTF(ObjectUtils.toString(oldSslCertChainFile));
+			}
+		}
+		out.writeCompressedInt(disable_log);
+		out.writeNullUTF(predisable_config);
+		out.writeBoolean(isManual);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_19) >= 0) {
+			out.writeBoolean(redirect_to_primary_hostname);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
+			out.writeNullUTF(include_site_config);
+		}
+	}
+
+	public HttpdSite getHttpdSite() throws SQLException, IOException {
+		HttpdSite obj = table.connector.getHttpdSites().get(httpd_site);
+		if(obj == null) throw new SQLException("Unable to find HttpdSite: " + httpd_site);
+		return obj;
+	}
+
+	public HttpdBind getHttpdBind() throws SQLException, IOException {
+		HttpdBind obj = table.connector.getHttpdBinds().get(httpd_bind);
+		if(obj == null) throw new SQLException("Unable to find HttpdBind: " + httpd_bind + " for HttpdSite=" + httpd_site);
+		return obj;
+	}
+
+	/**
+	 * Gets the name of the bind.  The default per-(site, ip, bind) has a null name.
+	 * Additional binds per (site, ip, bind) will have non-empty names.
+	 * The name is unique per (site, ip, bind), including only one default bind.
+	 *
+	 * @see #getSystemdEscapedName()
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Gets the <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd-encoded</a>
+	 * name of the bind.
+	 *
+	 * @see #getName()
+	 * @see SystemdUtil#encode(java.lang.String)
+	 */
+	public String getSystemdEscapedName() {
+		return SystemdUtil.encode(name);
+	}
+
+	public UnixPath getAccessLog() {
+		return access_log;
+	}
+
+	public UnixPath getErrorLog() {
+		return error_log;
+	}
+
+	/**
+	 * Gets the SSL certificate for this server.
+	 *
+	 * @return  the SSL certificate or {@code null} when filtered or not applicable
+	 */
+	public SslCertificate getCertificate() throws SQLException, IOException {
+		// Make sure protocol and certificate present match
+		String protocol = getHttpdBind().getNetBind().getAppProtocol().getProtocol();
+		if(Protocol.HTTP.equals(protocol)) {
+			if(certificate != -1) throw new SQLException("certificate non-null on " + Protocol.HTTP + " protocol for HttpdSiteBind #" + pkey);
+		} else if(Protocol.HTTPS.equals(protocol)) {
+			if(certificate == -1) throw new SQLException("certificate null on " + Protocol.HTTPS + " protocol for HttpdSiteBind #" + pkey);
+		} else {
+			throw new SQLException("Protocol is neither " + Protocol.HTTP + " nor " + Protocol.HTTPS + " for HttpdSiteBind #" + pkey + ": " + protocol);
+		}
+		if(certificate == -1) return null;
+		// May be filtered
+		return table.connector.getSslCertificates().get(certificate);
+	}
+
+	@Override
+	public DisableLog getDisableLog() throws SQLException, IOException {
+		if(disable_log == -1) return null;
+		DisableLog obj = table.connector.getDisableLogs().get(disable_log);
+		if(obj == null) throw new SQLException("Unable to find DisableLog: " + disable_log);
+		return obj;
+	}
+
+	@Override
+	public boolean isDisabled() {
+		return disable_log != -1;
 	}
 
 	@Override
@@ -91,176 +275,8 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.HTTPD_SITE_BINDS, pkey);
 	}
 
-	public UnixPath getAccessLog() {
-		return access_log;
-	}
-
-	public List<HttpdSiteURL> getAltHttpdSiteURLs() throws IOException, SQLException {
-		return table.connector.getHttpdSiteURLs().getAltHttpdSiteURLs(this);
-	}
-
-	@Override
-	Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_HTTPD_SITE: return httpd_site;
-			case 2: return httpd_bind;
-			case 3: return access_log;
-			case 4: return error_log;
-			case COLUMN_SSL_CERTIFICATE: return certificate == -1 ? null : certificate;
-			case 6: return disable_log == -1 ? null : disable_log;
-			case 7: return predisable_config;
-			case 8: return isManual;
-			case 9: return redirect_to_primary_hostname;
-			case 10: return include_site_config;
-			default: throw new IllegalArgumentException("Invalid index: " + i);
-		}
-	}
-
-	@Override
-	public boolean isDisabled() {
-		return disable_log != -1;
-	}
-
-	@Override
-	public DisableLog getDisableLog() throws SQLException, IOException {
-		if(disable_log == -1) return null;
-		DisableLog obj = table.connector.getDisableLogs().get(disable_log);
-		if(obj == null) throw new SQLException("Unable to find DisableLog: " + disable_log);
-		return obj;
-	}
-
-	public UnixPath getErrorLog() {
-		return error_log;
-	}
-
-	public HttpdBind getHttpdBind() throws SQLException, IOException {
-		HttpdBind obj = table.connector.getHttpdBinds().get(httpd_bind);
-		if(obj == null) throw new SQLException("Unable to find HttpdBind: " + httpd_bind + " for HttpdSite=" + httpd_site);
-		return obj;
-	}
-
-	public HttpdSite getHttpdSite() throws SQLException, IOException {
-		HttpdSite obj = table.connector.getHttpdSites().get(httpd_site);
-		if(obj == null) throw new SQLException("Unable to find HttpdSite: " + httpd_site);
-		return obj;
-	}
-
-	public List<HttpdSiteBindRedirect> getHttpdSiteBindRedirects() throws IOException, SQLException {
-		return table.connector.getHttpdSiteBindRedirects().getHttpdSiteBindRedirects(this);
-	}
-
-	public List<HttpdSiteURL> getHttpdSiteURLs() throws IOException, SQLException {
-		return table.connector.getHttpdSiteURLs().getHttpdSiteURLs(this);
-	}
-
 	public String getPredisableConfig() {
 		return predisable_config;
-	}
-
-	public HttpdSiteURL getPrimaryHttpdSiteURL() throws SQLException, IOException {
-		return table.connector.getHttpdSiteURLs().getPrimaryHttpdSiteURL(this);
-	}
-
-	/**
-	 * Gets the SSL certificate for this server.
-	 *
-	 * @return  the SSL certificate or {@code null} when filtered or not applicable
-	 */
-	public SslCertificate getCertificate() throws SQLException, IOException {
-		// Make sure protocol and certificate present match
-		String protocol = getHttpdBind().getNetBind().getAppProtocol().getProtocol();
-		if(Protocol.HTTP.equals(protocol)) {
-			if(certificate != -1) throw new SQLException("certificate non-null on " + Protocol.HTTP + " protocol for HttpdSiteBind #" + pkey);
-		} else if(Protocol.HTTPS.equals(protocol)) {
-			if(certificate == -1) throw new SQLException("certificate null on " + Protocol.HTTPS + " protocol for HttpdSiteBind #" + pkey);
-		} else {
-			throw new SQLException("Protocol is neither " + Protocol.HTTP + " nor " + Protocol.HTTPS + " for HttpdSiteBind #" + pkey + ": " + protocol);
-		}
-		if(certificate == -1) return null;
-		// May be filtered
-		return table.connector.getSslCertificates().get(certificate);
-	}
-
-	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.HTTPD_SITE_BINDS;
-	}
-
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			int pos = 1;
-			pkey = result.getInt(pos++);
-			httpd_site = result.getInt(pos++);
-			httpd_bind = result.getInt(pos++);
-			access_log = UnixPath.valueOf(result.getString(pos++));
-			error_log = UnixPath.valueOf(result.getString(pos++));
-			certificate = result.getInt(pos++);
-			if(result.wasNull()) certificate = -1;
-			disable_log = result.getInt(pos++);
-			if(result.wasNull()) disable_log = -1;
-			predisable_config = result.getString(pos++);
-			isManual = result.getBoolean(pos++);
-			redirect_to_primary_hostname = result.getBoolean(pos++);
-			include_site_config = result.getString(pos++);
-			oldSslCertFile = UnixPath.valueOf(result.getString(pos++));
-			oldSslCertKeyFile = UnixPath.valueOf(result.getString(pos++));
-			oldSslCertChainFile = UnixPath.valueOf(result.getString(pos++));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
-
-	public boolean isManual() {
-		return isManual;
-	}
-
-	public boolean getRedirectToPrimaryHostname() {
-		return redirect_to_primary_hostname;
-	}
-
-	/**
-	 * Controls whether this bind includes the per-site configuration file.
-	 * Will be one of:
-	 * <ul>
-	 * <li>{@code null} - Automatic mode</li>
-	 * <li>{@code "true"} - Include manually enabled</li>
-	 * <li>{@code "false"} - Include manually disabled</li>
-	 * <li>{@code "IfModule &lt;module_name&gt;"} - Include when a module is enabled</li>
-	 * <li>{@code "IfModule !&lt;module_name&gt;"} - Include when a module is disabled</li>
-	 * <li>Any future unrecognized value should be treated as equivalent to {@code null} (automatic mode)</li>
-	 * </ul>
-	 */
-	public String getIncludeSiteConfig() {
-		return include_site_config;
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			httpd_site = in.readCompressedInt();
-			httpd_bind = in.readCompressedInt();
-			access_log = UnixPath.valueOf(in.readUTF());
-			error_log = UnixPath.valueOf(in.readUTF());
-			certificate = in.readCompressedInt();
-			disable_log = in.readCompressedInt();
-			predisable_config = in.readNullUTF();
-			isManual = in.readBoolean();
-			redirect_to_primary_hostname = in.readBoolean();
-			include_site_config = in.readNullUTF();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
-
-	public void setIsManual(boolean isManual) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
-	}
-
-	public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
 	}
 
 	public void setPredisableConfig(final String config) throws IOException, SQLException {
@@ -294,37 +310,55 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 		);
 	}
 
-	@Override
-	String toStringImpl() throws SQLException, IOException {
-		HttpdSite site = getHttpdSite();
-		HttpdBind bind = getHttpdBind();
-		return site.toStringImpl() + '|' + bind.toStringImpl();
+	public boolean isManual() {
+		return isManual;
 	}
 
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(httpd_site);
-		out.writeCompressedInt(httpd_bind);
-		out.writeUTF(access_log.toString());
-		out.writeUTF(error_log.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
-			out.writeCompressedInt(certificate);
-		} else {
-			out.writeNullUTF(ObjectUtils.toString(oldSslCertFile));
-			out.writeNullUTF(ObjectUtils.toString(oldSslCertKeyFile));
-			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_4) >= 0) {
-				out.writeNullUTF(ObjectUtils.toString(oldSslCertChainFile));
-			}
-		}
-		out.writeCompressedInt(disable_log);
-		out.writeNullUTF(predisable_config);
-		out.writeBoolean(isManual);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_19) >= 0) {
-			out.writeBoolean(redirect_to_primary_hostname);
-		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
-			out.writeNullUTF(include_site_config);
-		}
+	public void setIsManual(boolean isManual) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_IS_MANUAL, pkey, isManual);
+	}
+
+	public boolean getRedirectToPrimaryHostname() {
+		return redirect_to_primary_hostname;
+	}
+
+	public void setRedirectToPrimaryHostname(boolean redirectToPrimaryHostname) throws IOException, SQLException {
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_HTTPD_SITE_BIND_REDIRECT_TO_PRIMARY_HOSTNAME, pkey, redirectToPrimaryHostname);
+	}
+
+	/**
+	 * Controls whether this bind includes the per-site configuration file.
+	 * Will be one of:
+	 * <ul>
+	 * <li>{@code null} - Automatic mode</li>
+	 * <li>{@code "true"} - Include manually enabled</li>
+	 * <li>{@code "false"} - Include manually disabled</li>
+	 * <li>{@code "IfModule &lt;module_name&gt;"} - Include when a module is enabled</li>
+	 * <li>{@code "IfModule !&lt;module_name&gt;"} - Include when a module is disabled</li>
+	 * <li>Any future unrecognized value should be treated as equivalent to {@code null} (automatic mode)</li>
+	 * </ul>
+	 */
+	public String getIncludeSiteConfig() {
+		return include_site_config;
+	}
+
+	public List<HttpdSiteURL> getHttpdSiteURLs() throws IOException, SQLException {
+		return table.connector.getHttpdSiteURLs().getHttpdSiteURLs(this);
+	}
+
+	public HttpdSiteURL getPrimaryHttpdSiteURL() throws SQLException, IOException {
+		return table.connector.getHttpdSiteURLs().getPrimaryHttpdSiteURL(this);
+	}
+
+	public List<HttpdSiteURL> getAltHttpdSiteURLs() throws IOException, SQLException {
+		return table.connector.getHttpdSiteURLs().getAltHttpdSiteURLs(this);
+	}
+
+	public int addHttpdSiteURL(DomainName hostname) throws IOException, SQLException {
+		return table.connector.getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
+	}
+
+	public List<HttpdSiteBindRedirect> getHttpdSiteBindRedirects() throws IOException, SQLException {
+		return table.connector.getHttpdSiteBindRedirects().getHttpdSiteBindRedirects(this);
 	}
 }

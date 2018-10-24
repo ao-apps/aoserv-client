@@ -28,7 +28,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 	xmlns:core="https://semanticcms.com/core/taglib/"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:jsp="http://java.sun.com/JSP/Page"
--	version="2.1"
+	version="2.1"
 >
 	<jsp:directive.page language="java" pageEncoding="UTF-8" session="false" />
 	<!-- TODO: https://schema.org/TechArticle on this page -->
@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-10-04T12:12:54-0500"
+		dateModified="2018-10-24T00:23:48-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -607,6 +607,35 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>httpd_site_authenticated_locations.handler</code> column</li>
 							<li>Added <code>add_httpd_site_authenticated_location</code> AOSH command</li>
 							<li>Added <code>set_httpd_site_authenticated_location_attributes</code> AOSH command</li>
+						</ol>
+					</li>
+					<li>
+						<p>
+							Now supporting multiple site-bind configurations per unique <code>(site, ip, port)</code>.
+							Previously, there was at most one Apache configuration file per unique <code>(site, ip, port)</code>
+							combination.  We now support multiple Apache configuration files per unique <code>(site, ip, port, <strong>name</strong>)</code>,
+							where <code>name</code> is either <code>null</code> (for the default), or a user/API-provided
+							meaningful name to identify the bind.
+						</p>
+						<p>
+							We host applications that respond to different, unrelated hostnames/domains, then internally perform
+							virtual hosting or content negotiation to serve different, unrelated clients.  With HTTP, this all
+							works well under a single per-<code>(site, ip, port)</code> Apache configuration file.
+						</p>
+						<p>
+							However, as part of our initiative to achieve 100% encryption via <ao:a href="https://letsencrypt.org/">Let's Encrypt</ao:a>,
+							and given that these hostnames/domains are for unrelated clients, we need to support different SSL certificates
+							for different clients.  Previously, we would accomplish this with each SSL certificate on a different IP address.
+							Now with the ubiquity of <ao:a href="https://en.wikipedia.org/wiki/Server_Name_Indication">SNI</ao:a>,
+							we want to run different SSL certificates on the same IP address, and thus our unique constraint on
+							<code>(site, ip, port)</code> was too restrictive.
+						</p>
+						<p>
+							API compatibility for older clients is maintained by only manipulating the <code>null</code>
+							(default) bind.
+						</p>
+						<ol>
+							<li>Added <code>httpd_site_binds.name</code> column</li>
 						</ol>
 					</li>
 				</ul>
