@@ -30,7 +30,7 @@ import com.aoindustries.util.StringUtility;
  *
  * @author  AO Industries, Inc.
  */
-class SystemdUtil {
+public class SystemdUtil {
 
 	/**
 	 * Implements <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd-encoded</a> encoding.
@@ -39,7 +39,7 @@ class SystemdUtil {
 	 * @see  HttpdServer#getSystemdEscapedName()
 	 * @see  SendmailServer#getSystemdEscapedName()
 	 */
-	static String encode(String value) {
+	public static String encode(String value) {
 		if(value == null) return null;
 		byte[] utf8 = value.getBytes(Charsets.UTF_8);
 		StringBuilder escaped = new StringBuilder(utf8.length);
