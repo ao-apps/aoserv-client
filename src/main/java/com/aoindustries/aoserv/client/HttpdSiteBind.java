@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.util.SystemdUtil;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -356,6 +357,10 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 
 	public int addHttpdSiteURL(DomainName hostname) throws IOException, SQLException {
 		return table.connector.getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
+	}
+
+	public List<HttpdSiteBindHeader> getHttpdSiteBindHeaders() throws IOException, SQLException {
+		return table.connector.getHttpdSiteBindHeaders().getHttpdSiteBindHeaders(this);
 	}
 
 	public List<HttpdSiteBindRedirect> getHttpdSiteBindRedirects() throws IOException, SQLException {

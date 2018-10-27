@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-10-24T00:23:48-0500"
+		dateModified="2018-10-26T17:21:37-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -638,6 +638,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>httpd_site_binds.name</code> column</li>
 						</ol>
 					</li>
+					<li>New table <code>httpd_site_bind_headers</code> that configures headers on a per-httpd_site_bind basis.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
