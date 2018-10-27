@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with aoserv-client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.aoserv.client;
+package com.aoindustries.aoserv.client.util;
 
 import com.aoindustries.nio.charset.Charsets;
 import com.aoindustries.util.StringUtility;
