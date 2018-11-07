@@ -75,7 +75,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	public static final String
 		REDHAT_JDBC_DRIVER="com.mysql.jdbc.Driver",
 		MANDRAKE_JDBC_DRIVER="com.mysql.jdbc.Driver",
-		CENTOS_JDBC_DRIVER="com.mysql.jdbc.Driver"
+		CENTOS_JDBC_DRIVER="com.mysql.jdbc.Driver",
+		CENTOS_7_JDBC_DRIVER="com.mysql.cj.jdbc.Driver"
 	;
 
 	/**
@@ -84,7 +85,8 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	public static final String
 		REDHAT_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
 		MANDRAKE_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
-		CENTOS_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/"
+		CENTOS_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/5.1/en/",
+		CENTOS_7_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/8.0/en/"
 	;
 
 	/**
@@ -265,16 +267,17 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	@Override
 	public String getJdbcDriver() throws SQLException, IOException {
-		int osv=getMySQLServer().getAOServer().getServer().operating_system_version;
+		int osv = getMySQLServer().getAOServer().getServer().operating_system_version;
 		switch(osv) {
 			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
 				return MANDRAKE_JDBC_DRIVER;
 			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
 				return REDHAT_JDBC_DRIVER;
 			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64:
-			case OperatingSystemVersion.CENTOS_7_X86_64:
 				return CENTOS_JDBC_DRIVER;
-			default : throw new SQLException("Unsupported OperatingSystemVersion: "+osv);
+			case OperatingSystemVersion.CENTOS_7_X86_64:
+				return CENTOS_7_JDBC_DRIVER;
+			default : throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
 		}
 	}
 
@@ -314,16 +317,17 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
-		int osv=getMySQLServer().getAOServer().getServer().operating_system_version;
+		int osv = getMySQLServer().getAOServer().getServer().operating_system_version;
 		switch(osv) {
 			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
 				return MANDRAKE_JDBC_DOCUMENTATION_URL;
 			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
 				return REDHAT_JDBC_DOCUMENTATION_URL;
 			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
-			case OperatingSystemVersion.CENTOS_7_X86_64 :
 				return CENTOS_JDBC_DOCUMENTATION_URL;
-			default : throw new SQLException("Unsupported OperatingSystemVersion: "+osv);
+			case OperatingSystemVersion.CENTOS_7_X86_64 :
+				return CENTOS_7_JDBC_DOCUMENTATION_URL;
+			default : throw new SQLException("Unsupported OperatingSystemVersion: " + osv);
 		}
 	}
 
