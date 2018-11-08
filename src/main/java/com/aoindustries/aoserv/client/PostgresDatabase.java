@@ -243,6 +243,9 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		} else {
 			if(ia.isUnspecified()) {
 				jdbcUrl.append(ao.getHostname());
+			} else if(ia.isLoopback()) {
+				// Loopback as IP addresses to avoid ambiguity about which stack (IPv4/IPv6) used for "localhost" in Java
+				jdbcUrl.append(ia.toBracketedString());
 			} else {
 				jdbcUrl.append(ip.getHostname());
 			}
