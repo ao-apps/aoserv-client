@@ -52,7 +52,7 @@ final public class SslCertificateName extends CachedObjectIntegerKey<SslCertific
 	private DomainName domain;
 
 	@Override
-	String toStringImpl() throws SQLException, IOException {
+	String toStringImpl() {
 		if(isCommonName) return getName();
 		else return getName() + " (Alt)";
 	}
