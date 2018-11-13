@@ -182,6 +182,10 @@ final public class SslCertificate extends CachedObjectIntegerKey<SslCertificate>
 		return table.connector.getSslCertificateNames().getAltNames(this);
 	}
 
+	public List<SslCertificateOtherUse> getOtherUses() throws IOException, SQLException {
+		return table.connector.getSslCertificateOtherUses().getOtherUses(this);
+	}
+
 	public List<CyrusImapdBind> getCyrusImapdBinds() throws IOException, SQLException {
 		return table.connector.getCyrusImapdBinds().getCyrusImapdBinds(this);
 	}
