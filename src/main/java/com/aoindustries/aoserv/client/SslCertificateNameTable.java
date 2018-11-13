@@ -22,10 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.net.DomainName;
 import java.io.IOException;
-import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
