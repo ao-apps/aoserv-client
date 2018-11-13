@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-11-07T01:56:22-0600"
+		dateModified="2018-11-12T21:32:09-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -640,6 +640,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>New table <code>httpd_site_bind_headers</code> that configures headers on a per-httpd_site_bind basis.</li>
+					<li>
+						New table <code>ssl_certificate_other_uses</code> that configures configured manual uses of SSL certificates.
+						This will avoid warnings in monitoring and avoid removal in management.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
