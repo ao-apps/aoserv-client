@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -156,6 +156,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	private InetAddress externalIpAddress;
 	private String netmask;
 	private boolean checkBlacklistsOverSmtp;
+	private boolean monitoringEnabled;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -174,6 +175,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 			case 11: return externalIpAddress;
 			case 12: return netmask;
 			case 13: return checkBlacklistsOverSmtp;
+			case 14: return monitoringEnabled;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -246,6 +248,19 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		return checkBlacklistsOverSmtp;
 	}
 
+	public boolean isMonitoringEnabled() {
+		return monitoringEnabled;
+	}
+
+	public void setMonitoringEnabled(boolean monitoringEnabled) throws IOException, SQLException {
+		table.connector.requestUpdateIL(
+			true,
+			AOServProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
+			pkey,
+			monitoringEnabled
+		);
+	}
+
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.IP_ADDRESSES;
@@ -254,21 +269,23 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getInt(1);
-			ip_address = InetAddress.valueOf(result.getString(2));
-			net_device = result.getInt(3);
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			ip_address = InetAddress.valueOf(result.getString(pos++));
+			net_device = result.getInt(pos++);
 			if(result.wasNull()) net_device=-1;
-			is_alias = result.getBoolean(4);
-			hostname = DomainName.valueOf(result.getString(5));
-			packageName = AccountingCode.valueOf(result.getString(6));
-			created = result.getTimestamp(7).getTime();
-			available = result.getBoolean(8);
-			isOverflow = result.getBoolean(9);
-			isDHCP = result.getBoolean(10);
-			pingMonitorEnabled = result.getBoolean(11);
-			externalIpAddress = InetAddress.valueOf(result.getString(12));
-			netmask = result.getString(13);
-			checkBlacklistsOverSmtp = result.getBoolean(14);
+			is_alias = result.getBoolean(pos++);
+			hostname = DomainName.valueOf(result.getString(pos++));
+			packageName = AccountingCode.valueOf(result.getString(pos++));
+			created = result.getTimestamp(pos++).getTime();
+			available = result.getBoolean(pos++);
+			isOverflow = result.getBoolean(pos++);
+			isDHCP = result.getBoolean(pos++);
+			pingMonitorEnabled = result.getBoolean(pos++);
+			externalIpAddress = InetAddress.valueOf(result.getString(pos++));
+			netmask = result.getString(pos++);
+			checkBlacklistsOverSmtp = result.getBoolean(pos++);
+			monitoringEnabled = result.getBoolean(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -315,6 +332,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 			externalIpAddress = InetAddress.valueOf(in.readNullUTF());
 			netmask = in.readUTF().intern();
 			checkBlacklistsOverSmtp = in.readBoolean();
+			monitoringEnabled = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -363,5 +381,6 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(ObjectUtils.toString(externalIpAddress));
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_38)>=0) out.writeUTF(netmask);
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_75)>=0) out.writeBoolean(checkBlacklistsOverSmtp);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) >= 0) out.writeBoolean(monitoringEnabled);
 	}
 }

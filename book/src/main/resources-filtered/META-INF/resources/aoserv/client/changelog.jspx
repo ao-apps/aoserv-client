@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-11-12T21:32:09-0600"
+		dateModified="2018-11-16T08:18:12-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -643,6 +643,14 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						New table <code>ssl_certificate_other_uses</code> that configures configured manual uses of SSL certificates.
 						This will avoid warnings in monitoring and avoid removal in management.
+					</li>
+					<li>
+						May now disable monitoring on a per-IP basis, which is useful to avoid alerts during routine maintenance
+						or while allocating and releasing resources:
+						<ol>
+							<li>Added <code>ip_addresses.monitoring_enabled</code> column</li>
+							<li>Added <code>set_ip_address_monitoring_enabled</code> AOSH command</li>
+						</ol>
 					</li>
 				</ul>
 			</changelog:release>

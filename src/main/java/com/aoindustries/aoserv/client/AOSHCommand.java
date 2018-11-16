@@ -335,6 +335,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF = "set_httpd_tomcat_site_block_webinf",
 		SET_IP_ADDRESS_DHCP_ADDRESS = "set_ip_address_dhcp_address",
 		SET_IP_ADDRESS_HOSTNAME = "set_ip_address_hostname",
+		SET_IP_ADDRESS_MONITORING_ENABLED = "set_ip_address_monitoring_enabled",
 		SET_IP_ADDRESS_PACKAGE = "set_ip_address_package",
 		SET_LINUX_ACCOUNT_HOME_PHONE = "set_linux_account_home_phone",
 		SET_LINUX_ACCOUNT_NAME = "set_linux_account_name",

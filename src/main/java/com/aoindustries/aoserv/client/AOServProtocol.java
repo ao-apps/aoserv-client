@@ -176,9 +176,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		VERSION_1_81_13("1.81.13"),
 		VERSION_1_81_14("1.81.14"),
 		VERSION_1_81_15("1.81.15"),
-		VERSION_1_81_16("1.81.16");
+		VERSION_1_81_16("1.81.16"),
+		VERSION_1_81_17("1.81.17");
 
-		public static final Version CURRENT_VERSION = VERSION_1_81_16;
+		public static final Version CURRENT_VERSION = VERSION_1_81_17;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
@@ -578,7 +579,8 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		CHECK_SSL_CERTIFICATE,
 		GET_HTTPD_SERVER_CONCURRENCY,
 		SET_HTTPD_SHARED_TOMCAT_VERSION,
-		SET_HTTPD_TOMCAT_STD_SITE_VERSION
+		SET_HTTPD_TOMCAT_STD_SITE_VERSION,
+		SET_IP_ADDRESS_MONITORING_ENABLED
 	}
 
 	/**
