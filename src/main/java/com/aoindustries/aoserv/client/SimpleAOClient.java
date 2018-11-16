@@ -7334,29 +7334,6 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Sets the hostname of an <code>IPAddress</code>.
-	 *
-	 * @param  ipAddress  the <code>IPAddress</code> being modified
-	 * @param  hostname  the new hostname
-	 *
-	 * @exception  IOException  if unable to contact the server
-	 * @exception  SQLException  if unable to access the database or a data integrity
-	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>IPAddress</code> or
-	 *					hostname is not valid format
-	 *
-	 * @see  IPAddress#setHostname
-	 */
-	public void setIPAddressHostname(
-		InetAddress ipAddress,
-		String server,
-		String net_device,
-		DomainName hostname
-	) throws IllegalArgumentException, IOException, SQLException {
-		getIPAddress(server, net_device, ipAddress).setHostname(hostname);
-	}
-
-	/**
 	 * Sets the IP address of a DHCP-enabled <code>IPAddress</code>.
 	 *
 	 * @param  ipAddress  the pkey of the <code>IPAddress</code>
@@ -7380,17 +7357,64 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Sets the ownership of a <code>IPAddress</code>.  The <code>Package</code> may only be set
-	 * if the <code>IPAddress</code> is not being used by any resources.
+	 * Sets the hostname of an <code>IPAddress</code>.
 	 *
 	 * @param  ipAddress  the <code>IPAddress</code> being modified
-	 * @param  newPackage  the name of the <code>Package</code>
+	 * @param  hostname  the new hostname
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>IPAddress</code> or
-	 *					<code>Package</code>
+	 *					hostname is not valid format
+	 *
+	 * @see  IPAddress#setHostname
+	 */
+	public void setIPAddressHostname(
+		InetAddress ipAddress,
+		String server,
+		String net_device,
+		DomainName hostname
+	) throws IllegalArgumentException, IOException, SQLException {
+		getIPAddress(server, net_device, ipAddress).setHostname(hostname);
+	}
+
+	/**
+	 * Sets the monitoring status of an {@link IPAddress}.
+	 *
+	 * @param  ipAddress  the {@link IPAddress} being modified
+	 * @param  enabled  the new monitoring state
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity
+	 *					violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the {@link IPAddress} or
+	 *					{@link Package}
+	 *
+	 * @see  IPAddress#setPackage
+	 * @see  #addPackage
+	 */
+	public void setIPAddressMonitoringEnabled(
+		InetAddress ipAddress,
+		String server,
+		String net_device,
+		boolean enabled
+	) throws IllegalArgumentException, IOException, SQLException {
+		getIPAddress(server, net_device, ipAddress).setMonitoringEnabled(enabled);
+	}
+
+	/**
+	 * Sets the ownership of an {@link IPAddress}.  The {@link Package} may only be set
+	 * if the {@link IPAddress} is not being used by any resources.
+	 *
+	 * @param  ipAddress  the {@link IPAddress} being modified
+	 * @param  newPackage  the name of the {@link Package}
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity
+	 *					violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the {@link IPAddress} or
+	 *					{@link Package}
 	 *
 	 * @see  IPAddress#setPackage
 	 * @see  #addPackage

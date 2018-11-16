@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -152,6 +152,16 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 					args[2],
 					args[3],
 					AOSH.parseDomainName(args[4], "hostname")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_MONITORING_ENABLED)) {
+			if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_MONITORING_ENABLED, args, 4, err)) {
+				connector.getSimpleAOClient().setIPAddressMonitoringEnabled(
+					AOSH.parseInetAddress(args[1], "ip_address"),
+					args[2],
+					args[3],
+					AOSH.parseBoolean(args[4], "enabled")
 				);
 			}
 			return true;
