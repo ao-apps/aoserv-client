@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -842,7 +842,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case PKEY: return value.toString();
 			case SHORT: return value.toString();
 			case STRING: return (String)value;
-			case TIME: return SQLUtility.getDateTime(((java.sql.Timestamp)value).getTime());
+			case TIME: return SQLUtility.getDateTime(((java.sql.Timestamp)value).getTime(), false);
 			case URL: return (String)value;
 			case USERNAME: return value.toString();
 			case ZONE: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.Zone
