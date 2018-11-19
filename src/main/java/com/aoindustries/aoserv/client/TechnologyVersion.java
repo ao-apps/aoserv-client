@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -93,7 +93,7 @@ final public class TechnologyVersion extends GlobalObjectIntegerKey<TechnologyVe
 	}
 
 	public Timestamp getDisableTime() {
-		return new Timestamp(disable_time);
+		return disable_time == -1 ? null : new Timestamp(disable_time);
 	}
 
 	public String getDisableReason() {
