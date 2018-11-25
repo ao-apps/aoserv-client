@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -100,38 +100,51 @@ final public class CreditCardTransaction extends CachedObjectIntegerKey<CreditCa
 	private long authorizationTime;
 	private UserId authorizationUsername;
 	private String authorizationPrincipalName;
+	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
 	private String authorizationCommunicationResult;
 	private String authorizationProviderErrorCode;
+	// TODO: enum com.aoindustries.creditcards.TransactionResult.ErrorCode
 	private String authorizationErrorCode;
 	private String authorizationProviderErrorMessage;
 	private String authorizationProviderUniqueId;
 	private String authorizationProviderApprovalResult;
+	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.ApprovalResult
 	private String authorizationApprovalResult;
 	private String authorizationProviderDeclineReason;
+	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.DeclineReason
 	private String authorizationDeclineReason;
 	private String authorizationProviderReviewReason;
+	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.ReviewReason
 	private String authorizationReviewReason;
 	private String authorizationProviderCvvResult;
+	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.CvvResult
 	private String authorizationCvvResult;
 	private String authorizationProviderAvsResult;
+	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.AvsResult
 	private String authorizationAvsResult;
 	private String authorizationApprovalCode;
 	private long captureTime;
 	private UserId captureUsername;
 	private String capturePrincipalName;
+	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
 	private String captureCommunicationResult;
 	private String captureProviderErrorCode;
+	// TODO: enum com.aoindustries.creditcards.TransactionResult.ErrorCode
 	private String captureErrorCode;
 	private String captureProviderErrorMessage;
 	private String captureProviderUniqueId;
 	private long voidTime;
 	private UserId voidUsername;
 	private String voidPrincipalName;
+	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
 	private String voidCommunicationResult;
 	private String voidProviderErrorCode;
+	// TODO: enum com.aoindustries.creditcards.TransactionResult.ErrorCode
 	private String voidErrorCode;
 	private String voidProviderErrorMessage;
 	private String voidProviderUniqueId;
+	// TODO: enum com.aoindustries.creditcards.Transaction.Status
+	// TODO: Use enum directly?  Wait until we have modular aoserv-client by schema, then pick it up as a dependency of aoserv-client-payment only?
 	private String status;
 
 	/**
