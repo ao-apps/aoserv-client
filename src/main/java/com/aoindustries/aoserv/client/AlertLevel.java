@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2014, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2014, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,6 +27,9 @@ package com.aoindustries.aoserv.client;
  *
  * @author  AO Industries, Inc.
  */
+// Matches enum com.aoindustries.noc.monitor.common.AlertLevel
+// Matches aoserv-master-db/aoindustries/monitoring/AlertLevel-type.sql
+// TODO: Once a separate project exists for aoserv-client-monitoring, remove this duplicate enum and depend on noc-common
 public enum AlertLevel {
 	NONE,
 	LOW,
