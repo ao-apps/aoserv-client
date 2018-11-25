@@ -204,13 +204,6 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 		}
 	}
 
-	/**
-	 * The max values for automatic gid selection in groupadd.
-	 *
-	 * @see  AOServer#getGidMin()
-	 */
-	public static final int GID_MAX = 60000;
-
 	AccountingCode packageName;
 	private String type;
 
