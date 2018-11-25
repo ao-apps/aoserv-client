@@ -505,7 +505,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 			ip_address = result.getInt(4);
 			port = Port.valueOf(
 				result.getInt(5),
-				com.aoindustries.net.Protocol.valueOf(result.getString(6).toUpperCase(Locale.ROOT))
+				com.aoindustries.net.Protocol.valueOf(result.getString(6).toUpperCase(Locale.ROOT)) // TODO: toUpperCase unnecessary in 1.81.18+ which uses matching PostgreSQL enum
 			);
 			app_protocol = result.getString(7);
 			monitoring_enabled = result.getBoolean(8);
