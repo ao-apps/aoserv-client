@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2008-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,6 +50,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	private float maxPower;
 	private Boolean supports_hvm;
 
+	// Matches aoserv-master-db/aoindustries/infrastructure/PhysicalServer.UpsType-type.sql
 	public enum UpsType {
 		/**
 		 * No UPS is supporting this device.

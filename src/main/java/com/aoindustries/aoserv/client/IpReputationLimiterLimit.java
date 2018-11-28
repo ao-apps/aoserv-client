@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -47,6 +47,7 @@ final public class IpReputationLimiterLimit extends CachedObjectIntegerKey<IpRep
 	/**
 	 * The set of possible classes
 	 */
+	// Matches aoserv-master-db/aoindustries/net/reputation/Class-type.sql
 	public enum LimiterClass {
 		/**
 		 * Manual Good
@@ -92,6 +93,7 @@ final public class IpReputationLimiterLimit extends CachedObjectIntegerKey<IpRep
 	/**
 	 * The set of possible units
 	 */
+	// Matches aoserv-master-db/aoindustries/net/reputation/LimiterClass.TimeUnit-type.sql
 	public enum TimeUnit {
 		second,
 		minute,

@@ -49,6 +49,7 @@ final public class HttpdSiteBindHeader extends CachedObjectIntegerKey<HttpdSiteB
 	int httpd_site_bind;
 	private short sortOrder;
 
+	// Matches aoserv-master-db/aoindustries/aoweb/Header.Type-type.sql
 	public enum Type {
 		Header,
 		RequestHeader

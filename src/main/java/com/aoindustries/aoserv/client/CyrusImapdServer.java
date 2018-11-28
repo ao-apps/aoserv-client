@@ -49,6 +49,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	;
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
+	// Matches aoserv-master-db/aoindustries/email/CyrusImapdServer.TimeUnit-type.sql
 	public enum TimeUnit {
 		DAYS('d') {
 			@Override
