@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008, 2009, 2014, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2008, 2009, 2014, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,7 +50,9 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	private int extents;
 	private short weight;
 	private short weightTarget;
+	// TODO: smallint or enum
 	private int verifyDayOfWeek;
+	// TODO: smallint
 	private int verifyHourOfDay;
 
 	@Override
