@@ -119,7 +119,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 		for(EmailList el : getEmailLists()) if(el.disable_log==-1) return false;
 
 		// httpd_sites
-		for(HttpdSite hs : getHttpdSites()) if(hs.disable_log==-1) return false;
+		for(HttpdSite hs : getHttpdSites()) if(!hs.isDisabled()) return false;
 
 		return true;
 	}
@@ -591,7 +591,7 @@ final public class LinuxServerAccount extends CachedObjectIntegerKey<LinuxServer
 
 		// No httpd_sites
 		for(HttpdSite site : ao.getHttpdSites()) {
-			if(site.linuxAccount.equals(username)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
+			if(site.getLinuxAccount_username().equals(username)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getAoServer().getHostname(), site));
 		}
 
 		return reasons;

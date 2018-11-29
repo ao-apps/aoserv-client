@@ -161,7 +161,7 @@ final public class LinuxServerGroup extends CachedObjectIntegerKey<LinuxServerGr
 
 		// httpd_sites
 		for(HttpdSite site : ao.getHttpdSites()) {
-			if(site.linuxGroup.equals(name)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getAOServer().getHostname(), site));
+			if(site.getLinuxGroup_name().equals(name)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getAoServer().getHostname(), site));
 		}
 
 		for(MajordomoServer ms : ao.getMajordomoServers()) {

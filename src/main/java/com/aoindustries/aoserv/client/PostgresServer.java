@@ -216,21 +216,147 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 	// </editor-fold>
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_AO_SERVER=2,
-		COLUMN_NET_BIND=5
+		COLUMN_BIND = 0,
+		COLUMN_AO_SERVER = 2
 	;
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
-	PostgresServerName name;
-	int ao_server;
+	private PostgresServerName name;
+	private int ao_server;
 	private int version;
 	private int max_connections;
-	int net_bind;
 	private int sort_mem;
 	private int shared_buffers;
 	private boolean fsync;
+
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_BIND: return pkey;
+			case 1: return name;
+			case COLUMN_AO_SERVER: return ao_server;
+			case 3: return version;
+			case 4: return max_connections;
+			case 5: return sort_mem;
+			case 6: return shared_buffers;
+			case 7: return fsync;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
+		}
+	}
+
+	public int getBind_id() {
+		return pkey;
+	}
+
+	public NetBind getBind() throws SQLException, IOException {
+		NetBind nb = table.connector.getNetBinds().get(pkey);
+		if(nb == null) throw new SQLException("Unable to find NetBind: " + pkey);
+		return nb;
+	}
+
+	public int getAoServer_server_pkey() {
+		return ao_server;
+	}
+
+	public AOServer getAoServer() throws SQLException, IOException {
+		AOServer ao = table.connector.getAoServers().get(ao_server);
+		if(ao == null) throw new SQLException("Unable to find AOServer: " + ao_server);
+		return ao;
+	}
+
+	public int getVersion_version_id() {
+		return version;
+	}
+
+	public PostgresVersion getVersion() throws SQLException, IOException {
+		PostgresVersion obj=table.connector.getPostgresVersions().get(version);
+		if(obj==null) throw new SQLException("Unable to find PostgresVersion: "+version);
+		if(
+			obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
+			!= getAoServer().getServer().operating_system_version
+		) {
+			throw new SQLException("resource/operating system version mismatch on PostgresServer: #"+pkey);
+		}
+		return obj;
+	}
+
+	public int getMaxConnections() {
+		return max_connections;
+	}
+
+	public int getSortMem() {
+		return sort_mem;
+	}
+
+	public int getSharedBuffers() {
+		return shared_buffers;
+	}
+
+	public boolean getFSync() {
+		return fsync;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		try {
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			name = PostgresServerName.valueOf(result.getString(pos++));
+			ao_server = result.getInt(pos++);
+			version = result.getInt(pos++);
+			max_connections = result.getInt(pos++);
+			sort_mem = result.getInt(pos++);
+			shared_buffers = result.getInt(pos++);
+			fsync = result.getBoolean(pos++);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey = in.readCompressedInt();
+			name = PostgresServerName.valueOf(in.readUTF()).intern();
+			ao_server = in.readCompressedInt();
+			version = in.readCompressedInt();
+			max_connections = in.readCompressedInt();
+			sort_mem = in.readCompressedInt();
+			shared_buffers = in.readCompressedInt();
+			fsync = in.readBoolean();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeUTF(name.toString());
+		out.writeCompressedInt(ao_server);
+		out.writeCompressedInt(version);
+		out.writeCompressedInt(max_connections);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			out.writeCompressedInt(pkey); // net_bind
+		}
+		out.writeCompressedInt(sort_mem);
+		out.writeCompressedInt(shared_buffers);
+		out.writeBoolean(fsync);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)<=0) {
+			out.writeCompressedInt(-1);
+		}
+	}
+
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.POSTGRES_SERVERS;
+	}
+
+	@Override
+	String toStringImpl() throws SQLException, IOException {
+		return name+" on "+getAoServer().getHostname();
+	}
 
 	public int addPostgresDatabase(
 		PostgresDatabaseName name,
@@ -247,22 +373,6 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 		);
 	}
 
-	@Override
-	Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return name;
-			case COLUMN_AO_SERVER: return ao_server;
-			case 3: return version;
-			case 4: return max_connections;
-			case COLUMN_NET_BIND: return net_bind;
-			case 6: return sort_mem;
-			case 7: return shared_buffers;
-			case 8: return fsync;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
-		}
-	}
-
 	public UnixPath getDataDirectory() {
 		try {
 			return UnixPath.valueOf(DATA_BASE_DIR.toString() + '/' + name.toString());
@@ -275,34 +385,6 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 
 	public PostgresServerName getName() {
 		return name;
-	}
-
-	public PostgresVersion getPostgresVersion() throws SQLException, IOException {
-		PostgresVersion obj=table.connector.getPostgresVersions().get(version);
-		if(obj==null) throw new SQLException("Unable to find PostgresVersion: "+version);
-		if(
-			obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
-			!= getAOServer().getServer().operating_system_version
-		) {
-			throw new SQLException("resource/operating system version mismatch on PostgresServer: #"+pkey);
-		}
-		return obj;
-	}
-
-	public AOServer getAOServer() throws SQLException, IOException {
-		AOServer ao=table.connector.getAoServers().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-		return ao;
-	}
-
-	public int getMaxConnections() {
-		return max_connections;
-	}
-
-	public NetBind getNetBind() throws SQLException, IOException {
-		NetBind nb=table.connector.getNetBinds().get(net_bind);
-		if(nb==null) throw new SQLException("Unable to find NetBind: "+net_bind);
-		return nb;
 	}
 
 	public PostgresDatabase getPostgresDatabase(PostgresDatabaseName name) throws IOException, SQLException {
@@ -329,59 +411,8 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 		return pu;
 	}
 
-	public int getSortMem() {
-		return sort_mem;
-	}
-
-	public int getSharedBuffers() {
-		return shared_buffers;
-	}
-
-	public boolean getFSync() {
-		return fsync;
-	}
-
-	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.POSTGRES_SERVERS;
-	}
-
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey=result.getInt(1);
-			name = PostgresServerName.valueOf(result.getString(2));
-			ao_server=result.getInt(3);
-			version=result.getInt(4);
-			max_connections=result.getInt(5);
-			net_bind=result.getInt(6);
-			sort_mem=result.getInt(7);
-			shared_buffers=result.getInt(8);
-			fsync=result.getBoolean(9);
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
-
 	public boolean isPostgresDatabaseNameAvailable(PostgresDatabaseName name) throws IOException, SQLException {
 		return table.connector.getPostgresDatabases().isPostgresDatabaseNameAvailable(name, this);
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		try {
-			pkey=in.readCompressedInt();
-			name = PostgresServerName.valueOf(in.readUTF()).intern();
-			ao_server=in.readCompressedInt();
-			version=in.readCompressedInt();
-			max_connections=in.readCompressedInt();
-			net_bind=in.readCompressedInt();
-			sort_mem=in.readCompressedInt();
-			shared_buffers=in.readCompressedInt();
-			fsync=in.readBoolean();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
 	}
 
 	public void restartPostgreSQL() throws IOException, SQLException {
@@ -394,26 +425,5 @@ final public class PostgresServer extends CachedObjectIntegerKey<PostgresServer>
 
 	public void stopPostgreSQL() throws IOException, SQLException {
 		table.connector.requestUpdate(false, AOServProtocol.CommandID.STOP_POSTGRESQL, pkey);
-	}
-
-	@Override
-	String toStringImpl() throws SQLException, IOException {
-		return name+" on "+getAOServer().getHostname();
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(name.toString());
-		out.writeCompressedInt(ao_server);
-		out.writeCompressedInt(version);
-		out.writeCompressedInt(max_connections);
-		out.writeCompressedInt(net_bind);
-		out.writeCompressedInt(sort_mem);
-		out.writeCompressedInt(shared_buffers);
-		out.writeBoolean(fsync);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)<=0) {
-			out.writeCompressedInt(-1);
-		}
 	}
 }

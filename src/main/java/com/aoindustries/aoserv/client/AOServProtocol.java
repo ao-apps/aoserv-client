@@ -177,9 +177,10 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		VERSION_1_81_14("1.81.14"),
 		VERSION_1_81_15("1.81.15"),
 		VERSION_1_81_16("1.81.16"),
-		VERSION_1_81_17("1.81.17");
+		VERSION_1_81_17("1.81.17"),
+		VERSION_1_81_18("1.81.18");
 
-		public static final Version CURRENT_VERSION = VERSION_1_81_17;
+		public static final Version CURRENT_VERSION = VERSION_1_81_18;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {
@@ -598,7 +599,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 
 	private long created;
 	private String comments;
-	private long last_used;
+	private long lastUsed;
 
 	@Override
 	Object getColumnImpl(int i) {
@@ -623,8 +624,12 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		return comments;
 	}
 
+	public Long getLastUsed_time() {
+		return lastUsed == -1 ? null : lastUsed;
+	}
+
 	public Date getLastUsed() {
-		return last_used==-1 ? null : new Date(last_used);
+		return lastUsed == -1 ? null : new Date(lastUsed);
 	}
 
 	@Override
@@ -638,7 +643,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		created = result.getDate(2).getTime();
 		comments = result.getString(3);
 		Date D = result.getDate(4);
-		last_used = D == null ? -1 : D.getTime();
+		lastUsed = D == null ? -1 : D.getTime();
 	}
 
 	@Override
@@ -646,7 +651,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		pkey = in.readUTF().intern();
 		created = in.readLong();
 		comments = in.readUTF();
-		last_used = in.readLong();
+		lastUsed = in.readLong();
 	}
 
 	@Override
@@ -655,7 +660,7 @@ public final class AOServProtocol extends GlobalObjectStringKey<AOServProtocol> 
 		out.writeLong(created);
 		out.writeUTF(comments);
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_9) >= 0) {
-			out.writeLong(last_used);
+			out.writeLong(lastUsed);
 		}
 	}
 }

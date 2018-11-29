@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2014, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2014, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,9 +48,9 @@ import java.util.List;
  */
 final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAccount> implements Removable {
 
-	static final int COLUMN_PKEY=0;
-	static final String COLUMN_GROUP_NAME_name = "group_name";
-	static final String COLUMN_USERNAME_name = "username";
+	static final int COLUMN_ID = 0;
+	static final String COLUMN_GROUP_name = "group";
+	static final String COLUMN_USER_name = "user";
 
 	/**
 	 * The maximum number of groups allowed for one account.
@@ -59,33 +59,99 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 	 */
 	public static final int MAX_GROUPS = 65536;
 
-	GroupId group_name;
-	UserId username;
-	boolean is_primary;
-	int operating_system_version;
+	private GroupId group;
+	private UserId user;
+	private boolean isPrimary;
+	private int operatingSystemVersion;
 
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return group_name;
-			case 2: return username;
-			case 3: return is_primary;
-			case 4: return operating_system_version==-1 ? null : operating_system_version;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case COLUMN_ID: return pkey;
+			case 1: return group;
+			case 2: return user;
+			case 3: return isPrimary;
+			case 4: return operatingSystemVersion == -1 ? null : operatingSystemVersion;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public LinuxAccount getLinuxAccount() throws SQLException, IOException {
-		LinuxAccount usernameObject = table.connector.getUsernames().get(username).getLinuxAccount();
-		if (usernameObject == null) throw new SQLException("Unable to find LinuxAccount: " + username);
+	public int getId() {
+		return pkey;
+	}
+
+	public GroupId getGroup_name() {
+		return group;
+	}
+
+	public LinuxGroup getGroup() throws SQLException, IOException {
+		LinuxGroup groupNameObject = table.connector.getLinuxGroups().get(group);
+		if (groupNameObject == null) throw new SQLException("Unable to find LinuxGroup: " + group);
+		return groupNameObject;
+	}
+
+	public UserId getUser_username() {
+		return user;
+	}
+
+	public LinuxAccount getUser() throws SQLException, IOException {
+		LinuxAccount usernameObject = table.connector.getUsernames().get(user).getLinuxAccount();
+		if (usernameObject == null) throw new SQLException("Unable to find LinuxAccount: " + user);
 		return usernameObject;
 	}
 
-	public LinuxGroup getLinuxGroup() throws SQLException, IOException {
-		LinuxGroup groupNameObject = table.connector.getLinuxGroups().get(group_name);
-		if (groupNameObject == null) throw new SQLException("Unable to find LinuxGroup: " + group_name);
-		return groupNameObject;
+	public boolean isPrimary() {
+		return isPrimary;
+	}
+
+	public Integer getOperatingSystemVersion_pkey() {
+		return operatingSystemVersion == -1 ? null : operatingSystemVersion;
+	}
+
+	public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
+		if(operatingSystemVersion == -1) return null;
+		OperatingSystemVersion osv = table.connector.getOperatingSystemVersions().get(operatingSystemVersion);
+		if(osv == null) throw new SQLException("Unable to find OperatingSystemVersion: " + operatingSystemVersion);
+		return osv;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		try {
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			group = GroupId.valueOf(result.getString(pos++));
+			user = UserId.valueOf(result.getString(pos++));
+			isPrimary = result.getBoolean(pos++);
+			operatingSystemVersion = result.getInt(pos++);
+			if(result.wasNull()) operatingSystemVersion = -1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey = in.readCompressedInt();
+			group = GroupId.valueOf(in.readUTF()).intern();
+			user = UserId.valueOf(in.readUTF()).intern();
+			isPrimary = in.readBoolean();
+			operatingSystemVersion = in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeUTF(group.toString());
+		out.writeUTF(user.toString());
+		out.writeBoolean(isPrimary);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
+			out.writeCompressedInt(operatingSystemVersion);
+		}
 	}
 
 	@Override
@@ -94,47 +160,9 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 	}
 
 	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = result.getInt(1);
-			group_name = GroupId.valueOf(result.getString(2));
-			username = UserId.valueOf(result.getString(3));
-			is_primary = result.getBoolean(4);
-			operating_system_version = result.getInt(5);
-			if(result.wasNull()) operating_system_version = -1;
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
-
-	public boolean isPrimary() {
-		return is_primary;
-	}
-
-	public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
-		if(operating_system_version == -1) return null;
-		OperatingSystemVersion osv = table.connector.getOperatingSystemVersions().get(operating_system_version);
-		if(osv == null) throw new SQLException("Unable to find OperatingSystemVersion: " + operating_system_version);
-		return osv;
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			group_name = GroupId.valueOf(in.readUTF()).intern();
-			username = UserId.valueOf(in.readUTF()).intern();
-			is_primary = in.readBoolean();
-			operating_system_version = in.readCompressedInt();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
-
-	@Override
 	public List<CannotRemoveReason<LinuxGroupAccount>> getCannotRemoveReasons() {
 		List<CannotRemoveReason<LinuxGroupAccount>> reasons=new ArrayList<>();
-		if(is_primary) reasons.add(new CannotRemoveReason<>("Not allowed to drop a primary group", this));
+		if(isPrimary) reasons.add(new CannotRemoveReason<>("Not allowed to drop a primary group", this));
 		return reasons;
 	}
 
@@ -158,17 +186,6 @@ final public class LinuxGroupAccount extends CachedObjectIntegerKey<LinuxGroupAc
 
 	@Override
 	String toStringImpl() {
-		return group_name.toString()+'|'+username.toString()+(is_primary?"|p":"|a");
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(group_name.toString());
-		out.writeUTF(username.toString());
-		out.writeBoolean(is_primary);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_1) >= 0) {
-			out.writeCompressedInt(operating_system_version);
-		}
+		return group.toString()+'|'+user.toString()+(isPrimary?"|p":"|a");
 	}
 }

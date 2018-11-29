@@ -267,7 +267,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	@Override
 	public String getJdbcDriver() throws SQLException, IOException {
-		int osv = getMySQLServer().getAOServer().getServer().operating_system_version;
+		int osv = getMySQLServer().getAoServer().getServer().operating_system_version;
 		switch(osv) {
 			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
 				return MANDRAKE_JDBC_DRIVER;
@@ -284,15 +284,15 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 	@Override
 	public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
 		MySQLServer ms = getMySQLServer();
-		AOServer ao = ms.getAOServer();
+		AOServer ao = ms.getAoServer();
 		StringBuilder jdbcUrl = new StringBuilder();
 		jdbcUrl.append("jdbc:mysql://");
-		NetBind nb = ms.getNetBind();
-		IPAddress ip = nb.getIPAddress();
+		NetBind nb = ms.getBind();
+		IPAddress ip = nb.getIpAddress();
 		InetAddress ia = ip.getInetAddress();
 		if(ipOnly) {
 			if(ia.isUnspecified()) {
-				jdbcUrl.append(ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
+				jdbcUrl.append(ao.getServer().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
 			} else {
 				jdbcUrl.append(ia.toBracketedString());
 			}
@@ -320,7 +320,7 @@ final public class MySQLDatabase extends CachedObjectIntegerKey<MySQLDatabase> i
 
 	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
-		int osv = getMySQLServer().getAOServer().getServer().operating_system_version;
+		int osv = getMySQLServer().getAoServer().getServer().operating_system_version;
 		switch(osv) {
 			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
 				return MANDRAKE_JDBC_DOCUMENTATION_URL;

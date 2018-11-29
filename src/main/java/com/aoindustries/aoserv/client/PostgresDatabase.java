@@ -228,15 +228,15 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 	@Override
 	public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
 		PostgresServer ps = getPostgresServer();
-		AOServer ao = ps.getAOServer();
+		AOServer ao = ps.getAoServer();
 		StringBuilder jdbcUrl = new StringBuilder();
 		jdbcUrl.append("jdbc:postgresql://");
-		NetBind nb = ps.getNetBind();
-		IPAddress ip = nb.getIPAddress();
+		NetBind nb = ps.getBind();
+		IPAddress ip = nb.getIpAddress();
 		InetAddress ia = ip.getInetAddress();
 		if(ipOnly) {
 			if(ia.isUnspecified()) {
-				jdbcUrl.append(ao.getServer().getNetDevice(ao.getDaemonDeviceID().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
+				jdbcUrl.append(ao.getServer().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
 			} else {
 				jdbcUrl.append(ia.toBracketedString());
 			}
@@ -264,7 +264,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 
 	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
-		String version=getPostgresServer().getPostgresVersion().getTechnologyVersion(table.connector).getVersion();
+		String version = getPostgresServer().getVersion().getTechnologyVersion(table.connector).getVersion();
 		return "https://aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
 	}
 
@@ -278,7 +278,7 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		// Make sure the postgres encoding postgresql version matches the server this database is part of
 		if(
 			obj.getPostgresVersion(table.connector).getPkey()
-			!= getPostgresServer().getPostgresVersion().getPkey()
+			!= getPostgresServer().getVersion().getPkey()
 		) {
 			throw new SQLException("encoding/postgres server version mismatch on PostgresDatabase: #"+pkey);
 		}
@@ -338,13 +338,13 @@ final public class PostgresDatabase extends CachedObjectIntegerKey<PostgresDatab
 		List<CannotRemoveReason<PostgresDatabase>> reasons=new ArrayList<>();
 
 		PostgresServer ps=getPostgresServer();
-		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
-		if(is_template) reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
+		if(is_template) reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
 		if(
 			name.equals(AOINDUSTRIES)
 			|| name.equals(AOSERV)
 			|| name.equals(AOWEB)
-		) reasons.add(new CannotRemoveReason<>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAOServer().getHostname(), this));
+		) reasons.add(new CannotRemoveReason<>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
 
 		return reasons;
 	}

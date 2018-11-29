@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -90,7 +90,7 @@ public class GetIndexedRowTODO extends TestCase {
 					Map<Object,List<AOServObject>> expectedLists=new HashMap<>();
 					for(SchemaColumn column : columns) {
 						boolean supported=true;
-						String columnName=column.getColumnName();
+						String columnName=column.getName();
 						try {
 							int colIndex=column.getIndex();
 							// Build our list of the expected objects by iterating through the entire list

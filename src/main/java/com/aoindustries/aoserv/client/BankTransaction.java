@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,19 +40,19 @@ import java.sql.Timestamp;
  */
 final public class BankTransaction extends AOServObject<Integer,BankTransaction> implements SingleTableObject<Integer,BankTransaction> {
 
+	static final String COLUMN_ID_name = "id";
 	static final String COLUMN_TIME_name = "time";
-	static final String COLUMN_TRANSID_name = "transid";
 
 	private AOServTable<Integer,BankTransaction> table;
+	private int id;
 	private long time;
-	private int transID;
 	private String
-		bankAccount,
+		account,
 		processor;
 	private UserId administrator;
 	private String
 		type,
-		expenseCode,
+		expenseCategory,
 		description,
 		checkNo
 	;
@@ -63,7 +63,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	boolean equalsImpl(Object O) {
 		return
 			O instanceof BankTransaction
-			&& ((BankTransaction)O).transID==transID
+			&& ((BankTransaction)O).id == id
 		;
 	}
 
@@ -78,8 +78,8 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	public BankAccount getBankAccount() throws SQLException, IOException {
-		BankAccount bankAccountObject = table.connector.getBankAccounts().get(bankAccount);
-		if (bankAccountObject == null) throw new SQLException("BankAccount not found: " + bankAccount);
+		BankAccount bankAccountObject = table.connector.getBankAccounts().get(account);
+		if (bankAccountObject == null) throw new SQLException("BankAccount not found: " + account);
 		return bankAccountObject;
 	}
 
@@ -96,18 +96,18 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case 0: return getTime();
-			case 1: return transID;
-			case 2: return bankAccount;
+			case 0: return id;
+			case 1: return getTime();
+			case 2: return account;
 			case 3: return processor;
 			case 4: return administrator;
 			case 5: return type;
-			case 6: return expenseCode;
+			case 6: return expenseCategory;
 			case 7: return description;
 			case 8: return checkNo;
 			case 9: return amount;
 			case 10: return confirmed;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -116,9 +116,9 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	public ExpenseCategory getExpenseCategory() throws SQLException, IOException {
-		if(expenseCode==null) return null;
-		ExpenseCategory cat=table.connector.getExpenseCategories().get(expenseCode);
-		if (cat == null) throw new SQLException("ExpenseCategory not found: " + expenseCode);
+		if(expenseCategory==null) return null;
+		ExpenseCategory cat=table.connector.getExpenseCategories().get(expenseCategory);
+		if (cat == null) throw new SQLException("ExpenseCategory not found: " + expenseCategory);
 		return cat;
 	}
 
@@ -131,7 +131,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 
 	@Override
 	public Integer getKey() {
-		return transID;
+		return id;
 	}
 
 	/**
@@ -149,33 +149,34 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		return SchemaTable.TableID.BANK_TRANSACTIONS;
 	}
 
+	public int getId() {
+		return id;
+	}
+
 	public Timestamp getTime() {
 		return new Timestamp(time);
 	}
 
-	public int getTransID() {
-		return transID;
-	}
-
 	@Override
 	int hashCodeImpl() {
-		return transID;
+		return id;
 	}
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			time = result.getTimestamp(1).getTime();
-			transID = result.getInt(2);
-			bankAccount = result.getString(3);
-			processor = result.getString(4);
-			administrator = UserId.valueOf(result.getString(5));
-			type = result.getString(6);
-			expenseCode = result.getString(7);
-			description = result.getString(8);
-			checkNo = result.getString(9);
-			amount = SQLUtility.getPennies(result.getString(10));
-			confirmed = result.getBoolean(11);
+			int pos = 1;
+			id = result.getInt(pos++);
+			time = result.getTimestamp(pos++).getTime();
+			account = result.getString(pos++);
+			processor = result.getString(pos++);
+			administrator = UserId.valueOf(result.getString(pos++));
+			type = result.getString(pos++);
+			expenseCategory = result.getString(pos++);
+			description = result.getString(pos++);
+			checkNo = result.getString(pos++);
+			amount = SQLUtility.getPennies(result.getString(pos++));
+			confirmed = result.getBoolean(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -188,13 +189,13 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
+			id = in.readCompressedInt();
 			time = in.readLong();
-			transID = in.readCompressedInt();
-			bankAccount = in.readUTF().intern();
+			account = in.readUTF().intern();
 			processor = InternUtils.intern(in.readNullUTF());
 			administrator = UserId.valueOf(in.readUTF()).intern();
 			type = in.readUTF().intern();
-			expenseCode = InternUtils.intern(in.readNullUTF());
+			expenseCategory = InternUtils.intern(in.readNullUTF());
 			description = in.readUTF();
 			checkNo = in.readNullUTF();
 			amount = in.readCompressedInt();
@@ -212,14 +213,19 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 
 	@Override
 	String toStringImpl() {
-		return transID+"|"+administrator+'|'+type+'|'+SQLUtility.getDecimal(amount);
+		return id+"|"+administrator+'|'+type+'|'+SQLUtility.getDecimal(amount);
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeLong(time);
-		out.writeCompressedInt(transID);
-		out.writeUTF(bankAccount);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			out.writeLong(time);
+			out.writeCompressedInt(id);
+		} else {
+			out.writeCompressedInt(id);
+			out.writeLong(time);
+		}
+		out.writeUTF(account);
 		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
 			out.writeNullUTF(null);
 		} else {
@@ -227,7 +233,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		}
 		out.writeUTF(administrator.toString());
 		out.writeUTF(type);
-		out.writeNullUTF(expenseCode);
+		out.writeNullUTF(expenseCategory);
 		out.writeUTF(description);
 		out.writeNullUTF(checkNo);
 		out.writeCompressedInt(amount);

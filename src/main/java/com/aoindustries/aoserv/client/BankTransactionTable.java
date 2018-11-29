@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,7 +40,7 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 
 	private static final OrderBy[] defaultOrderBy = {
 		new OrderBy(BankTransaction.COLUMN_TIME_name+"::"+SchemaType.DATE_name, ASCENDING),
-		new OrderBy(BankTransaction.COLUMN_TRANSID_name, ASCENDING)
+		new OrderBy(BankTransaction.COLUMN_ID_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {

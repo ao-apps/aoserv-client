@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,37 +40,64 @@ import java.sql.SQLException;
  */
 final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeignKey> {
 
-	static final int COLUMN_PKEY=0;
-	static final String COLUMN_PKEY_name = "pkey";
+	static final int COLUMN_ID = 0;
+	static final String COLUMN_ID_name = "id";
 
-	int
-		key_column,
-		foreign_column
-	;
-	private String since_version;
-	private String last_version;
+	private int column;
+	private int foreignColumn;
+	private String sinceVersion;
+	private String lastVersion;
 
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return key_column;
-			case 2: return foreign_column;
-			case 3: return since_version;
-			case 4: return last_version;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case COLUMN_ID: return pkey;
+			case 1: return column;
+			case 2: return foreignColumn;
+			case 3: return sinceVersion;
+			case 4: return lastVersion;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public SchemaColumn getForeignColumn(AOServConnector connector) throws SQLException, IOException {
-		SchemaColumn obj=connector.getSchemaColumns().get(foreign_column);
-		if(obj==null) throw new SQLException("Unable to find SchemaColumn: "+foreign_column);
+	public int getColumn_id() {
+		return column;
+	}
+
+	public SchemaColumn getColumn(AOServConnector connector) throws SQLException, IOException {
+		SchemaColumn obj = connector.getSchemaColumns().get(column);
+		if(obj == null) throw new SQLException("Unable to find SchemaColumn: " + column);
 		return obj;
 	}
 
-	public SchemaColumn getKeyColumn(AOServConnector connector) throws SQLException, IOException {
-		SchemaColumn obj=connector.getSchemaColumns().get(key_column);
-		if(obj==null) throw new SQLException("Unable to find SchemaColumn: "+key_column);
+	public int getForeignColumn_id() {
+		return foreignColumn;
+	}
+
+	public SchemaColumn getForeignColumn(AOServConnector connector) throws SQLException, IOException {
+		SchemaColumn obj = connector.getSchemaColumns().get(foreignColumn);
+		if(obj == null) throw new SQLException("Unable to find SchemaColumn: " + foreignColumn);
+		return obj;
+	}
+
+	public String getSinceVersion_version() {
+		return sinceVersion;
+	}
+
+	public AOServProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+		AOServProtocol obj = connector.getAoservProtocols().get(sinceVersion);
+		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
+		return obj;
+	}
+
+	public String getLastVersion_version() {
+		return lastVersion;
+	}
+
+	public AOServProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+		if(lastVersion == null) return null;
+		AOServProtocol obj = connector.getAoservProtocols().get(lastVersion);
+		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
 		return obj;
 	}
 
@@ -79,42 +106,35 @@ final public class SchemaForeignKey extends GlobalObjectIntegerKey<SchemaForeign
 		return SchemaTable.TableID.SCHEMA_FOREIGN_KEYS;
 	}
 
-	public String getSinceVersion() {
-		return since_version;
-	}
-
-	public String getLastVersion() {
-		return last_version;
-	}
-
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getInt(1);
-		key_column = result.getInt(2);
-		foreign_column = result.getInt(3);
-		since_version=result.getString(4);
-		last_version=result.getString(5);
+		int pos = 1;
+		pkey = result.getInt(pos++);
+		column = result.getInt(pos++);
+		foreignColumn = result.getInt(pos++);
+		sinceVersion = result.getString(pos++);
+		lastVersion = result.getString(pos++);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey = in.readCompressedInt();
-		key_column = in.readCompressedInt();
-		foreign_column = in.readCompressedInt();
-		since_version=in.readUTF().intern();
-		last_version=InternUtils.intern(in.readNullUTF());
+		column = in.readCompressedInt();
+		foreignColumn = in.readCompressedInt();
+		sinceVersion = in.readUTF().intern();
+		lastVersion = InternUtils.intern(in.readNullUTF());
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeCompressedInt(key_column);
-		out.writeCompressedInt(foreign_column);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		out.writeCompressedInt(column);
+		out.writeCompressedInt(foreignColumn);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30) <= 0) {
 			out.writeBoolean(false); // is_bridge
 			out.writeCompressedInt(-1); // tied_bridge
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101) >= 0) out.writeUTF(sinceVersion);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104) >= 0) out.writeNullUTF(lastVersion);
 	}
 }

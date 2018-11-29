@@ -47,8 +47,8 @@ final public class SendmailServerTable extends CachedTableIntegerKey<SendmailSer
 	}
 
 	@Override
-	public SendmailServer get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(SendmailServer.COLUMN_PKEY, pkey);
+	public SendmailServer get(int id) throws IOException, SQLException {
+		return getUniqueRow(SendmailServer.COLUMN_ID, id);
 	}
 
 	List<SendmailServer> getSendmailServers(AOServer ao) throws IOException, SQLException {

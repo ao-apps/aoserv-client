@@ -43,9 +43,9 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 
 	private static final OrderBy[] defaultOrderBy = {
 		new OrderBy(IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
+		new OrderBy(IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {
@@ -53,42 +53,42 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 	}
 
 	@Override
-	public IPAddress get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(IPAddress.COLUMN_PKEY, pkey);
+	public IPAddress get(int id) throws IOException, SQLException {
+		return getUniqueRow(IPAddress.COLUMN_ID, id);
 	}
 
-	IPAddress getIPAddress(NetDevice device, InetAddress ipAddress) throws IOException, SQLException {
-		int pkey=device.getPkey();
+	IPAddress getIPAddress(NetDevice device, InetAddress inetAddress) throws IOException, SQLException {
+		int device_id = device.getPkey();
 
 		List<IPAddress> cached = getRows();
 		int len = cached.size();
 		for (int c = 0; c < len; c++) {
 			IPAddress address=cached.get(c);
 			if(
-				address.net_device==pkey
-				&& address.ip_address.equals(ipAddress)
+				address.getDevice_id() == device_id
+				&& address.getInetAddress().equals(inetAddress)
 			) return address;
 		}
 		return null;
 	}
 
 	List<IPAddress> getIPAddresses(NetDevice device) throws IOException, SQLException {
-		return getIndexedRows(IPAddress.COLUMN_NET_DEVICE, device.pkey);
+		return getIndexedRows(IPAddress.COLUMN_DEVICE, device.pkey);
 	}
 
-	public List<IPAddress> getIPAddresses(InetAddress ipAddress) throws IOException, SQLException {
+	public List<IPAddress> getIPAddresses(InetAddress inetAddress) throws IOException, SQLException {
 		List<IPAddress> cached = getRows();
 		int len = cached.size();
 		List<IPAddress> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			IPAddress address=cached.get(c);
-			if(address.ip_address.equals(ipAddress)) matches.add(address);
+			if(address.getInetAddress().equals(inetAddress)) matches.add(address);
 		}
 		return matches;
 	}
 
 	List<IPAddress> getIPAddresses(Package pack) throws IOException, SQLException {
-		return getIndexedRows(IPAddress.COLUMN_PACKAGE, pack.name);
+		return getIndexedRows(IPAddress.COLUMN_PACKAGE, pack.pkey);
 	}
 
 	List<IPAddress> getIPAddresses(Server se) throws IOException, SQLException {
@@ -98,10 +98,10 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 		int len = cached.size();
 		List<IPAddress> matches=new ArrayList<>(len);
 		for(IPAddress address : cached) {
-			if(address.net_device==-1 && address.ip_address.isUnspecified()) matches.add(address);
+			if(address.getDevice_id() == -1 && address.getInetAddress().isUnspecified()) matches.add(address);
 			else {
-				NetDevice netDevice = address.getNetDevice();
-				if(netDevice!=null && netDevice.server==sePKey) matches.add(address);
+				NetDevice device = address.getDevice();
+				if(device != null && device.getServer_pkey() == sePKey) matches.add(address);
 			}
 		}
 		return matches;
@@ -152,16 +152,6 @@ final public class IPAddressTable extends CachedTableIntegerKey<IPAddress> {
 					args[2],
 					args[3],
 					AOSH.parseDomainName(args[4], "hostname")
-				);
-			}
-			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_MONITORING_ENABLED)) {
-			if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_MONITORING_ENABLED, args, 4, err)) {
-				connector.getSimpleAOClient().setIPAddressMonitoringEnabled(
-					AOSH.parseInetAddress(args[1], "ip_address"),
-					args[2],
-					args[3],
-					AOSH.parseBoolean(args[4], "enabled")
 				);
 			}
 			return true;

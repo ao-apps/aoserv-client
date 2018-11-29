@@ -104,7 +104,7 @@ final public class HttpdSharedTomcat extends CachedObjectIntegerKey<HttpdSharedT
 
 		for(HttpdTomcatSharedSite htss : getHttpdTomcatSharedSites()) {
 			HttpdSite hs=htss.getHttpdTomcatSite().getHttpdSite();
-			reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), htss));
+			reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), htss));
 		}
 
 		return reasons;

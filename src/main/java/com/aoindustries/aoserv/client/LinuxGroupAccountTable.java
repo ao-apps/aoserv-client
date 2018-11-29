@@ -59,8 +59,8 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(LinuxGroupAccount.COLUMN_GROUP_NAME_name, ASCENDING),
-		new OrderBy(LinuxGroupAccount.COLUMN_USERNAME_name, ASCENDING)
+		new OrderBy(LinuxGroupAccount.COLUMN_GROUP_name, ASCENDING),
+		new OrderBy(LinuxGroupAccount.COLUMN_USER_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {
@@ -68,33 +68,33 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 	}
 
 	int addLinuxGroupAccount(
-		LinuxGroup groupNameObject,
-		LinuxAccount usernameObject
+		LinuxGroup groupObject,
+		LinuxAccount userObject
 	) throws IOException, SQLException {
 		int pkey=connector.requestIntQueryIL(
 			true,
 			AOServProtocol.CommandID.ADD,
 			SchemaTable.TableID.LINUX_GROUP_ACCOUNTS,
-			groupNameObject.pkey,
-			usernameObject.pkey
+			groupObject.pkey,
+			userObject.pkey
 		);
 		return pkey;
 	}
 
 	@Override
-	public LinuxGroupAccount get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(LinuxGroupAccount.COLUMN_PKEY, pkey);
+	public LinuxGroupAccount get(int id) throws IOException, SQLException {
+		return getUniqueRow(LinuxGroupAccount.COLUMN_ID, id);
 	}
 
 	List<LinuxGroupAccount> getLinuxGroupAccounts(
-		GroupId groupName,
-		UserId username
+		GroupId group,
+		UserId user
 	) throws IOException, SQLException {
 		synchronized(hash) {
 			if(!hashBuilt) {
 				hash.clear();
 				for(LinuxGroupAccount lga : getRows()) {
-					Tuple2<GroupId,UserId> key = new Tuple2<>(lga.group_name, lga.username);
+					Tuple2<GroupId,UserId> key = new Tuple2<>(lga.getGroup_name(), lga.getUser_username());
 					List<LinuxGroupAccount> list = hash.get(key);
 					if(list == null) hash.put(key, list = new ArrayList<>());
 					list.add(lga);
@@ -107,7 +107,7 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 				}
 				hashBuilt = true;
 			}
-			List<LinuxGroupAccount> lgas = hash.get(new Tuple2<>(groupName, username));
+			List<LinuxGroupAccount> lgas = hash.get(new Tuple2<>(group, user));
 			if(lgas == null) return Collections.emptyList();
 			return lgas;
 		}
@@ -120,8 +120,8 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 		List<LinuxGroup> matches = new ArrayList<>(LinuxGroupAccount.MAX_GROUPS);
 		for(int c = 0; c < len; c++) {
 			LinuxGroupAccount lga = rows.get(c);
-			if(lga.username.equals(username)) {
-				LinuxGroup lg = lga.getLinuxGroup();
+			if(lga.getUser_username().equals(username)) {
+				LinuxGroup lg = lga.getGroup();
 				// Avoid duplicates that are now possible due to operating_system_version
 				if(!matches.contains(lg)) matches.add(lg);
 			}
@@ -140,8 +140,8 @@ final public class LinuxGroupAccountTable extends CachedTableIntegerKey<LinuxGro
 				for(int c = 0; c < len; c++) {
 					LinuxGroupAccount lga = cache.get(c);
 					if(lga.isPrimary()) {
-						UserId username = lga.username;
-						GroupId groupName = lga.group_name;
+						UserId username = lga.getUser_username();
+						GroupId groupName = lga.getGroup_name();
 						GroupId existing = primaryHash.put(username, groupName);
 						if(
 							existing != null

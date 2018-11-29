@@ -33,17 +33,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * A <code>Resource</code> wraps all the data for an entry in the resource table.
- *
  * @author  AO Industries, Inc.
  */
 final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 
-	static final int COLUMN_NAME = 0;
+	static final int COLUMN_NAME = 1;
 
 	/**
-	 * Each table has a unique identifier.  These IDs may change over time, but
-	 * are constant for one release.
+	 * Each set of tables in the protocol used by this client version.
 	 */
 	public enum TableID {
 		AO_SERVER_DAEMON_HOSTS,
@@ -129,6 +126,7 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		HTTPD_TOMCAT_VERSIONS,
 		HTTPD_WORKERS,
 		IP_ADDRESSES,
+		IpAddressMonitoring,
 		IP_REPUTATION_LIMITER_LIMITS,
 		IP_REPUTATION_LIMITER_SETS,
 		IP_REPUTATION_LIMITERS,
@@ -224,13 +222,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		WHOIS_HISTORY
 	}
 
-	String name;
-	String display;
-	private boolean is_public;
-	private String description;
-	private String since_version;
-	private String last_version;
-
 	private static final String[] descColumns={
 		"column", "type", "null", "unique", "references", "referenced_by", "description"
 	};
@@ -239,25 +230,146 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		false, false, false, false, false, false, false
 	};
 
+	private String name;
+	private String sinceVersion;
+	private String lastVersion;
+	private String display;
+	private boolean isPublic;
+	private String description;
+
 	public SchemaTable() {
 	}
 
 	public SchemaTable(
+		int id,
 		String name,
-		int table_id,
+		String sinceVersion,
+		String lastVersion,
 		String display,
-		boolean is_public,
-		String description,
-		String since_version,
-		String last_version
+		boolean isPublic,
+		String description
 	) {
-		this.name=name;
-		this.pkey=table_id;
-		this.display=display;
-		this.is_public=is_public;
-		this.description=description;
-		this.since_version=since_version;
-		this.last_version=last_version;
+		this.pkey = id;
+		this.name = name;
+		this.sinceVersion = sinceVersion;
+		this.lastVersion = lastVersion;
+		this.display = display;
+		this.isPublic = isPublic;
+		this.description = description;
+	}
+
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case 0: return pkey;
+			case COLUMN_NAME: return name;
+			case 2: return sinceVersion;
+			case 3: return lastVersion;
+			case 4: return display;
+			case 5: return isPublic;
+			case 6: return description;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
+		}
+	}
+
+	public int getId() {
+		return pkey;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getSinceVersion_version() {
+		return sinceVersion;
+	}
+
+	public AOServProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+		AOServProtocol obj = connector.getAoservProtocols().get(sinceVersion);
+		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
+		return obj;
+	}
+
+	public String getLastVersion_version() {
+		return lastVersion;
+	}
+
+	public AOServProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+		if(lastVersion == null) return null;
+		AOServProtocol obj = connector.getAoservProtocols().get(lastVersion);
+		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
+		return obj;
+	}
+
+	public String getDisplay() {
+		return display;
+	}
+
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public TableID getTableID() {
+		return TableID.SCHEMA_TABLES;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		int pos = 1;
+		pkey = result.getInt(pos++);
+		name = result.getString(pos++);
+		sinceVersion = result.getString(pos++);
+		lastVersion = result.getString(pos++);
+		display = result.getString(pos++);
+		isPublic = result.getBoolean(pos++);
+		description = result.getString(pos++);
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey = in.readCompressedInt();
+		name = in.readUTF().intern();
+		sinceVersion = in.readUTF().intern();
+		lastVersion = InternUtils.intern(in.readNullUTF());
+		display = in.readUTF();
+		isPublic = in.readBoolean();
+		description = in.readUTF();
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			out.writeUTF(name);
+			out.writeCompressedInt(pkey);
+			out.writeUTF(display);
+			out.writeBoolean(isPublic);
+			out.writeUTF(description);
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30) <= 0) out.writeNullUTF(null); // dataverse_editor
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101) >= 0) out.writeUTF(sinceVersion);
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104) >= 0) out.writeNullUTF(lastVersion);
+			if(
+				protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)>=0
+				&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
+			) out.writeNullUTF(null); // default_order_by
+		} else {
+			out.writeCompressedInt(pkey);
+			out.writeUTF(name);
+			out.writeUTF(sinceVersion);
+			out.writeNullUTF(lastVersion);
+			out.writeUTF(display);
+			out.writeBoolean(isPublic);
+			out.writeUTF(description);
+		}
+	}
+
+	@Override
+	String toStringImpl() {
+		return name;
 	}
 
 	public AOServTable<?,? extends AOServObject<?,?>> getAOServTable(AOServConnector connector) {
@@ -266,45 +378,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 
 	public List<AOSHCommand> getAOSHCommands(AOServConnector connector) throws IOException, SQLException {
 		return connector.getAoshCommands().getAOSHCommands(this);
-	}
-
-	@Override
-	Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_NAME: return name;
-			case 1: return pkey;
-			case 2: return display;
-			case 3: return is_public;
-			case 4: return description;
-			case 5: return since_version;
-			case 6: return last_version;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
-		}
-	}
-
-	public String getSinceVersion() {
-		return since_version;
-	}
-
-	public String getLastVersion() {
-		return last_version;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public String getDisplay() {
-		return display;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	String toStringImpl() {
-		return name;
 	}
 
 	public SchemaColumn getSchemaColumn(AOServConnector connector, String name) throws IOException, SQLException {
@@ -321,30 +394,6 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 
 	public List<SchemaForeignKey> getSchemaForeignKeys(AOServConnector connector) throws IOException, SQLException {
 		return connector.getSchemaForeignKeys().getSchemaForeignKeys(this);
-	}
-
-	@Override
-	public TableID getTableID() {
-		return TableID.SCHEMA_TABLES;
-	}
-
-	public int getTableUniqueID() {
-		return pkey;
-	}
-
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		name = result.getString(1);
-		pkey = result.getInt(2);
-		display = result.getString(3);
-		is_public = result.getBoolean(4);
-		description = result.getString(5);
-		since_version = result.getString(6);
-		last_version = result.getString(7);
-	}
-
-	public boolean isPublic() {
-		return is_public;
 	}
 
 	public void printDescription(AOServConnector connector, TerminalWriter out, boolean isInteractive) throws IOException, SQLException {
@@ -380,10 +429,10 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 		int pos=0;
 		for(int c=0;c<len;c++) {
 			SchemaColumn column=columns.get(c);
-			values[pos++]=column.column_name;
-			values[pos++]=column.getSchemaType(connector).getType();
-			values[pos++]=column.isNullable()?"true":"false";
-			values[pos++]=column.isUnique()?"true":"false";
+			values[pos++] = column.getName();
+			values[pos++] = column.getType(connector).getName();
+			values[pos++] = column.isNullable()?"true":"false";
+			values[pos++] = column.isUnique()?"true":"false";
 			List<SchemaForeignKey> fkeys=column.getReferences(connector);
 			if(!fkeys.isEmpty()) {
 				StringBuilder SB=new StringBuilder();
@@ -392,9 +441,9 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 					if(d>0) SB.append('\n');
 					SchemaColumn other=key.getForeignColumn(connector);
 					SB
-						.append(other.getSchemaTable(connector).getName())
+						.append(other.getTable(connector).getName())
 						.append('.')
-						.append(other.column_name)
+						.append(other.getName())
 					;
 				}
 				values[pos++]=SB.toString();
@@ -406,11 +455,11 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 				for(int d=0;d<fkeys.size();d++) {
 					SchemaForeignKey key=fkeys.get(d);
 					if(d>0) SB.append('\n');
-					SchemaColumn other=key.getKeyColumn(connector);
+					SchemaColumn other=key.getColumn(connector);
 					SB
-						.append(other.getSchemaTable(connector).getName())
+						.append(other.getTable(connector).getName())
 						.append('.')
-						.append(other.column_name)
+						.append(other.getName())
 					;
 				}
 				values[pos++]=SB.toString();
@@ -420,32 +469,5 @@ final public class SchemaTable extends GlobalObjectIntegerKey<SchemaTable> {
 
 		// Display the results
 		SQLUtility.printTable(descColumns, values, out, isInteractive, descRightAligns);
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		name=in.readUTF().intern();
-		pkey=in.readCompressedInt();
-		display=in.readUTF();
-		is_public=in.readBoolean();
-		description=in.readUTF();
-		since_version=in.readUTF().intern();
-		last_version=InternUtils.intern(in.readNullUTF());
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(name);
-		out.writeCompressedInt(pkey);
-		out.writeUTF(display);
-		out.writeBoolean(is_public);
-		out.writeUTF(description);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeNullUTF(null); // dataverse_editor
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101)>=0) out.writeUTF(since_version);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) out.writeNullUTF(last_version);
-		if(
-			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)>=0
-			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
-		) out.writeNullUTF(null); // default_order_by
 	}
 }

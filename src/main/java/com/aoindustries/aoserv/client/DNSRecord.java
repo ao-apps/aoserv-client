@@ -41,8 +41,8 @@ import java.util.List;
 final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implements Removable {
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_ZONE=1
+		COLUMN_ID = 0,
+		COLUMN_ZONE = 1
 	;
 	static final String COLUMN_ZONE_name        = "zone";
 	static final String COLUMN_DOMAIN_name      = "domain";
@@ -56,22 +56,20 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 	public static final int NO_PORT     = -1;
 	public static final int NO_TTL      = -1;
 
-	String
-		zone,
-		domain,
-		type
-	;
-	int priority;
-	int weight;
-	int port;
-	String destination;
-	int dhcpAddress;
-	int ttl;
+	private String zone;
+	private String domain;
+	private String type;
+	private int priority;
+	private int weight;
+	private int port;
+	private String destination;
+	private int dhcpAddress;
+	private int ttl;
 
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return pkey;
+			case COLUMN_ID: return pkey;
 			case COLUMN_ZONE: return zone;
 			case 2: return domain;
 			case 3: return type;
@@ -85,23 +83,115 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 		}
 	}
 
-	public String getDestination() {
-		return destination;
+	public int getId() {
+		return pkey;
 	}
 
-	public IPAddress getDHCPAddress() throws SQLException, IOException {
-		if(dhcpAddress==-1) return null;
-		IPAddress ia=table.connector.getIpAddresses().get(dhcpAddress);
-		if(ia==null) throw new SQLException("Unable to find IPAddress: "+dhcpAddress);
-		return ia;
+	public String getZone_zone() {
+		return zone;
 	}
 
-	public int getTTL() {
-		return ttl;
+	public DNSZone getZone() throws SQLException, IOException {
+		DNSZone obj = table.connector.getDnsZones().get(zone);
+		if(obj == null) throw new SQLException("Unable to find DNSZone: " + zone);
+		return obj;
 	}
 
 	public String getDomain() {
 		return domain;
+	}
+
+	public String getType_type() {
+		return type;
+	}
+
+	public DNSType getType() throws SQLException, IOException {
+		DNSType obj = table.connector.getDnsTypes().get(type);
+		if(obj == null) throw new SQLException("Unable to find DNSType: " + type);
+		return obj;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public int getWeight() {
+		return weight;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public Integer getDhcpAddress_id() {
+		return dhcpAddress == -1 ? null : dhcpAddress;
+	}
+
+	public IPAddress getDhcpAddress() throws SQLException, IOException {
+		if(dhcpAddress == -1) return null;
+		IPAddress ia = table.connector.getIpAddresses().get(dhcpAddress);
+		if(ia == null) throw new SQLException("Unable to find IPAddress: " + dhcpAddress);
+		return ia;
+	}
+
+	public int getTtl() {
+		return ttl;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		int pos = 1;
+		pkey        = result.getInt(pos++);
+		zone        = result.getString(pos++);
+		domain      = result.getString(pos++);
+		type        = result.getString(pos++);
+		priority    = result.getInt(pos++);
+		if(result.wasNull()) priority    = NO_PRIORITY;
+		weight      = result.getInt(pos++);
+		if(result.wasNull()) weight      = NO_WEIGHT;
+		port        = result.getInt(pos++);
+		if(result.wasNull()) port        = NO_PORT;
+		destination = result.getString(pos++);
+		dhcpAddress = result.getInt(pos++);
+		if(result.wasNull()) dhcpAddress = -1;
+		ttl         = result.getInt(pos++);
+		if(result.wasNull()) ttl=NO_TTL;
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey        = in.readCompressedInt();
+		zone        = in.readUTF().intern();
+		domain      = in.readUTF().intern();
+		type        = in.readUTF().intern();
+		priority    = in.readCompressedInt();
+		weight      = in.readCompressedInt();
+		port        = in.readCompressedInt();
+		destination = in.readUTF().intern();
+		dhcpAddress = in.readCompressedInt();
+		ttl         = in.readCompressedInt();
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeUTF(zone);
+		out.writeUTF(domain);
+		out.writeUTF(type);
+		out.writeCompressedInt(priority);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_72)>=0) {
+			out.writeCompressedInt(weight);
+			out.writeCompressedInt(port);
+		}
+		out.writeUTF(destination);
+		out.writeCompressedInt(dhcpAddress);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) {
+			out.writeCompressedInt(ttl);
+		}
 	}
 
 	/**
@@ -178,67 +268,9 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 		return false;
 	}
 
-	public int getPriority() {
-		return priority;
-	}
-
-	public int getWeight() {
-		return weight;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
 	@Override
 	public SchemaTable.TableID getTableID() {
 		return SchemaTable.TableID.DNS_RECORDS;
-	}
-
-	public DNSType getType() throws SQLException, IOException {
-		DNSType obj=table.connector.getDnsTypes().get(type);
-		if(obj==null) throw new SQLException("Unable to find DNSType: "+type);
-		return obj;
-	}
-
-	public DNSZone getZone() throws SQLException, IOException {
-		DNSZone obj=table.connector.getDnsZones().get(zone);
-		if(obj==null) throw new SQLException("Unable to find DNSZone: "+zone);
-		return obj;
-	}
-
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		int pos = 1;
-		pkey        = result.getInt(pos++);
-		zone        = result.getString(pos++);
-		domain      = result.getString(pos++);
-		type        = result.getString(pos++);
-		priority    = result.getInt(pos++);
-		if(result.wasNull()) priority    = NO_PRIORITY;
-		weight      = result.getInt(pos++);
-		if(result.wasNull()) weight      = NO_WEIGHT;
-		port        = result.getInt(pos++);
-		if(result.wasNull()) port        = NO_PORT;
-		destination = result.getString(pos++);
-		dhcpAddress = result.getInt(pos++);
-		if(result.wasNull()) dhcpAddress = -1;
-		ttl         = result.getInt(pos++);
-		if(result.wasNull()) ttl=NO_TTL;
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		pkey        = in.readCompressedInt();
-		zone        = in.readUTF().intern();
-		domain      = in.readUTF().intern();
-		type        = in.readUTF().intern();
-		priority    = in.readCompressedInt();
-		weight      = in.readCompressedInt();
-		port        = in.readCompressedInt();
-		destination = in.readUTF().intern();
-		dhcpAddress = in.readCompressedInt();
-		ttl         = in.readCompressedInt();
 	}
 
 	@Override
@@ -262,23 +294,5 @@ final public class DNSRecord extends CachedObjectIntegerKey<DNSRecord> implement
 		if(port     != NO_PORT)     SB.append(' ').append(port);
 		SB.append(' ').append(destination);
 		return SB.toString();
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(zone);
-		out.writeUTF(domain);
-		out.writeUTF(type);
-		out.writeCompressedInt(priority);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_72)>=0) {
-			out.writeCompressedInt(weight);
-			out.writeCompressedInt(port);
-		}
-		out.writeUTF(destination);
-		out.writeCompressedInt(dhcpAddress);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_127)>=0) {
-			out.writeCompressedInt(ttl);
-		}
 	}
 }

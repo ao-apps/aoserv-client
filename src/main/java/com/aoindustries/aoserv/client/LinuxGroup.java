@@ -207,8 +207,8 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 	AccountingCode packageName;
 	private String type;
 
-	public int addLinuxAccount(LinuxAccount account) throws IOException, SQLException {
-		return table.connector.getLinuxGroupAccounts().addLinuxGroupAccount(this, account);
+	public int addLinuxAccount(LinuxAccount user) throws IOException, SQLException {
+		return table.connector.getLinuxGroupAccounts().addLinuxGroupAccount(this, user);
 	}
 
 	public int addLinuxServerGroup(AOServer aoServer) throws IOException, SQLException {
@@ -281,8 +281,8 @@ final public class LinuxGroup extends CachedObjectGroupIdKey<LinuxGroup> impleme
 
 		// Cannot be the primary group for any linux accounts
 		for(LinuxGroupAccount lga : table.connector.getLinuxGroupAccounts().getRows()) {
-			if(lga.isPrimary() && equals(lga.getLinuxGroup())) {
-				reasons.add(new CannotRemoveReason<>("Used as primary group for Linux account "+lga.getLinuxAccount().getUsername().getUsername(), lga));
+			if(lga.isPrimary() && equals(lga.getGroup())) {
+				reasons.add(new CannotRemoveReason<>("Used as primary group for Linux account "+lga.getUser().getUsername().getUsername(), lga));
 			}
 		}
 

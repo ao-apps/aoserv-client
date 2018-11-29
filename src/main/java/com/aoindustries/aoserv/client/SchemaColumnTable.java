@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -66,7 +66,7 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
 
 	@Override
 	public SchemaColumn get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(SchemaColumn.COLUMN_PKEY, pkey);
+		return getUniqueRow(SchemaColumn.COLUMN_ID, pkey);
 	}
 
 	SchemaColumn getSchemaColumn(SchemaTable table, String columnName) throws IOException, SQLException {
@@ -79,7 +79,7 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
 				if(map==null) nameToColumns.set(tableID, map=new HashMap<>(len*4/3+1));
 				for(int c=0;c<len;c++) {
 					SchemaColumn col=cols.get(c);
-					map.put(col.column_name, col);
+					map.put(col.getName(), col);
 				}
 			}
 			return map.get(columnName);
@@ -96,13 +96,13 @@ final public class SchemaColumnTable extends GlobalTableIntegerKey<SchemaColumn>
 			List<SchemaColumn> cols=tableColumns.get(tableID);
 			if(cols!=null) return cols;
 
-			String name=table.name;
+			String name=table.getName();
 			List<SchemaColumn> cached=getRows();
 			List<SchemaColumn> matches=new ArrayList<>();
 			int size=cached.size();
 			for(int c=0;c<size;c++) {
 				SchemaColumn col=cached.get(c);
-				if(col.table_name.equals(name)) matches.add(col);
+				if(col.getTable_name().equals(name)) matches.add(col);
 			}
 			matches=Collections.unmodifiableList(matches);
 			tableColumns.set(tableID, matches);

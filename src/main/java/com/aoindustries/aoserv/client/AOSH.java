@@ -185,7 +185,7 @@ final public class AOSH extends ShellInterpreter {
 					String lowerCommand=command.toLowerCase();
 					AOSHCommand aoshCommand=connector.getAoshCommands().get(lowerCommand);
 					if(aoshCommand!=null) {
-						AOServTable<?,?> table=aoshCommand.getSchemaTable(connector).getAOServTable(connector);
+						AOServTable<?,?> table = aoshCommand.getTable(connector).getAOServTable(connector);
 						done=table.handleCommand(args, in, out, err, isInteractive());
 						if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+lowerCommand+"', table='"+table.getTableName()+'\'');
 					}

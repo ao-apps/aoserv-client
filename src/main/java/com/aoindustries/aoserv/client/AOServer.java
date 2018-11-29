@@ -71,21 +71,21 @@ final public class AOServer
 	implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServer>
 {
 
-	static final int COLUMN_SERVER=0;
-	static final int COLUMN_HOSTNAME=1;
+	static final int COLUMN_SERVER = 0;
+	static final int COLUMN_HOSTNAME = 1;
 	static final String COLUMN_HOSTNAME_name = "hostname";
 
 	private DomainName hostname;
-	int daemon_bind;
+	private int daemon_bind;
 	private HashedPassword daemon_key;
 	private int pool_size;
 	private int distro_hour;
 	private long last_distro_time;
-	int failover_server;
-	private String daemon_device_id;
-	int daemon_connect_bind;
+	private int failover_server;
+	private String daemonDeviceId;
+	private int daemon_connect_bind;
 	private String time_zone;
-	int jilter_bind;
+	private int jilter_bind;
 	private boolean restrict_outbound_email;
 	private HostAddress daemon_connect_address;
 	private int failover_batch_size;
@@ -93,9 +93,408 @@ final public class AOServer
 	private float monitoring_load_medium;
 	private float monitoring_load_high;
 	private float monitoring_load_critical;
-	private LinuxId uid_min;
-	private LinuxId gid_min;
+	private LinuxId uidMin;
+	private LinuxId gidMin;
+	private LinuxId uidMax;
+	private LinuxId gidMax;
+	private LinuxId lastUid;
+	private LinuxId lastGid;
 	private long sftp_umask;
+
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_SERVER: return pkey;
+			case COLUMN_HOSTNAME: return hostname;
+			case 2: return daemon_bind==-1?null:daemon_bind;
+			case 3: return daemon_key;
+			case 4: return pool_size;
+			case 5: return distro_hour;
+			case 6: return getLastDistroTime();
+			case 7: return failover_server==-1?null:failover_server;
+			case 8: return daemonDeviceId;
+			case 9: return daemon_connect_bind==-1?null:daemon_connect_bind;
+			case 10: return time_zone;
+			case 11: return jilter_bind == -1 ? null : jilter_bind;
+			case 12: return restrict_outbound_email;
+			case 13: return daemon_connect_address;
+			case 14: return failover_batch_size;
+			case 15: return Float.isNaN(monitoring_load_low) ? null : monitoring_load_low;
+			case 16: return Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium;
+			case 17: return Float.isNaN(monitoring_load_high) ? null : monitoring_load_high;
+			case 18: return Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical;
+			case 19: return uidMin;
+			case 20: return gidMin;
+			case 21: return uidMax;
+			case 22: return gidMax;
+			case 23: return lastUid;
+			case 24: return lastGid;
+			case 25: return sftp_umask==-1 ? null : sftp_umask;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
+
+	public int getServer_pkey() {
+		return pkey;
+	}
+
+	public Server getServer() throws SQLException, IOException {
+		Server se = table.connector.getServers().get(pkey);
+		if(se == null) throw new SQLException("Unable to find Server: " + pkey);
+		return se;
+	}
+
+	/**
+	 * Gets the unique, fully-qualified hostname for this server.  Should be resolvable in DNS to ease maintenance.
+	 */
+	public DomainName getHostname() {
+		return hostname;
+	}
+
+	public Integer getDaemonBind_id() {
+		return daemon_bind == -1 ? null : daemon_bind;
+	}
+
+	/**
+	 * Gets the port information to bind to.
+	 */
+	public NetBind getDaemonBind() throws IOException, SQLException {
+		if(daemon_bind == -1) return null;
+		// May be filtered
+		return table.connector.getNetBinds().get(daemon_bind);
+	}
+
+	public HashedPassword getDaemonKey() {
+		return daemon_key;
+	}
+
+	public int getPoolSize() {
+		return pool_size;
+	}
+
+	public int getDistroHour() {
+		return distro_hour;
+	}
+
+	public long getLastDistroTime_time() {
+		return last_distro_time;
+	}
+
+	public Timestamp getLastDistroTime() {
+		return last_distro_time==-1 ? null : new Timestamp(last_distro_time);
+	}
+
+	public Integer getFailoverServer_server_pkey() {
+		return failover_server == -1 ? null : failover_server;
+	}
+
+	public AOServer getFailoverServer() throws SQLException, IOException {
+		if(failover_server == -1) return null;
+		AOServer se=table.connector.getAoServers().get(failover_server);
+		if(se==null) throw new SQLException("Unable to find AOServer: "+failover_server);
+		return se;
+	}
+
+	public String getDaemonDeviceId_name() {
+		return daemonDeviceId;
+	}
+
+	public NetDeviceID getDaemonDeviceId() throws SQLException, IOException {
+		NetDeviceID obj = table.connector.getNetDeviceIDs().get(daemonDeviceId);
+		if(obj == null) throw new SQLException("Unable to find NetDeviceID: " + daemonDeviceId);
+		return obj;
+	}
+
+	public Integer getDaemonConnectBind_id() {
+		return daemon_connect_bind == -1 ? null : daemon_connect_bind;
+	}
+
+	/**
+	 * Gets the port information to connect to.
+	 */
+	public NetBind getDaemonConnectBind() throws IOException, SQLException {
+		if(daemon_connect_bind==-1) return null;
+		// May be filtered
+		return table.connector.getNetBinds().get(daemon_connect_bind);
+	}
+
+	public String getTimeZone_name() {
+		return time_zone;
+	}
+
+	public TimeZone getTimeZone() throws SQLException, IOException {
+		TimeZone obj = table.connector.getTimeZones().get(time_zone);
+		if(obj == null) throw new SQLException("Unable to find TimeZone: " + time_zone);
+		return obj;
+	}
+
+	public Integer getJilterBind_id() {
+		return jilter_bind == -1 ? null : jilter_bind;
+	}
+
+	public NetBind getJilterBind() throws IOException, SQLException {
+		if(jilter_bind==-1) return null;
+		// May be filtered
+		return table.connector.getNetBinds().get(jilter_bind);
+	}
+
+	public boolean getRestrictOutboundEmail() {
+		return restrict_outbound_email;
+	}
+
+	/**
+	 * Gets the address that should be connected to in order to reach this server.
+	 * This overrides both getDaemonConnectBind and getDaemonBind.
+	 *
+	 * @see  #getDaemonConnectBind
+	 * @see  #getDaemonBind
+	 */
+	public HostAddress getDaemonConnectAddress() {
+		return daemon_connect_address;
+	}
+
+	/**
+	 * Gets the number of filesystem entries sent per batch during failover replications.
+	 */
+	public int getFailoverBatchSize() {
+		return failover_batch_size;
+	}
+
+	/**
+	 * Gets the 5-minute load average that is considered a low-priority alert or
+	 * <code>NaN</code> if no alert allowed at this level.
+	 */
+	public float getMonitoringLoadLow() {
+		return monitoring_load_low;
+	}
+
+	/**
+	 * Gets the 5-minute load average that is considered a medium-priority alert or
+	 * <code>NaN</code> if no alert allowed at this level.
+	 */
+	public float getMonitoringLoadMedium() {
+		return monitoring_load_medium;
+	}
+
+	/**
+	 * Gets the 5-minute load average that is considered a high-priority alert or
+	 * <code>NaN</code> if no alert allowed at this level.
+	 */
+	public float getMonitoringLoadHigh() {
+		return monitoring_load_high;
+	}
+
+	/**
+	 * Gets the 5-minute load average that is considered a critical-priority alert or
+	 * <code>NaN</code> if no alert allowed at this level.  This is the level
+	 * that will alert people 24x7.
+	 */
+	public float getMonitoringLoadCritical() {
+		return monitoring_load_critical;
+	}
+
+	/**
+	 * Gets the min value for automatic uid selection in useradd.
+	 */
+	public LinuxId getUidMin() {
+		return uidMin;
+	}
+
+	/**
+	 * Gets the min value for automatic gid selection in groupadd.
+	 */
+	public LinuxId getGidMin() {
+		return gidMin;
+	}
+
+	/**
+	 * Gets the max value for automatic uid selection in useradd.
+	 */
+	public LinuxId getUidMax() {
+		return uidMax;
+	}
+
+	/**
+	 * Gets the max value for automatic gid selection in groupadd.
+	 */
+	public LinuxId getGidMax() {
+		return gidMax;
+	}
+
+	/**
+	 * Gets the last value for automatic uid selection in useradd, if any.
+	 */
+	public LinuxId getLastUid() {
+		return lastUid;
+	}
+
+	/**
+	 * Gets the last value for automatic gid selection in groupadd, if any.
+	 */
+	public LinuxId getLastGid() {
+		return lastGid;
+	}
+
+	/**
+	 * Gets the optional umask for the sftp-server or <code>-1</code> for none.
+	 */
+	public long getSftpUmask() {
+		return sftp_umask;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		try {
+			int pos = 1;
+			pkey=result.getInt(pos++);
+			hostname = DomainName.valueOf(result.getString(pos++));
+			daemon_bind=result.getInt(pos++);
+			if(result.wasNull()) daemon_bind=-1;
+			daemon_key=HashedPassword.valueOf(result.getString(pos++));
+			pool_size=result.getInt(pos++);
+			distro_hour=result.getInt(pos++);
+			Timestamp T=result.getTimestamp(pos++);
+			last_distro_time=T==null?-1:T.getTime();
+			failover_server=result.getInt(pos++);
+			if(result.wasNull()) failover_server=-1;
+			daemonDeviceId = result.getString(pos++);
+			daemon_connect_bind=result.getInt(pos++);
+			time_zone=result.getString(pos++);
+			jilter_bind=result.getInt(pos++);
+			if(result.wasNull()) jilter_bind=-1;
+			restrict_outbound_email=result.getBoolean(pos++);
+			daemon_connect_address=HostAddress.valueOf(result.getString(pos++));
+			failover_batch_size=result.getInt(pos++);
+			monitoring_load_low = result.getFloat(pos++);
+			if(result.wasNull()) monitoring_load_low = Float.NaN;
+			monitoring_load_medium = result.getFloat(pos++);
+			if(result.wasNull()) monitoring_load_medium = Float.NaN;
+			monitoring_load_high = result.getFloat(pos++);
+			if(result.wasNull()) monitoring_load_high = Float.NaN;
+			monitoring_load_critical = result.getFloat(pos++);
+			if(result.wasNull()) monitoring_load_critical = Float.NaN;
+			uidMin = LinuxId.valueOf(result.getInt(pos++));
+			gidMin = LinuxId.valueOf(result.getInt(pos++));
+			uidMax = LinuxId.valueOf(result.getInt(pos++));
+			gidMax = LinuxId.valueOf(result.getInt(pos++));
+			int lastUidInt = result.getInt(pos++);
+			lastUid = result.wasNull() ? null : LinuxId.valueOf(lastUidInt);
+			int lastGidInt = result.getInt(pos++);
+			lastGid = result.wasNull() ? null : LinuxId.valueOf(lastGidInt);
+			sftp_umask = result.getLong(pos++);
+			if(result.wasNull()) sftp_umask = -1;
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey=in.readCompressedInt();
+			hostname=DomainName.valueOf(in.readUTF());
+			daemon_bind=in.readCompressedInt();
+			daemon_key=HashedPassword.valueOf(in.readUTF());
+			pool_size=in.readCompressedInt();
+			distro_hour=in.readCompressedInt();
+			last_distro_time=in.readLong();
+			failover_server=in.readCompressedInt();
+			daemonDeviceId = InternUtils.intern(in.readNullUTF());
+			daemon_connect_bind=in.readCompressedInt();
+			time_zone=in.readUTF().intern();
+			jilter_bind=in.readCompressedInt();
+			restrict_outbound_email=in.readBoolean();
+			daemon_connect_address=InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
+			failover_batch_size=in.readCompressedInt();
+			monitoring_load_low = in.readFloat();
+			monitoring_load_medium = in.readFloat();
+			monitoring_load_high = in.readFloat();
+			monitoring_load_critical = in.readFloat();
+			uidMin = LinuxId.valueOf(in.readCompressedInt());
+			gidMin = LinuxId.valueOf(in.readCompressedInt());
+			uidMax = LinuxId.valueOf(in.readCompressedInt());
+			gidMax = LinuxId.valueOf(in.readCompressedInt());
+			int lastUidInt = in.readCompressedInt();
+			lastUid = lastUidInt == -1 ? null : LinuxId.valueOf(lastUidInt);
+			int lastGidInt = in.readCompressedInt();
+			lastGid = lastGidInt == -1 ? null : LinuxId.valueOf(lastGidInt);
+			sftp_umask = in.readLong();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+			out.writeCompressedInt(1);
+			out.writeCompressedInt(2000);
+			out.writeCompressedInt(1024);
+			out.writeCompressedInt(2);
+			out.writeCompressedInt(240);
+			out.writeNullUTF(null);
+			out.writeBoolean(false);
+			out.writeBoolean(false);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeBoolean(true);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+			out.writeBoolean(false);
+			out.writeUTF("AOServer #"+pkey);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+			out.writeUTF(hostname.toString());
+		}
+		out.writeCompressedInt(daemon_bind);
+		out.writeUTF(daemon_key.toString());
+		out.writeCompressedInt(pool_size);
+		out.writeCompressedInt(distro_hour);
+		out.writeLong(last_distro_time);
+		out.writeCompressedInt(failover_server);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+			out.writeCompressedInt(60*1000);
+			out.writeCompressedInt(5*60*1000);
+			out.writeBoolean(false);
+		}
+		out.writeNullUTF(daemonDeviceId);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+			out.writeNullUTF(null);
+			out.writeCompressedInt(1200*100);
+			out.writeBoolean(true);
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) {
+				out.writeNullUTF(null);
+				out.writeNullUTF(null);
+			} else if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
+				out.writeUTF(AOServProtocol.FILTERED);
+				out.writeUTF(AOServProtocol.FILTERED);
+			}
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(ObjectUtils.toString(daemon_connect_address));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
+			out.writeFloat(monitoring_load_low);
+			out.writeFloat(monitoring_load_medium);
+			out.writeFloat(monitoring_load_high);
+			out.writeFloat(monitoring_load_critical);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80) >= 0) {
+			out.writeCompressedInt(uidMin.getId());
+			out.writeCompressedInt(gidMin.getId());
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_18) >= 0) {
+			out.writeCompressedInt(uidMax.getId());
+			out.writeCompressedInt(gidMax.getId());
+			out.writeCompressedInt(lastUid == null ? -1 : lastUid.getId());
+			out.writeCompressedInt(lastGid == null ? -1 : lastGid.getId());
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_5) >= 0) {
+			out.writeLong(sftp_umask);
+		}
+	}
 
 	public int addCvsRepository(
 		UnixPath path,
@@ -277,35 +676,6 @@ final public class AOServer
 		return table.connector.getBlackholeEmailAddresses().getBlackholeEmailAddresses(this);
 	}
 
-	@Override
-	Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_SERVER: return pkey;
-			case COLUMN_HOSTNAME: return hostname;
-			case 2: return daemon_bind==-1?null:daemon_bind;
-			case 3: return daemon_key;
-			case 4: return pool_size;
-			case 5: return distro_hour;
-			case 6: return getLastDistroTime();
-			case 7: return failover_server==-1?null:failover_server;
-			case 8: return daemon_device_id;
-			case 9: return daemon_connect_bind==-1?null:daemon_connect_bind;
-			case 10: return time_zone;
-			case 11: return jilter_bind == -1 ? null : jilter_bind;
-			case 12: return restrict_outbound_email;
-			case 13: return daemon_connect_address;
-			case 14: return failover_batch_size;
-			case 15: return Float.isNaN(monitoring_load_low) ? null : monitoring_load_low;
-			case 16: return Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium;
-			case 17: return Float.isNaN(monitoring_load_high) ? null : monitoring_load_high;
-			case 18: return Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical;
-			case 19: return uid_min;
-			case 20: return gid_min;
-			case 21: return sftp_umask==-1 ? null : sftp_umask;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
-		}
-	}
-
 	public CvsRepository getCvsRepository(UnixPath path) throws IOException, SQLException {
 		return table.connector.getCvsRepositories().getCvsRepository(this, path);
 	}
@@ -314,150 +684,19 @@ final public class AOServer
 		return table.connector.getCvsRepositories().getCvsRepositories(this);
 	}
 
-	/**
-	 * Gets the unique, fully-qualified hostname for this server.  Should be resolvable in DNS to ease maintenance.
-	 */
-	public DomainName getHostname() {
-		return hostname;
-	}
-
-	/**
-	 * Gets the port information to bind to.
-	 */
-	public NetBind getDaemonBind() throws IOException, SQLException {
-		if(daemon_bind==-1) return null;
-		// May be filtered
-		return table.connector.getNetBinds().get(daemon_bind);
-	}
-
-	/**
-	 * Gets the port information to connect to.
-	 */
-	public NetBind getDaemonConnectBind() throws IOException, SQLException {
-		if(daemon_connect_bind==-1) return null;
-		// May be filtered
-		return table.connector.getNetBinds().get(daemon_connect_bind);
-	}
-
-	public TimeZone getTimeZone() throws SQLException, IOException {
-		TimeZone tz=table.connector.getTimeZones().get(time_zone);
-		if(tz==null) throw new SQLException("Unable to find TimeZone: "+time_zone);
-		return tz;
-	}
-
-	public NetBind getJilterBind() throws IOException, SQLException {
-		if(jilter_bind==-1) return null;
-		// May be filtered
-		return table.connector.getNetBinds().get(jilter_bind);
-	}
-
-	public boolean getRestrictOutboundEmail() {
-		return restrict_outbound_email;
-	}
-
-	/**
-	 * Gets the address that should be connected to in order to reach this server.
-	 * This overrides both getDaemonConnectBind and getDaemonBind.
-	 *
-	 * @see  #getDaemonConnectBind
-	 * @see  #getDaemonBind
-	 */
-	public HostAddress getDaemonConnectAddress() {
-		return daemon_connect_address;
-	}
-
-	/**
-	 * Gets the number of filesystem entries sent per batch during failover replications.
-	 */
-	public int getFailoverBatchSize() {
-		return failover_batch_size;
-	}
-
-	/**
-	 * Gets the 5-minute load average that is considered a low-priority alert or
-	 * <code>NaN</code> if no alert allowed at this level.
-	 */
-	public float getMonitoringLoadLow() {
-		return monitoring_load_low;
-	}
-
-	/**
-	 * Gets the 5-minute load average that is considered a medium-priority alert or
-	 * <code>NaN</code> if no alert allowed at this level.
-	 */
-	public float getMonitoringLoadMedium() {
-		return monitoring_load_medium;
-	}
-
-	/**
-	 * Gets the 5-minute load average that is considered a high-priority alert or
-	 * <code>NaN</code> if no alert allowed at this level.
-	 */
-	public float getMonitoringLoadHigh() {
-		return monitoring_load_high;
-	}
-
-	/**
-	 * Gets the 5-minute load average that is considered a critical-priority alert or
-	 * <code>NaN</code> if no alert allowed at this level.  This is the level
-	 * that will alert people 24x7.
-	 */
-	public float getMonitoringLoadCritical() {
-		return monitoring_load_critical;
-	}
-
-	/**
-	 * Gets the min value for automatic uid selection in useradd.
-	 *
-	 * @see  LinuxAccount#UID_MAX
-	 */
-	public LinuxId getUidMin() {
-		return uid_min;
-	}
-
-	/**
-	 * Gets the min value for automatic gid selection in groupadd.
-	 *
-	 * @see  LinuxGroup#GID_MAX
-	 */
-	public LinuxId getGidMin() {
-		return gid_min;
-	}
-
-	/**
-	 * Gets the optional umask for the sftp-server or <code>-1</code> for none.
-	 */
-	public long getSftpUmask() {
-		return sftp_umask;
-	}
-
-	public NetDeviceID getDaemonDeviceID() throws SQLException, IOException {
-		NetDeviceID ndi=table.connector.getNetDeviceIDs().get(daemon_device_id);
-		if(ndi==null) throw new SQLException("Unable to find NetDeviceID: "+daemon_device_id);
-		return ndi;
-	}
-
 	public IPAddress getDaemonIPAddress() throws SQLException, IOException {
 		NetBind nb=getDaemonBind();
 		if(nb==null) throw new SQLException("Unable to find daemon NetBind for AOServer: "+pkey);
-		IPAddress ia=nb.getIPAddress();
+		IPAddress ia=nb.getIpAddress();
 		InetAddress ip=ia.getInetAddress();
 		if(ip.isUnspecified()) {
-			NetDeviceID ndi=getDaemonDeviceID();
+			NetDeviceID ndi = getDaemonDeviceId();
 			NetDevice nd=getServer().getNetDevice(ndi.getName());
 			if(nd==null) throw new SQLException("Unable to find NetDevice: "+ndi.getName()+" on "+pkey);
 			ia=nd.getPrimaryIPAddress();
 			if(ia==null) throw new SQLException("Unable to find primary IPAddress: "+ndi.getName()+" on "+pkey);
 		}
 		return ia;
-	}
-
-	public HashedPassword getDaemonKey() {
-		return daemon_key;
-	}
-
-	public int getDistroHour() {
-		return distro_hour;
 	}
 
 	public CyrusImapdServer getCyrusImapdServer() throws IOException, SQLException {
@@ -510,13 +749,6 @@ final public class AOServer
 		return table.connector.getEmailSmtpRelays().getEmailSmtpRelays(this);
 	}
 
-	public AOServer getFailoverServer() throws SQLException, IOException {
-		if(failover_server==-1) return null;
-		AOServer se=table.connector.getAoServers().get(failover_server);
-		if(se==null) throw new SQLException("Unable to find AOServer: "+failover_server);
-		return se;
-	}
-
 	public List<FTPGuestUser> getFTPGuestUsers() throws IOException, SQLException {
 		return table.connector.getFtpGuestUsers().getFTPGuestUsers(this);
 	}
@@ -539,10 +771,6 @@ final public class AOServer
 
 	public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
 		return table.connector.getHttpdSites().getHttpdSites(this);
-	}
-
-	public Timestamp getLastDistroTime() {
-		return last_distro_time==-1 ? null : new Timestamp(last_distro_time);
 	}
 
 	public List<LinuxAccAddress> getLinuxAccAddresses() throws IOException, SQLException {
@@ -686,10 +914,6 @@ final public class AOServer
 		return table.connector.getAoServers().getNestedAOServers(this);
 	}
 
-	public int getPoolSize() {
-		return pool_size;
-	}
-
 	public PostgresServer getPostgresServer(PostgresServerName name) throws IOException, SQLException {
 		return table.connector.getPostgresServers().getPostgresServer(name, this);
 	}
@@ -704,7 +928,7 @@ final public class AOServer
 		String[] preferredMinorVersions=PostgresVersion.getPreferredMinorVersions();
 		for(String version : preferredMinorVersions) {
 			for (PostgresServer ps : pss) {
-				if(ps.getPostgresVersion().getMinorVersion().equals(version)) {
+				if(ps.getVersion().getMinorVersion().equals(version)) {
 					return ps;
 				}
 			}
@@ -715,7 +939,7 @@ final public class AOServer
 	}
 
 	public IPAddress getPrimaryIPAddress() throws SQLException, IOException {
-		NetDeviceID ndi=getDaemonDeviceID();
+		NetDeviceID ndi = getDaemonDeviceId();
 		String name=ndi.getName();
 		NetDevice nd=getServer().getNetDevice(name);
 		if(nd==null) throw new SQLException("Unable to find NetDevice: "+name+" on "+pkey);
@@ -733,12 +957,6 @@ final public class AOServer
 
 	public List<SendmailServer> getSendmailServers() throws IOException, SQLException {
 		return table.connector.getSendmailServers().getSendmailServers(this);
-	}
-
-	public Server getServer() throws SQLException, IOException {
-		Server se=table.connector.getServers().get(pkey);
-		if(se==null) throw new SQLException("Unable to find Server: "+pkey);
-		return se;
 	}
 
 	public List<SslCertificate> getSslCertificates() throws IOException, SQLException {
@@ -768,76 +986,6 @@ final public class AOServer
 
 	public boolean isPostgresServerNameAvailable(PostgresServerName name) throws IOException, SQLException {
 		return table.connector.getPostgresServers().isPostgresServerNameAvailable(name, this);
-	}
-
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			int pos = 1;
-			pkey=result.getInt(pos++);
-			hostname = DomainName.valueOf(result.getString(pos++));
-			daemon_bind=result.getInt(pos++);
-			if(result.wasNull()) daemon_bind=-1;
-			daemon_key=HashedPassword.valueOf(result.getString(pos++));
-			pool_size=result.getInt(pos++);
-			distro_hour=result.getInt(pos++);
-			Timestamp T=result.getTimestamp(pos++);
-			last_distro_time=T==null?-1:T.getTime();
-			failover_server=result.getInt(pos++);
-			if(result.wasNull()) failover_server=-1;
-			daemon_device_id=result.getString(pos++);
-			daemon_connect_bind=result.getInt(pos++);
-			time_zone=result.getString(pos++);
-			jilter_bind=result.getInt(pos++);
-			if(result.wasNull()) jilter_bind=-1;
-			restrict_outbound_email=result.getBoolean(pos++);
-			daemon_connect_address=HostAddress.valueOf(result.getString(pos++));
-			failover_batch_size=result.getInt(pos++);
-			monitoring_load_low = result.getFloat(pos++);
-			if(result.wasNull()) monitoring_load_low = Float.NaN;
-			monitoring_load_medium = result.getFloat(pos++);
-			if(result.wasNull()) monitoring_load_medium = Float.NaN;
-			monitoring_load_high = result.getFloat(pos++);
-			if(result.wasNull()) monitoring_load_high = Float.NaN;
-			monitoring_load_critical = result.getFloat(pos++);
-			if(result.wasNull()) monitoring_load_critical = Float.NaN;
-			uid_min = LinuxId.valueOf(result.getInt(pos++));
-			gid_min = LinuxId.valueOf(result.getInt(pos++));
-			sftp_umask = result.getLong(pos++);
-			if(result.wasNull()) sftp_umask = -1;
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		try {
-			pkey=in.readCompressedInt();
-			hostname=DomainName.valueOf(in.readUTF());
-			daemon_bind=in.readCompressedInt();
-			daemon_key=HashedPassword.valueOf(in.readUTF());
-			pool_size=in.readCompressedInt();
-			distro_hour=in.readCompressedInt();
-			last_distro_time=in.readLong();
-			failover_server=in.readCompressedInt();
-			daemon_device_id=InternUtils.intern(in.readNullUTF());
-			daemon_connect_bind=in.readCompressedInt();
-			time_zone=in.readUTF().intern();
-			jilter_bind=in.readCompressedInt();
-			restrict_outbound_email=in.readBoolean();
-			daemon_connect_address=InternUtils.intern(HostAddress.valueOf(in.readNullUTF()));
-			failover_batch_size=in.readCompressedInt();
-			monitoring_load_low = in.readFloat();
-			monitoring_load_medium = in.readFloat();
-			monitoring_load_high = in.readFloat();
-			monitoring_load_critical = in.readFloat();
-			uid_min = LinuxId.valueOf(in.readCompressedInt());
-			gid_min = LinuxId.valueOf(in.readCompressedInt());
-			sftp_umask = in.readLong();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
 	}
 
 	public void restartApache() throws IOException, SQLException {
@@ -966,72 +1114,6 @@ final public class AOServer
 
 	public void waitForPostgresUserRebuild() throws IOException, SQLException {
 		table.connector.getPostgresUsers().waitForRebuild(this);
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-			out.writeCompressedInt(1);
-			out.writeCompressedInt(2000);
-			out.writeCompressedInt(1024);
-			out.writeCompressedInt(2);
-			out.writeCompressedInt(240);
-			out.writeNullUTF(null);
-			out.writeBoolean(false);
-			out.writeBoolean(false);
-		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_4)<0) out.writeBoolean(true);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-			out.writeBoolean(false);
-			out.writeUTF("AOServer #"+pkey);
-		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
-			out.writeUTF(hostname.toString());
-		}
-		out.writeCompressedInt(daemon_bind);
-		out.writeUTF(daemon_key.toString());
-		out.writeCompressedInt(pool_size);
-		out.writeCompressedInt(distro_hour);
-		out.writeLong(last_distro_time);
-		out.writeCompressedInt(failover_server);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-			out.writeCompressedInt(60*1000);
-			out.writeCompressedInt(5*60*1000);
-			out.writeBoolean(false);
-		}
-		out.writeNullUTF(daemon_device_id);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
-			out.writeNullUTF(null);
-			out.writeCompressedInt(1200*100);
-			out.writeBoolean(true);
-			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) {
-				out.writeNullUTF(null);
-				out.writeNullUTF(null);
-			} else if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
-				out.writeUTF(AOServProtocol.FILTERED);
-				out.writeUTF(AOServProtocol.FILTERED);
-			}
-		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_119)>=0) out.writeCompressedInt(daemon_connect_bind);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(ObjectUtils.toString(daemon_connect_address));
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_35)>=0) {
-			out.writeFloat(monitoring_load_low);
-			out.writeFloat(monitoring_load_medium);
-			out.writeFloat(monitoring_load_high);
-			out.writeFloat(monitoring_load_critical);
-		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80)>=0) {
-			out.writeCompressedInt(uid_min.getId());
-			out.writeCompressedInt(gid_min.getId());
-		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_5) >= 0) {
-			out.writeLong(sftp_umask);
-		}
 	}
 
 	/**
@@ -2593,7 +2675,7 @@ final public class AOServer
 			distro_hour,
 			last_distro_time==-1 ? null : last_distro_time,
 			failover_server==-1 ? null : failover_server,
-			daemon_device_id,
+			daemonDeviceId,
 			daemon_connect_bind==-1 ? null : daemon_connect_bind,
 			time_zone,
 			jilter_bind==-1 ? null : jilter_bind,
@@ -2604,8 +2686,12 @@ final public class AOServer
 			Float.isNaN(monitoring_load_medium) ? null : monitoring_load_medium,
 			Float.isNaN(monitoring_load_high) ? null : monitoring_load_high,
 			Float.isNaN(monitoring_load_critical) ? null : monitoring_load_critical,
-			getDto(uid_min),
-			getDto(gid_min),
+			getDto(uidMin),
+			getDto(gidMin),
+			getDto(uidMax),
+			getDto(gidMax),
+			getDto(lastUid),
+			getDto(lastGid),
 			sftp_umask==-1 ? null : sftp_umask
 		);
 	}

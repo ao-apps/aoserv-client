@@ -591,6 +591,11 @@ abstract public class AOServConnector {
 		return ipAddresses;
 	}
 
+	private final IpAddressMonitoringTable ipAddressMonitoring;
+	public IpAddressMonitoringTable getIpAddressMonitoring() {
+		return ipAddressMonitoring;
+	}
+
 	private final IpReputationLimiterLimitTable ipReputationLimiterLimits;
 	public IpReputationLimiterLimitTable getIpReputationLimiterLimits() {
 		return ipReputationLimiterLimits;
@@ -1154,6 +1159,7 @@ abstract public class AOServConnector {
 		newTables.add(httpdTomcatVersions=new HttpdTomcatVersionTable(this));
 		newTables.add(httpdWorkers=new HttpdWorkerTable(this));
 		newTables.add(ipAddresses=new IPAddressTable(this));
+		newTables.add(ipAddressMonitoring=new IpAddressMonitoringTable(this));
 		newTables.add(ipReputationLimiterLimits=new IpReputationLimiterLimitTable(this));
 		newTables.add(ipReputationLimiterSets=new IpReputationLimiterSetTable(this));
 		newTables.add(ipReputationLimiters=new IpReputationLimiterTable(this));

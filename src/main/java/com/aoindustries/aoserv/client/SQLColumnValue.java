@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,14 +37,14 @@ final public class SQLColumnValue extends SQLExpression {
 	final private SchemaType columnType;
 
 	public SQLColumnValue(AOServConnector conn, SchemaColumn column) throws SQLException, IOException {
-		if(column==null) throw new NullPointerException("column is null");
-		this.column=column;
-		this.columnType=column.getSchemaType(conn);
+		if(column == null) throw new NullPointerException("column is null");
+		this.column = column;
+		this.columnType = column.getType(conn);
 	}
 
 	@Override
 	public String getColumnName() {
-		return column.column_name;
+		return column.getName();
 	}
 
 	@Override
@@ -59,7 +59,8 @@ final public class SQLColumnValue extends SQLExpression {
 
 	@Override
 	public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws SQLException, IOException {
-		SchemaTable table=column.getSchemaTable(conn);
+		SchemaTable table = column.getTable(conn);
 		if(!tables.contains(table)) tables.add(table);
 	}
 }
+

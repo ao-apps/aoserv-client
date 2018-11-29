@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2002-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -74,12 +74,12 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 	}
 
 	@Override
-	public PostgresServer get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(PostgresServer.COLUMN_PKEY, pkey);
+	public PostgresServer get(int bind) throws IOException, SQLException {
+		return getUniqueRow(PostgresServer.COLUMN_BIND, bind);
 	}
 
 	PostgresServer getPostgresServer(NetBind nb) throws IOException, SQLException {
-		return getUniqueRow(PostgresServer.COLUMN_NET_BIND, nb.pkey);
+		return getUniqueRow(PostgresServer.COLUMN_BIND, nb.pkey);
 	}
 
 	List<PostgresServer> getPostgresServers(AOServer ao) throws IOException, SQLException {
@@ -92,7 +92,7 @@ final public class PostgresServerTable extends CachedTableIntegerKey<PostgresSer
 		int size=table.size();
 		for(int c=0;c<size;c++) {
 			PostgresServer ps=table.get(c);
-			if(ps.name.equals(name)) return ps;
+			if(ps.getName().equals(name)) return ps;
 		}
 		return null;
 	}

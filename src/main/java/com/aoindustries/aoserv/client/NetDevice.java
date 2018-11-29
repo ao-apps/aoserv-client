@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,14 +44,14 @@ import java.util.List;
 final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_SERVER=1
+		COLUMN_ID = 0,
+		COLUMN_SERVER = 1
 	;
 	static final String COLUMN_SERVER_name = "server";
-	static final String COLUMN_DEVICE_ID_name = "device_id";
+	static final String COLUMN_DEVICE_ID_name = "deviceId";
 
-	int server;
-	String device_id;
+	private int server;
+	private String deviceId;
 	private String description;
 	private String delete_route;
 	private InetAddress gateway;
@@ -68,9 +68,9 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return pkey;
+			case COLUMN_ID: return pkey;
 			case COLUMN_SERVER: return server;
-			case 2: return device_id;
+			case 2: return deviceId;
 			case 3: return description;
 			case 4: return delete_route;
 			case 5: return gateway;
@@ -87,30 +87,40 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 		}
 	}
 
-	public String getDeleteRoute() {
-		return delete_route;
+	public int getId() {
+		return pkey;
+	}
+
+	public int getServer_pkey() {
+		return server;
+	}
+
+	public Server getServer() throws SQLException, IOException {
+		Server se = table.connector.getServers().get(server);
+		if(se == null) throw new SQLException("Unable to find Server: " + server);
+		return se;
+	}
+
+	public String getDeviceId_name() {
+		return deviceId;
+	}
+
+	public NetDeviceID getDeviceId() throws SQLException, IOException {
+		NetDeviceID obj = table.connector.getNetDeviceIDs().get(deviceId);
+		if(obj == null) throw new SQLException("Unable to find NetDeviceID: " + deviceId);
+		return obj;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
+	public String getDeleteRoute() {
+		return delete_route;
+	}
+
 	public InetAddress getGateway() {
 		return gateway;
-	}
-
-	public IPAddress getIPAddress(InetAddress ipAddress) throws IOException, SQLException {
-		return table.connector.getIpAddresses().getIPAddress(this, ipAddress);
-	}
-
-	public List<IPAddress> getIPAddresses() throws IOException, SQLException {
-		return table.connector.getIpAddresses().getIPAddresses(this);
-	}
-
-	public NetDeviceID getNetDeviceID() throws SQLException, IOException {
-		NetDeviceID ndi=table.connector.getNetDeviceIDs().get(device_id);
-		if(ndi==null) throw new SQLException("Unable to find NetDeviceID: "+device_id);
-		return ndi;
 	}
 
 	public InetAddress getNetwork() {
@@ -173,35 +183,13 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 		return monitoring_enabled;
 	}
 
-	public IPAddress getPrimaryIPAddress() throws SQLException, IOException {
-		List<IPAddress> ips=getIPAddresses();
-		List<IPAddress> matches=new ArrayList<>();
-		for (IPAddress ip : ips) {
-			if(!ip.isAlias()) matches.add(ip);
-		}
-		if(matches.isEmpty()) throw new SQLException("Unable to find primary IPAddress for NetDevice: "+device_id+" on "+server);
-		if(matches.size()>1) throw new SQLException("Found more than one primary IPAddress for NetDevice: "+device_id+" on "+server);
-		return matches.get(0);
-	}
-
-	public Server getServer() throws SQLException, IOException {
-		Server se=table.connector.getServers().get(server);
-		if(se==null) throw new SQLException("Unable to find Server: "+server);
-		return se;
-	}
-
-	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.NET_DEVICES;
-	}
-
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
 			int pos = 1;
 			pkey=result.getInt(pos++);
 			server=result.getInt(pos++);
-			device_id=result.getString(pos++);
+			deviceId = result.getString(pos++);
 			description=result.getString(pos++);
 			delete_route=result.getString(pos++);
 			gateway=InetAddress.valueOf(result.getString(pos++));
@@ -229,7 +217,7 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 		try {
 			pkey=in.readCompressedInt();
 			server=in.readCompressedInt();
-			device_id=in.readUTF().intern();
+			deviceId = in.readUTF().intern();
 			description=in.readUTF();
 			delete_route=InternUtils.intern(in.readNullUTF());
 			gateway=InternUtils.intern(InetAddress.valueOf(in.readNullUTF()));
@@ -248,15 +236,10 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 	}
 
 	@Override
-	String toStringImpl() throws SQLException, IOException {
-		return getServer().toStringImpl()+'|'+device_id;
-	}
-
-	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(server);
-		out.writeUTF(device_id);
+		out.writeUTF(deviceId);
 		out.writeUTF(description);
 		out.writeNullUTF(delete_route);
 		out.writeNullUTF(ObjectUtils.toString(gateway));
@@ -282,12 +265,41 @@ final public class NetDevice extends CachedObjectIntegerKey<NetDevice> {
 		}
 	}
 
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.NET_DEVICES;
+	}
+
+	@Override
+	String toStringImpl() throws SQLException, IOException {
+		return getServer().toStringImpl()+'|'+deviceId;
+	}
+
+	public IPAddress getIPAddress(InetAddress inetAddress) throws IOException, SQLException {
+		return table.connector.getIpAddresses().getIPAddress(this, inetAddress);
+	}
+
+	public List<IPAddress> getIPAddresses() throws IOException, SQLException {
+		return table.connector.getIpAddresses().getIPAddresses(this);
+	}
+
+	public IPAddress getPrimaryIPAddress() throws SQLException, IOException {
+		List<IPAddress> ips=getIPAddresses();
+		List<IPAddress> matches=new ArrayList<>();
+		for (IPAddress ip : ips) {
+			if(!ip.isAlias()) matches.add(ip);
+		}
+		if(matches.isEmpty()) throw new SQLException("Unable to find primary IPAddress for NetDevice: "+deviceId+" on "+server);
+		if(matches.size()>1) throw new SQLException("Found more than one primary IPAddress for NetDevice: "+deviceId+" on "+server);
+		return matches.get(0);
+	}
+
 	/**
 	 * Gets the bonding report from <code>/proc/net/bonding/[p]bond#</code>
 	 * or <code>null</code> if not a bonded device.
 	 */
 	public String getBondingReport() throws IOException, SQLException {
-		if(!device_id.startsWith("bond")) return null;
+		if(!deviceId.startsWith("bond")) return null;
 		return table.connector.requestStringQuery(true, AOServProtocol.CommandID.GET_NET_DEVICE_BONDING_REPORT, pkey);
 	}
 

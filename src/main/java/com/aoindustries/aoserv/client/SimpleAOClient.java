@@ -2224,7 +2224,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, SQLException, IOException {
 		PostgresServerUser psu=getPostgresServerUser(aoServer, postgres_server, datdba);
 		PostgresServer ps=psu.getPostgresServer();
-		PostgresVersion pv=ps.getPostgresVersion();
+		PostgresVersion pv=ps.getVersion();
 		PostgresEncoding pe=pv.getPostgresEncoding(connector, encoding);
 		if(pe==null) throw new IllegalArgumentException("Unable to find PostgresEncoding for PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+": "+encoding);
 		if(enablePostgis && pv.getPostgisVersion(connector)==null) throw new IllegalArgumentException("Unable to enable PostGIS, PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+" doesn't support PostGIS");
@@ -3255,9 +3255,9 @@ final public class SimpleAOClient {
 			}
 		}
 		for(HttpdSite hs : pk.getHttpdSites()) {
-			if(hs.disable_log==-1) {
+			if(!hs.isDisabled()) {
 				disableHttpdSite(dl, hs);
-				AOServer ao=hs.getAOServer();
+				AOServer ao=hs.getAoServer();
 				if(!httpdServers.contains(ao)) httpdServers.add(ao);
 			}
 		}
@@ -3766,7 +3766,7 @@ final public class SimpleAOClient {
 		// Start up the web sites
 		for(HttpdSharedTomcat hst : pk.getHttpdSharedTomcats()) if(hst.disable_log==dl.pkey) hst.enable();
 
-		for(HttpdSite hs : pk.getHttpdSites()) if(hs.disable_log==dl.pkey) enableHttpdSite(dl, hs);
+		for(HttpdSite hs : pk.getHttpdSites()) if(hs.getDisableLog_pkey() != null && hs.getDisableLog_pkey() == dl.pkey) enableHttpdSite(dl, hs);
 	}
 
 	/**
@@ -4038,7 +4038,7 @@ final public class SimpleAOClient {
 			if(msu.disable_log==dl.pkey) {
 				msu.enable();
 				if(mysqlServers!=null) {
-					AOServer ao=msu.getMySQLServer().getAOServer();
+					AOServer ao=msu.getMySQLServer().getAoServer();
 					if(!mysqlServers.contains(ao)) mysqlServers.add(ao);
 				}
 			}
@@ -4094,7 +4094,7 @@ final public class SimpleAOClient {
 			if(psu.disable_log==dl.pkey) {
 				psu.enable();
 				if(postgresServers!=null) {
-					AOServer ao=psu.getPostgresServer().getAOServer();
+					AOServer ao=psu.getPostgresServer().getAoServer();
 					if(!postgresServers.contains(ao)) postgresServers.add(ao);
 				}
 			}
@@ -6941,7 +6941,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, IOException, SQLException {
 		HttpdSite hs = getHttpdSite(aoServer, siteName);
 		hs.setPhpVersion(
-			findPhpVersion(hs.getAOServer(), phpVersion)
+			findPhpVersion(hs.getAoServer(), phpVersion)
 		);
 	}
 
@@ -7329,7 +7329,7 @@ final public class SimpleAOClient {
 		HttpdTomcatStdSite htss = hts.getHttpdTomcatStdSite();
 		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
 		htss.setHttpdTomcatVersion(
-			findTomcatVersion(hs.getAOServer(), version)
+			findTomcatVersion(hs.getAoServer(), version)
 		);
 	}
 
@@ -7400,7 +7400,7 @@ final public class SimpleAOClient {
 		String net_device,
 		boolean enabled
 	) throws IllegalArgumentException, IOException, SQLException {
-		getIPAddress(server, net_device, ipAddress).setMonitoringEnabled(enabled);
+		getIPAddress(server, net_device, ipAddress).getMonitoring().setEnabled(enabled);
 	}
 
 	/**
