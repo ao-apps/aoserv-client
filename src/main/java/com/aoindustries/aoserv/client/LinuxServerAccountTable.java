@@ -133,10 +133,10 @@ final public class LinuxServerAccountTable extends CachedTableIntegerKey<LinuxSe
 				// Must also have a non-primary entry in the LinuxGroupAccounts that is also a group on this server
 				for(LinuxGroupAccount lga : connector.getLinuxGroupAccounts().getLinuxGroupAccounts(groupName, username)) {
 					if(
-						!lga.is_primary
+						!lga.isPrimary()
 						&& (
-							lga.operating_system_version == -1
-							|| lga.operating_system_version == osv
+							lga.getOperatingSystemVersion_pkey() == null
+							|| lga.getOperatingSystemVersion_pkey() == osv
 						)
 					) {
 						matches.add(linuxServerAccount);

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-11-16T08:18:12-0600"
+		dateModified="2018-11-29T13:39:28-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -650,6 +650,26 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<ol>
 							<li>Added <code>ip_addresses.monitoring_enabled</code> column</li>
 							<li>Added <code>set_ip_address_monitoring_enabled</code> AOSH command</li>
+						</ol>
+					</li>
+					<li>
+						Moved monitoring configuration into a separate schema.  This results in the following changes:
+						<ol>
+							<li>Added <code>IpAddressMonitoring</code> table</li>
+						</ol>
+					</li>
+					<li>
+						<code>UID_MAX</code> and <code>GID_MAX</code> are now configurable on a per-server basis.
+						Also, uid and gid allocation proceeds from the last one allocated, wrapping back to <code>UID_MIN</code>
+						once <code>UID_MAX</code> is achieved.  Previously, the first available uid, starting at <code>UID_MIN</code>
+						was used, which could cause a new user to have access to orphaned files from an old, deleted user.
+					</li>
+					<li>Schema changes, with some moves toward:
+						<ol>
+							<li>Schema support</li>
+							<li>Singular table names, PascalCase</li>
+							<li>camelCase column names</li>
+							<li>Generated numeric keys <code>id</code> instead of <code>pkey</code></li>
 						</ol>
 					</li>
 				</ul>

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -299,7 +299,7 @@ final public class Server extends CachedObjectIntegerKey<Server> implements Comp
 			if(
 				ip.isAvailable()
 				&& ip.isAlias()
-				&& !ip.getNetDevice().getNetDeviceID().isLoopback()
+				&& !ip.getDevice().getDeviceId().isLoopback()
 			) return ip;
 		}
 		return null;

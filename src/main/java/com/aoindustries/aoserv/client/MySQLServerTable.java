@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -69,12 +69,12 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 	}
 
 	@Override
-	public MySQLServer get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(MySQLServer.COLUMN_PKEY, pkey);
+	public MySQLServer get(int bind) throws IOException, SQLException {
+		return getUniqueRow(MySQLServer.COLUMN_BIND, bind);
 	}
 
 	MySQLServer getMySQLServer(NetBind nb) throws IOException, SQLException {
-		return getUniqueRow(MySQLServer.COLUMN_NET_BIND, nb.pkey);
+		return getUniqueRow(MySQLServer.COLUMN_BIND, nb.pkey);
 	}
 
 	List<MySQLServer> getMySQLServers(AOServer ao) throws IOException, SQLException {
@@ -87,13 +87,9 @@ final public class MySQLServerTable extends CachedTableIntegerKey<MySQLServer> {
 		int size=table.size();
 		for(int c=0;c<size;c++) {
 			MySQLServer ms=table.get(c);
-			if(ms.name.equals(name)) return ms;
+			if(ms.getName().equals(name)) return ms;
 		}
 		return null;
-	}
-
-	List<MySQLServer> getMySQLServers(Package pk) throws IOException, SQLException {
-		return getIndexedRows(MySQLServer.COLUMN_PACKAGE, pk.name);
 	}
 
 	@Override

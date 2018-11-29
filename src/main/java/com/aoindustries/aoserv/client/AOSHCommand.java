@@ -397,21 +397,21 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		WHOAMI = "whoami"
 	;
 
-	String table_name;
-	private String short_desc;
+	private String sinceVersion;
+	private String lastVersion;
+	private String table;
+	private String description;
 	private String syntax;
-	private String since_version;
-	private String last_version;
 
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_COMMAND: return pkey;
-			case 1: return table_name;
-			case 2: return short_desc;
-			case 3: return syntax;
-			case 4: return since_version;
-			case 5: return last_version;
+			case 1: return sinceVersion;
+			case 2: return lastVersion;
+			case 3: return table;
+			case 4: return description;
+			case 5: return syntax;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -420,27 +420,44 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		return pkey;
 	}
 
-	public SchemaTable getSchemaTable(AOServConnector connector) throws SQLException, IOException {
-		if(table_name == null) return null;
-		SchemaTable obj = connector.getSchemaTables().get(table_name);
-		if(obj == null) throw new SQLException("Unable to find SchemaTable: " + table_name);
+	public String getSinceVersion_version() {
+		return sinceVersion;
+	}
+
+	public AOServProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+		AOServProtocol obj = connector.getAoservProtocols().get(sinceVersion);
+		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
 		return obj;
 	}
 
-	public String getShortDesc() {
-		return short_desc;
+	public String getLastVersion_version() {
+		return lastVersion;
+	}
+
+	public AOServProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+		if(lastVersion == null) return null;
+		AOServProtocol obj = connector.getAoservProtocols().get(lastVersion);
+		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
+		return obj;
+	}
+
+	public String getTable_name() {
+		return table;
+	}
+
+	public SchemaTable getTable(AOServConnector connector) throws SQLException, IOException {
+		if(table == null) return null;
+		SchemaTable obj = connector.getSchemaTables().get(table);
+		if(obj == null) throw new SQLException("Unable to find SchemaTable: " + table);
+		return obj;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	public String getSyntax() {
 		return syntax;
-	}
-
-	public String getSinceVersion() {
-		return since_version;
-	}
-
-	public String getLastVersion() {
-		return last_version;
 	}
 
 	@Override
@@ -450,12 +467,41 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey = result.getString(1);
-		table_name = result.getString(2);
-		short_desc = result.getString(3);
-		syntax = result.getString(4);
-		since_version = result.getString(5);
-		last_version = result.getString(6);
+		int pos = 1;
+		pkey = result.getString(pos++);
+		sinceVersion = result.getString(pos++);
+		lastVersion = result.getString(pos++);
+		table = result.getString(pos++);
+		description = result.getString(pos++);
+		syntax = result.getString(pos++);
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey = in.readUTF().intern();
+		sinceVersion = in.readUTF().intern();
+		lastVersion = InternUtils.intern(in.readNullUTF());
+		table = InternUtils.intern(in.readNullUTF());
+		description = in.readUTF();
+		syntax = in.readUTF();
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeUTF(pkey);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			out.writeNullUTF(table);
+			out.writeUTF(description);
+			out.writeUTF(syntax);
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101) >= 0) out.writeUTF(sinceVersion);
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_102) >= 0) out.writeNullUTF(lastVersion);
+		} else {
+			out.writeUTF(sinceVersion);
+			out.writeNullUTF(lastVersion);
+			out.writeNullUTF(table);
+			out.writeUTF(description);
+			out.writeUTF(syntax);
+		}
 	}
 
 	public void printCommandHelp(TerminalWriter out) throws IOException {
@@ -463,7 +509,7 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 		out.boldOn();
 		out.println("NAME");
 		out.attributesOff();
-		out.print("       "); out.print(pkey); out.print(" - "); printNoHTML(out, short_desc); out.println();
+		out.print("       "); out.print(pkey); out.print(" - "); printNoHTML(out, description); out.println();
 		out.println();
 		out.boldOn();
 		out.println("SYNOPSIS");
@@ -504,25 +550,5 @@ final public class AOSHCommand extends GlobalObjectStringKey<AOSHCommand> {
 				} else out.print(ch);
 			}
 		}
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		pkey = in.readUTF().intern();
-		table_name = InternUtils.intern(in.readNullUTF());
-		short_desc = in.readUTF();
-		syntax = in.readUTF();
-		since_version = in.readUTF().intern();
-		last_version = InternUtils.intern(in.readNullUTF());
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(pkey);
-		out.writeNullUTF(table_name);
-		out.writeUTF(short_desc);
-		out.writeUTF(syntax);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_101) >= 0) out.writeUTF(since_version);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_102) >= 0) out.writeNullUTF(last_version);
 	}
 }

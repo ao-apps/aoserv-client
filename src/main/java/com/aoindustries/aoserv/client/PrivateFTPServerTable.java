@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,7 +42,7 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
 		new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
+		new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
 		new OrderBy(PrivateFTPServer.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING)
 	};
 	@Override
@@ -63,7 +63,7 @@ final public class PrivateFTPServerTable extends CachedTableIntegerKey<PrivateFT
 		List<PrivateFTPServer> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			PrivateFTPServer obj=cached.get(c);
-			if(obj.getNetBind().server==aoPKey) matches.add(obj);
+			if(obj.getNetBind().getServer_pkey()==aoPKey) matches.add(obj);
 		}
 		return matches;
 	}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2015, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -96,14 +96,14 @@ public class GetUniqueRowTODO extends TestCase {
 							// Multiple rows may have null values even when the column is otherwise unique
 							if(uniqueValue!=null) {
 								// Check that is actually unique in overall list of data
-								if(uniqueMap.containsKey(uniqueValue)) fail("Column is flagged as unique but has a duplicate value.  Table="+table.getTableName()+", Column="+column.getColumnName()+", Value="+uniqueValue);
+								if(uniqueMap.containsKey(uniqueValue)) fail("Column is flagged as unique but has a duplicate value.  Table="+table.getTableName()+", Column="+column.getName()+", Value="+uniqueValue);
 								uniqueMap.put(uniqueValue, row);
 								// Check that the object returned from the get unique row call matches the row that provides the unique value
 								AOServObject fromUniqueCall=table.getUniqueRow(index, uniqueValue);
-								assertEquals("Table="+table.getTableName()+", Column="+column.getColumnName(), row, fromUniqueCall);
+								assertEquals("Table="+table.getTableName()+", Column="+column.getName(), row, fromUniqueCall);
 							} else {
 								// Make sure is nullable
-								if(!column.isNullable()) fail("Column returned null value but is not flagged as nullable.  Table="+table.getTableName()+", Column="+column.getColumnName()+", Value="+uniqueValue);
+								if(!column.isNullable()) fail("Column returned null value but is not flagged as nullable.  Table="+table.getTableName()+", Column="+column.getName()+", Value="+uniqueValue);
 							}
 						}
 					}

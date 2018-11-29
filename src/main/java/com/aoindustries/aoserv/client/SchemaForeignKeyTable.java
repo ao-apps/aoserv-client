@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -46,7 +46,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SchemaForeignKey.COLUMN_PKEY_name, ASCENDING)
+		new OrderBy(SchemaForeignKey.COLUMN_ID_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {
@@ -65,7 +65,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
 
 	@Override
 	public SchemaForeignKey get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(SchemaForeignKey.COLUMN_PKEY, pkey);
+		return getUniqueRow(SchemaForeignKey.COLUMN_ID, pkey);
 	}
 
 	List<SchemaForeignKey> getSchemaForeignKeys(SchemaTable table) throws IOException, SQLException {
@@ -75,7 +75,7 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
 				int size=cached.size();
 				for(int c=0;c<size;c++) {
 					SchemaForeignKey key=cached.get(c);
-					String tableName=key.getKeyColumn(connector).table_name;
+					String tableName=key.getColumn(connector).getTable_name();
 					List<SchemaForeignKey> keys=tableKeys.get(tableName);
 					if(keys==null) tableKeys.put(tableName, keys=new ArrayList<>());
 					keys.add(key);
@@ -97,8 +97,8 @@ final public class SchemaForeignKeyTable extends GlobalTableIntegerKey<SchemaFor
 			int size=cached.size();
 			for(int c=0;c<size;c++) {
 				SchemaForeignKey key=cached.get(c);
-				Integer keyColumnPKey=key.key_column;
-				Integer foreignColumnPKey=key.foreign_column;
+				Integer keyColumnPKey = key.getColumn_id();
+				Integer foreignColumnPKey=key.getForeignColumn_id();
 
 				// Referenced By
 				List<SchemaForeignKey> referencedBy=referencedByHash.get(keyColumnPKey);

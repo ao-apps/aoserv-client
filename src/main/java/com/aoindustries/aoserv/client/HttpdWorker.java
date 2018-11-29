@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -42,59 +42,53 @@ import java.sql.SQLException;
 final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_NET_BIND=2,
-		COLUMN_TOMCAT_SITE=3
+		COLUMN_BIND = 0,
+		COLUMN_TOMCAT_SITE = 2
 	;
-	static final String COLUMN_NET_BIND_name = "net_bind";
-	static final String COLUMN_CODE_name = "code";
+	static final String COLUMN_BIND_name = "bind";
+	static final String COLUMN_NAME_name = "name";
 
-	/**
-	 * Any attempt to use this port for workers causes Apache to not start.
-	 */
-	public static final int ERROR_CAUSING_PORT=1024;
-
-	private String code;
-	int net_bind;
-	int tomcat_site;
-
-	public HttpdJKCode getCode() throws SQLException, IOException {
-		HttpdJKCode obj=table.connector.getHttpdJKCodes().get(code);
-		if(obj==null) throw new SQLException("Unable to find HttpdJKCode: "+code);
-		return obj;
-	}
+	private String name;
+	private int tomcatSite;
 
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return code;
-			case COLUMN_NET_BIND: return net_bind;
-			case COLUMN_TOMCAT_SITE: return tomcat_site==-1?null:tomcat_site;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case COLUMN_BIND: return pkey;
+			case 1: return name;
+			case COLUMN_TOMCAT_SITE: return tomcatSite == -1 ? null : tomcatSite;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
-		HttpdJKProtocol obj=getNetBind().getAppProtocol().getHttpdJKProtocol(connector);
-		if(obj==null) throw new SQLException("Unable to find HttpdJKProtocol: "+net_bind);
+	public int getBind_id() {
+		return pkey;
+	}
+
+	public NetBind getBind() throws IOException, SQLException {
+		NetBind obj = table.connector.getNetBinds().get(pkey);
+		if(obj == null) throw new SQLException("Unable to find NetBind: " + pkey);
 		return obj;
 	}
 
-	public HttpdSharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
-		return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcat(this);
+	public String getName_code() {
+		return name;
 	}
 
-	public HttpdTomcatSite getHttpdTomcatSite() throws SQLException, IOException {
-		if(tomcat_site==-1) return null;
-		HttpdTomcatSite obj=table.connector.getHttpdTomcatSites().get(tomcat_site);
-		if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+tomcat_site);
+	public HttpdJKCode getName() throws SQLException, IOException {
+		HttpdJKCode obj = table.connector.getHttpdJKCodes().get(name);
+		if(obj == null) throw new SQLException("Unable to find HttpdJKCode: " + name);
 		return obj;
 	}
 
-	public NetBind getNetBind() throws IOException, SQLException {
-		NetBind obj=table.connector.getNetBinds().get(net_bind);
-		if(obj==null) throw new SQLException("Unable to find NetBind: "+net_bind);
+	public int getTomcatSite_httpdSite() {
+		return tomcatSite;
+	}
+
+	public HttpdTomcatSite getTomcatSite() throws SQLException, IOException {
+		if(tomcatSite == -1) return null;
+		HttpdTomcatSite obj = table.connector.getHttpdTomcatSites().get(tomcatSite);
+		if(obj == null) throw new SQLException("Unable to find HttpdTomcatSite: " + tomcatSite);
 		return obj;
 	}
 
@@ -105,31 +99,43 @@ final public class HttpdWorker extends CachedObjectIntegerKey<HttpdWorker> {
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		code=result.getString(2);
-		net_bind=result.getInt(3);
-		tomcat_site=result.getInt(4);
-		if(result.wasNull()) tomcat_site=-1;
+		int pos = 1;
+		pkey = result.getInt(pos++);
+		name = result.getString(pos++);
+		tomcatSite = result.getInt(pos++);
+		if(result.wasNull()) tomcatSite = -1;
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		code=in.readUTF();
-		net_bind=in.readCompressedInt();
-		tomcat_site=in.readCompressedInt();
-	}
-
-	@Override
-	String toStringImpl() {
-		return pkey+"|"+code;
+		pkey = in.readCompressedInt();
+		name = in.readUTF();
+		tomcatSite = in.readCompressedInt();
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeUTF(code);
-		out.writeCompressedInt(net_bind);
-		out.writeCompressedInt(tomcat_site);
+		out.writeUTF(name);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			out.writeCompressedInt(pkey);
+		}
+		out.writeCompressedInt(tomcatSite);
+	}
+
+	@Override
+	String toStringImpl() {
+		return pkey+"|"+name;
+	}
+
+	public HttpdJKProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
+		Protocol appProtocol = getBind().getAppProtocol();
+		HttpdJKProtocol obj = appProtocol.getHttpdJKProtocol(connector);
+		if(obj == null) throw new SQLException("Unable to find HttpdJKProtocol: " + appProtocol);
+		return obj;
+	}
+
+	public HttpdSharedTomcat getHttpdSharedTomcat() throws SQLException, IOException {
+		return table.connector.getHttpdSharedTomcats().getHttpdSharedTomcat(this);
 	}
 }

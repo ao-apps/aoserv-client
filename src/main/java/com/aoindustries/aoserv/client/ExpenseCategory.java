@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,16 +35,16 @@ import java.sql.SQLException;
  */
 final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory> {
 
-	static final int COLUMN_EXPENSE_CODE=0;
-	static final String COLUMN_EXPENSE_CODE_name = "expense_code";
+	static final int COLUMN_NAME = 0;
+	static final String COLUMN_NAME_name = "name";
 
 	@Override
 	Object getColumnImpl(int i) {
-		if(i==COLUMN_EXPENSE_CODE) return pkey;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		if(i == COLUMN_NAME) return pkey;
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
-	public String getExpenseCode() {
+	public String getName() {
 		return pkey;
 	}
 
@@ -55,12 +55,12 @@ final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getString(1);
+		pkey = result.getString(1);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readUTF().intern();
+		pkey = in.readUTF().intern();
 	}
 
 	@Override

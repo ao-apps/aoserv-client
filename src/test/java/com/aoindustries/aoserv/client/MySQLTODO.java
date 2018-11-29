@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -153,7 +153,7 @@ public class MySQLTODO extends TestCase {
 			MySQLServerUser msu=conn.getMysqlServerUsers().get(pkey);
 			assertNotNull("MySQLServerUser", msu);
 			mysqlServerUsers.add(msu);
-			mysqlServer.getAOServer().waitForMySQLUserRebuild();
+			mysqlServer.getAoServer().waitForMySQLUserRebuild();
 			System.out.println("Done");
 		}
 	}
@@ -224,7 +224,7 @@ public class MySQLTODO extends TestCase {
 			int pkey=mysqlServer.addMySQLDatabase(randomName, pack);
 			MySQLDatabase mysqlDatabase=conn.getMysqlDatabases().get(pkey);
 			assertNotNull("MySQLDatabase", mysqlDatabase);
-			mysqlServer.getAOServer().waitForMySQLDatabaseRebuild();
+			mysqlServer.getAoServer().waitForMySQLDatabaseRebuild();
 			System.out.println("Done");
 			mysqlDatabases.add(mysqlDatabase);
 		}
@@ -316,7 +316,7 @@ public class MySQLTODO extends TestCase {
 			System.out.print('.');
 			MySQLServerUser msu = getMySQLServerUser(md.getMySQLServer());
 			md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
-			md.getMySQLServer().getAOServer().waitForMySQLDBUserRebuild();
+			md.getMySQLServer().getAoServer().waitForMySQLDBUserRebuild();
 		}
 		System.out.println(" Done");
 	}
@@ -367,7 +367,7 @@ public class MySQLTODO extends TestCase {
 		for(MySQLServerUser msu : mysqlServerUsers) {
 			System.out.print('.');
 			msu.disable(dl);
-			msu.getMySQLServer().getAOServer().waitForMySQLUserRebuild();
+			msu.getMySQLServer().getAoServer().waitForMySQLUserRebuild();
 		}
 		System.out.println(" Done");
 	}
@@ -380,7 +380,7 @@ public class MySQLTODO extends TestCase {
 		for(MySQLServerUser msu : mysqlServerUsers) {
 			System.out.print('.');
 			msu.enable();
-			msu.getMySQLServer().getAOServer().waitForMySQLUserRebuild();
+			msu.getMySQLServer().getAoServer().waitForMySQLUserRebuild();
 		}
 		System.out.println(" Done");
 	}

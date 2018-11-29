@@ -53,7 +53,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 		new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_NET_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
+		new OrderBy(NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
 		new OrderBy(NetBind.COLUMN_PORT_name, ASCENDING)
 	};
 	@Override
@@ -119,8 +119,8 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 	}
 
 	@Override
-	public NetBind get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(NetBind.COLUMN_PKEY, pkey);
+	public NetBind get(int id) throws IOException, SQLException {
+		return getUniqueRow(NetBind.COLUMN_ID, id);
 	}
 
 	List<NetBind> getNetBinds(IPAddress ia) throws IOException, SQLException {
@@ -139,7 +139,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 		List<NetBind> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			NetBind nb=cached.get(c);
-			if(nb.packageName.equals(packageName)) matches.add(nb);
+			if(nb.getPackage_name().equals(packageName)) matches.add(nb);
 		}
 		return matches;
 	}
@@ -156,7 +156,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 		int size=cached.size();
 		List<NetBind> matches=new ArrayList<>(size);
 		for(NetBind nb : cached) {
-			if(nb.ip_address==ipAddress) matches.add(nb);
+			if(nb.getIpAddress_id()==ipAddress) matches.add(nb);
 		}
 		return matches;
 	}
@@ -174,8 +174,8 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 		for(int c=0;c<size;c++) {
 			NetBind nb=cached.get(c);
 			if(
-				nb.server==sePKey
-				&& nb.port==port
+				nb.getServer_pkey()==sePKey
+				&& nb.getPort()==port
 			) return nb;
 		}
 		return null;
@@ -190,7 +190,7 @@ final public class NetBindTable extends CachedTableIntegerKey<NetBind> {
 		List<NetBind> matches=new ArrayList<>(size);
 		for(int c=0;c<size;c++) {
 			NetBind nb=cached.get(c);
-			if(nb.app_protocol.equals(prot)) matches.add(nb);
+			if(nb.getAppProtocol_protocol().equals(prot)) matches.add(nb);
 		}
 		return matches;
 	}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -57,9 +57,11 @@ final public class FailoverMySQLReplicationTable extends CachedTableIntegerKey<F
 
 	List<FailoverMySQLReplication> getFailoverMySQLReplications(Package pk) throws IOException, SQLException {
 		List<FailoverMySQLReplication> matches = new ArrayList<>();
-		List<MySQLServer> mss = pk.getMySQLServers();
-		for(MySQLServer ms : mss) {
-			matches.addAll(ms.getFailoverMySQLReplications());
+		for(NetBind nb : pk.getNetBinds()) {
+			MySQLServer ms = nb.getMySQLServer();
+			if(ms != null) {
+				matches.addAll(ms.getFailoverMySQLReplications());
+			}
 		}
 		return matches;
 	}

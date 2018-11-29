@@ -155,7 +155,7 @@ final public class HttpdSiteURL extends CachedObjectIntegerKey<HttpdSiteURL> imp
 
 	public boolean isTestURL() throws SQLException, IOException {
 		HttpdSite hs=getHttpdSiteBind().getHttpdSite();
-		return hostname.toString().equalsIgnoreCase(hs.getSiteName()+"."+hs.getAOServer().getHostname());
+		return hostname.toString().equalsIgnoreCase(hs.getName()+"."+hs.getAoServer().getHostname());
 	}
 
 	@Override

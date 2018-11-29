@@ -132,7 +132,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		for(EmailPipe ep : getEmailPipes()) if(ep.disable_log==-1) return false;
 		for(CvsRepository cr : getCvsRepositories()) if(cr.disable_log==-1) return false;
 		for(Username un : getUsernames()) if(un.disable_log==-1) return false;
-		for(HttpdSite hs : getHttpdSites()) if(hs.disable_log==-1) return false;
+		for(HttpdSite hs : getHttpdSites()) if(!hs.isDisabled()) return false;
 		for(EmailList el : getEmailLists()) if(el.disable_log==-1) return false;
 		for(EmailSmtpRelay ssr : getEmailSmtpRelays()) if(ssr.disable_log==-1) return false;
 
@@ -299,10 +299,6 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 
 	public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
 		return table.connector.getFailoverMySQLReplications().getFailoverMySQLReplications(this);
-	}
-
-	public List<MySQLServer> getMySQLServers() throws IOException, SQLException {
-		return table.connector.getMysqlServers().getMySQLServers(this);
 	}
 
 	public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {

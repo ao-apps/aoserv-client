@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -571,7 +571,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		while(expr.length()>0) {
 			if(expr.charAt(0)=='.') {
 				List<SchemaForeignKey> keys=lastColumn.getReferences(connector);
-				if(keys.size()!=1) throw new IllegalArgumentException("Column "+lastColumn.getSchemaTable(connector).getName()+'.'+lastColumn.column_name+" should reference precisely one column, references "+keys.size());
+				if(keys.size()!=1) throw new IllegalArgumentException("Column "+lastColumn.getTable(connector).getName()+'.'+lastColumn.getName()+" should reference precisely one column, references "+keys.size());
 
 				joinPos=expr.indexOf('.', 1);
 				if(joinPos==-1) joinPos=expr.length();
@@ -580,7 +580,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				int joinNameEnd=Math.min(joinPos, castPos);
 				columnName=expr.substring(1, joinNameEnd);
 				SchemaColumn keyColumn=keys.get(0).getForeignColumn(connector);
-				SchemaTable valueTable=keyColumn.getSchemaTable(connector);
+				SchemaTable valueTable=keyColumn.getTable(connector);
 				SchemaColumn valueColumn=valueTable.getSchemaColumn(connector, columnName);
 				if(valueColumn==null) throw new IllegalArgumentException("Unable to find column: "+valueTable.getName()+'.'+columnName+" referenced from "+getTableName());
 
@@ -695,8 +695,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		boolean[] alignRights=new boolean[numCols];
 		for(int c=0;c<numCols;c++) {
 			SchemaColumn col=cols.get(c);
-			titles[c]=col.getColumnName();
-			SchemaType type=types[c]=col.getSchemaType(conn);
+			titles[c]=col.getName();
+			SchemaType type=types[c]=col.getType(conn);
 			alignRights[c]=type.alignRight();
 		}
 
@@ -842,7 +842,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	@Override
 	final public String toString() {
 		try {
-			return getTableSchema().display;
+			return getTableSchema().getDisplay();
 		} catch(IOException | SQLException err) {
 			throw new WrappedException(err);
 		}

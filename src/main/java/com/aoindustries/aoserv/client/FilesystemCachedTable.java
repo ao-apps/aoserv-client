@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -175,7 +175,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 			List<V> unmodifiableSortedList = columnLists.get(col);
 			if(unmodifiableSortedList==null) {
 				FileList<V> sortedFileList=new FileList<>(
-					schemaTable.getName()+'.'+schemaColumn.getColumnName(),
+					schemaTable.getName() + '.' + schemaColumn.getName(),
 					"unique",
 					getRecordLength(),
 					tableList.getObjectFactory()

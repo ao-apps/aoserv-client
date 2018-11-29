@@ -62,27 +62,81 @@ import java.util.concurrent.ConcurrentMap;
 final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Removable {
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_PACKAGE=1,
-		COLUMN_SERVER=2,
-		COLUMN_IP_ADDRESS=3
+		COLUMN_ID = 0,
+		COLUMN_PACKAGE = 1,
+		COLUMN_SERVER = 2,
+		COLUMN_IP_ADDRESS = 3
 	;
 	static final String COLUMN_SERVER_name = "server";
-	static final String COLUMN_IP_ADDRESS_name = "ip_address";
+	static final String COLUMN_IP_ADDRESS_name = "ipAddress";
 	static final String COLUMN_PORT_name = "port";
 
-	AccountingCode packageName;
-	int server;
-	int ip_address;
-	Port port;
-	String app_protocol;
+	private AccountingCode packageName;
+	private int server;
+	private int ipAddress;
+	private Port port;
+	private String app_protocol;
 	private boolean monitoring_enabled;
 	private String monitoring_parameters;
 
-	/**
-	 * For compatibility with older clients only.
-	 */
+	// Protocol conversion
 	private boolean open_firewall;
+
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_ID: return pkey;
+			case COLUMN_PACKAGE: return packageName;
+			case COLUMN_SERVER: return server;
+			case COLUMN_IP_ADDRESS: return ipAddress;
+			case 4: return port;
+			case 5: return app_protocol;
+			case 6: return monitoring_enabled;
+			case 7: return monitoring_parameters;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
+		}
+	}
+
+	public int getId() {
+		return pkey;
+	}
+
+	public AccountingCode getPackage_name() {
+		return packageName;
+	}
+
+	public Package getPackage() throws IOException, SQLException {
+		// May be filtered
+		return table.connector.getPackages().get(packageName);
+	}
+
+	public int getServer_pkey() {
+		return server;
+	}
+
+	public Server getServer() throws SQLException, IOException {
+		Server obj=table.connector.getServers().get(server);
+		if(obj==null) throw new SQLException("Unable to find Server: "+server);
+		return obj;
+	}
+
+	public int getIpAddress_id() {
+		return ipAddress;
+	}
+
+	public IPAddress getIpAddress() throws SQLException, IOException {
+		IPAddress obj=table.connector.getIpAddresses().get(ipAddress);
+		if(obj==null) throw new SQLException("Unable to find IPAddress: "+ipAddress);
+		return obj;
+	}
+
+	public Port getPort() {
+		return port;
+	}
+
+	public String getAppProtocol_protocol() {
+		return app_protocol;
+	}
 
 	public Protocol getAppProtocol() throws SQLException, IOException {
 		Protocol obj=table.connector.getProtocols().get(app_protocol);
@@ -90,24 +144,102 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return obj;
 	}
 
-	@Override
-	Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case COLUMN_PACKAGE: return packageName;
-			case COLUMN_SERVER: return server;
-			case COLUMN_IP_ADDRESS: return ip_address;
-			case 4: return port;
-			case 5: return app_protocol;
-			case 6: return monitoring_enabled;
-			case 7: return monitoring_parameters;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+	public boolean isMonitoringEnabled() {
+		return monitoring_enabled;
+	}
+
+	/**
+	 * Gets the unmodifiable map of parameters for this bind.
+	 */
+	public HttpParameters getMonitoringParameters() {
+		String myParamString = monitoring_parameters;
+		if(myParamString==null) {
+			return EmptyParameters.getInstance();
+		} else {
+			HttpParameters params = getMonitoringParametersCache.get(myParamString);
+			if(params==null) {
+				params = UnmodifiableHttpParameters.wrap(decodeParameters(myParamString));
+				HttpParameters previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
+				if(previous!=null) params = previous;
+			}
+			return params;
 		}
 	}
 
 	@Override
+	public void init(ResultSet result) throws SQLException {
+		try {
+			pkey = result.getInt(1);
+			packageName = AccountingCode.valueOf(result.getString(2));
+			server = result.getInt(3);
+			ipAddress = result.getInt(4);
+			port = Port.valueOf(
+				result.getInt(5),
+				com.aoindustries.net.Protocol.valueOf(result.getString(6).toUpperCase(Locale.ROOT)) // TODO: toUpperCase unnecessary in 1.81.18+ which uses matching PostgreSQL enum
+			);
+			app_protocol = result.getString(7);
+			monitoring_enabled = result.getBoolean(8);
+			monitoring_parameters = result.getString(9);
+			open_firewall = result.getBoolean(10);
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey = in.readCompressedInt();
+			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			server = in.readCompressedInt();
+			ipAddress = in.readCompressedInt();
+			port = Port.valueOf(
+				in.readCompressedInt(),
+				in.readEnum(com.aoindustries.net.Protocol.class)
+			);
+			app_protocol = in.readUTF().intern();
+			monitoring_enabled = in.readBoolean();
+			monitoring_parameters = in.readNullUTF();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeUTF(packageName.toString());
+		out.writeCompressedInt(server);
+		out.writeCompressedInt(ipAddress);
+		out.writeCompressedInt(port.getPort());
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_0) < 0) {
+			out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
+		} else {
+			out.writeEnum(port.getProtocol());
+		}
+		out.writeUTF(app_protocol);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_2) <= 0) {
+			out.writeBoolean(open_firewall);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
+			out.writeBoolean(monitoring_enabled);
+		} else {
+			out.writeCompressedInt(monitoring_enabled?300000:-1);
+			out.writeNullUTF(null);
+			out.writeNullUTF(null);
+			out.writeNullUTF(null);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_58)>=0) out.writeNullUTF(monitoring_parameters);
+	}
+
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.NET_BINDS;
+	}
+
+	@Override
 	String toStringImpl() throws IOException, SQLException {
-		return getServer().toStringImpl() + "|" + getIPAddress().toStringImpl() + "|" + getPort();
+		return getServer().toStringImpl() + "|" + getIpAddress().toStringImpl() + "|" + getPort();
 	}
 
 	public String getDetails() throws SQLException, IOException {
@@ -118,7 +250,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		if(jilterServer!=null) return "AOServDaemon.JilterManager";
 
 		PostgresServer ps=getPostgresServer();
-		if(ps!=null) return "PostgreSQL version "+ps.getPostgresVersion().getTechnologyVersion(table.connector).getVersion()+" in "+ps.getDataDirectory();
+		if(ps!=null) return "PostgreSQL version "+ps.getVersion().getTechnologyVersion(table.connector).getVersion()+" in "+ps.getDataDirectory();
 
 		CyrusImapdBind cib = getCyrusImapdBind();
 		if(cib != null) {
@@ -154,7 +286,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 					+ hst.getInstallDirectory()
 				;
 			}
-			HttpdTomcatSite hts=hw.getHttpdTomcatSite();
+			HttpdTomcatSite hts = hw.getTomcatSite();
 			if(hts!=null) {
 				return
 					hw.getHttpdJKProtocol(table.connector).getProtocol(table.connector).getProtocol()
@@ -272,7 +404,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		if(sb != null) {
 			SendmailServer ss = sb.getSendmailServer();
 			DomainName hostname = ss.getHostname();
-			if(hostname == null || hostname.equals(ss.getAOServer().getHostname())) {
+			if(hostname == null || hostname.equals(ss.getAoServer().getHostname())) {
 				String name = ss.getName();
 				if(name == null) {
 					return "Sendmail";
@@ -316,7 +448,7 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 				if(!hst.isDisabled() && hasEnabledSite) return false;
 				foundDisablable = true;
 			}
-			HttpdTomcatSite hts = hw.getHttpdTomcatSite();
+			HttpdTomcatSite hts = hw.getTomcatSite();
 			if(hts != null) {
 				if(!hts.getHttpdSite().isDisabled()) return false;
 				foundDisablable = true;
@@ -454,23 +586,12 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		return fzns;
 	}
 
-	public IPAddress getIPAddress() throws SQLException, IOException {
-		IPAddress obj=table.connector.getIpAddresses().get(ip_address);
-		if(obj==null) throw new SQLException("Unable to find IPAddress: "+ip_address);
-		return obj;
-	}
-
-	public boolean isMonitoringEnabled() {
-		return monitoring_enabled;
-	}
-
 	public NetTcpRedirect getNetTcpRedirect() throws IOException, SQLException {
 		return table.connector.getNetTcpRedirects().get(pkey);
 	}
 
-	public Package getPackage() throws IOException, SQLException {
-		// May be filtered
-		return table.connector.getPackages().get(packageName);
+	public MySQLServer getMySQLServer() throws IOException, SQLException {
+		return table.connector.getMysqlServers().getMySQLServer(this);
 	}
 
 	public PostgresServer getPostgresServer() throws IOException, SQLException {
@@ -479,41 +600,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 	public PrivateFTPServer getPrivateFTPServer() throws IOException, SQLException {
 		return table.connector.getPrivateFTPServers().get(pkey);
-	}
-
-	public Port getPort() {
-		return port;
-	}
-
-	public Server getServer() throws SQLException, IOException {
-		Server obj=table.connector.getServers().get(server);
-		if(obj==null) throw new SQLException("Unable to find Server: "+server);
-		return obj;
-	}
-
-	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.NET_BINDS;
-	}
-
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey = result.getInt(1);
-			packageName = AccountingCode.valueOf(result.getString(2));
-			server = result.getInt(3);
-			ip_address = result.getInt(4);
-			port = Port.valueOf(
-				result.getInt(5),
-				com.aoindustries.net.Protocol.valueOf(result.getString(6).toUpperCase(Locale.ROOT)) // TODO: toUpperCase unnecessary in 1.81.18+ which uses matching PostgreSQL enum
-			);
-			app_protocol = result.getString(7);
-			monitoring_enabled = result.getBoolean(8);
-			monitoring_parameters = result.getString(9);
-			open_firewall = result.getBoolean(10);
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
 	}
 
 	/**
@@ -573,43 +659,6 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 
 	private static final ConcurrentMap<String,HttpParameters> getMonitoringParametersCache = new ConcurrentHashMap<>();
 
-	/**
-	 * Gets the unmodifiable map of parameters for this bind.
-	 */
-	public HttpParameters getMonitoringParameters() {
-		String myParamString = monitoring_parameters;
-		if(myParamString==null) {
-			return EmptyParameters.getInstance();
-		} else {
-			HttpParameters params = getMonitoringParametersCache.get(myParamString);
-			if(params==null) {
-				params = UnmodifiableHttpParameters.wrap(decodeParameters(myParamString));
-				HttpParameters previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
-				if(previous!=null) params = previous;
-			}
-			return params;
-		}
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		try {
-			pkey = in.readCompressedInt();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
-			server = in.readCompressedInt();
-			ip_address = in.readCompressedInt();
-			port = Port.valueOf(
-				in.readCompressedInt(),
-				in.readEnum(com.aoindustries.net.Protocol.class)
-			);
-			app_protocol = in.readUTF().intern();
-			monitoring_enabled = in.readBoolean();
-			monitoring_parameters = in.readNullUTF();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
-	}
-
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
@@ -622,10 +671,10 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		// ao_servers
 		for(AOServer ao : conn.getAoServers().getRows()) {
 			if(
-				pkey==ao.daemon_bind
-				|| pkey==ao.daemon_connect_bind
+				pkey == ao.getDaemonBind_id()
+				|| pkey == ao.getDaemonConnectBind_id()
 			) reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon port for server: "+ao.getHostname(), ao));
-			if(pkey==ao.jilter_bind) reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon jilter port for server: "+ao.getHostname(), ao));
+			if(pkey == ao.getJilterBind_id()) reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon jilter port for server: "+ao.getHostname(), ao));
 		}
 
 		// httpd_binds
@@ -647,11 +696,11 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		// httpd_jboss_sites
 		for(HttpdJBossSite hjb : conn.getHttpdJBossSites().getRows()) {
 			HttpdSite hs=hjb.getHttpdTomcatSite().getHttpdSite();
-			if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
-			if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
-			if(equals(hjb.getRmiBind())) reasons.add(new CannotRemoveReason<>("Used as RMI port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
-			if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
-			if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hjb));
+			if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
+			if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
+			if(equals(hjb.getRmiBind())) reasons.add(new CannotRemoveReason<>("Used as RMI port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
+			if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
+			if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
 		}
 
 		// httpd_shared_tomcats
@@ -662,32 +711,30 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 		// httpd_tomcat_std_sites
 		for(HttpdTomcatStdSite hts : conn.getHttpdTomcatStdSites().getRows()) {
 			HttpdSite hs=hts.getHttpdTomcatSite().getHttpdSite();
-			if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
+			if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hts));
 		}
 
 		// httpd_workers
 		for(HttpdWorker hw : conn.getHttpdWorkers().getRows()) {
-			if(equals(hw.getNetBind())) {
+			if(equals(hw.getBind())) {
 				HttpdSharedTomcat hst=hw.getHttpdSharedTomcat();
 				if(hst!=null) reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
 
-				HttpdTomcatSite hts=hw.getHttpdTomcatSite();
+				HttpdTomcatSite hts=hw.getTomcatSite();
 				if(hts!=null) {
 					HttpdSite hs=hts.getHttpdSite();
-					reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAOServer().getHostname(), hts));
+					reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hts));
 				}
 			}
 		}
 
 		// mysql_servers
-		for(MySQLServer ms : conn.getMysqlServers().getRows()) {
-			if(equals(ms.getNetBind())) reasons.add(new CannotRemoveReason<>("Used for MySQL server "+ms.getName()+" on "+ms.getAOServer().getHostname(), ms));
-		}
+		MySQLServer ms = getMySQLServer();
+		if(ms != null) reasons.add(new CannotRemoveReason<>("Used for MySQL server "+ms.getName()+" on "+ms.getAoServer().getHostname(), ms));
 
 		// postgres_servers
-		for(PostgresServer ps : conn.getPostgresServers().getRows()) {
-			if(equals(ps.getNetBind())) reasons.add(new CannotRemoveReason<>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getAOServer().getHostname(), ps));
-		}
+		PostgresServer ps = getPostgresServer();
+		if(ps != null) reasons.add(new CannotRemoveReason<>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getAoServer().getHostname(), ps));
 
 		return reasons;
 	}
@@ -748,32 +795,5 @@ final public class NetBind extends CachedObjectIntegerKey<NetBind> implements Re
 				}
 			}
 		);
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(packageName.toString());
-		out.writeCompressedInt(server);
-		out.writeCompressedInt(ip_address);
-		out.writeCompressedInt(port.getPort());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_0) < 0) {
-			out.writeUTF(port.getProtocol().name().toLowerCase(Locale.ROOT));
-		} else {
-			out.writeEnum(port.getProtocol());
-		}
-		out.writeUTF(app_protocol);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80_2) <= 0) {
-			out.writeBoolean(open_firewall);
-		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_104)>=0) {
-			out.writeBoolean(monitoring_enabled);
-		} else {
-			out.writeCompressedInt(monitoring_enabled?300000:-1);
-			out.writeNullUTF(null);
-			out.writeNullUTF(null);
-			out.writeNullUTF(null);
-		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_58)>=0) out.writeNullUTF(monitoring_parameters);
 	}
 }

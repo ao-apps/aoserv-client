@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -151,7 +151,7 @@ final public class SchemaTableTable extends GlobalTableIntegerKey<SchemaTable> {
 							if(columnName.equals("*")) {
 								List<SchemaColumn> tcolumns = schemaTable.getSchemaColumns(connector);
 								for (int e = 0; e < tcolumns.size(); e++) {
-									columnName=tcolumns.get(e).column_name;
+									columnName = tcolumns.get(e).getName();
 									if(e==0) columnNames.set(d, columnName);
 									else columnNames.add(++d, columnName);
 								}

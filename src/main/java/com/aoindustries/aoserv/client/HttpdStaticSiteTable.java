@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,7 +37,7 @@ final public class HttpdStaticSiteTable extends CachedTableIntegerKey<HttpdStati
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(HttpdStaticSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+		new OrderBy(HttpdStaticSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(HttpdStaticSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override

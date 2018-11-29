@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,8 +33,8 @@ import java.util.List;
  */
 final public class SQLCast extends SQLExpression {
 
-	private SQLExpression expression;
-	private SchemaType castToType;
+	private final SQLExpression expression;
+	private final SchemaType castToType;
 
 	public SQLCast(SQLExpression expression, SchemaType castToType) {
 		this.expression=expression;
@@ -43,7 +43,7 @@ final public class SQLCast extends SQLExpression {
 
 	@Override
 	public String getColumnName() {
-		return castToType.getType();
+		return castToType.getName();
 	}
 
 	@Override

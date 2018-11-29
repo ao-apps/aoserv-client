@@ -45,7 +45,7 @@ import java.util.List;
 final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer> {
 
 	static final int
-		COLUMN_PKEY = 0,
+		COLUMN_ID = 0,
 		COLUMN_AO_SERVER = 1,
 		COLUMN_PACKAGE = 3,
 		COLUMN_SERVER_CERTIFICATE = 5,
@@ -109,7 +109,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	 */
 	public static final int DEFAULT_MIN_FREE_BLOCKS = 65536;
 
-	int ao_server;
+	private int ao_server;
 	private String name;
 	private int packageNum;
 	private DomainName hostname;
@@ -137,7 +137,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return pkey;
+			case COLUMN_ID: return pkey;
 			case COLUMN_AO_SERVER: return ao_server;
 			case 2: return name;
 			case COLUMN_PACKAGE: return packageNum;
@@ -259,7 +259,15 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		out.writeCompressedInt(clientAddrInet6);
 	}
 
-	public AOServer getAOServer() throws SQLException, IOException {
+	public int getId() {
+		return pkey;
+	}
+
+	public int getAOServer_server_pkey() {
+		return ao_server;
+	}
+
+	public AOServer getAoServer() throws SQLException, IOException {
 		AOServer obj = table.connector.getAoServers().get(ao_server);
 		if(obj == null) throw new SQLException("Unable to find AOServer: " + ao_server);
 		return obj;
@@ -289,6 +297,10 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		return SystemdUtil.encode(name);
 	}
 
+	public int getPackage_pkey() {
+		return packageNum;
+	}
+
 	public Package getPackage() throws IOException, SQLException {
 		// Package may be filtered
 		return table.connector.getPackages().get(packageNum);
@@ -303,6 +315,10 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		return hostname;
 	}
 
+	public int getServerCertificate_pkey() {
+		return serverCertificate;
+	}
+
 	/**
 	 * Gets the server certificate for this server.
 	 *
@@ -311,6 +327,10 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	public SslCertificate getServerCertificate() throws SQLException, IOException {
 		// May be filtered
 		return table.connector.getSslCertificates().get(serverCertificate);
+	}
+
+	public int getClientCertificate_pkey() {
+		return clientCertificate;
 	}
 
 	/**
@@ -401,6 +421,10 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		return minFreeBlocks;
 	}
 
+	public Integer getClientAddrInet_id() {
+		return clientAddrInet == -1 ? null : clientAddrInet;
+	}
+
 	/**
 	 * The <code>Addr</code> for <code>ClientPortOptions</code> with <code>Family=inet</code> or {@code null} if not set.
 	 */
@@ -412,8 +436,12 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		AddressFamily family = address.getAddressFamily();
 		if(family != AddressFamily.INET) throw new SQLException("Unexpected address family for clientAddrInet #" + clientAddrInet + ": " + family);
 		if(address.isUnspecified()) throw new SQLException("May not use unspecified address for clientAddrInet #" + clientAddrInet);
-		if(!getAOServer().getServer().equals(obj.getNetDevice().getServer())) throw new SQLException("IPAddress is not on this server for clientAddrInet #" + clientAddrInet);
+		if(!getAoServer().getServer().equals(obj.getDevice().getServer())) throw new SQLException("IPAddress is not on this server for clientAddrInet #" + clientAddrInet);
 		return obj;
+	}
+
+	public Integer getClientAddrInet6_id() {
+		return clientAddrInet6 == -1 ? null : clientAddrInet6;
 	}
 
 	/**
@@ -427,7 +455,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		AddressFamily family = address.getAddressFamily();
 		if(family != AddressFamily.INET6) throw new SQLException("Unexpected address family for clientAddrInet6 #" + clientAddrInet6 + ": " + family);
 		if(address.isUnspecified()) throw new SQLException("May not use unspecified address for clientAddrInet6 #" + clientAddrInet6);
-		if(!getAOServer().getServer().equals(obj.getNetDevice().getServer())) throw new SQLException("IPAddress is not on this server for clientAddrInet6 #" + clientAddrInet6);
+		if(!getAoServer().getServer().equals(obj.getDevice().getServer())) throw new SQLException("IPAddress is not on this server for clientAddrInet6 #" + clientAddrInet6);
 		return obj;
 	}
 

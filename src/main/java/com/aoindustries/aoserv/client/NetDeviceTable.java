@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -48,8 +48,8 @@ final public class NetDeviceTable extends CachedTableIntegerKey<NetDevice> {
 	}
 
 	@Override
-	public NetDevice get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(NetDevice.COLUMN_PKEY, pkey);
+	public NetDevice get(int id) throws IOException, SQLException {
+		return getUniqueRow(NetDevice.COLUMN_ID, id);
 	}
 
 	List<NetDevice> getNetDevices(Server se) throws IOException, SQLException {
@@ -62,7 +62,7 @@ final public class NetDeviceTable extends CachedTableIntegerKey<NetDevice> {
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			NetDevice dev=cached.get(c);
-			if(dev.device_id.equals(deviceID)) return dev;
+			if(dev.getDeviceId_name().equals(deviceID)) return dev;
 		}
 		return null;
 	}

@@ -69,12 +69,13 @@ import java.util.Locale;
  */
 final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 
-	static final int COLUMN_TYPE = 0;
+	static final int COLUMN_NAME = 1;
 	static final String DATE_name = "date";
 
 	/**
 	 * The different types of values.
 	 */
+	// TODO: No longer pass type ids, instead pass per-protocol type names, and use an enum here
 	public static final int
 		ACCOUNTING             =  0, // com.aoindustries.aoserv.client.validator.AccountingCode
 		BOOLEAN                =  1, // boolean/java.lang.Boolean
@@ -134,16 +135,16 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 		bigDecimal1000 = BigDecimal.valueOf(1000)
 	;
 
-	private String type;
-	private String since_version;
-	private String last_version;
+	private String name;
+	private String sinceVersion;
+	private String lastVersion;
 
 	public boolean alignRight() {
 		return alignRight(pkey);
 	}
 
-	public static boolean alignRight(int type) {
-		switch(type) {
+	public static boolean alignRight(int id) {
+		switch(id) {
 			case DECIMAL_2:
 			case DECIMAL_3:
 			case DOUBLE:
@@ -253,7 +254,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case BOOLEAN:
 					{
 						boolean bvalue=value==null?false:((Boolean)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case DECIMAL_2: return value==null?null:Integer.valueOf(bvalue?-100:0);
 							case DECIMAL_3: return value==null?null:Integer.valueOf(bvalue?-1000:0);
 							case DOUBLE: return value==null?null:new Double(bvalue?-1:0);
@@ -269,7 +270,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case DATE:
 					{
 						long tvalue=value==null?0:((java.sql.Date)value).getTime();
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(SQLUtility.getDaysFromMillis(tvalue)*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(SQLUtility.getDaysFromMillis(tvalue)*1000));
 							case DOUBLE: return value==null?null:new Double(SQLUtility.getDaysFromMillis(tvalue));
@@ -286,7 +287,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case DECIMAL_2:
 					{
 						int ivalue=value==null?0:((Integer)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:ivalue!=0;
 							case DECIMAL_3: return value==null?null:Integer.valueOf(ivalue*10);
 							case DOUBLE: return value==null?null:new Double((double)ivalue/100);
@@ -303,7 +304,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case DECIMAL_3:
 					{
 						int ivalue=value==null?0:((Integer)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:ivalue!=0;
 							case DECIMAL_2: return value==null?null:Integer.valueOf(ivalue/10);
 							case DOUBLE: return value==null?null:new Double((double)ivalue/1000);
@@ -320,7 +321,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case DOUBLE:
 					{
 						double dvalue=value==null?0:((Double)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:dvalue!=0;
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(dvalue*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(dvalue*1000));
@@ -336,7 +337,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case EMAIL:
 					// TODO: com.aoindustries.net.Email
-					switch(castToType.getNum()) {
+					switch(castToType.getId()) {
 						case HOSTNAME:    return value==null ? null : HostAddress.valueOf(getDomainNameForEmail((String)value));
 						case URL:         return value==null ? null : "mailto:"+((String)value);
 						case USERNAME:    return value==null ? null : UserId.valueOf(getUsernameForEmail((String)value));
@@ -345,7 +346,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					}
 					break;
 				case FKEY:
-					switch(castToType.getNum()) {
+					switch(castToType.getId()) {
 						case INT: return value;
 						case PKEY: return value;
 					}
@@ -353,7 +354,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case FLOAT:
 					{
 						float fvalue=value==null?0:((Float)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:fvalue!=0;
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(fvalue*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(fvalue*1000));
@@ -368,7 +369,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					}
 					break;
 				case HOSTNAME:
-					switch(castToType.getNum()) {
+					switch(castToType.getId()) {
 						case IP_ADDRESS:  return value==null ? null : ((HostAddress)value).getInetAddress();
 						case ZONE:        return value==null ? null : getZoneForDomainName(conn, ((HostAddress)value).getDomainName());
 						case DOMAIN_NAME: return value==null ? null : ((HostAddress)value).getDomainName();
@@ -377,7 +378,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case INT:
 					{
 						int ivalue=value==null?0:((Integer)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:ivalue!=0;
 							case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays(ivalue));
 							case DECIMAL_2: return value==null?null:Integer.valueOf(ivalue*100);
@@ -399,7 +400,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case INTERVAL:
 					{
 						long lvalue=value==null?0:((Long)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
 							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(lvalue*1000));
 							case DOUBLE: return value==null?null:new Double((double)lvalue);
@@ -418,7 +419,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case LONG:
 					{
 						long lvalue=value==null?0:((Long)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:lvalue!=0;
 							case DATE: return value==null?null:new java.sql.Date(lvalue);
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
@@ -437,7 +438,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case OCTAL_LONG:
 					{
 						long lvalue=value==null?0:((Long)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:lvalue!=0;
 							case DATE: return value==null?null:new java.sql.Date(lvalue);
 							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
@@ -454,7 +455,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					}
 					break;
 				case PKEY:
-					switch(castToType.getNum()) {
+					switch(castToType.getId()) {
 						case FKEY: return value;
 						case INT: return value;
 					}
@@ -468,7 +469,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case SHORT:
 					{
 						short svalue=value==null?0:((Short)value);
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:svalue!=0;
 							case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays(svalue));
 							case DECIMAL_2: return value==null?null:Integer.valueOf(svalue*100);
@@ -488,7 +489,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case TIME:
 					{
 						long lvalue=value==null?0:((java.sql.Timestamp)value).getTime();
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case DATE: return value==null?null:new java.sql.Date(lvalue);
 							case LONG: return value==null?null:Long.valueOf(lvalue);
 							case OCTAL_LONG: return value==null?null:Long.valueOf(lvalue);
@@ -497,7 +498,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case URL:
 					// TODO: URL as URI (no resolve stuff)?
-					switch(castToType.getNum()) {
+					switch(castToType.getId()) {
 						case HOSTNAME: return value==null?null:HostAddress.valueOf(new URL((String)value).getHost());
 						case PATH: return value==null?null:UnixPath.valueOf(new URL((String)value).getPath());
 						case ZONE: return value==null?null:getZoneForDomainName(conn, DomainName.valueOf(new URL((String)value).getHost()));
@@ -506,14 +507,14 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case USERNAME:
 					// TODO: com.aoindustries.aoserv.client.validator.UserId
-					switch(castToType.getNum()) {
+					switch(castToType.getId()) {
 						case MYSQL_USERNAME: return value==null ? null : MySQLUserId.valueOf(value.toString());
 						case POSTGRES_USERNAME: return value==null ? null : PostgresUserId.valueOf(value.toString());
 					}
 					break;
 				case ZONE:
 					// TODO: com.aoindustries.aoserv.client.validator.Zone
-					switch(castToType.getNum()) {
+					switch(castToType.getId()) {
 						case HOSTNAME: {
 							String hname = (String)value;
 							while(hname.endsWith(".")) hname = hname.substring(0, hname.length()-1);
@@ -525,7 +526,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case BIG_DECIMAL:
 					{
 						BigDecimal bvalue = (BigDecimal)value;
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:bvalue.compareTo(BigDecimal.ZERO)!=0;
 							case DECIMAL_2: return value==null?null:bvalue.multiply(bigDecimal100).intValue();
 							case DECIMAL_3: return value==null?null:bvalue.multiply(bigDecimal1000).intValue();
@@ -542,7 +543,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case DOMAIN_LABEL:
 					{
 						DomainLabel dlvalue = (DomainLabel)value;
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case DOMAIN_LABELS: return value==null?null:DomainLabels.valueOf(dlvalue.toString());
 							case DOMAIN_NAME: return value==null?null:DomainName.valueOf(dlvalue.toString());
 						}
@@ -551,13 +552,13 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case DOMAIN_LABELS:
 					{
 						DomainLabels dlvalue = (DomainLabels)value;
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case DOMAIN_NAME: return DomainName.valueOf(((DomainLabels)value).toString());
 						}
 					}
 					break;
 				case DOMAIN_NAME:
-					switch(castToType.getNum()) {
+					switch(castToType.getId()) {
 						case HOSTNAME: return HostAddress.valueOf((DomainName)value);
 						case ZONE: return ((DomainName)value).toString()+'.';
 						case DOMAIN_LABELS: return DomainLabels.valueOf(((DomainName)value).toString());
@@ -574,7 +575,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case LINUX_ID:
 					{
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BOOLEAN: return value==null?null:((LinuxId)value).getId()!=0;
 							case INT: return value==null?null:Integer.valueOf(((LinuxId)value).getId());
 						}
@@ -585,7 +586,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case MONEY:
 					{
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case BIG_DECIMAL: return value==null?null:((Money)value).getValue();
 						}
 					}
@@ -601,14 +602,14 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case MYSQL_USERNAME:
 					{
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case USERNAME: return value;
 						}
 					}
 					break;
 				case NET_PORT:
 					{
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case INT: return value==null?null:Integer.valueOf(((Port)value).getPort());
 						}
 					}
@@ -621,7 +622,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					break;
 				case POSTGRES_USERNAME:
 					{
-						switch(castToType.getNum()) {
+						switch(castToType.getId()) {
 							case USERNAME: return value;
 						}
 					}
@@ -630,7 +631,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 					// No special casts
 					break;
 			}
-			throw new IllegalArgumentException("Unable to cast from "+type+" to "+castToType.getType());
+			throw new IllegalArgumentException("Unable to cast from "+name+" to "+castToType.getName());
 		} catch(ValidationException e) {
 			throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 		}
@@ -664,7 +665,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	 *
 	 * @param  value1  the first value being compared
 	 * @param  value2  the second value being compared
-	 * @param  type  the data type
+	 * @param  id  the data type
 	 *
 	 * @return  the value <code>0</code> if the two values are equal;
 	 *          a value less than <code>0</code> if the first value
@@ -674,13 +675,13 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	 *
 	 * @exception  IllegalArgumentException  if the type is invalid
 	 */
-	public static int compareTo(Object value1, Object value2, int type) throws IllegalArgumentException, SQLException, UnknownHostException {
+	public static int compareTo(Object value1, Object value2, int id) throws IllegalArgumentException, SQLException, UnknownHostException {
 		try {
 			if(value1==null) {
 				return value2==null?0:-1;
 			} else {
 				if(value2==null) return 1;
-				switch(type) {
+				switch(id) {
 					case ACCOUNTING:
 						return ((AccountingCode)value1).compareTo((AccountingCode)value2);
 					case PHONE:
@@ -780,7 +781,7 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 						return ((PostgresUserId)value1).compareTo((PostgresUserId)value2);
 					case FIREWALLD_ZONE_NAME:
 						return ((FirewalldZoneName)value1).compareTo((FirewalldZoneName)value2);
-					default: throw new IllegalArgumentException("Unknown type: "+type);
+					default: throw new IllegalArgumentException("Unknown type: "+id);
 				}
 			}
 		} catch(ValidationException e) {
@@ -798,30 +799,92 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_TYPE: return type;
-			case 1: return pkey;
-			case 2: return since_version;
-			case 3: return last_version;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 0: return pkey;
+			case COLUMN_NAME: return name;
+			case 2: return sinceVersion;
+			case 3: return lastVersion;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public int getNum() {
+	public int getId() {
 		return pkey;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getSinceVersion_version() {
+		return sinceVersion;
+	}
+
+	public AOServProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
+		AOServProtocol obj = connector.getAoservProtocols().get(sinceVersion);
+		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
+		return obj;
+	}
+
+	public String getLastVersion_version() {
+		return lastVersion;
+	}
+
+	public AOServProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
+		if(lastVersion == null) return null;
+		AOServProtocol obj = connector.getAoservProtocols().get(lastVersion);
+		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
+		return obj;
+	}
+
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.SCHEMA_TYPES;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		int pos = 1;
+		pkey         = result.getInt(pos++);
+		name         = result.getString(pos++);
+		sinceVersion = result.getString(pos++);
+		lastVersion  = result.getString(pos++);
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey         = in.readCompressedInt();
+		name         = in.readUTF().intern();
+		sinceVersion = in.readUTF().intern();
+		lastVersion  = InternUtils.intern(in.readNullUTF());
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			out.writeUTF(name);
+			out.writeCompressedInt(pkey);
+		} else {
+			out.writeCompressedInt(pkey);
+			out.writeUTF(name);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_69) >= 0) {
+			out.writeUTF(sinceVersion);
+			out.writeNullUTF(lastVersion);
+		}
 	}
 
 	@Override
 	String toStringImpl() {
-		return type;
+		return name;
 	}
 
 	public String getString(Object value) {
 		return getString(value, pkey);
 	}
 
-	public static String getString(Object value, int type) throws IllegalArgumentException {
-		if(value==null) return null;
-		switch(type) {
+	public static String getString(Object value, int id) throws IllegalArgumentException {
+		if(value == null) return null;
+		switch(id) {
 			case ACCOUNTING: return value.toString();
 			case BOOLEAN: return value.toString();
 			case DATE: return SQLUtility.getDate(((java.sql.Date)value).getTime());
@@ -865,43 +928,18 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 			case POSTGRES_SERVER_NAME: return value.toString();
 			case POSTGRES_USERNAME: return value.toString();
 			case FIREWALLD_ZONE_NAME: return value.toString();
-			default: throw new IllegalArgumentException("Unknown SchemaType: "+type);
+			default: throw new IllegalArgumentException("Unknown SchemaType: " + id);
 		}
-	}
-
-	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.SCHEMA_TYPES;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public String getSinceVersion() {
-		return since_version;
-	}
-
-	public String getLastVersion() {
-		return last_version;
-	}
-
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		type          = result.getString(1);
-		pkey          = result.getInt(2);
-		since_version = result.getString(3);
-		last_version  = result.getString(4);
 	}
 
 	public Object parseString(String S) throws IllegalArgumentException {
 		return parseString(S, pkey);
 	}
 
-	public static Object parseString(String S, int type) throws IllegalArgumentException {
+	public static Object parseString(String S, int id) throws IllegalArgumentException {
 		try {
-			if(S==null) return null;
-			switch(type) {
+			if(S == null) return null;
+			switch(id) {
 				case ACCOUNTING:
 					return AccountingCode.valueOf(S);
 				case EMAIL: // TODO: com.aoindustries.net.Email
@@ -1002,28 +1040,10 @@ final public class SchemaType extends GlobalObjectIntegerKey<SchemaType> {
 				case FIREWALLD_ZONE_NAME:
 					return FirewalldZoneName.valueOf(S);
 				default:
-					throw new IllegalArgumentException("Unknown SchemaType: "+type);
+					throw new IllegalArgumentException("Unknown SchemaType: "+id);
 			}
 		} catch(ValidationException e) {
 			throw new IllegalArgumentException(e.getLocalizedMessage(), e);
-		}
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		type          = in.readUTF().intern();
-		pkey          = in.readCompressedInt();
-		since_version = in.readUTF().intern();
-		last_version  = InternUtils.intern(in.readNullUTF());
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeUTF(type);
-		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_69)>=0) {
-			out.writeUTF(since_version);
-			out.writeNullUTF(last_version);
 		}
 	}
 

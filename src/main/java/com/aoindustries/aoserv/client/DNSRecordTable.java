@@ -79,8 +79,8 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 	}
 
 	@Override
-	public DNSRecord get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(DNSRecord.COLUMN_PKEY, pkey);
+	public DNSRecord get(int id) throws IOException, SQLException {
+		return getUniqueRow(DNSRecord.COLUMN_ID, id);
 	}
 
 	List<DNSRecord> getDNSRecords(DNSZone dnsZone) throws IOException, SQLException {
@@ -97,8 +97,8 @@ final public class DNSRecordTable extends CachedTableIntegerKey<DNSRecord> {
 		for(int c=0;c<size;c++) {
 			DNSRecord record=cached.get(c);
 			if(
-				record.type.equals(type)
-				&& record.domain.equals(domain)
+				record.getType_type().equals(type)
+				&& record.getDomain().equals(domain)
 			) matches.add(record);
 		}
 		return matches;

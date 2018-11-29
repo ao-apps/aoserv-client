@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -52,6 +52,10 @@ public class AOServer extends AOServObject {
 	private Float monitoringLoadCritical;
 	private LinuxId uidMin;
 	private LinuxId gidMin;
+	private LinuxId uidMax;
+	private LinuxId gidMax;
+	private LinuxId lastUid;
+	private LinuxId lastGid;
 	private Long sftpUmask;
 
 	public AOServer() {
@@ -79,6 +83,10 @@ public class AOServer extends AOServObject {
 		Float monitoringLoadCritical,
 		LinuxId uidMin,
 		LinuxId gidMin,
+		LinuxId uidMax,
+		LinuxId gidMax,
+		LinuxId lastUid,
+		LinuxId lastGid,
 		Long sftpUmask
 	) {
 		this.server = server;
@@ -102,6 +110,10 @@ public class AOServer extends AOServObject {
 		this.monitoringLoadCritical = monitoringLoadCritical;
 		this.uidMin = uidMin;
 		this.gidMin = gidMin;
+		this.uidMax = uidMax;
+		this.gidMax = gidMax;
+		this.lastUid = lastUid;
+		this.lastGid = lastGid;
 		this.sftpUmask = sftpUmask;
 	}
 
@@ -271,6 +283,38 @@ public class AOServer extends AOServObject {
 
 	public void setGidMin(LinuxId gidMin) {
 		this.gidMin = gidMin;
+	}
+
+	public LinuxId getUidMax() {
+		return uidMax;
+	}
+
+	public void setUidMax(LinuxId uidMax) {
+		this.uidMax = uidMax;
+	}
+
+	public LinuxId getGidMax() {
+		return gidMax;
+	}
+
+	public void setGidMax(LinuxId gidMax) {
+		this.gidMax = gidMax;
+	}
+
+	public LinuxId getLastUid() {
+		return lastUid;
+	}
+
+	public void setLastUid(LinuxId lastUid) {
+		this.lastUid = lastUid;
+	}
+
+	public LinuxId getLastGid() {
+		return lastGid;
+	}
+
+	public void setLastGid(LinuxId lastGid) {
+		this.lastGid = lastGid;
 	}
 
 	public Long getSftpUmask() {

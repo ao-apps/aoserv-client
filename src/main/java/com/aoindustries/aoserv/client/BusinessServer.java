@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -208,9 +208,9 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 							String details=nb.getDetails();
 							if(details!=null) reasons.add(new CannotRemoveReason<>("Used for "+details+" on "+se.toStringImpl(), nb));
 							else {
-								IPAddress ia=nb.getIPAddress();
-								NetDevice nd=ia.getNetDevice();
-								if(nd!=null) reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort()+" on "+ia.getInetAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), nb));
+								IPAddress ia=nb.getIpAddress();
+								NetDevice nd = ia.getDevice();
+								if(nd!=null) reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort()+" on "+ia.getInetAddress()+" on "+nd.getDeviceId().getName()+" on "+se.toStringImpl(), nb));
 								else reasons.add(new CannotRemoveReason<>("Used for port "+nb.getPort()+" on "+ia.getInetAddress()+" on "+se.toStringImpl(), nb));
 							}
 						}
@@ -218,11 +218,11 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 
 					// ip_addresses
 					for(IPAddress ia : pk.getIPAddresses()) {
-						NetDevice nd=ia.getNetDevice();
+						NetDevice nd = ia.getDevice();
 						if(
 							nd!=null
 							&& se.equals(nd.getServer())
-						) reasons.add(new CannotRemoveReason<>("Used by IP address "+ia.getInetAddress()+" on "+nd.getNetDeviceID().getName()+" on "+se.toStringImpl(), ia));
+						) reasons.add(new CannotRemoveReason<>("Used by IP address "+ia.getInetAddress()+" on "+nd.getDeviceId().getName()+" on "+se.toStringImpl(), ia));
 					}
 
 					if(ao!=null) {
@@ -233,7 +233,7 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 
 						// httpd_sites
 						for(HttpdSite hs : pk.getHttpdSites()) {
-							if(hs.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
+							if(hs.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
 						}
 
 						for(Username un : pk.getUsernames()) {
@@ -272,13 +272,13 @@ final public class BusinessServer extends CachedObjectIntegerKey<BusinessServer>
 						// mysql_databases
 						for(MySQLDatabase md : pk.getMySQLDatabases()) {
 							MySQLServer ms=md.getMySQLServer();
-							if(ms.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
+							if(ms.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
 						}
 
 						// postgres_databases
 						for(PostgresDatabase pd : pk.getPostgresDatabases()) {
 							PostgresServer ps=pd.getPostgresServer();
-							if(ps.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
+							if(ps.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
 						}
 
 						// email_domains

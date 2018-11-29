@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017  AO Industries, Inc.
+ * Copyright (C) 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,7 +43,7 @@ final public class HttpdTomcatSiteJkMountTable extends CachedTableIntegerKey<Htt
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + HttpdTomcatSite.COLUMN_HTTPD_SITE_name + '.' + HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + HttpdTomcatSite.COLUMN_HTTPD_SITE_name + '.' + HttpdSite.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_HTTPD_TOMCAT_SITE_name + '.' + HttpdTomcatSite.COLUMN_HTTPD_SITE_name + '.' + HttpdSite.COLUMN_AO_SERVER_name + '.' + AOServer.COLUMN_HOSTNAME_name, ASCENDING),
 		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_MOUNT_name, DESCENDING), // JkMount before JkUnMount
 		new OrderBy(HttpdTomcatSiteJkMount.COLUMN_PATH_name, ASCENDING)

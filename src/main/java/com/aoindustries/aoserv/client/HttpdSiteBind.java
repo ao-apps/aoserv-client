@@ -263,7 +263,7 @@ final public class HttpdSiteBind extends CachedObjectIntegerKey<HttpdSiteBind> i
 	public boolean canEnable() throws SQLException, IOException {
 		DisableLog dl = getDisableLog();
 		if(dl == null) return false;
-		else return dl.canEnable() && getHttpdSite().disable_log == -1;
+		else return dl.canEnable() && !getHttpdSite().isDisabled();
 	}
 
 	@Override

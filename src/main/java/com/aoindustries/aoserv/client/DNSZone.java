@@ -374,14 +374,14 @@ final public class DNSZone extends CachedObjectStringKey<DNSZone> implements Rem
 				hasConflictAbove ? "; Disabled due to conflict: " : "",
 				line,
 				out,
-				record.domain,
+				record.getDomain(),
 				ttl,
-				record.ttl,
-				record.type,
-				record.priority,
-				record.weight,
-				record.port,
-				record.destination
+				record.getTtl(),
+				record.getType_type(),
+				record.getPriority(),
+				record.getWeight(),
+				record.getPort(),
+				record.getDestination()
 			);
 			// Allow the first one when there is a conflict
 			if(!hasConflictAbove) {

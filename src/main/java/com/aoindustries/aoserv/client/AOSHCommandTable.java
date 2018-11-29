@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -58,7 +58,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> {
 	List<AOSHCommand> getAOSHCommands(SchemaTable table) throws IOException, SQLException {
 		synchronized(this) {
 			// Table might be null
-			String name=table==null?GLOBAL_COMMANDS:table.name;
+			String name = (table == null) ? GLOBAL_COMMANDS : table.getName();
 			List<AOSHCommand> list=tableCommands.get(name);
 			if(list!=null) return list;
 
@@ -69,8 +69,8 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> {
 				AOSHCommand command=cached.get(c);
 				if(
 					table==null
-					?command.table_name==null
-					:name.equals(command.table_name)
+					?command.getTable_name() == null
+					:name.equals(command.getTable_name())
 				) matches.add(command);
 			}
 			matches=Collections.unmodifiableList(matches);
@@ -154,7 +154,7 @@ final public class AOSHCommandTable extends GlobalTableStringKey<AOSHCommand> {
 				int space=Math.max(1, 40-command.length());
 				for(int d=0;d<space;d++) out.print(d>0 && d<(space-1)?'.':' ');
 				// Print the description without the HTML tags
-				String desc=shortOrSchema?aoshCom.getShortDesc():aoshCom.getSyntax();
+				String desc = shortOrSchema ? aoshCom.getDescription() : aoshCom.getSyntax();
 				AOSHCommand.printNoHTML(out, desc);
 				out.println();
 			}

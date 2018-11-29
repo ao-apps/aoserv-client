@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,7 +43,7 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+		new OrderBy(HttpdSite.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
@@ -56,8 +56,8 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 	}
 
 	@Override
-	public HttpdSite get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(HttpdSite.COLUMN_PKEY, pkey);
+	public HttpdSite get(int id) throws IOException, SQLException {
+		return getUniqueRow(HttpdSite.COLUMN_ID, id);
 	}
 
 	HttpdSite getHttpdSite(String siteName, AOServer ao) throws IOException, SQLException {
@@ -68,8 +68,8 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 		for(int c=0;c<size;c++) {
 			HttpdSite site=cached.get(c);
 			if(
-				site.ao_server==aoPKey
-				&& site.site_name.equals(siteName)
+				site.getAoServer_server_pkey() == aoPKey
+				&& site.getName().equals(siteName)
 			) return site;
 		}
 		return null;
@@ -111,8 +111,8 @@ final public class HttpdSiteTable extends CachedTableIntegerKey<HttpdSite> {
 		for(int c=0;c<size;c++) {
 			HttpdSite site=cached.get(c);
 			if(
-				site.ao_server==aoServer
-				&& site.linuxAccount.equals(lsaUsername)
+				site.getAoServer_server_pkey() == aoServer
+				&& site.getLinuxAccount_username().equals(lsaUsername)
 			) matches.add(site);
 		}
 		return matches;

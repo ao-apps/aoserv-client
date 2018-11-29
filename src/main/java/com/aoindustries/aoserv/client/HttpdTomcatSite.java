@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -166,7 +166,7 @@ final public class HttpdTomcatSite extends CachedObjectIntegerKey<HttpdTomcatSit
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
 		if(
 			obj.getTechnologyVersion(table.connector).getOperatingSystemVersion(table.connector).getPkey()
-			!= getHttpdSite().getAOServer().getServer().operating_system_version
+			!= getHttpdSite().getAoServer().getServer().operating_system_version
 		) {
 			throw new SQLException("resource/operating system version mismatch on HttpdTomcatSite: #"+pkey);
 		}

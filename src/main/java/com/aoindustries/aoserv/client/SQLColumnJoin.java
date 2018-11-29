@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -47,18 +47,18 @@ final public class SQLColumnJoin extends SQLExpression {
 		SchemaColumn keyColumn,
 		SchemaColumn valueColumn
 	) throws SQLException, IOException {
-		this.expression=expression;
-		this.keyColumn=keyColumn;
-		this.keyIndex=keyColumn.getIndex();
-		this.valueColumn=valueColumn;
-		this.type=valueColumn.getSchemaType(conn);
-		this.table=keyColumn.getSchemaTable(conn).getAOServTable(conn);
+		this.expression = expression;
+		this.keyColumn = keyColumn;
+		this.keyIndex = keyColumn.getIndex();
+		this.valueColumn = valueColumn;
+		this.type = valueColumn.getType(conn);
+		this.table = keyColumn.getTable(conn).getAOServTable(conn);
 		this.valueIndex=valueColumn.getIndex();
 	}
 
 	@Override
 	public String getColumnName() {
-		return valueColumn.column_name;
+		return valueColumn.getName();
 	}
 
 	@Override
@@ -79,7 +79,7 @@ final public class SQLColumnJoin extends SQLExpression {
 	@Override
 	public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
 		expression.getReferencedTables(conn, tables);
-		SchemaTable t=keyColumn.getSchemaTable(conn);
+		SchemaTable t = keyColumn.getTable(conn);
 		if(!tables.contains(t)) tables.add(t);
 	}
 }

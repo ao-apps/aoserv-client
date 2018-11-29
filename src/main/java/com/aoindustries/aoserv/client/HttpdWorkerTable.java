@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,9 +40,9 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(HttpdWorker.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(HttpdWorker.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(HttpdWorker.COLUMN_CODE_name, ASCENDING)
+		new OrderBy(HttpdWorker.COLUMN_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(HttpdWorker.COLUMN_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(HttpdWorker.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {
@@ -50,8 +50,8 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 	}
 
 	@Override
-	public HttpdWorker get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(HttpdWorker.COLUMN_PKEY, pkey);
+	public HttpdWorker get(int bind) throws IOException, SQLException {
+		return getUniqueRow(HttpdWorker.COLUMN_BIND, bind);
 	}
 
 	List<HttpdWorker> getHttpdWorkers(HttpdServer server) throws IOException, SQLException {
@@ -62,7 +62,7 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 	Loop:
 		for(int c=0;c<size;c++) {
 			HttpdWorker worker=cached.get(c);
-			HttpdTomcatSite hts=worker.getHttpdTomcatSite();
+			HttpdTomcatSite hts=worker.getTomcatSite();
 			if(hts!=null) {
 				List<HttpdSiteBind> binds=hts.getHttpdSite().getHttpdSiteBinds();
 				// If one of the binds is this server, then count as a match
@@ -98,7 +98,7 @@ final public class HttpdWorkerTable extends CachedTableIntegerKey<HttpdWorker> {
 	}
 
 	HttpdWorker getHttpdWorker(NetBind nb) throws IOException, SQLException {
-		return getUniqueRow(HttpdWorker.COLUMN_NET_BIND, nb.pkey);
+		return getUniqueRow(HttpdWorker.COLUMN_BIND, nb.pkey);
 	}
 
 	@Override

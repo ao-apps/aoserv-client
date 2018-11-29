@@ -55,12 +55,12 @@ import java.util.concurrent.ConcurrentMap;
 final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_NET_DEVICE=2,
-		COLUMN_PACKAGE=5
+		COLUMN_ID = 0,
+		COLUMN_DEVICE = 2,
+		COLUMN_PACKAGE = 5
 	;
-	static final String COLUMN_IP_ADDRESS_name = "ip_address";
-	static final String COLUMN_NET_DEVICE_name = "net_device";
+	static final String COLUMN_IP_ADDRESS_name = "inetAddress";
+	static final String COLUMN_DEVICE_name = "device";
 
 	public static final String
 		LOOPBACK_IP="127.0.0.1",
@@ -143,41 +143,81 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		return arpa;
 	}*/
 
-	InetAddress ip_address;
-	int net_device;
-	boolean is_alias;
+	private InetAddress inetAddress;
+	private int device;
+	private boolean isAlias;
 	private DomainName hostname;
-	AccountingCode packageName;
+	private int package_id;
 	private long created;
-	private boolean available;
+	private boolean isAvailable;
 	private boolean isOverflow;
-	private boolean isDHCP;
-	private boolean pingMonitorEnabled;
-	private InetAddress externalIpAddress;
+	private boolean isDhcp;
+	private InetAddress externalInetAddress;
 	private String netmask;
+	// Protocol conversion
+	private AccountingCode packageName;
+	private boolean pingMonitorEnabled;
 	private boolean checkBlacklistsOverSmtp;
 	private boolean monitoringEnabled;
 
 	@Override
 	Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return ip_address;
-			case COLUMN_NET_DEVICE: return net_device==-1?null:net_device;
-			case 3: return is_alias;
+			case COLUMN_ID: return pkey;
+			case 1: return inetAddress;
+			case COLUMN_DEVICE: return device == -1 ? null : device;
+			case 3: return isAlias;
 			case 4: return hostname;
-			case COLUMN_PACKAGE: return packageName;
+			case COLUMN_PACKAGE: return package_id;
 			case 6: return getCreated();
-			case 7: return available;
+			case 7: return isAvailable;
 			case 8: return isOverflow;
-			case 9: return isDHCP;
-			case 10: return pingMonitorEnabled;
-			case 11: return externalIpAddress;
-			case 12: return netmask;
-			case 13: return checkBlacklistsOverSmtp;
-			case 14: return monitoringEnabled;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 9: return isDhcp;
+			case 10: return externalInetAddress;
+			case 11: return netmask;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
+	}
+
+	public int getId() {
+		return pkey;
+	}
+
+	public InetAddress getInetAddress() {
+		return inetAddress;
+	}
+
+	public int getDevice_id() {
+		return device;
+	}
+
+	public NetDevice getDevice() throws SQLException, IOException {
+		if(device == -1) return null;
+		NetDevice nd = table.connector.getNetDevices().get(device);
+		if (nd == null) throw new SQLException("Unable to find NetDevice: " + device);
+		return nd;
+	}
+
+	public boolean isAlias() {
+		return isAlias;
+	}
+
+	public DomainName getHostname() {
+		return hostname;
+	}
+
+	public int getPackage_id() {
+		return package_id;
+	}
+
+	public Package getPackage() throws IOException, SQLException {
+		// May be null when filtered
+		return table.connector.getPackages().get(package_id);
+	}
+
+	// TODO: Add this type of shortcut in other places where Timestamp is wrapped and returned
+	public long getCreated_time() {
+		return created;
 	}
 
 	/**
@@ -190,75 +230,32 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		return new Timestamp(created);
 	}
 
-	public DomainName getHostname() {
-		return hostname;
-	}
-
-	public InetAddress getInetAddress() {
-		return ip_address;
-	}
 
 	public List<NetBind> getNetBinds() throws IOException, SQLException {
 		return table.connector.getNetBinds().getNetBinds(this);
 	}
 
-	public NetDevice getNetDevice() throws SQLException, IOException {
-		if(net_device==-1) return null;
-		NetDevice nd = table.connector.getNetDevices().get(net_device);
-		if (nd == null) throw new SQLException("Unable to find NetDevice: " + net_device);
-		return nd;
-	}
-
-	public Package getPackage() throws IOException, SQLException {
-		// May be null when filtered
-		return table.connector.getPackages().get(packageName);
+	public boolean isAvailable() {
+		return isAvailable;
 	}
 
 	public boolean isOverflow() {
 		return isOverflow;
 	}
 
-	public boolean isDHCP() {
-		return isDHCP;
-	}
-
-	public boolean isPingMonitorEnabled() {
-		return pingMonitorEnabled;
+	public boolean isDhcp() {
+		return isDhcp;
 	}
 
 	/**
 	 * Gets the external IP address, if different than ip_address.
 	 */
-	public InetAddress getExternalIpAddress() {
-		return externalIpAddress;
+	public InetAddress getExternalInetAddress() {
+		return externalInetAddress;
 	}
 
 	public String getNetMask() {
 		return netmask;
-	}
-
-	/**
-	 * When the IP address is assigned to an AOServer, blacklist status
-	 * may be further determined by making SMTP connections out from the
-	 * server point of view.  This allows the detection of blocks by some
-	 * providers that give no other way to query, such as Comcast and the
-	 * AT&amp;T family of companies.
-	 */
-	public boolean getCheckBlacklistsOverSmtp() {
-		return checkBlacklistsOverSmtp;
-	}
-
-	public boolean isMonitoringEnabled() {
-		return monitoringEnabled;
-	}
-
-	public void setMonitoringEnabled(boolean monitoringEnabled) throws IOException, SQLException {
-		table.connector.requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
-			pkey,
-			monitoringEnabled
-		);
 	}
 
 	@Override
@@ -271,19 +268,21 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		try {
 			int pos = 1;
 			pkey = result.getInt(pos++);
-			ip_address = InetAddress.valueOf(result.getString(pos++));
-			net_device = result.getInt(pos++);
-			if(result.wasNull()) net_device=-1;
-			is_alias = result.getBoolean(pos++);
+			inetAddress = InetAddress.valueOf(result.getString(pos++));
+			device = result.getInt(pos++);
+			if(result.wasNull()) device = -1;
+			isAlias = result.getBoolean(pos++);
 			hostname = DomainName.valueOf(result.getString(pos++));
-			packageName = AccountingCode.valueOf(result.getString(pos++));
+			package_id = result.getInt(pos++);
 			created = result.getTimestamp(pos++).getTime();
-			available = result.getBoolean(pos++);
+			isAvailable = result.getBoolean(pos++);
 			isOverflow = result.getBoolean(pos++);
-			isDHCP = result.getBoolean(pos++);
-			pingMonitorEnabled = result.getBoolean(pos++);
-			externalIpAddress = InetAddress.valueOf(result.getString(pos++));
+			isDhcp = result.getBoolean(pos++);
+			externalInetAddress = InetAddress.valueOf(result.getString(pos++));
 			netmask = result.getString(pos++);
+			// Protocol conversion
+			packageName = AccountingCode.valueOf(result.getString(pos++));
+			pingMonitorEnabled = result.getBoolean(pos++);
 			checkBlacklistsOverSmtp = result.getBoolean(pos++);
 			monitoringEnabled = result.getBoolean(pos++);
 		} catch(ValidationException e) {
@@ -291,12 +290,60 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		}
 	}
 
-	public boolean isAlias() {
-		return is_alias;
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey = in.readCompressedInt();
+			inetAddress = InetAddress.valueOf(in.readUTF()).intern();
+			device = in.readCompressedInt();
+			isAlias = in.readBoolean();
+			hostname = DomainName.valueOf(in.readNullUTF());
+			package_id = in.readCompressedInt();
+			created = in.readLong();
+			isAvailable = in.readBoolean();
+			isOverflow = in.readBoolean();
+			isDhcp = in.readBoolean();
+			externalInetAddress = InetAddress.valueOf(in.readNullUTF());
+			netmask = in.readUTF().intern();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
-	public boolean isAvailable() {
-		return available;
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68) <= 0) out.writeUTF(inetAddress.isUnspecified() ? "0.0.0.0" : inetAddress.toString());
+		else out.writeUTF(inetAddress.toString());
+		out.writeCompressedInt(device);
+		out.writeBoolean(isAlias);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68) <= 0) {
+			out.writeUTF(hostname==null ? "*" : hostname.toString());
+		} else {
+			out.writeNullUTF(ObjectUtils.toString(hostname));
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			out.writeUTF(packageName.toString());
+		} else {
+			out.writeCompressedInt(package_id);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122) <= 0) out.writeCompressedInt(0);
+		out.writeLong(created);
+		out.writeBoolean(isAvailable);
+		out.writeBoolean(isOverflow);
+		out.writeBoolean(isDhcp);
+		if(
+			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30) >= 0
+			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0
+		) {
+			out.writeBoolean(pingMonitorEnabled);
+		}
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_34) >= 0) out.writeNullUTF(ObjectUtils.toString(externalInetAddress));
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_38) >= 0) out.writeUTF(netmask);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_75) >= 0) out.writeBoolean(checkBlacklistsOverSmtp);
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) >= 0) out.writeBoolean(monitoringEnabled);
+		}
 	}
 
 	public boolean isUsed() throws IOException, SQLException {
@@ -308,34 +355,11 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 	 */
 	@Deprecated
 	public boolean isWildcard() {
-		return ip_address.isUnspecified();
+		return inetAddress.isUnspecified();
 	}
 
 	public void moveTo(Server server) throws IOException, SQLException {
-		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.MOVE_IP_ADDRESS, ip_address.toString(), server.pkey);
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		try {
-			pkey=in.readCompressedInt();
-			ip_address=InetAddress.valueOf(in.readUTF()).intern();
-			net_device=in.readCompressedInt();
-			is_alias=in.readBoolean();
-			hostname=DomainName.valueOf(in.readNullUTF());
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
-			created=in.readLong();
-			available=in.readBoolean();
-			isOverflow=in.readBoolean();
-			isDHCP=in.readBoolean();
-			pingMonitorEnabled = in.readBoolean();
-			externalIpAddress = InetAddress.valueOf(in.readNullUTF());
-			netmask = in.readUTF().intern();
-			checkBlacklistsOverSmtp = in.readBoolean();
-			monitoringEnabled = in.readBoolean();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
+		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.MOVE_IP_ADDRESS, inetAddress.toString(), server.pkey);
 	}
 
 	/**
@@ -359,28 +383,7 @@ final public class IPAddress extends CachedObjectIntegerKey<IPAddress> {
 		table.connector.requestUpdateIL(true, AOServProtocol.CommandID.SET_IP_ADDRESS_DHCP_ADDRESS, pkey, ipAddress);
 	}
 
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) out.writeUTF(ip_address.isUnspecified() ? "0.0.0.0" : ip_address.toString());
-		else out.writeUTF(ip_address.toString());
-		out.writeCompressedInt(net_device);
-		out.writeBoolean(is_alias);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68)<=0) {
-			out.writeUTF(hostname==null ? "*" : hostname.toString());
-		} else {
-			out.writeNullUTF(ObjectUtils.toString(hostname));
-		}
-		out.writeUTF(packageName.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(0);
-		out.writeLong(created);
-		out.writeBoolean(available);
-		out.writeBoolean(isOverflow);
-		out.writeBoolean(isDHCP);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)>=0) out.writeBoolean(pingMonitorEnabled);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_34)>=0) out.writeNullUTF(ObjectUtils.toString(externalIpAddress));
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_38)>=0) out.writeUTF(netmask);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_75)>=0) out.writeBoolean(checkBlacklistsOverSmtp);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) >= 0) out.writeBoolean(monitoringEnabled);
+	public IpAddressMonitoring getMonitoring() throws IOException, SQLException {
+		return table.connector.getIpAddressMonitoring().get(pkey);
 	}
 }

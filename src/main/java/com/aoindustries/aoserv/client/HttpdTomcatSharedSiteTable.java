@@ -45,7 +45,7 @@ final public class HttpdTomcatSharedSiteTable extends CachedTableIntegerKey<Http
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(HttpdTomcatSharedSite.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_SITE_NAME_name, ASCENDING),
+		new OrderBy(HttpdTomcatSharedSite.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(HttpdTomcatSharedSite.COLUMN_TOMCAT_SITE_name+'.'+HttpdTomcatSite.COLUMN_HTTPD_SITE_name+'.'+HttpdSite.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override

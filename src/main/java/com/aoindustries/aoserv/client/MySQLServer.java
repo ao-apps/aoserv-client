@@ -363,10 +363,8 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	// </editor-fold>
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_AO_SERVER=2,
-		COLUMN_NET_BIND=5,
-		COLUMN_PACKAGE=6
+		COLUMN_BIND = 0,
+		COLUMN_AO_SERVER = 2
 	;
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 	static final String COLUMN_NAME_name = "name";
@@ -379,12 +377,106 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 	@Deprecated
 	public static final int MAX_SERVER_NAME_LENGTH = MySQLServerName.MAX_LENGTH;
 
-	MySQLServerName name;
-	int ao_server;
+	private MySQLServerName name;
+	private int ao_server;
 	private int version;
 	private int max_connections;
-	int net_bind;
-	AccountingCode packageName;
+	// Protocol conversion
+	private AccountingCode packageName;
+
+	@Override
+	Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_BIND: return pkey;
+			case 1: return name;
+			case COLUMN_AO_SERVER: return ao_server;
+			case 3: return version;
+			case 4: return max_connections;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
+		}
+	}
+
+	public int getBind_id() {
+		return pkey;
+	}
+
+	public NetBind getBind() throws SQLException, IOException {
+		NetBind nb = table.connector.getNetBinds().get(pkey);
+		if(nb == null) throw new SQLException("Unable to find NetBind: " + pkey);
+		return nb;
+	}
+
+	public MySQLServerName getName() {
+		return name;
+	}
+
+	public int getAoServer_server_pkey() {
+		return ao_server;
+	}
+
+	public AOServer getAoServer() throws SQLException, IOException {
+		AOServer ao = table.connector.getAoServers().get(ao_server);
+		if(ao == null) throw new SQLException("Unable to find AOServer: " + ao_server);
+		return ao;
+	}
+
+	public TechnologyVersion getVersion() throws SQLException, IOException {
+		TechnologyVersion obj=table.connector.getTechnologyVersions().get(version);
+		if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+version);
+		if(
+			obj.getOperatingSystemVersion(table.connector).getPkey()
+			!= getAoServer().getServer().operating_system_version
+		) {
+			throw new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey);
+		}
+		return obj;
+	}
+
+	public int getMaxConnections() {
+		return max_connections;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		try {
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			name = MySQLServerName.valueOf(result.getString(pos++));
+			ao_server = result.getInt(pos++);
+			version = result.getInt(pos++);
+			max_connections = result.getInt(pos++);
+			// Protocol conversion
+			packageName = AccountingCode.valueOf(result.getString(pos++));
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		try {
+			pkey = in.readCompressedInt();
+			name = MySQLServerName.valueOf(in.readUTF()).intern();
+			ao_server = in.readCompressedInt();
+			version = in.readCompressedInt();
+			max_connections = in.readCompressedInt();
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeUTF(name.toString());
+		out.writeCompressedInt(ao_server);
+		out.writeCompressedInt(version);
+		out.writeCompressedInt(max_connections);
+		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+			out.writeCompressedInt(pkey);
+			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28) >= 0) out.writeUTF(packageName.toString());
+		}
+	}
 
 	public int addMySQLDatabase(
 		MySQLDatabaseName name,
@@ -397,20 +489,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		);
 	}
 
-	@Override
-	Object getColumnImpl(int i) {
-		switch(i) {
-			case COLUMN_PKEY: return pkey;
-			case 1: return name;
-			case COLUMN_AO_SERVER: return ao_server;
-			case 3: return version;
-			case 4: return max_connections;
-			case COLUMN_NET_BIND: return net_bind;
-			case COLUMN_PACKAGE: return packageName;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
-		}
-	}
-
 	public UnixPath getDataDirectory() {
 		try {
 			return UnixPath.valueOf(DATA_BASE_DIR.toString() + '/' + name.toString());
@@ -419,10 +497,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 			ae.initCause(e);
 			throw ae;
 		}
-	}
-
-	public MySQLServerName getName() {
-		return name;
 	}
 
 	/**
@@ -438,40 +512,6 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		String S = techVersion.substring(0, pos2);
 		if(techVersion.endsWith("-max")) return S+"-max";
 		return S;
-	}
-
-	public TechnologyVersion getVersion() throws SQLException, IOException {
-		TechnologyVersion obj=table.connector.getTechnologyVersions().get(version);
-		if(obj==null) throw new SQLException("Unable to find TechnologyVersion: "+version);
-		if(
-			obj.getOperatingSystemVersion(table.connector).getPkey()
-			!= getAOServer().getServer().operating_system_version
-		) {
-			throw new SQLException("resource/operating system version mismatch on MySQLServer: #"+pkey);
-		}
-		return obj;
-	}
-
-	public AOServer getAOServer() throws SQLException, IOException {
-		AOServer ao=table.connector.getAoServers().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
-		return ao;
-	}
-
-	public int getMaxConnections() {
-		return max_connections;
-	}
-
-	public NetBind getNetBind() throws SQLException, IOException {
-		NetBind nb=table.connector.getNetBinds().get(net_bind);
-		if(nb==null) throw new SQLException("Unable to find NetBind: "+net_bind);
-		return nb;
-	}
-
-	public Package getPackage() throws SQLException, IOException {
-		Package pk=table.connector.getPackages().get(packageName);
-		if(pk==null) throw new SQLException("Unable to find Package: "+packageName);
-		return pk;
 	}
 
 	public MySQLDatabase getMySQLDatabase(MySQLDatabaseName name) throws IOException, SQLException {
@@ -511,38 +551,8 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 		return SchemaTable.TableID.MYSQL_SERVERS;
 	}
 
-	@Override
-	public void init(ResultSet result) throws SQLException {
-		try {
-			pkey=result.getInt(1);
-			name = MySQLServerName.valueOf(result.getString(2));
-			ao_server=result.getInt(3);
-			version=result.getInt(4);
-			max_connections=result.getInt(5);
-			net_bind=result.getInt(6);
-			packageName = AccountingCode.valueOf(result.getString(7));
-		} catch(ValidationException e) {
-			throw new SQLException(e);
-		}
-	}
-
 	public boolean isMySQLDatabaseNameAvailable(MySQLDatabaseName name) throws IOException, SQLException {
 		return table.connector.getMysqlDatabases().isMySQLDatabaseNameAvailable(name, this);
-	}
-
-	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
-		try {
-			pkey=in.readCompressedInt();
-			name = MySQLServerName.valueOf(in.readUTF()).intern();
-			ao_server=in.readCompressedInt();
-			version=in.readCompressedInt();
-			max_connections=in.readCompressedInt();
-			net_bind=in.readCompressedInt();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
-		} catch(ValidationException e) {
-			throw new IOException(e);
-		}
 	}
 
 	public void restartMySQL() throws IOException, SQLException {
@@ -559,18 +569,7 @@ final public class MySQLServer extends CachedObjectIntegerKey<MySQLServer> {
 
 	@Override
 	String toStringImpl() throws SQLException, IOException {
-		return name+" on "+getAOServer().getHostname();
-	}
-
-	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		out.writeCompressedInt(pkey);
-		out.writeUTF(name.toString());
-		out.writeCompressedInt(ao_server);
-		out.writeCompressedInt(version);
-		out.writeCompressedInt(max_connections);
-		out.writeCompressedInt(net_bind);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)>=0) out.writeUTF(packageName.toString());
+		return name+" on "+getAoServer().getHostname();
 	}
 
 	final public static class MasterStatus {

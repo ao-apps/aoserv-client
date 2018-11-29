@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -72,23 +72,23 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
 	}
 
 	AOServer getAOServerByDaemonNetBind(NetBind nb) throws IOException, SQLException {
-		int pkey=nb.pkey;
+		int bind_id=nb.pkey;
 		List<AOServer> servers=getRows();
 		int size=servers.size();
 		for(int c=0;c<size;c++) {
 			AOServer se=servers.get(c);
-			if(se.daemon_bind==pkey) return se;
+			if(se.getDaemonBind_id() == bind_id) return se;
 		}
 		return null;
 	}
 
 	AOServer getAOServerByJilterNetBind(NetBind nb) throws IOException, SQLException {
-		int pkey=nb.pkey;
+		int bind_id=nb.pkey;
 		List<AOServer> servers=getRows();
 		int size=servers.size();
 		for(int c=0;c<size;c++) {
 			AOServer se=servers.get(c);
-			if(se.jilter_bind==pkey) return se;
+			if(se.getJilterBind_id() == bind_id) return se;
 		}
 		return null;
 	}
@@ -103,7 +103,7 @@ final public class AOServerTable extends CachedTableIntegerKey<AOServer> {
 		List<AOServer> objs=new ArrayList<>();
 		for(int c=0;c<size;c++) {
 			AOServer se=servers.get(c);
-			int fs=se.failover_server;
+			int fs = se.getFailoverServer_server_pkey();
 			if(fs!=-1 && fs==pkey) objs.add(se);
 		}
 		return objs;

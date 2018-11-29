@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,7 +37,7 @@ final public class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCate
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(ExpenseCategory.COLUMN_EXPENSE_CODE_name, ASCENDING)
+		new OrderBy(ExpenseCategory.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
 	OrderBy[] getDefaultOrderBy() {
@@ -45,8 +45,8 @@ final public class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCate
 	}
 
 	@Override
-	public ExpenseCategory get(String expense_code) throws IOException, SQLException {
-		return getUniqueRow(ExpenseCategory.COLUMN_EXPENSE_CODE, expense_code);
+	public ExpenseCategory get(String name) throws IOException, SQLException {
+		return getUniqueRow(ExpenseCategory.COLUMN_NAME, name);
 	}
 
 	@Override

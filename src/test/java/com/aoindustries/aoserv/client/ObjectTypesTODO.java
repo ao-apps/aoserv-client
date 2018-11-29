@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -88,9 +88,9 @@ public class ObjectTypesTODO extends TestCase {
 				else {
 					List<SchemaColumn> columns=table.getTableSchema().getSchemaColumns(conn);
 					for(SchemaColumn column : columns) {
-						String columnName=column.getColumnName();
-						SchemaType type=column.getSchemaType(conn);
-						int typeNum=type.getNum();
+						String columnName = column.getName();
+						SchemaType type = column.getType(conn);
+						int typeNum=type.getId();
 						char tested='N';
 						for(AOServObject<?,?> row : rows) {
 							// Cast to proper type if not null
