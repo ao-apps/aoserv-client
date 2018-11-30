@@ -470,9 +470,14 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	public abstract void read(CompressedDataInputStream in) throws IOException;
 
 	/**
-	 * Gets a string representation of this object in the current thread locale.
+	 * {@inheritDoc}
 	 *
-	 * @see  #toString(java.util.Locale)
+	 * @implSpec  This default implementation calls {@link #toStringImpl()}, which
+	 *            is allowed to throw exceptions.
+	 *
+	 * @see  #toStringImpl()
+	 *
+	 * @throws  WrappedException when {@link #toStringImpl()} throws an exception
 	 */
 	@Override
 	final public String toString() {
@@ -484,12 +489,14 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 
 	/**
-	 * The default string representation is that of the key value.  If there
-	 * is no key value then it uses the representation of <code>Object.toString()</code>.
+	 * {@link #toString()} implementation that is allowed to throw exceptions.
+	 *
+	 * @implSpec  This default implementation calls {@link #toString()} on the key (from {@link #getKey()}).
+	 *            When the key is {@code null}, uses the default implementation from {@link Object#toString()}.
 	 */
 	public String toStringImpl() throws IOException, SQLException {
-		K pkey=getKey();
-		if(pkey==null) return super.toString();
+		K pkey = getKey();
+		if(pkey == null) return super.toString();
 		return pkey.toString();
 	}
 
