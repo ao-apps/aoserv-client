@@ -1,0 +1,5 @@
+TODO: These should be moved to a new aoserv-dto project, with a package
+structure matching the database structure.
+
+TODO: These should be automatically generated from the database schema,
+including support for generating for a specific protocol version.
