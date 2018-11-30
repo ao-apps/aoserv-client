@@ -1,0 +1,2 @@
+TODO: These should be moved to a new aoserv-types project, mirroring the style
+of ao-net-types.
