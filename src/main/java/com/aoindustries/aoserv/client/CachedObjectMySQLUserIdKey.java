@@ -48,7 +48,7 @@ public abstract class CachedObjectMySQLUserIdKey<V extends CachedObjectMySQLUser
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 

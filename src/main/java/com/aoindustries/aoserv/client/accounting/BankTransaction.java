@@ -165,7 +165,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return id;
 	}
 

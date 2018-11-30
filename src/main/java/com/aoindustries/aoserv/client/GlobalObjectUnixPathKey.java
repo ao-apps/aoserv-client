@@ -48,7 +48,7 @@ public abstract class GlobalObjectUnixPathKey<T extends GlobalObjectUnixPathKey<
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 

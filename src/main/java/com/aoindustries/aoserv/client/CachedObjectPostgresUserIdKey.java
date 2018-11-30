@@ -48,7 +48,7 @@ public abstract class CachedObjectPostgresUserIdKey<V extends CachedObjectPostgr
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 

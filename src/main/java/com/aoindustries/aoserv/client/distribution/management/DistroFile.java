@@ -195,7 +195,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey;
 	}
 

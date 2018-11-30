@@ -48,7 +48,7 @@ public abstract class GlobalObjectDomainNameKey<T extends GlobalObjectDomainName
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 

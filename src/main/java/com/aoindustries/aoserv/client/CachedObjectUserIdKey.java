@@ -48,7 +48,7 @@ public abstract class CachedObjectUserIdKey<V extends CachedObjectUserIdKey<V>> 
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 
