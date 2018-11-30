@@ -201,7 +201,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O instanceof Transaction
 			&& ((Transaction)O).transid==transid

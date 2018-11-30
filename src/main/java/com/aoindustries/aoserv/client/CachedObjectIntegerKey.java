@@ -35,7 +35,7 @@ public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>
 	protected int pkey;
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O!=null
 			&& O.getClass()==getClass()

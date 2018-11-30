@@ -34,7 +34,7 @@ public abstract class CachedObjectAccountingCodeKey<V extends CachedObjectAccoun
 	protected AccountingCode pkey;
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O!=null
 			&& O.getClass()==getClass()

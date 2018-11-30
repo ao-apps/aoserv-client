@@ -391,12 +391,15 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 	// </editor-fold>
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @implSpec  This default implementation considers the object equal when it is the same class
+	 *            (via {@link #getClass()} and has equal keys (via {@link #getKey()}).
+	 */
 	@Override
-	final public boolean equals(Object O) {
-		return O==null?false:equalsImpl(O);
-	}
-
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
+		if(O == null) return false;
 		Class<?> class1=getClass();
 		Class<?> class2=O.getClass();
 		if(class1==class2) {

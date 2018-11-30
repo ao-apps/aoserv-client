@@ -75,7 +75,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	AOServTable<Integer,BackupReport> table;
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O instanceof BackupReport
 			&& ((BackupReport)O).pkey==pkey
