@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.ticket;
 
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -63,8 +63,8 @@ final public class Language extends GlobalObjectStringKey<Language> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.LANGUAGES;
+	public Table.TableID getTableID() {
+		return Table.TableID.LANGUAGES;
 	}
 
 	@Override
@@ -78,7 +78,7 @@ final public class Language extends GlobalObjectStringKey<Language> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 	}
 }

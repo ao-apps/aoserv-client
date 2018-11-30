@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.infrastructure;
 
 import com.aoindustries.aoserv.client.CachedObjectStringKey;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -79,8 +79,8 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.SERVER_FARMS;
+	public Table.TableID getTableID() {
+		return Table.TableID.SERVER_FARMS;
 	}
 
 	@Override
@@ -105,15 +105,15 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeUTF("192.168.0.0/16");
 			out.writeBoolean(false);
 			out.writeUTF("mob");
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) out.writeCompressedInt(owner);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102)>=0) out.writeCompressedInt(owner);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_26)>=0) out.writeBoolean(use_restricted_smtp_port);
 	}
 }

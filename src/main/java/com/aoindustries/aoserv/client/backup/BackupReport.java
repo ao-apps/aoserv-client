@@ -26,9 +26,9 @@ import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -99,8 +99,8 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 		return pkey;
 	}
 
-	public Server getServer() throws SQLException, IOException {
-		Server se=table.getConnector().getServers().get(server);
+	public Host getServer() throws SQLException, IOException {
+		Host se=table.getConnector().getServers().get(server);
 		if(se==null) throw new SQLException("Unable to find Server: "+server);
 		return se;
 	}
@@ -134,8 +134,8 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BACKUP_REPORTS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BACKUP_REPORTS;
 	}
 
 	@Override
@@ -170,13 +170,13 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(server);
 		out.writeCompressedInt(packageNum);
 		out.writeLong(date);
 		out.writeInt(file_count);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeLong(0); // uncompressed_size
 			out.writeLong(0); // compressed_size
 		}

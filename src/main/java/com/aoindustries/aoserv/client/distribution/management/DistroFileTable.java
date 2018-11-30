@@ -25,10 +25,10 @@ package com.aoindustries.aoserv.client.distribution.management;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.FilesystemCachedTable;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -87,25 +87,25 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 	@Override
 	public int getCachedRowCount() throws IOException, SQLException {
 		if(isLoaded()) return super.getCachedRowCount();
-		else return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CACHED_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
+		else return connector.requestIntQuery(true, AoservProtocol.CommandID.GET_CACHED_ROW_COUNT, Table.TableID.DISTRO_FILES);
 	}
 
 	@Override
 	public int size() throws IOException, SQLException {
 		if(isLoaded()) return super.size();
-		else return connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ROW_COUNT, SchemaTable.TableID.DISTRO_FILES);
+		else return connector.requestIntQuery(true, AoservProtocol.CommandID.GET_ROW_COUNT, Table.TableID.DISTRO_FILES);
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.DISTRO_FILES;
+	public Table.TableID getTableID() {
+		return Table.TableID.DISTRO_FILES;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.START_DISTRO)) {
-			if(AOSH.checkParamCount(AOSHCommand.START_DISTRO, args, 2, err)) {
+		if(command.equalsIgnoreCase(Command.START_DISTRO)) {
+			if(AOSH.checkParamCount(Command.START_DISTRO, args, 2, err)) {
 				connector.getSimpleAOClient().startDistro(
 					args[1],
 					AOSH.parseBoolean(args[2], "include_user")
@@ -116,10 +116,9 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 		return false;
 	}
 
-	public void startDistro(AOServer server, boolean includeUser) throws IOException, SQLException {
-		connector.requestUpdate(
-			true,
-			AOServProtocol.CommandID.START_DISTRO,
+	public void startDistro(Server server, boolean includeUser) throws IOException, SQLException {
+		connector.requestUpdate(true,
+			AoservProtocol.CommandID.START_DISTRO,
 			server.getPkey(),
 			includeUser
 		);

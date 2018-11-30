@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -62,12 +62,12 @@ final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
 		return super.getIndexedRows(col, value);
 	}
 
-	public List<WhoisHistory> getWhoisHistory(Business bu) throws IOException, SQLException {
+	public List<WhoisHistory> getWhoisHistory(Account bu) throws IOException, SQLException {
 		return getIndexedRows(WhoisHistory.COLUMN_ACCOUNTING, bu.getAccounting());
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.WHOIS_HISTORY;
+	public Table.TableID getTableID() {
+		return Table.TableID.WHOIS_HISTORY;
 	}
 }

@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ import java.util.Map;
  */
 abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServTable<K,V> {
 
-	private static final int numTables = SchemaTable.TableID.values().length;
+	private static final int numTables = Table.TableID.values().length;
 	/**
 	 * The last time that the data was loaded, or
 	 * <code>-1</code> if not yet loaded.
@@ -116,7 +116,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@Override
 	@SuppressWarnings({"unchecked"})
 	final public List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
-		SchemaTable.TableID tableID=getTableID();
+		Table.TableID tableID=getTableID();
 		synchronized(locks[tableID.ordinal()]) {
 			validateCache();
 
@@ -162,7 +162,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@Override
 	@SuppressWarnings({"unchecked"})
 	final protected V getUniqueRowImpl(int col, Object value) throws SQLException, IOException {
-		SchemaTable.TableID tableID=getTableID();
+		Table.TableID tableID=getTableID();
 		synchronized(locks[tableID.ordinal()]) {
 			validateCache();
 
@@ -203,7 +203,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@Override
 	@SuppressWarnings({"unchecked"})
 	public final List<V> getRows() throws IOException, SQLException {
-		SchemaTable.TableID tableID = getTableID();
+		Table.TableID tableID = getTableID();
 		// We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
 		synchronized(locks[tableID.ordinal()]) {
 			validateCache();
@@ -238,7 +238,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@Override
 	public void clearCache() {
 		super.clearCache();
-		SchemaTable.TableID tableID=getTableID();
+		Table.TableID tableID=getTableID();
 		synchronized(locks[tableID.ordinal()]) {
 			lastLoadeds[tableID.ordinal()]=-1;
 		}
@@ -249,12 +249,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 */
 	@SuppressWarnings({"unchecked"})
 	private void validateCache() throws IOException, SQLException {
-		SchemaTable.TableID tableID=getTableID();
+		Table.TableID tableID=getTableID();
 		synchronized(locks[tableID.ordinal()]) {
 			long currentTime=System.currentTimeMillis();
 			long lastLoaded=lastLoadeds[tableID.ordinal()];
 			if(lastLoaded==-1) {
-				List<GlobalObject<?,?>> list=(List)getObjects(true, AOServProtocol.CommandID.GET_TABLE, tableID.ordinal());
+				List<GlobalObject<?,?>> list=(List)getObjects(true, AoservProtocol.CommandID.GET_TABLE, tableID.ordinal());
 				synchronized(tableObjs) {
 					tableObjs.set(tableID.ordinal(), Collections.unmodifiableList(list));
 				}

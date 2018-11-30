@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.account;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
@@ -57,7 +57,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	 * things disabled by this <code>DisableLog</code>.
 	 */
 	public boolean canEnable() throws SQLException, IOException {
-		BusinessAdministrator disabledBy=getDisabledBy();
+		Administrator disabledBy=getDisabledBy();
 		return disabledBy!=null && table
 			.getConnector()
 			.getThisBusinessAdministrator()
@@ -83,8 +83,8 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
-	public Business getBusiness() throws SQLException, IOException {
-		Business bu=table.getConnector().getBusinesses().get(accounting);
+	public Account getBusiness() throws SQLException, IOException {
+		Account bu=table.getConnector().getBusinesses().get(accounting);
 		if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
 		return bu;
 	}
@@ -97,7 +97,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		return disabled_by;
 	}
 
-	public BusinessAdministrator getDisabledBy() throws IOException, SQLException {
+	public Administrator getDisabledBy() throws IOException, SQLException {
 		// May be filtered
 		return table.getConnector().getBusinessAdministrators().get(disabled_by);
 	}
@@ -107,8 +107,8 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.DISABLE_LOG;
+	public Table.TableID getTableID() {
+		return Table.TableID.DISABLE_LOG;
 	}
 
 	@Override
@@ -138,7 +138,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeLong(time);
 		out.writeUTF(accounting.toString());

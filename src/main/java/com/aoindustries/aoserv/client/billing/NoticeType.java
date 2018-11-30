@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -64,8 +64,8 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.NOTICE_TYPES;
+	public Table.TableID getTableID() {
+		return Table.TableID.NOTICE_TYPES;
 	}
 
 	public String getType() {
@@ -85,7 +85,7 @@ final public class NoticeType extends GlobalObjectStringKey<NoticeType> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);
 	}

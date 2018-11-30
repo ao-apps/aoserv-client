@@ -24,15 +24,15 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
-import com.aoindustries.aoserv.client.payment.CreditCardProcessor;
+import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.payment.PaymentType;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.payment.Processor;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -65,7 +65,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Transaction.COLUMN_TIME_name+"::"+SchemaType.DATE_name, ASCENDING),
+		new OrderBy(Transaction.COLUMN_TIME_name+"::"+Type.DATE_name, ASCENDING),
 		new OrderBy(Transaction.COLUMN_TRANSID_name, ASCENDING)
 	};
 	@Override
@@ -74,28 +74,27 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
 
 	public int addTransaction(
-		final Business business,
-		final Business sourceBusiness,
-		final BusinessAdministrator business_administrator,
+		final Account business,
+		final Account sourceBusiness,
+		final Administrator business_administrator,
 		final String type,
 		final String description,
 		final int quantity,
 		final int rate,
 		final PaymentType paymentType,
 		final String paymentInfo,
-		final CreditCardProcessor processor,
+		final Processor processor,
 		final byte payment_confirmed
 	) throws IOException, SQLException {
-		return connector.requestResult(
-			false,
-			AOServProtocol.CommandID.ADD,
+		return connector.requestResult(false,
+			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int transid;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(SchemaTable.TableID.TRANSACTIONS.ordinal());
+					out.writeCompressedInt(Table.TableID.TRANSACTIONS.ordinal());
 					out.writeUTF(business.getAccounting().toString());
 					out.writeUTF(sourceBusiness.getAccounting().toString());
 					out.writeUTF(business_administrator.getUsername_userId().toString());
@@ -112,11 +111,11 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						transid=in.readCompressedInt();
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
@@ -151,7 +150,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 			if(balance!=null) return balance;
 			clearCounter = accountBalancesClearCounter;
 		}
-		BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting.toString()), 2);
+		BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AoservProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting.toString()), 2);
 		synchronized(accountBalances) {
 			// Only put in cache when not cleared while performing query
 			if(clearCounter==accountBalancesClearCounter) accountBalances.put(accounting, balance);
@@ -160,7 +159,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
 
 	public BigDecimal getAccountBalance(AccountingCode accounting, long before) throws IOException, SQLException {
-		return BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting.toString(), before), 2);
+		return BigDecimal.valueOf(connector.requestIntQuery(true, AoservProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting.toString(), before), 2);
 	}
 
 	public BigDecimal getConfirmedAccountBalance(AccountingCode accounting) throws IOException, SQLException {
@@ -170,7 +169,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 			if(balance!=null) return balance;
 			clearCounter = confirmedAccountBalancesClearCounter;
 		}
-		BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting.toString()), 2);
+		BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AoservProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting.toString()), 2);
 		synchronized(confirmedAccountBalances) {
 			// Only put in cache when not cleared while performing query
 			if(clearCounter==confirmedAccountBalancesClearCounter) confirmedAccountBalances.put(accounting, balance);
@@ -179,23 +178,23 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
 
 	public BigDecimal getConfirmedAccountBalance(AccountingCode accounting, long before) throws IOException, SQLException {
-		return BigDecimal.valueOf(connector.requestIntQuery(true, AOServProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting.toString(), before), 2);
+		return BigDecimal.valueOf(connector.requestIntQuery(true, AoservProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting.toString(), before), 2);
 	}
 
 	public List<Transaction> getPendingPayments() throws IOException, SQLException {
-		return getObjects(true, AOServProtocol.CommandID.GET_PENDING_PAYMENTS);
+		return getObjects(true, AoservProtocol.CommandID.GET_PENDING_PAYMENTS);
 	}
 
 	@Override
 	public List<Transaction> getRows() throws IOException, SQLException {
 		List<Transaction> list=new ArrayList<>();
-		getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.TRANSACTIONS);
+		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.TRANSACTIONS);
 		return list;
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.TRANSACTIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.TRANSACTIONS;
 	}
 
 	/**
@@ -208,19 +207,19 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
 
 	public Transaction get(int transid) throws IOException, SQLException {
-		return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.TRANSACTIONS, transid);
+		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.TRANSACTIONS, transid);
 	}
 
 	List<Transaction> getTransactions(TransactionSearchCriteria search) throws IOException, SQLException {
-		return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
+		return getObjects(true, AoservProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
 	}
 
 	public List<Transaction> getTransactions(AccountingCode accounting) throws IOException, SQLException {
-		return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting.toString());
+		return getObjects(true, AoservProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting.toString());
 	}
 
-	public List<Transaction> getTransactions(BusinessAdministrator ba) throws IOException, SQLException {
-		return getObjects(true, AOServProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.getUsername_userId());
+	public List<Transaction> getTransactions(Administrator ba) throws IOException, SQLException {
+		return getObjects(true, AoservProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.getUsername_userId());
 	}
 
 	@Override
@@ -243,8 +242,8 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.ADD_TRANSACTION)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_TRANSACTION, args, 11, err)) {
+		if(command.equalsIgnoreCase(Command.ADD_TRANSACTION)) {
+			if(AOSH.checkParamCount(Command.ADD_TRANSACTION, args, 11, err)) {
 				byte pc;
 				if(args[11].equals("Y")) pc=Transaction.CONFIRMED;
 				else if(args[11].equals("W")) pc=Transaction.WAITING_CONFIRMATION;

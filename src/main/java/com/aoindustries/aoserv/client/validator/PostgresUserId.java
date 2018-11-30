@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.postgresql.PostgresServer;
+import com.aoindustries.aoserv.client.postgresql.Server;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
@@ -85,7 +85,7 @@ final public class PostgresUserId extends UserId implements
 			id.equals("sameuser")
 			|| id.equals("samegroup")
 			|| id.equals("all")
-			|| PostgresServer.ReservedWord.isReservedWord(id)
+			|| Server.ReservedWord.isReservedWord(id)
 		) return new InvalidResult(ApplicationResources.accessor, "PostgresUserId.validate.reservedWord");
 		assert UserId.validate(id).isValid() : "A PostgresUserId is always a valid UserId.";
 		return ValidResult.getInstance();

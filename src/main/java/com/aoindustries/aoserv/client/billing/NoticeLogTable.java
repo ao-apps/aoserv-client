@@ -24,11 +24,11 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
@@ -65,10 +65,9 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 		String type,
 		int transid
 	) throws IOException, SQLException {
-		connector.requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.ADD,
-			SchemaTable.TableID.NOTICE_LOG,
+		connector.requestUpdateIL(true,
+			AoservProtocol.CommandID.ADD,
+			Table.TableID.NOTICE_LOG,
 			accounting.toString(),
 			billingContact,
 			emailAddress,
@@ -83,20 +82,20 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 		return getUniqueRow(NoticeLog.COLUMN_PKEY, pkey);
 	}
 
-	public List<NoticeLog> getNoticeLogs(Business bu) throws IOException, SQLException {
+	public List<NoticeLog> getNoticeLogs(Account bu) throws IOException, SQLException {
 		return getIndexedRows(NoticeLog.COLUMN_ACCOUNTING, bu.getAccounting());
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.NOTICE_LOG;
+	public Table.TableID getTableID() {
+		return Table.TableID.NOTICE_LOG;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.ADD_NOTICE_LOG)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_NOTICE_LOG, args, 6, err)) {
+		if(command.equalsIgnoreCase(Command.ADD_NOTICE_LOG)) {
+			if(AOSH.checkParamCount(Command.ADD_NOTICE_LOG, args, 6, err)) {
 				connector.getSimpleAOClient().addNoticeLog(
 					AOSH.parseAccountingCode(args[1], "business"),
 					args[2],

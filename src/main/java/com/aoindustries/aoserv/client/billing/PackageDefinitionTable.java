@@ -24,9 +24,9 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -60,7 +60,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	}
 
 	public int addPackageDefinition(
-		final Business business,
+		final Account business,
 		final PackageCategory category,
 		final String name,
 		final String version,
@@ -71,16 +71,15 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 		final int monthlyRate,
 		final TransactionType monthlyRateTransactionType
 	) throws IOException, SQLException {
-		return connector.requestResult(
-			true,
-			AOServProtocol.CommandID.ADD,
+		return connector.requestResult(true,
+			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(SchemaTable.TableID.PACKAGE_DEFINITIONS.ordinal());
+					out.writeCompressedInt(Table.TableID.PACKAGE_DEFINITIONS.ordinal());
 					out.writeUTF(business.getAccounting().toString());
 					out.writeUTF(category.getName());
 					out.writeUTF(name);
@@ -97,11 +96,11 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						pkey=in.readCompressedInt();
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unknown response code: "+code);
 					}
 				}
@@ -120,7 +119,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 		return getUniqueRow(PackageDefinition.COLUMN_PKEY, pkey);
 	}
 
-	public PackageDefinition getPackageDefinition(Business business, PackageCategory category, String name, String version) throws IOException, SQLException {
+	public PackageDefinition getPackageDefinition(Account business, PackageCategory category, String name, String version) throws IOException, SQLException {
 		AccountingCode accounting=business.getAccounting();
 		String categoryName=category.getName();
 		List<PackageDefinition> pds=getRows();
@@ -137,7 +136,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 		return null;
 	}
 
-	public List<PackageDefinition> getPackageDefinitions(Business business, PackageCategory category) throws IOException, SQLException {
+	public List<PackageDefinition> getPackageDefinitions(Account business, PackageCategory category) throws IOException, SQLException {
 		AccountingCode accounting=business.getAccounting();
 		String categoryName=category.getName();
 
@@ -155,7 +154,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PACKAGE_DEFINITIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.PACKAGE_DEFINITIONS;
 	}
 }

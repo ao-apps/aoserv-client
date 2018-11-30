@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
@@ -127,7 +127,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 		int len=sortExpressions.length;
 		for(int c=0;c<len;c++) {
 			SQLExpression expr=sortExpressions[c];
-			SchemaType type=expr.getType();
+			Type type=expr.getType();
 			int diff=type.compareTo(
 				expr.getValue(conn, this),
 				expr.getValue(conn, other)
@@ -142,7 +142,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 		int len=sortExpressions.length;
 		for(int c=0;c<len;c++) {
 			SQLExpression expr=sortExpressions[c];
-			SchemaType type=expr.getType();
+			Type type=expr.getType();
 			int diff=type.compareTo(
 				expr.getValue(conn, this),
 				value
@@ -159,7 +159,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
 		for(int c=0;c<len;c++) {
 			SQLExpression expr=sortExpressions[c];
-			SchemaType type=expr.getType();
+			Type type=expr.getType();
 			int diff=type.compareTo(
 				expr.getValue(conn, this),
 				OA[c]
@@ -440,9 +440,9 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
 	public abstract K getKey();
 
-	public abstract SchemaTable.TableID getTableID();
+	public abstract Table.TableID getTableID();
 
-	final public SchemaTable getTableSchema(AOServConnector connector) throws IOException, SQLException {
+	final public Table getTableSchema(AOServConnector connector) throws IOException, SQLException {
 		return connector.getSchemaTables().get(getTableID());
 	}
 
@@ -508,9 +508,9 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	@Deprecated
 	@Override
 	final public void write(CompressedDataOutputStream out, String version) throws IOException {
-		write(out, AOServProtocol.Version.getVersion(version));
+		write(out, AoservProtocol.Version.getVersion(version));
 	}
 
 	@Override
-	public abstract void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException;
+	public abstract void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException;
 }

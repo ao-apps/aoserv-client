@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.backup;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,8 +46,8 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 
 	private static final OrderBy[] defaultOrderBy = {
 		new OrderBy(BackupReport.COLUMN_DATE_name, DESCENDING),
-		new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(BackupReport.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(BackupReport.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
@@ -65,7 +65,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 	}
 
 	public BackupReport get(int pkey) throws IOException, SQLException {
-		return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BACKUP_REPORTS, pkey);
+		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BACKUP_REPORTS, pkey);
 	}
 
 	public List<BackupReport> getBackupReports(Package pk) throws IOException, SQLException {
@@ -80,7 +80,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 		return matches;
 	}
 
-	public List<BackupReport> getBackupReports(Server se) throws IOException, SQLException {
+	public List<BackupReport> getBackupReports(Host se) throws IOException, SQLException {
 		int sePKey=se.getPkey();
 		List<BackupReport> cached=getRows();
 		int size=cached.size();
@@ -95,13 +95,13 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 	@Override
 	public List<BackupReport> getRows() throws IOException, SQLException {
 		List<BackupReport> list=new ArrayList<>();
-		getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BACKUP_REPORTS);
+		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BACKUP_REPORTS);
 		return list;
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BACKUP_REPORTS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BACKUP_REPORTS;
 	}
 
 	@Override

@@ -23,10 +23,10 @@
 package com.aoindustries.aoserv.client.reseller;
 
 import com.aoindustries.aoserv.client.CachedObjectAccountingCodeKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.ticket.TicketAssignment;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.ticket.Assignment;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * A reseller may handle support tickets..
  *
- * @see  Business
+ * @see  Account
  * @see  Brand
  *
  * @author  AO Industries, Inc.
@@ -76,8 +76,8 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.RESELLERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.RESELLERS;
 	}
 
 	@Override
@@ -102,12 +102,12 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toUpperCase());
 		out.writeBoolean(ticket_auto_escalate);
 	}
 
-	public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
+	public List<Assignment> getTicketAssignments() throws IOException, SQLException {
 		return table.getConnector().getTicketAssignments().getTicketAssignments(this);
 	}
 
@@ -115,9 +115,9 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	 * Gets the immediate parent of this reseller or <code>null</code> if none available.
 	 */
 	public Reseller getParentReseller() throws IOException, SQLException {
-		Business bu = getBrand().getBusiness();
+		Account bu = getBrand().getBusiness();
 		if(bu==null) return null;
-		Business parent = bu.getParentBusiness();
+		Account parent = bu.getParentBusiness();
 		while(parent!=null) {
 			Brand parentBrand = parent.getBrand();
 			if(parentBrand!=null) {

@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.util.BufferManager;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public final class NestedInputStream extends InputStream {
 		// Load the next block, if needed
 		while(!isDone && bufferRead>=bufferFilled) {
 			int code=in.read();
-			if(code==AOServProtocol.NEXT) {
+			if(code==AoservProtocol.NEXT) {
 				bufferFilled=in.readShort();
 				in.readFully(buffer, 0, bufferFilled);
 				bufferRead=0;
@@ -67,7 +67,7 @@ public final class NestedInputStream extends InputStream {
 				isDone=true;
 				bufferFilled=bufferRead=0;
 				try {
-					AOServProtocol.checkResult(code, in);
+					AoservProtocol.checkResult(code, in);
 				} catch(SQLException err) {
 					throw new IOException(err.toString());
 				}
@@ -80,7 +80,7 @@ public final class NestedInputStream extends InputStream {
 		if(!isDone) {
 			// Read the rest of the underlying stream
 			int code;
-			while((code=in.read())==AOServProtocol.NEXT) {
+			while((code=in.read())==AoservProtocol.NEXT) {
 				int len=in.readShort();
 				while(len>0) {
 					int skipped=(int)in.skip(len);
@@ -94,7 +94,7 @@ public final class NestedInputStream extends InputStream {
 				buffer=null;
 			}
 			try {
-				AOServProtocol.checkResult(code, in);
+				AoservProtocol.checkResult(code, in);
 			} catch(SQLException err) {
 				throw new IOException(err.toString());
 			}

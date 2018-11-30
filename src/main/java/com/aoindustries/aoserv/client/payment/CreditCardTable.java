@@ -24,12 +24,12 @@ package com.aoindustries.aoserv.client.payment;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
+import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -61,8 +61,8 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	}
 
 	public int addCreditCard(
-		final CreditCardProcessor processor,
-		final Business business,
+		final Processor processor,
+		final Account business,
 		final String groupName,
 		final String cardInfo,
 		final String providerUniqueId,
@@ -106,16 +106,15 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 			encryptedExpiration = null;
 		}
 
-		return connector.requestResult(
-			true,
-			AOServProtocol.CommandID.ADD,
+		return connector.requestResult(true,
+			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(SchemaTable.TableID.CREDIT_CARDS.ordinal());
+					out.writeCompressedInt(Table.TableID.CREDIT_CARDS.ordinal());
 					out.writeUTF(processor.getProviderId());
 					out.writeUTF(business.getAccounting().toString());
 					out.writeNullUTF(groupName);
@@ -145,11 +144,11 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						pkey=in.readCompressedInt();
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unknown response code: "+code);
 					}
 				}
@@ -168,7 +167,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		return getUniqueRow(CreditCard.COLUMN_PKEY, pkey);
 	}
 
-	public List<CreditCard> getCreditCards(Business business) throws IOException, SQLException {
+	public List<CreditCard> getCreditCards(Account business) throws IOException, SQLException {
 		return getIndexedRows(CreditCard.COLUMN_ACCOUNTING, business.getAccounting());
 	}
 
@@ -179,7 +178,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	 *
 	 * @return  the <code>CreditCard</code> or <code>null</code> if none found
 	 */
-	public CreditCard getMonthlyCreditCard(Business business) throws IOException, SQLException {
+	public CreditCard getMonthlyCreditCard(Account business) throws IOException, SQLException {
 		AccountingCode accounting = business.getAccounting();
 		List<CreditCard> cards = getRows();
 		int size = cards.size();
@@ -191,23 +190,23 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CREDIT_CARDS;
+	public Table.TableID getTableID() {
+		return Table.TableID.CREDIT_CARDS;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.DECLINE_CREDIT_CARD)) {
-			if(AOSH.checkParamCount(AOSHCommand.DECLINE_CREDIT_CARD, args, 2, err)) {
+		if(command.equalsIgnoreCase(Command.DECLINE_CREDIT_CARD)) {
+			if(AOSH.checkParamCount(Command.DECLINE_CREDIT_CARD, args, 2, err)) {
 				connector.getSimpleAOClient().declineCreditCard(
 					AOSH.parseInt(args[1], "pkey"),
 					args[2]
 				);
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_CREDIT_CARD)) {
-			if(AOSH.checkParamCount(AOSHCommand.REMOVE_CREDIT_CARD, args, 1, err)) {
+		} else if(command.equalsIgnoreCase(Command.REMOVE_CREDIT_CARD)) {
+			if(AOSH.checkParamCount(Command.REMOVE_CREDIT_CARD, args, 1, err)) {
 				connector.getSimpleAOClient().removeCreditCard(
 					AOSH.parseInt(args[1], "pkey")
 				);

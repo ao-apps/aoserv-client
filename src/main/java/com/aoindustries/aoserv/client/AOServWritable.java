@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
 
@@ -33,5 +33,5 @@ import java.io.IOException;
  */
 public interface AOServWritable {
 
-	void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException;
+	void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException;
 }

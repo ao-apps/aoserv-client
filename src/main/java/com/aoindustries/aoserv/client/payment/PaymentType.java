@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.payment;
 
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -87,8 +87,8 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PAYMENT_TYPES;
+	public Table.TableID getTableID() {
+		return Table.TableID.PAYMENT_TYPES;
 	}
 
 	@Override
@@ -117,7 +117,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(description);
 		out.writeBoolean(isActive);

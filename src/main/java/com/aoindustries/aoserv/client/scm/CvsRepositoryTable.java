@@ -25,18 +25,18 @@ package com.aoindustries.aoserv.client.scm;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
+import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.linux.LinuxAccountType;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
-import com.aoindustries.aoserv.client.linux.LinuxServerGroup;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.linux.UserType;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.web.HttpdSite;
-import com.aoindustries.aoserv.client.web.tomcat.HttpdSharedTomcat;
+import com.aoindustries.aoserv.client.web.Site;
+import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -59,7 +59,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CvsRepository.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+LinuxServerAccount.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(CvsRepository.COLUMN_LINUX_SERVER_ACCOUNT_name+'.'+UserServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
 		new OrderBy(CvsRepository.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
@@ -68,16 +68,15 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	}
 
 	public int addCvsRepository(
-		AOServer ao,
+		Server ao,
 		UnixPath path,
-		LinuxServerAccount lsa,
-		LinuxServerGroup lsg,
+		UserServer lsa,
+		GroupServer lsg,
 		long mode
 	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(
-			true,
-			AOServProtocol.CommandID.ADD,
-			SchemaTable.TableID.CVS_REPOSITORIES,
+		return connector.requestIntQueryIL(true,
+			AoservProtocol.CommandID.ADD,
+			Table.TableID.CVS_REPOSITORIES,
 			ao.getPkey(),
 			path,
 			lsa.getPkey(),
@@ -94,7 +93,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	/**
 	 * Gets one <code>CvsRepository</code> from the database.
 	 */
-	public CvsRepository getCvsRepository(AOServer aoServer, UnixPath path) throws IOException, SQLException {
+	public CvsRepository getCvsRepository(Server aoServer, UnixPath path) throws IOException, SQLException {
 		int aoPKey=aoServer.getPkey();
 
 		List<CvsRepository> cached=getRows();
@@ -106,7 +105,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 		return null;
 	}
 
-	public List<CvsRepository> getCvsRepositories(AOServer aoServer) throws IOException, SQLException {
+	public List<CvsRepository> getCvsRepositories(Server aoServer) throws IOException, SQLException {
 		int aoPKey=aoServer.getPkey();
 
 		List<CvsRepository> cached=getRows();
@@ -132,13 +131,13 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 		return matches;
 	}
 
-	public List<CvsRepository> getCvsRepositories(LinuxServerAccount lsa) throws IOException, SQLException {
+	public List<CvsRepository> getCvsRepositories(UserServer lsa) throws IOException, SQLException {
 		return getIndexedRows(CvsRepository.COLUMN_LINUX_SERVER_ACCOUNT, lsa.getPkey());
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CVS_REPOSITORIES;
+	public Table.TableID getTableID() {
+		return Table.TableID.CVS_REPOSITORIES;
 	}
 
 	public SortedSet<UnixPath> getValidPrefixes() throws IOException, SQLException {
@@ -146,19 +145,19 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			SortedSet<UnixPath> prefixes=new TreeSet<>();
 
 			// Home directories
-			for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
-				if(lsa.getLinuxAccount().getType().getName().equals(LinuxAccountType.USER) && !lsa.isDisabled()) {
+			for(UserServer lsa : connector.getLinuxServerAccounts().getRows()) {
+				if(lsa.getLinuxAccount().getType().getName().equals(UserType.USER) && !lsa.isDisabled()) {
 					prefixes.add(lsa.getHome());
 				}
 			}
 
 			// HttpdSites
-			for(HttpdSite site : connector.getHttpdSites().getRows()) {
+			for(Site site : connector.getHttpdSites().getRows()) {
 				if(!site.isDisabled()) prefixes.add(site.getInstallDirectory());
 			}
 
 			// HttpdSharedTomcats
-			for(HttpdSharedTomcat tomcat : connector.getHttpdSharedTomcats().getRows()) {
+			for(SharedTomcat tomcat : connector.getHttpdSharedTomcats().getRows()) {
 				if(!tomcat.isDisabled()) {
 					prefixes.add(
 						UnixPath.valueOf(
@@ -181,8 +180,8 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.ADD_CVS_REPOSITORY)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_CVS_REPOSITORY, args, 5, err)) {
+		if(command.equalsIgnoreCase(Command.ADD_CVS_REPOSITORY)) {
+			if(AOSH.checkParamCount(Command.ADD_CVS_REPOSITORY, args, 5, err)) {
 				out.println(
 					connector.getSimpleAOClient().addCvsRepository(
 						args[1],
@@ -195,8 +194,8 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_CVS_REPOSITORY)) {
-			if(AOSH.checkParamCount(AOSHCommand.DISABLE_CVS_REPOSITORY, args, 2, err)) {
+		} else if(command.equalsIgnoreCase(Command.DISABLE_CVS_REPOSITORY)) {
+			if(AOSH.checkParamCount(Command.DISABLE_CVS_REPOSITORY, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().disableCvsRepository(
 						AOSH.parseInt(args[1], "pkey"),
@@ -206,21 +205,21 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_CVS_REPOSITORY)) {
-			if(AOSH.checkParamCount(AOSHCommand.ENABLE_CVS_REPOSITORY, args, 1, err)) {
+		} else if(command.equalsIgnoreCase(Command.ENABLE_CVS_REPOSITORY)) {
+			if(AOSH.checkParamCount(Command.ENABLE_CVS_REPOSITORY, args, 1, err)) {
 				connector.getSimpleAOClient().enableCvsRepository(AOSH.parseInt(args[1], "pkey"));
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_CVS_REPOSITORY)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_CVS_REPOSITORY, args, 2, err)) {
+		} else if(command.equalsIgnoreCase(Command.REMOVE_CVS_REPOSITORY)) {
+			if(AOSH.checkParamCount(Command.ADD_CVS_REPOSITORY, args, 2, err)) {
 				connector.getSimpleAOClient().removeCvsRepository(
 					args[1],
 					AOSH.parseUnixPath(args[2], "path")
 				);
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.SET_CVS_REPOSITORY_MODE)) {
-			if(AOSH.checkParamCount(AOSHCommand.SET_CVS_REPOSITORY_MODE, args, 3, err)) {
+		} else if(command.equalsIgnoreCase(Command.SET_CVS_REPOSITORY_MODE)) {
+			if(AOSH.checkParamCount(Command.SET_CVS_REPOSITORY_MODE, args, 3, err)) {
 				connector.getSimpleAOClient().setCvsRepositoryMode(
 					args[1],
 					AOSH.parseUnixPath(args[2], "path"),

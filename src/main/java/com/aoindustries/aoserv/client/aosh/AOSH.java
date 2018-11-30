@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.aosh;
 import com.aoindustries.aoserv.client.AOServClientConfiguration;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaTableTable;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.TableTable;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.aoserv.client.validator.Gecos;
@@ -154,7 +154,7 @@ final public class AOSH extends ShellInterpreter {
 	}
 
 	/** Avoid repeated array copies. */
-	private static final int numTables = SchemaTable.TableID.values().length;
+	private static final int numTables = Table.TableID.values().length;
 
 	/**
 	 * Processes one command and returns.
@@ -168,27 +168,27 @@ final public class AOSH extends ShellInterpreter {
 		int argCount=args.length;
 		if(argCount>0) {
 			String command=args[0];
-			if(AOSHCommand.EXIT.equalsIgnoreCase(command)) {
+			if(Command.EXIT.equalsIgnoreCase(command)) {
 				if(argCount!=1) {
-					err.println("aosh: "+AOSHCommand.EXIT+": too many parameters");
+					err.println("aosh: "+Command.EXIT+": too many parameters");
 					err.flush();
 				} else return false;
 			} else {
-				if(AOSHCommand.CLEAR.equalsIgnoreCase(command)) clear(args);
-				else if(AOSHCommand.ECHO.equalsIgnoreCase(command)) echo(args);
-				else if(AOSHCommand.INVALIDATE.equalsIgnoreCase(command)) invalidate(args);
-				else if(AOSHCommand.JOBS.equalsIgnoreCase(command)) jobs(args);
-				else if(AOSHCommand.PING.equalsIgnoreCase(command)) ping(args);
-				else if(AOSHCommand.REPEAT.equalsIgnoreCase(command)) repeat(args);
-				else if(AOSHCommand.SLEEP.equalsIgnoreCase(command)) sleep(args);
-				else if(AOSHCommand.SU.equalsIgnoreCase(command)) su(args);
-				else if(AOSHCommand.TIME.equalsIgnoreCase(command)) time(args);
-				else if(AOSHCommand.WHOAMI.equalsIgnoreCase(command)) whoami(args);
+				if(Command.CLEAR.equalsIgnoreCase(command)) clear(args);
+				else if(Command.ECHO.equalsIgnoreCase(command)) echo(args);
+				else if(Command.INVALIDATE.equalsIgnoreCase(command)) invalidate(args);
+				else if(Command.JOBS.equalsIgnoreCase(command)) jobs(args);
+				else if(Command.PING.equalsIgnoreCase(command)) ping(args);
+				else if(Command.REPEAT.equalsIgnoreCase(command)) repeat(args);
+				else if(Command.SLEEP.equalsIgnoreCase(command)) sleep(args);
+				else if(Command.SU.equalsIgnoreCase(command)) su(args);
+				else if(Command.TIME.equalsIgnoreCase(command)) time(args);
+				else if(Command.WHOAMI.equalsIgnoreCase(command)) whoami(args);
 				else {
 					boolean done=false;
 					// Use the aosh_commands table for faster lookups
 					String lowerCommand=command.toLowerCase();
-					AOSHCommand aoshCommand=connector.getAoshCommands().get(lowerCommand);
+					Command aoshCommand=connector.getAoshCommands().get(lowerCommand);
 					if(aoshCommand!=null) {
 						AOServTable<?,?> table = aoshCommand.getTable(connector).getAOServTable(connector);
 						done=table.handleCommand(args, in, out, err, isInteractive());
@@ -213,9 +213,9 @@ final public class AOSH extends ShellInterpreter {
 	}
 
 	private void invalidate(String[] args) throws IllegalArgumentException, SQLException, IOException {
-		if(checkRangeParamCount(AOSHCommand.INVALIDATE, args, 1, 2, err)) {
+		if(checkRangeParamCount(Command.INVALIDATE, args, 1, 2, err)) {
 			String tableName=args[1];
-			SchemaTableTable schemaTableTable=connector.getSchemaTables();
+			TableTable schemaTableTable=connector.getSchemaTables();
 			// Find the table ID
 			int tableID=-1;
 			for(int d=0;d<numTables;d++) {
@@ -227,7 +227,7 @@ final public class AOSH extends ShellInterpreter {
 			if(tableID>=0) {
 				connector.getSimpleAOClient().invalidate(tableID, args.length>2?args[2]:null);
 			} else {
-				err.print("aosh: "+AOSHCommand.INVALIDATE+": unable to find table: ");
+				err.print("aosh: "+Command.INVALIDATE+": unable to find table: ");
 				err.println(tableName);
 				err.flush();
 			}
@@ -552,7 +552,7 @@ final public class AOSH extends ShellInterpreter {
 	}
 
 	private void ping(String[] args) throws IOException, SQLException {
-		if(checkParamCount(AOSHCommand.PING, args, 0, err)) {
+		if(checkParamCount(Command.PING, args, 0, err)) {
 			out.print(connector.getSimpleAOClient().ping());
 			out.println(" ms");
 			out.flush();
@@ -582,17 +582,17 @@ final public class AOSH extends ShellInterpreter {
 
 					for(int c=0;c<count;c++) handleCommand(newArgs);
 				} else {
-					err.print("aosh: "+AOSHCommand.REPEAT+": invalid loop count: ");
+					err.print("aosh: "+Command.REPEAT+": invalid loop count: ");
 					err.println(count);
 					err.flush();
 				}
 			} catch(NumberFormatException nfe) {
-				err.print("aosh: "+AOSHCommand.REPEAT+": invalid loop count: ");
+				err.print("aosh: "+Command.REPEAT+": invalid loop count: ");
 				err.println(args[1]);
 				err.flush();
 			}
 		} else {
-			err.println("aosh: "+AOSHCommand.REPEAT+": not enough parameters");
+			err.println("aosh: "+Command.REPEAT+": not enough parameters");
 			err.flush();
 		}
 	}
@@ -604,23 +604,23 @@ final public class AOSH extends ShellInterpreter {
 					try {
 						long time=1000*Integer.parseInt(args[c]);
 						if(time<0) {
-							err.println("aosh: "+AOSHCommand.SLEEP+": invalid time interval: "+args[c]);
+							err.println("aosh: "+Command.SLEEP+": invalid time interval: "+args[c]);
 							err.flush();
 						} else {
 							Thread.sleep(time);
 						}
 					} catch(NumberFormatException nfe) {
-						err.println("aosh: "+AOSHCommand.SLEEP+": invalid time interval: "+args[c]);
+						err.println("aosh: "+Command.SLEEP+": invalid time interval: "+args[c]);
 						err.flush();
 					}
 				}
 			} catch(InterruptedException ie) {
 				status="Interrupted";
-				err.println("aosh: "+AOSHCommand.SLEEP+": interrupted");
+				err.println("aosh: "+Command.SLEEP+": interrupted");
 				err.flush();
 			}
 		} else {
-			err.println("aosh: "+AOSHCommand.SLEEP+": too few arguments");
+			err.println("aosh: "+Command.SLEEP+": too few arguments");
 			err.flush();
 		}
 	}
@@ -644,11 +644,11 @@ final public class AOSH extends ShellInterpreter {
 					newArgs
 				).run();
 			} catch(ValidationException e) {
-				err.println("aosh: "+AOSHCommand.SU+": " + e.getResult().toString());
+				err.println("aosh: "+Command.SU+": " + e.getResult().toString());
 				err.flush();
 			}
 		} else {
-			err.println("aosh: "+AOSHCommand.SU+": not enough parameters");
+			err.println("aosh: "+Command.SU+": not enough parameters");
 			err.flush();
 		}
 	}
@@ -674,7 +674,7 @@ final public class AOSH extends ShellInterpreter {
 				out.flush();
 			}
 		} else {
-			err.println("aosh: "+AOSHCommand.TIME+": not enough parameters");
+			err.println("aosh: "+Command.TIME+": not enough parameters");
 			err.flush();
 		}
 	}
@@ -684,7 +684,7 @@ final public class AOSH extends ShellInterpreter {
 			out.println(connector.getThisBusinessAdministrator().getUsername().getUsername());
 			out.flush();
 		} else {
-			err.println("aosh: "+AOSHCommand.WHOAMI+": too many parameters");
+			err.println("aosh: "+Command.WHOAMI+": too many parameters");
 			err.flush();
 		}
 	}

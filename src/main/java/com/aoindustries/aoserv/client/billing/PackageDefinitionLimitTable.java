@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -72,7 +72,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PACKAGE_DEFINITION_LIMITS;
+	public Table.TableID getTableID() {
+		return Table.TableID.PACKAGE_DEFINITION_LIMITS;
 	}
 }

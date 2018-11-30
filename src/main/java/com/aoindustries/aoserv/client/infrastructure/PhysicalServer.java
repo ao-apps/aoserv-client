@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.infrastructure;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.InternUtils;
@@ -91,8 +91,8 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 		}
 	}
 
-	public Server getServer() throws SQLException, IOException {
-		Server se=table.getConnector().getServers().get(pkey);
+	public Host getServer() throws SQLException, IOException {
+		Host se=table.getConnector().getServers().get(pkey);
 		if(se==null) throw new SQLException("Unable to find Server: "+pkey);
 		return se;
 	}
@@ -169,8 +169,8 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PHYSICAL_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.PHYSICAL_SERVERS;
 	}
 
 	@Override
@@ -215,7 +215,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(rack);
 		out.writeShort(rackUnits);
@@ -224,10 +224,10 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 		out.writeCompressedInt(processorSpeed);
 		out.writeCompressedInt(processorCores);
 		out.writeFloat(maxPower);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_37)>=0) {
 			out.writeBoolean(supports_hvm!=null);
 			if(supports_hvm!=null) out.writeBoolean(supports_hvm);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_63)>=0) out.writeUTF(upsType.name());
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_63)>=0) out.writeUTF(upsType.name());
 	}
 }

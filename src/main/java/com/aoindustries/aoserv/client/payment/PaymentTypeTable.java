@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.payment;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -91,7 +91,7 @@ final public class PaymentTypeTable extends GlobalTableStringKey<PaymentType> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PAYMENT_TYPES;
+	public Table.TableID getTableID() {
+		return Table.TableID.PAYMENT_TYPES;
 	}
 }

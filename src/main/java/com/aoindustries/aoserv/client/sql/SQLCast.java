@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.sql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -38,9 +38,9 @@ import java.util.List;
 final public class SQLCast extends SQLExpression {
 
 	private final SQLExpression expression;
-	private final SchemaType castToType;
+	private final Type castToType;
 
-	public SQLCast(SQLExpression expression, SchemaType castToType) {
+	public SQLCast(SQLExpression expression, Type castToType) {
 		this.expression=expression;
 		this.castToType=castToType;
 	}
@@ -56,12 +56,12 @@ final public class SQLCast extends SQLExpression {
 	}
 
 	@Override
-	public SchemaType getType() {
+	public Type getType() {
 		return castToType;
 	}
 
 	@Override
-	public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
+	public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
 		expression.getReferencedTables(conn, tables);
 	}
 }

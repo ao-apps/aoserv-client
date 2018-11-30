@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.reseller;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableAccountingCodeKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.util.tree.Node;
 import com.aoindustries.util.tree.Tree;
@@ -69,8 +69,8 @@ final public class ResellerTable extends CachedTableAccountingCodeKey<Reseller> 
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.RESELLERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.RESELLERS;
 	}
 	/**
 	 * Gets the list of all resellers that either have a null parent (the

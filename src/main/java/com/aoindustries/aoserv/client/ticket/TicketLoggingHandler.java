@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.ticket;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.account.Business;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.reseller.Brand;
-import com.aoindustries.aoserv.client.reseller.TicketCategory;
+import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.logging.QueuedHandler;
@@ -61,7 +61,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
 	 * Only one TicketLoggingHandler will be created per unique summaryPrefix,
 	 * AOServConnector, and category.
 	 */
-	public static Handler getHandler(String summaryPrefix, AOServConnector connector, TicketCategory category) throws IOException, SQLException {
+	public static Handler getHandler(String summaryPrefix, AOServConnector connector, Category category) throws IOException, SQLException {
 		synchronized(handlers) {
 			for(TicketLoggingHandler handler : handlers) {
 				if(
@@ -78,13 +78,13 @@ final public class TicketLoggingHandler extends QueuedHandler {
 
 	private final String summaryPrefix;
 	private final AOServConnector connector;
-	private final TicketCategory category;
-	private final Business business;
+	private final Category category;
+	private final Account business;
 	private final Brand brand;
 	private final Language language;
 	private final TicketType ticketType;
 
-	private TicketLoggingHandler(String summaryPrefix, final AOServConnector connector, TicketCategory category) throws IOException, SQLException {
+	private TicketLoggingHandler(String summaryPrefix, final AOServConnector connector, Category category) throws IOException, SQLException {
 		super(
 			"Console logger for "+connector.toString(),
 			"Ticket logger for "+connector.toString()
@@ -123,9 +123,9 @@ final public class TicketLoggingHandler extends QueuedHandler {
 				String status = ticket.getStatus().getStatus();
 				if(
 					(
-						TicketStatus.OPEN.equals(status)
-						|| TicketStatus.HOLD.equals(status)
-						|| TicketStatus.BOUNCED.equals(status)
+						Status.OPEN.equals(status)
+						|| Status.HOLD.equals(status)
+						|| Status.BOUNCED.equals(status)
 					) && brand.equals(ticket.getBrand())
 					&& business.equals(ticket.getBusiness())
 					&& language.equals(ticket.getLanguage())
@@ -146,11 +146,11 @@ final public class TicketLoggingHandler extends QueuedHandler {
 				// The priority depends on the log level
 				String priorityName;
 				int intLevel = level.intValue();
-				if(intLevel<=Level.CONFIG.intValue()) priorityName = TicketPriority.LOW;           // FINE < level <= CONFIG
-				else if(intLevel<=Level.INFO.intValue()) priorityName = TicketPriority.NORMAL;     // CONFIG < level <=INFO
-				else if(intLevel<=Level.WARNING.intValue()) priorityName = TicketPriority.HIGH;    // INFO < level <=WARNING
-				else priorityName = TicketPriority.URGENT;                                         // WARNING < level
-				TicketPriority priority = connector.getTicketPriorities().get(priorityName);
+				if(intLevel<=Level.CONFIG.intValue()) priorityName = Priority.LOW;           // FINE < level <= CONFIG
+				else if(intLevel<=Level.INFO.intValue()) priorityName = Priority.NORMAL;     // CONFIG < level <=INFO
+				else if(intLevel<=Level.WARNING.intValue()) priorityName = Priority.HIGH;    // INFO < level <=WARNING
+				else priorityName = Priority.URGENT;                                         // WARNING < level
+				Priority priority = connector.getTicketPriorities().get(priorityName);
 				if(priority==null) throw new SQLException("Unable to find TicketPriority: "+priorityName);
 				connector.getTickets().addTicket(
 					brand,

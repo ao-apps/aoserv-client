@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.email;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServStreamable;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -44,7 +44,7 @@ final public class InboxAttributes implements AOServStreamable {
 	private long fileSize;
 	private long lastModified;
 
-	public InboxAttributes(AOServConnector connector, LinuxServerAccount lsa) {
+	public InboxAttributes(AOServConnector connector, UserServer lsa) {
 		this.connector=connector;
 		this.linuxServerAccount=lsa.getPkey();
 	}
@@ -64,7 +64,7 @@ final public class InboxAttributes implements AOServStreamable {
 		return connector;
 	}
 
-	public LinuxServerAccount getLinuxServerAccount() throws IOException, SQLException {
+	public UserServer getLinuxServerAccount() throws IOException, SQLException {
 		return connector.getLinuxServerAccounts().get(linuxServerAccount);
 	}
 
@@ -98,11 +98,11 @@ final public class InboxAttributes implements AOServStreamable {
 	@Deprecated
 	@Override
 	public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
-		write(out, AOServProtocol.Version.getVersion(protocolVersion));
+		write(out, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(systemTime);
 		out.writeLong(fileSize);
 		out.writeLong(lastModified);

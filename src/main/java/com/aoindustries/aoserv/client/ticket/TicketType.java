@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.ticket;
 
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -67,8 +67,8 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.TICKET_TYPES;
+	public Table.TableID getTableID() {
+		return Table.TableID.TICKET_TYPES;
 	}
 
 	public String getType() {
@@ -86,9 +86,9 @@ final public class TicketType extends GlobalObjectStringKey<TicketType> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) {
 			out.writeUTF(pkey); // description
 			out.writeBoolean(false); // client_view
 		}

@@ -27,10 +27,10 @@ import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.DisableLog;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
-import com.aoindustries.aoserv.client.linux.LinuxServerGroup;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -131,12 +131,12 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.CVS_REPOSITORIES, dl.getPkey(), pkey);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.CVS_REPOSITORIES, dl.getPkey(), pkey);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.CVS_REPOSITORIES, pkey);
 	}
 
 	@Override
@@ -174,8 +174,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return linux_server_account;
 	}
 
-	public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-		LinuxServerAccount lsa=table.getConnector().getLinuxServerAccounts().get(linux_server_account);
+	public UserServer getLinuxServerAccount() throws SQLException, IOException {
+		UserServer lsa=table.getConnector().getLinuxServerAccounts().get(linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
 		return lsa;
 	}
@@ -184,8 +184,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return linux_server_group;
 	}
 
-	public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-		LinuxServerGroup lsg=table.getConnector().getLinuxServerGroups().get(linux_server_group);
+	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
+		GroupServer lsg=table.getConnector().getLinuxServerGroups().get(linux_server_group);
 		if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
 		return lsg;
 	}
@@ -199,8 +199,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CVS_REPOSITORIES;
+	public Table.TableID getTableID() {
+		return Table.TableID.CVS_REPOSITORIES;
 	}
 
 	@Override
@@ -241,22 +241,22 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CVS_REPOSITORIES, pkey);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.CVS_REPOSITORIES, pkey);
 	}
 
 	public void setMode(long mode) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_CVS_REPOSITORY_MODE, pkey, mode);
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(path.toString());
 		out.writeCompressedInt(linux_server_account);
 		out.writeCompressedInt(linux_server_group);
 		out.writeLong(mode);
 		out.writeLong(created);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);
 		}

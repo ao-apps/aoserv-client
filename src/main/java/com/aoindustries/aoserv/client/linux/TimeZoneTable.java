@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.linux;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -50,8 +50,8 @@ final public class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.TIME_ZONES;
+	public Table.TableID getTableID() {
+		return Table.TableID.TIME_ZONES;
 	}
 
 	@Override

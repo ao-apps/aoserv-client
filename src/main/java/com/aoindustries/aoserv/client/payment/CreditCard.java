@@ -26,11 +26,11 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
@@ -157,9 +157,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 * Flags a card as declined.
 	 */
 	public void declined(String reason) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.CREDIT_CARD_DECLINED,
+		table.getConnector().requestUpdateIL(true,
+			AoservProtocol.CommandID.CREDIT_CARD_DECLINED,
 			pkey,
 			reason
 		);
@@ -168,14 +167,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	/**
 	 * Gets the processor that is storing the credit card numbers.
 	 */
-	public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
-		CreditCardProcessor ccp = table.getConnector().getCreditCardProcessors().get(processorId);
+	public Processor getCreditCardProcessor() throws SQLException, IOException {
+		Processor ccp = table.getConnector().getCreditCardProcessors().get(processorId);
 		if(ccp==null) throw new SQLException("Unable to find CreditCardProcessor: "+processorId);
 		return ccp;
 	}
 
-	public Business getBusiness() throws SQLException, IOException {
-		Business business = table.getConnector().getBusinesses().get(accounting);
+	public Account getBusiness() throws SQLException, IOException {
+		Account business = table.getConnector().getBusinesses().get(accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 		return business;
 	}
@@ -315,8 +314,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return new Timestamp(created);
 	}
 
-	public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
-		BusinessAdministrator business_administrator = table.getConnector().getUsernames().get(createdBy).getBusinessAdministrator();
+	public Administrator getCreatedBy() throws SQLException, IOException {
+		Administrator business_administrator = table.getConnector().getUsernames().get(createdBy).getBusinessAdministrator();
 		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + createdBy);
 		return business_administrator;
 	}
@@ -373,8 +372,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CREDIT_CARDS;
+	public Table.TableID getTableID() {
+		return Table.TableID.CREDIT_CARDS;
 	}
 
 	@Override
@@ -471,7 +470,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REMOVE, SchemaTable.TableID.CREDIT_CARDS, pkey);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.REMOVE, Table.TableID.CREDIT_CARDS, pkey);
 	}
 
 	@Override
@@ -484,14 +483,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeUTF(processorId);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) out.writeUTF(processorId);
 		out.writeUTF(accounting.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(0);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(groupName);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(0);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(groupName);
 		out.writeUTF(cardInfo);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28)<=0) {
 			out.writeCompressedInt(0);
 			out.writeCompressedInt(0);
 			out.writeCompressedInt(0);
@@ -501,7 +500,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			else out.writeCompressedInt(0);
 			out.writeCompressedInt(0);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) {
 			out.writeUTF(providerUniqueId);
 			out.writeUTF(firstName);
 			out.writeUTF(lastName);
@@ -519,14 +518,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		}
 		out.writeLong(created);
 		out.writeUTF(createdBy.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(principalName);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(principalName);
 		out.writeBoolean(useMonthly);
 		out.writeBoolean(isActive);
 		out.writeLong(deactivatedOn);
 		out.writeNullUTF(deactivateReason);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
 		out.writeNullUTF(description);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31)>=0) {
 			out.writeNullUTF(encrypted_card_number);
 			out.writeCompressedInt(encryption_card_number_from);
 			out.writeCompressedInt(encryption_card_number_recipient);
@@ -555,9 +554,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		CountryCode countryCode,
 		String description
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.UPDATE_CREDIT_CARD,
+		table.getConnector().requestUpdateIL(true,
+			AoservProtocol.CommandID.UPDATE_CREDIT_CARD,
 			pkey,
 			firstName,
 			lastName,
@@ -587,7 +585,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		byte expirationMonth,
 		short expirationYear
 	) throws IOException, SQLException {
-		CreditCardProcessor processor = getCreditCardProcessor();
+		Processor processor = getCreditCardProcessor();
 		final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
 		final EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
 		final String encryptedCardNumber;
@@ -601,9 +599,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			encryptedExpiration = null;
 		}
 
-		table.getConnector().requestUpdate(
-			true,
-			AOServProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION,
+		table.getConnector().requestUpdate(true,
+			AoservProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
@@ -620,10 +617,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unknown response code: "+code);
 					}
 				}
@@ -644,15 +641,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		byte expirationMonth,
 		short expirationYear
 	) throws IOException, SQLException {
-		CreditCardProcessor processor = getCreditCardProcessor();
+		Processor processor = getCreditCardProcessor();
 		EncryptionKey encryptionFrom = processor.getEncryptionFrom();
 		EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
 		if(encryptionFrom!=null && encryptionRecipient!=null) {
 			// Encrypt the expiration
 			String encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
-			table.getConnector().requestUpdateIL(
-				true,
-				AOServProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
+			table.getConnector().requestUpdateIL(true,
+				AoservProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
 				pkey,
 				encryptedExpiration,
 				encryptionFrom.getPkey(),
@@ -665,9 +661,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 * Reactivates a credit card.
 	 */
 	public void reactivate() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.REACTIVATE_CREDIT_CARD,
+		table.getConnector().requestUpdateIL(true,
+			AoservProtocol.CommandID.REACTIVATE_CREDIT_CARD,
 			pkey
 		);
 	}

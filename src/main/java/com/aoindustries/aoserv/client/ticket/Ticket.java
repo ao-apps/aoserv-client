@@ -24,13 +24,13 @@ package com.aoindustries.aoserv.client.ticket;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.reseller.Brand;
+import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.aoserv.client.reseller.Reseller;
-import com.aoindustries.aoserv.client.reseller.TicketCategory;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
@@ -49,8 +49,8 @@ import java.util.List;
  * The <code>Ticket</code> system allows clients to submit support
  * requests and monitor the progress of the work.
  *
- * @see  TicketAction
- * @see  TicketPriority
+ * @see  Action
+ * @see  Priority
  * @see  TicketType
  *
  * @author  AO Industries, Inc.
@@ -129,8 +129,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.TICKETS;
+	public Table.TableID getTableID() {
+		return Table.TableID.TICKETS;
 	}
 
 	@Override
@@ -166,7 +166,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			pkey = in.readCompressedInt();
 			brand = AccountingCode.valueOf(in.readUTF()).intern();
 			String resellerStr = in.readUTF();
-			if(AOServProtocol.FILTERED.equals(resellerStr)) {
+			if(AoservProtocol.FILTERED.equals(resellerStr)) {
 				reseller = null;
 			} else {
 				reseller = AccountingCode.valueOf(resellerStr).intern();
@@ -191,42 +191,42 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller==null ? AOServProtocol.FILTERED : reseller.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46)>=0) out.writeUTF(brand.toString());
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeUTF(reseller==null ? AoservProtocol.FILTERED : reseller.toString());
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)<=0) {
 			out.writeUTF(accounting==null ? "" : accounting.toString());
 		} else {
 			out.writeNullUTF(ObjectUtils.toString(accounting));
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(language);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeUTF(language);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)<=0) {
 			out.writeUTF(created_by==null ? "" : created_by.toString());
 		} else {
 			out.writeNullUTF(ObjectUtils.toString(created_by));
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeCompressedInt(category);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeCompressedInt(category);
 		out.writeUTF(ticket_type);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(from_address);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeUTF(summary);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_14)<=0) out.writeUTF("");
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_15)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeCompressedInt(0); // details
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(from_address);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeUTF(summary);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_14)<=0) out.writeUTF("");
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_15)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeCompressedInt(0); // details
 		out.writeLong(open_date);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null);
 		out.writeUTF(client_priority);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_10)<0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_10)<0) {
 			out.writeUTF(admin_priority==null ? client_priority : admin_priority);
 		} else {
 			out.writeNullUTF(admin_priority);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // technology
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // technology
 		out.writeUTF(status);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_44)>=0) out.writeLong(status_timeout);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // assigned_to
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_125)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeLong(status_timeout);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // assigned_to
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0) {
 			out.writeUTF(contact_emails);
 			out.writeUTF(contact_phone_numbers);
 		}
@@ -256,7 +256,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	/**
 	 * May be null if not set or filtered.
 	 */
-	public Business getBusiness() throws SQLException, IOException {
+	public Account getBusiness() throws SQLException, IOException {
 		if(accounting==null) return null;
 		return table.getConnector().getBusinesses().get(accounting);
 	}
@@ -267,15 +267,15 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return la;
 	}
 
-	public BusinessAdministrator getCreatedBy() throws IOException, SQLException {
+	public Administrator getCreatedBy() throws IOException, SQLException {
 		if(created_by == null) return null;
 		// Data may be filtered by APIs
 		return table.getConnector().getBusinessAdministrators().get(created_by);
 	}
 
-	public TicketCategory getCategory() throws IOException, SQLException {
+	public Category getCategory() throws IOException, SQLException {
 		if(category==-1) return null;
-		TicketCategory tc = table.getConnector().getTicketCategories().get(category);
+		Category tc = table.getConnector().getTicketCategories().get(category);
 		if(tc==null) throw new SQLException("Unable to find TicketCategory: "+category);
 		return tc;
 	}
@@ -299,7 +299,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
 	synchronized public String getDetails() throws IOException, SQLException {
 		if(!detailsLoaded) {
-			details = table.getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_DETAILS, pkey);
+			details = table.getConnector().requestNullLongStringQuery(true, AoservProtocol.CommandID.GET_TICKET_DETAILS, pkey);
 			detailsLoaded = true;
 		}
 		return details;
@@ -307,7 +307,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
 	synchronized public String getRawEmail() throws IOException, SQLException {
 		if(!rawEmailLoaded) {
-			raw_email = table.getConnector().requestNullLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_RAW_EMAIL, pkey);
+			raw_email = table.getConnector().requestNullLongStringQuery(true, AoservProtocol.CommandID.GET_TICKET_RAW_EMAIL, pkey);
 			rawEmailLoaded = true;
 		}
 		return raw_email;
@@ -317,21 +317,21 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return new Timestamp(open_date);
 	}
 
-	public TicketPriority getClientPriority() throws IOException, SQLException {
-		TicketPriority clientPriorityObject = table.getConnector().getTicketPriorities().get(client_priority);
+	public Priority getClientPriority() throws IOException, SQLException {
+		Priority clientPriorityObject = table.getConnector().getTicketPriorities().get(client_priority);
 		if (clientPriorityObject == null) throw new SQLException("Unable to find Priority: " + client_priority);
 		return clientPriorityObject;
 	}
 
-	public TicketPriority getAdminPriority() throws IOException, SQLException {
+	public Priority getAdminPriority() throws IOException, SQLException {
 		if(admin_priority==null) return null;
-		TicketPriority adminPriorityObject = table.getConnector().getTicketPriorities().get(admin_priority);
+		Priority adminPriorityObject = table.getConnector().getTicketPriorities().get(admin_priority);
 		if (adminPriorityObject == null) throw new SQLException("Unable to find Priority: " + admin_priority);
 		return adminPriorityObject;
 	}
 
-	public TicketStatus getStatus() throws IOException, SQLException {
-		TicketStatus statusObject = table.getConnector().getTicketStatuses().get(status);
+	public Status getStatus() throws IOException, SQLException {
+		Status statusObject = table.getConnector().getTicketStatuses().get(status);
 		if (statusObject == null) throw new SQLException("Unable to find status: " + status);
 		return statusObject;
 	}
@@ -350,7 +350,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
 	synchronized public String getInternalNotes() throws IOException, SQLException {
 		if(!internalNotesLoaded) {
-			internal_notes = table.getConnector().requestLongStringQuery(true, AOServProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, pkey);
+			internal_notes = table.getConnector().requestLongStringQuery(true, AoservProtocol.CommandID.GET_TICKET_INTERNAL_NOTES, pkey);
 			internalNotesLoaded = true;
 		}
 		return internal_notes;
@@ -358,11 +358,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	// </editor-fold>
 
 	// <editor-fold desc="Data Access">
-	public List<TicketAction> getTicketActions() throws IOException, SQLException {
+	public List<Action> getTicketActions() throws IOException, SQLException {
 		return table.getConnector().getTicketActions().getActions(this);
 	}
 
-	public List<TicketAssignment> getTicketAssignments() throws IOException, SQLException {
+	public List<Assignment> getTicketAssignments() throws IOException, SQLException {
 		return table.getConnector().getTicketAssignments().getTicketAssignments(this);
 	}
 	// </editor-fold>
@@ -373,22 +373,21 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.getUsername_id(), comments);
 	}*/
 
-	public void actChangeAdminPriority(TicketPriority priority, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.getPriority(), business_administrator.getUsername_userId(), comments);
+	public void actChangeAdminPriority(Priority priority, Administrator business_administrator, String comments) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.CHANGE_TICKET_ADMIN_PRIORITY, pkey, priority==null ? "" : priority.getPriority(), business_administrator.getUsername_userId(), comments);
 	}
 
-	public void setClientPriority(TicketPriority clientPriority) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_CLIENT_PRIORITY, pkey, clientPriority.getPriority());
+	public void setClientPriority(Priority clientPriority) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.CHANGE_TICKET_CLIENT_PRIORITY, pkey, clientPriority.getPriority());
 	}
 
 	public void setSummary(String summary) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_SUMMARY, pkey, summary);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_TICKET_SUMMARY, pkey, summary);
 	}
 
 	public void addAnnotation(final String summary, final String details) throws IOException, SQLException {
-		table.getConnector().requestUpdate(
-			true,
-			AOServProtocol.CommandID.ADD_TICKET_ANNOTATION,
+		table.getConnector().requestUpdate(true,
+			AoservProtocol.CommandID.ADD_TICKET_ANNOTATION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
@@ -402,10 +401,10 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
@@ -418,16 +417,16 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		);
 	}
 
-	public void actAssignTo(BusinessAdministrator assignedTo, BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.getUsername_userId(), comments);
+	public void actAssignTo(Administrator assignedTo, Administrator business_administrator, String comments) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.getUsername_userId(), comments);
 	}
 
 	public void setContactEmails(String contactEmails) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_CONTACT_EMAILS, pkey, contactEmails);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_TICKET_CONTACT_EMAILS, pkey, contactEmails);
 	}
 
 	public void setContactPhoneNumbers(String contactPhoneNumbers) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_TICKET_CONTACT_PHONE_NUMBERS, pkey, contactPhoneNumbers);
 	}
 
 	/*
@@ -450,8 +449,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.getUsername_userId(), comments);
 	}*/
 
-	public void actWorkEntry(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.TICKET_WORK, pkey, business_administrator.getUsername_userId(), comments);
+	public void actWorkEntry(Administrator business_administrator, String comments) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.TICKET_WORK, pkey, business_administrator.getUsername_userId(), comments);
 	}
 
 	/**
@@ -459,10 +458,9 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 *
 	 * @return <code>true</code> if successfully updated or <code>false</code> if oldBusiness doesn't match the current business.
 	 */
-	public boolean setBusiness(Business oldBusiness, Business newBusiness) throws IOException, SQLException {
-		return table.getConnector().requestBooleanQueryIL(
-			true,
-			AOServProtocol.CommandID.SET_TICKET_BUSINESS,
+	public boolean setBusiness(Account oldBusiness, Account newBusiness) throws IOException, SQLException {
+		return table.getConnector().requestBooleanQueryIL(true,
+			AoservProtocol.CommandID.SET_TICKET_BUSINESS,
 			pkey,
 			oldBusiness==null ? "" : oldBusiness.getAccounting().toString(),
 			newBusiness==null ? "" : newBusiness.getAccounting().toString()
@@ -475,7 +473,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 * @return <code>true</code> if successfully updated or <code>false</code> if oldType doesn't match the current type.
 	 */
 	public boolean setTicketType(TicketType oldType, TicketType newType) throws IOException, SQLException {
-		return table.getConnector().requestBooleanQueryIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, oldType.getType(), newType.getType());
+		return table.getConnector().requestBooleanQueryIL(true, AoservProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, oldType.getType(), newType.getType());
 		// table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.CHANGE_TICKET_TYPE, pkey, ticket_type.pkey, business_administrator.getUsername_userId(), comments);
 	}
 
@@ -484,8 +482,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 *
 	 * @return <code>true</code> if successfully updated or <code>false</code> if oldStatus doesn't match the current status.
 	 */
-	public boolean setStatus(TicketStatus oldStatus, TicketStatus newStatus, long statusTimeout) throws IOException, SQLException {
-		return table.getConnector().requestBooleanQueryIL(true, AOServProtocol.CommandID.SET_TICKET_STATUS, pkey, oldStatus.getStatus(), newStatus.getStatus(), statusTimeout);
+	public boolean setStatus(Status oldStatus, Status newStatus, long statusTimeout) throws IOException, SQLException {
+		return table.getConnector().requestBooleanQueryIL(true, AoservProtocol.CommandID.SET_TICKET_STATUS, pkey, oldStatus.getStatus(), newStatus.getStatus(), statusTimeout);
 	}
 
 	/**
@@ -494,9 +492,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 * @return <code>true</code> if successfully updated or <code>false</code> if oldInternalNotes doesn't match the current internal notes.
 	 */
 	public boolean setInternalNotes(final String oldInternalNotes, final String newInternalNotes) throws IOException, SQLException {
-		return table.getConnector().requestResult(
-			true,
-			AOServProtocol.CommandID.SET_TICKET_INTERNAL_NOTES,
+		return table.getConnector().requestResult(true,
+			AoservProtocol.CommandID.SET_TICKET_INTERNAL_NOTES,
 			new AOServConnector.ResultRequest<Boolean>() {
 				boolean result;
 				IntList invalidateList;
@@ -511,11 +508,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code = in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						result = in.readBoolean();
 						invalidateList = AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}

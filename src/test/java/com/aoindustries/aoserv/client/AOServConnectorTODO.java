@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -265,17 +265,17 @@ public class AOServConnectorTODO extends TestCase {
 		for(AOServConnector conn : conns) {
 			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
-			int numTables = SchemaTable.TableID.values().length;
+			int numTables = Table.TableID.values().length;
 			AOServTable[] tables=new AOServTable[numTables];
 			for(int c=0;c<numTables;c++) {
 				AOServTable table=tables[c]=conn.getTable(c);
 				// Make sure index matches table ID
 				// AOServClient version 1.30 had a bug where two tables were swapped
 				if(
-					AOServProtocol.Version.CURRENT_VERSION==AOServProtocol.Version.VERSION_1_30
+					AoservProtocol.Version.CURRENT_VERSION==AoservProtocol.Version.VERSION_1_30
 					&& (
-						c==SchemaTable.TableID.AOSERV_PERMISSIONS.ordinal()
-						|| c==SchemaTable.TableID.AOSERV_PROTOCOLS.ordinal()
+						c==Table.TableID.AOSERV_PERMISSIONS.ordinal()
+						|| c==Table.TableID.AOSERV_PROTOCOLS.ordinal()
 					)
 				) {
 					System.out.println("        Skipping version 1.30 bug where aoserv_protocols and aoserv_permissions were swapped in AOServConnector table array");

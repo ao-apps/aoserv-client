@@ -25,10 +25,10 @@ package com.aoindustries.aoserv.client.infrastructure;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
+import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import java.io.IOException;
@@ -48,8 +48,8 @@ final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(VirtualDisk.COLUMN_VIRTUAL_SERVER_name+'.'+VirtualServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(VirtualDisk.COLUMN_DEVICE_name, ASCENDING)
 	};
 	@Override
@@ -63,8 +63,8 @@ final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.VIRTUAL_DISKS;
+	public Table.TableID getTableID() {
+		return Table.TableID.VIRTUAL_DISKS;
 	}
 
 	List<VirtualDisk> getVirtualDisks(VirtualServer vs) throws IOException, SQLException {
@@ -74,8 +74,8 @@ final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.VERIFY_VIRTUAL_DISK)) {
-			if(AOSH.checkParamCount(AOSHCommand.VERIFY_VIRTUAL_DISK, args, 2, err)) {
+		if(command.equalsIgnoreCase(Command.VERIFY_VIRTUAL_DISK)) {
+			if(AOSH.checkParamCount(Command.VERIFY_VIRTUAL_DISK, args, 2, err)) {
 				long lastVerified = connector.getSimpleAOClient().verifyVirtualDisk(args[1], args[2]);
 				if(isInteractive) {
 					out.println(SQLUtility.getDateTime(lastVerified));

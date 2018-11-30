@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.sql;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
-import com.aoindustries.aoserv.client.schema.SchemaColumn;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.schema.Column;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -40,18 +40,18 @@ import java.util.List;
 final public class SQLColumnJoin extends SQLExpression {
 
 	final private SQLExpression expression;
-	final private SchemaColumn keyColumn;
+	final private Column keyColumn;
 	final private int keyIndex;
-	final private SchemaColumn valueColumn;
-	final private SchemaType type;
+	final private Column valueColumn;
+	final private Type type;
 	final private AOServTable table;
 	final private int valueIndex;
 
 	public SQLColumnJoin(
 		AOServConnector conn,
 		SQLExpression expression,
-		SchemaColumn keyColumn,
-		SchemaColumn valueColumn
+		Column keyColumn,
+		Column valueColumn
 	) throws SQLException, IOException {
 		this.expression = expression;
 		this.keyColumn = keyColumn;
@@ -78,14 +78,14 @@ final public class SQLColumnJoin extends SQLExpression {
 	}
 
 	@Override
-	public SchemaType getType() {
+	public Type getType() {
 		return type;
 	}
 
 	@Override
-	public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
+	public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
 		expression.getReferencedTables(conn, tables);
-		SchemaTable t = keyColumn.getTable(conn);
+		Table t = keyColumn.getTable(conn);
 		if(!tables.contains(t)) tables.add(t);
 	}
 }

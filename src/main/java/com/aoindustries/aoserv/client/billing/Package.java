@@ -24,39 +24,36 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.Disablable;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.DisableLog;
 import com.aoindustries.aoserv.client.account.Username;
 import com.aoindustries.aoserv.client.backup.BackupReport;
-import com.aoindustries.aoserv.client.backup.FailoverMySQLReplication;
-import com.aoindustries.aoserv.client.dns.DNSZone;
-import com.aoindustries.aoserv.client.email.EmailDomain;
-import com.aoindustries.aoserv.client.email.EmailList;
-import com.aoindustries.aoserv.client.email.EmailPipe;
-import com.aoindustries.aoserv.client.email.EmailSmtpRelay;
-import com.aoindustries.aoserv.client.email.EmailSmtpRelayType;
+import com.aoindustries.aoserv.client.backup.MysqlReplication;
+import com.aoindustries.aoserv.client.dns.Zone;
+import com.aoindustries.aoserv.client.email.Domain;
+import com.aoindustries.aoserv.client.email.Pipe;
 import com.aoindustries.aoserv.client.email.SendmailServer;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.linux.LinuxGroup;
-import com.aoindustries.aoserv.client.linux.LinuxGroupType;
-import com.aoindustries.aoserv.client.mysql.MySQLDatabase;
-import com.aoindustries.aoserv.client.mysql.MySQLUser;
-import com.aoindustries.aoserv.client.net.IPAddress;
-import com.aoindustries.aoserv.client.net.NetBind;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.pki.SslCertificate;
-import com.aoindustries.aoserv.client.postgresql.PostgresDatabase;
-import com.aoindustries.aoserv.client.postgresql.PostgresUser;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.email.SmtpRelay;
+import com.aoindustries.aoserv.client.email.SmtpRelayType;
+import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.GroupType;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.mysql.Database;
+import com.aoindustries.aoserv.client.mysql.User;
+import com.aoindustries.aoserv.client.net.Bind;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.net.IpAddress;
+import com.aoindustries.aoserv.client.pki.Certificate;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.scm.CvsRepository;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.web.HttpdServer;
-import com.aoindustries.aoserv.client.web.HttpdSite;
-import com.aoindustries.aoserv.client.web.tomcat.HttpdSharedTomcat;
+import com.aoindustries.aoserv.client.web.Site;
+import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.HostAddress;
@@ -76,7 +73,7 @@ import java.util.List;
  * only between <code>Business</code>es.  If intra-account security is
  * required, please use child <code>Business</code>es.
  *
- * @see  Business
+ * @see  Account
  * @see  PackageDefinition
  *
  * @author  AO Industries, Inc.
@@ -138,11 +135,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		table.getConnector().getDnsZones().addDNSZone(this, zone, ip, ttl);
 	}
 
-	public int addEmailSmtpRelay(AOServer aoServer, HostAddress host, EmailSmtpRelayType type, long duration) throws IOException, SQLException {
+	public int addEmailSmtpRelay(Server aoServer, HostAddress host, SmtpRelayType type, long duration) throws IOException, SQLException {
 		return table.getConnector().getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
 	}
 
-	public void addLinuxGroup(GroupId name, LinuxGroupType type) throws IOException, SQLException {
+	public void addLinuxGroup(GroupId name, GroupType type) throws IOException, SQLException {
 		addLinuxGroup(name, type.getName());
 	}
 
@@ -160,13 +157,13 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		if(disable_log!=-1) return false;
 
 		// Can only disabled when all dependent objects are already disabled
-		for(HttpdSharedTomcat hst : getHttpdSharedTomcats()) if(!hst.isDisabled()) return false;
-		for(EmailPipe ep : getEmailPipes()) if(!ep.isDisabled()) return false;
+		for(SharedTomcat hst : getHttpdSharedTomcats()) if(!hst.isDisabled()) return false;
+		for(Pipe ep : getEmailPipes()) if(!ep.isDisabled()) return false;
 		for(CvsRepository cr : getCvsRepositories()) if(!cr.isDisabled()) return false;
 		for(Username un : getUsernames()) if(!un.isDisabled()) return false;
-		for(HttpdSite hs : getHttpdSites()) if(!hs.isDisabled()) return false;
-		for(EmailList el : getEmailLists()) if(!el.isDisabled()) return false;
-		for(EmailSmtpRelay ssr : getEmailSmtpRelays()) if(!ssr.isDisabled()) return false;
+		for(Site hs : getHttpdSites()) if(!hs.isDisabled()) return false;
+		for(com.aoindustries.aoserv.client.email.List el : getEmailLists()) if(!el.isDisabled()) return false;
+		for(SmtpRelay ssr : getEmailSmtpRelays()) if(!ssr.isDisabled()) return false;
 
 		return true;
 	}
@@ -180,12 +177,12 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.PACKAGES, dl.getPkey(), name);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.PACKAGES, dl.getPkey(), name);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.PACKAGES, name);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.PACKAGES, name);
 	}
 
 	public List<BackupReport> getBackupReports() throws IOException, SQLException {
@@ -196,8 +193,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return accounting;
 	}
 
-	public Business getBusiness() throws SQLException, IOException {
-		Business accountingObject = table.getConnector().getBusinesses().get(accounting);
+	public Account getBusiness() throws SQLException, IOException {
+		Account accountingObject = table.getConnector().getBusinesses().get(accounting);
 		if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
 		return accountingObject;
 	}
@@ -226,8 +223,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	return new Timestamp(created);
 	}
 
-	public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
-		BusinessAdministrator createdByObject = table.getConnector().getUsernames().get(created_by).getBusinessAdministrator();
+	public Administrator getCreatedBy() throws SQLException, IOException {
+		Administrator createdByObject = table.getConnector().getUsernames().get(created_by).getBusinessAdministrator();
 		if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
 		return createdByObject;
 	}
@@ -297,19 +294,19 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return email_relay_rate;
 	}
 
-	public List<DNSZone> getDNSZones() throws IOException, SQLException {
+	public List<Zone> getDNSZones() throws IOException, SQLException {
 		return table.getConnector().getDnsZones().getDNSZones(this);
 	}
 
-	public List<EmailList> getEmailLists() throws IOException, SQLException {
+	public List<com.aoindustries.aoserv.client.email.List> getEmailLists() throws IOException, SQLException {
 		return table.getConnector().getEmailLists().getEmailLists(this);
 	}
 
-	public List<EmailPipe> getEmailPipes() throws IOException, SQLException {
+	public List<Pipe> getEmailPipes() throws IOException, SQLException {
 		return table.getConnector().getEmailPipes().getEmailPipes(this);
 	}
 
-	public List<HttpdSharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
+	public List<SharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
 		return table.getConnector().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
 	}
 
@@ -317,27 +314,27 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.getConnector().getHttpdServers().getHttpdServers(this);
 	}
 
-	public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
+	public List<Site> getHttpdSites() throws IOException, SQLException {
 		return table.getConnector().getHttpdSites().getHttpdSites(this);
 	}
 
-	public List<IPAddress> getIPAddresses() throws IOException, SQLException {
+	public List<IpAddress> getIPAddresses() throws IOException, SQLException {
 		return table.getConnector().getIpAddresses().getIPAddresses(this);
 	}
 
-	public List<LinuxGroup> getLinuxGroups() throws IOException, SQLException {
+	public List<Group> getLinuxGroups() throws IOException, SQLException {
 		return table.getConnector().getLinuxGroups().getLinuxGroups(this);
 	}
 
-	public List<MySQLDatabase> getMySQLDatabases() throws IOException, SQLException {
+	public List<Database> getMySQLDatabases() throws IOException, SQLException {
 		return table.getConnector().getMysqlDatabases().getMySQLDatabases(this);
 	}
 
-	public List<FailoverMySQLReplication> getFailoverMySQLReplications() throws IOException, SQLException {
+	public List<MysqlReplication> getFailoverMySQLReplications() throws IOException, SQLException {
 		return table.getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
 	}
 
-	public List<MySQLUser> getMySQLUsers() throws IOException, SQLException {
+	public List<User> getMySQLUsers() throws IOException, SQLException {
 		return table.getConnector().getMysqlUsers().getMySQLUsers(this);
 	}
 
@@ -345,11 +342,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return name;
 	}
 
-	public List<NetBind> getNetBinds() throws IOException, SQLException {
+	public List<Bind> getNetBinds() throws IOException, SQLException {
 		return table.getConnector().getNetBinds().getNetBinds(this);
 	}
 
-	public List<NetBind> getNetBinds(IPAddress ip) throws IOException, SQLException {
+	public List<Bind> getNetBinds(IpAddress ip) throws IOException, SQLException {
 		return table.getConnector().getNetBinds().getNetBinds(this, ip);
 	}
 
@@ -359,11 +356,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return pd;
 	}
 
-	public List<PostgresDatabase> getPostgresDatabases() throws IOException, SQLException {
+	public List<com.aoindustries.aoserv.client.postgresql.Database> getPostgresDatabases() throws IOException, SQLException {
 		return table.getConnector().getPostgresDatabases().getPostgresDatabases(this);
 	}
 
-	public List<PostgresUser> getPostgresUsers() throws SQLException, IOException {
+	public List<com.aoindustries.aoserv.client.postgresql.User> getPostgresUsers() throws SQLException, IOException {
 		return table.getConnector().getPostgresUsers().getPostgresUsers(this);
 	}
 
@@ -371,29 +368,29 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.getConnector().getSendmailServers().getSendmailServers(this);
 	}
 
-	public Server getServer(String name) throws IOException, SQLException {
+	public Host getServer(String name) throws IOException, SQLException {
 		return table.getConnector().getServers().getServer(this, name);
 	}
 
-	public List<Server> getServers() throws IOException, SQLException {
+	public List<Host> getServers() throws IOException, SQLException {
 		return table.getConnector().getServers().getServers(this);
 	}
 
-	public List<EmailDomain> getEmailDomains() throws IOException, SQLException {
+	public List<Domain> getEmailDomains() throws IOException, SQLException {
 		return table.getConnector().getEmailDomains().getEmailDomains(this);
 	}
 
-	public List<EmailSmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
+	public List<SmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
 		return table.getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
 	}
 
-	public List<SslCertificate> getSslCertificates() throws IOException, SQLException {
+	public List<Certificate> getSslCertificates() throws IOException, SQLException {
 		return table.getConnector().getSslCertificates().getSslCertificates(this);
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PACKAGES;
+	public Table.TableID getTableID() {
+		return Table.TableID.PACKAGES;
 	}
 
 	public List<Username> getUsernames() throws IOException, SQLException {
@@ -451,33 +448,33 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name.toString());
 		out.writeUTF(accounting.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) {
 			out.writeUTF("unknown");
 			out.writeCompressedInt(0);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_123)>=0) {
 			out.writeCompressedInt(package_definition);
 		}
 		out.writeLong(created);
 		out.writeUTF(created_by.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) {
 			out.writeCompressedInt(-1);
 			out.writeCompressedInt(200);
 			out.writeCompressedInt(-1);
 			out.writeCompressedInt(100);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(256);
 			out.writeLong(64*1024*1024);
 			out.writeCompressedInt(256);
 			out.writeLong(64*1024*1024);
 		}
 		out.writeCompressedInt(disable_log);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_24)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_24)>=0) {
 			out.writeCompressedInt(email_in_burst);
 			out.writeFloat(email_in_rate);
 			out.writeCompressedInt(email_out_burst);

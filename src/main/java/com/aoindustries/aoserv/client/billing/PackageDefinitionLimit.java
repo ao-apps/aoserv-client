@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -155,8 +155,8 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PACKAGE_DEFINITION_LIMITS;
+	public Table.TableID getTableID() {
+		return Table.TableID.PACKAGE_DEFINITION_LIMITS;
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(package_definition);
 		out.writeUTF(resource);

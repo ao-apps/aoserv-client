@@ -25,10 +25,10 @@ package com.aoindustries.aoserv.client.accounting;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
-import com.aoindustries.aoserv.client.master.MasterUser;
-import com.aoindustries.aoserv.client.payment.CreditCardProcessor;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.master.User;
+import com.aoindustries.aoserv.client.payment.Processor;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -74,8 +74,8 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		;
 	}
 
-	public MasterUser getAdministrator() throws SQLException, IOException {
-		MasterUser obj = table.getConnector().getMasterUsers().get(administrator);
+	public User getAdministrator() throws SQLException, IOException {
+		User obj = table.getConnector().getMasterUsers().get(administrator);
 		if (obj == null) throw new SQLException("Unable to find MasterUser: " + administrator);
 		return obj;
 	}
@@ -129,9 +129,9 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		return cat;
 	}
 
-	public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
+	public Processor getCreditCardProcessor() throws SQLException, IOException {
 		if (processor == null) return null;
-		CreditCardProcessor ccProcessor = table.getConnector().getCreditCardProcessors().get(processor);
+		Processor ccProcessor = table.getConnector().getCreditCardProcessors().get(processor);
 		if (ccProcessor == null) throw new SQLException("CreditCardProcessor not found: " + processor);
 		return ccProcessor;
 	}
@@ -152,8 +152,8 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BANK_TRANSACTIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BANK_TRANSACTIONS;
 	}
 
 	public int getId() {
@@ -224,8 +224,8 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_17) <= 0) {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
 			out.writeLong(time);
 			out.writeCompressedInt(id);
 		} else {
@@ -233,7 +233,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 			out.writeLong(time);
 		}
 		out.writeUTF(account);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)<0) {
 			out.writeNullUTF(null);
 		} else {
 			out.writeNullUTF(processor);

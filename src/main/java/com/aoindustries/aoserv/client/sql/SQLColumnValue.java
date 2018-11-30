@@ -24,9 +24,9 @@ package com.aoindustries.aoserv.client.sql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.schema.SchemaColumn;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.schema.Column;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -38,10 +38,10 @@ import java.util.List;
  */
 final public class SQLColumnValue extends SQLExpression {
 
-	final private SchemaColumn column;
-	final private SchemaType columnType;
+	final private Column column;
+	final private Type columnType;
 
-	public SQLColumnValue(AOServConnector conn, SchemaColumn column) throws SQLException, IOException {
+	public SQLColumnValue(AOServConnector conn, Column column) throws SQLException, IOException {
 		if(column == null) throw new NullPointerException("column is null");
 		this.column = column;
 		this.columnType = column.getType(conn);
@@ -58,13 +58,13 @@ final public class SQLColumnValue extends SQLExpression {
 	}
 
 	@Override
-	public SchemaType getType() {
+	public Type getType() {
 		return columnType;
 	}
 
 	@Override
-	public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws SQLException, IOException {
-		SchemaTable table = column.getTable(conn);
+	public void getReferencedTables(AOServConnector conn, List<Table> tables) throws SQLException, IOException {
+		Table table = column.getTable(conn);
 		if(!tables.contains(table)) tables.add(table);
 	}
 }

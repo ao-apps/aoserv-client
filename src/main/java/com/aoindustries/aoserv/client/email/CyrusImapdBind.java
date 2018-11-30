@@ -23,10 +23,10 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.net.NetBind;
-import com.aoindustries.aoserv.client.pki.SslCertificate;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Bind;
+import com.aoindustries.aoserv.client.pki.Certificate;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -42,7 +42,7 @@ import java.sql.SQLException;
  * <code>CyrusImapdServer</code>s to <code>NetBinds</code>.
  *
  * @see  CyrusImapdServer
- * @see  NetBind
+ * @see  Bind
  *
  * @author  AO Industries, Inc.
  */
@@ -63,7 +63,7 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
 		CyrusImapdServer server = getCyrusImapdServer();
-		NetBind bind = getNetBind();
+		Bind bind = getNetBind();
 		return server.toStringImpl() + '|' + bind.toStringImpl();
 	}
 
@@ -80,8 +80,8 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CYRUS_IMAPD_BINDS;
+	public Table.TableID getTableID() {
+		return Table.TableID.CYRUS_IMAPD_BINDS;
 	}
 
 	@Override
@@ -114,7 +114,7 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(cyrus_imapd_server);
 		out.writeNullUTF(ObjectUtils.toString(servername));
@@ -122,8 +122,8 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 		out.writeNullBoolean(allowPlaintextAuth);
 	}
 
-	public NetBind getNetBind() throws SQLException, IOException {
-		NetBind obj = table.getConnector().getNetBinds().get(pkey);
+	public Bind getNetBind() throws SQLException, IOException {
+		Bind obj = table.getConnector().getNetBinds().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find NetBind: " + pkey);
 		return obj;
 	}
@@ -148,7 +148,7 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 	 *
 	 * @return  the SSL certificate or {@code null} when filtered or defaulting to {@link CyrusImapdServer#getCertificate()}
 	 */
-	public SslCertificate getCertificate() throws SQLException, IOException {
+	public Certificate getCertificate() throws SQLException, IOException {
 		if(certificate == -1) return null;
 		// May be filtered
 		return table.getConnector().getSslCertificates().get(certificate);

@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.util.EncodingUtils;
 import java.io.IOException;
@@ -68,7 +68,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 	/**
 	 * Avoid repeated copies.
 	 */
-	private static final int numTables = SchemaTable.TableID.values().length;
+	private static final int numTables = Table.TableID.values().length;
 
 	@Override
 	protected void printConnectionStats(Appendable out) throws IOException {

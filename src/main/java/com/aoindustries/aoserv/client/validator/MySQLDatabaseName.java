@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.mysql.MySQLServer;
+import com.aoindustries.aoserv.client.mysql.Server;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
@@ -92,7 +92,7 @@ final public class MySQLDatabaseName implements
 				&& ch != '_'
 			) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.illegalCharacter");
 		}
-		if(MySQLServer.ReservedWord.isReservedWord(name)) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.reservedWord");
+		if(Server.ReservedWord.isReservedWord(name)) return new InvalidResult(ApplicationResources.accessor, "MySQLDatabaseName.validate.reservedWord");
 		return ValidResult.getInstance();
 	}
 

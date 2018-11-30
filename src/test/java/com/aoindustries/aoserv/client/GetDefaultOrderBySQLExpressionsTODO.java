@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.List;
 import junit.framework.Test;
@@ -68,7 +68,7 @@ public class GetDefaultOrderBySQLExpressionsTODO extends TestCase {
 		for(AOServConnector conn : conns) {
 			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.print("    "+username+": ");
-			int numTables = SchemaTable.TableID.values().length;
+			int numTables = Table.TableID.values().length;
 			for(int c=0;c<numTables;c++) {
 				System.out.print('.');
 				AOServTable<?,?> table=conn.getTable(c);

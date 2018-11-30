@@ -24,9 +24,9 @@ package com.aoindustries.aoserv.client.accounting;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BankTransaction.COLUMN_TIME_name+"::"+SchemaType.DATE_name, ASCENDING),
+		new OrderBy(BankTransaction.COLUMN_TIME_name+"::"+Type.DATE_name, ASCENDING),
 		new OrderBy(BankTransaction.COLUMN_ID_name, ASCENDING)
 	};
 	@Override
@@ -62,23 +62,23 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 	}
 
 	public BankTransaction get(int transid) throws IOException, SQLException {
-		return getObject(true, AOServProtocol.CommandID.GET_OBJECT, SchemaTable.TableID.BANK_TRANSACTIONS, transid);
+		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BANK_TRANSACTIONS, transid);
 	}
 
 	List<BankTransaction> getBankTransactions(BankAccount account) throws IOException, SQLException {
-		return getObjects(true, AOServProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
+		return getObjects(true, AoservProtocol.CommandID.GET_BANK_TRANSACTIONS_ACCOUNT, account.getName());
 	}
 
 	@Override
 	public List<BankTransaction> getRows() throws IOException, SQLException {
 		List<BankTransaction> list=new ArrayList<>();
-		getObjects(true, list, AOServProtocol.CommandID.GET_TABLE, SchemaTable.TableID.BANK_TRANSACTIONS);
+		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BANK_TRANSACTIONS);
 		return list;
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BANK_TRANSACTIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BANK_TRANSACTIONS;
 	}
 
 	@Override

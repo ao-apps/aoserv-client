@@ -23,13 +23,13 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.net.NetBind;
-import com.aoindustries.aoserv.client.net.Protocol;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.pki.SslCertificate;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.net.AppProtocol;
+import com.aoindustries.aoserv.client.net.Bind;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.pki.Certificate;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -186,8 +186,8 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CYRUS_IMAPD_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.CYRUS_IMAPD_SERVERS;
 	}
 
 	@Override
@@ -233,7 +233,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(sieveNetBind);
 		out.writeNullUTF(ObjectUtils.toString(servername));
@@ -247,20 +247,20 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 		out.writeNullEnum(expungeDurationUnit);
 	}
 
-	public AOServer getAOServer() throws SQLException, IOException {
-		AOServer obj = table.getConnector().getAoServers().get(pkey);
+	public Server getAOServer() throws SQLException, IOException {
+		Server obj = table.getConnector().getAoServers().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find AOServer: " + pkey);
 		return obj;
 	}
 
-	public NetBind getSieveNetBind() throws IOException, SQLException {
+	public Bind getSieveNetBind() throws IOException, SQLException {
 		if(sieveNetBind == -1) return null;
-		NetBind nb = table.getConnector().getNetBinds().get(sieveNetBind);
+		Bind nb = table.getConnector().getNetBinds().get(sieveNetBind);
 		// May be filtered
 		if(nb == null) return null;
 		String protocol = nb.getAppProtocol().getProtocol();
-		if(!Protocol.SIEVE.equals(protocol)) throw new SQLException("Sieve NetBind is incorrect app_protocol for NetBind #" + nb.getPkey() + ": " + protocol);
-		Server server = nb.getServer();
+		if(!AppProtocol.SIEVE.equals(protocol)) throw new SQLException("Sieve NetBind is incorrect app_protocol for NetBind #" + nb.getPkey() + ": " + protocol);
+		Host server = nb.getServer();
 		if(!server.equals(getAOServer().getServer())) throw new SQLException("Sieve NetBind is not on this server for NetBind #" + nb.getPkey());
 		return nb;
 	}
@@ -279,7 +279,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	 *
 	 * @return  the SSL certificate or {@code null} when filtered
 	 */
-	public SslCertificate getCertificate() throws SQLException, IOException {
+	public Certificate getCertificate() throws SQLException, IOException {
 		// May be filtered
 		return table.getConnector().getSslCertificates().get(certificate);
 	}

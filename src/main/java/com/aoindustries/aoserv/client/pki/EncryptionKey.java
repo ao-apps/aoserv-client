@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.pki;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -44,7 +44,7 @@ import java.sql.SQLException;
  * Stores the list of encryption keys for a business.  The keys themselves are GPG keys
  * and are stored by GPG.
  *
- * @see  Business
+ * @see  Account
  *
  * @author  AO Industries, Inc.
  */
@@ -176,8 +176,8 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	private AccountingCode accounting;
 	private String id;
 
-	public Business getBusiness() throws SQLException, IOException {
-		Business accountingObject = table.getConnector().getBusinesses().get(accounting);
+	public Account getBusiness() throws SQLException, IOException {
+		Account accountingObject = table.getConnector().getBusinesses().get(accounting);
 		if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
 		return accountingObject;
 	}
@@ -200,8 +200,8 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.ENCRYPTION_KEYS;
+	public Table.TableID getTableID() {
+		return Table.TableID.ENCRYPTION_KEYS;
 	}
 
 	@Override
@@ -227,14 +227,14 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(id);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_from / signup_signer
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_25)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_recipient
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_signer
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_25)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_recipient
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_from / signup_signer
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_25)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeBoolean(false); // signup_recipient
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_signer
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_25)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) out.writeBoolean(false); // credit_card_recipient
 	}
 
 	/**

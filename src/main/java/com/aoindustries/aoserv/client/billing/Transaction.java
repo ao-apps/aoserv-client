@@ -26,14 +26,14 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.Username;
-import com.aoindustries.aoserv.client.payment.CreditCardProcessor;
-import com.aoindustries.aoserv.client.payment.CreditCardTransaction;
+import com.aoindustries.aoserv.client.payment.Payment;
 import com.aoindustries.aoserv.client.payment.PaymentType;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.payment.Processor;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
@@ -52,7 +52,7 @@ import java.sql.Timestamp;
  * charges and payments processed.  Each entry in this
  * account is a <code>Transaction</code>.
  *
- * @see  Business
+ * @see  Account
  *
  * @author  AO Industries, Inc.
  */
@@ -108,9 +108,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	private byte payment_confirmed;
 
 	public void approved(final int creditCardTransaction) throws IOException, SQLException {
-		table.getConnector().requestUpdate(
-			true,
-			AOServProtocol.CommandID.TRANSACTION_APPROVED,
+		table.getConnector().requestUpdate(true,
+			AoservProtocol.CommandID.TRANSACTION_APPROVED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
@@ -123,9 +122,9 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+					if(code==AoservProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
 					else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
@@ -139,9 +138,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	public void declined(final int creditCardTransaction) throws IOException, SQLException {
-		table.getConnector().requestUpdate(
-			true,
-			AOServProtocol.CommandID.TRANSACTION_DECLINED,
+		table.getConnector().requestUpdate(true,
+			AoservProtocol.CommandID.TRANSACTION_DECLINED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
@@ -154,9 +152,9 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+					if(code==AoservProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
 					else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
@@ -170,9 +168,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	public void held(final int creditCardTransaction) throws IOException, SQLException {
-		table.getConnector().requestUpdate(
-			true,
-			AOServProtocol.CommandID.TRANSACTION_HELD,
+		table.getConnector().requestUpdate(true,
+			AoservProtocol.CommandID.TRANSACTION_HELD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
@@ -185,9 +182,9 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
+					if(code==AoservProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
 					else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
@@ -216,27 +213,27 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	 * @see  CreditCardTransaction#getAuthorizationApprovalCode()
 	 */
 	public String getAprNum() throws SQLException, IOException {
-		CreditCardTransaction cct = getCreditCardTransaction();
+		Payment cct = getCreditCardTransaction();
 		return cct==null ? null : cct.getAuthorizationApprovalCode();
 	}
 
-	public Business getBusiness() throws SQLException, IOException {
-		Business business = table.getConnector().getBusinesses().get(accounting);
+	public Account getBusiness() throws SQLException, IOException {
+		Account business = table.getConnector().getBusinesses().get(accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 		return business;
 	}
 
-	public Business getSourceBusiness() throws SQLException, IOException {
-		Business business = table.getConnector().getBusinesses().get(source_accounting);
+	public Account getSourceBusiness() throws SQLException, IOException {
+		Account business = table.getConnector().getBusinesses().get(source_accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + source_accounting);
 		return business;
 	}
 
-	public BusinessAdministrator getBusinessAdministrator() throws SQLException, IOException {
+	public Administrator getBusinessAdministrator() throws SQLException, IOException {
 		Username un=table.getConnector().getUsernames().get(username);
 		// May be filtered
 		if(un==null) return null;
-		BusinessAdministrator business_administrator = un.getBusinessAdministrator();
+		Administrator business_administrator = un.getBusinessAdministrator();
 		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + username);
 		return business_administrator;
 	}
@@ -266,16 +263,16 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		return description;
 	}
 
-	public CreditCardProcessor getCreditCardProcessor() throws SQLException, IOException {
+	public Processor getCreditCardProcessor() throws SQLException, IOException {
 		if (processor == null) return null;
-		CreditCardProcessor creditCardProcessor = table.getConnector().getCreditCardProcessors().get(processor);
+		Processor creditCardProcessor = table.getConnector().getCreditCardProcessors().get(processor);
 		if (creditCardProcessor == null) throw new SQLException("Unable to find CreditCardProcessor: " + processor);
 		return creditCardProcessor;
 	}
 
-	public CreditCardTransaction getCreditCardTransaction() throws SQLException, IOException {
+	public Payment getCreditCardTransaction() throws SQLException, IOException {
 		if (creditCardTransaction == -1) return null;
-		CreditCardTransaction cct = table.getConnector().getCreditCardTransactions().get(creditCardTransaction);
+		Payment cct = table.getConnector().getCreditCardTransactions().get(creditCardTransaction);
 		if (cct == null) throw new SQLException("Unable to find CreditCardTransaction: " + creditCardTransaction);
 		return cct;
 	}
@@ -332,8 +329,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.TRANSACTIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.TRANSACTIONS;
 	}
 
 	public Timestamp getTime() {
@@ -435,7 +432,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(time);
 		out.writeCompressedInt(transid);
 		out.writeCompressedUTF(accounting.toString(), 0);
@@ -447,15 +444,15 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		out.writeCompressedInt(rate);
 		out.writeNullUTF(payment_type);
 		out.writeNullUTF(payment_info);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)<0) {
 			out.writeNullUTF(null);
 		} else {
 			out.writeNullUTF(processor);
 			out.writeCompressedInt(creditCardTransaction);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_128)<0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_128)<0) {
 			out.writeCompressedInt(-1);
-		} else if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_29)<0) {
+		} else if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)<0) {
 			out.writeNullUTF(null);
 		}
 		out.writeByte(payment_confirmed);

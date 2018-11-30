@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.web;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.net.NetBind;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Bind;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import java.sql.SQLException;
  * <code>HttpdServer</code>s to <code>NetBinds</code>.
  *
  * @see  HttpdServer
- * @see  NetBind
+ * @see  Bind
  *
  * @author  AO Industries, Inc.
  */
@@ -71,15 +71,15 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 		return obj;
 	}
 
-	public NetBind getNetBind() throws SQLException, IOException {
-		NetBind obj=table.getConnector().getNetBinds().get(pkey);
+	public Bind getNetBind() throws SQLException, IOException {
+		Bind obj=table.getConnector().getNetBinds().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+pkey);
 		return obj;
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.HTTPD_BINDS;
+	public Table.TableID getTableID() {
+		return Table.TableID.HTTPD_BINDS;
 	}
 
 	@Override
@@ -97,12 +97,12 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
 		HttpdServer server=getHttpdServer();
-		NetBind bind=getNetBind();
+		Bind bind=getNetBind();
 		return server.toStringImpl()+'|'+bind.toStringImpl();
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_server);
 	}

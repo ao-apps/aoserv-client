@@ -24,10 +24,10 @@ package com.aoindustries.aoserv.client.distribution.management;
 
 import com.aoindustries.aoserv.client.FilesystemCachedObject;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
-import com.aoindustries.aoserv.client.linux.LinuxAccount;
-import com.aoindustries.aoserv.client.linux.LinuxGroup;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.User;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -142,16 +142,16 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		return mode;
 	}
 
-	public LinuxAccount getLinuxAccount() throws SQLException, IOException {
+	public User getLinuxAccount() throws SQLException, IOException {
 		if(table==null) throw new NullPointerException("table is null");
 		if(table.getConnector()==null) throw new NullPointerException("table.getConnector() is null");
-		LinuxAccount linuxAccount=table.getConnector().getLinuxAccounts().get(linux_account);
+		User linuxAccount=table.getConnector().getLinuxAccounts().get(linux_account);
 		if(linuxAccount==null) throw new SQLException("Unable to find LinuxAccount: "+linux_account);
 		return linuxAccount;
 	}
 
-	public LinuxGroup getLinuxGroup() throws SQLException, IOException {
-		LinuxGroup linuxGroup=table.getConnector().getLinuxGroups().get(linux_group);
+	public Group getLinuxGroup() throws SQLException, IOException {
+		Group linuxGroup=table.getConnector().getLinuxGroups().get(linux_group);
 		if(linuxGroup==null) throw new SQLException("Unable to find LinuxGroup: "+linux_group);
 		return linuxGroup;
 	}
@@ -190,8 +190,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.DISTRO_FILES;
+	public Table.TableID getTableID() {
+		return Table.TableID.DISTRO_FILES;
 	}
 
 	@Override
@@ -299,8 +299,8 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108) >= 0) {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0) {
 			out.writeCompressedInt(pkey);
 			out.writeCompressedInt(operating_system_version);
 		}
@@ -311,7 +311,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		out.writeCompressedUTF(linux_account.toString(), 2);
 		out.writeCompressedUTF(linux_group.toString(), 3);
 		out.writeLong(size);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_80) >= 0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80) >= 0) {
 			out.writeBoolean(has_file_sha256);
 			if(has_file_sha256) {
 				out.writeLong(file_sha256_0);

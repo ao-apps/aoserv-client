@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.infrastructure;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -88,8 +88,8 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.RACKS;
+	public Table.TableID getTableID() {
+		return Table.TableID.RACKS;
 	}
 
 	@Override
@@ -118,7 +118,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(farm);
 		out.writeUTF(name);

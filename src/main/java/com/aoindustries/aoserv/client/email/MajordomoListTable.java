@@ -26,10 +26,10 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -48,8 +48,8 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(MajordomoList.COLUMN_MAJORDOMO_SERVER_name+'.'+MajordomoServer.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
-		new OrderBy(MajordomoList.COLUMN_MAJORDOMO_SERVER_name+'.'+MajordomoServer.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(MajordomoList.COLUMN_MAJORDOMO_SERVER_name+'.'+MajordomoServer.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
+		new OrderBy(MajordomoList.COLUMN_MAJORDOMO_SERVER_name+'.'+MajordomoServer.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
 		new OrderBy(MajordomoList.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
@@ -61,10 +61,9 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 		MajordomoServer majordomoServer,
 		String listName
 	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(
-			true,
-			AOServProtocol.CommandID.ADD,
-			SchemaTable.TableID.MAJORDOMO_LISTS,
+		return connector.requestIntQueryIL(true,
+			AoservProtocol.CommandID.ADD,
+			Table.TableID.MAJORDOMO_LISTS,
 			majordomoServer.getPkey(),
 			listName
 		);
@@ -94,15 +93,15 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.MAJORDOMO_LISTS;
+	public Table.TableID getTableID() {
+		return Table.TableID.MAJORDOMO_LISTS;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_LIST)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_LIST, args, 3, err)) {
+		if(command.equalsIgnoreCase(Command.ADD_MAJORDOMO_LIST)) {
+			if(AOSH.checkParamCount(Command.ADD_MAJORDOMO_LIST, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().addMajordomoList(
 						AOSH.parseDomainName(args[1], "domain"),
@@ -113,20 +112,20 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.CHECK_MAJORDOMO_LIST_NAME)) {
-			if(AOSH.checkParamCount(AOSHCommand.CHECK_MAJORDOMO_LIST_NAME, args, 1, err)) {
+		} else if(command.equalsIgnoreCase(Command.CHECK_MAJORDOMO_LIST_NAME)) {
+			if(AOSH.checkParamCount(Command.CHECK_MAJORDOMO_LIST_NAME, args, 1, err)) {
 				try {
 					SimpleAOClient.checkMajordomoListName(args[1]);
 					out.println("true");
 				} catch(IllegalArgumentException iae) {
-					out.print("aosh: "+AOSHCommand.CHECK_MAJORDOMO_LIST_NAME+": ");
+					out.print("aosh: "+Command.CHECK_MAJORDOMO_LIST_NAME+": ");
 					out.println(iae.getMessage());
 				}
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INFO_FILE)) {
-			if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INFO_FILE, args, 3, err)) {
+		} else if(command.equalsIgnoreCase(Command.GET_MAJORDOMO_INFO_FILE)) {
+			if(AOSH.checkParamCount(Command.GET_MAJORDOMO_INFO_FILE, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().getMajordomoInfoFile(
 						AOSH.parseDomainName(args[1], "domain"),
@@ -137,8 +136,8 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.GET_MAJORDOMO_INTRO_FILE)) {
-			if(AOSH.checkParamCount(AOSHCommand.GET_MAJORDOMO_INTRO_FILE, args, 3, err)) {
+		} else if(command.equalsIgnoreCase(Command.GET_MAJORDOMO_INTRO_FILE)) {
+			if(AOSH.checkParamCount(Command.GET_MAJORDOMO_INTRO_FILE, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().getMajordomoIntroFile(
 						AOSH.parseDomainName(args[1], "domain"),
@@ -149,8 +148,8 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INFO_FILE)) {
-			if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INFO_FILE, args, 4, err)) {
+		} else if(command.equalsIgnoreCase(Command.SET_MAJORDOMO_INFO_FILE)) {
+			if(AOSH.checkParamCount(Command.SET_MAJORDOMO_INFO_FILE, args, 4, err)) {
 				connector.getSimpleAOClient().setMajordomoInfoFile(
 					AOSH.parseDomainName(args[1], "domain"),
 					args[2],
@@ -159,8 +158,8 @@ final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoLis
 				);
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.SET_MAJORDOMO_INTRO_FILE)) {
-			if(AOSH.checkParamCount(AOSHCommand.SET_MAJORDOMO_INTRO_FILE, args, 4, err)) {
+		} else if(command.equalsIgnoreCase(Command.SET_MAJORDOMO_INTRO_FILE)) {
+			if(AOSH.checkParamCount(Command.SET_MAJORDOMO_INTRO_FILE, args, 4, err)) {
 				connector.getSimpleAOClient().setMajordomoIntroFile(
 					AOSH.parseDomainName(args[1], "domain"),
 					args[2],

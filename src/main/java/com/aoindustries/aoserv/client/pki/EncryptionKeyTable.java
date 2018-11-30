@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.pki;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -55,12 +55,12 @@ final public class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKe
 		return getUniqueRow(EncryptionKey.COLUMN_PKEY, pkey);
 	}
 
-	public List<EncryptionKey> getEncryptionKeys(Business business) throws IOException, SQLException {
+	public List<EncryptionKey> getEncryptionKeys(Account business) throws IOException, SQLException {
 		return getIndexedRows(EncryptionKey.COLUMN_ACCOUNTING, business.getAccounting());
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.ENCRYPTION_KEYS;
+	public Table.TableID getTableID() {
+		return Table.TableID.ENCRYPTION_KEYS;
 	}
 }

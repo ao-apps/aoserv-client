@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.infrastructure;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -42,8 +42,8 @@ final public class PhysicalServerTable extends CachedTableIntegerKey<PhysicalSer
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING)
+		new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(PhysicalServer.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
@@ -56,7 +56,7 @@ final public class PhysicalServerTable extends CachedTableIntegerKey<PhysicalSer
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PHYSICAL_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.PHYSICAL_SERVERS;
 	}
 }
