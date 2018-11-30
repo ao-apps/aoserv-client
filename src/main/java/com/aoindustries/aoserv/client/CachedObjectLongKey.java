@@ -53,7 +53,7 @@ public abstract class CachedObjectLongKey<V extends CachedObjectLongKey<V>> exte
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		// Same approach as java.lang.Long
 		return (int)(pkey ^ (pkey >>> 32));
 	}

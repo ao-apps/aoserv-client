@@ -48,7 +48,7 @@ public abstract class CachedObjectGroupIdKey<V extends CachedObjectGroupIdKey<V>
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 

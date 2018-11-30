@@ -139,7 +139,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey;
 	}
 

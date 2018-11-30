@@ -111,7 +111,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey;
 	}
 

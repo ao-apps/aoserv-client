@@ -50,7 +50,7 @@ public abstract class GlobalObjectIntegerKey<T extends GlobalObjectIntegerKey<T>
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey;
 	}
 

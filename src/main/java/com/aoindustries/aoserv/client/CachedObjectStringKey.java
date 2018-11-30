@@ -46,7 +46,7 @@ public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> 
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 

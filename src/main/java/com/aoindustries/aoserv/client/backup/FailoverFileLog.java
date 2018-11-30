@@ -131,7 +131,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey;
 	}
 

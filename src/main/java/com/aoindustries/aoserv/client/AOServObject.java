@@ -446,15 +446,15 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 		return connector.getSchemaTables().get(getTableID());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @implSpec  This default implementation calls {@link #hashCode()} on the key (from {@link #getKey()}).
+	 */
 	@Override
-	final public int hashCode() {
-		return hashCodeImpl();
-	}
-
-	// TODO: This should just be hashCode directly
-	public int hashCodeImpl() {
-		K pkey=getKey();
-		if(pkey==null) throw new NullPointerException("No primary key available.");
+	public int hashCode() {
+		K pkey = getKey();
+		if(pkey == null) throw new NullPointerException("No primary key available.");
 		return pkey.hashCode();
 	}
 

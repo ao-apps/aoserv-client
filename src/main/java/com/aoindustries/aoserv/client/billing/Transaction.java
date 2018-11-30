@@ -351,7 +351,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return transid;
 	}
 

@@ -46,7 +46,7 @@ public abstract class GlobalObjectStringKey<T extends GlobalObjectStringKey<T>> 
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 

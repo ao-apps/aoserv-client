@@ -48,7 +48,7 @@ public abstract class CachedObjectAccountingCodeKey<V extends CachedObjectAccoun
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey.hashCode();
 	}
 

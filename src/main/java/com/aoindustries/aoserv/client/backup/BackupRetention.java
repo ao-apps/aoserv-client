@@ -80,7 +80,7 @@ final public class BackupRetention extends GlobalObject<Short,BackupRetention> {
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return days;
 	}
 

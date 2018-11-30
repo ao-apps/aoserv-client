@@ -53,7 +53,7 @@ public abstract class CachedObjectIntegerKey<V extends CachedObjectIntegerKey<V>
 	}
 
 	@Override
-	public int hashCodeImpl() {
+	public int hashCode() {
 		return pkey;
 	}
 
