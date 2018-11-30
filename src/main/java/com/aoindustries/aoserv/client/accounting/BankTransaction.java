@@ -67,7 +67,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	private boolean confirmed;
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O instanceof BankTransaction
 			&& ((BankTransaction)O).id == id

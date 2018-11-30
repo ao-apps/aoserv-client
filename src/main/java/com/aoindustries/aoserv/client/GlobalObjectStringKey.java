@@ -32,7 +32,7 @@ public abstract class GlobalObjectStringKey<T extends GlobalObjectStringKey<T>> 
 	protected String pkey;
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O!=null
 			&& O.getClass()==getClass()

@@ -34,7 +34,7 @@ public abstract class CachedObjectUserIdKey<V extends CachedObjectUserIdKey<V>> 
 	protected UserId pkey;
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O!=null
 			&& O.getClass()==getClass()

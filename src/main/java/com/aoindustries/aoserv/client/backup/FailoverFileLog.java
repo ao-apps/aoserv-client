@@ -58,7 +58,7 @@ final public class FailoverFileLog extends AOServObject<Integer,FailoverFileLog>
 	private boolean is_successful;
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O instanceof FailoverFileLog
 			&& ((FailoverFileLog)O).pkey==pkey

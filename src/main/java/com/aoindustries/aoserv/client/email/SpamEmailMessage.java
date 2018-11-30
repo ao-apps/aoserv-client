@@ -59,7 +59,7 @@ final public class SpamEmailMessage extends AOServObject<Integer,SpamEmailMessag
 	private String message;
 
 	@Override
-	public boolean equalsImpl(Object O) {
+	public boolean equals(Object O) {
 		return
 			O instanceof SpamEmailMessage
 			&& ((SpamEmailMessage)O).getPkey()==pkey
