@@ -22,6 +22,164 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.BusinessAdministratorTable;
+import com.aoindustries.aoserv.client.account.BusinessProfileTable;
+import com.aoindustries.aoserv.client.account.BusinessServerTable;
+import com.aoindustries.aoserv.client.account.BusinessTable;
+import com.aoindustries.aoserv.client.account.DisableLogTable;
+import com.aoindustries.aoserv.client.account.USStateTable;
+import com.aoindustries.aoserv.client.account.UsernameTable;
+import com.aoindustries.aoserv.client.accounting.BankAccountTable;
+import com.aoindustries.aoserv.client.accounting.BankTable;
+import com.aoindustries.aoserv.client.accounting.BankTransactionTable;
+import com.aoindustries.aoserv.client.accounting.BankTransactionTypeTable;
+import com.aoindustries.aoserv.client.accounting.ExpenseCategoryTable;
+import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.aosh.AOSHCommandTable;
+import com.aoindustries.aoserv.client.backup.BackupPartitionTable;
+import com.aoindustries.aoserv.client.backup.BackupReportTable;
+import com.aoindustries.aoserv.client.backup.BackupRetentionTable;
+import com.aoindustries.aoserv.client.backup.FailoverFileLogTable;
+import com.aoindustries.aoserv.client.backup.FailoverFileReplicationTable;
+import com.aoindustries.aoserv.client.backup.FailoverFileScheduleTable;
+import com.aoindustries.aoserv.client.backup.FailoverMySQLReplicationTable;
+import com.aoindustries.aoserv.client.backup.FileBackupSettingTable;
+import com.aoindustries.aoserv.client.billing.MonthlyChargeTable;
+import com.aoindustries.aoserv.client.billing.NoticeLogTable;
+import com.aoindustries.aoserv.client.billing.NoticeTypeTable;
+import com.aoindustries.aoserv.client.billing.PackageCategoryTable;
+import com.aoindustries.aoserv.client.billing.PackageDefinitionLimitTable;
+import com.aoindustries.aoserv.client.billing.PackageDefinitionTable;
+import com.aoindustries.aoserv.client.billing.PackageTable;
+import com.aoindustries.aoserv.client.billing.ResourceTable;
+import com.aoindustries.aoserv.client.billing.TransactionTable;
+import com.aoindustries.aoserv.client.billing.TransactionTypeTable;
+import com.aoindustries.aoserv.client.billing.WhoisHistoryTable;
+import com.aoindustries.aoserv.client.distribution.ArchitectureTable;
+import com.aoindustries.aoserv.client.distribution.OperatingSystemTable;
+import com.aoindustries.aoserv.client.distribution.OperatingSystemVersionTable;
+import com.aoindustries.aoserv.client.distribution.TechnologyClassTable;
+import com.aoindustries.aoserv.client.distribution.TechnologyNameTable;
+import com.aoindustries.aoserv.client.distribution.TechnologyTable;
+import com.aoindustries.aoserv.client.distribution.TechnologyVersionTable;
+import com.aoindustries.aoserv.client.distribution.management.DistroFileTable;
+import com.aoindustries.aoserv.client.distribution.management.DistroFileTypeTable;
+import com.aoindustries.aoserv.client.distribution.management.DistroReportTypeTable;
+import com.aoindustries.aoserv.client.dns.DNSForbiddenZoneTable;
+import com.aoindustries.aoserv.client.dns.DNSRecordTable;
+import com.aoindustries.aoserv.client.dns.DNSTLDTable;
+import com.aoindustries.aoserv.client.dns.DNSTypeTable;
+import com.aoindustries.aoserv.client.dns.DNSZoneTable;
+import com.aoindustries.aoserv.client.email.BlackholeEmailAddressTable;
+import com.aoindustries.aoserv.client.email.CyrusImapdBindTable;
+import com.aoindustries.aoserv.client.email.CyrusImapdServerTable;
+import com.aoindustries.aoserv.client.email.EmailAddressTable;
+import com.aoindustries.aoserv.client.email.EmailAttachmentBlockTable;
+import com.aoindustries.aoserv.client.email.EmailAttachmentTypeTable;
+import com.aoindustries.aoserv.client.email.EmailDomainTable;
+import com.aoindustries.aoserv.client.email.EmailForwardingTable;
+import com.aoindustries.aoserv.client.email.EmailListAddressTable;
+import com.aoindustries.aoserv.client.email.EmailListTable;
+import com.aoindustries.aoserv.client.email.EmailPipeAddressTable;
+import com.aoindustries.aoserv.client.email.EmailPipeTable;
+import com.aoindustries.aoserv.client.email.EmailSmtpRelayTable;
+import com.aoindustries.aoserv.client.email.EmailSmtpRelayTypeTable;
+import com.aoindustries.aoserv.client.email.EmailSmtpSmartHostDomainTable;
+import com.aoindustries.aoserv.client.email.EmailSmtpSmartHostTable;
+import com.aoindustries.aoserv.client.email.EmailSpamAssassinIntegrationModeTable;
+import com.aoindustries.aoserv.client.email.LinuxAccAddressTable;
+import com.aoindustries.aoserv.client.email.MajordomoListTable;
+import com.aoindustries.aoserv.client.email.MajordomoServerTable;
+import com.aoindustries.aoserv.client.email.MajordomoVersionTable;
+import com.aoindustries.aoserv.client.email.SendmailBindTable;
+import com.aoindustries.aoserv.client.email.SendmailServerTable;
+import com.aoindustries.aoserv.client.email.SpamEmailMessageTable;
+import com.aoindustries.aoserv.client.email.SystemEmailAliasTable;
+import com.aoindustries.aoserv.client.ftp.FTPGuestUserTable;
+import com.aoindustries.aoserv.client.ftp.PrivateFTPServerTable;
+import com.aoindustries.aoserv.client.infrastructure.PhysicalServerTable;
+import com.aoindustries.aoserv.client.infrastructure.ProcessorTypeTable;
+import com.aoindustries.aoserv.client.infrastructure.RackTable;
+import com.aoindustries.aoserv.client.infrastructure.ServerFarmTable;
+import com.aoindustries.aoserv.client.infrastructure.VirtualDiskTable;
+import com.aoindustries.aoserv.client.infrastructure.VirtualServerTable;
+import com.aoindustries.aoserv.client.linux.AOServerDaemonHostTable;
+import com.aoindustries.aoserv.client.linux.AOServerTable;
+import com.aoindustries.aoserv.client.linux.LinuxAccountTable;
+import com.aoindustries.aoserv.client.linux.LinuxAccountTypeTable;
+import com.aoindustries.aoserv.client.linux.LinuxGroupAccountTable;
+import com.aoindustries.aoserv.client.linux.LinuxGroupTable;
+import com.aoindustries.aoserv.client.linux.LinuxGroupTypeTable;
+import com.aoindustries.aoserv.client.linux.LinuxServerAccountTable;
+import com.aoindustries.aoserv.client.linux.LinuxServerGroupTable;
+import com.aoindustries.aoserv.client.linux.ShellTable;
+import com.aoindustries.aoserv.client.linux.TimeZoneTable;
+import com.aoindustries.aoserv.client.master.AOServPermissionTable;
+import com.aoindustries.aoserv.client.master.BusinessAdministratorPermissionTable;
+import com.aoindustries.aoserv.client.master.MasterHostTable;
+import com.aoindustries.aoserv.client.master.MasterProcessTable;
+import com.aoindustries.aoserv.client.master.MasterServerStatTable;
+import com.aoindustries.aoserv.client.master.MasterServerTable;
+import com.aoindustries.aoserv.client.master.MasterUserTable;
+import com.aoindustries.aoserv.client.mysql.MySQLDBUserTable;
+import com.aoindustries.aoserv.client.mysql.MySQLDatabaseTable;
+import com.aoindustries.aoserv.client.mysql.MySQLServerTable;
+import com.aoindustries.aoserv.client.mysql.MySQLServerUserTable;
+import com.aoindustries.aoserv.client.mysql.MySQLUserTable;
+import com.aoindustries.aoserv.client.net.FirewalldZoneTable;
+import com.aoindustries.aoserv.client.net.IPAddressTable;
+import com.aoindustries.aoserv.client.net.NetBindFirewalldZoneTable;
+import com.aoindustries.aoserv.client.net.NetBindTable;
+import com.aoindustries.aoserv.client.net.NetDeviceIDTable;
+import com.aoindustries.aoserv.client.net.NetDeviceTable;
+import com.aoindustries.aoserv.client.net.NetTcpRedirectTable;
+import com.aoindustries.aoserv.client.net.ProtocolTable;
+import com.aoindustries.aoserv.client.net.ServerTable;
+import com.aoindustries.aoserv.client.net.monitoring.IpAddressMonitoringTable;
+import com.aoindustries.aoserv.client.net.reputation.IpReputationLimiterLimitTable;
+import com.aoindustries.aoserv.client.net.reputation.IpReputationLimiterSetTable;
+import com.aoindustries.aoserv.client.net.reputation.IpReputationLimiterTable;
+import com.aoindustries.aoserv.client.net.reputation.IpReputationSetHostTable;
+import com.aoindustries.aoserv.client.net.reputation.IpReputationSetNetworkTable;
+import com.aoindustries.aoserv.client.net.reputation.IpReputationSetTable;
+import com.aoindustries.aoserv.client.payment.CountryCodeTable;
+import com.aoindustries.aoserv.client.payment.CreditCardProcessorTable;
+import com.aoindustries.aoserv.client.payment.CreditCardTable;
+import com.aoindustries.aoserv.client.payment.CreditCardTransactionTable;
+import com.aoindustries.aoserv.client.payment.PaymentTypeTable;
+import com.aoindustries.aoserv.client.pki.EncryptionKeyTable;
+import com.aoindustries.aoserv.client.pki.SslCertificateNameTable;
+import com.aoindustries.aoserv.client.pki.SslCertificateOtherUseTable;
+import com.aoindustries.aoserv.client.pki.SslCertificateTable;
+import com.aoindustries.aoserv.client.postgresql.PostgresDatabaseTable;
+import com.aoindustries.aoserv.client.postgresql.PostgresEncodingTable;
+import com.aoindustries.aoserv.client.postgresql.PostgresServerTable;
+import com.aoindustries.aoserv.client.postgresql.PostgresServerUserTable;
+import com.aoindustries.aoserv.client.postgresql.PostgresUserTable;
+import com.aoindustries.aoserv.client.postgresql.PostgresVersionTable;
+import com.aoindustries.aoserv.client.reseller.BrandTable;
+import com.aoindustries.aoserv.client.reseller.ResellerTable;
+import com.aoindustries.aoserv.client.reseller.TicketBrandCategoryTable;
+import com.aoindustries.aoserv.client.reseller.TicketCategoryTable;
+import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.AOServProtocolTable;
+import com.aoindustries.aoserv.client.schema.SchemaColumnTable;
+import com.aoindustries.aoserv.client.schema.SchemaForeignKeyTable;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.SchemaTableTable;
+import com.aoindustries.aoserv.client.schema.SchemaTypeTable;
+import com.aoindustries.aoserv.client.scm.CvsRepositoryTable;
+import com.aoindustries.aoserv.client.signup.SignupRequestOptionTable;
+import com.aoindustries.aoserv.client.signup.SignupRequestTable;
+import com.aoindustries.aoserv.client.ticket.LanguageTable;
+import com.aoindustries.aoserv.client.ticket.TicketActionTable;
+import com.aoindustries.aoserv.client.ticket.TicketActionTypeTable;
+import com.aoindustries.aoserv.client.ticket.TicketAssignmentTable;
+import com.aoindustries.aoserv.client.ticket.TicketPriorityTable;
+import com.aoindustries.aoserv.client.ticket.TicketStatusTable;
+import com.aoindustries.aoserv.client.ticket.TicketTable;
+import com.aoindustries.aoserv.client.ticket.TicketTypeTable;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
@@ -36,6 +194,29 @@ import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.web.HttpdBindTable;
+import com.aoindustries.aoserv.client.web.HttpdServerTable;
+import com.aoindustries.aoserv.client.web.HttpdSiteAuthenticatedLocationTable;
+import com.aoindustries.aoserv.client.web.HttpdSiteBindHeaderTable;
+import com.aoindustries.aoserv.client.web.HttpdSiteBindRedirectTable;
+import com.aoindustries.aoserv.client.web.HttpdSiteBindTable;
+import com.aoindustries.aoserv.client.web.HttpdSiteTable;
+import com.aoindustries.aoserv.client.web.HttpdSiteURLTable;
+import com.aoindustries.aoserv.client.web.HttpdStaticSiteTable;
+import com.aoindustries.aoserv.client.web.jboss.HttpdJBossSiteTable;
+import com.aoindustries.aoserv.client.web.jboss.HttpdJBossVersionTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdJKCodeTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdJKProtocolTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdSharedTomcatTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatContextTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatDataSourceTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatParameterTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatSharedSiteTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatSiteJkMountTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatSiteTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatStdSiteTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatVersionTable;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdWorkerTable;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.CompressedWritable;
@@ -181,6 +362,9 @@ abstract public class AOServConnector {
 	final DomainName daemonServer;
 
 	final Logger logger;
+	public Logger getLogger() {
+		return logger;
+	}
 
 	/**
 	 * Gets the logger for this connector.
@@ -1568,7 +1752,7 @@ abstract public class AOServConnector {
 		);
 	}
 
-	static IntList readInvalidateList(CompressedDataInputStream in) throws IOException {
+	public static IntList readInvalidateList(CompressedDataInputStream in) throws IOException {
 		IntArrayList tableList=null;
 		int tableID;
 		while((tableID=in.readCompressedInt())!=-1) {
@@ -1681,7 +1865,7 @@ abstract public class AOServConnector {
 	 *
 	 * @see  #requestResult(boolean,ResultRequest)
 	 */
-	interface ResultRequest<T> {
+	public interface ResultRequest<T> {
 		/**
 		 * Writes the request to the server.
 		 * This does not need to flush the output stream.
@@ -1702,7 +1886,7 @@ abstract public class AOServConnector {
 		T afterRelease();
 	}
 
-	final <T> T requestResult(
+	final public <T> T requestResult(
 		boolean allowRetry,
 		AOServProtocol.CommandID commID,
 		ResultRequest<T> resultRequest
@@ -1743,7 +1927,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final boolean requestBooleanQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public boolean requestBooleanQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1782,7 +1966,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final boolean requestBooleanQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public boolean requestBooleanQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1829,7 +2013,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final int requestIntQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public int requestIntQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1868,7 +2052,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final int requestIntQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public int requestIntQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1915,7 +2099,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final long requestLongQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public long requestLongQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1954,7 +2138,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final short requestShortQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public short requestShortQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -1993,7 +2177,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final short requestShortQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public short requestShortQueryIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -2040,7 +2224,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final String requestStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public String requestStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -2082,7 +2266,7 @@ abstract public class AOServConnector {
 	/**
 	 * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery).
 	 */
-	final String requestLongStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public String requestLongStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -2125,7 +2309,7 @@ abstract public class AOServConnector {
 	 * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery) or <code>null</code>.
 	 * Supports nulls.
 	 */
-	final String requestNullLongStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public String requestNullLongStringQuery(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -2169,7 +2353,7 @@ abstract public class AOServConnector {
 	 *
 	 * @see  #requestUpdate(boolean,UpdateRequest)
 	 */
-	interface UpdateRequest {
+	public interface UpdateRequest {
 		/**
 		 * Writes the request to the server.
 		 * This does not need to flush the output stream.
@@ -2188,7 +2372,7 @@ abstract public class AOServConnector {
 		void afterRelease();
 	}
 
-	final void requestUpdate(
+	final public void requestUpdate(
 		boolean allowRetry,
 		AOServProtocol.CommandID commID,
 		UpdateRequest updateRequest
@@ -2230,7 +2414,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final void requestUpdate(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public void requestUpdate(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -2268,7 +2452,7 @@ abstract public class AOServConnector {
 		throw new InterruptedIOException();
 	}
 
-	final void requestUpdateIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	final public void requestUpdateIL(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		int attempt = 1;
 		int attempts = allowRetry ? RETRY_ATTEMPTS : 1;
 		while(!Thread.interrupted()) {
@@ -2314,7 +2498,7 @@ abstract public class AOServConnector {
 
 	public abstract AOServConnector switchUsers(UserId username) throws IOException;
 
-	protected final void tablesUpdated(IntList invalidateList) {
+	final public void tablesUpdated(IntList invalidateList) {
 		if(invalidateList!=null) {
 			int size=invalidateList.size();
 
@@ -2340,7 +2524,7 @@ abstract public class AOServConnector {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 */
-	public final void testConnect() throws IOException, SQLException {
+	final public void testConnect() throws IOException, SQLException {
 		synchronized(testConnectLock) {
 			requestUpdate(
 				true,

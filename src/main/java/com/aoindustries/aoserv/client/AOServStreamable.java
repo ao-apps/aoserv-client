@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.schema.AOServProtocol;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.Streamable;

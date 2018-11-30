@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
@@ -392,7 +396,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 		return O==null?false:equalsImpl(O);
 	}
 
-	boolean equalsImpl(Object O) {
+	public boolean equalsImpl(Object O) {
 		Class<?> class1=getClass();
 		Class<?> class2=O.getClass();
 		if(class1==class2) {
@@ -405,6 +409,9 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	}
 
 	@Override
+	// TODO: 'tis a shame we have this duality just to catch exceptions.
+	// TODO: Would it be better to allow exceptions through the interface this implements?
+	// TODO: It could be generic exceptions, like we've done other places (a bit tricky but works, except doesn't interact well with lambdas).
 	final public Object getColumn(int i) {
 		try {
 			return getColumnImpl(i);
@@ -413,7 +420,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 		}
 	}
 
-	abstract Object getColumnImpl(int i) throws IOException, SQLException;
+	abstract protected Object getColumnImpl(int i) throws IOException, SQLException;
 
 	final public List<Object> getColumns(AOServConnector connector) throws IOException, SQLException {
 		int len=getTableSchema(connector).getSchemaColumns(connector).size();
@@ -441,7 +448,8 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 		return hashCodeImpl();
 	}
 
-	int hashCodeImpl() {
+	// TODO: This should just be hashCode directly
+	public int hashCodeImpl() {
 		K pkey=getKey();
 		if(pkey==null) throw new NullPointerException("No primary key available.");
 		return pkey.hashCode();
@@ -476,7 +484,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	 * The default string representation is that of the key value.  If there
 	 * is no key value then it uses the representation of <code>Object.toString()</code>.
 	 */
-	String toStringImpl() throws IOException, SQLException {
+	public String toStringImpl() throws IOException, SQLException {
 		K pkey=getKey();
 		if(pkey==null) return super.toString();
 		return pkey.toString();

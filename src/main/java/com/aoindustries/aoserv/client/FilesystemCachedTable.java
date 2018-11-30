@@ -22,6 +22,12 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.SchemaColumn;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.sql.SQLColumnValue;
+import com.aoindustries.aoserv.client.sql.SQLComparator;
+import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.io.FileList;
 import com.aoindustries.io.FileListObjectFactory;
 import com.aoindustries.util.sort.ComparisonSortAlgorithm;
@@ -78,7 +84,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 		super(connector, clazz);
 	}
 
-	abstract int getRecordLength();
+	abstract protected int getRecordLength();
 
 	/**
 	 * Clears the cache, freeing up memory.  The data will be reloaded upon

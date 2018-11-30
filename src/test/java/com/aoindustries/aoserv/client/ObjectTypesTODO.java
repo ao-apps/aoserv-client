@@ -22,6 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.schema.SchemaColumn;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.SchemaType;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.math.BigDecimal;
 import java.sql.Date;

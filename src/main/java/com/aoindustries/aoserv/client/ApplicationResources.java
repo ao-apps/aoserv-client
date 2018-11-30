@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -52,7 +52,7 @@ public final class ApplicationResources extends EditableResourceBundle {
 		super(
 			new Locale(""),
 			bundleSet,
-			new File(System.getProperty("user.home")+"/maven2/ao/aoserv-client/src/com/aoindustries/aoserv/client/ApplicationResources.properties")
+			new File(System.getProperty("user.home")+"/maven2/ao/aoserv/client/src/main/resources/com/aoindustries/aoserv/client/ApplicationResources.properties")
 		);
 	}
 

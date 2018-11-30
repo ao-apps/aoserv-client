@@ -22,6 +22,87 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.Business;
+import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.BusinessServer;
+import com.aoindustries.aoserv.client.account.DisableLog;
+import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.backup.BackupPartition;
+import com.aoindustries.aoserv.client.backup.FailoverFileReplication;
+import com.aoindustries.aoserv.client.backup.FileBackupSetting;
+import com.aoindustries.aoserv.client.billing.NoticeLog;
+import com.aoindustries.aoserv.client.billing.NoticeType;
+import com.aoindustries.aoserv.client.billing.Package;
+import com.aoindustries.aoserv.client.billing.PackageDefinition;
+import com.aoindustries.aoserv.client.billing.Transaction;
+import com.aoindustries.aoserv.client.billing.TransactionType;
+import com.aoindustries.aoserv.client.distribution.Architecture;
+import com.aoindustries.aoserv.client.distribution.OperatingSystem;
+import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
+import com.aoindustries.aoserv.client.distribution.TechnologyName;
+import com.aoindustries.aoserv.client.distribution.TechnologyVersion;
+import com.aoindustries.aoserv.client.dns.DNSRecord;
+import com.aoindustries.aoserv.client.dns.DNSType;
+import com.aoindustries.aoserv.client.dns.DNSZone;
+import com.aoindustries.aoserv.client.email.BlackholeEmailAddress;
+import com.aoindustries.aoserv.client.email.EmailAddress;
+import com.aoindustries.aoserv.client.email.EmailDomain;
+import com.aoindustries.aoserv.client.email.EmailForwarding;
+import com.aoindustries.aoserv.client.email.EmailList;
+import com.aoindustries.aoserv.client.email.EmailListAddress;
+import com.aoindustries.aoserv.client.email.EmailPipe;
+import com.aoindustries.aoserv.client.email.EmailPipeAddress;
+import com.aoindustries.aoserv.client.email.EmailSmtpRelay;
+import com.aoindustries.aoserv.client.email.EmailSmtpRelayType;
+import com.aoindustries.aoserv.client.email.EmailSpamAssassinIntegrationMode;
+import com.aoindustries.aoserv.client.email.InboxAttributes;
+import com.aoindustries.aoserv.client.email.LinuxAccAddress;
+import com.aoindustries.aoserv.client.email.MajordomoList;
+import com.aoindustries.aoserv.client.email.MajordomoServer;
+import com.aoindustries.aoserv.client.email.MajordomoVersion;
+import com.aoindustries.aoserv.client.ftp.FTPGuestUser;
+import com.aoindustries.aoserv.client.infrastructure.ServerFarm;
+import com.aoindustries.aoserv.client.infrastructure.VirtualDisk;
+import com.aoindustries.aoserv.client.infrastructure.VirtualServer;
+import com.aoindustries.aoserv.client.linux.AOServer;
+import com.aoindustries.aoserv.client.linux.LinuxAccount;
+import com.aoindustries.aoserv.client.linux.LinuxAccountType;
+import com.aoindustries.aoserv.client.linux.LinuxGroup;
+import com.aoindustries.aoserv.client.linux.LinuxGroupAccount;
+import com.aoindustries.aoserv.client.linux.LinuxGroupType;
+import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
+import com.aoindustries.aoserv.client.linux.LinuxServerGroup;
+import com.aoindustries.aoserv.client.linux.Shell;
+import com.aoindustries.aoserv.client.mysql.MySQLDBUser;
+import com.aoindustries.aoserv.client.mysql.MySQLDatabase;
+import com.aoindustries.aoserv.client.mysql.MySQLServer;
+import com.aoindustries.aoserv.client.mysql.MySQLServerUser;
+import com.aoindustries.aoserv.client.mysql.MySQLUser;
+import com.aoindustries.aoserv.client.net.IPAddress;
+import com.aoindustries.aoserv.client.net.NetBind;
+import com.aoindustries.aoserv.client.net.NetDevice;
+import com.aoindustries.aoserv.client.net.Protocol;
+import com.aoindustries.aoserv.client.net.Server;
+import com.aoindustries.aoserv.client.net.reputation.IpReputationSet;
+import com.aoindustries.aoserv.client.password.PasswordChecker;
+import com.aoindustries.aoserv.client.password.PasswordGenerator;
+import com.aoindustries.aoserv.client.password.PasswordProtected;
+import com.aoindustries.aoserv.client.payment.CreditCard;
+import com.aoindustries.aoserv.client.payment.CreditCardProcessor;
+import com.aoindustries.aoserv.client.payment.PaymentType;
+import com.aoindustries.aoserv.client.pki.SslCertificate;
+import com.aoindustries.aoserv.client.postgresql.PostgresDatabase;
+import com.aoindustries.aoserv.client.postgresql.PostgresEncoding;
+import com.aoindustries.aoserv.client.postgresql.PostgresServer;
+import com.aoindustries.aoserv.client.postgresql.PostgresServerUser;
+import com.aoindustries.aoserv.client.postgresql.PostgresUser;
+import com.aoindustries.aoserv.client.postgresql.PostgresVersion;
+import com.aoindustries.aoserv.client.reseller.TicketCategory;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.scm.CvsRepository;
+import com.aoindustries.aoserv.client.ticket.Language;
+import com.aoindustries.aoserv.client.ticket.TicketPriority;
+import com.aoindustries.aoserv.client.ticket.TicketType;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.aoserv.client.validator.Gecos;
@@ -35,6 +116,20 @@ import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.web.HttpdServer;
+import com.aoindustries.aoserv.client.web.HttpdSite;
+import com.aoindustries.aoserv.client.web.HttpdSiteAuthenticatedLocation;
+import com.aoindustries.aoserv.client.web.HttpdSiteBind;
+import com.aoindustries.aoserv.client.web.HttpdSiteURL;
+import com.aoindustries.aoserv.client.web.jboss.HttpdJBossVersion;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdSharedTomcat;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatContext;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatDataSource;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatParameter;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatSite;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatSiteJkMount;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatStdSite;
+import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatVersion;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
@@ -72,6 +167,9 @@ import java.util.Set;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: This 8700 line monstrosity should be split into appropriate structure
+// TODO: as it is used primarily by AOSH.  Either do this directly in AOSH,
+// TODO: or have an aoserv-client-simple project that is used by AOSH.
 final public class SimpleAOClient {
 
 	final AOServConnector connector;
@@ -87,7 +185,7 @@ final public class SimpleAOClient {
 	 * @see  TCPConnector#getTCPConnector
 	 * @see  SSLConnector#getSSLConnector
 	 */
-	SimpleAOClient(AOServConnector connector) {
+	public SimpleAOClient(AOServConnector connector) {
 		this.connector=connector;
 	}
 
@@ -956,7 +1054,7 @@ final public class SimpleAOClient {
 		EmailAddress ea=sd.getEmailAddress(address);
 		boolean added=false;
 		if(ea==null) {
-			ea=connector.getEmailAddresses().get(connector.getEmailAddresses().addEmailAddress(address, sd));
+			ea = connector.getEmailAddresses().get(sd.addEmailAddress(address));
 			added=true;
 		}
 		try {
@@ -1027,15 +1125,15 @@ final public class SimpleAOClient {
 		if(phpVersion == null || phpVersion.isEmpty()) return null;
 		String prefix = phpVersion;
 		if(!prefix.endsWith(".")) prefix += '.';
-		int osvId = aoServer.getServer().operating_system_version;
+		int osvId = aoServer.getServer().getOperatingSystemVersion_id();
 		List<TechnologyVersion> matches = new ArrayList<>();
 		for(TechnologyVersion tv : connector.getTechnologyVersions()) {
 			if(
-				tv.operating_system_version == osvId
-				&& tv.name.equals(TechnologyName.PHP)
+				tv.getOperatingSystemVersion_id() == osvId
+				&& tv.getTechnologyName_name().equals(TechnologyName.PHP)
 				&& (
-					tv.version.equals(phpVersion)
-					|| tv.version.startsWith(prefix)
+					tv.getVersion().equals(phpVersion)
+					|| tv.getVersion().startsWith(prefix)
 				)
 			) {
 				matches.add(tv);
@@ -1050,7 +1148,7 @@ final public class SimpleAOClient {
 			for(TechnologyVersion match : matches) {
 				if(didOne) sb.append(", ");
 				else didOne = true;
-				sb.append(match.version);
+				sb.append(match.getVersion());
 			}
 			throw new IllegalArgumentException(sb.toString());
 		} else {
@@ -1064,15 +1162,15 @@ final public class SimpleAOClient {
 	private HttpdTomcatVersion findTomcatVersion(AOServer aoServer, String version) throws IllegalArgumentException, IOException, SQLException {
 		String prefix = version;
 		if(!prefix.endsWith(".")) prefix += '.';
-		int osvId = aoServer.getServer().operating_system_version;
+		int osvId = aoServer.getServer().getOperatingSystemVersion_id();
 		List<HttpdTomcatVersion> matches = new ArrayList<>();
 		for(HttpdTomcatVersion htv : connector.getHttpdTomcatVersions()) {
 			TechnologyVersion tv = htv.getTechnologyVersion(connector);
 			if(
-				tv.operating_system_version == osvId
+				tv.getOperatingSystemVersion_id() == osvId
 				&& (
-					tv.version.equals(version)
-					|| tv.version.startsWith(prefix)
+					tv.getVersion().equals(version)
+					|| tv.getVersion().startsWith(prefix)
 				)
 			) {
 				matches.add(htv);
@@ -1087,7 +1185,7 @@ final public class SimpleAOClient {
 			for(HttpdTomcatVersion match : matches) {
 				if(didOne) sb.append(", ");
 				else didOne = true;
-				sb.append(match.getTechnologyVersion(connector).version);
+				sb.append(match.getTechnologyVersion(connector).getVersion());
 			}
 			throw new IllegalArgumentException(sb.toString());
 		} else {
@@ -2228,9 +2326,8 @@ final public class SimpleAOClient {
 		PostgresEncoding pe=pv.getPostgresEncoding(connector, encoding);
 		if(pe==null) throw new IllegalArgumentException("Unable to find PostgresEncoding for PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+": "+encoding);
 		if(enablePostgis && pv.getPostgisVersion(connector)==null) throw new IllegalArgumentException("Unable to enable PostGIS, PostgresVersion "+pv.getTechnologyVersion(connector).getVersion()+" doesn't support PostGIS");
-		return connector.getPostgresDatabases().addPostgresDatabase(
+		return ps.addPostgresDatabase(
 			name,
-			ps,
 			psu,
 			pe,
 			enablePostgis
@@ -2887,7 +2984,7 @@ final public class SimpleAOClient {
 		if(
 			!EmailList.isValidRegularPath(
 				path,
-				ao.getServer().operating_system_version
+				ao.getServer().getOperatingSystemVersion_id()
 			)
 		) throw new IllegalArgumentException("Invalid EmailList path: " + path + " on " + ao);
 	}
@@ -3211,7 +3308,7 @@ final public class SimpleAOClient {
 	public int disableBusiness(AccountingCode accounting, String disableReason) throws IllegalArgumentException, IOException, SQLException {
 		Business bu=getBusiness(accounting);
 		DisableLog dl=connector.getDisableLogs().get(bu.addDisableLog(disableReason));
-		for(Package pk : bu.getPackages()) if(pk.disable_log==-1) disablePackage(dl, pk);
+		for(Package pk : bu.getPackages()) if(!pk.isDisabled()) disablePackage(dl, pk);
 		bu.disable(dl);
 		return dl.getPkey();
 	}
@@ -3239,16 +3336,16 @@ final public class SimpleAOClient {
 		/*
 		 * Email stuff
 		 */
-		for(EmailList el : pk.getEmailLists()) if(el.disable_log==-1) el.disable(dl);
-		for(EmailPipe ep : pk.getEmailPipes()) if(ep.disable_log==-1) ep.disable(dl);
-		for(EmailSmtpRelay ssr : pk.getEmailSmtpRelays()) if(ssr.disable_log==-1) ssr.disable(dl);
+		for(EmailList el : pk.getEmailLists()) if(!el.isDisabled()) el.disable(dl);
+		for(EmailPipe ep : pk.getEmailPipes()) if(!ep.isDisabled()) ep.disable(dl);
+		for(EmailSmtpRelay ssr : pk.getEmailSmtpRelays()) if(!ssr.isDisabled()) ssr.disable(dl);
 
 		/*
 		 * HTTP stuff
 		 */
 		List<AOServer> httpdServers=new SortedArrayList<>();
 		for(HttpdSharedTomcat hst : pk.getHttpdSharedTomcats()) {
-			if(hst.disable_log==-1) {
+			if(!hst.isDisabled()) {
 				hst.disable(dl);
 				AOServer ao=hst.getAOServer();
 				if(!httpdServers.contains(ao)) httpdServers.add(ao);
@@ -3266,7 +3363,7 @@ final public class SimpleAOClient {
 		for(AOServer httpdServer : httpdServers) httpdServer.waitForHttpdSiteRebuild();
 
 		// Disable the user accounts once the JVMs have been shut down
-		for(Username un : pk.getUsernames()) if(un.disable_log==-1) disableUsername(dl, un);
+		for(Username un : pk.getUsernames()) if(!un.isDisabled()) disableUsername(dl, un);
 
 		pk.disable(dl);
 	}
@@ -3345,7 +3442,7 @@ final public class SimpleAOClient {
 		return dl.getPkey();
 	}
 	private void disableHttpdSite(DisableLog dl, HttpdSite hs) throws IOException, SQLException {
-		for(HttpdSiteBind hsb : hs.getHttpdSiteBinds()) if(hsb.disable_log==-1) hsb.disable(dl);
+		for(HttpdSiteBind hsb : hs.getHttpdSiteBinds()) if(!hsb.isDisabled()) hsb.disable(dl);
 		hs.disable(dl);
 	}
 
@@ -3446,13 +3543,13 @@ final public class SimpleAOClient {
 	}
 	private void disableUsername(DisableLog dl, Username un) throws IOException, SQLException {
 		LinuxAccount la=un.getLinuxAccount();
-		if(la!=null && la.disable_log==-1) disableLinuxAccount(dl, la);
+		if(la!=null && !la.isDisabled()) disableLinuxAccount(dl, la);
 
 		MySQLUser mu=un.getMySQLUser();
-		if(mu!=null && mu.disable_log==-1) disableMySQLUser(dl, mu);
+		if(mu!=null && !mu.isDisabled()) disableMySQLUser(dl, mu);
 
 		PostgresUser pu=un.getPostgresUser();
-		if(pu!=null && pu.disable_log==-1) disablePostgresUser(dl, pu);
+		if(pu!=null && !pu.isDisabled()) disablePostgresUser(dl, pu);
 
 		un.disable(dl);
 	}
@@ -3481,7 +3578,7 @@ final public class SimpleAOClient {
 	}
 	private void disableLinuxAccount(DisableLog dl, LinuxAccount la) throws IOException, SQLException {
 		for(LinuxServerAccount lsa : la.getLinuxServerAccounts()) {
-			if(lsa.disable_log==-1) disableLinuxServerAccount(dl, lsa);
+			if(!lsa.isDisabled()) disableLinuxServerAccount(dl, lsa);
 		}
 
 		la.disable(dl);
@@ -3513,7 +3610,7 @@ final public class SimpleAOClient {
 		return dl.getPkey();
 	}
 	private void disableLinuxServerAccount(DisableLog dl, LinuxServerAccount lsa) throws IOException, SQLException {
-		for(CvsRepository cr : lsa.getCvsRepositories()) if(cr.disable_log==-1) cr.disable(dl);
+		for(CvsRepository cr : lsa.getCvsRepositories()) if(!cr.isDisabled()) cr.disable(dl);
 		lsa.disable(dl);
 	}
 
@@ -3574,7 +3671,7 @@ final public class SimpleAOClient {
 		return dl.getPkey();
 	}
 	private void disableMySQLUser(DisableLog dl, MySQLUser mu) throws IOException, SQLException {
-		for(MySQLServerUser msu : mu.getMySQLServerUsers()) if(msu.disable_log==-1) msu.disable(dl);
+		for(MySQLServerUser msu : mu.getMySQLServerUsers()) if(!msu.isDisabled()) msu.disable(dl);
 		mu.disable(dl);
 	}
 
@@ -3629,7 +3726,7 @@ final public class SimpleAOClient {
 		return dl.getPkey();
 	}
 	private void disablePostgresUser(DisableLog dl, PostgresUser pu) throws IOException, SQLException{
-		for(PostgresServerUser psu : pu.getPostgresServerUsers()) if(psu.disable_log==-1) psu.disable(dl);
+		for(PostgresServerUser psu : pu.getPostgresServerUsers()) if(!psu.isDisabled()) psu.disable(dl);
 		pu.disable(dl);
 	}
 
@@ -3709,7 +3806,7 @@ final public class SimpleAOClient {
 		DisableLog dl=bu.getDisableLog();
 		if(dl==null) throw new IllegalArgumentException("Business not disabled: "+accounting);
 		bu.enable();
-		for(Package pk : bu.getPackages()) if(pk.disable_log==dl.pkey) enablePackage(dl, pk);
+		for(Package pk : bu.getPackages()) if(dl.equals(pk.getDisableLog())) enablePackage(dl, pk);
 	}
 
 	/**
@@ -3734,16 +3831,16 @@ final public class SimpleAOClient {
 		/*
 		 * Email stuff
 		 */
-		for(EmailList el : pk.getEmailLists()) if(el.disable_log==dl.pkey) el.enable();
-		for(EmailPipe ep : pk.getEmailPipes()) if(ep.disable_log==dl.pkey) ep.enable();
-		for(EmailSmtpRelay ssr : pk.getEmailSmtpRelays()) if(ssr.disable_log==dl.pkey) ssr.enable();
+		for(EmailList el : pk.getEmailLists()) if(dl.equals(el.getDisableLog())) el.enable();
+		for(EmailPipe ep : pk.getEmailPipes()) if(dl.equals(ep.getDisableLog())) ep.enable();
+		for(EmailSmtpRelay ssr : pk.getEmailSmtpRelays()) if(dl.equals(ssr.getDisableLog())) ssr.enable();
 
 		// Various accounts
 		List<AOServer> linuxAccountServers=new SortedArrayList<>();
 		List<AOServer> mysqlServers=new SortedArrayList<>();
 		List<AOServer> postgresServers=new SortedArrayList<>();
 		for(Username un : pk.getUsernames()) {
-			if(un.disable_log==dl.pkey) enableUsername(
+			if(dl.equals(un.getDisableLog())) enableUsername(
 				dl,
 				un,
 				linuxAccountServers,
@@ -3764,9 +3861,9 @@ final public class SimpleAOClient {
 		}
 
 		// Start up the web sites
-		for(HttpdSharedTomcat hst : pk.getHttpdSharedTomcats()) if(hst.disable_log==dl.pkey) hst.enable();
+		for(HttpdSharedTomcat hst : pk.getHttpdSharedTomcats()) if(dl.equals(hst.getDisableLog())) hst.enable();
 
-		for(HttpdSite hs : pk.getHttpdSites()) if(hs.getDisableLog_pkey() != null && hs.getDisableLog_pkey() == dl.pkey) enableHttpdSite(dl, hs);
+		for(HttpdSite hs : pk.getHttpdSites()) if(hs.getDisableLog_pkey() != null && hs.getDisableLog_pkey() == dl.getPkey()) enableHttpdSite(dl, hs);
 	}
 
 	/**
@@ -3832,7 +3929,7 @@ final public class SimpleAOClient {
 	}
 	private void enableHttpdSite(DisableLog dl, HttpdSite hs) throws IOException, SQLException {
 		hs.enable();
-		for(HttpdSiteBind hsb : hs.getHttpdSiteBinds()) if(hsb.disable_log==dl.pkey) hsb.enable();
+		for(HttpdSiteBind hsb : hs.getHttpdSiteBinds()) if(dl.equals(hsb.getDisableLog())) hsb.enable();
 	}
 
 	/**
@@ -3924,16 +4021,16 @@ final public class SimpleAOClient {
 		un.enable();
 
 		BusinessAdministrator ba=un.getBusinessAdministrator();
-		if(ba!=null && ba.disable_log==dl.pkey) ba.enable();
+		if(ba!=null && dl.equals(ba.getDisableLog())) ba.enable();
 
 		LinuxAccount la=un.getLinuxAccount();
-		if(la!=null && la.disable_log==dl.pkey) enableLinuxAccount(dl, la, linuxAccountServers);
+		if(la!=null && dl.equals(la.getDisableLog())) enableLinuxAccount(dl, la, linuxAccountServers);
 
 		MySQLUser mu=un.getMySQLUser();
-		if(mu!=null && mu.disable_log==dl.pkey) enableMySQLUser(dl, mu, mysqlServers);
+		if(mu!=null && dl.equals(mu.getDisableLog())) enableMySQLUser(dl, mu, mysqlServers);
 
 		PostgresUser pu=un.getPostgresUser();
-		if(pu!=null && pu.disable_log==dl.pkey) enablePostgresUser(dl, pu, postgresServers);
+		if(pu!=null && dl.equals(pu.getDisableLog())) enablePostgresUser(dl, pu, postgresServers);
 	}
 
 	/**
@@ -3958,7 +4055,7 @@ final public class SimpleAOClient {
 		la.enable();
 
 		for(LinuxServerAccount lsa : la.getLinuxServerAccounts()) {
-			if(lsa.disable_log==dl.pkey) {
+			if(dl.equals(lsa.getDisableLog())) {
 				enableLinuxServerAccount(dl, lsa);
 				if(linuxAccountServers!=null) {
 					AOServer ao=lsa.getAOServer();
@@ -3991,7 +4088,7 @@ final public class SimpleAOClient {
 	}
 	private void enableLinuxServerAccount(DisableLog dl, LinuxServerAccount lsa) throws IOException, SQLException {
 		lsa.enable();
-		for(CvsRepository cr : lsa.getCvsRepositories()) if(cr.disable_log==dl.pkey) cr.enable();
+		for(CvsRepository cr : lsa.getCvsRepositories()) if(dl.equals(cr.getDisableLog())) cr.enable();
 	}
 
 	/**
@@ -4035,7 +4132,7 @@ final public class SimpleAOClient {
 	private void enableMySQLUser(DisableLog dl, MySQLUser mu, List<AOServer> mysqlServers) throws IOException, SQLException {
 		mu.enable();
 		for(MySQLServerUser msu : mu.getMySQLServerUsers()) {
-			if(msu.disable_log==dl.pkey) {
+			if(dl.equals(msu.getDisableLog())) {
 				msu.enable();
 				if(mysqlServers!=null) {
 					AOServer ao=msu.getMySQLServer().getAoServer();
@@ -4091,7 +4188,7 @@ final public class SimpleAOClient {
 		pu.enable();
 
 		for(PostgresServerUser psu : pu.getPostgresServerUsers()) {
-			if(psu.disable_log==dl.pkey) {
+			if(dl.equals(psu.getDisableLog())) {
 				psu.enable();
 				if(postgresServers!=null) {
 					AOServer ao=psu.getPostgresServer().getAoServer();

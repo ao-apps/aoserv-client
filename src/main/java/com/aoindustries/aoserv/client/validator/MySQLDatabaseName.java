@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.MySQLServer;
+import com.aoindustries.aoserv.client.mysql.MySQLServer;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;

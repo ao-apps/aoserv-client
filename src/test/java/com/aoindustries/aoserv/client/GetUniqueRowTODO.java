@@ -22,6 +22,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.schema.SchemaColumn;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.ArrayList;
 import java.util.Collections;

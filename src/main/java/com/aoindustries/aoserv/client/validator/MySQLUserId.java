@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.MySQLServer;
+import com.aoindustries.aoserv.client.mysql.MySQLServer;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;

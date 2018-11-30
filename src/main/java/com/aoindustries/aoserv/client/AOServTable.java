@@ -22,6 +22,15 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.SchemaColumn;
+import com.aoindustries.aoserv.client.schema.SchemaForeignKey;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.sql.SQLCast;
+import com.aoindustries.aoserv.client.sql.SQLColumnJoin;
+import com.aoindustries.aoserv.client.sql.SQLColumnValue;
+import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -55,7 +64,7 @@ import java.util.Set;
  */
 abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iterable<V>, Table<V> {
 
-	final AOServConnector connector;
+	final protected AOServConnector connector;
 	//final SimpleAOClient client;
 	final Class<V> clazz;
 
@@ -216,11 +225,11 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 */
 	public static final boolean DESCENDING=false;
 
-	static class OrderBy {
+	protected static class OrderBy {
 		final private String expression;
 		final private boolean order;
 
-		OrderBy(String expression, boolean order) {
+		public OrderBy(String expression, boolean order) {
 			this.expression = expression;
 			this.order = order;
 		}
@@ -245,7 +254,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 *
 	 * @return  <code>null</code> if the sorting is performed by the server or the array of column names
 	 */
-	abstract OrderBy[] getDefaultOrderBy();
+	abstract protected OrderBy[] getDefaultOrderBy();
 
 	final public SQLExpression[] getDefaultOrderBySQLExpressions() throws SQLException, IOException {
 		OrderBy[] orderBys=getDefaultOrderBy();
@@ -670,7 +679,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
 	protected abstract V getUniqueRowImpl(int col, Object value) throws IOException, SQLException;
 
-	boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
+	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {
 		return false;
 	}
 

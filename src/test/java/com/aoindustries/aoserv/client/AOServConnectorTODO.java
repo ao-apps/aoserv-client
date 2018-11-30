@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -44,7 +46,7 @@ public class AOServConnectorTODO extends TestCase {
 
 	private static final Logger logger = Logger.getLogger(AOServConnectorTODO.class.getName());
 
-	static final UserId REGULAR_USER_USERNAME;
+	public static final UserId REGULAR_USER_USERNAME;
 	static {
 		try {
 			REGULAR_USER_USERNAME = UserId.valueOf("testuser");
@@ -53,7 +55,7 @@ public class AOServConnectorTODO extends TestCase {
 		}
 	}
 
-	static final String REGULAR_USER_PASSWORD="T3st1234";
+	public static final String REGULAR_USER_PASSWORD="T3st1234";
 
 	/**
 	 * Gets the list of connectors to be used during testing.  This represents the three different

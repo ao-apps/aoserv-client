@@ -23,6 +23,8 @@
 package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.CompressedDataInputStream;
