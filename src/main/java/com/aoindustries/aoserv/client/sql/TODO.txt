@@ -1,0 +1,10 @@
+TODO: These should be moved to a new ao-client-sql project.
+
+The aoserv-client should use Java comparator based sorting and SortedSet for
+more natural behavior with the Java language.  Please see ao-rtd for an example
+structure.
+
+This should alleviate the core dependency on this SQL-like behavior, and thus
+allow this to become a separate package, which may be a dependency of AOSH, or
+included as an additional AOSH module which adds the "select", "describe", and
+similar commands.

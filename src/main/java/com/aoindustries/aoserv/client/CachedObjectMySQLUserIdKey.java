@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017  AO Industries, Inc.
+ * Copyright (C) 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,7 +34,7 @@ public abstract class CachedObjectMySQLUserIdKey<V extends CachedObjectMySQLUser
 	protected MySQLUserId pkey;
 
 	@Override
-	boolean equalsImpl(Object O) {
+	public boolean equalsImpl(Object O) {
 		return
 			O!=null
 			&& O.getClass()==getClass()
@@ -48,12 +48,12 @@ public abstract class CachedObjectMySQLUserIdKey<V extends CachedObjectMySQLUser
 	}
 
 	@Override
-	int hashCodeImpl() {
+	public int hashCodeImpl() {
 		return pkey.hashCode();
 	}
 
 	@Override
-	String toStringImpl() {
+	public String toStringImpl() {
 		return pkey.toString();
 	}
 }

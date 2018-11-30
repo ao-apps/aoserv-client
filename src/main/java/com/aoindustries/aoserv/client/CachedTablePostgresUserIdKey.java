@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017  AO Industries, Inc.
+ * Copyright (C) 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,7 +33,7 @@ import java.sql.SQLException;
  */
 public abstract class CachedTablePostgresUserIdKey<V extends CachedObjectPostgresUserIdKey<V>> extends CachedTable<PostgresUserId,V> {
 
-	CachedTablePostgresUserIdKey(AOServConnector connector, Class<V> clazz) {
+	protected CachedTablePostgresUserIdKey(AOServConnector connector, Class<V> clazz) {
 		super(connector, clazz);
 	}
 

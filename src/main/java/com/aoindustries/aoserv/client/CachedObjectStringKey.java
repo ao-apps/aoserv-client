@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,7 @@ public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> 
 	protected String pkey;
 
 	@Override
-	boolean equalsImpl(Object O) {
+	public boolean equalsImpl(Object O) {
 		return
 			O!=null
 			&& O.getClass()==getClass()
@@ -46,12 +46,12 @@ public abstract class CachedObjectStringKey<V extends CachedObjectStringKey<V>> 
 	}
 
 	@Override
-	int hashCodeImpl() {
+	public int hashCodeImpl() {
 		return pkey.hashCode();
 	}
 
 	@Override
-	String toStringImpl() {
+	public String toStringImpl() {
 		return pkey;
 	}
 }

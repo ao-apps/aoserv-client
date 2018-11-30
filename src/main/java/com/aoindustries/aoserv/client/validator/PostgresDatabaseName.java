@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.PostgresServer;
+import com.aoindustries.aoserv.client.postgresql.PostgresServer;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;

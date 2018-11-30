@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2013, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,7 @@ import java.sql.SQLException;
  */
 public abstract class GlobalTableStringKey<V extends GlobalObjectStringKey<V>> extends GlobalTable<String,V> {
 
-	GlobalTableStringKey(AOServConnector connector, Class<V> clazz) {
+	protected GlobalTableStringKey(AOServConnector connector, Class<V> clazz) {
 		super(connector, clazz);
 	}
 

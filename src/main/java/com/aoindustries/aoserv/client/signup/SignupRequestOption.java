@@ -1,0 +1,106 @@
+/*
+ * aoserv-client - Java client for the AOServ Platform.
+ * Copyright (C) 2007-2009, 2016, 2017, 2018  AO Industries, Inc.
+ *     support@aoindustries.com
+ *     7262 Bull Pen Cir
+ *     Mobile, AL 36695
+ *
+ * This file is part of aoserv-client.
+ *
+ * aoserv-client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * aoserv-client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with aoserv-client.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.aoindustries.aoserv.client.signup;
+
+import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.CompressedDataOutputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+/**
+ * Stores an option for a sign-up request, each option has a unique name per sign-up request.
+ *
+ * @author  AO Industries, Inc.
+ */
+final public class SignupRequestOption extends CachedObjectIntegerKey<SignupRequestOption> {
+
+	static final int
+		COLUMN_PKEY=0,
+		COLUMN_REQUEST=1
+	;
+	static final String COLUMN_REQUEST_name = "request";
+	static final String COLUMN_NAME_name = "name";
+
+	int request;
+	private String name;
+	private String value;
+
+	@Override
+	protected Object getColumnImpl(int i) {
+		switch(i) {
+			case COLUMN_PKEY: return pkey;
+			case COLUMN_REQUEST: return request;
+			case 2: return name;
+			case 3: return value;
+			default: throw new IllegalArgumentException("Invalid index: "+i);
+		}
+	}
+
+	@Override
+	public SchemaTable.TableID getTableID() {
+		return SchemaTable.TableID.SIGNUP_REQUEST_OPTIONS;
+	}
+
+	@Override
+	public void init(ResultSet result) throws SQLException {
+		int pos = 1;
+		pkey = result.getInt(pos++);
+		request = result.getInt(pos++);
+		name = result.getString(pos++);
+		value = result.getString(pos++);
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in) throws IOException {
+		pkey=in.readCompressedInt();
+		request=in.readCompressedInt();
+		name = in.readUTF().intern();
+		value = in.readNullUTF();
+	}
+
+	@Override
+	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+		out.writeCompressedInt(pkey);
+		out.writeCompressedInt(request);
+		out.writeUTF(name);
+		out.writeNullUTF(value);
+	}
+
+	public SignupRequest getSignupRequest() throws SQLException, IOException {
+		SignupRequest sr = table.getConnector().getSignupRequests().get(request);
+		if (sr == null) throw new SQLException("Unable to find SignupRequest: " + request);
+		return sr;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+}
