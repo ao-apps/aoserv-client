@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -59,7 +59,7 @@ abstract public class AOServConnection {
 	/**
 	 * Gets the stream to write to the server.
 	 */
-	abstract CompressedDataOutputStream getRequestOut(AOServProtocol.CommandID commID) throws IOException;
+	abstract CompressedDataOutputStream getRequestOut(AoservProtocol.CommandID commID) throws IOException;
 
 	/**
 	 * Gets the stream to read from the server.

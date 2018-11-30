@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.accounting;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableStringKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -53,7 +53,7 @@ final public class BankTable extends CachedTableStringKey<Bank> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BANKS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BANKS;
 	}
 }

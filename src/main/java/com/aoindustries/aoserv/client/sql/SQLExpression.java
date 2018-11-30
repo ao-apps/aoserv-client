@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.sql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -41,11 +41,11 @@ abstract public class SQLExpression {
 
 	abstract public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException;
 
-	abstract public SchemaType getType();
+	abstract public Type getType();
 
 	/**
 	 * Gets all of the tables referenced by this expression.
 	 */
-	public void getReferencedTables(AOServConnector conn, List<SchemaTable> tables) throws IOException, SQLException {
+	public void getReferencedTables(AOServConnector conn, List<Table> tables) throws IOException, SQLException {
 	}
 }

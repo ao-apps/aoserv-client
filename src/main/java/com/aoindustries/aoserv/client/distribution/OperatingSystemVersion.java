@@ -24,9 +24,9 @@ package com.aoindustries.aoserv.client.distribution;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
-import com.aoindustries.aoserv.client.email.EmailList;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.email.List;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -144,8 +144,8 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.OPERATING_SYSTEM_VERSIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.OPERATING_SYSTEM_VERSIONS;
 	}
 
 	@Override
@@ -178,15 +178,15 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(operating_system);
 		out.writeUTF(version_number);
 		out.writeUTF(version_name);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeUTF(architecture);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108)>=0) out.writeUTF(architecture);
 		out.writeUTF(display);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_3)>=0) out.writeShort(sort_order);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108)>=0) out.writeBoolean(is_aoserv_daemon_supported);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_3)>=0) out.writeShort(sort_order);
 	}
 
 	/**
@@ -310,13 +310,13 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * @see  EmailList#getListPath(java.lang.String, int)
 	 */
 	public UnixPath getEmailListPath(String name) throws ValidationException {
-		return EmailList.getListPath(name, pkey);
+		return List.getListPath(name, pkey);
 	}
 
 	/**
 	 * @see  EmailList#isValidRegularPath(com.aoindustries.aoserv.client.validator.UnixPath, int)
 	 */
 	public boolean isValidEmailListRegularPath(UnixPath path) {
-		return EmailList.isValidRegularPath(path, pkey);
+		return List.isValidRegularPath(path, pkey);
 	}
 }

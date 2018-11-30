@@ -25,12 +25,12 @@ package com.aoindustries.aoserv.client.email;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
-import com.aoindustries.aoserv.client.linux.LinuxServerGroup;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -50,8 +50,8 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_DOMAIN_name, ASCENDING),
-		new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+EmailDomain.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_DOMAIN_name, ASCENDING),
+		new OrderBy(MajordomoServer.COLUMN_DOMAIN_name+'.'+Domain.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
 	};
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
@@ -59,15 +59,14 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 	}
 
 	void addMajordomoServer(
-		EmailDomain emailDomain,
-		LinuxServerAccount linuxServerAccount,
-		LinuxServerGroup linuxServerGroup,
+		Domain emailDomain,
+		UserServer linuxServerAccount,
+		GroupServer linuxServerGroup,
 		MajordomoVersion majordomoVersion
 	) throws IOException, SQLException {
-		connector.requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.ADD,
-			SchemaTable.TableID.MAJORDOMO_SERVERS,
+		connector.requestUpdateIL(true,
+			AoservProtocol.CommandID.ADD,
+			Table.TableID.MAJORDOMO_SERVERS,
 			emailDomain.getPkey(),
 			linuxServerAccount.getPkey(),
 			linuxServerGroup.getPkey(),
@@ -80,7 +79,7 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 		return getUniqueRow(MajordomoServer.COLUMN_DOMAIN, domain);
 	}
 
-	public List<MajordomoServer> getMajordomoServers(AOServer ao) throws IOException, SQLException {
+	public List<MajordomoServer> getMajordomoServers(Server ao) throws IOException, SQLException {
 		int aoPKey=ao.getPkey();
 		List<MajordomoServer> cached=getRows();
 		int size=cached.size();
@@ -93,15 +92,15 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.MAJORDOMO_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.MAJORDOMO_SERVERS;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.ADD_MAJORDOMO_SERVER)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_MAJORDOMO_SERVER, args, 5, err)) {
+		if(command.equalsIgnoreCase(Command.ADD_MAJORDOMO_SERVER)) {
+			if(AOSH.checkParamCount(Command.ADD_MAJORDOMO_SERVER, args, 5, err)) {
 				connector.getSimpleAOClient().addMajordomoServer(
 					AOSH.parseDomainName(args[1], "domain"),
 					args[2],
@@ -111,8 +110,8 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 				);
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.REMOVE_MAJORDOMO_SERVER)) {
-			if(AOSH.checkParamCount(AOSHCommand.REMOVE_MAJORDOMO_SERVER, args, 2, err)) {
+		} else if(command.equalsIgnoreCase(Command.REMOVE_MAJORDOMO_SERVER)) {
+			if(AOSH.checkParamCount(Command.REMOVE_MAJORDOMO_SERVER, args, 2, err)) {
 				connector.getSimpleAOClient().removeMajordomoServer(
 					AOSH.parseDomainName(args[1], "domain"),
 					args[2]

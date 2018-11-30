@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.accounting;
 
 import com.aoindustries.aoserv.client.CachedObjectStringKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -52,8 +52,8 @@ final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
 	}
 
 	@Override
-		public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.EXPENSE_CATEGORIES;
+		public Table.TableID getTableID() {
+		return Table.TableID.EXPENSE_CATEGORIES;
 	}
 
 	@Override
@@ -67,7 +67,7 @@ final public class ExpenseCategory extends CachedObjectStringKey<ExpenseCategory
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 	}
 }

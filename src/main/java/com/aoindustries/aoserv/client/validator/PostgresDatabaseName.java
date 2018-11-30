@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.postgresql.PostgresServer;
+import com.aoindustries.aoserv.client.postgresql.Server;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
@@ -92,7 +92,7 @@ final public class PostgresDatabaseName implements
 				&& ch!='_'
 			) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.illegalCharacter");
 		}
-		if(PostgresServer.ReservedWord.isReservedWord(name)) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.reservedWord");
+		if(Server.ReservedWord.isReservedWord(name)) return new InvalidResult(ApplicationResources.accessor, "PostgresDatabaseName.validate.reservedWord");
 		return ValidResult.getInstance();
 	}
 

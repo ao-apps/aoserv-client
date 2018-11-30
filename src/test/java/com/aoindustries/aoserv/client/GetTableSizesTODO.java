@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.List;
 import junit.framework.Test;
@@ -69,14 +69,14 @@ public class GetTableSizesTODO extends TestCase {
 		for(AOServConnector conn : conns) {
 			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
-			int numTables = SchemaTable.TableID.values().length;
+			int numTables = Table.TableID.values().length;
 			int[][] counts=new int[PASSES][numTables];
 			for(int d=0;d<PASSES;d++) {
 				// Excluded for testing speed
 				if(
-					d==SchemaTable.TableID.DISTRO_FILES.ordinal()
-					|| d==SchemaTable.TableID.TRANSACTIONS.ordinal()
-					|| d==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+					d==Table.TableID.DISTRO_FILES.ordinal()
+					|| d==Table.TableID.TRANSACTIONS.ordinal()
+					|| d==Table.TableID.WHOIS_HISTORY.ordinal()
 				) continue;
 				System.out.print("        Pass"+(d<9?"  ":" ")+(d+1)+" of "+PASSES+": ");
 				for(int c=0;c<numTables;c++) {
@@ -94,13 +94,13 @@ public class GetTableSizesTODO extends TestCase {
 				for(int d=0;d<numTables;d++) {
 					// Excluded for testing speed
 					if(
-						d==SchemaTable.TableID.DISTRO_FILES.ordinal()
-						|| d==SchemaTable.TableID.TRANSACTIONS.ordinal()
-						|| d==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+						d==Table.TableID.DISTRO_FILES.ordinal()
+						|| d==Table.TableID.TRANSACTIONS.ordinal()
+						|| d==Table.TableID.WHOIS_HISTORY.ordinal()
 					) continue;
 					// Skip master_processes because they frequently change sizes
 					if(
-						d!=SchemaTable.TableID.MASTER_PROCESSES.ordinal()
+						d!=Table.TableID.MASTER_PROCESSES.ordinal()
 					) {
 						AOServTable<?,?> table=conn.getTable(d);
 						String tableName=table.getTableName();

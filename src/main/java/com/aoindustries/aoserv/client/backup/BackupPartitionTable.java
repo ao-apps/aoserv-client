@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.backup;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -46,7 +46,7 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BackupPartition.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(BackupPartition.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
 		new OrderBy(BackupPartition.COLUMN_PATH_name, ASCENDING)
 	};
 	@Override
@@ -59,11 +59,11 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 		return getUniqueRow(BackupPartition.COLUMN_PKEY, pkey);
 	}
 
-	public List<BackupPartition> getBackupPartitions(AOServer ao) throws IOException, SQLException {
+	public List<BackupPartition> getBackupPartitions(Server ao) throws IOException, SQLException {
 		return getIndexedRows(BackupPartition.COLUMN_AO_SERVER, ao.getPkey());
 	}
 
-	public BackupPartition getBackupPartitionForPath(AOServer ao, String path) throws IOException, SQLException {
+	public BackupPartition getBackupPartitionForPath(Server ao, String path) throws IOException, SQLException {
 		// Use index first
 		List<BackupPartition> cached=getBackupPartitions(ao);
 		int size=cached.size();
@@ -75,15 +75,15 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BACKUP_PARTITIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BACKUP_PARTITIONS;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
-			if(AOSH.checkParamCount(AOSHCommand.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {
+		if(command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_TOTAL_SIZE)) {
+			if(AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_TOTAL_SIZE, args, 2, err)) {
 				long size=connector.getSimpleAOClient().getBackupPartitionTotalSize(
 					args[1],
 					args[2]
@@ -93,8 +93,8 @@ final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPart
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.GET_BACKUP_PARTITION_USED_SIZE)) {
-			if(AOSH.checkParamCount(AOSHCommand.GET_BACKUP_PARTITION_USED_SIZE, args, 2, err)) {
+		} else if(command.equalsIgnoreCase(Command.GET_BACKUP_PARTITION_USED_SIZE)) {
+			if(AOSH.checkParamCount(Command.GET_BACKUP_PARTITION_USED_SIZE, args, 2, err)) {
 				long size=connector.getSimpleAOClient().getBackupPartitionUsedSize(
 					args[1],
 					args[2]

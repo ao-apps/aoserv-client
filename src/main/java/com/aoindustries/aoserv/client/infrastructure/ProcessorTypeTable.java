@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.infrastructure;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -53,7 +53,7 @@ final public class ProcessorTypeTable extends GlobalTableStringKey<ProcessorType
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PROCESSOR_TYPES;
+	public Table.TableID getTableID() {
+		return Table.TableID.PROCESSOR_TYPES;
 	}
 }

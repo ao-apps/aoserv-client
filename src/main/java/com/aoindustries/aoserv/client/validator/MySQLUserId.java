@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.validator;
 
-import com.aoindustries.aoserv.client.mysql.MySQLServer;
+import com.aoindustries.aoserv.client.mysql.Server;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
@@ -89,7 +89,7 @@ final public class MySQLUserId extends UserId implements
 					&& ch!='_'
 				) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.illegalCharacter");
 			}
-			if(MySQLServer.ReservedWord.isReservedWord(id)) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.reservedWord");
+			if(Server.ReservedWord.isReservedWord(id)) return new InvalidResult(ApplicationResources.accessor, "MySQLUserId.validate.reservedWord");
 		}
 		assert UserId.validate(id).isValid() : "A MySQLUserId is always a valid UserId.";
 		return ValidResult.getInstance();

@@ -24,11 +24,11 @@ package com.aoindustries.aoserv.client.email;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.net.IPAddress;
-import com.aoindustries.aoserv.client.pki.SslCertificate;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.net.IpAddress;
+import com.aoindustries.aoserv.client.pki.Certificate;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.util.SystemdUtil;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -169,8 +169,8 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.SENDMAIL_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.SENDMAIL_SERVERS;
 	}
 
 	@Override
@@ -243,7 +243,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
 		out.writeNullUTF(name);
@@ -274,8 +274,8 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		return ao_server;
 	}
 
-	public AOServer getAoServer() throws SQLException, IOException {
-		AOServer obj = table.getConnector().getAoServers().get(ao_server);
+	public Server getAoServer() throws SQLException, IOException {
+		Server obj = table.getConnector().getAoServers().get(ao_server);
 		if(obj == null) throw new SQLException("Unable to find AOServer: " + ao_server);
 		return obj;
 	}
@@ -331,7 +331,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	 *
 	 * @return  the server SSL certificate or {@code null} when filtered
 	 */
-	public SslCertificate getServerCertificate() throws SQLException, IOException {
+	public Certificate getServerCertificate() throws SQLException, IOException {
 		// May be filtered
 		return table.getConnector().getSslCertificates().get(serverCertificate);
 	}
@@ -345,7 +345,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	 *
 	 * @return  the client SSL certificate or {@code null} when filtered
 	 */
-	public SslCertificate getClientCertificate() throws SQLException, IOException {
+	public Certificate getClientCertificate() throws SQLException, IOException {
 		// May be filtered
 		return table.getConnector().getSslCertificates().get(clientCertificate);
 	}
@@ -435,9 +435,9 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	/**
 	 * The <code>Addr</code> for <code>ClientPortOptions</code> with <code>Family=inet</code> or {@code null} if not set.
 	 */
-	public IPAddress getClientAddrInet() throws IOException, SQLException {
+	public IpAddress getClientAddrInet() throws IOException, SQLException {
 		if(clientAddrInet == -1) return null;
-		IPAddress obj = table.getConnector().getIpAddresses().get(clientAddrInet);
+		IpAddress obj = table.getConnector().getIpAddresses().get(clientAddrInet);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + clientAddrInet);
 		InetAddress address = obj.getInetAddress();
 		AddressFamily family = address.getAddressFamily();
@@ -454,9 +454,9 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	/**
 	 * The <code>Addr</code> for <code>ClientPortOptions</code> with <code>Family=inet6</code> or {@code null} if not set.
 	 */
-	public IPAddress getClientAddrInet6() throws IOException, SQLException {
+	public IpAddress getClientAddrInet6() throws IOException, SQLException {
 		if(clientAddrInet6 == -1) return null;
-		IPAddress obj = table.getConnector().getIpAddresses().get(clientAddrInet6);
+		IpAddress obj = table.getConnector().getIpAddresses().get(clientAddrInet6);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + clientAddrInet6);
 		InetAddress address = obj.getInetAddress();
 		AddressFamily family = address.getAddressFamily();

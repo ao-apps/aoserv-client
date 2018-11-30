@@ -26,9 +26,9 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -93,7 +93,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	/**
 	 * May be null if filtered.
 	 */
-	public Business getBusiness() throws IOException, SQLException {
+	public Account getBusiness() throws IOException, SQLException {
 		return table.getConnector().getBusinesses().get(accounting);
 	}
 
@@ -120,9 +120,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	}
 
 	public void setLimits(final PackageDefinitionLimit[] limits) throws IOException, SQLException {
-		table.getConnector().requestUpdate(
-			true,
-			AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS,
+		table.getConnector().requestUpdate(true,
+			AoservProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
@@ -143,10 +142,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unknown response code: "+code);
 					}
 				}
@@ -206,11 +205,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	}
 
 	public int copy() throws IOException, SQLException {
-		return table.getConnector().requestIntQueryIL(true, AOServProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
+		return table.getConnector().requestIntQueryIL(true, AoservProtocol.CommandID.COPY_PACKAGE_DEFINITION, pkey);
 	}
 
 	public void setActive(boolean active) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_PACKAGE_DEFINITION_ACTIVE, pkey, active);
 	}
 
 	public boolean isApproved() {
@@ -218,8 +217,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PACKAGE_DEFINITIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.PACKAGE_DEFINITIONS;
 	}
 
 	@Override
@@ -271,7 +270,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version aoservVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version aoservVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(category);
@@ -297,16 +296,15 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.REMOVE,
-			SchemaTable.TableID.PACKAGE_DEFINITIONS,
+		table.getConnector().requestUpdateIL(true,
+			AoservProtocol.CommandID.REMOVE,
+			Table.TableID.PACKAGE_DEFINITIONS,
 			pkey
 		);
 	}
 
 	public void update(
-		final Business business,
+		final Account business,
 		final PackageCategory category,
 		final String name,
 		final String version,
@@ -317,9 +315,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 		final int monthlyRate,
 		final TransactionType monthlyRateTransactionType
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdate(
-			true,
-			AOServProtocol.CommandID.UPDATE_PACKAGE_DEFINITION,
+		table.getConnector().requestUpdate(true,
+			AoservProtocol.CommandID.UPDATE_PACKAGE_DEFINITION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
 
@@ -342,10 +339,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unknown response code: "+code);
 					}
 				}

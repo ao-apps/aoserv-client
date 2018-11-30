@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.payment;
 
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -83,8 +83,8 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.COUNTRY_CODES;
+	public Table.TableID getTableID() {
+		return Table.TableID.COUNTRY_CODES;
 	}
 
 	@Override
@@ -109,7 +109,7 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeUTF(name);
 		out.writeBoolean(charge_com_supported);

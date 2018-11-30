@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.infrastructure;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -147,8 +147,8 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.VIRTUAL_DISKS;
+	public Table.TableID getTableID() {
+		return Table.TableID.VIRTUAL_DISKS;
 	}
 
 	@Override
@@ -188,26 +188,26 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(virtualServer);
 		out.writeUTF(device);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumRaidType
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumRaidType
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumDiskType
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumDiskType
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumRaidType
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumRaidType
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_41)<=0) out.writeNullUTF(null); // primaryMinimumDiskType
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(null); // secondaryMinimumDiskType
 		out.writeCompressedInt(minimumDiskSpeed);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumDiskSpeedTarget);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(minimumDiskSpeed);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumDiskSpeedTarget);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(minimumDiskSpeed);
 		out.writeCompressedInt(extents);
 		out.writeShort(weight);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(weightTarget);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(weight);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_42)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)>=0) out.writeShort(weightTarget);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeShort(weight);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_42)<=0) {
 			out.writeBoolean(false); // primaryPhysicalVolumesLocked
 			out.writeBoolean(false); // secondaryPhysicalVolumesLocked
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_72)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_72)>=0) {
 			out.writeCompressedInt(verifyDayOfWeek);
 			out.writeCompressedInt(verifyHourOfDay);
 		}
@@ -223,6 +223,6 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	 * @return  The time the verification began, which may be in the past if a verification was already in progress
 	 */
 	public long verify() throws SQLException, IOException {
-		return table.getConnector().requestLongQuery(true, AOServProtocol.CommandID.VERIFY_VIRTUAL_DISK, this.getPkey());
+		return table.getConnector().requestLongQuery(true, AoservProtocol.CommandID.VERIFY_VIRTUAL_DISK, this.getPkey());
 	}
 }

@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.email;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.pki.SslCertificate;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.pki.Certificate;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -44,7 +44,7 @@ final public class SendmailServerTable extends CachedTableIntegerKey<SendmailSer
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(SendmailServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(SendmailServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
 		new OrderBy(SendmailServer.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
@@ -57,7 +57,7 @@ final public class SendmailServerTable extends CachedTableIntegerKey<SendmailSer
 		return getUniqueRow(SendmailServer.COLUMN_ID, id);
 	}
 
-	public List<SendmailServer> getSendmailServers(AOServer ao) throws IOException, SQLException {
+	public List<SendmailServer> getSendmailServers(Server ao) throws IOException, SQLException {
 		return getIndexedRows(SendmailServer.COLUMN_AO_SERVER, ao.getPkey());
 	}
 
@@ -65,16 +65,16 @@ final public class SendmailServerTable extends CachedTableIntegerKey<SendmailSer
 		return getIndexedRows(SendmailServer.COLUMN_PACKAGE, pk.getPkey());
 	}
 
-	public List<SendmailServer> getSendmailServersByServerCertificate(SslCertificate sslCert) throws IOException, SQLException {
+	public List<SendmailServer> getSendmailServersByServerCertificate(Certificate sslCert) throws IOException, SQLException {
 		return getIndexedRows(SendmailServer.COLUMN_SERVER_CERTIFICATE, sslCert.getPkey());
 	}
 
-	public List<SendmailServer> getSendmailServersByClientCertificate(SslCertificate sslCert) throws IOException, SQLException {
+	public List<SendmailServer> getSendmailServersByClientCertificate(Certificate sslCert) throws IOException, SQLException {
 		return getIndexedRows(SendmailServer.COLUMN_CLIENT_CERTIFICATE, sslCert.getPkey());
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.SENDMAIL_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.SENDMAIL_SERVERS;
 	}
 }

@@ -24,14 +24,14 @@ package com.aoindustries.aoserv.client.web;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.distribution.TechnologyVersion;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
-import com.aoindustries.aoserv.client.linux.LinuxServerGroup;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
+import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.util.SystemdUtil;
-import com.aoindustries.aoserv.client.web.tomcat.HttpdWorker;
+import com.aoindustries.aoserv.client.web.tomcat.Worker;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -46,7 +46,7 @@ import java.util.List;
  * IP addresses and ports, and serve content for many sites.
  *
  * @see  HttpdBind
- * @see  HttpdSite
+ * @see  Site
  * @see  HttpdSiteBind
  *
  * @author  AO Industries, Inc.
@@ -170,11 +170,11 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		return table.getConnector().getHttpdBinds().getHttpdBinds(this);
 	}
 
-	public List<HttpdSite> getHttpdSites() throws IOException, SQLException {
+	public List<Site> getHttpdSites() throws IOException, SQLException {
 		return table.getConnector().getHttpdSites().getHttpdSites(this);
 	}
 
-	public List<HttpdWorker> getHttpdWorkers() throws IOException, SQLException {
+	public List<Worker> getHttpdWorkers() throws IOException, SQLException {
 		return table.getConnector().getHttpdWorkers().getHttpdWorkers(this);
 	}
 
@@ -182,8 +182,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		return linux_server_account;
 	}
 
-	public LinuxServerAccount getLinuxServerAccount() throws SQLException, IOException {
-		LinuxServerAccount lsa=table.getConnector().getLinuxServerAccounts().get(linux_server_account);
+	public UserServer getLinuxServerAccount() throws SQLException, IOException {
+		UserServer lsa=table.getConnector().getLinuxServerAccounts().get(linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
 		return lsa;
 	}
@@ -192,15 +192,15 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		return linux_server_group;
 	}
 
-	public LinuxServerGroup getLinuxServerGroup() throws SQLException, IOException {
-		LinuxServerGroup lsg=table.getConnector().getLinuxServerGroups().get(linux_server_group);
+	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
+		GroupServer lsg=table.getConnector().getLinuxServerGroups().get(linux_server_group);
 		if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
 		return lsg;
 	}
 
-	public TechnologyVersion getModPhpVersion() throws SQLException, IOException {
+	public SoftwareVersion getModPhpVersion() throws SQLException, IOException {
 		if(mod_php_version==-1) return null;
-		TechnologyVersion tv=table.getConnector().getTechnologyVersions().get(mod_php_version);
+		SoftwareVersion tv=table.getConnector().getTechnologyVersions().get(mod_php_version);
 		if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+mod_php_version);
 		if(
 			tv.getOperatingSystemVersion(table.getConnector()).getPkey()
@@ -299,8 +299,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		return SystemdUtil.encode(name);
 	}
 
-	public AOServer getAOServer() throws SQLException, IOException {
-		AOServer obj=table.getConnector().getAoServers().get(ao_server);
+	public Server getAOServer() throws SQLException, IOException {
+		Server obj=table.getConnector().getAoServers().get(ao_server);
 		if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return obj;
 	}
@@ -426,8 +426,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.HTTPD_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.HTTPD_SERVERS;
 	}
 
 	@Override
@@ -574,44 +574,44 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_8) < 0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_8) < 0) {
 			out.writeCompressedInt(name==null ? 1 : Integer.parseInt(name));
 		} else {
 			out.writeNullUTF(name);
 		}
 		out.writeBoolean(can_add_sites);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_9) <= 0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_9) <= 0) {
 			out.writeBoolean(true); // is_mod_jk
 			out.writeCompressedInt(128); // max_binds
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_102)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102)>=0) {
 			out.writeCompressedInt(linux_server_account);
 			out.writeCompressedInt(linux_server_group);
 			out.writeCompressedInt(mod_php_version);
 			out.writeBoolean(use_suexec);
 			out.writeCompressedInt(packageNum);
-			if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
 			out.writeBoolean(is_shared);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_103)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_103)>=0) {
 			out.writeBoolean(use_mod_perl);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_130)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_130)>=0) {
 			out.writeCompressedInt(timeout);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_68)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_68)>=0) {
 			out.writeCompressedInt(max_concurrency);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_11) >= 0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_11) >= 0) {
 			out.writeCompressedInt(monitoring_concurrency_low);
 			out.writeCompressedInt(monitoring_concurrency_medium);
 			out.writeCompressedInt(monitoring_concurrency_high);
 			out.writeCompressedInt(monitoring_concurrency_critical);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_7) >= 0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_7) >= 0) {
 			out.writeNullBoolean(mod_access_compat);
 			out.writeNullBoolean(mod_actions);
 			out.writeNullBoolean(mod_alias);
@@ -642,7 +642,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 			out.writeNullBoolean(mod_ssl);
 			out.writeNullBoolean(mod_status);
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_81_10) >= 0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_10) >= 0) {
 			out.writeNullBoolean(mod_wsgi);
 		}
 	}
@@ -651,9 +651,8 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	 * Gets the current concurrency of this HTTP server.
 	 */
 	public int getConcurrency() throws IOException, SQLException {
-		return table.getConnector().requestIntQuery(
-			true,
-			AOServProtocol.CommandID.GET_HTTPD_SERVER_CONCURRENCY,
+		return table.getConnector().requestIntQuery(true,
+			AoservProtocol.CommandID.GET_HTTPD_SERVER_CONCURRENCY,
 			pkey
 		);
 	}

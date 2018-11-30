@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaColumn;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Column;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.sql.SQLColumnValue;
 import com.aoindustries.aoserv.client.sql.SQLComparator;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
@@ -112,14 +112,14 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 		   // If the system time was reset to previous time
 		   || currentTime<lastLoaded
 		) {
-			SchemaTable schemaTable=getTableSchema();
+			Table schemaTable=getTableSchema();
 			FileList<V> newTableList=new FileList<>(
 				schemaTable.getName(),
 				"table",
 				getRecordLength(),
 				this
 			);
-			getObjects(true, newTableList, AOServProtocol.CommandID.GET_TABLE, getTableID());
+			getObjects(true, newTableList, AoservProtocol.CommandID.GET_TABLE, getTableID());
 			tableList=newTableList;
 			unmodifiableTableList=Collections.unmodifiableList(tableList);
 			lastLoaded=currentTime;
@@ -154,8 +154,8 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 
 	@Override
 	final protected V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		SchemaTable schemaTable=getTableSchema();
-		SchemaColumn schemaColumn=schemaTable.getSchemaColumn(connector, col);
+		Table schemaTable=getTableSchema();
+		Column schemaColumn=schemaTable.getSchemaColumn(connector, col);
 		SQLComparator<V> Vcomparator=new SQLComparator<>(
 			connector,
 			new SQLExpression[] {

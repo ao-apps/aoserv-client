@@ -24,10 +24,10 @@ package com.aoindustries.aoserv.client.email;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.net.NetBind;
-import com.aoindustries.aoserv.client.pki.SslCertificate;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.net.Bind;
+import com.aoindustries.aoserv.client.pki.Certificate;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -44,7 +44,7 @@ final public class CyrusImapdServerTable extends CachedTableIntegerKey<CyrusImap
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CyrusImapdServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING)
+		new OrderBy(CyrusImapdServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING)
 	};
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
@@ -56,16 +56,16 @@ final public class CyrusImapdServerTable extends CachedTableIntegerKey<CyrusImap
 		return getUniqueRow(CyrusImapdServer.COLUMN_AO_SERVER, ao_server);
 	}
 
-	public CyrusImapdServer getCyrusImapdServerBySieveNetBind(NetBind nb) throws IOException, SQLException {
+	public CyrusImapdServer getCyrusImapdServerBySieveNetBind(Bind nb) throws IOException, SQLException {
 		return getUniqueRow(CyrusImapdServer.COLUMN_SIEVE_NET_BIND, nb.getId());
 	}
 
-	public List<CyrusImapdServer> getCyrusImapdServers(SslCertificate sslCert) throws IOException, SQLException {
+	public List<CyrusImapdServer> getCyrusImapdServers(Certificate sslCert) throws IOException, SQLException {
 		return getIndexedRows(CyrusImapdServer.COLUMN_CERTIFICATE, sslCert.getPkey());
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CYRUS_IMAPD_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.CYRUS_IMAPD_SERVERS;
 	}
 }

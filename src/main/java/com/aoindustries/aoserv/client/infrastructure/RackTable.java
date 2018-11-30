@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.infrastructure;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -54,7 +54,7 @@ final public class RackTable extends CachedTableIntegerKey<Rack> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.RACKS;
+	public Table.TableID getTableID() {
+		return Table.TableID.RACKS;
 	}
 }

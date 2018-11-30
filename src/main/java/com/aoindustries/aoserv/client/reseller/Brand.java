@@ -23,13 +23,13 @@
 package com.aoindustries.aoserv.client.reseller;
 
 import com.aoindustries.aoserv.client.CachedObjectAccountingCodeKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.email.EmailAddress;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
-import com.aoindustries.aoserv.client.net.NetBind;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.email.Address;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -48,7 +48,7 @@ import java.util.List;
 /**
  * A brand has separate website, packages, nameservers, and support.
  *
- * @see  Business
+ * @see  Account
  * @see  Reseller
  *
  * @author  AO Industries, Inc.
@@ -147,8 +147,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		return pkey;
 	}
 
-	public Business getBusiness() throws IOException, SQLException {
-		Business bu = table.getConnector().getBusinesses().get(pkey);
+	public Account getBusiness() throws IOException, SQLException {
+		Account bu = table.getConnector().getBusinesses().get(pkey);
 		if(bu==null) throw new SQLException("Unable to find Business: "+pkey);
 		return bu;
 	}
@@ -169,8 +169,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		return nameserver4;
 	}
 
-	public LinuxServerAccount getSmtpLinuxServerAccount() throws IOException, SQLException {
-		LinuxServerAccount lsa = table.getConnector().getLinuxServerAccounts().get(smtp_linux_server_account);
+	public UserServer getSmtpLinuxServerAccount() throws IOException, SQLException {
+		UserServer lsa = table.getConnector().getLinuxServerAccounts().get(smtp_linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+smtp_linux_server_account);
 		return lsa;
 	}
@@ -187,8 +187,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		return smtp_password;
 	}
 
-	public LinuxServerAccount getImapLinuxServerAccount() throws SQLException, IOException {
-		LinuxServerAccount lsa = table.getConnector().getLinuxServerAccounts().get(imap_linux_server_account);
+	public UserServer getImapLinuxServerAccount() throws SQLException, IOException {
+		UserServer lsa = table.getConnector().getLinuxServerAccounts().get(imap_linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+imap_linux_server_account);
 		return lsa;
 	}
@@ -205,8 +205,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		return imap_password;
 	}
 
-	public EmailAddress getSupportEmailAddress() throws IOException, SQLException {
-		EmailAddress ea = table.getConnector().getEmailAddresses().get(support_email_address);
+	public Address getSupportEmailAddress() throws IOException, SQLException {
+		Address ea = table.getConnector().getEmailAddresses().get(support_email_address);
 		if(ea==null) throw new SQLException("Unable to find EmailAddress: "+support_email_address);
 		return ea;
 	}
@@ -215,8 +215,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		return support_email_display;
 	}
 
-	public EmailAddress getSignupEmailAddress() throws IOException, SQLException {
-		EmailAddress ea = table.getConnector().getEmailAddresses().get(signup_email_address);
+	public Address getSignupEmailAddress() throws IOException, SQLException {
+		Address ea = table.getConnector().getEmailAddresses().get(signup_email_address);
 		if(ea==null) throw new SQLException("Unable to find EmailAddress: "+signup_email_address);
 		return ea;
 	}
@@ -325,8 +325,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		return aoweb_struts_signup_admin_address;
 	}
 
-	public NetBind getAowebStrutsVncBind() throws IOException, SQLException {
-		NetBind nb = table.getConnector().getNetBinds().get(aoweb_struts_vnc_bind);
+	public Bind getAowebStrutsVncBind() throws IOException, SQLException {
+		Bind nb = table.getConnector().getNetBinds().get(aoweb_struts_vnc_bind);
 		if(nb==null) throw new SQLException("Unable to find NetBind: "+aoweb_struts_vnc_bind);
 		return nb;
 	}
@@ -340,8 +340,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BRANDS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BRANDS;
 	}
 
 	@Override
@@ -440,17 +440,17 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeUTF(nameserver1.toString());
 		out.writeUTF(nameserver2.toString());
 		out.writeNullUTF(ObjectUtils.toString(nameserver3));
 		out.writeNullUTF(ObjectUtils.toString(nameserver4));
 		out.writeCompressedInt(smtp_linux_server_account);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(smtp_host));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(smtp_host));
 		out.writeUTF(smtp_password);
 		out.writeCompressedInt(imap_linux_server_account);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(imap_host));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(imap_host));
 		out.writeUTF(imap_password);
 		out.writeCompressedInt(support_email_address);
 		out.writeUTF(support_email_display);
@@ -477,8 +477,8 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		out.writeBoolean(aoweb_struts_noindex);
 		out.writeNullUTF(aoweb_struts_google_analytics_new_tracking_code);
 		out.writeUTF(aoweb_struts_signup_admin_address);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_52)>=0) out.writeCompressedInt(aoweb_struts_vnc_bind);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_53)>=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_52)>=0) out.writeCompressedInt(aoweb_struts_vnc_bind);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_53)>=0) {
 			out.writeUTF(aoweb_struts_keystore_type);
 			out.writeUTF(aoweb_struts_keystore_password);
 		}
@@ -491,7 +491,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		return table.getConnector().getResellers().getReseller(this);
 	}
 
-	public List<TicketBrandCategory> getTicketBrandCategories() throws IOException, SQLException {
+	public List<BrandCategory> getTicketBrandCategories() throws IOException, SQLException {
 		return table.getConnector().getTicketBrandCategories().getTicketBrandCategories(this);
 	}
 
@@ -499,9 +499,9 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	 * Gets the immediate parent of this brand or <code>null</code> if none available.
 	 */
 	public Brand getParentBrand() throws IOException, SQLException {
-		Business bu = getBusiness();
+		Account bu = getBusiness();
 		if(bu==null) return null;
-		Business parent = bu.getParentBusiness();
+		Account parent = bu.getParentBusiness();
 		while(parent!=null) {
 			Brand parentBrand = parent.getBrand();
 			if(parentBrand!=null) return parentBrand;

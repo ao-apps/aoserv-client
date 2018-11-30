@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.email;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
@@ -132,8 +132,8 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 		return getDefaultIntroFile(getMajordomoServer().getDomain().getDomain(), name);
 	}
 
-	public EmailList getEmailList() throws SQLException, IOException {
-		EmailList obj=table.getConnector().getEmailLists().get(pkey);
+	public List getEmailList() throws SQLException, IOException {
+		List obj=table.getConnector().getEmailLists().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find EmailList: "+pkey);
 		return obj;
 	}
@@ -142,42 +142,42 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 	 * Gets the info file for the list.
 	 */
 	public String getInfoFile() throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
+		return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_MAJORDOMO_INFO_FILE, pkey);
 	}
 
 	/**
 	 * Gets the intro file for the list.
 	 */
 	public String getIntroFile() throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
+		return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_MAJORDOMO_INTRO_FILE, pkey);
 	}
 
-	public EmailPipeAddress getListPipeAddress() throws SQLException, IOException {
-		EmailPipeAddress pipeAddress=table.getConnector().getEmailPipeAddresses().get(listname_pipe_add);
+	public PipeAddress getListPipeAddress() throws SQLException, IOException {
+		PipeAddress pipeAddress=table.getConnector().getEmailPipeAddresses().get(listname_pipe_add);
 		if(pipeAddress==null) throw new SQLException("Unable to find EmailPipeAddress: "+listname_pipe_add);
 		return pipeAddress;
 	}
 
-	public EmailAddress getListApprovalAddress() throws SQLException, IOException {
-		EmailAddress address=table.getConnector().getEmailAddresses().get(listname_approval_add);
+	public Address getListApprovalAddress() throws SQLException, IOException {
+		Address address=table.getConnector().getEmailAddresses().get(listname_approval_add);
 		if(address==null) throw new SQLException("Unable to find EmailAddress: "+listname_approval_add);
 		return address;
 	}
 
-	public EmailListAddress getListListAddress() throws SQLException, IOException {
-		EmailListAddress listAddress=table.getConnector().getEmailListAddresses().get(listname_list_add);
+	public ListAddress getListListAddress() throws SQLException, IOException {
+		ListAddress listAddress=table.getConnector().getEmailListAddresses().get(listname_list_add);
 		if(listAddress==null) throw new SQLException("Unable to find EmailListAddress: "+listname_list_add);
 		return listAddress;
 	}
 
-	public EmailAddress getListOwnerAddress() throws SQLException, IOException {
-		EmailAddress address=table.getConnector().getEmailAddresses().get(listname_owner_add);
+	public Address getListOwnerAddress() throws SQLException, IOException {
+		Address address=table.getConnector().getEmailAddresses().get(listname_owner_add);
 		if(address==null) throw new SQLException("Unable to find EmailAddress: "+listname_owner_add);
 		return address;
 	}
 
-	public EmailPipeAddress getListRequestPipeAddress() throws SQLException, IOException {
-		EmailPipeAddress pipeAddress=table.getConnector().getEmailPipeAddresses().get(listname_request_pipe_add);
+	public PipeAddress getListRequestPipeAddress() throws SQLException, IOException {
+		PipeAddress pipeAddress=table.getConnector().getEmailPipeAddresses().get(listname_request_pipe_add);
 		if(pipeAddress==null) throw new SQLException("Unable to find EmailPipeAddress: "+listname_request_pipe_add);
 		return pipeAddress;
 	}
@@ -186,8 +186,8 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 		return name;
 	}
 
-	public EmailAddress getOwnerListAddress() throws SQLException, IOException {
-		EmailAddress address=table.getConnector().getEmailAddresses().get(owner_listname_add);
+	public Address getOwnerListAddress() throws SQLException, IOException {
+		Address address=table.getConnector().getEmailAddresses().get(owner_listname_add);
 		if(address==null) throw new SQLException("Unable to find EmailAddress: "+owner_listname_add);
 		return address;
 	}
@@ -199,8 +199,8 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.MAJORDOMO_LISTS;
+	public Table.TableID getTableID() {
+		return Table.TableID.MAJORDOMO_LISTS;
 	}
 
 	@Override
@@ -249,11 +249,11 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 	}
 
 	public void setInfoFile(String file) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
+		table.getConnector().requestUpdate(true, AoservProtocol.CommandID.SET_MAJORDOMO_INFO_FILE, pkey, file);
 	}
 
 	public void setIntroFile(String file) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true, AOServProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
+		table.getConnector().requestUpdate(true, AoservProtocol.CommandID.SET_MAJORDOMO_INTRO_FILE, pkey, file);
 	}
 
 	@Override
@@ -262,7 +262,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(majordomo_server);
 		out.writeUTF(name);

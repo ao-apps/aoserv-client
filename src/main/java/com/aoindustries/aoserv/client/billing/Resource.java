@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import static com.aoindustries.aoserv.client.billing.ApplicationResources.accessor;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -89,8 +89,8 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.RESOURCES;
+	public Table.TableID getTableID() {
+		return Table.TableID.RESOURCES;
 	}
 
 	public String getDisplayUnit(int quantity) {
@@ -118,15 +118,15 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) {
 			out.writeUTF(accessor.getMessage("Resource."+pkey+".singularDisplayUnit", ""));
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_123)>=0 && protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_123)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) {
 			out.writeUTF(accessor.getMessage("Resource."+pkey+".pluralDisplayUnit", ""));
 			out.writeUTF(getPerUnit(""));
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // description
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_60)<=0) out.writeUTF(toString()); // description
 	}
 }

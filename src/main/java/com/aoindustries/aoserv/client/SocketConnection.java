@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -85,7 +85,7 @@ final public class SocketConnection extends AOServConnection {
 			out = new CompressedDataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			in = new CompressedDataInputStream(new BufferedInputStream(socket.getInputStream()));
 
-			out.writeUTF(AOServProtocol.Version.CURRENT_VERSION.getVersion());
+			out.writeUTF(AoservProtocol.Version.CURRENT_VERSION.getVersion());
 			out.writeNullUTF(ObjectUtils.toString(connector.daemonServer));
 			out.writeUTF(connector.connectAs.toString());
 			out.writeUTF(connector.authenticateAs.toString());
@@ -133,7 +133,7 @@ final public class SocketConnection extends AOServConnection {
 		}
 		if(out != null) {
 			try {
-				out.writeCompressedInt(AOServProtocol.CommandID.QUIT.ordinal());
+				out.writeCompressedInt(AoservProtocol.CommandID.QUIT.ordinal());
 				out.flush();
 			} catch(SocketException err) {
 				// Normal when the other side has terminated the connection
@@ -165,7 +165,7 @@ final public class SocketConnection extends AOServConnection {
 	private long currentSeq;
 
 	@Override
-	CompressedDataOutputStream getRequestOut(AOServProtocol.CommandID commID) throws IOException {
+	CompressedDataOutputStream getRequestOut(AoservProtocol.CommandID commID) throws IOException {
 		currentSeq = seq.getAndIncrement();
 		out.writeLong(currentSeq);
 		out.writeCompressedInt(commID.ordinal());

@@ -24,12 +24,12 @@ package com.aoindustries.aoserv.client.ticket;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.reseller.Brand;
-import com.aoindustries.aoserv.client.reseller.TicketCategory;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.reseller.Category;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -59,27 +59,26 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 
 	public int addTicket(
 		final Brand brand,
-		final Business business,
+		final Account business,
 		final Language language,
-		final TicketCategory category,
+		final Category category,
 		final TicketType ticketType,
 		final String fromAddress,
 		final String summary,
 		final String details,
-		final TicketPriority clientPriority,
+		final Priority clientPriority,
 		final String contactEmails,
 		final String contactPhoneNumbers
 	) throws IOException, SQLException {
-		return connector.requestResult(
-			true,
-			AOServProtocol.CommandID.ADD,
+		return connector.requestResult(true,
+			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
 				IntList invalidateList;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(SchemaTable.TableID.TICKETS.ordinal());
+					out.writeCompressedInt(Table.TableID.TICKETS.ordinal());
 					out.writeUTF(brand.getBusiness_accounting().toString());
 					out.writeNullUTF(business==null ? null : business.getAccounting().toString());
 					out.writeUTF(language.getCode());
@@ -96,11 +95,11 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						pkey=in.readCompressedInt();
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
@@ -115,8 +114,8 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.TICKETS;
+	public Table.TableID getTableID() {
+		return Table.TableID.TICKETS;
 	}
 
 	@Override
@@ -124,11 +123,11 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 		return getUniqueRow(Ticket.COLUMN_PKEY, pkey);
 	}
 
-	public List<Ticket> getTickets(Business business) throws IOException, SQLException {
+	public List<Ticket> getTickets(Account business) throws IOException, SQLException {
 		return getIndexedRows(Ticket.COLUMN_ACCOUNTING, business.getAccounting());
 	}
 
-	public List<Ticket> getCreatedTickets(BusinessAdministrator ba) throws IOException, SQLException {
+	public List<Ticket> getCreatedTickets(Administrator ba) throws IOException, SQLException {
 		return getIndexedRows(Ticket.COLUMN_CREATED_BY, ba.getUsername_userId());
 	}
 

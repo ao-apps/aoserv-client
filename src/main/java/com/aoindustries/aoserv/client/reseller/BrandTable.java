@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.reseller;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableAccountingCodeKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.util.tree.Node;
 import com.aoindustries.util.tree.Tree;
@@ -65,13 +65,13 @@ final public class BrandTable extends CachedTableAccountingCodeKey<Brand> {
 	/**
 	 * Gets a <code>Brand</code> given its business.
 	 */
-	public Brand getBrand(Business business) throws IOException, SQLException {
+	public Brand getBrand(Account business) throws IOException, SQLException {
 		return getUniqueRow(Brand.COLUMN_ACCOUNTING, business.getAccounting());
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BRANDS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BRANDS;
 	}
 
 	/**

@@ -24,11 +24,11 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationException;
@@ -58,13 +58,12 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 
 	public int addPackage(
 		AccountingCode name,
-		Business business,
+		Account business,
 		PackageDefinition packageDefinition
 	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(
-			true,
-			AOServProtocol.CommandID.ADD,
-			SchemaTable.TableID.PACKAGES,
+		return connector.requestIntQueryIL(true,
+			AoservProtocol.CommandID.ADD,
+			Table.TableID.PACKAGES,
 			name,
 			business.getAccounting(),
 			packageDefinition.getPkey()
@@ -95,13 +94,13 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 
 	public AccountingCode generatePackageName(AccountingCode template) throws IOException, SQLException {
 		try {
-			return AccountingCode.valueOf(connector.requestStringQuery(true, AOServProtocol.CommandID.GENERATE_PACKAGE_NAME, template));
+			return AccountingCode.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GENERATE_PACKAGE_NAME, template));
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
 	}
 
-	public List<Package> getPackages(Business business) throws IOException, SQLException {
+	public List<Package> getPackages(Account business) throws IOException, SQLException {
 		return getIndexedRows(Package.COLUMN_ACCOUNTING, business.getAccounting());
 	}
 
@@ -110,15 +109,15 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.PACKAGES;
+	public Table.TableID getTableID() {
+		return Table.TableID.PACKAGES;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.ADD_PACKAGE)) {
-			if(AOSH.checkParamCount(AOSHCommand.ADD_PACKAGE, args, 3, err)) {
+		if(command.equalsIgnoreCase(Command.ADD_PACKAGE)) {
+			if(AOSH.checkParamCount(Command.ADD_PACKAGE, args, 3, err)) {
 				try {
 					out.println(
 						connector.getSimpleAOClient().addPackage(
@@ -129,14 +128,14 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 					);
 					out.flush();
 				} catch(IllegalArgumentException iae) {
-					err.print("aosh: "+AOSHCommand.ADD_PACKAGE+": ");
+					err.print("aosh: "+Command.ADD_PACKAGE+": ");
 					err.println(iae.getMessage());
 					err.flush();
 				}
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.DISABLE_PACKAGE)) {
-			if(AOSH.checkParamCount(AOSHCommand.DISABLE_PACKAGE, args, 2, err)) {
+		} else if(command.equalsIgnoreCase(Command.DISABLE_PACKAGE)) {
+			if(AOSH.checkParamCount(Command.DISABLE_PACKAGE, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().disablePackage(
 						AOSH.parseAccountingCode(args[1], "name"),
@@ -146,15 +145,15 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.ENABLE_PACKAGE)) {
-			if(AOSH.checkParamCount(AOSHCommand.ENABLE_PACKAGE, args, 1, err)) {
+		} else if(command.equalsIgnoreCase(Command.ENABLE_PACKAGE)) {
+			if(AOSH.checkParamCount(Command.ENABLE_PACKAGE, args, 1, err)) {
 				connector.getSimpleAOClient().enablePackage(
 					AOSH.parseAccountingCode(args[1], "name")
 				);
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.GENERATE_PACKAGE_NAME)) {
-			if(AOSH.checkParamCount(AOSHCommand.GENERATE_PACKAGE_NAME, args, 1, err)) {
+		} else if(command.equalsIgnoreCase(Command.GENERATE_PACKAGE_NAME)) {
+			if(AOSH.checkParamCount(Command.GENERATE_PACKAGE_NAME, args, 1, err)) {
 				out.println(
 					connector.getSimpleAOClient().generatePackageName(
 						AOSH.parseAccountingCode(args[1], "template")
@@ -163,8 +162,8 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 				out.flush();
 			}
 			return true;
-		} else if(command.equalsIgnoreCase(AOSHCommand.IS_PACKAGE_NAME_AVAILABLE)) {
-			if(AOSH.checkParamCount(AOSHCommand.IS_PACKAGE_NAME_AVAILABLE, args, 1, err)) {
+		} else if(command.equalsIgnoreCase(Command.IS_PACKAGE_NAME_AVAILABLE)) {
+			if(AOSH.checkParamCount(Command.IS_PACKAGE_NAME_AVAILABLE, args, 1, err)) {
 				try {
 					out.println(
 						connector.getSimpleAOClient().isPackageNameAvailable(
@@ -173,7 +172,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 					);
 					out.flush();
 				} catch(IllegalArgumentException iae) {
-					err.print("aosh: "+AOSHCommand.IS_PACKAGE_NAME_AVAILABLE+": ");
+					err.print("aosh: "+Command.IS_PACKAGE_NAME_AVAILABLE+": ");
 					err.println(iae.getMessage());
 					err.flush();
 				}
@@ -183,6 +182,6 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	}
 
 	public boolean isPackageNameAvailable(AccountingCode packageName) throws SQLException, IOException {
-		return connector.requestBooleanQuery(true, AOServProtocol.CommandID.IS_PACKAGE_NAME_AVAILABLE, packageName);
+		return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_PACKAGE_NAME_AVAILABLE, packageName);
 	}
 }

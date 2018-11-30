@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.backup;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -66,15 +66,15 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	}
 
 	public long getDiskTotalSize() throws IOException, SQLException {
-		return table.getConnector().requestLongQuery(true, AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
+		return table.getConnector().requestLongQuery(true, AoservProtocol.CommandID.GET_BACKUP_PARTITION_DISK_TOTAL_SIZE, pkey);
 	}
 
 	public long getDiskUsedSize() throws IOException, SQLException {
-		return table.getConnector().requestLongQuery(true, AOServProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
+		return table.getConnector().requestLongQuery(true, AoservProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
 	}
 
-	public AOServer getAOServer() throws SQLException, IOException {
-		AOServer ao=table.getConnector().getAoServers().get(ao_server);
+	public Server getAOServer() throws SQLException, IOException {
+		Server ao=table.getConnector().getAoServers().get(ao_server);
 		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return ao;
 	}
@@ -84,8 +84,8 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BACKUP_PARTITIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BACKUP_PARTITIONS;
 	}
 
 	@Override
@@ -136,22 +136,22 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) out.writeUTF(path.toString());
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) out.writeUTF(path.toString());
 		out.writeUTF(path.toString());
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0) {
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeLong((long)512*1024*1024); // min free space
 			out.writeLong((long)1024*1024*1024); // desired free space
 		}
 		out.writeBoolean(enabled);
 		if(
-			protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_0_A_117)>=0
-			&& protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_30)<=0
+			protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_117)>=0
+			&& protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0
 		) {
 			out.writeCompressedInt(1); // fill_order
 		}
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_31)>=0) out.writeBoolean(quota_enabled);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31)>=0) out.writeBoolean(quota_enabled);
 	}
 }

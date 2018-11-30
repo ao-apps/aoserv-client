@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.backup;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTable;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -61,7 +61,7 @@ final public class BackupRetentionTable extends GlobalTable<Short,BackupRetentio
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.BACKUP_RETENTIONS;
+	public Table.TableID getTableID() {
+		return Table.TableID.BACKUP_RETENTIONS;
 	}
 }

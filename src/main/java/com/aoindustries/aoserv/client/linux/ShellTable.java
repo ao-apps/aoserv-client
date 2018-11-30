@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.linux;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableUnixPathKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UnixPath;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -49,8 +49,8 @@ final public class ShellTable extends GlobalTableUnixPathKey<Shell> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.SHELLS;
+	public Table.TableID getTableID() {
+		return Table.TableID.SHELLS;
 	}
 
 	@Override

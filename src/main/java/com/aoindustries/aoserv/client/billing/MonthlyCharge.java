@@ -23,10 +23,10 @@
 package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
@@ -46,7 +46,7 @@ import java.sql.Timestamp;
  * places of the system, the use of this table will
  * decrease and possibly disappear.
  *
- * @see  Business
+ * @see  Account
  * @see  Transaction
  *
  * @author  AO Industries, Inc.
@@ -74,13 +74,13 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
 	MonthlyCharge(
 		MonthlyChargeTable table,
-		Business business,
+		Account business,
 		Package packageObject,
 		TransactionType typeObject,
 		String description,
 		int quantity,
 		int rate,
-		BusinessAdministrator createdByObject
+		Administrator createdByObject
 	) {
 		setTable(table);
 		this.pkey=-1;
@@ -116,14 +116,14 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		return new Timestamp(created);
 	}
 
-	public BusinessAdministrator getCreatedBy() throws SQLException, IOException {
-		BusinessAdministrator createdByObject = table.getConnector().getUsernames().get(created_by).getBusinessAdministrator();
+	public Administrator getCreatedBy() throws SQLException, IOException {
+		Administrator createdByObject = table.getConnector().getUsernames().get(created_by).getBusinessAdministrator();
 		if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
 		return createdByObject;
 	}
 
-	public Business getBusiness() throws SQLException, IOException {
-		Business bu=table.getConnector().getBusinesses().get(accounting);
+	public Account getBusiness() throws SQLException, IOException {
+		Account bu=table.getConnector().getBusinesses().get(accounting);
 		if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
 		return bu;
 	}
@@ -156,8 +156,8 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.MONTHLY_CHARGES;
+	public Table.TableID getTableID() {
+		return Table.TableID.MONTHLY_CHARGES;
 	}
 
 	public TransactionType getType() throws SQLException, IOException {
@@ -212,7 +212,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(packageName.toString());

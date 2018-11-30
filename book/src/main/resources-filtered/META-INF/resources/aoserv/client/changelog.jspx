@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-11-30T01:47:46-0600"
+		dateModified="2018-11-30T07:24:42-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -673,6 +673,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>Restructured into package names matching recently introduced master server schemas.</li>
+					<li>Renamed classes to match new table names.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

@@ -25,10 +25,10 @@ package com.aoindustries.aoserv.client.web;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
+import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -47,7 +47,7 @@ final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(HttpdServer.COLUMN_AO_SERVER_name+'.'+AOServer.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(HttpdServer.COLUMN_AO_SERVER_name+'.'+Server.COLUMN_HOSTNAME_name, ASCENDING),
 		new OrderBy(HttpdServer.COLUMN_NAME_name, ASCENDING)
 	};
 	@Override
@@ -60,7 +60,7 @@ final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 		return getUniqueRow(HttpdServer.COLUMN_PKEY, pkey);
 	}
 
-	public List<HttpdServer> getHttpdServers(AOServer ao) throws IOException, SQLException {
+	public List<HttpdServer> getHttpdServers(Server ao) throws IOException, SQLException {
 		return getIndexedRows(HttpdServer.COLUMN_AO_SERVER, ao.getPkey());
 	}
 
@@ -69,15 +69,15 @@ final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.HTTPD_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.HTTPD_SERVERS;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command = args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.GET_HTTPD_SERVER_CONCURRENCY)) {
-			if(AOSH.checkParamCount(AOSHCommand.GET_HTTPD_SERVER_CONCURRENCY, args, 2, err)) {
+		if(command.equalsIgnoreCase(Command.GET_HTTPD_SERVER_CONCURRENCY)) {
+			if(AOSH.checkParamCount(Command.GET_HTTPD_SERVER_CONCURRENCY, args, 2, err)) {
 				out.write(
 					Integer.toString(
 						connector.getSimpleAOClient().getHttpdServerConcurrency(

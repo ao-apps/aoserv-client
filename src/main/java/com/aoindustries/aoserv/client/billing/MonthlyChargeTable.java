@@ -24,23 +24,21 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
-import com.aoindustries.aoserv.client.backup.FailoverMySQLReplication;
-import com.aoindustries.aoserv.client.linux.LinuxAccount;
-import com.aoindustries.aoserv.client.linux.LinuxAccountType;
-import com.aoindustries.aoserv.client.linux.LinuxGroup;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
-import com.aoindustries.aoserv.client.linux.LinuxServerGroup;
-import com.aoindustries.aoserv.client.net.IPAddress;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.backup.MysqlReplication;
+import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.User;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.linux.UserType;
+import com.aoindustries.aoserv.client.net.IpAddress;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.web.HttpdServer;
-import com.aoindustries.aoserv.client.web.HttpdSite;
-import com.aoindustries.aoserv.client.web.jboss.HttpdJBossSite;
-import com.aoindustries.aoserv.client.web.tomcat.HttpdSharedTomcat;
-import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatSite;
-import com.aoindustries.aoserv.client.web.tomcat.HttpdTomcatStdSite;
+import com.aoindustries.aoserv.client.web.Site;
+import com.aoindustries.aoserv.client.web.tomcat.PrivateTomcatSite;
+import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -84,7 +82,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 	 *
 	 * @return  the <code>MonthlyCharge</code> objects.
 	 */
-	public List<MonthlyCharge> getMonthlyCharges(BusinessAdministrator business_administrator, Business bu) throws IOException, SQLException {
+	public List<MonthlyCharge> getMonthlyCharges(Administrator business_administrator, Account bu) throws IOException, SQLException {
 		// Add the entries in the monthly_charges table that apply to this business
 		List<MonthlyCharge> charges;
 		{
@@ -120,12 +118,12 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		Map<Package,Integer> emailsPerPackage=new HashMap<>();
 		Map<Package,Integer> usersPerPackage=new HashMap<>();
 		{
-			for(LinuxServerAccount lsa : connector.getLinuxServerAccounts().getRows()) {
+			for(UserServer lsa : connector.getLinuxServerAccounts().getRows()) {
 				UserId username=lsa.getLinuxAccount_username_id();
-				if(!username.equals(LinuxAccount.MAIL)) {
+				if(!username.equals(User.MAIL)) {
 					Map<Package,Integer> map;
-					LinuxAccount la=lsa.getLinuxAccount();
-					if(la.getType().getName().equals(LinuxAccountType.EMAIL)) map=emailsPerPackage;
+					User la=lsa.getLinuxAccount();
+					if(la.getType().getName().equals(UserType.EMAIL)) map=emailsPerPackage;
 					else map=usersPerPackage;
 
 					Package pack=la.getUsername().getPackage();
@@ -138,27 +136,27 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		Map<Package,Integer> javavmsPerPackage=new HashMap<>();
 		{
 			// HttpdSharedTomcats
-			for(HttpdSharedTomcat hst : connector.getHttpdSharedTomcats().getRows()) {
-				LinuxServerGroup lsg=hst.getLinuxServerGroup();
-				LinuxGroup lg=lsg.getLinuxGroup();
+			for(SharedTomcat hst : connector.getHttpdSharedTomcats().getRows()) {
+				GroupServer lsg=hst.getLinuxServerGroup();
+				Group lg=lsg.getLinuxGroup();
 				Package pack=lg.getPackage();
 				Integer I=javavmsPerPackage.get(pack);
 				if(I==null) javavmsPerPackage.put(pack, I=1);
 				else javavmsPerPackage.put(pack, I=I+1);
 			}
 			// HttpdJBossSites
-			for(HttpdJBossSite hjs : connector.getHttpdJBossSites().getRows()) {
-				HttpdTomcatSite hts=hjs.getHttpdTomcatSite();
-				HttpdSite hs=hts.getHttpdSite();
+			for(com.aoindustries.aoserv.client.web.jboss.Site hjs : connector.getHttpdJBossSites().getRows()) {
+				com.aoindustries.aoserv.client.web.tomcat.Site hts=hjs.getHttpdTomcatSite();
+				Site hs=hts.getHttpdSite();
 				Package pack=hs.getPackage();
 				Integer I=javavmsPerPackage.get(pack);
 				if(I==null) javavmsPerPackage.put(pack, I=1);
 				else javavmsPerPackage.put(pack, I=I+1);
 			}
 			// HttpdTomcatStdSites
-			for(HttpdTomcatStdSite htss : connector.getHttpdTomcatStdSites().getRows()) {
-				HttpdTomcatSite hts=htss.getHttpdTomcatSite();
-				HttpdSite hs=hts.getHttpdSite();
+			for(PrivateTomcatSite htss : connector.getHttpdTomcatStdSites().getRows()) {
+				com.aoindustries.aoserv.client.web.tomcat.Site hts=htss.getHttpdTomcatSite();
+				Site hs=hts.getHttpdSite();
 				Package pack=hs.getPackage();
 				Integer I=javavmsPerPackage.get(pack);
 				if(I==null) javavmsPerPackage.put(pack, I=1);
@@ -167,10 +165,10 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		}
 
 	for(Package pack : connector.getPackages().getRows()) {
-			Business business=pack.getBusiness();
+			Account business=pack.getBusiness();
 			// Only bill when active
 			if(business.getCanceled()==null) {
-				Business acctBusiness=business.getAccountingBusiness();
+				Account acctBusiness=business.getAccountingBusiness();
 				if(
 					bu==null
 					|| bu.equals(acctBusiness)
@@ -234,7 +232,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 					{
 						PackageDefinitionLimit limit=packageDefinition.getLimit(ipResource);
 						if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-							List<IPAddress> ips=pack.getIPAddresses();
+							List<IpAddress> ips=pack.getIPAddresses();
 							if(!ips.isEmpty()) {
 								if(limit==null) throw new SQLException("IPAddresses exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
 								if(ips.size()>limit.getSoftLimit()) {
@@ -295,7 +293,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 					{
 						PackageDefinitionLimit limit=packageDefinition.getLimit(mysqlReplicationResource);
 						if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-							List<FailoverMySQLReplication> fmrs = pack.getFailoverMySQLReplications();
+							List<MysqlReplication> fmrs = pack.getFailoverMySQLReplications();
 							if(!fmrs.isEmpty()) {
 								if(limit==null) throw new SQLException("FailoverMySQLReplications exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
 								if(fmrs.size()>limit.getSoftLimit()) {
@@ -358,7 +356,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 					{
 						PackageDefinitionLimit limit=packageDefinition.getLimit(siteResource);
 						if(limit==null || limit.getSoftLimit()!=PackageDefinitionLimit.UNLIMITED) {
-							List<HttpdSite> hss=pack.getHttpdSites();
+							List<Site> hss=pack.getHttpdSites();
 							if(!hss.isEmpty()) {
 								if(limit==null) throw new SQLException("HttpdSites exist, but no limit defined for Package="+pack.getPkey()+", PackageDefinition="+packageDefinition.getPkey());
 								if(hss.size()>limit.getSoftLimit()) {
@@ -427,7 +425,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		return Collections.unmodifiableList(charges);
 	}
 
-	public List<MonthlyCharge> getMonthlyCharges(Business bu) throws SQLException, IOException {
+	public List<MonthlyCharge> getMonthlyCharges(Account bu) throws SQLException, IOException {
 		return getMonthlyCharges(connector.getThisBusinessAdministrator(), bu);
 	}
 
@@ -437,8 +435,8 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.MONTHLY_CHARGES;
+	public Table.TableID getTableID() {
+		return Table.TableID.MONTHLY_CHARGES;
 	}
 
 	@Override

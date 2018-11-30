@@ -24,10 +24,10 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServStreamable;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.account.BusinessAdministrator;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.payment.PaymentType;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
@@ -110,9 +110,9 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		long after,
 		long before,
 		int transid,
-		Business business,
-		Business sourceBusiness,
-		BusinessAdministrator business_administrator,
+		Account business,
+		Account sourceBusiness,
+		Administrator business_administrator,
 		TransactionType type,
 		String description,
 		PaymentType paymentType,
@@ -132,7 +132,7 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		this.payment_confirmed = payment_confirmed;
 	}
 
-	public TransactionSearchCriteria(BusinessAdministrator business_administrator) throws IOException, SQLException {
+	public TransactionSearchCriteria(Administrator business_administrator) throws IOException, SQLException {
 		// The current time
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(System.currentTimeMillis());
@@ -316,11 +316,11 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	@Deprecated
 	@Override
 	public void write(CompressedDataOutputStream out, String version) throws IOException {
-		write(out, AOServProtocol.Version.getVersion(version));
+		write(out, AoservProtocol.Version.getVersion(version));
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(after);
 		out.writeLong(before);
 		out.writeCompressedInt(transid);

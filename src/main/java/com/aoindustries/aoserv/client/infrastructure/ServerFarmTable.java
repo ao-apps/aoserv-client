@@ -24,7 +24,7 @@ package com.aoindustries.aoserv.client.infrastructure;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableStringKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -53,7 +53,7 @@ final public class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.SERVER_FARMS;
+	public Table.TableID getTableID() {
+		return Table.TableID.SERVER_FARMS;
 	}
 }

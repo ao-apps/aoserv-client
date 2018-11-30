@@ -25,12 +25,12 @@ package com.aoindustries.aoserv.client.email;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.net.IPAddress;
-import com.aoindustries.aoserv.client.net.NetBind;
-import com.aoindustries.aoserv.client.net.NetDevice;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.pki.SslCertificate;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Bind;
+import com.aoindustries.aoserv.client.net.Device;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.net.IpAddress;
+import com.aoindustries.aoserv.client.pki.Certificate;
+import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -47,11 +47,11 @@ final public class CyrusImapdBindTable extends CachedTableIntegerKey<CyrusImapdB
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_IP_ADDRESS_name+'.'+IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+NetBind.COLUMN_PORT_name, ASCENDING)
+		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_IP_ADDRESS_name+'.'+IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING),
+		new OrderBy(CyrusImapdBind.COLUMN_NET_BIND_name+'.'+Bind.COLUMN_PORT_name, ASCENDING)
 	};
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
@@ -67,12 +67,12 @@ final public class CyrusImapdBindTable extends CachedTableIntegerKey<CyrusImapdB
 		return getUniqueRow(CyrusImapdBind.COLUMN_NET_BIND, pkey);
 	}
 
-	public List<CyrusImapdBind> getCyrusImapdBinds(SslCertificate sslCert) throws IOException, SQLException {
+	public List<CyrusImapdBind> getCyrusImapdBinds(Certificate sslCert) throws IOException, SQLException {
 		return getIndexedRows(CyrusImapdBind.COLUMN_SSL_CERTIFICATE, sslCert.getPkey());
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.CYRUS_IMAPD_BINDS;
+	public Table.TableID getTableID() {
+		return Table.TableID.CYRUS_IMAPD_BINDS;
 	}
 }

@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -81,8 +81,8 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		return new Timestamp(time);
 	}
 
-	public Business getBusiness() throws SQLException, IOException {
-		Business business = table.getConnector().getBusinesses().get(accounting);
+	public Account getBusiness() throws SQLException, IOException {
+		Account business = table.getConnector().getBusinesses().get(accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 		return business;
 	}
@@ -103,13 +103,13 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	 * values per instance.
 	 */
 	public String getWhoisOutput() throws IOException, SQLException {
-		if(whois_output==null) whois_output = table.getConnector().requestStringQuery(true, AOServProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT, pkey);
+		if(whois_output==null) whois_output = table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT, pkey);
 		return whois_output;
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.WHOIS_HISTORY;
+	public Table.TableID getTableID() {
+		return Table.TableID.WHOIS_HISTORY;
 	}
 
 	@Override
@@ -144,7 +144,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeLong(time);
 		out.writeUTF(accounting.toString());

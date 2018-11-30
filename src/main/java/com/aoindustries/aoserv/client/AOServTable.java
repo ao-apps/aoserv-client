@@ -22,11 +22,11 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaColumn;
-import com.aoindustries.aoserv.client.schema.SchemaForeignKey;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Column;
+import com.aoindustries.aoserv.client.schema.ForeignKey;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.SQLCast;
 import com.aoindustries.aoserv.client.sql.SQLColumnJoin;
 import com.aoindustries.aoserv.client.sql.SQLColumnValue;
@@ -35,7 +35,6 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.table.Table;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.sort.ComparisonSortAlgorithm;
@@ -62,7 +61,7 @@ import java.util.Set;
  *
  * @see  AOServObject
  */
-abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iterable<V>, Table<V> {
+abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iterable<V>, com.aoindustries.table.Table<V> {
 
 	final protected AOServConnector connector;
 	//final SimpleAOClient client;
@@ -278,9 +277,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		return 1;
 	}*/
 
-	protected V getObject(boolean allowRetry, final AOServProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
-		return connector.requestResult(
-			allowRetry,
+	protected V getObject(boolean allowRetry, final AoservProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
+		return connector.requestResult(allowRetry,
 			commID,
 			new AOServConnector.ResultRequest<V>() {
 				V result;
@@ -294,13 +292,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.NEXT) {
+					if(code==AoservProtocol.NEXT) {
 						V obj=getNewObject();
 						obj.read(in);
 						if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
 						result = obj;
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						result = null;
 					}
 				}
@@ -313,13 +311,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		);
 	}
 
-	protected List<V> getObjects(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	protected List<V> getObjects(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		List<V> list=new ArrayList<>();
 		getObjects(allowRetry, list, commID, params);
 		return list;
 	}
 
-	protected void getObjects(boolean allowRetry, final List<V> list, final AOServProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
+	protected void getObjects(boolean allowRetry, final List<V> list, final AoservProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
 		final int initialSize = list.size();
 		// Get a snapshot of all listeners
 		final ProgressListener[] listeners=getProgressListeners();
@@ -345,8 +343,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		}
 
 		try {
-			connector.requestUpdate(
-				allowRetry,
+			connector.requestUpdate(allowRetry,
 				commID,
 				new AOServConnector.UpdateRequest() {
 
@@ -362,8 +359,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 						// Remove anything that was added during a previous attempt
 						while(list.size()>initialSize) list.remove(list.size()-1);
 						// Load the data
-						int code=listeners==null?AOServProtocol.NEXT:in.readByte();
-						if(code==AOServProtocol.NEXT) {
+						int code=listeners==null?AoservProtocol.NEXT:in.readByte();
+						if(code==AoservProtocol.NEXT) {
 							int size;
 							if(listeners==null) {
 								size=0;
@@ -371,7 +368,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 								size=in.readCompressedInt();
 							}
 							int objCount=0;
-							while((code=in.readByte())==AOServProtocol.NEXT) {
+							while((code=in.readByte())==AoservProtocol.NEXT) {
 								V obj=getNewObject();
 								obj.read(in);
 								if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
@@ -394,7 +391,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 									entry.param=entry.listener.tableRowLoaded(AOServTable.this, obj, objCount-1, entry.param);
 								}
 							}
-							AOServProtocol.checkResult(code, in);
+							AoservProtocol.checkResult(code, in);
 							if(listenerCount>0 && size!=objCount) throw new IOException("Unexpected number of objects returned: expected="+size+", returned="+objCount);
 							// Show at final progress scale, just in case previous algorithm did not get the scale there.
 							for(int c=0;c<listenerCount;c++) if(finalLastProgresses[c]!=finalProgressScales[c]) listeners[c].progressChanged(finalLastProgresses[c]=finalProgressScales[c], finalProgressScales[c], AOServTable.this);
@@ -405,7 +402,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 								entry.param=entry.listener.tableLoadCompleted(AOServTable.this, entry.param);
 							}
 						} else {
-							AOServProtocol.checkResult(code, in);
+							AoservProtocol.checkResult(code, in);
 							throw new IOException("Unexpected response code: "+code);
 						}
 					}
@@ -428,19 +425,19 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		}
 	}
 
-	protected List<V> getObjects(boolean allowRetry, AOServProtocol.CommandID commID, AOServWritable param1) throws IOException, SQLException {
+	protected List<V> getObjects(boolean allowRetry, AoservProtocol.CommandID commID, AOServWritable param1) throws IOException, SQLException {
 		List<V> list=new ArrayList<>();
 		getObjects(allowRetry, list, commID, param1);
 		return list;
 	}
 
-	protected List<V> getObjectsNoProgress(boolean allowRetry, AOServProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
+	protected List<V> getObjectsNoProgress(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {
 		List<V> list=new ArrayList<>();
 		getObjectsNoProgress(allowRetry, list, commID, params);
 		return list;
 	}
 
-	protected void getObjectsNoProgress(boolean allowRetry, final List<V> list, final AOServProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
+	protected void getObjectsNoProgress(boolean allowRetry, final List<V> list, final AoservProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
 		final int initialSize = list.size();
 		// Get a snapshot of all load listeners
 		final TableLoadListenerEntry[] loadListeners=getTableLoadListeners();
@@ -452,8 +449,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		}
 
 		try {
-			connector.requestUpdate(
-				allowRetry,
+			connector.requestUpdate(allowRetry,
 				commID,
 				new AOServConnector.UpdateRequest() {
 
@@ -470,7 +466,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 						// Load the data
 						int objCount=0;
 						int code;
-						while((code=in.readByte())==AOServProtocol.NEXT) {
+						while((code=in.readByte())==AoservProtocol.NEXT) {
 							V obj=getNewObject();
 							obj.read(in);
 							if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
@@ -482,7 +478,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 								entry.param=entry.listener.tableRowLoaded(AOServTable.this, obj, objCount-1, entry.param);
 							}
 						}
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 
 						// Tell each load listener that we are done
 						for(int c=0;c<loadCount;c++) {
@@ -571,7 +567,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		if(castPos==-1) castPos=expr.length();
 		int columnNameEnd=Math.min(joinPos, castPos);
 		String columnName=expr.substring(0, columnNameEnd);
-		SchemaColumn lastColumn=getTableSchema().getSchemaColumn(connector, columnName);
+		Column lastColumn=getTableSchema().getSchemaColumn(connector, columnName);
 		if(lastColumn==null) throw new IllegalArgumentException("Unable to find column: "+getTableName()+'.'+columnName);
 
 		SQLExpression sql=new SQLColumnValue(connector, lastColumn);
@@ -579,7 +575,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
 		while(expr.length()>0) {
 			if(expr.charAt(0)=='.') {
-				List<SchemaForeignKey> keys=lastColumn.getReferences(connector);
+				List<ForeignKey> keys=lastColumn.getReferences(connector);
 				if(keys.size()!=1) throw new IllegalArgumentException("Column "+lastColumn.getTable(connector).getName()+'.'+lastColumn.getName()+" should reference precisely one column, references "+keys.size());
 
 				joinPos=expr.indexOf('.', 1);
@@ -588,9 +584,9 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				if(castPos==-1) castPos=expr.length();
 				int joinNameEnd=Math.min(joinPos, castPos);
 				columnName=expr.substring(1, joinNameEnd);
-				SchemaColumn keyColumn=keys.get(0).getForeignColumn(connector);
-				SchemaTable valueTable=keyColumn.getTable(connector);
-				SchemaColumn valueColumn=valueTable.getSchemaColumn(connector, columnName);
+				Column keyColumn=keys.get(0).getForeignColumn(connector);
+				Table valueTable=keyColumn.getTable(connector);
+				Column valueColumn=valueTable.getSchemaColumn(connector, columnName);
 				if(valueColumn==null) throw new IllegalArgumentException("Unable to find column: "+valueTable.getName()+'.'+columnName+" referenced from "+getTableName());
 
 				sql=new SQLColumnJoin(connector, sql, keyColumn, valueColumn);
@@ -604,7 +600,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				if(castPos==-1) castPos=expr.length();
 				int typeNameEnd=Math.min(joinPos, castPos);
 				String typeName=expr.substring(2, typeNameEnd);
-				SchemaType type=connector.getSchemaTypes().get(typeName);
+				Type type=connector.getSchemaTypes().get(typeName);
 				if(type==null) throw new IllegalArgumentException("Unable to find SchemaType: "+typeName);
 
 				sql=new SQLCast(sql, type);
@@ -623,7 +619,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 *
 	 * @see  SchemaTable.TableID
 	 */
-	public abstract SchemaTable.TableID getTableID();
+	public abstract Table.TableID getTableID();
 
 	private TableLoadListenerEntry[] getTableLoadListeners() {
 		synchronized(_loadListeners) {
@@ -633,7 +629,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		}
 	}
 
-	final public SchemaTable getTableSchema() throws IOException, SQLException {
+	final public Table getTableSchema() throws IOException, SQLException {
 		return connector.getSchemaTables().get(getTableID());
 	}
 
@@ -696,16 +692,16 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 * Prints the contents of this table.
 	 */
 	final public void printTable(AOServConnector conn, PrintWriter out, boolean isInteractive) throws IOException, SQLException {
-		SchemaTable schemaTable=getTableSchema();
-		List<SchemaColumn> cols=schemaTable.getSchemaColumns(conn);
+		Table schemaTable=getTableSchema();
+		List<Column> cols=schemaTable.getSchemaColumns(conn);
 		int numCols=cols.size();
 		String[] titles=new String[numCols];
-		SchemaType[] types=new SchemaType[numCols];
+		Type[] types=new Type[numCols];
 		boolean[] alignRights=new boolean[numCols];
 		for(int c=0;c<numCols;c++) {
-			SchemaColumn col=cols.get(c);
+			Column col=cols.get(c);
 			titles[c]=col.getName();
-			SchemaType type=types[c]=col.getType(conn);
+			Type type=types[c]=col.getType(conn);
 			alignRights[c]=type.alignRight();
 		}
 

@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.SchemaColumn;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Column;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,11 +75,11 @@ public class GetUniqueRowTODO extends TestCase {
 			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
 			Map<Object,AOServObject> uniqueMap=new HashMap<>();
-			int numTables = SchemaTable.TableID.values().length;
+			int numTables = Table.TableID.values().length;
 			for(int c=0;c<numTables;c++) {
 				// Excluded for testing speed
 				if(
-					c==SchemaTable.TableID.DISTRO_FILES.ordinal()
+					c==Table.TableID.DISTRO_FILES.ordinal()
 				) continue;
 				AOServTable table=conn.getTable(c);
 				System.out.print("        "+table.getTableName()+": ");
@@ -88,8 +88,8 @@ public class GetUniqueRowTODO extends TestCase {
 				System.out.println(rows.size()+" rows");
 				System.out.println("            Shuffling rows");
 				Collections.shuffle(rows);
-				List<SchemaColumn> columns=table.getTableSchema().getSchemaColumns(conn);
-				for(SchemaColumn column : columns) {
+				List<Column> columns=table.getTableSchema().getSchemaColumns(conn);
+				for(Column column : columns) {
 					uniqueMap.clear();
 					if(column.isUnique()) {
 						int index=column.getIndex();

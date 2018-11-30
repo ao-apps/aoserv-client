@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.SchemaColumn;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.Column;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,13 +74,13 @@ public class GetIndexedRowTODO extends TestCase {
 		for(AOServConnector conn : conns) {
 			UserId username = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+username);
-			int numTables = SchemaTable.TableID.values().length;
+			int numTables = Table.TableID.values().length;
 			for(int c=0;c<numTables;c++) {
 				// Excluded for testing speed
 				if(
-					c==SchemaTable.TableID.DISTRO_FILES.ordinal()
-					|| c==SchemaTable.TableID.TRANSACTIONS.ordinal()
-					|| c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+					c==Table.TableID.DISTRO_FILES.ordinal()
+					|| c==Table.TableID.TRANSACTIONS.ordinal()
+					|| c==Table.TableID.WHOIS_HISTORY.ordinal()
 				) continue;
 				AOServTable table=conn.getTable(c);
 				String tableName=table.getTableName();
@@ -88,9 +88,9 @@ public class GetIndexedRowTODO extends TestCase {
 				List<AOServObject> rows=table.getRows();
 				if(rows.isEmpty()) System.out.println("Empty table, cannot test");
 				else {
-					List<SchemaColumn> columns=table.getTableSchema().getSchemaColumns(conn);
+					List<Column> columns=table.getTableSchema().getSchemaColumns(conn);
 					Map<Object,List<AOServObject>> expectedLists=new HashMap<>();
-					for(SchemaColumn column : columns) {
+					for(Column column : columns) {
 						boolean supported=true;
 						String columnName=column.getName();
 						try {

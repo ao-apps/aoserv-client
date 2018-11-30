@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.account.Business;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -76,8 +76,8 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 		return billing_email;
 	}
 
-	public Business getBusiness() throws SQLException, IOException {
-		Business obj=table.getConnector().getBusinesses().get(accounting);
+	public Account getBusiness() throws SQLException, IOException {
+		Account obj=table.getConnector().getBusinesses().get(accounting);
 		if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
 		return obj;
 	}
@@ -108,8 +108,8 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.NOTICE_LOG;
+	public Table.TableID getTableID() {
+		return Table.TableID.NOTICE_LOG;
 	}
 
 	public Transaction getTransaction() throws IOException, SQLException {
@@ -158,7 +158,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeLong(create_time);
 		out.writeUTF(accounting.toString());

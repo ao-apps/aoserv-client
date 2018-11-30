@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.account;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -54,19 +54,18 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 	}
 
 	int addDisableLog(
-		final Business bu,
+		final Account bu,
 		final String disableReason
 	) throws IOException, SQLException {
-		return connector.requestResult(
-			true,
-			AOServProtocol.CommandID.ADD,
+		return connector.requestResult(true,
+			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				IntList invalidateList;
 				int result;
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(SchemaTable.TableID.DISABLE_LOG.ordinal());
+					out.writeCompressedInt(Table.TableID.DISABLE_LOG.ordinal());
 					out.writeUTF(bu.getAccounting().toString());
 					out.writeBoolean(disableReason!=null); if(disableReason!=null) out.writeUTF(disableReason);
 				}
@@ -74,11 +73,11 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						result=in.readCompressedInt();
 						invalidateList=AOServConnector.readInvalidateList(in);
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
@@ -98,7 +97,7 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.DISABLE_LOG;
+	public Table.TableID getTableID() {
+		return Table.TableID.DISABLE_LOG;
 	}
 }

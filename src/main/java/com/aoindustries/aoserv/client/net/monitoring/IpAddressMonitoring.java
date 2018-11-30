@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.net.monitoring;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
-import com.aoindustries.aoserv.client.net.IPAddress;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.IpAddress;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -33,7 +33,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @see  IPAddress
+ * @see  IpAddress
  *
  * @author  AO Industries, Inc.
  */
@@ -65,8 +65,8 @@ final public class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
 		return pkey;
 	}
 
-	public IPAddress getIpAddress() throws SQLException, IOException {
-		IPAddress obj = table.getConnector().getIpAddresses().get(pkey);
+	public IpAddress getIpAddress() throws SQLException, IOException {
+		IpAddress obj = table.getConnector().getIpAddresses().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + pkey);
 		return obj;
 	}
@@ -99,17 +99,16 @@ final public class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
 	}
 
 	public void setEnabled(boolean enabled) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
+		table.getConnector().requestUpdateIL(true,
+			AoservProtocol.CommandID.SET_IP_ADDRESS_MONITORING_ENABLED,
 			pkey,
 			enabled
 		);
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.IpAddressMonitoring;
+	public Table.TableID getTableID() {
+		return Table.TableID.IpAddressMonitoring;
 	}
 
 	@Override
@@ -134,7 +133,7 @@ final public class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeBoolean(enabled);
 		out.writeBoolean(pingMonitorEnabled);

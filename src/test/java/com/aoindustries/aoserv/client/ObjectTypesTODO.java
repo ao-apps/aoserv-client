@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.schema.SchemaColumn;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
-import com.aoindustries.aoserv.client.schema.SchemaType;
+import com.aoindustries.aoserv.client.schema.Column;
+import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.validator.UserId;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -73,15 +73,15 @@ public class ObjectTypesTODO extends TestCase {
 		System.out.println("E = Empty Table, Tests Not Performed");
 		System.out.println("N = All Null, Tests Not Performed");
 		System.out.println("U = Unsupported Operation");
-		int numTables = SchemaTable.TableID.values().length;
+		int numTables = Table.TableID.values().length;
 		for(AOServConnector conn : conns) {
 			UserId connUsername = conn.getThisBusinessAdministrator().pkey;
 			System.out.println("    "+connUsername);
 			for(int c=0;c<numTables;c++) {
 				// Excluded for testing speed
 				if(
-					c==SchemaTable.TableID.DISTRO_FILES.ordinal()
-					|| c==SchemaTable.TableID.WHOIS_HISTORY.ordinal()
+					c==Table.TableID.DISTRO_FILES.ordinal()
+					|| c==Table.TableID.WHOIS_HISTORY.ordinal()
 				) continue;
 				AOServTable<?,?> table=conn.getTable(c);
 				String tableName=table.getTableName();
@@ -89,10 +89,10 @@ public class ObjectTypesTODO extends TestCase {
 				List<? extends AOServObject<?,?>> rows=table.getRows();
 				if(rows.isEmpty()) System.out.println('E');
 				else {
-					List<SchemaColumn> columns=table.getTableSchema().getSchemaColumns(conn);
-					for(SchemaColumn column : columns) {
+					List<Column> columns=table.getTableSchema().getSchemaColumns(conn);
+					for(Column column : columns) {
 						String columnName = column.getName();
-						SchemaType type = column.getType(conn);
+						Type type = column.getType(conn);
 						int typeNum=type.getId();
 						char tested='N';
 						for(AOServObject<?,?> row : rows) {
@@ -102,38 +102,38 @@ public class ObjectTypesTODO extends TestCase {
 								Class<?> expectedType=null;
 								try {
 									switch(typeNum) {
-										case SchemaType.ACCOUNTING: {expectedType=String.class; String accounting=(String)value; break;}
-										case SchemaType.BOOLEAN: {expectedType=Boolean.class; Boolean b=(Boolean)value; break;}
+										case Type.ACCOUNTING: {expectedType=String.class; String accounting=(String)value; break;}
+										case Type.BOOLEAN: {expectedType=Boolean.class; Boolean b=(Boolean)value; break;}
 										//case SchemaType.BYTE: {expectedType=Byte.class; Byte b=(Byte)value; break;}
 										//case SchemaType.CITY: {expectedType=String.class; String city=(String)value; break;}
 										//case SchemaType.COUNTRY: {expectedType=String.class; String country=(String)value; break;}
-										case SchemaType.DATE: {expectedType=Date.class; Date date=(Date)value; break;}
-										case SchemaType.DECIMAL_2: {expectedType=Integer.class; Integer decimal2=(Integer)value; break;}
-										case SchemaType.DECIMAL_3: {expectedType=Integer.class; Integer decimal3=(Integer)value; break;}
-										case SchemaType.DOUBLE: {expectedType=Double.class; Double d=(Double)value; break;}
-										case SchemaType.EMAIL: {expectedType=String.class; String email=(String)value; break;}
-										case SchemaType.FKEY: {expectedType=Integer.class; Integer fkey=(Integer)value; break;}
-										case SchemaType.FLOAT: {expectedType=Float.class; Float f=(Float)value; break;}
-										case SchemaType.HOSTNAME: {expectedType=String.class; String hostname=(String)value; break;}
-										case SchemaType.INT: {expectedType=Integer.class; Integer i=(Integer)value; break;}
-										case SchemaType.INTERVAL: {expectedType=Long.class; Long interval=(Long)value; break;}
-										case SchemaType.IP_ADDRESS: {expectedType=String.class; String ip=(String)value; break;}
-										case SchemaType.LONG: {expectedType=Long.class; Long l=(Long)value; break;}
+										case Type.DATE: {expectedType=Date.class; Date date=(Date)value; break;}
+										case Type.DECIMAL_2: {expectedType=Integer.class; Integer decimal2=(Integer)value; break;}
+										case Type.DECIMAL_3: {expectedType=Integer.class; Integer decimal3=(Integer)value; break;}
+										case Type.DOUBLE: {expectedType=Double.class; Double d=(Double)value; break;}
+										case Type.EMAIL: {expectedType=String.class; String email=(String)value; break;}
+										case Type.FKEY: {expectedType=Integer.class; Integer fkey=(Integer)value; break;}
+										case Type.FLOAT: {expectedType=Float.class; Float f=(Float)value; break;}
+										case Type.HOSTNAME: {expectedType=String.class; String hostname=(String)value; break;}
+										case Type.INT: {expectedType=Integer.class; Integer i=(Integer)value; break;}
+										case Type.INTERVAL: {expectedType=Long.class; Long interval=(Long)value; break;}
+										case Type.IP_ADDRESS: {expectedType=String.class; String ip=(String)value; break;}
+										case Type.LONG: {expectedType=Long.class; Long l=(Long)value; break;}
 										//case SchemaType.OCTAL_INT: {expectedType=Integer.class; Integer i=(Integer)value; break;}
-										case SchemaType.OCTAL_LONG: {expectedType=Long.class; Long l=(Long)value; break;}
+										case Type.OCTAL_LONG: {expectedType=Long.class; Long l=(Long)value; break;}
 										//case SchemaType.PACKAGE: {expectedType=String.class; String pack=(String)value; break;}
-										case SchemaType.PATH: {expectedType=String.class; String path=(String)value; break;}
-										case SchemaType.PHONE: {expectedType=String.class; String phone=(String)value; break;}
-										case SchemaType.PKEY: {expectedType=Integer.class; Integer pkey=(Integer)value; break;}
-										case SchemaType.SHORT: {expectedType=Short.class; Short s=(Short)value; break;}
+										case Type.PATH: {expectedType=String.class; String path=(String)value; break;}
+										case Type.PHONE: {expectedType=String.class; String phone=(String)value; break;}
+										case Type.PKEY: {expectedType=Integer.class; Integer pkey=(Integer)value; break;}
+										case Type.SHORT: {expectedType=Short.class; Short s=(Short)value; break;}
 										//case SchemaType.STATE: {expectedType=String.class; String state=(String)value; break;}
-										case SchemaType.STRING: {expectedType=String.class; String s=(String)value; break;}
-										case SchemaType.TIME: {expectedType=Date.class; Date time=(Date)value; break;}
-										case SchemaType.URL: {expectedType=String.class; String url=(String)value; break;}
-										case SchemaType.USERNAME: {expectedType=String.class; String username=(String)value; break;}
+										case Type.STRING: {expectedType=String.class; String s=(String)value; break;}
+										case Type.TIME: {expectedType=Date.class; Date time=(Date)value; break;}
+										case Type.URL: {expectedType=String.class; String url=(String)value; break;}
+										case Type.USERNAME: {expectedType=String.class; String username=(String)value; break;}
 										//case SchemaType.ZIP: {expectedType=String.class; String zip=(String)value; break;}
-										case SchemaType.ZONE: {expectedType=String.class; String zone=(String)value; break;}
-										case SchemaType.BIG_DECIMAL: {expectedType=BigDecimal.class; BigDecimal bigDecimal=(BigDecimal)value; break;}
+										case Type.ZONE: {expectedType=String.class; String zone=(String)value; break;}
+										case Type.BIG_DECIMAL: {expectedType=BigDecimal.class; BigDecimal bigDecimal=(BigDecimal)value; break;}
 										default: fail("Unexpected SchemaType id: "+typeNum);
 									}
 									String string=type.getString(value);

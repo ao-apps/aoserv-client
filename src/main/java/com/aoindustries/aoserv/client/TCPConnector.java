@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.CompressedDataInputStream;
@@ -64,7 +64,7 @@ public class TCPConnector extends AOServConnector {
 	private static final long MAX_IDLE_LISTEN_CACHES = 90L*60*1000;
 
 	/** Avoid repeated copies using static final int. */
-	private static final int numTables = SchemaTable.TableID.values().length;
+	private static final int numTables = Table.TableID.values().length;
 
 	class CacheMonitor extends Thread {
 
@@ -85,7 +85,7 @@ public class TCPConnector extends AOServConnector {
 						try {
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
-								CompressedDataOutputStream out = conn.getRequestOut(AOServProtocol.CommandID.LISTEN_CACHES);
+								CompressedDataOutputStream out = conn.getRequestOut(AoservProtocol.CommandID.LISTEN_CACHES);
 								out.flush();
 
 								CompressedDataInputStream in=conn.getResponseIn();

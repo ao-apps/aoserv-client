@@ -27,16 +27,14 @@ import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.linux.LinuxAccount;
-import com.aoindustries.aoserv.client.linux.LinuxAccountType;
-import com.aoindustries.aoserv.client.linux.LinuxGroup;
+import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.Shell;
-import com.aoindustries.aoserv.client.mysql.MySQLUser;
+import com.aoindustries.aoserv.client.linux.User;
+import com.aoindustries.aoserv.client.linux.UserType;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
-import com.aoindustries.aoserv.client.postgresql.PostgresUser;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
@@ -59,10 +57,10 @@ import java.util.List;
  * be allocated to a <code>Package</code> before use in any of the
  * account types.
  *
- * @see  BusinessAdministrator
- * @see  LinuxAccount
- * @see  MySQLUser
- * @see  PostgresUser
+ * @see  Administrator
+ * @see  User
+ * @see  User
+ * @see  User
  *
  * @author  AO Industries, Inc.
  */
@@ -117,12 +115,12 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	}
 
 	public void addLinuxAccount(
-		LinuxGroup primaryGroup,
+		Group primaryGroup,
 		Gecos name,
 		Gecos office_location,
 		Gecos office_phone,
 		Gecos home_phone,
-		LinuxAccountType typeObject,
+		UserType typeObject,
 		Shell shellObject
 	) throws IOException, SQLException {
 		addLinuxAccount(
@@ -181,13 +179,13 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	public int arePasswordsSet() throws IOException, SQLException {
 		// Build the array of objects
 		List<PasswordProtected> pps=new ArrayList<>();
-		BusinessAdministrator ba=getBusinessAdministrator();
+		Administrator ba=getBusinessAdministrator();
 		if(ba!=null) pps.add(ba);
-		LinuxAccount la=getLinuxAccount();
+		User la=getLinuxAccount();
 		if(la!=null) pps.add(la);
-		MySQLUser mu=getMySQLUser();
+		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser();
 		if(mu!=null) pps.add(mu);
-		PostgresUser pu=getPostgresUser();
+		com.aoindustries.aoserv.client.postgresql.User pu=getPostgresUser();
 		if(pu!=null) pps.add(pu);
 		return Username.groupPasswordsSet(pps);
 	}
@@ -195,11 +193,11 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	@Override
 	public boolean canDisable() throws IOException, SQLException {
 		if(disable_log!=-1) return false;
-		LinuxAccount la=getLinuxAccount();
+		User la=getLinuxAccount();
 		if(la!=null && !la.isDisabled()) return false;
-		MySQLUser mu=getMySQLUser();
+		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser();
 		if(mu!=null && !mu.isDisabled()) return false;
-		PostgresUser pu=getPostgresUser();
+		com.aoindustries.aoserv.client.postgresql.User pu=getPostgresUser();
 		if(pu!=null && !pu.isDisabled()) return false;
 		return true;
 	}
@@ -216,25 +214,25 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	 */
 	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException, SQLException {
-		BusinessAdministrator ba=getBusinessAdministrator();
+		Administrator ba=getBusinessAdministrator();
 		if(ba!=null) {
 			List<PasswordChecker.Result> results=ba.checkPassword(password);
 			if(PasswordChecker.hasResults(results)) return results;
 		}
 
-		LinuxAccount la=getLinuxAccount();
+		User la=getLinuxAccount();
 		if(la!=null) {
 			List<PasswordChecker.Result> results=la.checkPassword(password);
 			if(PasswordChecker.hasResults(results)) return results;
 		}
 
-		MySQLUser mu=getMySQLUser();
+		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser();
 		if(mu!=null) {
 			List<PasswordChecker.Result> results=mu.checkPassword(password);
 			if(PasswordChecker.hasResults(results)) return results;
 		}
 
-		PostgresUser pu=getPostgresUser();
+		com.aoindustries.aoserv.client.postgresql.User pu=getPostgresUser();
 		if(pu!=null) {
 			List<PasswordChecker.Result> results=pu.checkPassword(password);
 			if(PasswordChecker.hasResults(results)) return results;
@@ -245,15 +243,15 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.DISABLE, SchemaTable.TableID.USERNAMES, dl.getPkey(), pkey);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.USERNAMES, dl.getPkey(), pkey);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.ENABLE, SchemaTable.TableID.USERNAMES, pkey);
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.USERNAMES, pkey);
 	}
 
-	public BusinessAdministrator getBusinessAdministrator() throws IOException, SQLException {
+	public Administrator getBusinessAdministrator() throws IOException, SQLException {
 		return table.getConnector().getBusinessAdministrators().get(pkey);
 	}
 
@@ -280,11 +278,11 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 		return obj;
 	}
 
-	public LinuxAccount getLinuxAccount() throws IOException, SQLException {
+	public User getLinuxAccount() throws IOException, SQLException {
 		return table.getConnector().getLinuxAccounts().get(pkey);
 	}
 
-	public MySQLUser getMySQLUser() throws IOException, SQLException {
+	public com.aoindustries.aoserv.client.mysql.User getMySQLUser() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(MySQLUserId.validate(username).isValid()) {
 			try {
@@ -307,7 +305,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 		return packageObject;
 	}
 
-	public PostgresUser getPostgresUser() throws IOException, SQLException {
+	public com.aoindustries.aoserv.client.postgresql.User getPostgresUser() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(PostgresUserId.validate(username).isValid()) {
 			try {
@@ -321,8 +319,8 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.USERNAMES;
+	public Table.TableID getTableID() {
+		return Table.TableID.USERNAMES;
 	}
 
 	public UserId getUsername() {
@@ -375,13 +373,13 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
-		LinuxAccount la=getLinuxAccount();
+		User la=getLinuxAccount();
 		if(la!=null) reasons.add(new CannotRemoveReason<>("Used by Linux account: "+la.getUsername().getUsername(), la));
-		BusinessAdministrator ba=getBusinessAdministrator();
+		Administrator ba=getBusinessAdministrator();
 		if(ba!=null) reasons.add(new CannotRemoveReason<>("Used by Business Administrator: "+ba.getUsername().getUsername(), ba));
-		MySQLUser mu=getMySQLUser();
+		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser();
 		if(mu!=null) reasons.add(new CannotRemoveReason<>("Used by MySQL user: "+mu.getUsername().getUsername(), mu));
-		PostgresUser pu=getPostgresUser();
+		com.aoindustries.aoserv.client.postgresql.User pu=getPostgresUser();
 		if(pu!=null) reasons.add(new CannotRemoveReason<>("Used by PostgreSQL user: "+pu.getUsername().getUsername(), pu));
 
 		return reasons;
@@ -389,26 +387,25 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(
-			true,
-			AOServProtocol.CommandID.REMOVE,
-			SchemaTable.TableID.USERNAMES,
+		table.getConnector().requestUpdateIL(true,
+			AoservProtocol.CommandID.REMOVE,
+			Table.TableID.USERNAMES,
 			pkey
 		);
 	}
 
 	@Override
 	public void setPassword(String password) throws SQLException, IOException {
-		BusinessAdministrator ba=getBusinessAdministrator();
+		Administrator ba=getBusinessAdministrator();
 		if(ba!=null) ba.setPassword(password);
 
-		LinuxAccount la=getLinuxAccount();
+		User la=getLinuxAccount();
 		if(la!=null) la.setPassword(password);
 
-		MySQLUser mu=getMySQLUser();
+		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser();
 		if(mu!=null) mu.setPassword(password);
 
-		PostgresUser pu=getPostgresUser();
+		com.aoindustries.aoserv.client.postgresql.User pu=getPostgresUser();
 		if(pu!=null) pu.setPassword(password);
 	}
 
@@ -416,23 +413,23 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	public boolean canSetPassword() throws IOException, SQLException {
 		if(disable_log!=-1) return false;
 
-		BusinessAdministrator ba=getBusinessAdministrator();
+		Administrator ba=getBusinessAdministrator();
 		if(ba!=null && !ba.canSetPassword()) return false;
 
-		LinuxAccount la=getLinuxAccount();
+		User la=getLinuxAccount();
 		if(la!=null && !la.canSetPassword()) return false;
 
-		MySQLUser mu=getMySQLUser();
+		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser();
 		if(mu!=null && !mu.canSetPassword()) return false;
 
-		PostgresUser pu=getPostgresUser();
+		com.aoindustries.aoserv.client.postgresql.User pu=getPostgresUser();
 		if(pu!=null && !pu.canSetPassword()) return false;
 
 		return ba!=null || la!=null || mu!=null || pu!=null;
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(disable_log);

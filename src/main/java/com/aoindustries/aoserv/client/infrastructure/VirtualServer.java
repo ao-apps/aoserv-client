@@ -25,10 +25,10 @@ package com.aoindustries.aoserv.client.infrastructure;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.distribution.Architecture;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.schema.AOServProtocol;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.HostAddress;
@@ -93,8 +93,8 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 		}
 	}
 
-	public Server getServer() throws SQLException, IOException {
-		Server se=table.getConnector().getServers().get(pkey);
+	public Host getServer() throws SQLException, IOException {
+		Host se=table.getConnector().getServers().get(pkey);
 		if(se==null) throw new SQLException("Unable to find Server: "+pkey);
 		return se;
 	}
@@ -208,8 +208,8 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.VIRTUAL_SERVERS;
+	public Table.TableID getTableID() {
+		return Table.TableID.VIRTUAL_SERVERS;
 	}
 
 	@Override
@@ -265,30 +265,30 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AOServProtocol.Version protocolVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(primaryRam);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(primaryRamTarget);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(primaryRamTarget);
 		out.writeCompressedInt(secondaryRam);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(secondaryRamTarget);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(secondaryRamTarget);
 		out.writeNullUTF(minimumProcessorType);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(secondaryRam==-1 ? null : minimumProcessorType);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeNullUTF(secondaryRam==-1 ? null : minimumProcessorType);
 		out.writeUTF(minimumProcessorArchitecture);
 		out.writeCompressedInt(minimumProcessorSpeed);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumProcessorSpeedTarget);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(secondaryRam==-1 ? -1 : minimumProcessorSpeed);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)>=0) out.writeCompressedInt(minimumProcessorSpeedTarget);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(secondaryRam==-1 ? -1 : minimumProcessorSpeed);
 		out.writeShort(processorCores);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(processorCoresTarget);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorCores);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)>=0) out.writeShort(processorCoresTarget);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorCores);
 		out.writeShort(processorWeight);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_43)>=0) out.writeShort(processorWeightTarget);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorWeight);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)>=0) out.writeShort(processorWeightTarget);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeShort(secondaryRam==-1 ? -1 : processorWeight);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
 		out.writeBoolean(primaryPhysicalServerLocked);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_40)<=0) out.writeCompressedInt(-1);
 		out.writeBoolean(secondaryPhysicalServerLocked);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
-		if(protocolVersion.compareTo(AOServProtocol.Version.VERSION_1_51)>=0) out.writeNullUTF(vnc_password);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_37)>=0) out.writeBoolean(requires_hvm);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_51)>=0) out.writeNullUTF(vnc_password);
 	}
 
 	public List<VirtualDisk> getVirtualDisks() throws IOException, SQLException {
@@ -308,12 +308,11 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 		return null;
 	}
 
-	public AOServer.DaemonAccess requestVncConsoleAccess() throws IOException, SQLException {
-		return table.getConnector().requestResult(
-			true,
-			AOServProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
-			new AOServConnector.ResultRequest<AOServer.DaemonAccess>() {
-				private AOServer.DaemonAccess daemonAccess;
+	public Server.DaemonAccess requestVncConsoleAccess() throws IOException, SQLException {
+		return table.getConnector().requestResult(true,
+			AoservProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
+			new AOServConnector.ResultRequest<Server.DaemonAccess>() {
+				private Server.DaemonAccess daemonAccess;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(pkey);
@@ -321,9 +320,9 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code==AOServProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
 						try {
-							daemonAccess = new AOServer.DaemonAccess(
+							daemonAccess = new Server.DaemonAccess(
 								in.readUTF(),
 								HostAddress.valueOf(in.readUTF()),
 								Port.valueOf(
@@ -336,12 +335,12 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 							throw new IOException(e);
 						}
 					} else {
-						AOServProtocol.checkResult(code, in);
+						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
 				}
 				@Override
-				public AOServer.DaemonAccess afterRelease() {
+				public Server.DaemonAccess afterRelease() {
 					return daemonAccess;
 				}
 			}
@@ -358,7 +357,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 *                          exception message.
 	 */
 	public String create() throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(false, AOServProtocol.CommandID.CREATE_VIRTUAL_SERVER, pkey);
+		return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.CREATE_VIRTUAL_SERVER, pkey);
 	}
 
 	/**
@@ -371,7 +370,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 *                          exception message.
 	 */
 	public String reboot() throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(false, AOServProtocol.CommandID.REBOOT_VIRTUAL_SERVER, pkey);
+		return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.REBOOT_VIRTUAL_SERVER, pkey);
 	}
 
 	/**
@@ -384,7 +383,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 *                          exception message.
 	 */
 	public String shutdown() throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(false, AOServProtocol.CommandID.SHUTDOWN_VIRTUAL_SERVER, pkey);
+		return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.SHUTDOWN_VIRTUAL_SERVER, pkey);
 	}
 
 	/**
@@ -397,7 +396,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 *                          exception message.
 	 */
 	public String destroy() throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(false, AOServProtocol.CommandID.DESTROY_VIRTUAL_SERVER, pkey);
+		return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.DESTROY_VIRTUAL_SERVER, pkey);
 	}
 
 	/**
@@ -410,7 +409,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 *                          exception message.
 	 */
 	public String pause() throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(false, AOServProtocol.CommandID.PAUSE_VIRTUAL_SERVER, pkey);
+		return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.PAUSE_VIRTUAL_SERVER, pkey);
 	}
 
 	/**
@@ -423,7 +422,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 *                          exception message.
 	 */
 	public String unpause() throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(false, AOServProtocol.CommandID.UNPAUSE_VIRTUAL_SERVER, pkey);
+		return table.getConnector().requestStringQuery(false, AoservProtocol.CommandID.UNPAUSE_VIRTUAL_SERVER, pkey);
 	}
 
 	/**
@@ -488,17 +487,15 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 *                          exception message.
 	 */
 	public int getStatus() throws IOException, SQLException {
-		return table.getConnector().requestIntQuery(true, AOServProtocol.CommandID.GET_VIRTUAL_SERVER_STATUS, pkey);
+		return table.getConnector().requestIntQuery(true, AoservProtocol.CommandID.GET_VIRTUAL_SERVER_STATUS, pkey);
 	}
 
 	/**
 	 * Gets the physical server that is currently the primary node for this virtual server.
 	 */
 	public PhysicalServer getPrimaryPhysicalServer() throws IOException, SQLException {
-		return table.getConnector().getPhysicalServers().get(
-			table.getConnector().requestIntQuery(
-				true,
-				AOServProtocol.CommandID.GET_PRIMARY_PHYSICAL_SERVER,
+		return table.getConnector().getPhysicalServers().get(table.getConnector().requestIntQuery(true,
+				AoservProtocol.CommandID.GET_PRIMARY_PHYSICAL_SERVER,
 				pkey
 			)
 		);
@@ -508,10 +505,8 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 * Gets the physical server that is currently the secondary node for this virtual server.
 	 */
 	public PhysicalServer getSecondaryPhysicalServer() throws IOException, SQLException {
-		return table.getConnector().getPhysicalServers().get(
-			table.getConnector().requestIntQuery(
-				true,
-				AOServProtocol.CommandID.GET_SECONDARY_PHYSICAL_SERVER,
+		return table.getConnector().getPhysicalServers().get(table.getConnector().requestIntQuery(true,
+				AoservProtocol.CommandID.GET_SECONDARY_PHYSICAL_SERVER,
 				pkey
 			)
 		);

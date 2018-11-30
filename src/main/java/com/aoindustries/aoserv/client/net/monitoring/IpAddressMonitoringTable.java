@@ -25,12 +25,12 @@ package com.aoindustries.aoserv.client.net.monitoring;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
-import com.aoindustries.aoserv.client.aosh.AOSHCommand;
+import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.net.IPAddress;
-import com.aoindustries.aoserv.client.net.NetDevice;
-import com.aoindustries.aoserv.client.net.Server;
-import com.aoindustries.aoserv.client.schema.SchemaTable;
+import com.aoindustries.aoserv.client.net.Device;
+import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.net.IpAddress;
+import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -48,10 +48,10 @@ final public class IpAddressMonitoringTable extends CachedTableIntegerKey<IpAddr
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IPAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_SERVER_name+'.'+Server.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IPAddress.COLUMN_DEVICE_name+'.'+NetDevice.COLUMN_DEVICE_ID_name, ASCENDING)
+		new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+		new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_PACKAGE_name+'.'+Package.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_SERVER_name+'.'+Host.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(IpAddressMonitoring.COLUMN_ID_name + '.' + IpAddress.COLUMN_DEVICE_name+'.'+Device.COLUMN_DEVICE_ID_name, ASCENDING)
 	};
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
@@ -64,15 +64,15 @@ final public class IpAddressMonitoringTable extends CachedTableIntegerKey<IpAddr
 	}
 
 	@Override
-	public SchemaTable.TableID getTableID() {
-		return SchemaTable.TableID.IpAddressMonitoring;
+	public Table.TableID getTableID() {
+		return Table.TableID.IpAddressMonitoring;
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command=args[0];
-		if(command.equalsIgnoreCase(AOSHCommand.SET_IP_ADDRESS_MONITORING_ENABLED)) {
-			if(AOSH.checkParamCount(AOSHCommand.SET_IP_ADDRESS_MONITORING_ENABLED, args, 4, err)) {
+		if(command.equalsIgnoreCase(Command.SET_IP_ADDRESS_MONITORING_ENABLED)) {
+			if(AOSH.checkParamCount(Command.SET_IP_ADDRESS_MONITORING_ENABLED, args, 4, err)) {
 				connector.getSimpleAOClient().setIPAddressMonitoringEnabled(
 					AOSH.parseInetAddress(args[1], "ip_address"),
 					args[2],
