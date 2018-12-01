@@ -109,8 +109,8 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		List<Server> objs=new ArrayList<>();
 		for(int c=0;c<size;c++) {
 			Server se=servers.get(c);
-			int fs = se.getFailoverServer_server_pkey();
-			if(fs!=-1 && fs==pkey) objs.add(se);
+			Integer fs = se.getFailoverServer_server_pkey();
+			if(fs != null && fs==pkey) objs.add(se);
 		}
 		return objs;
 	}
