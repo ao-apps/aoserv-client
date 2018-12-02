@@ -47,6 +47,7 @@ import java.sql.Timestamp;
  */
 final public class BankTransaction extends AOServObject<Integer,BankTransaction> implements SingleTableObject<Integer,BankTransaction> {
 
+	static final int COLUMN_ID = 0;
 	static final String COLUMN_ID_name = "id";
 	static final String COLUMN_TIME_name = "time";
 
@@ -103,7 +104,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {
-			case 0: return id;
+			case COLUMN_ID: return id;
 			case 1: return getTime();
 			case 2: return account;
 			case 3: return processor;

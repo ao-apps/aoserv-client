@@ -48,10 +48,14 @@ public abstract class CachedTableLongKey<V extends CachedObjectLongKey<V>> exten
 	@Deprecated
 	@Override
 	public V get(Object pkey) throws IOException, SQLException, IllegalArgumentException, NumberFormatException {
+		if(pkey == null) return null;
 		if(pkey instanceof Long) return get(((Long)pkey).longValue());
 		else if(pkey instanceof String) return get(Long.parseLong((String)pkey));
 		else throw new IllegalArgumentException("pkey is neither a Long nor a String: "+pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(long pkey) throws IOException, SQLException;
 }

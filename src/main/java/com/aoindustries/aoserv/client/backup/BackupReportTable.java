@@ -61,9 +61,13 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 	@Deprecated
 	@Override
 	public BackupReport get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
 		return get(((Integer)pkey).intValue());
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public BackupReport get(int pkey) throws IOException, SQLException {
 		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BACKUP_REPORTS, pkey);
 	}

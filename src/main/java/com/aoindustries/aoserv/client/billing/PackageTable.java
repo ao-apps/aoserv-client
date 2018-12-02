@@ -78,16 +78,23 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	@Deprecated
 	@Override
 	public Package get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
 		if(pkey instanceof AccountingCode) return get((AccountingCode)pkey);
 		throw new IllegalArgumentException("pkey must be either an Integer or an AccountingCode");
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	@Override
 	public Package get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(Package.COLUMN_PKEY, pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public Package get(AccountingCode name) throws IOException, SQLException {
 		return getUniqueRow(Package.COLUMN_NAME, name);
 	}

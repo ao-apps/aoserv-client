@@ -48,5 +48,8 @@ public abstract class GlobalTableUnixPathKey<V extends GlobalObjectUnixPathKey<V
 		return get((UnixPath)pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(UnixPath pkey) throws IOException, SQLException;
 }

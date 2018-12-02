@@ -48,5 +48,8 @@ public abstract class CachedTableAccountingCodeKey<V extends CachedObjectAccount
 		return get((AccountingCode)pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(AccountingCode pkey) throws IOException, SQLException;
 }

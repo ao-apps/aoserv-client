@@ -63,21 +63,31 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 	@Deprecated
 	@Override
 	public Table get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
 		if(pkey instanceof Integer) return get(((Number)pkey).intValue());
 		else if(pkey instanceof String) return get((String)pkey);
 		else if(pkey instanceof Table.TableID) return get((Table.TableID)pkey);
 		else throw new IllegalArgumentException("Must be an Integer, a String, or a SchemaTable.TableID");
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	@Override
 	public Table get(int table_id) throws IOException, SQLException {
 		return getRows().get(table_id);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public Table get(String name) throws IOException, SQLException {
 		return getUniqueRow(Table.COLUMN_NAME, name);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public Table get(Table.TableID tableID) throws IOException, SQLException {
 		return get(tableID.ordinal());
 	}

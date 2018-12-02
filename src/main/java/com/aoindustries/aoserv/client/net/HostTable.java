@@ -127,6 +127,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 	@Deprecated
 	@Override
 	public Host get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
 		else if(pkey instanceof String) return get((String)pkey);
 		else throw new IllegalArgumentException("Must be an Integer or a String");
@@ -141,6 +142,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 	 * @return  the <code>Server</code> or <code>null</code> if not found
 	 *
 	 * @see  Server#toString
+	 * @see  #get(java.lang.Object)
 	 */
 	public Host get(String server) throws SQLException, IOException {
 		// Is it the exact hostname of an ao_server?
@@ -189,6 +191,9 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		}
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	@Override
 	public Host get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(Host.COLUMN_PKEY, pkey);

@@ -277,6 +277,9 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		return 1;
 	}*/
 
+	/**
+	 * Gets a single object or {@code null} when not found.
+	 */
 	protected V getObject(boolean allowRetry, final AoservProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
 		return connector.requestResult(allowRetry,
 			commID,
@@ -882,8 +885,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	}
 
 	/**
-	 * Gets the value for the associated key or <code>null</code> if the data
+	 * Gets the value for the associated key or {@code null} if the data
 	 * doesn't exist or is filtered.
+	 *
+	 * @param key  when {@code null}, will always return {@code null}
 	 *
 	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
 	 */

@@ -63,6 +63,9 @@ final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroF
 		return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public DistroFile get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(DistroFile.COLUMN_PKEY, pkey);
 	}
