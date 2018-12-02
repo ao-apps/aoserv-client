@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-11-30T07:24:42-0600"
+		dateModified="2018-12-01T21:20:31-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -674,6 +674,13 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Restructured into package names matching recently introduced master server schemas.</li>
 					<li>Renamed classes to match new table names.</li>
+					<li>
+						<ao:a href="apidocs/com/aoindustries/aoserv/client/ProgressListener.html">ProgressListener</ao:a> and
+						<ao:a href="apidocs/com/aoindustries/aoserv/client/TableLoadListener.html">TableLoadListener</ao:a>
+						now notified of row counts using a 64-bit integer to handle results with more than
+						<code>CompressedDataOutputStream.MAX_COMPRESSED_INT_VALUE</code><%-- TODO: SemanticCMS 2: link --%>
+						rows.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
