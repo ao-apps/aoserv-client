@@ -85,9 +85,13 @@ final public class FileReplicationLogTable extends AOServTable<Integer,FileRepli
 	@Deprecated
 	@Override
 	public FileReplicationLog get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
 		return get(((Integer)pkey).intValue());
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public FileReplicationLog get(int pkey) throws IOException, SQLException {
 		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.FAILOVER_FILE_LOG, pkey);
 	}

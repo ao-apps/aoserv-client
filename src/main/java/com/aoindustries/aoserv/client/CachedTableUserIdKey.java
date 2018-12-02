@@ -48,5 +48,8 @@ public abstract class CachedTableUserIdKey<V extends CachedObjectUserIdKey<V>> e
 		return get((UserId)pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(UserId pkey) throws IOException, SQLException;
 }

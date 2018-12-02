@@ -62,16 +62,23 @@ final public class TypeTable extends GlobalTableIntegerKey<Type> {
 	@Deprecated
 	@Override
 	public Type get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
 		else if(pkey instanceof String) return get((String)pkey);
 		else throw new IllegalArgumentException("Must be an Integer or a String");
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	@Override
 	public Type get(int num) throws IOException, SQLException {
 		return getRows().get(num);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public Type get(String type) throws IOException, SQLException {
 		return getUniqueRow(Type.COLUMN_NAME, type);
 	}

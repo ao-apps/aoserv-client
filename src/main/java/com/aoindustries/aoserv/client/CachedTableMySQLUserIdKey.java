@@ -48,5 +48,8 @@ public abstract class CachedTableMySQLUserIdKey<V extends CachedObjectMySQLUserI
 		return get((MySQLUserId)pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(MySQLUserId pkey) throws IOException, SQLException;
 }

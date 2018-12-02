@@ -53,9 +53,13 @@ final public class BackupRetentionTable extends GlobalTable<Short,BackupRetentio
 	@Deprecated
 	@Override
 	public BackupRetention get(Object days) throws IOException, SQLException {
+		if(days == null) return null;
 		return get(((Short)days).shortValue());
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public BackupRetention get(short days) throws IOException, SQLException {
 		return getUniqueRow(BackupRetention.COLUMN_DAYS, days);
 	}

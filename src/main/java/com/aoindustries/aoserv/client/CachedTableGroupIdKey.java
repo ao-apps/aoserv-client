@@ -48,5 +48,8 @@ public abstract class CachedTableGroupIdKey<V extends CachedObjectGroupIdKey<V>>
 		return get((GroupId)pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(GroupId pkey) throws IOException, SQLException;
 }

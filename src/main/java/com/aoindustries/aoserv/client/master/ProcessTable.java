@@ -53,9 +53,13 @@ final public class ProcessTable extends AOServTable<Long,Process> {
 	@Deprecated
 	@Override
 	public Process get(Object pid) throws IOException, SQLException {
+		if(pid == null) return null;
 		return get(((Long)pid).longValue());
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public Process get(long pid) throws IOException, SQLException {
 		for(Process mp : getRows()) if(mp.process_id==pid) return mp;
 		return null;

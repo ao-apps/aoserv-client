@@ -63,16 +63,23 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	@Deprecated
 	@Override
 	public Server get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
 		else if(pkey instanceof DomainName) return get((DomainName)pkey);
 		else throw new IllegalArgumentException("Must be an Integer or a DomainName");
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	@Override
 	public Server get(int pkey) throws IOException, SQLException {
 		return getUniqueRow(Server.COLUMN_SERVER, pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public Server get(DomainName hostname) throws IOException, SQLException {
 		return getUniqueRow(Server.COLUMN_HOSTNAME, hostname);
 	}

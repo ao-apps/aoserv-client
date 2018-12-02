@@ -203,9 +203,13 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	@Deprecated
 	@Override
 	public Transaction get(Object transid) throws IOException, SQLException {
+		if(transid == null) return null;
 		return get(((Integer)transid).intValue());
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public Transaction get(int transid) throws IOException, SQLException {
 		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.TRANSACTIONS, transid);
 	}

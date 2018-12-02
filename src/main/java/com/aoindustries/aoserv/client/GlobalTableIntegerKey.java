@@ -44,8 +44,12 @@ public abstract class GlobalTableIntegerKey<V extends GlobalObjectIntegerKey<V>>
 	@Deprecated
 	@Override
 	public V get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
 		return get(((Integer)pkey).intValue());
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(int pkey) throws IOException, SQLException;
 }

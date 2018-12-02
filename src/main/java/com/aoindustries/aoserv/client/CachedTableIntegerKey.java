@@ -48,10 +48,14 @@ public abstract class CachedTableIntegerKey<V extends CachedObjectIntegerKey<V>>
 	@Deprecated
 	@Override
 	public V get(Object pkey) throws IOException, SQLException, IllegalArgumentException, NumberFormatException {
+		if(pkey == null) return null;
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
 		else if(pkey instanceof String) return get(Integer.parseInt((String)pkey));
 		else throw new IllegalArgumentException("pkey is neither an Integer nor a String: "+pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(int pkey) throws IOException, SQLException;
 }

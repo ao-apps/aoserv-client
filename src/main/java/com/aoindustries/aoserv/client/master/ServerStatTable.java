@@ -53,6 +53,7 @@ final public class ServerStatTable extends AOServTable<String,ServerStat> {
 	@Deprecated
 	@Override
 	public ServerStat get(Object name) throws IOException, SQLException {
+		if(name == null) return null;
 		List<ServerStat> table=getRows();
 		int size=table.size();
 		for(int c=0;c<size;c++) {

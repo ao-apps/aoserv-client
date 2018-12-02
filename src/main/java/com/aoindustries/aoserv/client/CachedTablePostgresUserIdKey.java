@@ -48,5 +48,8 @@ public abstract class CachedTablePostgresUserIdKey<V extends CachedObjectPostgre
 		return get((PostgresUserId)pkey);
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	abstract public V get(PostgresUserId pkey) throws IOException, SQLException;
 }

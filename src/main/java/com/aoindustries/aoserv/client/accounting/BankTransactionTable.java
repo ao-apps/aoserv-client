@@ -58,9 +58,13 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 	@Deprecated
 	@Override
 	public BankTransaction get(Object transid) throws IOException, SQLException {
+		if(transid == null) return null;
 		return get(((Integer)transid).intValue());
 	}
 
+	/**
+	 * @see  #get(java.lang.Object)
+	 */
 	public BankTransaction get(int transid) throws IOException, SQLException {
 		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.BANK_TRANSACTIONS, transid);
 	}
@@ -83,7 +87,7 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 
 	@Override
 	protected BankTransaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
-		return get(value);
+		if(col == BankTransaction.COLUMN_ID) return get(value);
+		throw new IllegalArgumentException("Not a unique column: "+col);
 	}
 }
