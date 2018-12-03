@@ -54,7 +54,7 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 // TODO: Rename something different, to distinguish from top-level domains proper.
-//       Perhaps "RegistrationDomain"/"RegistrarDomain"/"RegisterableDomain"?
+//       Perhaps "RegistrationDomain"/"RegistrarDomain"/"RegistrableDomain"?
 //       Or "Tier"/"UsableDomain"?
 // Evaluated: https://github.com/whois-server-list/public-suffix-list
 //            Seems dead, also not self-updating
