@@ -43,11 +43,27 @@ import java.sql.SQLException;
  * is a word without dots (<code>.</code>), and <code>dns_tld</code> is one of
  * the top level domains in the database.  If a top level domain does not exist
  * that properly should, please contact AO Industries to have it added.
+ * <p>
+ * Also, this is a list of effective top-level domains, for the purposes of
+ * domain allocation.  This means it includes things like <code>com.au</code>,
+ * whereas the {@link com.aoindustries.tlds.TopLevelDomain} only includes <code>au</code>.
+ * </p>
  *
- * @see  DNSZone
+ * @see  Zone
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Rename something different, to distinguish from top-level domains proper.
+//       Perhaps "RegistrationDomain"/"RegistrarDomain"/"RegisterableDomain"?
+//       Or "Tier"/"UsableDomain"?
+// Evaluated: https://github.com/whois-server-list/public-suffix-list
+//            Seems dead, also not self-updating
+//
+// https://wiki.mozilla.org/Public_Suffix_List
+// https://publicsuffix.org/
+// https://publicsuffix.org/list/
+// https://publicsuffix.org/list/public_suffix_list.dat
+
 final public class TopLevelDomain extends GlobalObjectDomainNameKey<TopLevelDomain> {
 
 	static final int COLUMN_DOMAIN=0;
