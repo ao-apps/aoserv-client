@@ -54,7 +54,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 
 	private DomainName registrableDomain;
 	private long time;
-	private int exitStatus;
+	private Integer exitStatus;
 
 	/**
 	 * Note: these are loaded in a separate call to the master as-needed to conserve heap space, and it is null to begin with.
@@ -95,7 +95,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		return new Timestamp(time);
 	}
 
-	public int getExitStatus() {
+	public Integer getExitStatus() {
 		return exitStatus;
 	}
 
@@ -178,6 +178,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 			registrableDomain = DomainName.valueOf(result.getString(pos++));
 			time = result.getTimestamp(pos++).getTime();
 			exitStatus = result.getInt(pos++);
+			if(result.wasNull()) exitStatus = null;
 
 			// Note: these are loaded in a separate call to the master as-needed to conserve heap space:
 			// output = result.getString(pos++);
@@ -196,7 +197,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 			pkey = in.readCompressedInt();
 			registrableDomain = DomainName.valueOf(in.readUTF()).intern();
 			time = in.readLong();
-			exitStatus = in.readCompressedInt();
+			exitStatus = in.readNullInteger();
 			// Note: these are loaded in a separate call to the master as-needed to conserve heap space:
 			// output = in.readUTF();
 			// error = in.readUTF();
@@ -217,7 +218,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 			// Was "zone" type with trailing period
 			out.writeUTF(registrableDomain.toString() + ".");
 		} else {
-			out.writeCompressedInt(exitStatus);
+			out.writeNullInteger(exitStatus);
 		}
 
 		// Note: these are loaded in a separate call to the master as-needed to conserve heap space:
