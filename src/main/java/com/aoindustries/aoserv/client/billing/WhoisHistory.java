@@ -167,7 +167,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 
 	@Override
 	public Table.TableID getTableID() {
-		return Table.TableID.WHOIS_HISTORY;
+		return Table.TableID.WhoisHistory;
 	}
 
 	@Override

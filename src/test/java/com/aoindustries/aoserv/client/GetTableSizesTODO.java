@@ -76,7 +76,7 @@ public class GetTableSizesTODO extends TestCase {
 				if(
 					d==Table.TableID.DISTRO_FILES.ordinal()
 					|| d==Table.TableID.TRANSACTIONS.ordinal()
-					|| d==Table.TableID.WHOIS_HISTORY.ordinal()
+					|| d==Table.TableID.WhoisHistory.ordinal()
 				) continue;
 				System.out.print("        Pass"+(d<9?"  ":" ")+(d+1)+" of "+PASSES+": ");
 				for(int c=0;c<numTables;c++) {
@@ -96,7 +96,7 @@ public class GetTableSizesTODO extends TestCase {
 					if(
 						d==Table.TableID.DISTRO_FILES.ordinal()
 						|| d==Table.TableID.TRANSACTIONS.ordinal()
-						|| d==Table.TableID.WHOIS_HISTORY.ordinal()
+						|| d==Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
 					) continue;
 					// Skip master_processes because they frequently change sizes
 					if(

@@ -63,6 +63,6 @@ final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
 
 	@Override
 	public Table.TableID getTableID() {
-		return Table.TableID.WHOIS_HISTORY;
+		return Table.TableID.WhoisHistory;
 	}
 }
