@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-12-03T23:01:11-0600"
+		dateModified="2018-12-04T01:24:09-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -683,6 +683,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Improved registrable domain management:
 						<ol>
+							<li>Renamed table <code>billing.whois_history</code> to <code>billing.WhoisHistory</code></li>
 							<li>Added table <code>billing.WhoisHistoryAccount</code></li>
 							<li>Changes to <code>billing.WhoisHistory</code>:
 								<ol type="a">

@@ -81,7 +81,7 @@ public class ObjectTypesTODO extends TestCase {
 				// Excluded for testing speed
 				if(
 					c==Table.TableID.DISTRO_FILES.ordinal()
-					|| c==Table.TableID.WHOIS_HISTORY.ordinal()
+					|| c==Table.TableID.WhoisHistory.ordinal() // TODO: Just exclude output/error columns?
 				) continue;
 				AOServTable<?,?> table=conn.getTable(c);
 				String tableName=table.getTableName();
