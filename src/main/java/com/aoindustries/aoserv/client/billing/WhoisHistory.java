@@ -136,7 +136,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	}
 
 	/**
-	 * Gets the whois output from the database.  The first access to this for a specific object instance
+	 * Gets the whois output from the database.  The first access to this, or {@link #getError()}, for a specific object instance
 	 * will query the master server for the information and then cache the results.  This is done
 	 * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
 	 *
@@ -151,7 +151,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	}
 
 	/**
-	 * Gets the whois error from the database.  The first access to this for a specific object instance
+	 * Gets the whois error from the database.  The first access to this, or {@link #getOutput()}, for a specific object instance
 	 * will query the master server for the information and then cache the results.  This is done
 	 * to conserve heap space while still yielding high performance through the caching of the rest of the fields.
 	 *
