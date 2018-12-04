@@ -33,7 +33,8 @@ import com.aoindustries.aoserv.client.billing.PackageCategory;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
 import com.aoindustries.aoserv.client.billing.Transaction;
 import com.aoindustries.aoserv.client.billing.TransactionType;
-import com.aoindustries.aoserv.client.billing.WhoisHistory;
+import com.aoindustries.aoserv.client.billing.WhoisHistoryAccount;
+import com.aoindustries.aoserv.client.billing.WhoisHistoryAccountTable;
 import com.aoindustries.aoserv.client.email.Domain;
 import com.aoindustries.aoserv.client.email.Forwarding;
 import com.aoindustries.aoserv.client.linux.GroupServer;
@@ -489,6 +490,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		return "$"+getAccountBalance(before);
 	}
 
+	// TODO: Rename "id"
 	public AccountingCode getAccounting() {
 		return pkey;
 	}
@@ -719,8 +721,11 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		return table.getConnector().getTransactions().getTransactions(pkey);
 	}
 
-	public List<WhoisHistory> getWhoisHistory() throws IOException, SQLException {
-		return table.getConnector().getWhoisHistory().getWhoisHistory(this);
+	/**
+	 * @see  WhoisHistoryAccountTable#getWhoisHistoryAccounts(com.aoindustries.aoserv.client.account.Account)
+	 */
+	public List<WhoisHistoryAccount> getWhoisHistoryAccounts() throws IOException, SQLException {
+		return table.getConnector().getWhoisHistoryAccount().getWhoisHistoryAccounts(this);
 	}
 
 	/**

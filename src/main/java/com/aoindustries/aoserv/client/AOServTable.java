@@ -519,7 +519,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
 	/**
 	 * Gets the ComparisonSortAlgorithm used to sort the table.
-	 * Defaults to JavaSort.
+	 *
+	 * @implSpec  Defaults to JavaSort.
 	 */
 	protected ComparisonSortAlgorithm<Object> getSortAlgorithm() {
 		return JavaSort.getInstance();
@@ -663,7 +664,9 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	}
 
 	/**
-	 * Gets the rows in a more efficient, indexed manner.  This default implementation simply throws UnsupportedOperationException.
+	 * Gets the rows in a more efficient, indexed manner.
+	 * 
+	 * @implSpec  This default implementation simply throws UnsupportedOperationException.
 	 *
 	 * @exception UnsupportedOperationException if not supported by the specific table implementation
 	 */

@@ -24,25 +24,27 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.Table;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 /**
- * @see  WhoisHistory
+ * @see  WhoisHistoryAccount
  *
  * @author  AO Industries, Inc.
  */
-final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory> {
+final public class WhoisHistoryAccountTable extends CachedTableIntegerKey<WhoisHistoryAccount> {
 
-	public WhoisHistoryTable(AOServConnector connector) {
-		super(connector, WhoisHistory.class);
+	public WhoisHistoryAccountTable(AOServConnector connector) {
+		super(connector, WhoisHistoryAccount.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(WhoisHistory.COLUMN_registrableDomain_name, ASCENDING),
-		new OrderBy(WhoisHistory.COLUMN_time_name, ASCENDING)
+		new OrderBy(WhoisHistoryAccount.COLUMN_whoisHistory_name + "." + WhoisHistory.COLUMN_registrableDomain_name, ASCENDING),
+		new OrderBy(WhoisHistoryAccount.COLUMN_whoisHistory_name + "." + WhoisHistory.COLUMN_time_name, ASCENDING),
+		new OrderBy(WhoisHistoryAccount.COLUMN_account_name, ASCENDING)
 	};
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
@@ -50,19 +52,26 @@ final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory>
 	}
 
 	@Override
-	public WhoisHistory get(int id) throws IOException, SQLException {
-		return getUniqueRow(WhoisHistory.COLUMN_id, id);
-	}
-
-	@Override
-	public List<WhoisHistory> getIndexedRows(int col, Object value) throws IOException, SQLException {
-		if(col == WhoisHistory.COLUMN_output) throw new UnsupportedOperationException("getIndexedRows not supported for WhoisHistory.output because each access is a round-trip to the server");
-		if(col == WhoisHistory.COLUMN_error) throw new UnsupportedOperationException("getIndexedRows not supported for WhoisHistory.error because each access is a round-trip to the server");
-		return super.getIndexedRows(col, value);
+	public WhoisHistoryAccount get(int id) throws IOException, SQLException {
+		return getUniqueRow(WhoisHistoryAccount.COLUMN_id, id);
 	}
 
 	@Override
 	public Table.TableID getTableID() {
-		return Table.TableID.WHOIS_HISTORY;
+		return Table.TableID.WhoisHistoryAccount;
+	}
+
+	/**
+	 * @see  WhoisHistory#getAccounts()
+	 */
+	List<WhoisHistoryAccount> getWhoisHistoryAccounts(WhoisHistory whoisHistory) throws IOException, SQLException {
+		return getIndexedRows(WhoisHistoryAccount.COLUMN_whoisHistory, whoisHistory.getId());
+	}
+
+	/**
+	 * @see  Account#getWhoisHistoryAccounts()
+	 */
+	public List<WhoisHistoryAccount> getWhoisHistoryAccounts(Account account) throws IOException, SQLException {
+		return getIndexedRows(WhoisHistoryAccount.COLUMN_account, account.getAccounting());
 	}
 }
