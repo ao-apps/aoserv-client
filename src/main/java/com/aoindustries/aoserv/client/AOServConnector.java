@@ -55,6 +55,7 @@ import com.aoindustries.aoserv.client.billing.PackageTable;
 import com.aoindustries.aoserv.client.billing.ResourceTable;
 import com.aoindustries.aoserv.client.billing.TransactionTable;
 import com.aoindustries.aoserv.client.billing.TransactionTypeTable;
+import com.aoindustries.aoserv.client.billing.WhoisHistoryAccountTable;
 import com.aoindustries.aoserv.client.billing.WhoisHistoryTable;
 import com.aoindustries.aoserv.client.distribution.ArchitectureTable;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemTable;
@@ -1214,6 +1215,9 @@ abstract public class AOServConnector {
 	private final WhoisHistoryTable whoisHistory;
 	public WhoisHistoryTable getWhoisHistory() {return whoisHistory;}
 
+	private final WhoisHistoryAccountTable whoisHistoryAccount;
+	public WhoisHistoryAccountTable getWhoisHistoryAccount() {return whoisHistoryAccount;}
+
 	private final SimpleAOClient simpleAOClient;
 	public SimpleAOClient getSimpleAOClient() {return simpleAOClient;}
 
@@ -1424,6 +1428,7 @@ abstract public class AOServConnector {
 		newTables.add(virtualDisks=new VirtualDiskTable(this));
 		newTables.add(virtualServers=new VirtualServerTable(this));
 		newTables.add(whoisHistory=new WhoisHistoryTable(this));
+		newTables.add(whoisHistoryAccount = new WhoisHistoryAccountTable(this));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 

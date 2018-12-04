@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-12-01T21:20:31-0600"
+		dateModified="2018-12-03T23:01:11-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -680,6 +680,30 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						now notified of row counts using a 64-bit integer to handle results with more than
 						<code>CompressedDataOutputStream.MAX_COMPRESSED_INT_VALUE</code><%-- TODO: SemanticCMS 2: link --%>
 						rows.
+					</li>
+					<li>Improved registrable domain management:
+						<ol>
+							<li>Added table <code>billing.WhoisHistoryAccount</code></li>
+							<li>Changes to <code>billing.WhoisHistory</code>:
+								<ol type="a">
+									<li>Changed <code>zone</code> to <code>domain</code> type (without the trailing period).</li>
+									<li>Renamed <code>zone</code> to <code>registrableDomain</code></li>
+									<li>Added column <code>exitStatus</code></li>
+									<li>Renamed <code>whois_output</code> to <code>output</code></li>
+									<li>Added column <code>error</code></li>
+									<li>Removed column <code>accounting</code></li>
+								</ol>
+							</li>
+							<!-- TODO:
+							<li>Renamed <code>dns.TopLevelDomain</code> to <code>dns.Suffix</code>:
+								<ol type="a">
+									<li>Added column <code>isRegistrable</code></li>
+									<li>Added column <code>isPublicSuffix</code></li>
+									<li>Added column <code>isManual</code></li>
+								</ol>
+							</li>
+							-->
+						</ol>
 					</li>
 				</ul>
 			</changelog:release>

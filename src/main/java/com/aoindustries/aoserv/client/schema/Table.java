@@ -224,7 +224,8 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 		USERNAMES,
 		VIRTUAL_DISKS,
 		VIRTUAL_SERVERS,
-		WHOIS_HISTORY
+		WHOIS_HISTORY,
+		WhoisHistoryAccount
 	}
 
 	private static final String[] descColumns={
