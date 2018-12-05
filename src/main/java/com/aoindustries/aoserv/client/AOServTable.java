@@ -320,10 +320,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		return list;
 	}
 
-	private void getObjects(boolean allowRetry, boolean allowProgress, final List<V> list, final AoservProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
+	private void getObjects(boolean allowRetry, final boolean withProgress, final List<V> list, final AoservProtocol.CommandID commID, final Object ... params) throws IOException, SQLException {
 		final int initialSize = list.size();
 		// Get a snapshot of all listeners
-		final ProgressListener[] progListeners = allowProgress ? getProgressListeners() : null;
+		final ProgressListener[] progListeners = withProgress ? getProgressListeners() : null;
 		final int progCount = progListeners == null ? 0 : progListeners.length;
 		final int[] progressScales;
 		final int[] lastProgresses;
@@ -360,7 +360,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
 						@Override
 						public void writeRequest(CompressedDataOutputStream out) throws IOException {
-							out.writeBoolean(progListeners != null);
+							if(withProgress) out.writeBoolean(progListeners != null);
 							AOServConnector.writeParams(params, out);
 						}
 
@@ -392,7 +392,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 								if(progListeners == null) {
 									size = -1; // Unknown
 								} else {
-									size = in.readCompressedInt();
+									size = in.readLong();
 								}
 								// Tell each load listener about the number of rows
 								for(int c = 0; c < loadCount; c++) {
