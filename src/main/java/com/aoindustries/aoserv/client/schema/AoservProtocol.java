@@ -180,9 +180,10 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 		VERSION_1_81_16("1.81.16"),
 		VERSION_1_81_17("1.81.17"),
 		VERSION_1_81_18("1.81.18"),
-		VERSION_1_81_19("1.81.19");
+		VERSION_1_81_19("1.81.19"),
+		VERSION_1_81_20("1.81.20");
 
-		public static final Version CURRENT_VERSION = VERSION_1_81_19;
+		public static final Version CURRENT_VERSION = VERSION_1_81_20;
 
 		private static final Map<String,Version> versionMap = new HashMap<>();
 		static {

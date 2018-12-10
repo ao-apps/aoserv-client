@@ -131,8 +131,10 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		boolean sendInvoice,
 		String billingContact,
 		String billingEmail,
+		Profile.EmailFormat billingEmailFormat,
 		String technicalContact,
-		String technicalEmail
+		String technicalEmail,
+		Profile.EmailFormat technicalEmailFormat
 	) throws IOException, SQLException {
 		return table.getConnector().getBusinessProfiles().addBusinessProfile(
 			this,
@@ -149,8 +151,10 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 			sendInvoice,
 			billingContact,
 			billingEmail,
+			billingEmailFormat,
 			technicalContact,
-			technicalEmail
+			technicalEmail,
+			technicalEmailFormat
 		);
 	}
 

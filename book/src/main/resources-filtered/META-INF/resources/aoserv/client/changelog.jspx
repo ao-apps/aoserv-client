@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-12-04T01:24:09-0600"
+		dateModified="2018-12-09T23:43:07-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -704,6 +704,25 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 								</ol>
 							</li>
 							-->
+						</ol>
+					</li>
+					<li>
+						<p>
+							May now select the format for outgoing emails.  May be one of:
+						</p>
+						<ul>
+							<li><code>HTML</code> - HTML allowing embedded images (the default).</li>
+							<li><code>HTML_ONLY</code> - HTML without any embedded images.</li>
+							<li><code>TEXT</code> - Plaintext only.</li>
+						</ul>
+						<p>
+							Made the following schema changes to support this:
+						</p>
+						<ol>
+							<li>Added enum <code>account.Profile.EmailFormat</code></li>
+							<li>Added column <code>account.Profile.billingEmailFormat</code></li>
+							<li>Added column <code>account.Profile.technicalEmailFormat</code></li>
+							<li>Updated <code>add_business_profile</code> AOSH command</li>
 						</ol>
 					</li>
 				</ul>
