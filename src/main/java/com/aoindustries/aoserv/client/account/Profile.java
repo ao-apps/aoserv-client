@@ -66,7 +66,33 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 
 	private long created;
 
-	private String billingContact, billingEmail, technicalContact, technicalEmail;
+	/**
+	 * The set of possible units
+	 */
+	// Matches aoserv-master-db/aoindustries/account/Profile.EmailFormat-type.sql
+	public enum EmailFormat {
+		/**
+		 * HTML allowing embedded images.
+		 */
+		HTML,
+
+		/**
+		 * HTML without any embedded images.
+		 */
+		HTML_ONLY,
+
+		/**
+		 * Plaintext only.
+		 */
+		TEXT
+	}
+
+	private String billingContact;
+	private String billingEmail;
+	private EmailFormat billingEmailFormat;
+	private String technicalContact;
+	private String technicalEmail;
+	private EmailFormat technicalEmailFormat;
 
 	public String getAddress1() {
 		return address1;
@@ -82,6 +108,10 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 
 	public List<String> getBillingEmail() {
 		return StringUtility.splitStringCommaSpace(billingEmail);
+	}
+
+	public EmailFormat getBillingEmailFormat() {
+		return billingEmailFormat;
 	}
 
 	public AccountingCode getBusiness_accounting() {
@@ -118,9 +148,11 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			case 14: return getCreated();
 			case 15: return billingContact;
 			case 16: return billingEmail;
-			case 17: return technicalContact;
-			case 18: return technicalEmail;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 17: return billingEmailFormat;
+			case 18: return technicalContact;
+			case 19: return technicalEmail;
+			case 20: return technicalEmailFormat;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -171,6 +203,10 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return StringUtility.splitStringCommaSpace(technicalEmail);
 	}
 
+	public EmailFormat getTechnicalEmailFormat() {
+		return technicalEmailFormat;
+	}
+
 	public String getZIP() {
 		return zip;
 	}
@@ -178,25 +214,28 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getInt(1);
-			accounting = AccountingCode.valueOf(result.getString(2));
-			priority = result.getInt(3);
-			name = result.getString(4);
-			isPrivate = result.getBoolean(5);
-			phone = result.getString(6);
-			fax = result.getString(7);
-			address1 = result.getString(8);
-			address2 = result.getString(9);
-			city = result.getString(10);
-			state = result.getString(11);
-			country = result.getString(12);
-			zip = result.getString(13);
-			sendInvoice = result.getBoolean(14);
-			created = result.getTimestamp(15).getTime();
-			billingContact = result.getString(16);
-			billingEmail = result.getString(17);
-			technicalContact = result.getString(18);
-			technicalEmail = result.getString(19);
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			accounting = AccountingCode.valueOf(result.getString(pos++));
+			priority = result.getInt(pos++);
+			name = result.getString(pos++);
+			isPrivate = result.getBoolean(pos++);
+			phone = result.getString(pos++);
+			fax = result.getString(pos++);
+			address1 = result.getString(pos++);
+			address2 = result.getString(pos++);
+			city = result.getString(pos++);
+			state = result.getString(pos++);
+			country = result.getString(pos++);
+			zip = result.getString(pos++);
+			sendInvoice = result.getBoolean(pos++);
+			created = result.getTimestamp(pos++).getTime();
+			billingContact = result.getString(pos++);
+			billingEmail = result.getString(pos++);
+			billingEmailFormat = EmailFormat.valueOf(result.getString(pos++));
+			technicalContact = result.getString(pos++);
+			technicalEmail = result.getString(pos++);
+			technicalEmailFormat = EmailFormat.valueOf(result.getString(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -237,8 +276,10 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			created=in.readLong();
 			billingContact=in.readUTF();
 			billingEmail=in.readUTF();
+			billingEmailFormat = in.readEnum(EmailFormat.class);
 			technicalContact=in.readUTF();
 			technicalEmail=in.readUTF();
+			technicalEmailFormat = in.readEnum(EmailFormat.class);
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -272,7 +313,13 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		out.writeLong(created);
 		out.writeUTF(billingContact);
 		out.writeUTF(billingEmail);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_20) >= 0) {
+			out.writeEnum(billingEmailFormat);
+		}
 		out.writeUTF(technicalContact);
 		out.writeUTF(technicalEmail);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_20) >= 0) {
+			out.writeEnum(technicalEmailFormat);
+		}
 	}
 }

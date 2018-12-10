@@ -26,6 +26,7 @@ import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.AccountHost;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.DisableLog;
+import com.aoindustries.aoserv.client.account.Profile;
 import com.aoindustries.aoserv.client.account.Username;
 import com.aoindustries.aoserv.client.backup.BackupPartition;
 import com.aoindustries.aoserv.client.backup.FileReplication;
@@ -645,8 +646,10 @@ final public class SimpleAOClient {
 		boolean sendInvoice,
 		String billingContact,
 		String billingEmail,
+		String billingEmailFormat,
 		String technicalContact,
-		String technicalEmail
+		String technicalEmail,
+		String technicalEmailFormat
 	) throws IllegalArgumentException, IOException, SQLException {
 		return getBusiness(business).addBusinessProfile(
 			name,
@@ -662,8 +665,10 @@ final public class SimpleAOClient {
 			sendInvoice,
 			billingContact,
 			billingEmail,
+			Profile.EmailFormat.valueOf(billingEmailFormat.toUpperCase(Locale.ROOT)),
 			technicalContact,
-			technicalEmail
+			technicalEmail,
+			Profile.EmailFormat.valueOf(technicalEmailFormat.toUpperCase(Locale.ROOT))
 		);
 	}
 

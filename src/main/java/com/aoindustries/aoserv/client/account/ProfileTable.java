@@ -73,8 +73,10 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 		final boolean sendInvoice,
 		final String billingContact,
 		final String billingEmail,
+		final Profile.EmailFormat billingEmailFormat,
 		final String technicalContact,
-		final String technicalEmail
+		final String technicalEmail,
+		final Profile.EmailFormat technicalEmailFormat
 	) throws IOException, SQLException {
 		if(fax!=null && fax.length()==0) fax=null;
 		final String finalFax = fax;
@@ -112,8 +114,10 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 					out.writeBoolean(sendInvoice);
 					out.writeUTF(billingContact);
 					out.writeUTF(billingEmail);
+					out.writeEnum(billingEmailFormat);
 					out.writeUTF(technicalContact);
 					out.writeUTF(technicalEmail);
+					out.writeEnum(technicalEmailFormat);
 				}
 
 				@Override
@@ -171,7 +175,7 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) {
 		String command=args[0];
 		if(command.equalsIgnoreCase(Command.ADD_BUSINESS_PROFILE)) {
-			if(AOSH.checkParamCount(Command.ADD_BUSINESS_PROFILE, args, 16, err)) {
+			if(AOSH.checkParamCount(Command.ADD_BUSINESS_PROFILE, args, 18, err)) {
 				try {
 					out.println(
 						connector.getSimpleAOClient().addBusinessProfile(
@@ -190,7 +194,9 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 							args[13],
 							args[14],
 							args[15],
-							args[16]
+							args[16],
+							args[17],
+							args[18]
 						)
 					);
 					out.flush();
