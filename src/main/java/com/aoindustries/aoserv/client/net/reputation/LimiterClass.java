@@ -48,52 +48,6 @@ final public class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
 	;
 
 	/**
-	 * The set of possible classes
-	 */
-	// Matches aoserv-master-db/aoindustries/net/reputation/Class-type.sql
-	public enum Class {
-		/**
-		 * Manual Good
-		 */
-		gm,
-
-		/**
-		 * Manual Bad
-		 */
-		bm,
-
-		/**
-		 * Definite Bad
-		 */
-		bd,
-
-		/**
-		 * Uncertain Bad
-		 */
-		bu,
-
-		/**
-		 * Uncertain Good
-		 */
-		gu,
-
-		/**
-		 * Definite Good
-		 */
-		gd,
-
-		/**
-		 * Network Good
-		 */
-		gn,
-
-		/**
-		 * Unknown
-		 */
-		uu
-	}
-
-	/**
 	 * The set of possible units
 	 */
 	// Matches aoserv-master-db/aoindustries/net/reputation/LimiterClass.TimeUnit-type.sql
