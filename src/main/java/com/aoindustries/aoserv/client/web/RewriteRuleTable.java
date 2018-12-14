@@ -34,24 +34,24 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * @see  Redirect
+ * @see  RewriteRule
  *
  * @author  AO Industries, Inc.
  */
-final public class RedirectTable extends CachedTableIntegerKey<Redirect> {
+final public class RewriteRuleTable extends CachedTableIntegerKey<RewriteRule> {
 
-	public RedirectTable(AOServConnector connector) {
-		super(connector, Redirect.class);
+	public RewriteRuleTable(AOServConnector connector) {
+		super(connector, RewriteRule.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(Redirect.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Redirect.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
-		new OrderBy(Redirect.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
-		new OrderBy(Redirect.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
-		new OrderBy(Redirect.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
-		new OrderBy(Redirect.COLUMN_HTTPD_SITE_BIND_name + '.' + VirtualHost.COLUMN_NAME_name, ASCENDING),
-		new OrderBy(Redirect.COLUMN_SORT_ORDER_name, ASCENDING)
+		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_SITE_name + '.' + Site.COLUMN_AO_SERVER_name + '.' + Server.COLUMN_HOSTNAME_name, ASCENDING),
+		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_IP_ADDRESS_name, ASCENDING),
+		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_IP_ADDRESS_name + '.' + IpAddress.COLUMN_DEVICE_name + '.' + Device.COLUMN_DEVICE_ID_name, ASCENDING),
+		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_HTTPD_BIND_name + '.' + HttpdBind.COLUMN_NET_BIND_name + '.' + Bind.COLUMN_PORT_name, ASCENDING),
+		new OrderBy(RewriteRule.COLUMN_virtualHost_name + '.' + VirtualHost.COLUMN_NAME_name, ASCENDING),
+		new OrderBy(RewriteRule.COLUMN_sortOrder_name, ASCENDING)
 	};
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
@@ -59,16 +59,16 @@ final public class RedirectTable extends CachedTableIntegerKey<Redirect> {
 	}
 
 	@Override
-	public Redirect get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(Redirect.COLUMN_PKEY, pkey);
+	public RewriteRule get(int id) throws IOException, SQLException {
+		return getUniqueRow(RewriteRule.COLUMN_id, id);
 	}
 
-	List<Redirect> getHttpdSiteBindRedirects(VirtualHost bind) throws IOException, SQLException {
-		return getIndexedRows(Redirect.COLUMN_HTTPD_SITE_BIND, bind.getPkey());
+	List<RewriteRule> getRewriteRules(VirtualHost virtualHost) throws IOException, SQLException {
+		return getIndexedRows(RewriteRule.COLUMN_virtualHost, virtualHost.getPkey());
 	}
 
 	@Override
 	public Table.TableID getTableID() {
-		return Table.TableID.HTTPD_SITE_BIND_REDIRECTS;
+		return Table.TableID.RewriteRule;
 	}
 }

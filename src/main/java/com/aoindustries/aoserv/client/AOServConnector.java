@@ -190,7 +190,7 @@ import com.aoindustries.aoserv.client.web.HeaderTable;
 import com.aoindustries.aoserv.client.web.HttpdBindTable;
 import com.aoindustries.aoserv.client.web.HttpdServerTable;
 import com.aoindustries.aoserv.client.web.LocationTable;
-import com.aoindustries.aoserv.client.web.RedirectTable;
+import com.aoindustries.aoserv.client.web.RewriteRuleTable;
 import com.aoindustries.aoserv.client.web.SiteTable;
 import com.aoindustries.aoserv.client.web.StaticSiteTable;
 import com.aoindustries.aoserv.client.web.VirtualHostNameTable;
@@ -690,9 +690,9 @@ abstract public class AOServConnector {
 		return httpdSiteBindHeaders;
 	}
 
-	private final RedirectTable httpdSiteBindRedirects;
-	public RedirectTable getHttpdSiteBindRedirects() {
-		return httpdSiteBindRedirects;
+	private final RewriteRuleTable rewriteRuleTable;
+	public RewriteRuleTable getRewriteRuleTable() {
+		return rewriteRuleTable;
 	}
 
 	private final VirtualHostTable httpdSiteBinds;
@@ -1319,7 +1319,7 @@ abstract public class AOServConnector {
 		newTables.add(httpdSharedTomcats=new SharedTomcatTable(this));
 		newTables.add(httpdSiteAuthenticatedLocationTable=new LocationTable(this));
 		newTables.add(httpdSiteBindHeaders=new HeaderTable(this));
-		newTables.add(httpdSiteBindRedirects=new RedirectTable(this));
+		newTables.add(rewriteRuleTable=new RewriteRuleTable(this));
 		newTables.add(httpdSiteBinds=new VirtualHostTable(this));
 		newTables.add(httpdSiteURLs=new VirtualHostNameTable(this));
 		newTables.add(httpdSites=new SiteTable(this));
