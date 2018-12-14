@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-12-09T23:43:07-0600"
+		dateModified="2018-12-14T02:14:42-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -723,6 +723,16 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added column <code>account.Profile.billingEmailFormat</code></li>
 							<li>Added column <code>account.Profile.technicalEmailFormat</code></li>
 							<li>Updated <code>add_business_profile</code> AOSH command</li>
+						</ol>
+					</li>
+					<li>Allowing direct control over the <ao:a href="https://httpd.apache.org/docs/2.4/rewrite/flags.html">RewriteRule Flags</ao:a>:
+						<ol>
+							<li>Renamed table <code>httpd_site_bind_redirect</code> to <code>RewriteRule</code></li>
+							<li>Renamed column <code>RewriteRule.pkey</code> to <code>id</code></li>
+							<li>Renamed column <code>RewriteRule.httpd_site_bind</code> to <code>virtualHost</code></li>
+							<li>Renamed column <code>RewriteRule.sort_order</code> to <code>sortOrder</code></li>
+							<li>Added column <code>RewriteRule.flags</code></li>
+							<li>Removed column <code>RewriteRule.no_escape</code></li>
 						</ol>
 					</li>
 				</ul>

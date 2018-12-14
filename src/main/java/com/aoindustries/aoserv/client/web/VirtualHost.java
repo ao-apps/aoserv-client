@@ -370,7 +370,7 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 		return table.getConnector().getHttpdSiteBindHeaders().getHttpdSiteBindHeaders(this);
 	}
 
-	public List<Redirect> getHttpdSiteBindRedirects() throws IOException, SQLException {
-		return table.getConnector().getHttpdSiteBindRedirects().getHttpdSiteBindRedirects(this);
+	public List<RewriteRule> getRewriteRules() throws IOException, SQLException {
+		return table.getConnector().getRewriteRuleTable().getRewriteRules(this);
 	}
 }
