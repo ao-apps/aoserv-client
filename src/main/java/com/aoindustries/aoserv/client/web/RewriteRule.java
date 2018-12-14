@@ -102,6 +102,7 @@ final public class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
 	 * @return  The flags or {@code null} when none.
 	 *
 	 * @see  #hasFlag(java.lang.String)
+	 * @see  #hasFlag(java.lang.String...)
 	 */
 	public String getFlags() {
 		return flags;
@@ -111,6 +112,7 @@ final public class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
 	 * Case-insensitive check if contains the given flag.
 	 *
 	 * @see  #getFlags()
+	 * @see  #hasFlag(java.lang.String...)
 	 */
 	public boolean hasFlag(String flag) {
 		if(flags == null) return false;
@@ -123,6 +125,20 @@ final public class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
 			|| flagsUC.endsWith(',' + flagUC)        // ...,flag
 			|| flagsUC.contains(',' + flagUC + ',')  // ...,flag,...
 			|| flagsUC.contains(',' + flagUC + '='); // ...,flag=...
+	}
+
+	/**
+	 * Case-insensitive check if contains any of the given flags.
+	 *
+	 * @see  #getFlags()
+	 * @see  #hasFlag(java.lang.String)
+	 */
+	public boolean hasFlag(String ... flags) {
+		if(flags == null) return false;
+		for(String flag : flags) {
+			if(hasFlag(flag)) return true;
+		}
+		return false;
 	}
 
 	/**
@@ -201,7 +217,7 @@ final public class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
 			&& protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_20) <= 0
 		) {
 			// noEscape
-			out.writeBoolean(hasFlag("NE"));
+			out.writeBoolean(hasFlag("NE", "noescape"));
 		}
 	}
 }
