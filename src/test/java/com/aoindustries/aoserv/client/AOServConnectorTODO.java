@@ -287,7 +287,7 @@ public class AOServConnectorTODO extends TestCase {
 					for(int d=0;d<c;d++) assertNotSame(table, tables[d]);
 				}
 			}
-			List<AOServTable> allTables=conn.getTables();
+			List<? extends AOServTable<?,?>> allTables = conn.getTables();
 			assertEquals(tables.length, allTables.size());
 			for(int c=0;c<numTables;c++) assertSame(tables[c], allTables.get(c));
 		}

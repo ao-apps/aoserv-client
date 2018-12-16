@@ -288,7 +288,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @see  Table.TableID#ordinal()
 	 */
-	private final List<AOServTable> tables;
+	private final List<? extends AOServTable<?,?>> tables;
 
 	private final SimpleAOClient simpleAOClient;
 	public SimpleAOClient getSimpleAOClient() {return simpleAOClient;}
@@ -344,7 +344,7 @@ abstract public class AOServConnector implements SchemaParent {
 		schemas = Collections.unmodifiableList(newSchemas);
 
 		// These must match the table IDs in SchemaTable
-		ArrayList<AOServTable> newTables = new ArrayList<>();
+		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
 		newTables.add(linux.getDaemonAcl());
 		newTables.add(linux.getServer());
 		newTables.add(master.getPermission());
@@ -774,6 +774,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @see  Table
 	 */
 	@SuppressWarnings({"unchecked"})
+	// TODO: Better generics here
 	final public AOServTable<?,? extends AOServObject> getTable(int tableID) throws IllegalArgumentException {
 		if(tableID>=0 && tableID<tables.size()) return tables.get(tableID);
 		throw new IllegalArgumentException("Table not found for ID="+tableID);
@@ -788,7 +789,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @see  #getTable(int)
 	 * @see  Table
 	 */
-	final public List<AOServTable> getTables() {
+	final public List<? extends AOServTable<?,?>> getTables() {
 		return tables;
 	}
 
