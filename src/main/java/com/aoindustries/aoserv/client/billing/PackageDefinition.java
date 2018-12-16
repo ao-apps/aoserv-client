@@ -94,11 +94,11 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	 * May be null if filtered.
 	 */
 	public Account getBusiness() throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinesses().get(accounting);
+		return table.getConnector().getAccount().getAccount().get(accounting);
 	}
 
 	public PackageCategory getPackageCategory() throws SQLException, IOException {
-		PackageCategory pc=table.getConnector().getBilling().getPackageCategories().get(category);
+		PackageCategory pc=table.getConnector().getBilling().getPackageCategory().get(category);
 		if(pc==null) throw new SQLException("Unable to find PackageCategory: "+category);
 		return pc;
 	}
@@ -107,16 +107,16 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	 * Gets the list of packages using this definition.
 	 */
 	public List<Package> getPackages() throws IOException, SQLException {
-		return table.getConnector().getBilling().getPackages().getPackages(this);
+		return table.getConnector().getBilling().getPackage().getPackages(this);
 	}
 
 	public PackageDefinitionLimit getLimit(Resource resource) throws IOException, SQLException {
 		if(resource==null) throw new AssertionError("resource is null");
-		return table.getConnector().getBilling().getPackageDefinitionLimits().getPackageDefinitionLimit(this, resource);
+		return table.getConnector().getBilling().getPackageDefinitionLimit().getPackageDefinitionLimit(this, resource);
 	}
 
 	public List<PackageDefinitionLimit> getLimits() throws IOException, SQLException {
-		return table.getConnector().getBilling().getPackageDefinitionLimits().getPackageDefinitionLimits(this);
+		return table.getConnector().getBilling().getPackageDefinitionLimit().getPackageDefinitionLimits(this);
 	}
 
 	public void setLimits(final PackageDefinitionLimit[] limits) throws IOException, SQLException {
@@ -184,7 +184,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
 	public TransactionType getSetupFeeTransactionType() throws SQLException, IOException {
 		if(setup_fee_transaction_type==null) return null;
-		TransactionType tt=table.getConnector().getBilling().getTransactionTypes().get(setup_fee_transaction_type);
+		TransactionType tt=table.getConnector().getBilling().getTransactionType().get(setup_fee_transaction_type);
 		if(tt==null) throw new SQLException("Unable to find TransactionType: "+setup_fee_transaction_type);
 		return tt;
 	}
@@ -195,7 +195,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
 	public TransactionType getMonthlyRateTransactionType() throws SQLException, IOException {
 		if(monthly_rate_transaction_type==null) return null;
-		TransactionType tt=table.getConnector().getBilling().getTransactionTypes().get(monthly_rate_transaction_type);
+		TransactionType tt=table.getConnector().getBilling().getTransactionType().get(monthly_rate_transaction_type);
 		if(tt==null) throw new SQLException("Unable to find TransactionType: "+monthly_rate_transaction_type);
 		return tt;
 	}

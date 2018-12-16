@@ -65,7 +65,7 @@ final public class SmtpSmartHostDomain extends CachedObjectIntegerKey<SmtpSmartH
 	}
 
 	public SmtpSmartHost getEmailSmtpSmartHost() throws SQLException, IOException {
-		SmtpSmartHost obj = table.getConnector().getEmail().getEmailSmtpSmartHosts().get(smart_host);
+		SmtpSmartHost obj = table.getConnector().getEmail().getSmtpSmartHost().get(smart_host);
 		if(obj==null) throw new SQLException("Unable to find EmailSmtpSmartHost: "+smart_host);
 		return obj;
 	}

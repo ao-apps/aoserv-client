@@ -34,14 +34,14 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final DistroFileTable distroFileTable;
-	public DistroFileTable getDistroFiles() {return distroFileTable;}
+	private final DistroFileTable DistroFile;
+	public DistroFileTable getDistroFile() {return DistroFile;}
 
-	private final DistroFileTypeTable distroFileTypeTable;
-	public DistroFileTypeTable getDistroFileTypes() {return distroFileTypeTable;}
+	private final DistroFileTypeTable DistroFileType;
+	public DistroFileTypeTable getDistroFileType() {return DistroFileType;}
 
-	private final DistroReportTypeTable distroReportTypeTable;
-	public DistroReportTypeTable getDistroReportTypes() {return distroReportTypeTable;}
+	private final DistroReportTypeTable DistroReportType;
+	public DistroReportTypeTable getDistroReportType() {return DistroReportType;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -49,9 +49,9 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(distroFileTable = new DistroFileTable(connector));
-		newTables.add(distroFileTypeTable = new DistroFileTypeTable(connector));
-		newTables.add(distroReportTypeTable = new DistroReportTypeTable(connector));
+		newTables.add(DistroFile = new DistroFileTable(connector));
+		newTables.add(DistroFileType = new DistroFileTypeTable(connector));
+		newTables.add(DistroReportType = new DistroReportTypeTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

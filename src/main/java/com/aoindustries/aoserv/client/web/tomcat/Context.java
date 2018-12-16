@@ -103,7 +103,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 		int maxWait,
 		String validationQuery
 	) throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatDataSources().addHttpdTomcatDataSource(
+		return table.getConnector().getWeb_tomcat().getContextDataSource().addHttpdTomcatDataSource(
 			this,
 			name,
 			driverClassName,
@@ -118,7 +118,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 	}
 
 	public int addHttpdTomcatParameter(String name, String value, boolean override, String description) throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatParameters().addHttpdTomcatParameter(this, name, value, override, description);
+		return table.getConnector().getWeb_tomcat().getContextParameter().addHttpdTomcatParameter(this, name, value, override, description);
 	}
 
 	@Override
@@ -151,7 +151,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 	}
 
 	public Site getHttpdTomcatSite() throws SQLException, IOException {
-		Site obj=table.getConnector().getWeb_tomcat().getHttpdTomcatSites().get(tomcat_site);
+		Site obj=table.getConnector().getWeb_tomcat().getSite().get(tomcat_site);
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+tomcat_site);
 		return obj;
 	}
@@ -214,19 +214,19 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 	}
 
 	public List<ContextDataSource> getHttpdTomcatDataSources() throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatDataSources().getHttpdTomcatDataSources(this);
+		return table.getConnector().getWeb_tomcat().getContextDataSource().getHttpdTomcatDataSources(this);
 	}
 
 	public ContextDataSource getHttpdTomcatDataSource(String name) throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatDataSources().getHttpdTomcatDataSource(this, name);
+		return table.getConnector().getWeb_tomcat().getContextDataSource().getHttpdTomcatDataSource(this, name);
 	}
 
 	public List<ContextParameter> getHttpdTomcatParameters() throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatParameters().getHttpdTomcatParameters(this);
+		return table.getConnector().getWeb_tomcat().getContextParameter().getHttpdTomcatParameters(this);
 	}
 
 	public ContextParameter getHttpdTomcatParameter(String name) throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatParameters().getHttpdTomcatParameter(this, name);
+		return table.getConnector().getWeb_tomcat().getContextParameter().getHttpdTomcatParameter(this, name);
 	}
 
 	@Override

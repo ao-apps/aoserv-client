@@ -34,20 +34,20 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final ForbiddenZoneTable forbiddenZoneTable;
-	public ForbiddenZoneTable getDnsForbiddenZones() {return forbiddenZoneTable;}
+	private final ForbiddenZoneTable ForbiddenZone;
+	public ForbiddenZoneTable getForbiddenZone() {return ForbiddenZone;}
 
-	private final RecordTable recordTable;
-	public RecordTable getDnsRecords() {return recordTable;}
+	private final RecordTable Record;
+	public RecordTable getRecord() {return Record;}
 
-	private final RecordTypeTable recordTypeTable;
-	public RecordTypeTable getDnsTypes() {return recordTypeTable;}
+	private final RecordTypeTable RecordType;
+	public RecordTypeTable getRecordType() {return RecordType;}
 
-	private final TopLevelDomainTable topLevelDomainTable;
-	public TopLevelDomainTable getDnsTLDs() {return topLevelDomainTable;}
+	private final TopLevelDomainTable TopLevelDomain;
+	public TopLevelDomainTable getTopLevelDomain() {return TopLevelDomain;}
 
-	private final ZoneTable zoneTable;
-	public ZoneTable getDnsZones() {return zoneTable;}
+	private final ZoneTable Zone;
+	public ZoneTable getZone() {return Zone;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -55,11 +55,11 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(forbiddenZoneTable = new ForbiddenZoneTable(connector));
-		newTables.add(recordTable = new RecordTable(connector));
-		newTables.add(recordTypeTable = new RecordTypeTable(connector));
-		newTables.add(topLevelDomainTable = new TopLevelDomainTable(connector));
-		newTables.add(zoneTable = new ZoneTable(connector));
+		newTables.add(ForbiddenZone = new ForbiddenZoneTable(connector));
+		newTables.add(Record = new RecordTable(connector));
+		newTables.add(RecordType = new RecordTypeTable(connector));
+		newTables.add(TopLevelDomain = new TopLevelDomainTable(connector));
+		newTables.add(Zone = new ZoneTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

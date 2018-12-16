@@ -51,13 +51,13 @@ final public class BindFirewallZone extends CachedObjectIntegerKey<BindFirewallZ
 	int firewalld_zone;
 
 	public Bind getNetBind() throws SQLException, IOException {
-		Bind obj = table.getConnector().getNet().getNetBinds().get(net_bind);
+		Bind obj = table.getConnector().getNet().getBind().get(net_bind);
 		if(obj == null) throw new SQLException("Unable to find NetBind: " + net_bind);
 		return obj;
 	}
 
 	public FirewallZone getFirewalldZone() throws SQLException, IOException {
-		FirewallZone obj = table.getConnector().getNet().getFirewalldZones().get(firewalld_zone);
+		FirewallZone obj = table.getConnector().getNet().getFirewallZone().get(firewalld_zone);
 		if(obj == null) throw new SQLException("Unable to find FirewalldZone: " + firewalld_zone);
 		return obj;
 	}

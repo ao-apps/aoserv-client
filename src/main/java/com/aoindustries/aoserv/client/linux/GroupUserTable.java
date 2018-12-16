@@ -168,7 +168,7 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 			GroupId groupName = primaryHash.get(account.getUsername_id());
 			if(groupName == null) return null;
 			// May be filtered
-			return connector.getLinux().getLinuxGroups().get(groupName);
+			return connector.getLinux().getGroup().get(groupName);
 		}
 	}
 

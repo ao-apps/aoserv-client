@@ -34,80 +34,80 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final AddressTable addressTable;
-	public AddressTable getEmailAddresses() {return addressTable;}
+	private final AddressTable Address;
+	public AddressTable getAddress() {return Address;}
 
-	private final AttachmentBlockTable attachmentBlockTable;
-	public AttachmentBlockTable getEmailAttachmentBlocks() {return attachmentBlockTable;}
+	private final AttachmentBlockTable AttachmentBlock;
+	public AttachmentBlockTable getAttachmentBlock() {return AttachmentBlock;}
 
-	private final AttachmentTypeTable attachmentTypeTable;
-	public AttachmentTypeTable getEmailAttachmentTypes() {return attachmentTypeTable;}
+	private final AttachmentTypeTable AttachmentType;
+	public AttachmentTypeTable getAttachmentType() {return AttachmentType;}
 
-	private final BlackholeAddressTable blackholeAddressTable;
-	public BlackholeAddressTable getBlackholeEmailAddresses() {return blackholeAddressTable;}
+	private final BlackholeAddressTable BlackholeAddress;
+	public BlackholeAddressTable getBlackholeAddress() {return BlackholeAddress;}
 
-	private final CyrusImapdBindTable cyrusImapdBindTable;
-	public CyrusImapdBindTable getCyrusImapdBinds() {return cyrusImapdBindTable;}
+	private final CyrusImapdBindTable CyrusImapdBind;
+	public CyrusImapdBindTable getCyrusImapdBind() {return CyrusImapdBind;}
 
-	private final CyrusImapdServerTable cyrusImapdServerTable;
-	public CyrusImapdServerTable getCyrusImapdServers() {return cyrusImapdServerTable;}
+	private final CyrusImapdServerTable CyrusImapdServer;
+	public CyrusImapdServerTable getCyrusImapdServer() {return CyrusImapdServer;}
 
-	private final DomainTable domainTable;
-	public DomainTable getEmailDomains() {return domainTable;}
+	private final DomainTable Domain;
+	public DomainTable getDomain() {return Domain;}
 
-	private final ForwardingTable forwardingTable;
-	public ForwardingTable getEmailForwardings() {return forwardingTable;}
+	private final ForwardingTable Forwarding;
+	public ForwardingTable getForwarding() {return Forwarding;}
 
-	private final InboxAddressTable inboxAddressTable;
-	public InboxAddressTable getLinuxAccAddresses() {return inboxAddressTable;}
+	private final InboxAddressTable InboxAddress;
+	public InboxAddressTable getInboxAddress() {return InboxAddress;}
 
-	private final ListTable listTable;
-	public ListTable getEmailLists() {return listTable;}
+	private final ListTable List;
+	public ListTable getList() {return List;}
 
-	private final ListAddressTable listAddressTable;
-	public ListAddressTable getEmailListAddresses() {return listAddressTable;}
+	private final ListAddressTable ListAddress;
+	public ListAddressTable getListAddress() {return ListAddress;}
 
-	private final MajordomoListTable majordomoListTable;
-	public MajordomoListTable getMajordomoLists() {return majordomoListTable;}
+	private final MajordomoListTable MajordomoList;
+	public MajordomoListTable getMajordomoList() {return MajordomoList;}
 
-	private final MajordomoServerTable majordomoServerTable;
-	public MajordomoServerTable getMajordomoServers() {return majordomoServerTable;}
+	private final MajordomoServerTable MajordomoServer;
+	public MajordomoServerTable getMajordomoServer() {return MajordomoServer;}
 
-	private final MajordomoVersionTable majordomoVersionTable;
-	public MajordomoVersionTable getMajordomoVersions() {return majordomoVersionTable;}
+	private final MajordomoVersionTable MajordomoVersion;
+	public MajordomoVersionTable getMajordomoVersion() {return MajordomoVersion;}
 
-	private final PipeTable pipeTable;
-	public PipeTable getEmailPipes() {return pipeTable;}
+	private final PipeTable Pipe;
+	public PipeTable getPipe() {return Pipe;}
 
-	private final PipeAddressTable pipeAddressTable;
-	public PipeAddressTable getEmailPipeAddresses() {return pipeAddressTable;}
+	private final PipeAddressTable PipeAddress;
+	public PipeAddressTable getPipeAddress() {return PipeAddress;}
 
-	private final SendmailBindTable sendmailBindTable;
-	public SendmailBindTable getSendmailBinds() {return sendmailBindTable;}
+	private final SendmailBindTable SendmailBind;
+	public SendmailBindTable getSendmailBind() {return SendmailBind;}
 
-	private final SendmailServerTable sendmailServerTable;
-	public SendmailServerTable getSendmailServers() {return sendmailServerTable;}
+	private final SendmailServerTable SendmailServer;
+	public SendmailServerTable getSendmailServer() {return SendmailServer;}
 
-	private final SmtpRelayTable smtpRelayTable;
-	public SmtpRelayTable getEmailSmtpRelays() {return smtpRelayTable;}
+	private final SmtpRelayTable SmtpRelay;
+	public SmtpRelayTable getSmtpRelay() {return SmtpRelay;}
 
-	private final SmtpRelayTypeTable smtpRelayTypeTable;
-	public SmtpRelayTypeTable getEmailSmtpRelayTypes() {return smtpRelayTypeTable;}
+	private final SmtpRelayTypeTable SmtpRelayType;
+	public SmtpRelayTypeTable getSmtpRelayType() {return SmtpRelayType;}
 
-	private final SmtpSmartHostTable smtpSmartHostTable;
-	public SmtpSmartHostTable getEmailSmtpSmartHosts() {return smtpSmartHostTable;}
+	private final SmtpSmartHostTable SmtpSmartHost;
+	public SmtpSmartHostTable getSmtpSmartHost() {return SmtpSmartHost;}
 
-	private final SmtpSmartHostDomainTable smtpSmartHostDomainTable;
-	public SmtpSmartHostDomainTable getEmailSmtpSmartHostDomains() {return smtpSmartHostDomainTable;}
+	private final SmtpSmartHostDomainTable SmtpSmartHostDomain;
+	public SmtpSmartHostDomainTable getSmtpSmartHostDomain() {return SmtpSmartHostDomain;}
 
-	private final SpamAssassinModeTable spamAssassinModeTable;
-	public SpamAssassinModeTable getEmailSpamAssassinIntegrationModes() {return spamAssassinModeTable;}
+	private final SpamAssassinModeTable SpamAssassinMode;
+	public SpamAssassinModeTable getSpamAssassinMode() {return SpamAssassinMode;}
 
-	private final SpamMessageTable spamMessageTable;
-	public SpamMessageTable getSpamEmailMessages() {return spamMessageTable;}
+	private final SpamMessageTable SpamMessage;
+	public SpamMessageTable getSpamMessage() {return SpamMessage;}
 
-	private final SystemAliasTable systemAliasTable;
-	public SystemAliasTable getSystemEmailAliases() {return systemAliasTable;}
+	private final SystemAliasTable SystemAlias;
+	public SystemAliasTable getSystemAlias() {return SystemAlias;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -115,31 +115,31 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(addressTable = new AddressTable(connector));
-		newTables.add(attachmentBlockTable = new AttachmentBlockTable(connector));
-		newTables.add(attachmentTypeTable = new AttachmentTypeTable(connector));
-		newTables.add(blackholeAddressTable = new BlackholeAddressTable(connector));
-		newTables.add(cyrusImapdBindTable = new CyrusImapdBindTable(connector));
-		newTables.add(cyrusImapdServerTable = new CyrusImapdServerTable(connector));
-		newTables.add(domainTable = new DomainTable(connector));
-		newTables.add(forwardingTable = new ForwardingTable(connector));
-		newTables.add(inboxAddressTable = new InboxAddressTable(connector));
-		newTables.add(listTable = new ListTable(connector));
-		newTables.add(listAddressTable = new ListAddressTable(connector));
-		newTables.add(majordomoListTable = new MajordomoListTable(connector));
-		newTables.add(majordomoServerTable = new MajordomoServerTable(connector));
-		newTables.add(majordomoVersionTable = new MajordomoVersionTable(connector));
-		newTables.add(pipeTable = new PipeTable(connector));
-		newTables.add(pipeAddressTable = new PipeAddressTable(connector));
-		newTables.add(sendmailBindTable = new SendmailBindTable(connector));
-		newTables.add(sendmailServerTable = new SendmailServerTable(connector));
-		newTables.add(smtpRelayTable = new SmtpRelayTable(connector));
-		newTables.add(smtpRelayTypeTable = new SmtpRelayTypeTable(connector));
-		newTables.add(smtpSmartHostTable = new SmtpSmartHostTable(connector));
-		newTables.add(smtpSmartHostDomainTable = new SmtpSmartHostDomainTable(connector));
-		newTables.add(spamAssassinModeTable = new SpamAssassinModeTable(connector));
-		newTables.add(spamMessageTable = new SpamMessageTable(connector));
-		newTables.add(systemAliasTable = new SystemAliasTable(connector));
+		newTables.add(Address = new AddressTable(connector));
+		newTables.add(AttachmentBlock = new AttachmentBlockTable(connector));
+		newTables.add(AttachmentType = new AttachmentTypeTable(connector));
+		newTables.add(BlackholeAddress = new BlackholeAddressTable(connector));
+		newTables.add(CyrusImapdBind = new CyrusImapdBindTable(connector));
+		newTables.add(CyrusImapdServer = new CyrusImapdServerTable(connector));
+		newTables.add(Domain = new DomainTable(connector));
+		newTables.add(Forwarding = new ForwardingTable(connector));
+		newTables.add(InboxAddress = new InboxAddressTable(connector));
+		newTables.add(List = new ListTable(connector));
+		newTables.add(ListAddress = new ListAddressTable(connector));
+		newTables.add(MajordomoList = new MajordomoListTable(connector));
+		newTables.add(MajordomoServer = new MajordomoServerTable(connector));
+		newTables.add(MajordomoVersion = new MajordomoVersionTable(connector));
+		newTables.add(Pipe = new PipeTable(connector));
+		newTables.add(PipeAddress = new PipeAddressTable(connector));
+		newTables.add(SendmailBind = new SendmailBindTable(connector));
+		newTables.add(SendmailServer = new SendmailServerTable(connector));
+		newTables.add(SmtpRelay = new SmtpRelayTable(connector));
+		newTables.add(SmtpRelayType = new SmtpRelayTypeTable(connector));
+		newTables.add(SmtpSmartHost = new SmtpSmartHostTable(connector));
+		newTables.add(SmtpSmartHostDomain = new SmtpSmartHostDomainTable(connector));
+		newTables.add(SpamAssassinMode = new SpamAssassinModeTable(connector));
+		newTables.add(SpamMessage = new SpamMessageTable(connector));
+		newTables.add(SystemAlias = new SystemAliasTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

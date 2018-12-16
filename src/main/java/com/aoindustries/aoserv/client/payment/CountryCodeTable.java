@@ -66,7 +66,7 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 
 		// Add the business_profiles
 		Set<AccountingCode> finishedBusinesses=new HashSet<>();
-		for(Profile profile : connector.getAccount().getBusinessProfiles().getRows()) {
+		for(Profile profile : connector.getAccount().getProfile().getRows()) {
 			AccountingCode accounting = profile.getBusiness_accounting();
 			if(!finishedBusinesses.contains(accounting)) {
 				finishedBusinesses.add(accounting);

@@ -119,7 +119,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	}
 
 	public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
-		OperatingSystemVersion osv=table.getConnector().getDistribution().getOperatingSystemVersions().get(operating_system_version);
+		OperatingSystemVersion osv=table.getConnector().getDistribution().getOperatingSystemVersion().get(operating_system_version);
 		if(osv==null) throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
 		return osv;
 	}
@@ -133,7 +133,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	}
 
 	public DistroFileType getType() throws SQLException, IOException {
-		DistroFileType fileType=table.getConnector().getDistribution_management().getDistroFileTypes().get(type);
+		DistroFileType fileType=table.getConnector().getDistribution_management().getDistroFileType().get(type);
 		if(fileType==null) throw new SQLException("Unable to find DistroFileType: "+type);
 		return fileType;
 	}
@@ -145,13 +145,13 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	public User getLinuxAccount() throws SQLException, IOException {
 		if(table==null) throw new NullPointerException("table is null");
 		if(table.getConnector()==null) throw new NullPointerException("table.getConnector() is null");
-		User linuxAccount=table.getConnector().getLinux().getLinuxAccounts().get(linux_account);
+		User linuxAccount=table.getConnector().getLinux().getUser().get(linux_account);
 		if(linuxAccount==null) throw new SQLException("Unable to find LinuxAccount: "+linux_account);
 		return linuxAccount;
 	}
 
 	public Group getLinuxGroup() throws SQLException, IOException {
-		Group linuxGroup=table.getConnector().getLinux().getLinuxGroups().get(linux_group);
+		Group linuxGroup=table.getConnector().getLinux().getGroup().get(linux_group);
 		if(linuxGroup==null) throw new SQLException("Unable to find LinuxGroup: "+linux_group);
 		return linuxGroup;
 	}

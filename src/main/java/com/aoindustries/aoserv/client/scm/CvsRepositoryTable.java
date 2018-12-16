@@ -145,19 +145,19 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			SortedSet<UnixPath> prefixes=new TreeSet<>();
 
 			// Home directories
-			for(UserServer lsa : connector.getLinux().getLinuxServerAccounts().getRows()) {
+			for(UserServer lsa : connector.getLinux().getUserServer().getRows()) {
 				if(lsa.getLinuxAccount().getType().getName().equals(UserType.USER) && !lsa.isDisabled()) {
 					prefixes.add(lsa.getHome());
 				}
 			}
 
 			// HttpdSites
-			for(Site site : connector.getWeb().getHttpdSites().getRows()) {
+			for(Site site : connector.getWeb().getSite().getRows()) {
 				if(!site.isDisabled()) prefixes.add(site.getInstallDirectory());
 			}
 
 			// HttpdSharedTomcats
-			for(SharedTomcat tomcat : connector.getWeb_tomcat().getHttpdSharedTomcats().getRows()) {
+			for(SharedTomcat tomcat : connector.getWeb_tomcat().getSharedTomcat().getRows()) {
 				if(!tomcat.isDisabled()) {
 					prefixes.add(
 						UnixPath.valueOf(

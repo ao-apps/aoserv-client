@@ -34,20 +34,20 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final CountryCodeTable countryCodes;
-	public CountryCodeTable getCountryCodes() {return countryCodes;}
+	private final CountryCodeTable CountryCode;
+	public CountryCodeTable getCountryCode() {return CountryCode;}
 
-	private final CreditCardTable creditCards;
-	public CreditCardTable getCreditCards() {return creditCards;}
+	private final CreditCardTable CreditCard;
+	public CreditCardTable getCreditCard() {return CreditCard;}
 
-	private final PaymentTable creditCardTransactions;
-	public PaymentTable getCreditCardTransactions() {return creditCardTransactions;}
+	private final PaymentTable Payment;
+	public PaymentTable getPayment() {return Payment;}
 
-	private final PaymentTypeTable paymentTypes;
-	public PaymentTypeTable getPaymentTypes() {return paymentTypes;}
+	private final PaymentTypeTable PaymentType;
+	public PaymentTypeTable getPaymentType() {return PaymentType;}
 
-	private final ProcessorTable creditCardProcessors;
-	public ProcessorTable getCreditCardProcessors() {return creditCardProcessors;}
+	private final ProcessorTable Processor;
+	public ProcessorTable getProcessor() {return Processor;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -55,11 +55,11 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(countryCodes = new CountryCodeTable(connector));
-		newTables.add(creditCards = new CreditCardTable(connector));
-		newTables.add(creditCardTransactions = new PaymentTable(connector));
-		newTables.add(paymentTypes = new PaymentTypeTable(connector));
-		newTables.add(creditCardProcessors = new ProcessorTable(connector));
+		newTables.add(CountryCode = new CountryCodeTable(connector));
+		newTables.add(CreditCard = new CreditCardTable(connector));
+		newTables.add(Payment = new PaymentTable(connector));
+		newTables.add(PaymentType = new PaymentTypeTable(connector));
+		newTables.add(Processor = new ProcessorTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

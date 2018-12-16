@@ -219,7 +219,7 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	}
 
 	public List<Transaction> getTransactions(AOServConnector connector) throws IOException, SQLException {
-		return connector.getBilling().getTransactions().getTransactions(this);
+		return connector.getBilling().getTransaction().getTransactions(this);
 	}
 
 	public int getTransID() {

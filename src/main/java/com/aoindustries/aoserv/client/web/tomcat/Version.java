@@ -114,7 +114,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	}
 
 	public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-		SoftwareVersion obj = connector.getDistribution().getTechnologyVersions().get(pkey);
+		SoftwareVersion obj = connector.getDistribution().getSoftwareVersion().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find TechnologyVersion: " + pkey);
 		return obj;
 	}

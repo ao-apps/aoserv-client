@@ -541,7 +541,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 			for(int c=0;c<orderBys.length;c++) {
 				sortOrders[c] = orderBys[c].getOrder();
 			}
-			connector.getSchema().getSchemaTypes().sort(getSortAlgorithm(), list, sortExpressions, sortOrders);
+			connector.getSchema().getType().sort(getSortAlgorithm(), list, sortExpressions, sortOrders);
 		}
 	}
 
@@ -616,7 +616,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				if(castPos==-1) castPos=expr.length();
 				int typeNameEnd=Math.min(joinPos, castPos);
 				String typeName=expr.substring(2, typeNameEnd);
-				Type type=connector.getSchema().getSchemaTypes().get(typeName);
+				Type type=connector.getSchema().getType().get(typeName);
 				if(type==null) throw new IllegalArgumentException("Unable to find SchemaType: "+typeName);
 
 				sql=new SQLCast(sql, type);
@@ -646,7 +646,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	}
 
 	final public Table getTableSchema() throws IOException, SQLException {
-		return connector.getSchema().getSchemaTables().get(getTableID());
+		return connector.getSchema().getTable().get(getTableID());
 	}
 
 	@Override

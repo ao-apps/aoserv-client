@@ -120,14 +120,14 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	}
 
 	public Ticket getTicket() throws IOException, SQLException {
-		Ticket t = table.getConnector().getTicket().getTickets().get(ticket);
+		Ticket t = table.getConnector().getTicket().getTicket().get(ticket);
 		if(t==null) throw new SQLException("Unable to find Ticket: "+ticket);
 		return t;
 	}
 
 	public Administrator getAdministrator() throws IOException, SQLException {
 		if(administrator==null) return null;
-		return table.getConnector().getAccount().getBusinessAdministrators().get(administrator);
+		return table.getConnector().getAccount().getAdministrator().get(administrator);
 	}
 
 	public Timestamp getTime() {
@@ -135,7 +135,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	}
 
 	public ActionType getTicketActionType() throws SQLException, IOException {
-		ActionType type=table.getConnector().getTicket().getTicketActionTypes().get(action_type);
+		ActionType type=table.getConnector().getTicket().getActionType().get(action_type);
 		if(type==null) throw new SQLException("Unable to find TicketActionType: "+action_type);
 		return type;
 	}
@@ -145,7 +145,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	 */
 	public Account getOldBusiness() throws IOException, SQLException {
 		if(old_accounting==null) return null;
-		return table.getConnector().getAccount().getBusinesses().get(old_accounting);
+		return table.getConnector().getAccount().getAccount().get(old_accounting);
 	}
 
 	/**
@@ -153,47 +153,47 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	 */
 	public Account getNewBusiness() throws IOException, SQLException {
 		if(new_accounting==null) return null;
-		return table.getConnector().getAccount().getBusinesses().get(new_accounting);
+		return table.getConnector().getAccount().getAccount().get(new_accounting);
 	}
 
 	public Priority getOldPriority() throws IOException, SQLException {
 		if(old_priority==null) return null;
-		Priority tp = table.getConnector().getTicket().getTicketPriorities().get(old_priority);
+		Priority tp = table.getConnector().getTicket().getPriority().get(old_priority);
 		if(tp==null) throw new SQLException("Unable to find TicketPriority: "+old_priority);
 		return tp;
 	}
 
 	public Priority getNewPriority() throws IOException, SQLException {
 		if(new_priority==null) return null;
-		Priority tp = table.getConnector().getTicket().getTicketPriorities().get(new_priority);
+		Priority tp = table.getConnector().getTicket().getPriority().get(new_priority);
 		if(tp==null) throw new SQLException("Unable to find TicketPriority: "+new_priority);
 		return tp;
 	}
 
 	public TicketType getOldType() throws IOException, SQLException {
 		if(old_type==null) return null;
-		TicketType tt = table.getConnector().getTicket().getTicketTypes().get(old_type);
+		TicketType tt = table.getConnector().getTicket().getTicketType().get(old_type);
 		if(tt==null) throw new SQLException("Unable to find TicketType: "+old_type);
 		return tt;
 	}
 
 	public TicketType getNewType() throws IOException, SQLException {
 		if(new_type==null) return null;
-		TicketType tt = table.getConnector().getTicket().getTicketTypes().get(new_type);
+		TicketType tt = table.getConnector().getTicket().getTicketType().get(new_type);
 		if(tt==null) throw new SQLException("Unable to find TicketType: "+new_type);
 		return tt;
 	}
 
 	public Status getOldStatus() throws IOException, SQLException {
 		if(old_status==null) return null;
-		Status ts = table.getConnector().getTicket().getTicketStatuses().get(old_status);
+		Status ts = table.getConnector().getTicket().getStatus().get(old_status);
 		if(ts==null) throw new SQLException("Unable to find TicketStatus: "+old_status);
 		return ts;
 	}
 
 	public Status getNewStatus() throws IOException, SQLException {
 		if(new_status==null) return null;
-		Status ts = table.getConnector().getTicket().getTicketStatuses().get(new_status);
+		Status ts = table.getConnector().getTicket().getStatus().get(new_status);
 		if(ts==null) throw new SQLException("Unable to find TicketStatus: "+new_status);
 		return ts;
 	}
@@ -203,7 +203,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	 */
 	public Administrator getOldAssignedTo() throws IOException, SQLException {
 		if(old_assigned_to==null) return null;
-		return table.getConnector().getAccount().getBusinessAdministrators().get(old_assigned_to);
+		return table.getConnector().getAccount().getAdministrator().get(old_assigned_to);
 	}
 
 	/**
@@ -211,19 +211,19 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	 */
 	public Administrator getNewAssignedTo() throws IOException, SQLException {
 		if(new_assigned_to==null) return null;
-		return table.getConnector().getAccount().getBusinessAdministrators().get(new_assigned_to);
+		return table.getConnector().getAccount().getAdministrator().get(new_assigned_to);
 	}
 
 	public Category getOldCategory() throws IOException, SQLException {
 		if(old_category==-1) return null;
-		Category tc = table.getConnector().getReseller().getTicketCategories().get(old_category);
+		Category tc = table.getConnector().getReseller().getCategory().get(old_category);
 		if(tc==null) throw new SQLException("Unable to find TicketCategory: "+old_category);
 		return tc;
 	}
 
 	public Category getNewCategory() throws IOException, SQLException {
 		if(new_category==-1) return null;
-		Category tc = table.getConnector().getReseller().getTicketCategories().get(new_category);
+		Category tc = table.getConnector().getReseller().getCategory().get(new_category);
 		if(tc==null) throw new SQLException("Unable to find TicketCategory: "+new_category);
 		return tc;
 	}

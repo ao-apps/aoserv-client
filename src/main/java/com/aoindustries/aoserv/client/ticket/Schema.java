@@ -34,44 +34,44 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final ActionTable actionTable;
-	public ActionTable getTicketActions() {
-		return actionTable;
+	private final ActionTable Action;
+	public ActionTable getAction() {
+		return Action;
 	}
 
-	private final ActionTypeTable actionTypeTable;
-	public ActionTypeTable getTicketActionTypes() {
-		return actionTypeTable;
+	private final ActionTypeTable ActionType;
+	public ActionTypeTable getActionType() {
+		return ActionType;
 	}
 
-	private final AssignmentTable assignmentTable;
-	public AssignmentTable getTicketAssignments() {
-		return assignmentTable;
+	private final AssignmentTable Assignment;
+	public AssignmentTable getAssignment() {
+		return Assignment;
 	}
 
-	private final LanguageTable languageTable;
-	public LanguageTable getLanguages() {
-		return languageTable;
+	private final LanguageTable Language;
+	public LanguageTable getLanguage() {
+		return Language;
 	}
 
-	private final PriorityTable priorityTable;
-	public PriorityTable getTicketPriorities() {
-		return priorityTable;
+	private final PriorityTable Priority;
+	public PriorityTable getPriority() {
+		return Priority;
 	}
 
-	private final StatusTable statusTable;
-	public StatusTable getTicketStatuses() {
-		return statusTable;
+	private final StatusTable Status;
+	public StatusTable getStatus() {
+		return Status;
 	}
 
-	private final TicketTable ticketTable;
-	public TicketTable getTickets() {
-		return ticketTable;
+	private final TicketTable Ticket;
+	public TicketTable getTicket() {
+		return Ticket;
 	}
 
-	private final TicketTypeTable ticketTypeTable;
-	public TicketTypeTable getTicketTypes() {
-		return ticketTypeTable;
+	private final TicketTypeTable TicketType;
+	public TicketTypeTable getTicketType() {
+		return TicketType;
 	}
 
 	final List<? extends AOServTable<?,?>> tables;
@@ -80,14 +80,14 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(actionTable = new ActionTable(connector));
-		newTables.add(actionTypeTable = new ActionTypeTable(connector));
-		newTables.add(assignmentTable = new AssignmentTable(connector));
-		newTables.add(languageTable = new LanguageTable(connector));
-		newTables.add(priorityTable = new PriorityTable(connector));
-		newTables.add(statusTable = new StatusTable(connector));
-		newTables.add(ticketTable = new TicketTable(connector));
-		newTables.add(ticketTypeTable = new TicketTypeTable(connector));
+		newTables.add(Action = new ActionTable(connector));
+		newTables.add(ActionType = new ActionTypeTable(connector));
+		newTables.add(Assignment = new AssignmentTable(connector));
+		newTables.add(Language = new LanguageTable(connector));
+		newTables.add(Priority = new PriorityTable(connector));
+		newTables.add(Status = new StatusTable(connector));
+		newTables.add(Ticket = new TicketTable(connector));
+		newTables.add(TicketType = new TicketTypeTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

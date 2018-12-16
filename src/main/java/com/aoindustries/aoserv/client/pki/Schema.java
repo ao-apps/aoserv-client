@@ -34,17 +34,17 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final CertificateTable certificateTable;
-	public CertificateTable getSslCertificates() {return certificateTable;}
+	private final CertificateTable Certificate;
+	public CertificateTable getCertificate() {return Certificate;}
 
-	private final CertificateNameTable certificateNameTable;
-	public CertificateNameTable getSslCertificateNames() {return certificateNameTable;}
+	private final CertificateNameTable CertificateName;
+	public CertificateNameTable getCertificateName() {return CertificateName;}
 
-	private final CertificateOtherUseTable certificateOtherUseTable;
-	public CertificateOtherUseTable getSslCertificateOtherUses() {return certificateOtherUseTable;}
+	private final CertificateOtherUseTable CertificateOtherUse;
+	public CertificateOtherUseTable getCertificateOtherUse() {return CertificateOtherUse;}
 
-	private final EncryptionKeyTable encryptionKeyTable;
-	public EncryptionKeyTable getEncryptionKeys() {return encryptionKeyTable;}
+	private final EncryptionKeyTable EncryptionKey;
+	public EncryptionKeyTable getEncryptionKey() {return EncryptionKey;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -52,10 +52,10 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(certificateTable = new CertificateTable(connector));
-		newTables.add(certificateNameTable = new CertificateNameTable(connector));
-		newTables.add(certificateOtherUseTable = new CertificateOtherUseTable(connector));
-		newTables.add(encryptionKeyTable = new EncryptionKeyTable(connector));
+		newTables.add(Certificate = new CertificateTable(connector));
+		newTables.add(CertificateName = new CertificateNameTable(connector));
+		newTables.add(CertificateOtherUse = new CertificateOtherUseTable(connector));
+		newTables.add(EncryptionKey = new EncryptionKeyTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

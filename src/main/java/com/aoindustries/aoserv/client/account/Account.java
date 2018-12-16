@@ -136,7 +136,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		String technicalEmail,
 		Profile.EmailFormat technicalEmailFormat
 	) throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinessProfiles().addBusinessProfile(
+		return table.getConnector().getAccount().getProfile().addBusinessProfile(
 			this,
 			name,
 			isPrivate,
@@ -161,7 +161,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	public int addBusinessServer(
 		Host server
 	) throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinessServers().addBusinessServer(this, server);
+		return table.getConnector().getAccount().getAccountHost().addBusinessServer(this, server);
 	}
 
 	public int addCreditCard(
@@ -188,7 +188,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		byte expirationMonth,
 		short expirationYear
 	) throws IOException, SQLException {
-		return table.getConnector().getPayment().getCreditCards().addCreditCard(
+		return table.getConnector().getPayment().getCreditCard().addCreditCard(
 			processor,
 			this,
 			groupName,
@@ -267,7 +267,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		long authorizationTime,
 		String authorizationPrincipalName
 	) throws IOException, SQLException {
-		return table.getConnector().getPayment().getCreditCardTransactions().addCreditCardTransaction(
+		return table.getConnector().getPayment().getPayment().addCreditCardTransaction(
 			processor,
 			this,
 			groupName,
@@ -322,7 +322,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	public int addDisableLog(
 		String disableReason
 	) throws IOException, SQLException {
-		return table.getConnector().getAccount().getDisableLogs().addDisableLog(this, disableReason);
+		return table.getConnector().getAccount().getDisableLog().addDisableLog(this, disableReason);
 	}
 
 	public void addNoticeLog(
@@ -332,7 +332,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		String type,
 		int transid
 	) throws IOException, SQLException {
-		table.getConnector().getBilling().getNoticeLogs().addNoticeLog(
+		table.getConnector().getBilling().getNoticeLog().addNoticeLog(
 			pkey,
 			billingContact,
 			emailAddress,
@@ -346,7 +346,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		AccountingCode name,
 		PackageDefinition packageDefinition
 	) throws IOException, SQLException {
-		return table.getConnector().getBilling().getPackages().addPackage(
+		return table.getConnector().getBilling().getPackage().addPackage(
 			name,
 			this,
 			packageDefinition
@@ -365,7 +365,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		Processor processor,
 		byte payment_confirmed
 	) throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransactions().addTransaction(
+		return table.getConnector().getBilling().getTransaction().addTransaction(
 			this,
 			sourceBusiness,
 			business_administrator,
@@ -431,7 +431,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public boolean isRootBusiness() throws IOException, SQLException {
-		return pkey.equals(table.getConnector().getAccount().getBusinesses().getRootAccounting());
+		return pkey.equals(table.getConnector().getAccount().getAccount().getRootAccounting());
 	}
 
 	@Override
@@ -473,11 +473,11 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public BigDecimal getAccountBalance() throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransactions().getAccountBalance(pkey);
+		return table.getConnector().getBilling().getTransaction().getAccountBalance(pkey);
 	}
 
 	public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransactions().getAccountBalance(pkey, before);
+		return table.getConnector().getBilling().getTransaction().getAccountBalance(pkey, before);
 	}
 
 	/**
@@ -525,7 +525,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	 * from the top level business.
 	 */
 	public Account getTopLevelBusiness() throws IOException, SQLException {
-		AccountingCode rootAccounting=table.getConnector().getAccount().getBusinesses().getRootAccounting();
+		AccountingCode rootAccounting=table.getConnector().getAccount().getAccount().getRootAccounting();
 		Account bu=this;
 		Account tempParent;
 		while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
@@ -548,7 +548,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	 * Gets the <code>BusinessProfile</code> with the highest priority.
 	 */
 	public Profile getBusinessProfile() throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinessProfiles().getBusinessProfile(this);
+		return table.getConnector().getAccount().getProfile().getBusinessProfile(this);
 	}
 
 	/**
@@ -556,17 +556,17 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	 * sorted with the highest priority profile at the zero index.
 	 */
 	public List<Profile> getBusinessProfiles() throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinessProfiles().getBusinessProfiles(this);
+		return table.getConnector().getAccount().getProfile().getBusinessProfiles(this);
 	}
 
 	public AccountHost getBusinessServer(
 		Host server
 	) throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinessServers().getBusinessServer(this, server);
+		return table.getConnector().getAccount().getAccountHost().getBusinessServer(this, server);
 	}
 
 	public List<AccountHost> getBusinessServers() throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinessServers().getBusinessServers(this);
+		return table.getConnector().getAccount().getAccountHost().getBusinessServers(this);
 	}
 
 	public Timestamp getCanceled() {
@@ -578,7 +578,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public List<Account> getChildBusinesses() throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinesses().getChildBusinesses(this);
+		return table.getConnector().getAccount().getAccount().getChildBusinesses(this);
 	}
 
 	@Override
@@ -602,11 +602,11 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransactions().getConfirmedAccountBalance(pkey);
+		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(pkey);
 	}
 
 	public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransactions().getConfirmedAccountBalance(pkey, before);
+		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(pkey, before);
 	}
 
 	public String getContractVersion() {
@@ -618,16 +618,16 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public List<Processor> getCreditCardProcessors() throws IOException, SQLException {
-		return table.getConnector().getPayment().getCreditCardProcessors().getCreditCardProcessors(this);
+		return table.getConnector().getPayment().getProcessor().getCreditCardProcessors(this);
 	}
 
 	public List<CreditCard> getCreditCards() throws IOException, SQLException {
-		return table.getConnector().getPayment().getCreditCards().getCreditCards(this);
+		return table.getConnector().getPayment().getCreditCard().getCreditCards(this);
 	}
 
 	public Host getDefaultServer() throws IOException, SQLException {
 		// May be null when the account is canceled or not using servers
-		return table.getConnector().getAccount().getBusinessServers().getDefaultServer(this);
+		return table.getConnector().getAccount().getAccountHost().getDefaultServer(this);
 	}
 
 	@Override
@@ -638,33 +638,33 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
 
 	public List<Forwarding> getEmailForwarding() throws SQLException, IOException {
-		return table.getConnector().getEmail().getEmailForwardings().getEmailForwarding(this);
+		return table.getConnector().getEmail().getForwarding().getEmailForwarding(this);
 	}
 
 	public List<com.aoindustries.aoserv.client.email.List> getEmailLists() throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailLists().getEmailLists(this);
+		return table.getConnector().getEmail().getList().getEmailLists(this);
 	}
 
 	public GroupServer getLinuxServerGroup(Server aoServer) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerGroups().getLinuxServerGroup(aoServer, this);
+		return table.getConnector().getLinux().getGroupServer().getLinuxServerGroup(aoServer, this);
 	}
 
 	public List<User> getMailAccounts() throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxAccounts().getMailAccounts(this);
+		return table.getConnector().getLinux().getUser().getMailAccounts(this);
 	}
 
 	public CreditCard getMonthlyCreditCard() throws IOException, SQLException {
-		return table.getConnector().getPayment().getCreditCards().getMonthlyCreditCard(this);
+		return table.getConnector().getPayment().getCreditCard().getMonthlyCreditCard(this);
 	}
 
 	public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
-		return table.getConnector().getBilling().getMonthlyCharges().getMonthlyCharges(this);
+		return table.getConnector().getBilling().getMonthlyCharge().getMonthlyCharges(this);
 	}
 
 	/**
@@ -685,22 +685,22 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
-		return table.getConnector().getBilling().getNoticeLogs().getNoticeLogs(this);
+		return table.getConnector().getBilling().getNoticeLog().getNoticeLogs(this);
 	}
 
 	public List<Package> getPackages() throws IOException, SQLException {
-		return table.getConnector().getBilling().getPackages().getPackages(this);
+		return table.getConnector().getBilling().getPackage().getPackages(this);
 	}
 
 	public Account getParentBusiness() throws IOException, SQLException {
 		if(parent==null) return null;
 		// The parent business might not be found, even when the value is set.  This is normal due
 		// to filtering.
-		return table.getConnector().getAccount().getBusinesses().get(parent);
+		return table.getConnector().getAccount().getAccount().get(parent);
 	}
 
 	public List<Domain> getEmailDomains() throws SQLException, IOException {
-		return table.getConnector().getEmail().getEmailDomains().getEmailDomains(this);
+		return table.getConnector().getEmail().getDomain().getEmailDomains(this);
 	}
 
 	@Override
@@ -722,7 +722,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public List<Transaction> getTransactions() throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransactions().getTransactions(pkey);
+		return table.getConnector().getBilling().getTransaction().getTransactions(pkey);
 	}
 
 	/**
@@ -800,7 +800,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		List<GroupServer> fromLinuxServerGroups=new ArrayList<>();
 		List<GroupServer> toLinuxServerGroups=new SortedArrayList<>();
 		{
-			for(GroupServer lsg : table.getConnector().getLinux().getLinuxServerGroups().getRows()) {
+			for(GroupServer lsg : table.getConnector().getLinux().getGroupServer().getRows()) {
 				Package pk=lsg.getLinuxGroup().getPackage();
 				if(pk!=null && pk.getBusiness().equals(this)) {
 					Server ao=lsg.getAOServer();
@@ -832,7 +832,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		List<UserServer> fromLinuxServerAccounts=new ArrayList<>();
 		List<UserServer> toLinuxServerAccounts=new SortedArrayList<>();
 		{
-			List<UserServer> lsas=table.getConnector().getLinux().getLinuxServerAccounts().getRows();
+			List<UserServer> lsas=table.getConnector().getLinux().getUserServer().getRows();
 			for (UserServer lsa : lsas) {
 				Package pk=lsa.getLinuxAccount().getUsername().getPackage();
 				if(pk!=null && pk.getBusiness().equals(this)) {
@@ -947,7 +947,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 			out.attributesOff();
 			out.flush();
 		}
-		List<IpAddress> ips=table.getConnector().getNet().getIpAddresses().getRows();
+		List<IpAddress> ips=table.getConnector().getNet().getIpAddress().getRows();
 		for (IpAddress ip : ips) {
 			InetAddress inetAddress = ip.getInetAddress();
 			if(
@@ -1081,14 +1081,14 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public List<Ticket> getTickets() throws SQLException, IOException {
-		return table.getConnector().getTicket().getTickets().getTickets(this);
+		return table.getConnector().getTicket().getTicket().getTickets(this);
 	}
 
 	/**
 	 * Gets all of the encryption keys for this business.
 	 */
 	public List<EncryptionKey> getEncryptionKeys() throws IOException, SQLException {
-		return table.getConnector().getPki().getEncryptionKeys().getEncryptionKeys(this);
+		return table.getConnector().getPki().getEncryptionKey().getEncryptionKeys(this);
 	}
 
 	/**
@@ -1107,14 +1107,14 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	 * Gets the most recent credit card transaction.
 	 */
 	public Payment getLastCreditCardTransaction() throws IOException, SQLException {
-		return table.getConnector().getPayment().getCreditCardTransactions().getLastCreditCardTransaction(this);
+		return table.getConnector().getPayment().getPayment().getLastCreditCardTransaction(this);
 	}
 
 	/**
 	 * Gets the Brand for this business or <code>null</code> if not a brand.
 	 */
 	public Brand getBrand() throws IOException, SQLException {
-		return table.getConnector().getReseller().getBrands().getBrand(this);
+		return table.getConnector().getReseller().getBrand().getBrand(this);
 	}
 
 	public int addPackageDefinition(
@@ -1128,7 +1128,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		int monthlyRate,
 		TransactionType monthlyRateTransactionType
 	) throws IOException, SQLException {
-		return table.getConnector().getBilling().getPackageDefinitions().addPackageDefinition(
+		return table.getConnector().getBilling().getPackageDefinition().addPackageDefinition(
 			this,
 			category,
 			name,
@@ -1143,11 +1143,11 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public PackageDefinition getPackageDefinition(PackageCategory category, String name, String version) throws IOException, SQLException {
-		return table.getConnector().getBilling().getPackageDefinitions().getPackageDefinition(this, category, name, version);
+		return table.getConnector().getBilling().getPackageDefinition().getPackageDefinition(this, category, name, version);
 	}
 
 	public List<PackageDefinition> getPackageDefinitions(PackageCategory category) throws IOException, SQLException {
-		return table.getConnector().getBilling().getPackageDefinitions().getPackageDefinitions(this, category);
+		return table.getConnector().getBilling().getPackageDefinition().getPackageDefinitions(this, category);
 	}
 
 	/**
@@ -1155,7 +1155,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	 */
 	public Map<PackageCategory,List<PackageDefinition>> getActivePackageDefinitions() throws IOException, SQLException {
 		// Determine the active packages per category
-		List<PackageCategory> allCategories = table.getConnector().getBilling().getPackageCategories().getRows();
+		List<PackageCategory> allCategories = table.getConnector().getBilling().getPackageCategory().getRows();
 		Map<PackageCategory,List<PackageDefinition>> categories = new LinkedHashMap<>(allCategories.size()*4/3+1);
 		for(PackageCategory category : allCategories) {
 			List<PackageDefinition> allDefinitions = getPackageDefinitions(category);

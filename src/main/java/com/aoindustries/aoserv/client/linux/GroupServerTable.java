@@ -190,7 +190,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 
 		// Find the primary group for the account
 		User linuxAccount=account.getLinuxAccount();
-		Group linuxGroup=connector.getLinux().getLinuxGroupAccounts().getPrimaryGroup(linuxAccount);
+		Group linuxGroup=connector.getLinux().getGroupUser().getPrimaryGroup(linuxAccount);
 		if(linuxGroup==null) throw new SQLException("Unable to find primary LinuxGroup for username="+linuxAccount.getUsername_id());
 		GroupServer lsg=getLinuxServerGroup(account.getAOServer(), linuxGroup.getName());
 		if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup.getName()+" on "+account.ao_server);

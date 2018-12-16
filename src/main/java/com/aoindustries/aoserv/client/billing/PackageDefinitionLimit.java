@@ -82,7 +82,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 		this.additional_transaction_type=additional_transaction_type==null ? null : additional_transaction_type.getName();
 
 		// The table is set from the connector of the package definition
-		setTable(package_definition.getTable().getConnector().getBilling().getPackageDefinitionLimits());
+		setTable(package_definition.getTable().getConnector().getBilling().getPackageDefinitionLimit());
 	}
 
 	@Override
@@ -100,13 +100,13 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	}
 
 	public PackageDefinition getPackageDefinition() throws IOException, SQLException {
-		PackageDefinition pd = table.getConnector().getBilling().getPackageDefinitions().get(package_definition);
+		PackageDefinition pd = table.getConnector().getBilling().getPackageDefinition().get(package_definition);
 		if(pd == null) throw new SQLException("Unable to find PackageDefinition: " + package_definition);
 		return pd;
 	}
 
 	public Resource getResource() throws SQLException, IOException {
-		Resource r=table.getConnector().getBilling().getResources().get(resource);
+		Resource r=table.getConnector().getBilling().getResource().get(resource);
 		if(r==null) throw new SQLException("Unable to find Resource: "+resource);
 		return r;
 	}
@@ -149,7 +149,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 
 	public TransactionType getAdditionalTransactionType() throws SQLException, IOException {
 		if(additional_transaction_type==null) return null;
-		TransactionType tt=table.getConnector().getBilling().getTransactionTypes().get(additional_transaction_type);
+		TransactionType tt=table.getConnector().getBilling().getTransactionType().get(additional_transaction_type);
 		if(tt==null) throw new SQLException("Unable to find TransactionType: "+additional_transaction_type);
 		return tt;
 	}

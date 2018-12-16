@@ -34,32 +34,32 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final HeaderTable httpdSiteBindHeaders;
-	public HeaderTable getHttpdSiteBindHeaders() {return httpdSiteBindHeaders;}
+	private final HeaderTable Header;
+	public HeaderTable getHeader() {return Header;}
 
-	private final HttpdBindTable httpdBinds;
-	public HttpdBindTable getHttpdBinds() {return httpdBinds;}
+	private final HttpdBindTable HttpdBind;
+	public HttpdBindTable getHttpdBind() {return HttpdBind;}
 
-	private final HttpdServerTable httpdServers;
-	public HttpdServerTable getHttpdServers() {return httpdServers;}
+	private final HttpdServerTable HttpdServer;
+	public HttpdServerTable getHttpdServer() {return HttpdServer;}
 
-	private final LocationTable httpdSiteAuthenticatedLocationTable;
-	public LocationTable getHttpdSiteAuthenticatedLocationTable() {return httpdSiteAuthenticatedLocationTable;}
+	private final LocationTable Location;
+	public LocationTable getLocation() {return Location;}
 
-	private final RewriteRuleTable rewriteRuleTable;
-	public RewriteRuleTable getRewriteRuleTable() {return rewriteRuleTable;}
+	private final RewriteRuleTable RewriteRule;
+	public RewriteRuleTable getRewriteRule() {return RewriteRule;}
 
-	private final SiteTable httpdSites;
-	public SiteTable getHttpdSites() {return httpdSites;}
+	private final SiteTable Site;
+	public SiteTable getSite() {return Site;}
 
-	private final StaticSiteTable httpdStaticSites;
-	public StaticSiteTable getHttpdStaticSites() {return httpdStaticSites;}
+	private final StaticSiteTable StaticSite;
+	public StaticSiteTable getStaticSite() {return StaticSite;}
 
-	private final VirtualHostTable httpdSiteBinds;
-	public VirtualHostTable getHttpdSiteBinds() {return httpdSiteBinds;}
+	private final VirtualHostTable VirtualHost;
+	public VirtualHostTable getVirtualHost() {return VirtualHost;}
 
-	private final VirtualHostNameTable httpdSiteURLs;
-	public VirtualHostNameTable getHttpdSiteURLs() {return httpdSiteURLs;}
+	private final VirtualHostNameTable VirtualHostName;
+	public VirtualHostNameTable getVirtualHostName() {return VirtualHostName;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -67,15 +67,15 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(httpdSiteBindHeaders = new HeaderTable(connector));
-		newTables.add(httpdBinds = new HttpdBindTable(connector));
-		newTables.add(httpdServers = new HttpdServerTable(connector));
-		newTables.add(httpdSiteAuthenticatedLocationTable = new LocationTable(connector));
-		newTables.add(rewriteRuleTable = new RewriteRuleTable(connector));
-		newTables.add(httpdSites = new SiteTable(connector));
-		newTables.add(httpdStaticSites = new StaticSiteTable(connector));
-		newTables.add(httpdSiteBinds = new VirtualHostTable(connector));
-		newTables.add(httpdSiteURLs = new VirtualHostNameTable(connector));
+		newTables.add(Header = new HeaderTable(connector));
+		newTables.add(HttpdBind = new HttpdBindTable(connector));
+		newTables.add(HttpdServer = new HttpdServerTable(connector));
+		newTables.add(Location = new LocationTable(connector));
+		newTables.add(RewriteRule = new RewriteRuleTable(connector));
+		newTables.add(Site = new SiteTable(connector));
+		newTables.add(StaticSite = new StaticSiteTable(connector));
+		newTables.add(VirtualHost = new VirtualHostTable(connector));
+		newTables.add(VirtualHostName = new VirtualHostNameTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

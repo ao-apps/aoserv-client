@@ -34,17 +34,17 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final BrandTable brandTable;
-	public BrandTable getBrands() {return brandTable;}
+	private final BrandTable Brand;
+	public BrandTable getBrand() {return Brand;}
 
-	private final BrandCategoryTable brandCategoryTable;
-	public BrandCategoryTable getTicketBrandCategories() {return brandCategoryTable;}
+	private final BrandCategoryTable BrandCategory;
+	public BrandCategoryTable getBrandCategory() {return BrandCategory;}
 
-	private final CategoryTable categoryTable;
-	public CategoryTable getTicketCategories() {return categoryTable;}
+	private final CategoryTable Category;
+	public CategoryTable getCategory() {return Category;}
 
-	private final ResellerTable resellerTable;
-	public ResellerTable getResellers() {return resellerTable;}
+	private final ResellerTable Reseller;
+	public ResellerTable getReseller() {return Reseller;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -52,10 +52,10 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(brandTable = new BrandTable(connector));
-		newTables.add(brandCategoryTable = new BrandCategoryTable(connector));
-		newTables.add(categoryTable = new CategoryTable(connector));
-		newTables.add(resellerTable = new ResellerTable(connector));
+		newTables.add(Brand = new BrandTable(connector));
+		newTables.add(BrandCategory = new BrandCategoryTable(connector));
+		newTables.add(Category = new CategoryTable(connector));
+		newTables.add(Reseller = new ResellerTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

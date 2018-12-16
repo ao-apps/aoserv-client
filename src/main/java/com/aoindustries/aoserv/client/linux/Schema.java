@@ -34,38 +34,38 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final DaemonAclTable daemonAclTable;
-	public DaemonAclTable getAoServerDaemonHosts() {return daemonAclTable;}
+	private final DaemonAclTable DaemonAcl;
+	public DaemonAclTable getDaemonAcl() {return DaemonAcl;}
 
-	private final GroupTable groupTable;
-	public GroupTable getLinuxGroups() {return groupTable;}
+	private final GroupTable Group;
+	public GroupTable getGroup() {return Group;}
 
-	private final GroupServerTable groupServerTable;
-	public GroupServerTable getLinuxServerGroups() {return groupServerTable;}
+	private final GroupServerTable GroupServer;
+	public GroupServerTable getGroupServer() {return GroupServer;}
 
-	private final GroupTypeTable groupTypeTable;
-	public GroupTypeTable getLinuxGroupTypes() {return groupTypeTable;}
+	private final GroupTypeTable GroupType;
+	public GroupTypeTable getGroupType() {return GroupType;}
 
-	private final GroupUserTable groupUserTable;
-	public GroupUserTable getLinuxGroupAccounts() {return groupUserTable;}
+	private final GroupUserTable GroupUser;
+	public GroupUserTable getGroupUser() {return GroupUser;}
 
-	private final ServerTable serverTable;
-	public ServerTable getAoServers() {return serverTable;}
+	private final ServerTable Server;
+	public ServerTable getServer() {return Server;}
 
-	private final ShellTable shellTable;
-	public ShellTable getShells() {return shellTable;}
+	private final ShellTable Shell;
+	public ShellTable getShell() {return Shell;}
 
-	private final TimeZoneTable timeZoneTable;
-	public TimeZoneTable getTimeZones() {return timeZoneTable;}
+	private final TimeZoneTable TimeZone;
+	public TimeZoneTable getTimeZone() {return TimeZone;}
 
-	private final UserTable userTable;
-	public UserTable getLinuxAccounts() {return userTable;}
+	private final UserTable User;
+	public UserTable getUser() {return User;}
 
-	private final UserServerTable userServerTable;
-	public UserServerTable getLinuxServerAccounts() {return userServerTable;}
+	private final UserServerTable UserServer;
+	public UserServerTable getUserServer() {return UserServer;}
 
-	private final UserTypeTable userTypeTable;
-	public UserTypeTable getLinuxAccountTypes() {return userTypeTable;}
+	private final UserTypeTable UserType;
+	public UserTypeTable getUserType() {return UserType;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -73,17 +73,17 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(daemonAclTable = new DaemonAclTable(connector));
-		newTables.add(groupTable = new GroupTable(connector));
-		newTables.add(groupServerTable = new GroupServerTable(connector));
-		newTables.add(groupTypeTable = new GroupTypeTable(connector));
-		newTables.add(groupUserTable = new GroupUserTable(connector));
-		newTables.add(serverTable = new ServerTable(connector));
-		newTables.add(shellTable = new ShellTable(connector));
-		newTables.add(timeZoneTable = new TimeZoneTable(connector));
-		newTables.add(userTable = new UserTable(connector));
-		newTables.add(userServerTable = new UserServerTable(connector));
-		newTables.add(userTypeTable = new UserTypeTable(connector));
+		newTables.add(DaemonAcl = new DaemonAclTable(connector));
+		newTables.add(Group = new GroupTable(connector));
+		newTables.add(GroupServer = new GroupServerTable(connector));
+		newTables.add(GroupType = new GroupTypeTable(connector));
+		newTables.add(GroupUser = new GroupUserTable(connector));
+		newTables.add(Server = new ServerTable(connector));
+		newTables.add(Shell = new ShellTable(connector));
+		newTables.add(TimeZone = new TimeZoneTable(connector));
+		newTables.add(User = new UserTable(connector));
+		newTables.add(UserServer = new UserServerTable(connector));
+		newTables.add(UserType = new UserTypeTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

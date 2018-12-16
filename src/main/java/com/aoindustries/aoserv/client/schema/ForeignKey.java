@@ -67,7 +67,7 @@ final public class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
 	}
 
 	public Column getColumn(AOServConnector connector) throws SQLException, IOException {
-		Column obj = connector.getSchema().getSchemaColumns().get(column);
+		Column obj = connector.getSchema().getColumn().get(column);
 		if(obj == null) throw new SQLException("Unable to find SchemaColumn: " + column);
 		return obj;
 	}
@@ -77,7 +77,7 @@ final public class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
 	}
 
 	public Column getForeignColumn(AOServConnector connector) throws SQLException, IOException {
-		Column obj = connector.getSchema().getSchemaColumns().get(foreignColumn);
+		Column obj = connector.getSchema().getColumn().get(foreignColumn);
 		if(obj == null) throw new SQLException("Unable to find SchemaColumn: " + foreignColumn);
 		return obj;
 	}
@@ -87,7 +87,7 @@ final public class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
 	}
 
 	public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
-		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(sinceVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
 		return obj;
 	}
@@ -98,7 +98,7 @@ final public class ForeignKey extends GlobalObjectIntegerKey<ForeignKey> {
 
 	public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
 		if(lastVersion == null) return null;
-		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(lastVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
 		return obj;
 	}

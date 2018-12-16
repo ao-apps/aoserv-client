@@ -148,7 +148,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	public Account getBusiness() throws IOException, SQLException {
-		Account bu = table.getConnector().getAccount().getBusinesses().get(pkey);
+		Account bu = table.getConnector().getAccount().getAccount().get(pkey);
 		if(bu==null) throw new SQLException("Unable to find Business: "+pkey);
 		return bu;
 	}
@@ -170,7 +170,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	public UserServer getSmtpLinuxServerAccount() throws IOException, SQLException {
-		UserServer lsa = table.getConnector().getLinux().getLinuxServerAccounts().get(smtp_linux_server_account);
+		UserServer lsa = table.getConnector().getLinux().getUserServer().get(smtp_linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+smtp_linux_server_account);
 		return lsa;
 	}
@@ -188,7 +188,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	public UserServer getImapLinuxServerAccount() throws SQLException, IOException {
-		UserServer lsa = table.getConnector().getLinux().getLinuxServerAccounts().get(imap_linux_server_account);
+		UserServer lsa = table.getConnector().getLinux().getUserServer().get(imap_linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+imap_linux_server_account);
 		return lsa;
 	}
@@ -206,7 +206,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	public Address getSupportEmailAddress() throws IOException, SQLException {
-		Address ea = table.getConnector().getEmail().getEmailAddresses().get(support_email_address);
+		Address ea = table.getConnector().getEmail().getAddress().get(support_email_address);
 		if(ea==null) throw new SQLException("Unable to find EmailAddress: "+support_email_address);
 		return ea;
 	}
@@ -216,7 +216,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	public Address getSignupEmailAddress() throws IOException, SQLException {
-		Address ea = table.getConnector().getEmail().getEmailAddresses().get(signup_email_address);
+		Address ea = table.getConnector().getEmail().getAddress().get(signup_email_address);
 		if(ea==null) throw new SQLException("Unable to find EmailAddress: "+signup_email_address);
 		return ea;
 	}
@@ -226,25 +226,25 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	public EncryptionKey getTicketEncryptionFrom() throws IOException, SQLException {
-		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(ticket_encryption_from);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(ticket_encryption_from);
 		if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+ticket_encryption_from);
 		return ek;
 	}
 
 	public EncryptionKey getTicketEncryptionRecipient() throws IOException, SQLException {
-		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(ticket_encryption_recipient);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(ticket_encryption_recipient);
 		if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+ticket_encryption_recipient);
 		return ek;
 	}
 
 	public EncryptionKey getSignupEncryptionFrom() throws IOException, SQLException {
-		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(signup_encryption_from);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(signup_encryption_from);
 		if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+signup_encryption_from);
 		return ek;
 	}
 
 	public EncryptionKey getSignupEncryptionRecipient() throws IOException, SQLException {
-		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(signup_encryption_recipient);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(signup_encryption_recipient);
 		if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+signup_encryption_recipient);
 		return ek;
 	}
@@ -326,7 +326,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	}
 
 	public Bind getAowebStrutsVncBind() throws IOException, SQLException {
-		Bind nb = table.getConnector().getNet().getNetBinds().get(aoweb_struts_vnc_bind);
+		Bind nb = table.getConnector().getNet().getBind().get(aoweb_struts_vnc_bind);
 		if(nb==null) throw new SQLException("Unable to find NetBind: "+aoweb_struts_vnc_bind);
 		return nb;
 	}
@@ -488,11 +488,11 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	 * Gets the Reseller for this Brand or <code>null</code> if not a reseller.
 	 */
 	public Reseller getReseller() throws IOException, SQLException {
-		return table.getConnector().getReseller().getResellers().getReseller(this);
+		return table.getConnector().getReseller().getReseller().getReseller(this);
 	}
 
 	public List<BrandCategory> getTicketBrandCategories() throws IOException, SQLException {
-		return table.getConnector().getReseller().getTicketBrandCategories().getTicketBrandCategories(this);
+		return table.getConnector().getReseller().getBrandCategory().getTicketBrandCategories(this);
 	}
 
 	/**
@@ -515,7 +515,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	 */
 	public List<Brand> getChildBrands() throws IOException, SQLException {
 		List<Brand> children = new ArrayList<>();
-		for(Brand brand : table.getConnector().getReseller().getBrands().getRows()) {
+		for(Brand brand : table.getConnector().getReseller().getBrand().getRows()) {
 			if(!brand.equals(this) && this.equals(brand.getParentBrand())) children.add(brand);
 		}
 		return children;

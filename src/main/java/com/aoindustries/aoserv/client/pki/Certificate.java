@@ -138,13 +138,13 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server obj = table.getConnector().getLinux().getAoServers().get(pkey);
+		Server obj = table.getConnector().getLinux().getServer().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find AOServer: " + pkey);
 		return obj;
 	}
 
 	public Package getPackage() throws IOException, SQLException {
-		Package obj = table.getConnector().getBilling().getPackages().get(packageNum);
+		Package obj = table.getConnector().getBilling().getPackage().get(packageNum);
 		if(obj == null) throw new SQLException("Unable to find Package: " + packageNum);
 		return obj;
 	}
@@ -182,39 +182,39 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 	}
 
 	public List<CertificateName> getNames() throws IOException, SQLException {
-		return table.getConnector().getPki().getSslCertificateNames().getNames(this);
+		return table.getConnector().getPki().getCertificateName().getNames(this);
 	}
 
 	public CertificateName getCommonName() throws SQLException, IOException {
-		return table.getConnector().getPki().getSslCertificateNames().getCommonName(this);
+		return table.getConnector().getPki().getCertificateName().getCommonName(this);
 	}
 
 	public List<CertificateName> getAltNames() throws IOException, SQLException {
-		return table.getConnector().getPki().getSslCertificateNames().getAltNames(this);
+		return table.getConnector().getPki().getCertificateName().getAltNames(this);
 	}
 
 	public List<CertificateOtherUse> getOtherUses() throws IOException, SQLException {
-		return table.getConnector().getPki().getSslCertificateOtherUses().getOtherUses(this);
+		return table.getConnector().getPki().getCertificateOtherUse().getOtherUses(this);
 	}
 
 	public List<CyrusImapdBind> getCyrusImapdBinds() throws IOException, SQLException {
-		return table.getConnector().getEmail().getCyrusImapdBinds().getCyrusImapdBinds(this);
+		return table.getConnector().getEmail().getCyrusImapdBind().getCyrusImapdBinds(this);
 	}
 
 	public List<CyrusImapdServer> getCyrusImapdServers() throws IOException, SQLException {
-		return table.getConnector().getEmail().getCyrusImapdServers().getCyrusImapdServers(this);
+		return table.getConnector().getEmail().getCyrusImapdServer().getCyrusImapdServers(this);
 	}
 
 	public List<VirtualHost> getHttpdSiteBinds() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSiteBinds().getHttpdSiteBinds(this);
+		return table.getConnector().getWeb().getVirtualHost().getHttpdSiteBinds(this);
 	}
 
 	public List<SendmailServer> getSendmailServersByServerCertificate() throws IOException, SQLException {
-		return table.getConnector().getEmail().getSendmailServers().getSendmailServersByServerCertificate(this);
+		return table.getConnector().getEmail().getSendmailServer().getSendmailServersByServerCertificate(this);
 	}
 
 	public List<SendmailServer> getSendmailServersByClientCertificate() throws IOException, SQLException {
-		return table.getConnector().getEmail().getSendmailServers().getSendmailServersByClientCertificate(this);
+		return table.getConnector().getEmail().getSendmailServer().getSendmailServersByClientCertificate(this);
 	}
 
 	public static class Check implements Serializable {

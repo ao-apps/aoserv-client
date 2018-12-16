@@ -188,15 +188,15 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	int disable_log;
 
 	public void addFTPGuestUser() throws IOException, SQLException {
-		table.getConnector().getFtp().getFtpGuestUsers().addFTPGuestUser(pkey);
+		table.getConnector().getFtp().getGuestUser().addFTPGuestUser(pkey);
 	}
 
 	public void addLinuxGroup(Group group) throws IOException, SQLException {
-		table.getConnector().getLinux().getLinuxGroupAccounts().addLinuxGroupAccount(group, this);
+		table.getConnector().getLinux().getGroupUser().addLinuxGroupAccount(group, this);
 	}
 
 	public int addLinuxServerAccount(Server aoServer, UnixPath home) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerAccounts().addLinuxServerAccount(this, aoServer, home);
+		return table.getConnector().getLinux().getUserServer().addLinuxServerAccount(this, aoServer, home);
 	}
 
 	@Override
@@ -277,13 +277,13 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
 
 	public GuestUser getFTPGuestUser() throws IOException, SQLException {
-		return table.getConnector().getFtp().getFtpGuestUsers().get(pkey);
+		return table.getConnector().getFtp().getGuestUser().get(pkey);
 	}
 
 	public Gecos getHomePhone() {
@@ -291,15 +291,15 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	}
 
 	public List<Group> getLinuxGroups() throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxGroupAccounts().getLinuxGroups(this);
+		return table.getConnector().getLinux().getGroupUser().getLinuxGroups(this);
 	}
 
 	public UserServer getLinuxServerAccount(Server aoServer) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerAccounts().getLinuxServerAccount(aoServer, pkey);
+		return table.getConnector().getLinux().getUserServer().getLinuxServerAccount(aoServer, pkey);
 	}
 
 	public List<UserServer> getLinuxServerAccounts() throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerAccounts().getLinuxServerAccounts(this);
+		return table.getConnector().getLinux().getUserServer().getLinuxServerAccounts(this);
 	}
 
 	public Gecos getName() {
@@ -315,11 +315,11 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	}
 
 	public Group getPrimaryGroup() throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxGroupAccounts().getPrimaryGroup(this);
+		return table.getConnector().getLinux().getGroupUser().getPrimaryGroup(this);
 	}
 
 	public Shell getShell() throws SQLException, IOException {
-		Shell shellObject = table.getConnector().getLinux().getShells().get(shell);
+		Shell shellObject = table.getConnector().getLinux().getShell().get(shell);
 		if (shellObject == null) throw new SQLException("Unable to find Shell: " + shell);
 		return shellObject;
 	}
@@ -330,7 +330,7 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	}
 
 	public UserType getType() throws IOException, SQLException {
-		UserType typeObject = table.getConnector().getLinux().getLinuxAccountTypes().get(type);
+		UserType typeObject = table.getConnector().getLinux().getUserType().get(type);
 		if (typeObject == null) throw new IllegalArgumentException(new SQLException("Unable to find LinuxAccountType: " + type));
 		return typeObject;
 	}
@@ -340,7 +340,7 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	}
 
 	public Username getUsername() throws SQLException, IOException {
-		Username usernameObject = table.getConnector().getAccount().getUsernames().get(pkey);
+		Username usernameObject = table.getConnector().getAccount().getUsername().get(pkey);
 		if (usernameObject == null) throw new SQLException("Unable to find Username: " + pkey);
 		return usernameObject;
 	}
@@ -441,7 +441,7 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	}
 
 	public void removeLinuxGroup(Group group) throws IOException, SQLException {
-		for(GroupUser lga : table.getConnector().getLinux().getLinuxGroupAccounts().getLinuxGroupAccounts(group.getName(), pkey)) {
+		for(GroupUser lga : table.getConnector().getLinux().getGroupUser().getLinuxGroupAccounts(group.getName(), pkey)) {
 			lga.remove();
 		}
 	}
@@ -501,7 +501,7 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	}
 
 	public void setPrimaryLinuxGroup(Group group) throws SQLException, IOException {
-		List<GroupUser> lgas = table.getConnector().getLinux().getLinuxGroupAccounts().getLinuxGroupAccounts(group.getName(), pkey);
+		List<GroupUser> lgas = table.getConnector().getLinux().getGroupUser().getLinuxGroupAccounts(group.getName(), pkey);
 		if(lgas.isEmpty()) throw new SQLException("Unable to find LinuxGroupAccount for username="+pkey+" and group="+group.getName());
 		if(lgas.size() > 1) throw new SQLException("Found more than one LinuxGroupAccount for username="+pkey+" and group="+group.getName());
 		lgas.get(0).setAsPrimary();

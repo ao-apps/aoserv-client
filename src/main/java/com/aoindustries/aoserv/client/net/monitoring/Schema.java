@@ -34,8 +34,8 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final IpAddressMonitoringTable ipAddressMonitoringTable;
-	public IpAddressMonitoringTable getIpAddressMonitoring() {return ipAddressMonitoringTable;}
+	private final IpAddressMonitoringTable IpAddressMonitoring;
+	public IpAddressMonitoringTable getIpAddressMonitoring() {return IpAddressMonitoring;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -43,7 +43,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(ipAddressMonitoringTable = new IpAddressMonitoringTable(connector));
+		newTables.add(IpAddressMonitoring = new IpAddressMonitoringTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

@@ -99,7 +99,7 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 	}
 
 	public Host getServer() throws SQLException, IOException {
-		Host se = table.getConnector().getNet().getServers().get(server);
+		Host se = table.getConnector().getNet().getHost().get(server);
 		if(se == null) throw new SQLException("Unable to find Server: " + server);
 		return se;
 	}
@@ -109,7 +109,7 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 	}
 
 	public DeviceId getDeviceId() throws SQLException, IOException {
-		DeviceId obj = table.getConnector().getNet().getNetDeviceIDs().get(deviceId);
+		DeviceId obj = table.getConnector().getNet().getDeviceId().get(deviceId);
 		if(obj == null) throw new SQLException("Unable to find NetDeviceID: " + deviceId);
 		return obj;
 	}
@@ -279,11 +279,11 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 	}
 
 	public IpAddress getIPAddress(InetAddress inetAddress) throws IOException, SQLException {
-		return table.getConnector().getNet().getIpAddresses().getIPAddress(this, inetAddress);
+		return table.getConnector().getNet().getIpAddress().getIPAddress(this, inetAddress);
 	}
 
 	public List<IpAddress> getIPAddresses() throws IOException, SQLException {
-		return table.getConnector().getNet().getIpAddresses().getIPAddresses(this);
+		return table.getConnector().getNet().getIpAddress().getIPAddresses(this);
 	}
 
 	public IpAddress getPrimaryIPAddress() throws SQLException, IOException {

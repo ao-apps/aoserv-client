@@ -34,29 +34,29 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final BackupPartitionTable backupPartitionTable;
-	public BackupPartitionTable getBackupPartitions() {return backupPartitionTable;}
+	private final BackupPartitionTable BackupPartition;
+	public BackupPartitionTable getBackupPartition() {return BackupPartition;}
 
-	private final BackupReportTable backupReportTable;
-	public BackupReportTable getBackupReports() {return backupReportTable;}
+	private final BackupReportTable BackupReport;
+	public BackupReportTable getBackupReport() {return BackupReport;}
 
-	private final BackupRetentionTable backupRetentionTable;
-	public BackupRetentionTable getBackupRetentions() {return backupRetentionTable;}
+	private final BackupRetentionTable BackupRetention;
+	public BackupRetentionTable getBackupRetention() {return BackupRetention;}
 
-	private final FileReplicationTable fileReplicationTable;
-	public FileReplicationTable getFailoverFileReplications() {return fileReplicationTable;}
+	private final FileReplicationTable FileReplication;
+	public FileReplicationTable getFileReplication() {return FileReplication;}
 
-	private final FileReplicationLogTable fileReplicationLogTable;
-	public FileReplicationLogTable getFailoverFileLogs() {return fileReplicationLogTable;}
+	private final FileReplicationLogTable FileReplicationLog;
+	public FileReplicationLogTable getFileReplicationLog() {return FileReplicationLog;}
 
-	private final FileReplicationScheduleTable fileReplicationScheduleTable;
-	public FileReplicationScheduleTable getFailoverFileSchedules() {return fileReplicationScheduleTable;}
+	private final FileReplicationScheduleTable FileReplicationSchedule;
+	public FileReplicationScheduleTable getFileReplicationSchedule() {return FileReplicationSchedule;}
 
-	private final FileReplicationSettingTable fileReplicationSettingTable;
-	public FileReplicationSettingTable getFileBackupSettings() {return fileReplicationSettingTable;}
+	private final FileReplicationSettingTable FileReplicationSetting;
+	public FileReplicationSettingTable getFileReplicationSetting() {return FileReplicationSetting;}
 
-	private final MysqlReplicationTable mysqlReplicationTable;
-	public MysqlReplicationTable getFailoverMySQLReplications() {return mysqlReplicationTable;}
+	private final MysqlReplicationTable MysqlReplication;
+	public MysqlReplicationTable getMysqlReplication() {return MysqlReplication;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -64,14 +64,14 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(backupPartitionTable = new BackupPartitionTable(connector));
-		newTables.add(backupReportTable = new BackupReportTable(connector));
-		newTables.add(backupRetentionTable = new BackupRetentionTable(connector));
-		newTables.add(fileReplicationTable = new FileReplicationTable(connector));
-		newTables.add(fileReplicationLogTable = new FileReplicationLogTable(connector));
-		newTables.add(fileReplicationScheduleTable = new FileReplicationScheduleTable(connector));
-		newTables.add(fileReplicationSettingTable = new FileReplicationSettingTable(connector));
-		newTables.add(mysqlReplicationTable = new MysqlReplicationTable(connector));
+		newTables.add(BackupPartition = new BackupPartitionTable(connector));
+		newTables.add(BackupReport = new BackupReportTable(connector));
+		newTables.add(BackupRetention = new BackupRetentionTable(connector));
+		newTables.add(FileReplication = new FileReplicationTable(connector));
+		newTables.add(FileReplicationLog = new FileReplicationLogTable(connector));
+		newTables.add(FileReplicationSchedule = new FileReplicationScheduleTable(connector));
+		newTables.add(FileReplicationSetting = new FileReplicationSettingTable(connector));
+		newTables.add(MysqlReplication = new MysqlReplicationTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

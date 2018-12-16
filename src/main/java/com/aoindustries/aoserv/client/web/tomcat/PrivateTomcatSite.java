@@ -79,7 +79,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 	}
 
 	public Site getHttpdTomcatSite() throws SQLException, IOException {
-		Site obj=table.getConnector().getWeb_tomcat().getHttpdTomcatSites().get(pkey);
+		Site obj=table.getConnector().getWeb_tomcat().getSite().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
 		return obj;
 	}
@@ -149,7 +149,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 
 	public Bind getTomcat4ShutdownPort() throws IOException, SQLException {
 		if(tomcat4_shutdown_port==-1) return null;
-		Bind nb=table.getConnector().getNet().getNetBinds().get(tomcat4_shutdown_port);
+		Bind nb=table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
 		if(nb==null) throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
 		return nb;
 	}

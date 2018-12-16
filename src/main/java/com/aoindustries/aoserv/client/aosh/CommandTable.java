@@ -103,7 +103,7 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 		if(command.equalsIgnoreCase(Command.HELP) || command.equals("?")) {
 			int argCount=args.length;
 			if(argCount==1) {
-				TableTable schemaTableTable=connector.getSchema().getSchemaTables();
+				TableTable schemaTableTable=connector.getSchema().getTable();
 				for(int c=-1;c<numTables;c++) {
 					Table schemaTable=c==-1?null:schemaTableTable.get(c);
 					String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');
@@ -113,7 +113,7 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 				out.flush();
 			} else if(argCount==2) {
 				if(args[1].equals("syntax")) {
-					TableTable schemaTableTable=connector.getSchema().getSchemaTables();
+					TableTable schemaTableTable=connector.getSchema().getTable();
 					for(int c=-1;c<numTables;c++) {
 						Table schemaTable=c==-1?null:schemaTableTable.get(c);
 						String title=c==-1?"Global Commands:":(schemaTable.getDisplay()+':');

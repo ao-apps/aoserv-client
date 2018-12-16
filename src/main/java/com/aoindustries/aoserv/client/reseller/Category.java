@@ -72,7 +72,7 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 	 */
 	public Category getParent() throws IOException, SQLException {
 		if(parent==-1) return null;
-		Category tc = table.getConnector().getReseller().getTicketCategories().get(parent);
+		Category tc = table.getConnector().getReseller().getCategory().get(parent);
 		if(tc==null) throw new SQLException("Unable to find TicketCategory: "+parent);
 		return tc;
 	}
@@ -126,10 +126,10 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 	}
 
 	public List<BrandCategory> getTicketBrandCategorys() throws IOException, SQLException {
-		return table.getConnector().getReseller().getTicketBrandCategories().getTicketBrandCategories(this);
+		return table.getConnector().getReseller().getBrandCategory().getTicketBrandCategories(this);
 	}
 
 	public List<Category> getChildrenCategories() throws IOException, SQLException {
-		return table.getConnector().getReseller().getTicketCategories().getChildrenCategories(this);
+		return table.getConnector().getReseller().getCategory().getChildrenCategories(this);
 	}
 }

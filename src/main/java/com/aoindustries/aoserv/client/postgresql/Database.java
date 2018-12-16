@@ -225,7 +225,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	public UserServer getDatDBA() throws SQLException, IOException {
-		UserServer obj=table.getConnector().getPostgresql().getPostgresServerUsers().get(datdba);
+		UserServer obj=table.getConnector().getPostgresql().getUserServer().get(datdba);
 		if(obj==null) throw new SQLException("Unable to find PostgresServerUser: "+datdba);
 		return obj;
 	}
@@ -283,7 +283,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	public Encoding getPostgresEncoding() throws SQLException, IOException {
-		Encoding obj=table.getConnector().getPostgresql().getPostgresEncodings().get(encoding);
+		Encoding obj=table.getConnector().getPostgresql().getEncoding().get(encoding);
 		if(obj==null) throw new SQLException("Unable to find PostgresEncoding: "+encoding);
 		// Make sure the postgres encoding postgresql version matches the server this database is part of
 		if(
@@ -297,7 +297,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	public Server getPostgresServer() throws SQLException, IOException {
-		Server obj=table.getConnector().getPostgresql().getPostgresServers().get(postgres_server);
+		Server obj=table.getConnector().getPostgresql().getServer().get(postgres_server);
 		if(obj==null) throw new SQLException("Unable to find PostgresServer: "+postgres_server);
 		return obj;
 	}

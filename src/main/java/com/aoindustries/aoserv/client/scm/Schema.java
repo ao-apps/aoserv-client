@@ -34,8 +34,8 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final CvsRepositoryTable cvsRepositories;
-	public CvsRepositoryTable getCvsRepositories() {return cvsRepositories;}
+	private final CvsRepositoryTable CvsRepository;
+	public CvsRepositoryTable getCvsRepository() {return CvsRepository;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -43,7 +43,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(cvsRepositories = new CvsRepositoryTable(connector));
+		newTables.add(CvsRepository = new CvsRepositoryTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

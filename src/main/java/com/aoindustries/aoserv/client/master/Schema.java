@@ -34,26 +34,26 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final AdministratorPermissionTable administratorPermissionTable;
-	public AdministratorPermissionTable getBusinessAdministratorPermissions() {return administratorPermissionTable;}
+	private final AdministratorPermissionTable AdministratorPermission;
+	public AdministratorPermissionTable getAdministratorPermission() {return AdministratorPermission;}
 
-	private final ProcessTable processTable;
-	public ProcessTable getMasterProcesses() {return processTable;}
+	private final ProcessTable Process;
+	public ProcessTable getProcess() {return Process;}
 
-	private final ServerStatTable serverStatTable;
-	public ServerStatTable getMasterServerStats() {return serverStatTable;}
+	private final ServerStatTable ServerStat;
+	public ServerStatTable getServerStat() {return ServerStat;}
 
-	private final PermissionTable permissionTable;
-	public PermissionTable getAoservPermissions() {return permissionTable;}
+	private final PermissionTable Permission;
+	public PermissionTable getPermission() {return Permission;}
 
-	private final UserTable userTable;
-	public UserTable getMasterUsers() {return userTable;}
+	private final UserTable User;
+	public UserTable getUser() {return User;}
 
-	private final UserAclTable userAclTable;
-	public UserAclTable getMasterHosts() {return userAclTable;}
+	private final UserAclTable UserAcl;
+	public UserAclTable getUserAcl() {return UserAcl;}
 
-	private final UserHostTable userHostTable;
-	public UserHostTable getMasterServers() {return userHostTable;}
+	private final UserHostTable UserHost;
+	public UserHostTable getUserHost() {return UserHost;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -61,13 +61,13 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(administratorPermissionTable = new AdministratorPermissionTable(connector));
-		newTables.add(processTable = new ProcessTable(connector));
-		newTables.add(serverStatTable = new ServerStatTable(connector));
-		newTables.add(permissionTable = new PermissionTable(connector));
-		newTables.add(userTable = new com.aoindustries.aoserv.client.master.UserTable(connector));
-		newTables.add(userAclTable = new UserAclTable(connector));
-		newTables.add(userHostTable = new UserHostTable(connector));
+		newTables.add(AdministratorPermission = new AdministratorPermissionTable(connector));
+		newTables.add(Process = new ProcessTable(connector));
+		newTables.add(ServerStat = new ServerStatTable(connector));
+		newTables.add(Permission = new PermissionTable(connector));
+		newTables.add(User = new com.aoindustries.aoserv.client.master.UserTable(connector));
+		newTables.add(UserAcl = new UserAclTable(connector));
+		newTables.add(UserHost = new UserHostTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

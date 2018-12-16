@@ -34,41 +34,41 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final MonthlyChargeTable monthlyChargeTable;
-	public MonthlyChargeTable getMonthlyCharges() {return monthlyChargeTable;}
+	private final MonthlyChargeTable MonthlyCharge;
+	public MonthlyChargeTable getMonthlyCharge() {return MonthlyCharge;}
 
-	private final NoticeLogTable noticeLogTable;
-	public NoticeLogTable getNoticeLogs() {return noticeLogTable;}
+	private final NoticeLogTable NoticeLog;
+	public NoticeLogTable getNoticeLog() {return NoticeLog;}
 
-	private final NoticeTypeTable noticeTypeTable;
-	public NoticeTypeTable getNoticeTypes() {return noticeTypeTable;}
+	private final NoticeTypeTable NoticeType;
+	public NoticeTypeTable getNoticeType() {return NoticeType;}
 
-	private final PackageTable packageTable;
-	public PackageTable getPackages() {return packageTable;}
+	private final PackageTable Package;
+	public PackageTable getPackage() {return Package;}
 
-	private final PackageCategoryTable packageCategoryTable;
-	public PackageCategoryTable getPackageCategories() {return packageCategoryTable;}
+	private final PackageCategoryTable PackageCategory;
+	public PackageCategoryTable getPackageCategory() {return PackageCategory;}
 
-	private final PackageDefinitionTable packageDefinitionTable;
-	public PackageDefinitionTable getPackageDefinitions() {return packageDefinitionTable;}
+	private final PackageDefinitionTable PackageDefinition;
+	public PackageDefinitionTable getPackageDefinition() {return PackageDefinition;}
 
-	private final PackageDefinitionLimitTable packageDefinitionLimitTable;
-	public PackageDefinitionLimitTable getPackageDefinitionLimits() {return packageDefinitionLimitTable;}
+	private final PackageDefinitionLimitTable PackageDefinitionLimit;
+	public PackageDefinitionLimitTable getPackageDefinitionLimit() {return PackageDefinitionLimit;}
 
-	private final ResourceTable resourceTable;
-	public ResourceTable getResources() {return resourceTable;}
+	private final ResourceTable Resource;
+	public ResourceTable getResource() {return Resource;}
 
-	private final TransactionTable transactionTable;
-	public TransactionTable getTransactions() {return transactionTable;}
+	private final TransactionTable Transaction;
+	public TransactionTable getTransaction() {return Transaction;}
 
-	private final TransactionTypeTable transactionTypeTable;
-	public TransactionTypeTable getTransactionTypes() {return transactionTypeTable;}
+	private final TransactionTypeTable TransactionType;
+	public TransactionTypeTable getTransactionType() {return TransactionType;}
 
-	private final WhoisHistoryTable whoisHistoryTable;
-	public WhoisHistoryTable getWhoisHistory() {return whoisHistoryTable;}
+	private final WhoisHistoryTable WhoisHistory;
+	public WhoisHistoryTable getWhoisHistory() {return WhoisHistory;}
 
-	private final WhoisHistoryAccountTable whoisHistoryAccountTable;
-	public WhoisHistoryAccountTable getWhoisHistoryAccount() {return whoisHistoryAccountTable;}
+	private final WhoisHistoryAccountTable WhoisHistoryAccount;
+	public WhoisHistoryAccountTable getWhoisHistoryAccount() {return WhoisHistoryAccount;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -76,18 +76,18 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(monthlyChargeTable = new MonthlyChargeTable(connector));
-		newTables.add(noticeLogTable = new NoticeLogTable(connector));
-		newTables.add(noticeTypeTable = new NoticeTypeTable(connector));
-		newTables.add(packageTable = new PackageTable(connector));
-		newTables.add(packageCategoryTable = new PackageCategoryTable(connector));
-		newTables.add(packageDefinitionTable = new PackageDefinitionTable(connector));
-		newTables.add(packageDefinitionLimitTable = new PackageDefinitionLimitTable(connector));
-		newTables.add(resourceTable = new ResourceTable(connector));
-		newTables.add(transactionTable = new TransactionTable(connector));
-		newTables.add(transactionTypeTable = new TransactionTypeTable(connector));
-		newTables.add(whoisHistoryTable = new WhoisHistoryTable(connector));
-		newTables.add(whoisHistoryAccountTable = new WhoisHistoryAccountTable(connector));
+		newTables.add(MonthlyCharge = new MonthlyChargeTable(connector));
+		newTables.add(NoticeLog = new NoticeLogTable(connector));
+		newTables.add(NoticeType = new NoticeTypeTable(connector));
+		newTables.add(Package = new PackageTable(connector));
+		newTables.add(PackageCategory = new PackageCategoryTable(connector));
+		newTables.add(PackageDefinition = new PackageDefinitionTable(connector));
+		newTables.add(PackageDefinitionLimit = new PackageDefinitionLimitTable(connector));
+		newTables.add(Resource = new ResourceTable(connector));
+		newTables.add(Transaction = new TransactionTable(connector));
+		newTables.add(TransactionType = new TransactionTypeTable(connector));
+		newTables.add(WhoisHistory = new WhoisHistoryTable(connector));
+		newTables.add(WhoisHistoryAccount = new WhoisHistoryAccountTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

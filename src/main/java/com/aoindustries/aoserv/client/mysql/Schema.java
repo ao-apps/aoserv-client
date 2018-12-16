@@ -34,28 +34,20 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final DatabaseTable mysqlDatabases;
-	public DatabaseTable getMysqlDatabases() {
-		return mysqlDatabases;
-	}
+	private final DatabaseTable Database;
+	public DatabaseTable getDatabase() {return Database;}
 
-	private final DatabaseUserTable mysqlDBUsers;
-	public DatabaseUserTable getMysqlDBUsers() {
-		return mysqlDBUsers;
-	}
+	private final DatabaseUserTable DatabaseUser;
+	public DatabaseUserTable getDatabaseUser() {return DatabaseUser;}
 
-	private final ServerTable mysqlServers;
-	public ServerTable getMysqlServers() {return mysqlServers;}
+	private final ServerTable Server;
+	public ServerTable getServer() {return Server;}
 
-	private final UserTable mysqlUsers;
-	public UserTable getMysqlUsers() {
-		return mysqlUsers;
-	}
+	private final UserTable User;
+	public UserTable getUser() {return User;}
 
-	private final UserServerTable mysqlServerUsers;
-	public UserServerTable getMysqlServerUsers() {
-		return mysqlServerUsers;
-	}
+	private final UserServerTable UserServer;
+	public UserServerTable getUserServer() {return UserServer;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -63,11 +55,11 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(mysqlDatabases = new DatabaseTable(connector));
-		newTables.add(mysqlDBUsers = new DatabaseUserTable(connector));
-		newTables.add(mysqlServers = new ServerTable(connector));
-		newTables.add(mysqlUsers = new UserTable(connector));
-		newTables.add(mysqlServerUsers = new UserServerTable(connector));
+		newTables.add(Database = new DatabaseTable(connector));
+		newTables.add(DatabaseUser = new DatabaseUserTable(connector));
+		newTables.add(Server = new ServerTable(connector));
+		newTables.add(User = new UserTable(connector));
+		newTables.add(UserServer = new UserServerTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

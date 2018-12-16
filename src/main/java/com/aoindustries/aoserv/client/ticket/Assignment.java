@@ -70,19 +70,19 @@ final public class Assignment extends CachedObjectIntegerKey<Assignment> {
 	}
 
 	public Ticket getTicket() throws IOException, SQLException {
-		Ticket t = table.getConnector().getTicket().getTickets().get(ticket);
+		Ticket t = table.getConnector().getTicket().getTicket().get(ticket);
 		if(t==null) throw new SQLException("Unable to find Ticket: "+ticket);
 		return t;
 	}
 
 	public Reseller getReseller() throws IOException, SQLException {
-		Reseller r = table.getConnector().getReseller().getResellers().get(reseller);
+		Reseller r = table.getConnector().getReseller().getReseller().get(reseller);
 		if(r==null) throw new SQLException("Unable to find Reseller: "+reseller);
 		return r;
 	}
 
 	public Administrator getBusinessAdministrator() throws IOException, SQLException {
-		Administrator ba = table.getConnector().getAccount().getBusinessAdministrators().get(administrator);
+		Administrator ba = table.getConnector().getAccount().getAdministrator().get(administrator);
 		if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+administrator);
 		return ba;
 		//Username un=table.getConnector().getUsernames().get(administrator);

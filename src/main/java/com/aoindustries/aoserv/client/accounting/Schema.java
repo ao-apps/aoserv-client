@@ -34,30 +34,20 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final BankTable bankTable;
-	public BankTable getBanks() {
-		return bankTable;
-	}
+	private final BankTable Bank;
+	public BankTable getBank() {return Bank;}
 
-	private final BankAccountTable bankAccountTable;
-	public BankAccountTable getBankAccounts() {
-		return bankAccountTable;
-	}
+	private final BankAccountTable BankAccount;
+	public BankAccountTable getBankAccount() {return BankAccount;}
 
-	private final BankTransactionTable bankTransactionTable;
-	public BankTransactionTable getBankTransactions() {
-		return bankTransactionTable;
-	}
+	private final BankTransactionTable BankTransaction;
+	public BankTransactionTable getBankTransaction() {return BankTransaction;}
 
-	private final BankTransactionTypeTable bankTransactionTypeTable;
-	public BankTransactionTypeTable getBankTransactionTypes() {
-		return bankTransactionTypeTable;
-	}
+	private final BankTransactionTypeTable BankTransactionType;
+	public BankTransactionTypeTable getBankTransactionType() {return BankTransactionType;}
 
-	private final ExpenseCategoryTable expenseCategoryTable;
-	public ExpenseCategoryTable getExpenseCategories() {
-		return expenseCategoryTable;
-	}
+	private final ExpenseCategoryTable ExpenseCategory;
+	public ExpenseCategoryTable getExpenseCategory() {return ExpenseCategory;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -65,11 +55,11 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(bankAccountTable = new BankAccountTable(connector));
-		newTables.add(bankTransactionTypeTable = new BankTransactionTypeTable(connector));
-		newTables.add(bankTransactionTable = new BankTransactionTable(connector));
-		newTables.add(bankTable = new BankTable(connector));
-		newTables.add(expenseCategoryTable = new ExpenseCategoryTable(connector));
+		newTables.add(BankAccount = new BankAccountTable(connector));
+		newTables.add(BankTransactionType = new BankTransactionTypeTable(connector));
+		newTables.add(BankTransaction = new BankTransactionTable(connector));
+		newTables.add(Bank = new BankTable(connector));
+		newTables.add(ExpenseCategory = new ExpenseCategoryTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

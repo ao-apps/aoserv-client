@@ -168,13 +168,13 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 * Gets the processor that is storing the credit card numbers.
 	 */
 	public Processor getCreditCardProcessor() throws SQLException, IOException {
-		Processor ccp = table.getConnector().getPayment().getCreditCardProcessors().get(processorId);
+		Processor ccp = table.getConnector().getPayment().getProcessor().get(processorId);
 		if(ccp==null) throw new SQLException("Unable to find CreditCardProcessor: "+processorId);
 		return ccp;
 	}
 
 	public Account getBusiness() throws SQLException, IOException {
-		Account business = table.getConnector().getAccount().getBusinesses().get(accounting);
+		Account business = table.getConnector().getAccount().getAccount().get(accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 		return business;
 	}
@@ -305,7 +305,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	public CountryCode getCountryCode() throws SQLException, IOException {
-		CountryCode countryCodeObj = table.getConnector().getPayment().getCountryCodes().get(this.countryCode);
+		CountryCode countryCodeObj = table.getConnector().getPayment().getCountryCode().get(this.countryCode);
 		if (countryCodeObj == null) throw new SQLException("Unable to find CountryCode: " + this.countryCode);
 		return countryCodeObj;
 	}
@@ -315,7 +315,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator business_administrator = table.getConnector().getAccount().getUsernames().get(createdBy).getBusinessAdministrator();
+		Administrator business_administrator = table.getConnector().getAccount().getUsername().get(createdBy).getBusinessAdministrator();
 		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + createdBy);
 		return business_administrator;
 	}
@@ -345,28 +345,28 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
 	public EncryptionKey getEncryptionCardNumberFrom() throws SQLException, IOException {
 		if(encryption_card_number_from==-1) return null;
-		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(encryption_card_number_from);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_card_number_from);
 		if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_card_number_from);
 		return ek;
 	}
 
 	public EncryptionKey getEncryptionCardNumberRecipient() throws SQLException, IOException {
 		if(encryption_card_number_recipient==-1) return null;
-		EncryptionKey er = table.getConnector().getPki().getEncryptionKeys().get(encryption_card_number_recipient);
+		EncryptionKey er = table.getConnector().getPki().getEncryptionKey().get(encryption_card_number_recipient);
 		if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_card_number_recipient);
 		return er;
 	}
 
 	public EncryptionKey getEncryptionExpirationFrom() throws SQLException, IOException {
 		if(encryption_expiration_from==-1) return null;
-		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(encryption_expiration_from);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_expiration_from);
 		if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_expiration_from);
 		return ek;
 	}
 
 	public EncryptionKey getEncryptionExpirationRecipient() throws SQLException, IOException {
 		if(encryption_expiration_recipient==-1) return null;
-		EncryptionKey er = table.getConnector().getPki().getEncryptionKeys().get(encryption_expiration_recipient);
+		EncryptionKey er = table.getConnector().getPki().getEncryptionKey().get(encryption_expiration_recipient);
 		if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_expiration_recipient);
 		return er;
 	}

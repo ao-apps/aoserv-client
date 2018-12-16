@@ -97,13 +97,13 @@ final public class SendmailBind extends CachedObjectIntegerKey<SendmailBind> {
 	}
 
 	public Bind getNetBind() throws SQLException, IOException {
-		Bind obj = table.getConnector().getNet().getNetBinds().get(pkey);
+		Bind obj = table.getConnector().getNet().getBind().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find NetBind: " + pkey);
 		return obj;
 	}
 
 	public SendmailServer getSendmailServer() throws SQLException, IOException {
-		SendmailServer obj = table.getConnector().getEmail().getSendmailServers().get(sendmail_server);
+		SendmailServer obj = table.getConnector().getEmail().getSendmailServer().get(sendmail_server);
 		if(obj == null) throw new SQLException("Unable to find SendmailServer: " + sendmail_server);
 		return obj;
 	}

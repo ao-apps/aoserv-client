@@ -72,7 +72,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 	AccountingCode packageName;
 
 	public int addEmailAddress(String address) throws SQLException, IOException {
-		return table.getConnector().getEmail().getEmailAddresses().addEmailAddress(address, this);
+		return table.getConnector().getEmail().getAddress().addEmailAddress(address, this);
 	}
 
 	public void addMajordomoServer(
@@ -80,7 +80,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 		GroupServer linuxServerGroup,
 		MajordomoVersion majordomoVersion
 	) throws IOException, SQLException {
-		table.getConnector().getEmail().getMajordomoServers().addMajordomoServer(
+		table.getConnector().getEmail().getMajordomoServer().addMajordomoServer(
 			this,
 			linuxServerAccount,
 			linuxServerGroup,
@@ -104,25 +104,25 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 	}
 
 	public Address getEmailAddress(String address) throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailAddresses().getEmailAddress(address, this);
+		return table.getConnector().getEmail().getAddress().getEmailAddress(address, this);
 	}
 
 	public List<Address> getEmailAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailAddresses().getEmailAddresses(this);
+		return table.getConnector().getEmail().getAddress().getEmailAddresses(this);
 	}
 
 	public MajordomoServer getMajordomoServer() throws IOException, SQLException {
-		return table.getConnector().getEmail().getMajordomoServers().get(pkey);
+		return table.getConnector().getEmail().getMajordomoServer().get(pkey);
 	}
 
 	public Package getPackage() throws SQLException, IOException {
-		Package packageObject = table.getConnector().getBilling().getPackages().get(packageName);
+		Package packageObject = table.getConnector().getBilling().getPackage().get(packageName);
 		if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 		return packageObject;
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server ao=table.getConnector().getLinux().getAoServers().get(ao_server);
+		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
 		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return ao;
 	}

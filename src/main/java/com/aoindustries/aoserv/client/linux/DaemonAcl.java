@@ -70,7 +70,7 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server ao=table.getConnector().getLinux().getAoServers().get(aoServer);
+		Server ao=table.getConnector().getLinux().getServer().get(aoServer);
 		if(ao==null) throw new SQLException("Unable to find AOServer: "+aoServer);
 		return ao;
 	}

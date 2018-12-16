@@ -91,7 +91,7 @@ final public class JkMount extends CachedObjectIntegerKey<JkMount> implements Re
 	}
 
 	public Site getHttpdTomcatSite() throws SQLException, IOException {
-		Site obj = table.getConnector().getWeb_tomcat().getHttpdTomcatSites().get(httpd_tomcat_site);
+		Site obj = table.getConnector().getWeb_tomcat().getSite().get(httpd_tomcat_site);
 		if(obj == null) throw new SQLException("Unable to find HttpdTomcatSite: " + httpd_tomcat_site);
 		return obj;
 	}

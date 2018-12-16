@@ -119,7 +119,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	}
 
 	public Account getBusiness() throws SQLException, IOException {
-		Account business=table.getConnector().getAccount().getBusinesses().get(accounting);
+		Account business=table.getConnector().getAccount().getAccount().get(accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 		return business;
 	}
@@ -161,7 +161,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	}
 
 	public CountryCode getCountry() throws SQLException, IOException {
-		CountryCode countryCode = table.getConnector().getPayment().getCountryCodes().get(country);
+		CountryCode countryCode = table.getConnector().getPayment().getCountryCode().get(country);
 		if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
 		return countryCode;
 	}

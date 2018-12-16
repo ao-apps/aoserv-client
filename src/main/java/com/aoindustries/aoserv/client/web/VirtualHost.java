@@ -188,13 +188,13 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	}
 
 	public Site getHttpdSite() throws SQLException, IOException {
-		Site obj = table.getConnector().getWeb().getHttpdSites().get(httpd_site);
+		Site obj = table.getConnector().getWeb().getSite().get(httpd_site);
 		if(obj == null) throw new SQLException("Unable to find HttpdSite: " + httpd_site);
 		return obj;
 	}
 
 	public HttpdBind getHttpdBind() throws SQLException, IOException {
-		HttpdBind obj = table.getConnector().getWeb().getHttpdBinds().get(httpd_bind);
+		HttpdBind obj = table.getConnector().getWeb().getHttpdBind().get(httpd_bind);
 		if(obj == null) throw new SQLException("Unable to find HttpdBind: " + httpd_bind + " for HttpdSite=" + httpd_site);
 		return obj;
 	}
@@ -246,13 +246,13 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 		}
 		if(certificate == -1) return null;
 		// May be filtered
-		return table.getConnector().getPki().getSslCertificates().get(certificate);
+		return table.getConnector().getPki().getCertificate().get(certificate);
 	}
 
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log == -1) return null;
-		DisableLog obj = table.getConnector().getAccount().getDisableLogs().get(disable_log);
+		DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
 		if(obj == null) throw new SQLException("Unable to find DisableLog: " + disable_log);
 		return obj;
 	}
@@ -351,26 +351,26 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	}
 
 	public List<VirtualHostName> getHttpdSiteURLs() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSiteURLs().getHttpdSiteURLs(this);
+		return table.getConnector().getWeb().getVirtualHostName().getHttpdSiteURLs(this);
 	}
 
 	public VirtualHostName getPrimaryHttpdSiteURL() throws SQLException, IOException {
-		return table.getConnector().getWeb().getHttpdSiteURLs().getPrimaryHttpdSiteURL(this);
+		return table.getConnector().getWeb().getVirtualHostName().getPrimaryHttpdSiteURL(this);
 	}
 
 	public List<VirtualHostName> getAltHttpdSiteURLs() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSiteURLs().getAltHttpdSiteURLs(this);
+		return table.getConnector().getWeb().getVirtualHostName().getAltHttpdSiteURLs(this);
 	}
 
 	public int addHttpdSiteURL(DomainName hostname) throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSiteURLs().addHttpdSiteURL(this, hostname);
+		return table.getConnector().getWeb().getVirtualHostName().addHttpdSiteURL(this, hostname);
 	}
 
 	public List<Header> getHttpdSiteBindHeaders() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSiteBindHeaders().getHttpdSiteBindHeaders(this);
+		return table.getConnector().getWeb().getHeader().getHttpdSiteBindHeaders(this);
 	}
 
 	public List<RewriteRule> getRewriteRules() throws IOException, SQLException {
-		return table.getConnector().getWeb().getRewriteRuleTable().getRewriteRules(this);
+		return table.getConnector().getWeb().getRewriteRule().getRewriteRules(this);
 	}
 }
