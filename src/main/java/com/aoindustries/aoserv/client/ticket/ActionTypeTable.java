@@ -39,7 +39,7 @@ import java.sql.SQLException;
  */
 final public class ActionTypeTable extends GlobalTableStringKey<ActionType> {
 
-	public ActionTypeTable(AOServConnector connector) {
+	ActionTypeTable(AOServConnector connector) {
 		super(connector, ActionType.class);
 	}
 

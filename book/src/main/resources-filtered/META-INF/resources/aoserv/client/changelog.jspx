@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-12-14T02:14:42-0600"
+		dateModified="2018-12-15T19:35:04-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -735,6 +735,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Removed column <code>RewriteRule.no_escape</code></li>
 						</ol>
 					</li>
+					<li>Moved table getters into per-package schemas.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

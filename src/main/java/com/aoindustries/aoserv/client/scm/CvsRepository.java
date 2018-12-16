@@ -161,7 +161,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
@@ -175,7 +175,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	}
 
 	public UserServer getLinuxServerAccount() throws SQLException, IOException {
-		UserServer lsa=table.getConnector().getLinuxServerAccounts().get(linux_server_account);
+		UserServer lsa=table.getConnector().getLinux().getLinuxServerAccounts().get(linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
 		return lsa;
 	}
@@ -185,7 +185,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	}
 
 	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-		GroupServer lsg=table.getConnector().getLinuxServerGroups().get(linux_server_group);
+		GroupServer lsg=table.getConnector().getLinux().getLinuxServerGroups().get(linux_server_group);
 		if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
 		return lsg;
 	}

@@ -39,7 +39,7 @@ import java.util.List;
  */
 final public class SendmailServerTable extends CachedTableIntegerKey<SendmailServer> {
 
-	public SendmailServerTable(AOServConnector connector) {
+	SendmailServerTable(AOServConnector connector) {
 		super(connector, SendmailServer.class);
 	}
 

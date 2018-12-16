@@ -48,7 +48,7 @@ import java.util.List;
  */
 final public class SiteTable extends CachedTableIntegerKey<Site> {
 
-	public SiteTable(AOServConnector connector) {
+	SiteTable(AOServConnector connector) {
 		super(connector, Site.class);
 	}
 

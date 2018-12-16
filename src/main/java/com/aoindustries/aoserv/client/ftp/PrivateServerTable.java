@@ -43,7 +43,7 @@ import java.util.List;
  */
 final public class PrivateServerTable extends CachedTableIntegerKey<PrivateServer> {
 
-	public PrivateServerTable(AOServConnector connector) {
+	PrivateServerTable(AOServConnector connector) {
 		super(connector, PrivateServer.class);
 	}
 

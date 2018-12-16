@@ -106,7 +106,7 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	}
 
 	public FileReplication getFailoverFileReplication() throws SQLException, IOException {
-		FileReplication ffr=table.getConnector().getFailoverFileReplications().get(replication);
+		FileReplication ffr=table.getConnector().getBackup().getFailoverFileReplications().get(replication);
 		if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
 		return ffr;
 	}

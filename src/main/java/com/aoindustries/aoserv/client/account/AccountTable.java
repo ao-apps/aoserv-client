@@ -55,7 +55,7 @@ final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
 
 	private AccountingCode rootAccounting;
 
-	public AccountTable(AOServConnector connector) {
+	AccountTable(AOServConnector connector) {
 		super(connector, Account.class);
 	}
 

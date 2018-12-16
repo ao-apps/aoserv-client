@@ -169,7 +169,7 @@ final public class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
 	}
 
 	public Limiter getLimiter() throws SQLException, IOException {
-		Limiter obj = table.getConnector().getIpReputationLimiters().get(limiter);
+		Limiter obj = table.getConnector().getNet_reputation().getIpReputationLimiters().get(limiter);
 		if(obj==null) throw new SQLException("Unable to find IpReputationLimiter: " + limiter);
 		return obj;
 	}

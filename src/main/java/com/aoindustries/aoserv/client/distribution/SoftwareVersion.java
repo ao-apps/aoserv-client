@@ -74,13 +74,13 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 	}
 
 	public Version getHttpdTomcatVersion(AOServConnector connector) throws IOException, SQLException {
-		return connector.getHttpdTomcatVersions().get(pkey);
+		return connector.getWeb_tomcat().getHttpdTomcatVersions().get(pkey);
 	}
 
 	public User getOwner(AOServConnector connector) throws SQLException, IOException {
 		// May be filtered
 		if(owner == null) return null;
-		User obj = connector.getMasterUsers().get(owner);
+		User obj = connector.getMaster().getMasterUsers().get(owner);
 		if (obj == null) throw new SQLException("Unable to find MasterUser: " + owner);
 		return obj;
 	}
@@ -90,7 +90,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 	}
 
 	public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn) throws SQLException, IOException {
-		OperatingSystemVersion osv=conn.getOperatingSystemVersions().get(operating_system_version);
+		OperatingSystemVersion osv=conn.getDistribution().getOperatingSystemVersions().get(operating_system_version);
 		if(osv==null) throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
 		return osv;
 	}
@@ -120,7 +120,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 	}
 
 	public Software getTechnologyName(AOServConnector connector) throws SQLException, IOException {
-		Software technologyName = connector.getTechnologyNames().get(name);
+		Software technologyName = connector.getDistribution().getTechnologyNames().get(name);
 		if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
 		return technologyName;
 	}

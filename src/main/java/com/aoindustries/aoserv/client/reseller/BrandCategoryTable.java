@@ -37,7 +37,7 @@ import java.util.List;
  */
 final public class BrandCategoryTable extends CachedTableIntegerKey<BrandCategory> {
 
-	public BrandCategoryTable(AOServConnector connector) {
+	BrandCategoryTable(AOServConnector connector) {
 		super(connector, BrandCategory.class);
 	}
 

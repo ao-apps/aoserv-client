@@ -132,11 +132,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	private float email_relay_rate;
 
 	public void addDNSZone(String zone, InetAddress ip, int ttl) throws IOException, SQLException {
-		table.getConnector().getDnsZones().addDNSZone(this, zone, ip, ttl);
+		table.getConnector().getDns().getDnsZones().addDNSZone(this, zone, ip, ttl);
 	}
 
 	public int addEmailSmtpRelay(Server aoServer, HostAddress host, SmtpRelayType type, long duration) throws IOException, SQLException {
-		return table.getConnector().getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
+		return table.getConnector().getEmail().getEmailSmtpRelays().addEmailSmtpRelay(this, aoServer, host, type, duration);
 	}
 
 	public void addLinuxGroup(GroupId name, GroupType type) throws IOException, SQLException {
@@ -144,11 +144,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public void addLinuxGroup(GroupId name, String type) throws IOException, SQLException {
-		table.getConnector().getLinuxGroups().addLinuxGroup(name, this, type);
+		table.getConnector().getLinux().getLinuxGroups().addLinuxGroup(name, this, type);
 	}
 
 	public void addUsername(UserId username) throws IOException, SQLException {
-		table.getConnector().getUsernames().addUsername(this, username);
+		table.getConnector().getAccount().getUsernames().addUsername(this, username);
 	}
 
 	@Override
@@ -186,7 +186,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public List<BackupReport> getBackupReports() throws IOException, SQLException {
-		return table.getConnector().getBackupReports().getBackupReports(this);
+		return table.getConnector().getBackup().getBackupReports().getBackupReports(this);
 	}
 
 	public AccountingCode getBusiness_accounting() {
@@ -194,7 +194,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public Account getBusiness() throws SQLException, IOException {
-		Account accountingObject = table.getConnector().getBusinesses().get(accounting);
+		Account accountingObject = table.getConnector().getAccount().getBusinesses().get(accounting);
 		if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
 		return accountingObject;
 	}
@@ -224,13 +224,13 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator createdByObject = table.getConnector().getUsernames().get(created_by).getBusinessAdministrator();
+		Administrator createdByObject = table.getConnector().getAccount().getUsernames().get(created_by).getBusinessAdministrator();
 		if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
 		return createdByObject;
 	}
 
 	public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-		return table.getConnector().getCvsRepositories().getCvsRepositories(this);
+		return table.getConnector().getScm().getCvsRepositories().getCvsRepositories(this);
 	}
 
 	@Override
@@ -241,7 +241,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
@@ -295,47 +295,47 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public List<Zone> getDNSZones() throws IOException, SQLException {
-		return table.getConnector().getDnsZones().getDNSZones(this);
+		return table.getConnector().getDns().getDnsZones().getDNSZones(this);
 	}
 
 	public List<com.aoindustries.aoserv.client.email.List> getEmailLists() throws IOException, SQLException {
-		return table.getConnector().getEmailLists().getEmailLists(this);
+		return table.getConnector().getEmail().getEmailLists().getEmailLists(this);
 	}
 
 	public List<Pipe> getEmailPipes() throws IOException, SQLException {
-		return table.getConnector().getEmailPipes().getEmailPipes(this);
+		return table.getConnector().getEmail().getEmailPipes().getEmailPipes(this);
 	}
 
 	public List<SharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-		return table.getConnector().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
+		return table.getConnector().getWeb_tomcat().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
 	}
 
 	public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
-		return table.getConnector().getHttpdServers().getHttpdServers(this);
+		return table.getConnector().getWeb().getHttpdServers().getHttpdServers(this);
 	}
 
 	public List<Site> getHttpdSites() throws IOException, SQLException {
-		return table.getConnector().getHttpdSites().getHttpdSites(this);
+		return table.getConnector().getWeb().getHttpdSites().getHttpdSites(this);
 	}
 
 	public List<IpAddress> getIPAddresses() throws IOException, SQLException {
-		return table.getConnector().getIpAddresses().getIPAddresses(this);
+		return table.getConnector().getNet().getIpAddresses().getIPAddresses(this);
 	}
 
 	public List<Group> getLinuxGroups() throws IOException, SQLException {
-		return table.getConnector().getLinuxGroups().getLinuxGroups(this);
+		return table.getConnector().getLinux().getLinuxGroups().getLinuxGroups(this);
 	}
 
 	public List<Database> getMySQLDatabases() throws IOException, SQLException {
-		return table.getConnector().getMysqlDatabases().getMySQLDatabases(this);
+		return table.getConnector().getMysql().getMysqlDatabases().getMySQLDatabases(this);
 	}
 
 	public List<MysqlReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-		return table.getConnector().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+		return table.getConnector().getBackup().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
 	}
 
 	public List<User> getMySQLUsers() throws IOException, SQLException {
-		return table.getConnector().getMysqlUsers().getMySQLUsers(this);
+		return table.getConnector().getMysql().getMysqlUsers().getMySQLUsers(this);
 	}
 
 	public AccountingCode getName() {
@@ -343,49 +343,49 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public List<Bind> getNetBinds() throws IOException, SQLException {
-		return table.getConnector().getNetBinds().getNetBinds(this);
+		return table.getConnector().getNet().getNetBinds().getNetBinds(this);
 	}
 
 	public List<Bind> getNetBinds(IpAddress ip) throws IOException, SQLException {
-		return table.getConnector().getNetBinds().getNetBinds(this, ip);
+		return table.getConnector().getNet().getNetBinds().getNetBinds(this, ip);
 	}
 
 	public PackageDefinition getPackageDefinition() throws SQLException, IOException {
-		PackageDefinition pd = table.getConnector().getPackageDefinitions().get(package_definition);
+		PackageDefinition pd = table.getConnector().getBilling().getPackageDefinitions().get(package_definition);
 		if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
 		return pd;
 	}
 
 	public List<com.aoindustries.aoserv.client.postgresql.Database> getPostgresDatabases() throws IOException, SQLException {
-		return table.getConnector().getPostgresDatabases().getPostgresDatabases(this);
+		return table.getConnector().getPostgresql().getPostgresDatabases().getPostgresDatabases(this);
 	}
 
 	public List<com.aoindustries.aoserv.client.postgresql.User> getPostgresUsers() throws SQLException, IOException {
-		return table.getConnector().getPostgresUsers().getPostgresUsers(this);
+		return table.getConnector().getPostgresql().getPostgresUsers().getPostgresUsers(this);
 	}
 
 	public List<SendmailServer> getSendmailServers() throws IOException, SQLException {
-		return table.getConnector().getSendmailServers().getSendmailServers(this);
+		return table.getConnector().getEmail().getSendmailServers().getSendmailServers(this);
 	}
 
 	public Host getServer(String name) throws IOException, SQLException {
-		return table.getConnector().getServers().getServer(this, name);
+		return table.getConnector().getNet().getServers().getServer(this, name);
 	}
 
 	public List<Host> getServers() throws IOException, SQLException {
-		return table.getConnector().getServers().getServers(this);
+		return table.getConnector().getNet().getServers().getServers(this);
 	}
 
 	public List<Domain> getEmailDomains() throws IOException, SQLException {
-		return table.getConnector().getEmailDomains().getEmailDomains(this);
+		return table.getConnector().getEmail().getEmailDomains().getEmailDomains(this);
 	}
 
 	public List<SmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-		return table.getConnector().getEmailSmtpRelays().getEmailSmtpRelays(this);
+		return table.getConnector().getEmail().getEmailSmtpRelays().getEmailSmtpRelays(this);
 	}
 
 	public List<Certificate> getSslCertificates() throws IOException, SQLException {
-		return table.getConnector().getSslCertificates().getSslCertificates(this);
+		return table.getConnector().getPki().getSslCertificates().getSslCertificates(this);
 	}
 
 	@Override
@@ -394,7 +394,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public List<Username> getUsernames() throws IOException, SQLException {
-		return table.getConnector().getUsernames().getUsernames(this);
+		return table.getConnector().getAccount().getUsernames().getUsernames(this);
 	}
 
 	@Override

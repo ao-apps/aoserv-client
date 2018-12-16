@@ -34,7 +34,7 @@ import java.sql.SQLException;
  */
 final public class AoservProtocolTable extends GlobalTableStringKey<AoservProtocol> {
 
-	public AoservProtocolTable(AOServConnector connector) {
+	AoservProtocolTable(AOServConnector connector) {
 		super(connector, AoservProtocol.class);
 	}
 

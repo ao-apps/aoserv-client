@@ -48,7 +48,7 @@ import java.util.List;
  */
 final public class AdministratorTable extends CachedTableUserIdKey<Administrator> {
 
-	public AdministratorTable(AOServConnector connector) {
+	AdministratorTable(AOServConnector connector) {
 		super(connector, Administrator.class);
 	}
 

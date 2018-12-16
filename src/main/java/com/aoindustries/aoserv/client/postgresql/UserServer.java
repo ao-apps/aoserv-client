@@ -126,17 +126,17 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	@Override
 	public DisableLog getDisableLog() throws IOException, SQLException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
 
 	public List<Database> getPostgresDatabases() throws IOException, SQLException {
-		return table.getConnector().getPostgresDatabases().getPostgresDatabases(this);
+		return table.getConnector().getPostgresql().getPostgresDatabases().getPostgresDatabases(this);
 	}
 
 	public User getPostgresUser() throws SQLException, IOException {
-		User obj=table.getConnector().getPostgresUsers().get(username);
+		User obj=table.getConnector().getPostgresql().getPostgresUsers().get(username);
 		if(obj==null) throw new SQLException("Unable to find PostgresUser: "+username);
 		return obj;
 	}
@@ -147,7 +147,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	public Server getPostgresServer() throws IOException, SQLException{
 		// May be filtered
-		return table.getConnector().getPostgresServers().get(postgres_server);
+		return table.getConnector().getPostgresql().getPostgresServers().get(postgres_server);
 	}
 
 	@Override

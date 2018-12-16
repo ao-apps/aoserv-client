@@ -138,7 +138,7 @@ final public class Location extends CachedObjectIntegerKey<Location> implements 
 	}
 
 	public Site getHttpdSite() throws SQLException, IOException {
-		Site obj=table.getConnector().getHttpdSites().get(httpd_site);
+		Site obj=table.getConnector().getWeb().getHttpdSites().get(httpd_site);
 		if(obj==null) throw new SQLException("Unable to find HttpdSite: "+httpd_site);
 		return obj;
 	}

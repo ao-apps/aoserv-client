@@ -41,7 +41,7 @@ import java.sql.SQLException;
  */
 final public class DistroFileTable extends FilesystemCachedTable<Integer,DistroFile> {
 
-	public DistroFileTable(AOServConnector connector) {
+	DistroFileTable(AOServConnector connector) {
 		super(connector, DistroFile.class);
 	}
 

@@ -70,13 +70,13 @@ final public class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 	}
 
 	public Address getEmailAddress() throws SQLException, IOException {
-		Address emailAddressObject = table.getConnector().getEmailAddresses().get(email_address);
+		Address emailAddressObject = table.getConnector().getEmail().getEmailAddresses().get(email_address);
 		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 		return emailAddressObject;
 	}
 
 	public UserServer getLinuxServerAccount() throws SQLException, IOException {
-		UserServer lsa = table.getConnector().getLinuxServerAccounts().get(linux_server_account);
+		UserServer lsa = table.getConnector().getLinux().getLinuxServerAccounts().get(linux_server_account);
 		if(lsa == null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
 		return lsa;
 	}

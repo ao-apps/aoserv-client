@@ -42,7 +42,7 @@ import java.util.TreeSet;
  */
 final public class AdministratorPermissionTable extends CachedTableIntegerKey<AdministratorPermission> {
 
-	public AdministratorPermissionTable(AOServConnector connector) {
+	AdministratorPermissionTable(AOServConnector connector) {
 		super(connector, AdministratorPermission.class);
 	}
 

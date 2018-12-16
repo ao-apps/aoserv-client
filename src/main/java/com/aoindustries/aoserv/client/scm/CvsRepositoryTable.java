@@ -54,7 +54,7 @@ import java.util.TreeSet;
  */
 final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepository> {
 
-	public CvsRepositoryTable(AOServConnector connector) {
+	CvsRepositoryTable(AOServConnector connector) {
 		super(connector, CvsRepository.class);
 	}
 
@@ -145,19 +145,19 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			SortedSet<UnixPath> prefixes=new TreeSet<>();
 
 			// Home directories
-			for(UserServer lsa : connector.getLinuxServerAccounts().getRows()) {
+			for(UserServer lsa : connector.getLinux().getLinuxServerAccounts().getRows()) {
 				if(lsa.getLinuxAccount().getType().getName().equals(UserType.USER) && !lsa.isDisabled()) {
 					prefixes.add(lsa.getHome());
 				}
 			}
 
 			// HttpdSites
-			for(Site site : connector.getHttpdSites().getRows()) {
+			for(Site site : connector.getWeb().getHttpdSites().getRows()) {
 				if(!site.isDisabled()) prefixes.add(site.getInstallDirectory());
 			}
 
 			// HttpdSharedTomcats
-			for(SharedTomcat tomcat : connector.getHttpdSharedTomcats().getRows()) {
+			for(SharedTomcat tomcat : connector.getWeb_tomcat().getHttpdSharedTomcats().getRows()) {
 				if(!tomcat.isDisabled()) {
 					prefixes.add(
 						UnixPath.valueOf(

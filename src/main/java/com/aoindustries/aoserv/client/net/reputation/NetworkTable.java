@@ -36,7 +36,7 @@ import java.util.List;
  */
 final public class NetworkTable extends CachedTableLongKey<Network> {
 
-	public NetworkTable(AOServConnector connector) {
+	NetworkTable(AOServConnector connector) {
 		super(connector, Network.class);
 	}
 

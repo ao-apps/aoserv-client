@@ -60,7 +60,7 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	private long confirmedAccountBalancesClearCounter = 0;
 	final private Map<AccountingCode,BigDecimal> confirmedAccountBalances=new HashMap<>();
 
-	public TransactionTable(AOServConnector connector) {
+	TransactionTable(AOServConnector connector) {
 		super(connector, Transaction.class);
 	}
 

@@ -45,7 +45,7 @@ import java.util.List;
  */
 final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser> {
 
-	public DatabaseUserTable(AOServConnector connector) {
+	DatabaseUserTable(AOServConnector connector) {
 		super(connector, DatabaseUser.class);
 	}
 

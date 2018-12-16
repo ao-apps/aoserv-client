@@ -57,7 +57,7 @@ final public class ColumnTable extends GlobalTableIntegerKey<Column> {
 		for(int c=0;c<numTables;c++) nameToColumns.add(null);
 	}
 
-	public ColumnTable(AOServConnector connector) {
+	ColumnTable(AOServConnector connector) {
 		super(connector, Column.class);
 	}
 

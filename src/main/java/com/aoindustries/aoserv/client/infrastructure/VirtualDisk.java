@@ -76,7 +76,7 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	}
 
 	public VirtualServer getVirtualServer() throws SQLException, IOException {
-		VirtualServer vs=table.getConnector().getVirtualServers().get(virtualServer);
+		VirtualServer vs=table.getConnector().getInfrastructure().getVirtualServers().get(virtualServer);
 		if(vs==null) throw new SQLException("Unable to find VirtualServer: "+virtualServer);
 		return vs;
 	}

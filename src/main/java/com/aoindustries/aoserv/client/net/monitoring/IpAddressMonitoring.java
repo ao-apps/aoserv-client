@@ -66,7 +66,7 @@ final public class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
 	}
 
 	public IpAddress getIpAddress() throws SQLException, IOException {
-		IpAddress obj = table.getConnector().getIpAddresses().get(pkey);
+		IpAddress obj = table.getConnector().getNet().getIpAddresses().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + pkey);
 		return obj;
 	}

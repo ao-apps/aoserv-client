@@ -49,7 +49,7 @@ import java.util.List;
  */
 final public class UserTable extends CachedTablePostgresUserIdKey<User> {
 
-	public UserTable(AOServConnector connector) {
+	UserTable(AOServConnector connector) {
 		super(connector, User.class);
 	}
 

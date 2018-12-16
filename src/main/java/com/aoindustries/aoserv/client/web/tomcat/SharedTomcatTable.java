@@ -52,7 +52,7 @@ import java.util.List;
  */
 final public class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat> {
 
-	public  SharedTomcatTable(AOServConnector connector) {
+	SharedTomcatTable(AOServConnector connector) {
 		super(connector, SharedTomcat.class);
 	}
 

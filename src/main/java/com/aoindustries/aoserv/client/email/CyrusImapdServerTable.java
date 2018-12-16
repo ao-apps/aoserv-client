@@ -39,7 +39,7 @@ import java.util.List;
  */
 final public class CyrusImapdServerTable extends CachedTableIntegerKey<CyrusImapdServer> {
 
-	public CyrusImapdServerTable(AOServConnector connector) {
+	CyrusImapdServerTable(AOServConnector connector) {
 		super(connector, CyrusImapdServer.class);
 	}
 

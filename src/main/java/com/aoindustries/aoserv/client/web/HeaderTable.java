@@ -40,7 +40,7 @@ import java.util.List;
  */
 final public class HeaderTable extends CachedTableIntegerKey<Header> {
 
-	public HeaderTable(AOServConnector connector) {
+	HeaderTable(AOServConnector connector) {
 		super(connector, Header.class);
 	}
 

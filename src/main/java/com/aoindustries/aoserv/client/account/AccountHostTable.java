@@ -44,7 +44,7 @@ import java.util.List;
  */
 final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 
-	public AccountHostTable(AOServConnector connector) {
+	AccountHostTable(AOServConnector connector) {
 		super(connector, AccountHost.class);
 	}
 

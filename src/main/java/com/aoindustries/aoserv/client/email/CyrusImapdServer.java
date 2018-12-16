@@ -248,14 +248,14 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server obj = table.getConnector().getAoServers().get(pkey);
+		Server obj = table.getConnector().getLinux().getAoServers().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find AOServer: " + pkey);
 		return obj;
 	}
 
 	public Bind getSieveNetBind() throws IOException, SQLException {
 		if(sieveNetBind == -1) return null;
-		Bind nb = table.getConnector().getNetBinds().get(sieveNetBind);
+		Bind nb = table.getConnector().getNet().getNetBinds().get(sieveNetBind);
 		// May be filtered
 		if(nb == null) return null;
 		String protocol = nb.getAppProtocol().getProtocol();
@@ -281,7 +281,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	 */
 	public Certificate getCertificate() throws SQLException, IOException {
 		// May be filtered
-		return table.getConnector().getSslCertificates().get(certificate);
+		return table.getConnector().getPki().getSslCertificates().get(certificate);
 	}
 
 	/**
@@ -357,6 +357,6 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	}
 
 	public List<CyrusImapdBind> getCyrusImapdBinds() throws IOException, SQLException {
-		return table.getConnector().getCyrusImapdBinds().getCyrusImapdBinds(this);
+		return table.getConnector().getEmail().getCyrusImapdBinds().getCyrusImapdBinds(this);
 	}
 }

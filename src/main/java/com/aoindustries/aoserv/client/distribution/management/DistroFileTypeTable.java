@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class DistroFileTypeTable extends GlobalTableStringKey<DistroFileType> {
 
-	public DistroFileTypeTable(AOServConnector connector) {
+	DistroFileTypeTable(AOServConnector connector) {
 		super(connector, DistroFileType.class);
 	}
 

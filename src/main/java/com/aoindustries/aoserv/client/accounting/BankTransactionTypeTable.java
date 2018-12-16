@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class BankTransactionTypeTable extends CachedTableStringKey<BankTransactionType> {
 
-	public BankTransactionTypeTable(AOServConnector connector) {
+	BankTransactionTypeTable(AOServConnector connector) {
 		super(connector, BankTransactionType.class);
 	}
 

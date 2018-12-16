@@ -65,7 +65,7 @@ final public class InboxAttributes implements AOServStreamable {
 	}
 
 	public UserServer getLinuxServerAccount() throws IOException, SQLException {
-		return connector.getLinuxServerAccounts().get(linuxServerAccount);
+		return connector.getLinux().getLinuxServerAccounts().get(linuxServerAccount);
 	}
 
 	public long getSystemTime() {

@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class DistroReportTypeTable extends GlobalTableStringKey<DistroReportType> {
 
-	public DistroReportTypeTable(AOServConnector connector) {
+	DistroReportTypeTable(AOServConnector connector) {
 		super(connector, DistroReportType.class);
 	}
 

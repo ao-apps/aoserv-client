@@ -48,7 +48,7 @@ import java.util.ArrayList;
  */
 final public class ListTable extends CachedTableIntegerKey<List> {
 
-	public ListTable(AOServConnector connector) {
+	ListTable(AOServConnector connector) {
 		super(connector, List.class);
 	}
 

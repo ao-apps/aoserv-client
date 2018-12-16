@@ -82,7 +82,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
 	}
 
 	public OperatingSystemVersion getOperatingSystemVersion(AOServConnector conn, String version, Architecture architecture) throws IOException, SQLException {
-		return conn.getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
+		return conn.getDistribution().getOperatingSystemVersions().getOperatingSystemVersion(this, version, architecture);
 	}
 
 	@Override

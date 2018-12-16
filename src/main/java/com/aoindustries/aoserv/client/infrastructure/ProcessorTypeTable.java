@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class ProcessorTypeTable extends GlobalTableStringKey<ProcessorType> {
 
-	public ProcessorTypeTable(AOServConnector connector) {
+	ProcessorTypeTable(AOServConnector connector) {
 		super(connector, ProcessorType.class);
 	}
 

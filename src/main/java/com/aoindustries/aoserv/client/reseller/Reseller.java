@@ -66,7 +66,7 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	}
 
 	public Brand getBrand() throws SQLException, IOException {
-		Brand br = table.getConnector().getBrands().get(pkey);
+		Brand br = table.getConnector().getReseller().getBrands().get(pkey);
 		if(br==null) throw new SQLException("Unable to find Brand: "+pkey);
 		return br;
 	}
@@ -108,7 +108,7 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	}
 
 	public List<Assignment> getTicketAssignments() throws IOException, SQLException {
-		return table.getConnector().getTicketAssignments().getTicketAssignments(this);
+		return table.getConnector().getTicket().getTicketAssignments().getTicketAssignments(this);
 	}
 
 	/**
@@ -134,7 +134,7 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	 */
 	public List<Reseller> getChildResellers() throws IOException, SQLException {
 		List<Reseller> children = new ArrayList<>();
-		for(Reseller reseller : table.getConnector().getResellers().getRows()) {
+		for(Reseller reseller : table.getConnector().getReseller().getResellers().getRows()) {
 			if(!reseller.equals(this) && this.equals(reseller.getParentReseller())) children.add(reseller);
 		}
 		return children;

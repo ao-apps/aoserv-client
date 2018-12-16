@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 final public class UserTable extends CachedTableUserIdKey<User> {
 
-	public UserTable(AOServConnector connector) {
+	UserTable(AOServConnector connector) {
 		super(connector, User.class);
 	}
 

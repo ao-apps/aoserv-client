@@ -52,7 +52,7 @@ import java.util.List;
  */
 final public class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateTomcatSite> {
 
-	public PrivateTomcatSiteTable(AOServConnector connector) {
+	PrivateTomcatSiteTable(AOServConnector connector) {
 		super(connector, PrivateTomcatSite.class);
 	}
 

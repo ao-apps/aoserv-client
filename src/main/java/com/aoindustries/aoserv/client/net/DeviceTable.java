@@ -37,8 +37,8 @@ import java.util.List;
  */
 final public class DeviceTable extends CachedTableIntegerKey<Device> {
 
-	public DeviceTable(AOServConnector connector) {
-	super(connector, Device.class);
+	DeviceTable(AOServConnector connector) {
+		super(connector, Device.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {

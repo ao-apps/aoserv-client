@@ -187,12 +187,12 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 
 	public Database getMySQLDatabase() throws IOException, SQLException {
 		// May be null due to filtering or a recently removed table
-		return table.getConnector().getMysqlDatabases().get(mysql_database);
+		return table.getConnector().getMysql().getMysqlDatabases().get(mysql_database);
 	}
 
 	public UserServer getMySQLServerUser() throws IOException, SQLException {
 		// May be null due to filtering or a recently removed table
-		return table.getConnector().getMysqlServerUsers().get(mysql_server_user);
+		return table.getConnector().getMysql().getMysqlServerUsers().get(mysql_server_user);
 	}
 
 	@Override

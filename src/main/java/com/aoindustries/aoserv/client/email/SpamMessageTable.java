@@ -43,7 +43,7 @@ import java.util.List;
  */
 final public class SpamMessageTable extends AOServTable<Integer,SpamMessage> {
 
-	public SpamMessageTable(AOServConnector connector) {
+	SpamMessageTable(AOServConnector connector) {
 		super(connector, SpamMessage.class);
 	}
 

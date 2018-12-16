@@ -94,7 +94,7 @@ final public class Limiter extends CachedObjectIntegerKey<Limiter> {
 	}
 
 	public Device getNetDevice() throws SQLException, IOException {
-		Device nd = table.getConnector().getNetDevices().get(netDevice);
+		Device nd = table.getConnector().getNet().getNetDevices().get(netDevice);
 		if(nd==null) throw new SQLException("Unable to find NetDevice: " + netDevice);
 		return nd;
 	}
@@ -114,10 +114,10 @@ final public class Limiter extends CachedObjectIntegerKey<Limiter> {
 	}
 
 	public List<LimiterClass> getLimits() throws IOException, SQLException {
-		return table.getConnector().getIpReputationLimiterLimits().getLimits(this);
+		return table.getConnector().getNet_reputation().getIpReputationLimiterLimits().getLimits(this);
 	}
 
 	public List<LimiterSet> getSets() throws IOException, SQLException {
-		return table.getConnector().getIpReputationLimiterSets().getSets(this);
+		return table.getConnector().getNet_reputation().getIpReputationLimiterSets().getSets(this);
 	}
 }

@@ -42,7 +42,7 @@ import java.util.List;
  */
 final public class ContextDataSourceTable extends CachedTableIntegerKey<ContextDataSource> {
 
-	public ContextDataSourceTable(AOServConnector connector) {
+	ContextDataSourceTable(AOServConnector connector) {
 		super(connector, ContextDataSource.class);
 	}
 

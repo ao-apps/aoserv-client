@@ -44,7 +44,7 @@ import java.util.Set;
  */
 final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 
-	public CountryCodeTable(AOServConnector connector) {
+	CountryCodeTable(AOServConnector connector) {
 		super(connector, CountryCode.class);
 	}
 
@@ -66,7 +66,7 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 
 		// Add the business_profiles
 		Set<AccountingCode> finishedBusinesses=new HashSet<>();
-		for(Profile profile : connector.getBusinessProfiles().getRows()) {
+		for(Profile profile : connector.getAccount().getBusinessProfiles().getRows()) {
 			AccountingCode accounting = profile.getBusiness_accounting();
 			if(!finishedBusinesses.contains(accounting)) {
 				finishedBusinesses.add(accounting);

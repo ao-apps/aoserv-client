@@ -38,7 +38,7 @@ import java.util.List;
  */
 final public class ServerStatTable extends AOServTable<String,ServerStat> {
 
-	public ServerStatTable(AOServConnector connector) {
+	ServerStatTable(AOServConnector connector) {
 		super(connector, ServerStat.class);
 	}
 

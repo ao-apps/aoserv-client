@@ -65,7 +65,7 @@ final public class UserAcl extends CachedObjectIntegerKey<UserAcl> {
 	}
 
 	public User getMasterUser() throws SQLException, IOException {
-		User obj=table.getConnector().getMasterUsers().get(username);
+		User obj=table.getConnector().getMaster().getMasterUsers().get(username);
 		if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
 		return obj;
 	}

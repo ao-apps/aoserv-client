@@ -43,7 +43,7 @@ import java.util.List;
  */
 final public class PipeTable extends CachedTableIntegerKey<Pipe> {
 
-	public PipeTable(AOServConnector connector) {
+	PipeTable(AOServConnector connector) {
 		super(connector, Pipe.class);
 	}
 

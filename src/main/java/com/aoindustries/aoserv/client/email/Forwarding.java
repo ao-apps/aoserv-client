@@ -78,7 +78,7 @@ final public class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
 	 * Gets the <code>email_address</code>
 	 */
 	public Address getEmailAddress() throws SQLException, IOException {
-		Address emailAddressObject = table.getConnector().getEmailAddresses().get(email_address);
+		Address emailAddressObject = table.getConnector().getEmail().getEmailAddresses().get(email_address);
 		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 		return emailAddressObject;
 	}

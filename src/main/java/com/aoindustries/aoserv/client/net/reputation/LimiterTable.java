@@ -38,7 +38,7 @@ import java.sql.SQLException;
  */
 final public class LimiterTable extends CachedTableIntegerKey<Limiter> {
 
-	public LimiterTable(AOServConnector connector) {
+	LimiterTable(AOServConnector connector) {
 		super(connector, Limiter.class);
 	}
 

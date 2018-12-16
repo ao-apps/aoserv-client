@@ -44,7 +44,7 @@ import java.util.List;
  */
 final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 
-	public NoticeLogTable(AOServConnector connector) {
+	NoticeLogTable(AOServConnector connector) {
 		super(connector, NoticeLog.class);
 	}
 

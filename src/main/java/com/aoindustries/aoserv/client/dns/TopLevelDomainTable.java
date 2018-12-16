@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 final public class TopLevelDomainTable extends GlobalTableDomainNameKey<TopLevelDomain> {
 
-	public TopLevelDomainTable(AOServConnector connector) {
+	TopLevelDomainTable(AOServConnector connector) {
 		super(connector, TopLevelDomain.class);
 	}
 

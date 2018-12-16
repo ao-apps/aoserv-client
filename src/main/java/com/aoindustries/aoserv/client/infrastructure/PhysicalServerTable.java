@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 final public class PhysicalServerTable extends CachedTableIntegerKey<PhysicalServer> {
 
-	public PhysicalServerTable(AOServConnector connector) {
+	PhysicalServerTable(AOServConnector connector) {
 		super(connector, PhysicalServer.class);
 	}
 

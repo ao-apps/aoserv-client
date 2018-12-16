@@ -91,7 +91,7 @@ final public class Option extends CachedObjectIntegerKey<Option> {
 	}
 
 	public Request getSignupRequest() throws SQLException, IOException {
-		Request sr = table.getConnector().getSignupRequests().get(request);
+		Request sr = table.getConnector().getSignup().getSignupRequests().get(request);
 		if (sr == null) throw new SQLException("Unable to find SignupRequest: " + request);
 		return sr;
 	}

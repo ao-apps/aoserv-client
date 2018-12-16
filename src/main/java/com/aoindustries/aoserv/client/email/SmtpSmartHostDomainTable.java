@@ -40,7 +40,7 @@ import java.sql.SQLException;
  */
 public final class SmtpSmartHostDomainTable extends CachedTableIntegerKey<SmtpSmartHostDomain> {
 
-	public SmtpSmartHostDomainTable(AOServConnector connector) {
+	SmtpSmartHostDomainTable(AOServConnector connector) {
 		super(connector, SmtpSmartHostDomain.class);
 	}
 

@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class ForbiddenZoneTable extends GlobalTableStringKey<ForbiddenZone> {
 
-	public ForbiddenZoneTable(AOServConnector connector) {
+	ForbiddenZoneTable(AOServConnector connector) {
 		super(connector, ForbiddenZone.class);
 	}
 

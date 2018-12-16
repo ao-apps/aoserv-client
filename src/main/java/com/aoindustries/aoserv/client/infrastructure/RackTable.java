@@ -35,8 +35,8 @@ import java.sql.SQLException;
  */
 final public class RackTable extends CachedTableIntegerKey<Rack> {
 
-	public RackTable(AOServConnector connector) {
-	super(connector, Rack.class);
+	RackTable(AOServConnector connector) {
+		super(connector, Rack.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {

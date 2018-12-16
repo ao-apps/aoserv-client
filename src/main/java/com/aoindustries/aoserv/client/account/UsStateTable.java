@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class UsStateTable extends GlobalTableStringKey<UsState> {
 
-	public UsStateTable(AOServConnector connector) {
+	UsStateTable(AOServConnector connector) {
 		super(connector, UsState.class);
 	}
 

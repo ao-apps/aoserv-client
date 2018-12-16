@@ -44,7 +44,7 @@ import java.util.List;
  */
 final public class InboxAddressTable extends CachedTableIntegerKey<InboxAddress> {
 
-	public InboxAddressTable(AOServConnector connector) {
+	InboxAddressTable(AOServConnector connector) {
 		super(connector, InboxAddress.class);
 	}
 

@@ -74,7 +74,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server ao=table.getConnector().getAoServers().get(ao_server);
+		Server ao=table.getConnector().getLinux().getAoServers().get(ao_server);
 		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return ao;
 	}

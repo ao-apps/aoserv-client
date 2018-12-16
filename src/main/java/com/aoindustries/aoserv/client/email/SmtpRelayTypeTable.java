@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class SmtpRelayTypeTable extends GlobalTableStringKey<SmtpRelayType> {
 
-	public SmtpRelayTypeTable(AOServConnector connector) {
+	SmtpRelayTypeTable(AOServConnector connector) {
 		super(connector, SmtpRelayType.class);
 	}
 

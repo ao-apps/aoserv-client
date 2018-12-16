@@ -78,20 +78,20 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 
 	public com.aoindustries.aoserv.client.linux.Server getAOServer() throws SQLException, IOException {
 		if(ao_server==-1) return null;
-		com.aoindustries.aoserv.client.linux.Server ao=table.getConnector().getAoServers().get(ao_server);
+		com.aoindustries.aoserv.client.linux.Server ao=table.getConnector().getLinux().getAoServers().get(ao_server);
 		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return ao;
 	}
 
 	public FileReplication getFailoverFileReplication() throws SQLException, IOException {
 		if(replication==-1) return null;
-		FileReplication ffr=table.getConnector().getFailoverFileReplications().get(replication);
+		FileReplication ffr=table.getConnector().getBackup().getFailoverFileReplications().get(replication);
 		if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
 		return ffr;
 	}
 
 	public Server getMySQLServer() throws IOException, SQLException {
-		Server ms=table.getConnector().getMysqlServers().get(mysql_server);
+		Server ms=table.getConnector().getMysql().getMysqlServers().get(mysql_server);
 		if(ms==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
 		return ms;
 	}

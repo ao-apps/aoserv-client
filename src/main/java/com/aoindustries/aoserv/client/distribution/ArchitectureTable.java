@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class ArchitectureTable extends GlobalTableStringKey<Architecture> {
 
-	public ArchitectureTable(AOServConnector connector) {
+	ArchitectureTable(AOServConnector connector) {
 		super(connector, Architecture.class);
 	}
 

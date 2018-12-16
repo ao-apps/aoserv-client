@@ -167,15 +167,15 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	}
 
 	public List<HttpdBind> getHttpdBinds() throws IOException, SQLException {
-		return table.getConnector().getHttpdBinds().getHttpdBinds(this);
+		return table.getConnector().getWeb().getHttpdBinds().getHttpdBinds(this);
 	}
 
 	public List<Site> getHttpdSites() throws IOException, SQLException {
-		return table.getConnector().getHttpdSites().getHttpdSites(this);
+		return table.getConnector().getWeb().getHttpdSites().getHttpdSites(this);
 	}
 
 	public List<Worker> getHttpdWorkers() throws IOException, SQLException {
-		return table.getConnector().getHttpdWorkers().getHttpdWorkers(this);
+		return table.getConnector().getWeb_tomcat().getHttpdWorkers().getHttpdWorkers(this);
 	}
 
 	public int getLinuxServerAccount_pkey() {
@@ -183,7 +183,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	}
 
 	public UserServer getLinuxServerAccount() throws SQLException, IOException {
-		UserServer lsa=table.getConnector().getLinuxServerAccounts().get(linux_server_account);
+		UserServer lsa=table.getConnector().getLinux().getLinuxServerAccounts().get(linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
 		return lsa;
 	}
@@ -193,14 +193,14 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	}
 
 	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-		GroupServer lsg=table.getConnector().getLinuxServerGroups().get(linux_server_group);
+		GroupServer lsg=table.getConnector().getLinux().getLinuxServerGroups().get(linux_server_group);
 		if(lsg==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
 		return lsg;
 	}
 
 	public SoftwareVersion getModPhpVersion() throws SQLException, IOException {
 		if(mod_php_version==-1) return null;
-		SoftwareVersion tv=table.getConnector().getTechnologyVersions().get(mod_php_version);
+		SoftwareVersion tv=table.getConnector().getDistribution().getTechnologyVersions().get(mod_php_version);
 		if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+mod_php_version);
 		if(
 			tv.getOperatingSystemVersion(table.getConnector()).getPkey()
@@ -217,7 +217,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 
 	public Package getPackage() throws IOException, SQLException {
 		// Package may be filtered
-		return table.getConnector().getPackages().get(packageNum);
+		return table.getConnector().getBilling().getPackages().get(packageNum);
 	}
 
 	public boolean isShared() {
@@ -300,7 +300,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server obj=table.getConnector().getAoServers().get(ao_server);
+		Server obj=table.getConnector().getLinux().getAoServers().get(ao_server);
 		if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return obj;
 	}

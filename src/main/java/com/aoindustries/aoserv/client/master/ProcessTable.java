@@ -38,7 +38,7 @@ import java.util.List;
  */
 final public class ProcessTable extends AOServTable<Long,Process> {
 
-	public ProcessTable(AOServConnector connector) {
+	ProcessTable(AOServConnector connector) {
 		super(connector, Process.class);
 	}
 

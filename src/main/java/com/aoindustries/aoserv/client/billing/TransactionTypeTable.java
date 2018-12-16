@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public final class TransactionTypeTable extends GlobalTableStringKey<TransactionType> {
 
-	public TransactionTypeTable(AOServConnector connector) {
+	TransactionTypeTable(AOServConnector connector) {
 		super(connector, TransactionType.class);
 	}
 

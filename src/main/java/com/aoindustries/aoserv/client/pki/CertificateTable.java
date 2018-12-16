@@ -41,7 +41,7 @@ import java.util.List;
  */
 final public class CertificateTable extends CachedTableIntegerKey<Certificate> {
 
-	public CertificateTable(AOServConnector connector) {
+	CertificateTable(AOServConnector connector) {
 		super(connector, Certificate.class);
 	}
 

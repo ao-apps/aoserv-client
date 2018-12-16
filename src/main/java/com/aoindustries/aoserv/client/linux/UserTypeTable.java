@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class UserTypeTable extends GlobalTableStringKey<UserType> {
 
-	public UserTypeTable(AOServConnector connector) {
+	UserTypeTable(AOServConnector connector) {
 		super(connector, UserType.class);
 	}
 

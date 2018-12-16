@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class WorkerNameTable extends GlobalTableStringKey<WorkerName> {
 
-	public WorkerNameTable(AOServConnector connector) {
+	WorkerNameTable(AOServConnector connector) {
 		super(connector, WorkerName.class);
 	}
 

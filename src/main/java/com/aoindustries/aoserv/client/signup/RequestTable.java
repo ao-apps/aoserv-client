@@ -46,7 +46,7 @@ import java.util.Map;
  */
 final public class RequestTable extends CachedTableIntegerKey<Request> {
 
-	public RequestTable(AOServConnector connector) {
+	RequestTable(AOServConnector connector) {
 		super(connector, Request.class);
 	}
 

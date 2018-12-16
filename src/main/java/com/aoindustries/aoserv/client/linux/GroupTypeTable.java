@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class GroupTypeTable extends GlobalTableStringKey<GroupType> {
 
-	public GroupTypeTable(AOServConnector connector) {
+	GroupTypeTable(AOServConnector connector) {
 		super(connector, GroupType.class);
 	}
 

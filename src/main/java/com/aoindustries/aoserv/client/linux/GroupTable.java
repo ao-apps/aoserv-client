@@ -44,7 +44,7 @@ import java.util.List;
  */
 final public class GroupTable extends CachedTableGroupIdKey<Group> {
 
-	public GroupTable(AOServConnector connector) {
+	GroupTable(AOServConnector connector) {
 		super(connector, Group.class);
 	}
 

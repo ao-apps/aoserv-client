@@ -172,11 +172,11 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public List<Action> getTicketActions() throws IOException, SQLException {
-		return table.getConnector().getTicketActions().getActions(this);
+		return table.getConnector().getTicket().getTicketActions().getActions(this);
 	}
 
 	public List<Assignment> getTicketAssignments() throws IOException, SQLException {
-		return table.getConnector().getTicketAssignments().getTicketAssignments(this);
+		return table.getConnector().getTicket().getTicketAssignments().getTicketAssignments(this);
 	}
 
 	public String getAddress1() {
@@ -230,7 +230,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 
 	public CountryCode getCountry() throws SQLException, IOException {
 		if(country == null) return null;
-		CountryCode countryCode=table.getConnector().getCountryCodes().get(country);
+		CountryCode countryCode=table.getConnector().getPayment().getCountryCodes().get(country);
 		if (countryCode == null) throw new SQLException("CountryCode not found: " + country);
 		return countryCode;
 	}
@@ -240,7 +240,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public List<Ticket> getCreatedTickets() throws IOException, SQLException {
-		return table.getConnector().getTickets().getCreatedTickets(this);
+		return table.getConnector().getTicket().getTickets().getCreatedTickets(this);
 	}
 
 	@Override
@@ -251,7 +251,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
@@ -269,11 +269,11 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public User getMasterUser() throws IOException, SQLException {
-		return table.getConnector().getMasterUsers().get(pkey);
+		return table.getConnector().getMaster().getMasterUsers().get(pkey);
 	}
 
 	public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
-		return table.getConnector().getMonthlyCharges().getMonthlyCharges(this, null);
+		return table.getConnector().getBilling().getMonthlyCharges().getMonthlyCharges(this, null);
 	}
 
 	public String getName() {
@@ -305,7 +305,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public List<Transaction> getTransactions() throws IOException, SQLException {
-		return table.getConnector().getTransactions().getTransactions(this);
+		return table.getConnector().getBilling().getTransactions().getTransactions(this);
 	}
 
 	public UserId getUsername_userId() {
@@ -313,7 +313,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public Username getUsername() throws SQLException, IOException {
-		Username usernameObject = table.getConnector().getUsernames().get(pkey);
+		Username usernameObject = table.getConnector().getAccount().getUsernames().get(pkey);
 		if (usernameObject == null) throw new SQLException("Username not found: " + pkey);
 		return usernameObject;
 	}
@@ -595,7 +595,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public List<AdministratorPermission> getPermissions() throws IOException, SQLException {
-		return table.getConnector().getBusinessAdministratorPermissions().getPermissions(this);
+		return table.getConnector().getMaster().getBusinessAdministratorPermissions().getPermissions(this);
 	}
 
 	/**
@@ -616,7 +616,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	 * Checks if this business administrator has the provided permission.
 	 */
 	public boolean hasPermission(String permission) throws IOException, SQLException {
-		return table.getConnector().getBusinessAdministratorPermissions().hasPermission(this, permission);
+		return table.getConnector().getMaster().getBusinessAdministratorPermissions().hasPermission(this, permission);
 	}
 
 	/**

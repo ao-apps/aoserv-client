@@ -45,7 +45,7 @@ import java.util.List;
  */
 final public class JkMountTable extends CachedTableIntegerKey<JkMount> {
 
-	public JkMountTable(AOServConnector connector) {
+	JkMountTable(AOServConnector connector) {
 		super(connector, JkMount.class);
 	}
 

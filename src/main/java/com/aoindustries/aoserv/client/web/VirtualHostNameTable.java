@@ -47,7 +47,7 @@ import java.util.List;
  */
 final public class VirtualHostNameTable extends CachedTableIntegerKey<VirtualHostName> {
 
-	public VirtualHostNameTable(AOServConnector connector) {
+	VirtualHostNameTable(AOServConnector connector) {
 		super(connector, VirtualHostName.class);
 	}
 

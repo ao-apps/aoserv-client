@@ -128,7 +128,7 @@ final public class UserType extends GlobalObjectStringKey<UserType> {
 	public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
 		UnixPath[] paths=getShellList(pkey);
 
-		ShellTable shellTable=connector.getShells();
+		ShellTable shellTable=connector.getLinux().getShells();
 		int len=paths.length;
 		List<Shell> shells=new ArrayList<>(len);
 		for(int c=0;c<len;c++) {

@@ -42,7 +42,7 @@ import java.util.List;
  */
 final public class CyrusImapdBindTable extends CachedTableIntegerKey<CyrusImapdBind> {
 
-	public CyrusImapdBindTable(AOServConnector connector) {
+	CyrusImapdBindTable(AOServConnector connector) {
 		super(connector, CyrusImapdBind.class);
 	}
 

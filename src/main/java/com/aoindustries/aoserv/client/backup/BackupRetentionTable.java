@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class BackupRetentionTable extends GlobalTable<Short,BackupRetention> {
 
-	public BackupRetentionTable(AOServConnector connector) {
+	BackupRetentionTable(AOServConnector connector) {
 		super(connector, BackupRetention.class);
 	}
 

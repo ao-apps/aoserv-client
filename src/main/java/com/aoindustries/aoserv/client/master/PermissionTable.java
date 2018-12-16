@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 final public class PermissionTable extends GlobalTableStringKey<Permission> {
 
-	public PermissionTable(AOServConnector connector) {
+	PermissionTable(AOServConnector connector) {
 		super(connector, Permission.class);
 	}
 

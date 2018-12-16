@@ -36,7 +36,7 @@ import java.util.List;
  */
 final public class SoftwareCategorizationTable extends GlobalTableIntegerKey<SoftwareCategorization> {
 
-	public SoftwareCategorizationTable(AOServConnector connector) {
+	SoftwareCategorizationTable(AOServConnector connector) {
 		super(connector, SoftwareCategorization.class);
 	}
 

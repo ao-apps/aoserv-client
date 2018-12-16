@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class TicketTypeTable extends GlobalTableStringKey<TicketType> {
 
-	public TicketTypeTable(AOServConnector connector) {
+	TicketTypeTable(AOServConnector connector) {
 		super(connector, TicketType.class);
 	}
 

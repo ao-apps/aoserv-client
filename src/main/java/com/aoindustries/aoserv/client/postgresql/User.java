@@ -100,7 +100,7 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 	int disable_log;
 
 	public int addPostgresServerUser(Server postgresServer) throws IOException, SQLException {
-		return table.getConnector().getPostgresServerUsers().addPostgresServerUser(pkey, postgresServer);
+		return table.getConnector().getPostgresql().getPostgresServerUsers().addPostgresServerUser(pkey, postgresServer);
 	}
 
 	@Override
@@ -180,7 +180,7 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
@@ -190,7 +190,7 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 	}
 
 	public List<UserServer> getPostgresServerUsers() throws IOException, SQLException {
-		return table.getConnector().getPostgresServerUsers().getPostgresServerUsers(this);
+		return table.getConnector().getPostgresql().getPostgresServerUsers().getPostgresServerUsers(this);
 	}
 
 	@Override
@@ -203,7 +203,7 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 	}
 
 	public Username getUsername() throws SQLException, IOException {
-		Username username=table.getConnector().getUsernames().get(this.pkey);
+		Username username=table.getConnector().getAccount().getUsernames().get(this.pkey);
 		if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
 		return username;
 	}

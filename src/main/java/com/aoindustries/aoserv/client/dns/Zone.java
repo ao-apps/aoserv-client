@@ -99,7 +99,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 		String destination,
 		int ttl
 	) throws IOException, SQLException {
-		return table.getConnector().getDnsRecords().addDNSRecord(this, domain, type, priority, weight, port, destination, ttl);
+		return table.getConnector().getDns().getDnsRecords().addDNSRecord(this, domain, type, priority, weight, port, destination, ttl);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	}
 
 	public RecordType[] getAllowedDNSTypes() throws IOException, SQLException {
-		RecordTypeTable tt=table.getConnector().getDnsTypes();
+		RecordTypeTable tt=table.getConnector().getDns().getDnsTypes();
 		if(isArpa()) {
 			RecordType[] types={
 				tt.get(RecordType.NS),
@@ -185,11 +185,11 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	}
 
 	public List<Record> getDNSRecords() throws IOException, SQLException {
-		return table.getConnector().getDnsRecords().getDNSRecords(this);
+		return table.getConnector().getDns().getDnsRecords().getDNSRecords(this);
 	}
 
 	public List<Record> getDNSRecords(String domain, RecordType type) throws IOException, SQLException {
-		return table.getConnector().getDnsRecords().getDNSRecords(this, domain, type);
+		return table.getConnector().getDns().getDnsRecords().getDNSRecords(this, domain, type);
 	}
 
 	public String getFile() {
@@ -201,7 +201,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	}
 
 	public Package getPackage() throws SQLException, IOException {
-		Package obj=table.getConnector().getPackages().get(packageName);
+		Package obj=table.getConnector().getBilling().getPackages().get(packageName);
 		if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
 		return obj;
 	}

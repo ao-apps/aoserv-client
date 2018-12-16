@@ -60,7 +60,7 @@ final public class GuestUser extends CachedObjectUserIdKey<GuestUser> implements
 	}
 
 	public User getLinuxAccount() throws SQLException, IOException {
-		User obj = table.getConnector().getLinuxAccounts().get(pkey);
+		User obj = table.getConnector().getLinux().getLinuxAccounts().get(pkey);
 		if (obj == null) throw new SQLException("Unable to find LinuxAccount: " + pkey);
 		return obj;
 	}

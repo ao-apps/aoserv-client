@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class MajordomoVersionTable extends GlobalTableStringKey<MajordomoVersion> {
 
-	public MajordomoVersionTable(AOServConnector connector) {
+	MajordomoVersionTable(AOServConnector connector) {
 		super(connector, MajordomoVersion.class);
 	}
 

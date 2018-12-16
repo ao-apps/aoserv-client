@@ -75,7 +75,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	int disable_log;
 
 	public int addEmailAddress(Address address) throws IOException, SQLException {
-		return table.getConnector().getEmailListAddresses().addEmailListAddress(address, this);
+		return table.getConnector().getEmail().getEmailListAddresses().addEmailListAddress(address, this);
 	}
 
 	@Override
@@ -146,17 +146,17 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
 
 	public java.util.List<Address> getEmailAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmailListAddresses().getEmailAddresses(this);
+		return table.getConnector().getEmail().getEmailListAddresses().getEmailAddresses(this);
 	}
 
 	public java.util.List<ListAddress> getEmailListAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmailListAddresses().getEmailListAddresses(this);
+		return table.getConnector().getEmail().getEmailListAddresses().getEmailListAddresses(this);
 	}
 
 	public int getLinuxServerAccount_pkey() {
@@ -164,7 +164,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	}
 
 	public UserServer getLinuxServerAccount() throws SQLException, IOException {
-		UserServer linuxServerAccountObject = table.getConnector().getLinuxServerAccounts().get(linux_server_account);
+		UserServer linuxServerAccountObject = table.getConnector().getLinux().getLinuxServerAccounts().get(linux_server_account);
 		if (linuxServerAccountObject == null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
 		return linuxServerAccountObject;
 	}
@@ -174,7 +174,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	}
 
 	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-		GroupServer linuxServerGroupObject = table.getConnector().getLinuxServerGroups().get(linux_server_group);
+		GroupServer linuxServerGroupObject = table.getConnector().getLinux().getLinuxServerGroups().get(linux_server_group);
 		if (linuxServerGroupObject == null) throw new SQLException("Unable to find LinuxServerGroup: " + linux_server_group);
 		return linuxServerGroupObject;
 	}
@@ -222,7 +222,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	}
 
 	public MajordomoList getMajordomoList() throws IOException, SQLException {
-		return table.getConnector().getMajordomoLists().get(pkey);
+		return table.getConnector().getEmail().getMajordomoLists().get(pkey);
 	}
 
 	public UnixPath getPath() {

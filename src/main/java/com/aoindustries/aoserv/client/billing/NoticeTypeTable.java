@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class NoticeTypeTable extends GlobalTableStringKey<NoticeType> {
 
-	public NoticeTypeTable(AOServConnector connector) {
+	NoticeTypeTable(AOServConnector connector) {
 		super(connector, NoticeType.class);
 	}
 

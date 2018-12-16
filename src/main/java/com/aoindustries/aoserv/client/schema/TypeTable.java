@@ -39,7 +39,7 @@ import java.util.List;
  */
 final public class TypeTable extends GlobalTableIntegerKey<Type> {
 
-	public TypeTable(AOServConnector connector) {
+	TypeTable(AOServConnector connector) {
 		super(connector, Type.class);
 	}
 

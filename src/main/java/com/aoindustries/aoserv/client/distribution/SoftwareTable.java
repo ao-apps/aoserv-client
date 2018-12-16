@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class SoftwareTable extends GlobalTableStringKey<Software> {
 
-	public SoftwareTable(AOServConnector connector) {
+	SoftwareTable(AOServConnector connector) {
 		super(connector, Software.class);
 	}
 

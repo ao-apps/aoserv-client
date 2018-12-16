@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 final public class StaticSiteTable extends CachedTableIntegerKey<StaticSite> {
 
-	public StaticSiteTable(AOServConnector connector) {
+	StaticSiteTable(AOServConnector connector) {
 		super(connector, StaticSite.class);
 	}
 

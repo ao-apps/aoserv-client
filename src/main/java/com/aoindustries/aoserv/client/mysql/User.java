@@ -131,7 +131,7 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 	int disable_log;
 
 	public int addMySQLServerUser(Server mysqlServer, String host) throws IOException, SQLException {
-		return table.getConnector().getMysqlServerUsers().addMySQLServerUser(pkey, mysqlServer, host);
+		return table.getConnector().getMysql().getMysqlServerUsers().addMySQLServerUser(pkey, mysqlServer, host);
 	}
 
 	@Override
@@ -337,17 +337,17 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
 
 	public UserServer getMySQLServerUser(Server mysqlServer) throws IOException, SQLException {
-		return table.getConnector().getMysqlServerUsers().getMySQLServerUser(pkey, mysqlServer);
+		return table.getConnector().getMysql().getMysqlServerUsers().getMySQLServerUser(pkey, mysqlServer);
 	}
 
 	public List<UserServer> getMySQLServerUsers() throws IOException, SQLException {
-		return table.getConnector().getMysqlServerUsers().getMySQLServerUsers(this);
+		return table.getConnector().getMysql().getMysqlServerUsers().getMySQLServerUsers(this);
 	}
 
 	@Override
@@ -359,7 +359,7 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 		return pkey;
 	}
 	public Username getUsername() throws SQLException, IOException {
-		Username obj=table.getConnector().getUsernames().get(pkey);
+		Username obj=table.getConnector().getAccount().getUsernames().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
 		return obj;
 	}

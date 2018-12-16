@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class ServerFarmTable extends CachedTableStringKey<ServerFarm> {
 
-	public ServerFarmTable(AOServConnector connector) {
+	ServerFarmTable(AOServConnector connector) {
 		super(connector, ServerFarm.class);
 	}
 

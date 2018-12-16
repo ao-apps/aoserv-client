@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public final class PackageCategoryTable extends GlobalTableStringKey<PackageCategory> {
 
-	public PackageCategoryTable(AOServConnector connector) {
+	PackageCategoryTable(AOServConnector connector) {
 		super(connector, PackageCategory.class);
 	}
 

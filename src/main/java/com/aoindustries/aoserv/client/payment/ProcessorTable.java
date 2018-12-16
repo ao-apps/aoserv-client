@@ -37,7 +37,7 @@ import java.util.List;
  */
 final public class ProcessorTable extends CachedTableStringKey<Processor> {
 
-	public ProcessorTable(AOServConnector connector) {
+	ProcessorTable(AOServConnector connector) {
 		super(connector, Processor.class);
 	}
 

@@ -64,13 +64,13 @@ final public class SoftwareCategorization extends GlobalObjectIntegerKey<Softwar
 	}
 
 	public SoftwareCategory getTechnologyClass(AOServConnector connector) throws SQLException, IOException {
-		SoftwareCategory technologyClass = connector.getTechnologyClasses().get(clazz);
+		SoftwareCategory technologyClass = connector.getDistribution().getTechnologyClasses().get(clazz);
 		if (technologyClass == null) throw new SQLException("Unable to find TechnologyClass: " + clazz);
 		return technologyClass;
 	}
 
 	public Software getTechnologyName(AOServConnector connector) throws SQLException, IOException {
-		Software technologyName = connector.getTechnologyNames().get(name);
+		Software technologyName = connector.getDistribution().getTechnologyNames().get(name);
 		if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
 		return technologyName;
 	}

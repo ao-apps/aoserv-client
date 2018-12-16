@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 final public class TimeZoneTable extends GlobalTableStringKey<TimeZone> {
 
-	public TimeZoneTable(AOServConnector connector) {
+	TimeZoneTable(AOServConnector connector) {
 		super(connector, TimeZone.class);
 	}
 

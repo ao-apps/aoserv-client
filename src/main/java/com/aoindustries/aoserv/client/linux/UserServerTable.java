@@ -58,7 +58,7 @@ import java.util.Map;
  */
 final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 
-	public UserServerTable(AOServConnector connector) {
+	UserServerTable(AOServConnector connector) {
 		super(connector, UserServer.class);
 	}
 
@@ -139,7 +139,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				UserId username = linuxServerAccount.username;
 
 				// Must also have a non-primary entry in the LinuxGroupAccounts that is also a group on this server
-				for(GroupUser lga : connector.getLinuxGroupAccounts().getLinuxGroupAccounts(groupName, username)) {
+				for(GroupUser lga : connector.getLinux().getLinuxGroupAccounts().getLinuxGroupAccounts(groupName, username)) {
 					if(
 						!lga.isPrimary()
 						&& (
@@ -232,7 +232,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		UserServer badPasswordLSA=null;
 		UserServer disabledLSA=null;
 
-		List<Domain> domains=connector.getEmailDomains().getRows();
+		List<Domain> domains=connector.getEmail().getEmailDomains().getRows();
 		int domainsLen=domains.size();
 		for(int c=0;c<domainsLen;c++) {
 			Domain ed=domains.get(c);

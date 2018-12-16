@@ -42,7 +42,7 @@ import java.util.List;
  */
 final public class BlackholeAddressTable extends CachedTableIntegerKey<BlackholeAddress> {
 
-	public BlackholeAddressTable(AOServConnector connector) {
+	BlackholeAddressTable(AOServConnector connector) {
 		super(connector, BlackholeAddress.class);
 	}
 

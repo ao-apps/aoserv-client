@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public final class SpamAssassinModeTable extends GlobalTableStringKey<SpamAssassinMode> {
 
-	public SpamAssassinModeTable(AOServConnector connector) {
+	SpamAssassinModeTable(AOServConnector connector) {
 		super(connector, SpamAssassinMode.class);
 	}
 

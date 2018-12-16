@@ -36,7 +36,7 @@ import java.util.List;
  */
 final public class EncodingTable extends GlobalTableIntegerKey<Encoding> {
 
-	public EncodingTable(AOServConnector connector) {
+	EncodingTable(AOServConnector connector) {
 		super(connector, Encoding.class);
 	}
 

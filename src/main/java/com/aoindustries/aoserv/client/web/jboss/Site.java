@@ -68,37 +68,37 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 	}
 
 	public Version getHttpdJBossVersion() throws SQLException, IOException {
-		Version obj=table.getConnector().getHttpdJBossVersions().get(version);
+		Version obj=table.getConnector().getWeb_jboss().getHttpdJBossVersions().get(version);
 		if(obj==null) throw new SQLException("Unable to find HttpdJBossVersion: "+version);
 		return obj;
 	}
 
 	public com.aoindustries.aoserv.client.web.tomcat.Site getHttpdTomcatSite() throws SQLException, IOException {
-		com.aoindustries.aoserv.client.web.tomcat.Site obj=table.getConnector().getHttpdTomcatSites().get(pkey);
+		com.aoindustries.aoserv.client.web.tomcat.Site obj=table.getConnector().getWeb_tomcat().getHttpdTomcatSites().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatSite: "+pkey);
 		return obj;
 	}
 
 	public Bind getHypersonicBind() throws IOException, SQLException {
-		Bind obj=table.getConnector().getNetBinds().get(hypersonicBind);
+		Bind obj=table.getConnector().getNet().getNetBinds().get(hypersonicBind);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+hypersonicBind);
 		return obj;
 	}
 
 	public Bind getJmxBind() throws IOException, SQLException {
-		Bind obj=table.getConnector().getNetBinds().get(jmxBind);
+		Bind obj=table.getConnector().getNet().getNetBinds().get(jmxBind);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+jmxBind);
 		return obj;
 	}
 
 	public Bind getJnpBind() throws IOException, SQLException {
-		Bind obj=table.getConnector().getNetBinds().get(jnpBind);
+		Bind obj=table.getConnector().getNet().getNetBinds().get(jnpBind);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+jnpBind);
 		return obj;
 	}
 
 	public Bind getRmiBind() throws SQLException, IOException {
-		Bind obj=table.getConnector().getNetBinds().get(rmiBind);
+		Bind obj=table.getConnector().getNet().getNetBinds().get(rmiBind);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+rmiBind);
 		return obj;
 	}
@@ -109,7 +109,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 	}
 
 	public Bind getWebserverBind() throws IOException, SQLException {
-		Bind obj=table.getConnector().getNetBinds().get(webserverBind);
+		Bind obj=table.getConnector().getNet().getNetBinds().get(webserverBind);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+webserverBind);
 		return obj;
 	}

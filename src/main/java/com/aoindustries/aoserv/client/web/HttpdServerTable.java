@@ -42,7 +42,7 @@ import java.util.List;
  */
 final public class HttpdServerTable extends CachedTableIntegerKey<HttpdServer> {
 
-	public HttpdServerTable(AOServConnector connector) {
+	HttpdServerTable(AOServConnector connector) {
 		super(connector, HttpdServer.class);
 	}
 

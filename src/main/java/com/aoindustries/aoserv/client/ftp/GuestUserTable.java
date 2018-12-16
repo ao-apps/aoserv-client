@@ -44,7 +44,7 @@ import java.util.List;
  */
 final public class GuestUserTable extends CachedTableUserIdKey<GuestUser> {
 
-	public GuestUserTable(AOServConnector connector) {
+	GuestUserTable(AOServConnector connector) {
 		super(connector, GuestUser.class);
 	}
 

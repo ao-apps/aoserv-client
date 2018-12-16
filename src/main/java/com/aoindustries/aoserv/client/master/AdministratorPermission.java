@@ -62,13 +62,13 @@ final public class AdministratorPermission extends CachedObjectIntegerKey<Admini
 	}
 
 	public Administrator getBusinessAdministrator() throws SQLException, IOException {
-		Administrator ba = table.getConnector().getBusinessAdministrators().get(username);
+		Administrator ba = table.getConnector().getAccount().getBusinessAdministrators().get(username);
 		if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+username);
 		return ba;
 	}
 
 	public Permission getAOServPermission() throws SQLException, IOException {
-		Permission ap = table.getConnector().getAoservPermissions().get(permission);
+		Permission ap = table.getConnector().getMaster().getAoservPermissions().get(permission);
 		if(ap==null) throw new SQLException("Unable to find AOServPermission: "+permission);
 		return ap;
 	}

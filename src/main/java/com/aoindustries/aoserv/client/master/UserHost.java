@@ -67,13 +67,13 @@ final public class UserHost extends CachedObjectIntegerKey<UserHost> {
 	}
 
 	public User getMasterUser() throws SQLException, IOException {
-		User obj=table.getConnector().getMasterUsers().get(username);
+		User obj=table.getConnector().getMaster().getMasterUsers().get(username);
 		if(obj==null) throw new SQLException("Unable to find MasterUser: "+username);
 		return obj;
 	}
 
 	public Host getServer() throws SQLException, IOException {
-		Host obj=table.getConnector().getServers().get(server);
+		Host obj=table.getConnector().getNet().getServers().get(server);
 		if(obj==null) throw new SQLException("Unable to find Server: "+server);
 		return obj;
 	}

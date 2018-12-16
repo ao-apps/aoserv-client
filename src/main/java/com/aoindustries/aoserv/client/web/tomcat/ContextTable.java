@@ -47,7 +47,7 @@ import java.util.List;
  */
 final public class ContextTable extends CachedTableIntegerKey<Context> {
 
-	public ContextTable(AOServConnector connector) {
+	ContextTable(AOServConnector connector) {
 		super(connector, Context.class);
 	}
 

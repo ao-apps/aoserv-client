@@ -45,7 +45,7 @@ import java.util.List;
  */
 final public class AddressTable extends CachedTableIntegerKey<Address> {
 
-	public AddressTable(AOServConnector connector) {
+	AddressTable(AOServConnector connector) {
 		super(connector, Address.class);
 	}
 

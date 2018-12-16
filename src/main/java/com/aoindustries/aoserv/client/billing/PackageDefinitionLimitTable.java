@@ -36,7 +36,7 @@ import java.util.List;
  */
 public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<PackageDefinitionLimit> {
 
-	public PackageDefinitionLimitTable(AOServConnector connector) {
+	PackageDefinitionLimitTable(AOServConnector connector) {
 		super(connector, PackageDefinitionLimit.class);
 	}
 

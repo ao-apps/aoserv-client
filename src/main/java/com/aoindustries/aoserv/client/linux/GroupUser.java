@@ -91,7 +91,7 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 	}
 
 	public Group getGroup() throws SQLException, IOException {
-		Group groupNameObject = table.getConnector().getLinuxGroups().get(group);
+		Group groupNameObject = table.getConnector().getLinux().getLinuxGroups().get(group);
 		if (groupNameObject == null) throw new SQLException("Unable to find LinuxGroup: " + group);
 		return groupNameObject;
 	}
@@ -101,7 +101,7 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 	}
 
 	public User getUser() throws SQLException, IOException {
-		User usernameObject = table.getConnector().getUsernames().get(user).getLinuxAccount();
+		User usernameObject = table.getConnector().getAccount().getUsernames().get(user).getLinuxAccount();
 		if (usernameObject == null) throw new SQLException("Unable to find LinuxAccount: " + user);
 		return usernameObject;
 	}
@@ -116,7 +116,7 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 
 	public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
 		if(operatingSystemVersion == -1) return null;
-		OperatingSystemVersion osv = table.getConnector().getOperatingSystemVersions().get(operatingSystemVersion);
+		OperatingSystemVersion osv = table.getConnector().getDistribution().getOperatingSystemVersions().get(operatingSystemVersion);
 		if(osv == null) throw new SQLException("Unable to find OperatingSystemVersion: " + operatingSystemVersion);
 		return osv;
 	}

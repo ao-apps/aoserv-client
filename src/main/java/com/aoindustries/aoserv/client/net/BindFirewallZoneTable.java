@@ -37,7 +37,7 @@ import java.util.List;
  */
 final public class BindFirewallZoneTable extends CachedTableIntegerKey<BindFirewallZone> {
 
-	public BindFirewallZoneTable(AOServConnector connector) {
+	BindFirewallZoneTable(AOServConnector connector) {
 		super(connector, BindFirewallZone.class);
 	}
 
