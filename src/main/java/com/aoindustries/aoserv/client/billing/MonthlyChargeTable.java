@@ -99,26 +99,26 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		}
 
 		// Resource constants used later
-		final Resource httpdResource=connector.getBilling().getResources().get(Resource.HTTPD);
+		final Resource httpdResource=connector.getBilling().getResource().get(Resource.HTTPD);
 		if(httpdResource==null) throw new AssertionError("httpdResource is null");
-		final Resource javavmResource=connector.getBilling().getResources().get(Resource.JAVAVM);
+		final Resource javavmResource=connector.getBilling().getResource().get(Resource.JAVAVM);
 		if(javavmResource==null) throw new AssertionError("javavmResource is null");
-		final Resource ipResource=connector.getBilling().getResources().get(Resource.IP);
+		final Resource ipResource=connector.getBilling().getResource().get(Resource.IP);
 		if(ipResource==null) throw new AssertionError("ipResource is null");
-		final Resource mysqlReplicationResource=connector.getBilling().getResources().get(Resource.MYSQL_REPLICATION);
+		final Resource mysqlReplicationResource=connector.getBilling().getResource().get(Resource.MYSQL_REPLICATION);
 		if(mysqlReplicationResource==null) throw new AssertionError("mysqlReplicationResource is null");
-		final Resource emailResource=connector.getBilling().getResources().get(Resource.EMAIL);
+		final Resource emailResource=connector.getBilling().getResource().get(Resource.EMAIL);
 		if(emailResource==null) throw new AssertionError("emailResource is null");
-		final Resource siteResource=connector.getBilling().getResources().get(Resource.SITE);
+		final Resource siteResource=connector.getBilling().getResource().get(Resource.SITE);
 		if(siteResource==null) throw new AssertionError("siteResource is null");
-		final Resource userResource=connector.getBilling().getResources().get(Resource.USER);
+		final Resource userResource=connector.getBilling().getResource().get(Resource.USER);
 		if(userResource==null) throw new AssertionError("userResource is null");
 
 		// Preprocess resources counts
 		Map<Package,Integer> emailsPerPackage=new HashMap<>();
 		Map<Package,Integer> usersPerPackage=new HashMap<>();
 		{
-			for(UserServer lsa : connector.getLinux().getLinuxServerAccounts().getRows()) {
+			for(UserServer lsa : connector.getLinux().getUserServer().getRows()) {
 				UserId username=lsa.getLinuxAccount_username_id();
 				if(!username.equals(User.MAIL)) {
 					Map<Package,Integer> map;
@@ -136,7 +136,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		Map<Package,Integer> javavmsPerPackage=new HashMap<>();
 		{
 			// HttpdSharedTomcats
-			for(SharedTomcat hst : connector.getWeb_tomcat().getHttpdSharedTomcats().getRows()) {
+			for(SharedTomcat hst : connector.getWeb_tomcat().getSharedTomcat().getRows()) {
 				GroupServer lsg=hst.getLinuxServerGroup();
 				Group lg=lsg.getLinuxGroup();
 				Package pack=lg.getPackage();
@@ -145,7 +145,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 				else javavmsPerPackage.put(pack, I=I+1);
 			}
 			// HttpdJBossSites
-			for(com.aoindustries.aoserv.client.web.jboss.Site hjs : connector.getWeb_jboss().getHttpdJBossSites().getRows()) {
+			for(com.aoindustries.aoserv.client.web.jboss.Site hjs : connector.getWeb_jboss().getSite().getRows()) {
 				com.aoindustries.aoserv.client.web.tomcat.Site hts=hjs.getHttpdTomcatSite();
 				Site hs=hts.getHttpdSite();
 				Package pack=hs.getPackage();
@@ -154,7 +154,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 				else javavmsPerPackage.put(pack, I=I+1);
 			}
 			// HttpdTomcatStdSites
-			for(PrivateTomcatSite htss : connector.getWeb_tomcat().getHttpdTomcatStdSites().getRows()) {
+			for(PrivateTomcatSite htss : connector.getWeb_tomcat().getPrivateTomcatSite().getRows()) {
 				com.aoindustries.aoserv.client.web.tomcat.Site hts=htss.getHttpdTomcatSite();
 				Site hs=hts.getHttpdSite();
 				Package pack=hs.getPackage();
@@ -164,7 +164,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 			}
 		}
 
-	for(Package pack : connector.getBilling().getPackages().getRows()) {
+	for(Package pack : connector.getBilling().getPackage().getRows()) {
 			Account business=pack.getBusiness();
 			// Only bill when active
 			if(business.getCanceled()==null) {

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-12-15T19:35:04-0600"
+		dateModified="2018-12-15T22:20:48-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -736,6 +736,12 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>Moved table getters into per-package schemas.</li>
+					<li>
+						Changed table getters to be consistent with database table names.
+						Unusual for Java, these property names are Pascal-case (CapitalCamelCase), for
+						consistency with their representation in the database.  We are choosing to make Java
+						conform to other systems, for consistency across the platform.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>

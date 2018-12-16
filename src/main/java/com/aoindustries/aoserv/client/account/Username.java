@@ -93,7 +93,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 		String zip,
 		boolean enableEmailSupport
 	) throws IOException, SQLException {
-		table.getConnector().getAccount().getBusinessAdministrators().addBusinessAdministrator(
+		table.getConnector().getAccount().getAdministrator().addBusinessAdministrator(
 			this,
 			name,
 			title,
@@ -143,7 +143,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 		String type,
 		UnixPath shell
 	) throws IOException, SQLException {
-		table.getConnector().getLinux().getLinuxAccounts().addLinuxAccount(
+		table.getConnector().getLinux().getUser().addLinuxAccount(
 			this,
 			primaryGroup,
 			name,
@@ -157,7 +157,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 
 	public void addMySQLUser() throws IOException, SQLException {
 		try {
-			table.getConnector().getMysql().getMysqlUsers().addMySQLUser(
+			table.getConnector().getMysql().getUser().addMySQLUser(
 				MySQLUserId.valueOf(pkey.toString())
 			);
 		} catch(ValidationException e) {
@@ -167,7 +167,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 
 	public void addPostgresUser() throws IOException, SQLException {
 		try {
-			table.getConnector().getPostgresql().getPostgresUsers().addPostgresUser(
+			table.getConnector().getPostgresql().getUser().addPostgresUser(
 				PostgresUserId.valueOf(pkey.toString())
 			);
 		} catch(ValidationException e) {
@@ -252,7 +252,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	}
 
 	public Administrator getBusinessAdministrator() throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinessAdministrators().get(pkey);
+		return table.getConnector().getAccount().getAdministrator().get(pkey);
 	}
 
 	@Override
@@ -273,20 +273,20 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
 
 	public User getLinuxAccount() throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxAccounts().get(pkey);
+		return table.getConnector().getLinux().getUser().get(pkey);
 	}
 
 	public com.aoindustries.aoserv.client.mysql.User getMySQLUser() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(MySQLUserId.validate(username).isValid()) {
 			try {
-				return table.getConnector().getMysql().getMysqlUsers().get(MySQLUserId.valueOf(username));
+				return table.getConnector().getMysql().getUser().get(MySQLUserId.valueOf(username));
 			} catch(ValidationException e) {
 				throw new AssertionError("Already validated", e);
 			}
@@ -300,7 +300,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 	}
 
 	public Package getPackage() throws SQLException, IOException {
-		Package packageObject=table.getConnector().getBilling().getPackages().get(packageName);
+		Package packageObject=table.getConnector().getBilling().getPackage().get(packageName);
 		if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 		return packageObject;
 	}
@@ -309,7 +309,7 @@ final public class Username extends CachedObjectUserIdKey<Username> implements P
 		String username = pkey.toString();
 		if(PostgresUserId.validate(username).isValid()) {
 			try {
-				return table.getConnector().getPostgresql().getPostgresUsers().get(PostgresUserId.valueOf(username));
+				return table.getConnector().getPostgresql().getUser().get(PostgresUserId.valueOf(username));
 			} catch(ValidationException e) {
 				throw new AssertionError("Already validated", e);
 			}

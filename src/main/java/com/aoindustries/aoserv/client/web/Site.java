@@ -154,7 +154,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	}
 
 	public Server getAoServer() throws SQLException, IOException {
-		Server obj = table.getConnector().getLinux().getAoServers().get(ao_server);
+		Server obj = table.getConnector().getLinux().getServer().get(ao_server);
 		if(obj == null) throw new SQLException("Unable to find AOServer: " + ao_server);
 		return obj;
 	}
@@ -172,7 +172,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	}
 
 	public Package getPackage() throws SQLException, IOException {
-		Package obj = table.getConnector().getBilling().getPackages().get(packageName);
+		Package obj = table.getConnector().getBilling().getPackage().get(packageName);
 		if(obj == null) throw new SQLException("Unable to find Package: "+packageName);
 		return obj;
 	}
@@ -183,7 +183,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
 	public UserServer getLinuxServerAccount() throws SQLException, IOException {
 		// May be filtered
-		User obj = table.getConnector().getLinux().getLinuxAccounts().get(linuxAccount);
+		User obj = table.getConnector().getLinux().getUser().get(linuxAccount);
 		if(obj == null) return null;
 
 		UserServer lsa = obj.getLinuxServerAccount(getAoServer());
@@ -196,7 +196,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	}
 
 	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-		Group obj = table.getConnector().getLinux().getLinuxGroups().get(linuxGroup);
+		Group obj = table.getConnector().getLinux().getGroup().get(linuxGroup);
 		if(obj == null) throw new SQLException("Unable to find LinuxGroup: "+linuxGroup);
 		GroupServer lsg = obj.getLinuxServerGroup(getAoServer());
 		if(lsg == null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup+" on "+ao_server);
@@ -214,7 +214,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log == -1) return null;
-		DisableLog obj = table.getConnector().getAccount().getDisableLogs().get(disable_log);
+		DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
 		if(obj == null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
@@ -233,7 +233,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
 	public SoftwareVersion getPhpVersion() throws IOException, SQLException {
 		if(phpVersion == -1) return null;
-		SoftwareVersion tv = table.getConnector().getDistribution().getTechnologyVersions().get(phpVersion);
+		SoftwareVersion tv = table.getConnector().getDistribution().getSoftwareVersion().get(phpVersion);
 		if(tv == null) throw new SQLException("TechnologyVersion not found: " + phpVersion);
 		if(!tv.getTechnologyName_name().equals(Software.PHP)) throw new SQLException("Not a PHP version: " + tv.getTechnologyName_name() + " #" + tv.getPkey());
 		if(
@@ -430,7 +430,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		String require,
 		String handler
 	) throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSiteAuthenticatedLocationTable().addHttpdSiteAuthenticatedLocation(
+		return table.getConnector().getWeb().getLocation().addHttpdSiteAuthenticatedLocation(
 			this,
 			path,
 			isRegularExpression,
@@ -495,31 +495,31 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	}
 
 	public List<Location> getHttpdSiteAuthenticatedLocations() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSiteAuthenticatedLocationTable().getHttpdSiteAuthenticatedLocations(this);
+		return table.getConnector().getWeb().getLocation().getHttpdSiteAuthenticatedLocations(this);
 	}
 
 	public List<VirtualHost> getHttpdSiteBinds() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSiteBinds().getHttpdSiteBinds(this);
+		return table.getConnector().getWeb().getVirtualHost().getHttpdSiteBinds(this);
 	}
 
 	public List<VirtualHost> getHttpdSiteBinds(HttpdServer server) throws SQLException, IOException {
-		return table.getConnector().getWeb().getHttpdSiteBinds().getHttpdSiteBinds(this, server);
+		return table.getConnector().getWeb().getVirtualHost().getHttpdSiteBinds(this, server);
 	}
 
 	public StaticSite getHttpdStaticSite() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdStaticSites().get(pkey);
+		return table.getConnector().getWeb().getStaticSite().get(pkey);
 	}
 
 	public com.aoindustries.aoserv.client.web.tomcat.Site getHttpdTomcatSite() throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatSites().get(pkey);
+		return table.getConnector().getWeb_tomcat().getSite().get(pkey);
 	}
 
 	public VirtualHostName getPrimaryHttpdSiteURL() throws SQLException, IOException {
 		List<VirtualHost> binds=getHttpdSiteBinds();
 		if(binds.isEmpty()) return null;
 
-		Port httpPort = table.getConnector().getNet().getProtocols().get(AppProtocol.HTTP).getPort();
-		Port httpsPort = table.getConnector().getNet().getProtocols().get(AppProtocol.HTTPS).getPort();
+		Port httpPort = table.getConnector().getNet().getAppProtocol().get(AppProtocol.HTTP).getPort();
+		Port httpsPort = table.getConnector().getNet().getAppProtocol().get(AppProtocol.HTTPS).getPort();
 
 		// Find first in null (default) HTTPS on default port, if any
 		for(VirtualHost bind : binds) {

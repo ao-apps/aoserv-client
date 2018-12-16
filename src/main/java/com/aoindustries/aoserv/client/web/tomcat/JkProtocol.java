@@ -61,7 +61,7 @@ final public class JkProtocol extends GlobalObjectStringKey<JkProtocol> {
 	}
 
 	public AppProtocol getProtocol(AOServConnector connector) throws SQLException, IOException {
-		AppProtocol protocol=connector.getNet().getProtocols().get(pkey);
+		AppProtocol protocol=connector.getNet().getAppProtocol().get(pkey);
 		if(protocol==null) throw new SQLException("Unable to find Protocol: "+pkey);
 		return protocol;
 	}

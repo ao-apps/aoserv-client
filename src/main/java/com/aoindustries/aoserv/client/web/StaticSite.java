@@ -51,7 +51,7 @@ final public class StaticSite extends CachedObjectIntegerKey<StaticSite> {
 	}
 
 	public Site getHttpdSite() throws SQLException, IOException {
-		Site obj=table.getConnector().getWeb().getHttpdSites().get(pkey);
+		Site obj=table.getConnector().getWeb().getSite().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find HttpdSite: "+pkey);
 		return obj;
 	}

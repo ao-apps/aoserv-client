@@ -76,7 +76,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	int disable_log;
 
 	public int addSpamEmailMessage(String message) throws IOException, SQLException {
-		return table.getConnector().getEmail().getSpamEmailMessages().addSpamEmailMessage(this, message);
+		return table.getConnector().getEmail().getSpamMessage().addSpamEmailMessage(this, message);
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	@Override
 	public DisableLog getDisableLog() throws IOException, SQLException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
@@ -144,7 +144,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	}
 
 	public SmtpRelayType getType() throws SQLException, IOException {
-		SmtpRelayType esrt=table.getConnector().getEmail().getEmailSmtpRelayTypes().get(type);
+		SmtpRelayType esrt=table.getConnector().getEmail().getSmtpRelayType().get(type);
 		if(esrt==null) throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
 		return esrt;
 	}
@@ -155,7 +155,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
 	public Package getPackage() throws IOException, SQLException {
 		// May be filtered
-		return table.getConnector().getBilling().getPackages().get(packageName);
+		return table.getConnector().getBilling().getPackage().get(packageName);
 	}
 
 	public int getRefreshCount() {
@@ -164,13 +164,13 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
 	public Server getAOServer() throws SQLException, IOException {
 		if(ao_server==-1) return null;
-		Server ao=table.getConnector().getLinux().getAoServers().get(ao_server);
+		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
 		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return ao;
 	}
 
 	public List<SpamMessage> getSpamEmailMessages() throws IOException, SQLException {
-		return table.getConnector().getEmail().getSpamEmailMessages().getSpamEmailMessages(this);
+		return table.getConnector().getEmail().getSpamMessage().getSpamEmailMessages(this);
 	}
 
 	@Override

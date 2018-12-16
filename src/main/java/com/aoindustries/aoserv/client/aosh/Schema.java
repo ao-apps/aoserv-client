@@ -34,9 +34,9 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final CommandTable aoshCommands;
-	public CommandTable getAoshCommands() {
-		return aoshCommands;
+	private final CommandTable Command;
+	public CommandTable getCommand() {
+		return Command;
 	}
 
 	final List<? extends AOServTable<?,?>> tables;
@@ -45,7 +45,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(aoshCommands = new CommandTable(connector));
+		newTables.add(Command = new CommandTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

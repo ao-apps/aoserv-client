@@ -275,7 +275,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	}
 
 	public Server getAoServer() throws SQLException, IOException {
-		Server obj = table.getConnector().getLinux().getAoServers().get(ao_server);
+		Server obj = table.getConnector().getLinux().getServer().get(ao_server);
 		if(obj == null) throw new SQLException("Unable to find AOServer: " + ao_server);
 		return obj;
 	}
@@ -310,7 +310,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 
 	public Package getPackage() throws IOException, SQLException {
 		// Package may be filtered
-		return table.getConnector().getBilling().getPackages().get(packageNum);
+		return table.getConnector().getBilling().getPackage().get(packageNum);
 	}
 
 	/**
@@ -333,7 +333,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	 */
 	public Certificate getServerCertificate() throws SQLException, IOException {
 		// May be filtered
-		return table.getConnector().getPki().getSslCertificates().get(serverCertificate);
+		return table.getConnector().getPki().getCertificate().get(serverCertificate);
 	}
 
 	public int getClientCertificate_pkey() {
@@ -347,7 +347,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	 */
 	public Certificate getClientCertificate() throws SQLException, IOException {
 		// May be filtered
-		return table.getConnector().getPki().getSslCertificates().get(clientCertificate);
+		return table.getConnector().getPki().getCertificate().get(clientCertificate);
 	}
 
 	/**
@@ -437,7 +437,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	 */
 	public IpAddress getClientAddrInet() throws IOException, SQLException {
 		if(clientAddrInet == -1) return null;
-		IpAddress obj = table.getConnector().getNet().getIpAddresses().get(clientAddrInet);
+		IpAddress obj = table.getConnector().getNet().getIpAddress().get(clientAddrInet);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + clientAddrInet);
 		InetAddress address = obj.getInetAddress();
 		AddressFamily family = address.getAddressFamily();
@@ -456,7 +456,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	 */
 	public IpAddress getClientAddrInet6() throws IOException, SQLException {
 		if(clientAddrInet6 == -1) return null;
-		IpAddress obj = table.getConnector().getNet().getIpAddresses().get(clientAddrInet6);
+		IpAddress obj = table.getConnector().getNet().getIpAddress().get(clientAddrInet6);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + clientAddrInet6);
 		InetAddress address = obj.getInetAddress();
 		AddressFamily family = address.getAddressFamily();
@@ -467,6 +467,6 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	}
 
 	public List<SendmailBind> getSendmailBinds() throws IOException, SQLException {
-		return table.getConnector().getEmail().getSendmailBinds().getSendmailBinds(this);
+		return table.getConnector().getEmail().getSendmailBind().getSendmailBinds(this);
 	}
 }

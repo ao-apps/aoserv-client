@@ -290,7 +290,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	}
 
 	public Brand getBrand() throws SQLException, IOException {
-		Brand br = table.getConnector().getReseller().getBrands().get(brand);
+		Brand br = table.getConnector().getReseller().getBrand().get(brand);
 		if(br == null) throw new SQLException("Unable to find Brand: " + brand);
 		return br;
 	}
@@ -304,7 +304,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	}
 
 	public PackageDefinition getPackageDefinition() throws SQLException, IOException {
-		PackageDefinition pd = table.getConnector().getBilling().getPackageDefinitions().get(package_definition);
+		PackageDefinition pd = table.getConnector().getBilling().getPackageDefinition().get(package_definition);
 		if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
 		return pd;
 	}
@@ -418,13 +418,13 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	}
 
 	public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
-		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(encryption_from);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_from);
 		if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_from);
 		return ek;
 	}
 
 	public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
-		EncryptionKey er = table.getConnector().getPki().getEncryptionKeys().get(encryption_recipient);
+		EncryptionKey er = table.getConnector().getPki().getEncryptionKey().get(encryption_recipient);
 		if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_recipient);
 		return er;
 	}
@@ -432,7 +432,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	public Administrator getCompletedBy() throws IOException, SQLException {
 		if(completed_by == null) return null;
 		// May be filtered, null is OK
-		return table.getConnector().getAccount().getBusinessAdministrators().get(completed_by);
+		return table.getConnector().getAccount().getAdministrator().get(completed_by);
 	}
 
 	public Timestamp getCompletedTime() {

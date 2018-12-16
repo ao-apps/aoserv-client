@@ -34,11 +34,11 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final SiteTable httpdJBossSites;
-	public SiteTable getHttpdJBossSites() {return httpdJBossSites;}
+	private final SiteTable Site;
+	public SiteTable getSite() {return Site;}
 
-	private final VersionTable httpdJBossVersions;
-	public VersionTable getHttpdJBossVersions() {return httpdJBossVersions;}
+	private final VersionTable Version;
+	public VersionTable getVersion() {return Version;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -46,8 +46,8 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(httpdJBossSites = new SiteTable(connector));
-		newTables.add(httpdJBossVersions = new VersionTable(connector));
+		newTables.add(Site = new SiteTable(connector));
+		newTables.add(Version = new VersionTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

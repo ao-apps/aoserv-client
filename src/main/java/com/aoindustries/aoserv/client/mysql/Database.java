@@ -156,7 +156,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		boolean canEvent,
 		boolean canTrigger
 	) throws IOException, SQLException {
-		return table.getConnector().getMysql().getMysqlDBUsers().addMySQLDBUser(
+		return table.getConnector().getMysql().getDatabaseUser().addMySQLDBUser(
 			this,
 			msu,
 			canSelect,
@@ -349,15 +349,15 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	public DatabaseUser getMySQLDBUser(UserServer msu) throws IOException, SQLException {
-		return table.getConnector().getMysql().getMysqlDBUsers().getMySQLDBUser(this, msu);
+		return table.getConnector().getMysql().getDatabaseUser().getMySQLDBUser(this, msu);
 	}
 
 	public List<DatabaseUser> getMySQLDBUsers() throws IOException, SQLException {
-		return table.getConnector().getMysql().getMysqlDBUsers().getMySQLDBUsers(this);
+		return table.getConnector().getMysql().getDatabaseUser().getMySQLDBUsers(this);
 	}
 
 	public List<UserServer> getMySQLServerUsers() throws IOException, SQLException {
-		return table.getConnector().getMysql().getMysqlDBUsers().getMySQLServerUsers(this);
+		return table.getConnector().getMysql().getDatabaseUser().getMySQLServerUsers(this);
 	}
 
 	public MySQLDatabaseName getName() {
@@ -365,13 +365,13 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	public Package getPackage() throws SQLException, IOException {
-		Package obj=table.getConnector().getBilling().getPackages().get(packageName);
+		Package obj=table.getConnector().getBilling().getPackage().get(packageName);
 		if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
 		return obj;
 	}
 
 	public Server getMySQLServer() throws SQLException, IOException {
-		Server obj=table.getConnector().getMysql().getMysqlServers().get(mysql_server);
+		Server obj=table.getConnector().getMysql().getServer().get(mysql_server);
 		if(obj==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
 		return obj;
 	}

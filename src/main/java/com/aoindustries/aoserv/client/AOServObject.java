@@ -443,7 +443,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	public abstract Table.TableID getTableID();
 
 	final public Table getTableSchema(AOServConnector connector) throws IOException, SQLException {
-		return connector.getSchema().getSchemaTables().get(getTableID());
+		return connector.getSchema().getTable().get(getTableID());
 	}
 
 	/**

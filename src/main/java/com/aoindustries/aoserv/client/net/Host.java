@@ -82,7 +82,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 		boolean can_see_prices,
 		boolean billParent
 	) throws IOException, SQLException {
-		table.getConnector().getAccount().getBusinesses().addBusiness(
+		table.getConnector().getAccount().getAccount().addBusiness(
 			accounting,
 			contractVersion,
 			this,
@@ -102,7 +102,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 		boolean monitoringEnabled,
 		Set<FirewalldZoneName> firewalldZones
 	) throws IOException, SQLException {
-		return table.getConnector().getNet().getNetBinds().addNetBind(
+		return table.getConnector().getNet().getBind().addNetBind(
 			this,
 			pk,
 			ia,
@@ -114,19 +114,19 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	}
 
 	public Server getAOServer() throws IOException, SQLException {
-		return table.getConnector().getLinux().getAoServers().get(pkey);
+		return table.getConnector().getLinux().getServer().get(pkey);
 	}
 
 	public PhysicalServer getPhysicalServer() throws IOException, SQLException {
-		return table.getConnector().getInfrastructure().getPhysicalServers().get(pkey);
+		return table.getConnector().getInfrastructure().getPhysicalServer().get(pkey);
 	}
 
 	public VirtualServer getVirtualServer() throws IOException, SQLException {
-		return table.getConnector().getInfrastructure().getVirtualServers().get(pkey);
+		return table.getConnector().getInfrastructure().getVirtualServer().get(pkey);
 	}
 
 	public List<Account> getBusinesses() throws IOException, SQLException {
-		return table.getConnector().getAccount().getBusinessServers().getBusinesses(this);
+		return table.getConnector().getAccount().getAccountHost().getBusinesses(this);
 	}
 
 	@Override
@@ -149,7 +149,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 
 	public OperatingSystemVersion getOperatingSystemVersion() throws SQLException, IOException {
 		if(operating_system_version==-1) return null;
-		OperatingSystemVersion osv=table.getConnector().getDistribution().getOperatingSystemVersions().get(operating_system_version);
+		OperatingSystemVersion osv=table.getConnector().getDistribution().getOperatingSystemVersion().get(operating_system_version);
 		if(osv==null) throw new SQLException("Unable to find OperatingSystemVersion: "+operating_system_version);
 		return osv;
 	}
@@ -160,7 +160,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	 * @see #getPackageId()
 	 */
 	public Package getPackage() throws IOException, SQLException {
-		return table.getConnector().getBilling().getPackages().get(packageId);
+		return table.getConnector().getBilling().getPackage().get(packageId);
 	}
 
 	/**
@@ -181,7 +181,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	}
 
 	public ServerFarm getServerFarm() throws SQLException, IOException {
-		ServerFarm sf=table.getConnector().getInfrastructure().getServerFarms().get(farm);
+		ServerFarm sf=table.getConnector().getInfrastructure().getServerFarm().get(farm);
 		if(sf==null) throw new SQLException("Unable to find ServerFarm: "+farm);
 		return sf;
 	}
@@ -275,39 +275,39 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	 * Gets the list of all replications coming from this server.
 	 */
 	public List<FileReplication> getFailoverFileReplications() throws IOException, SQLException {
-		return table.getConnector().getBackup().getFailoverFileReplications().getFailoverFileReplications(this);
+		return table.getConnector().getBackup().getFileReplication().getFailoverFileReplications(this);
 	}
 
 	public List<FirewallZone> getFirewalldZones() throws IOException, SQLException {
-		return table.getConnector().getNet().getFirewalldZones().getFirewalldZones(this);
+		return table.getConnector().getNet().getFirewallZone().getFirewalldZones(this);
 	}
 
 	public Bind getNetBind(IpAddress ipAddress, Port port) throws IOException, SQLException {
-		return table.getConnector().getNet().getNetBinds().getNetBind(this, ipAddress, port);
+		return table.getConnector().getNet().getBind().getNetBind(this, ipAddress, port);
 	}
 
 	public List<Bind> getNetBinds() throws IOException, SQLException {
-		return table.getConnector().getNet().getNetBinds().getNetBinds(this);
+		return table.getConnector().getNet().getBind().getNetBinds(this);
 	}
 
 	public List<Bind> getNetBinds(IpAddress ipAddress) throws IOException, SQLException {
-		return table.getConnector().getNet().getNetBinds().getNetBinds(this, ipAddress);
+		return table.getConnector().getNet().getBind().getNetBinds(this, ipAddress);
 	}
 
 	public List<Bind> getNetBinds(AppProtocol protocol) throws IOException, SQLException {
-		return table.getConnector().getNet().getNetBinds().getNetBinds(this, protocol);
+		return table.getConnector().getNet().getBind().getNetBinds(this, protocol);
 	}
 
 	public Device getNetDevice(String deviceID) throws IOException, SQLException {
-		return table.getConnector().getNet().getNetDevices().getNetDevice(this, deviceID);
+		return table.getConnector().getNet().getDevice().getNetDevice(this, deviceID);
 	}
 
 	public List<Device> getNetDevices() throws IOException, SQLException {
-		return table.getConnector().getNet().getNetDevices().getNetDevices(this);
+		return table.getConnector().getNet().getDevice().getNetDevices(this);
 	}
 
 	public List<IpAddress> getIPAddresses() throws IOException, SQLException {
-		return table.getConnector().getNet().getIpAddresses().getIPAddresses(this);
+		return table.getConnector().getNet().getIpAddress().getIPAddresses(this);
 	}
 
 	public IpAddress getAvailableIPAddress() throws SQLException, IOException {

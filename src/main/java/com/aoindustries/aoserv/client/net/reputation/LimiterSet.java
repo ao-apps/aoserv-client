@@ -93,13 +93,13 @@ final public class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
 	}
 
 	public Limiter getLimiter() throws SQLException, IOException {
-		Limiter obj = table.getConnector().getNet_reputation().getIpReputationLimiters().get(limiter);
+		Limiter obj = table.getConnector().getNet_reputation().getLimiter().get(limiter);
 		if(obj==null) throw new SQLException("Unable to find IpReputationLimiter: " + limiter);
 		return obj;
 	}
 
 	public Set getSet() throws SQLException, IOException {
-		Set obj = table.getConnector().getNet_reputation().getIpReputationSets().get(set);
+		Set obj = table.getConnector().getNet_reputation().getSet().get(set);
 		if(obj==null) throw new SQLException("Unable to find IpReputationSet: " + set);
 		return obj;
 	}

@@ -62,7 +62,7 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 	}
 
 	public Bind getNetBind() throws IOException, SQLException {
-		Bind nb=table.getConnector().getNet().getNetBinds().get(pkey);
+		Bind nb=table.getConnector().getNet().getBind().get(pkey);
 		if(nb==null) throw new SQLException("Unable to find NetBind: "+pkey);
 		return nb;
 	}

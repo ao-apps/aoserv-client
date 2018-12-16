@@ -99,7 +99,7 @@ final public class CertificateOtherUse extends CachedObjectIntegerKey<Certificat
 	}
 
 	public Certificate getSslCertificate() throws SQLException, IOException {
-		Certificate obj = table.getConnector().getPki().getSslCertificates().get(sslCertificate);
+		Certificate obj = table.getConnector().getPki().getCertificate().get(sslCertificate);
 		if(obj == null) throw new SQLException("Unable to find SslCertificate: " + sslCertificate);
 		return obj;
 	}

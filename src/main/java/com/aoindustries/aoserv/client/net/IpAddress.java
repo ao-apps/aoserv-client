@@ -198,7 +198,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 
 	public Device getDevice() throws SQLException, IOException {
 		if(device == -1) return null;
-		Device nd = table.getConnector().getNet().getNetDevices().get(device);
+		Device nd = table.getConnector().getNet().getDevice().get(device);
 		if (nd == null) throw new SQLException("Unable to find NetDevice: " + device);
 		return nd;
 	}
@@ -217,7 +217,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 
 	public Package getPackage() throws IOException, SQLException {
 		// May be null when filtered
-		return table.getConnector().getBilling().getPackages().get(package_id);
+		return table.getConnector().getBilling().getPackage().get(package_id);
 	}
 
 	// TODO: Add this type of shortcut in other places where Timestamp is wrapped and returned
@@ -237,7 +237,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 
 
 	public List<Bind> getNetBinds() throws IOException, SQLException {
-		return table.getConnector().getNet().getNetBinds().getNetBinds(this);
+		return table.getConnector().getNet().getBind().getNetBinds(this);
 	}
 
 	public boolean isAvailable() {

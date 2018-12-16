@@ -34,11 +34,11 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final OptionTable optionTable;
-	public OptionTable getSignupRequestOptions() {return optionTable;}
+	private final OptionTable Option;
+	public OptionTable getOption() {return Option;}
 
-	private final RequestTable requestTable;
-	public RequestTable getSignupRequests() {return requestTable;}
+	private final RequestTable Request;
+	public RequestTable getRequest() {return Request;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -46,8 +46,8 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(optionTable = new OptionTable(connector));
-		newTables.add(requestTable = new RequestTable(connector));
+		newTables.add(Option = new OptionTable(connector));
+		newTables.add(Request = new RequestTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

@@ -118,7 +118,7 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 	}
 
 	public Account getBusiness() throws IOException, SQLException {
-		Account obj=table.getConnector().getAccount().getBusinesses().get(accounting);
+		Account obj=table.getConnector().getAccount().getAccount().get(accounting);
 		if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
 		return obj;
 	}
@@ -143,7 +143,7 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 	}
 
 	public Host getServer() throws IOException, SQLException {
-		Host obj=table.getConnector().getNet().getServers().get(server);
+		Host obj=table.getConnector().getNet().getHost().get(server);
 		if(obj==null) throw new SQLException("Unable to find Server: "+server);
 		return obj;
 	}
@@ -213,7 +213,7 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 		Server ao=se.getAOServer();
 
 		// No children should be able to access the server
-		List<Account> bus=table.getConnector().getAccount().getBusinesses().getRows();
+		List<Account> bus=table.getConnector().getAccount().getAccount().getRows();
 		for(int c=0;c<bus.size();c++) {
 			if(bu.isBusinessOrParentOf(bus.get(c))) {
 				Account bu2=bus.get(c);

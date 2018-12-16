@@ -79,7 +79,7 @@ final public class RewriteRule extends CachedObjectIntegerKey<RewriteRule> {
 	}
 
 	public VirtualHost getVirtualHost() throws SQLException, IOException {
-		VirtualHost obj = table.getConnector().getWeb().getHttpdSiteBinds().get(virtualHost);
+		VirtualHost obj = table.getConnector().getWeb().getVirtualHost().get(virtualHost);
 		if(obj == null) throw new SQLException("Unable to find VirtualHost: " + virtualHost);
 		return obj;
 	}

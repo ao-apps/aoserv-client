@@ -128,7 +128,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 
 	public Package getPackage() throws IOException, SQLException {
 		// May be filtered
-		return table.getConnector().getBilling().getPackages().get(packageName);
+		return table.getConnector().getBilling().getPackage().get(packageName);
 	}
 
 	public int getServer_pkey() {
@@ -136,7 +136,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	public Host getServer() throws SQLException, IOException {
-		Host obj=table.getConnector().getNet().getServers().get(server);
+		Host obj=table.getConnector().getNet().getHost().get(server);
 		if(obj==null) throw new SQLException("Unable to find Server: "+server);
 		return obj;
 	}
@@ -146,7 +146,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	public IpAddress getIpAddress() throws SQLException, IOException {
-		IpAddress obj=table.getConnector().getNet().getIpAddresses().get(ipAddress);
+		IpAddress obj=table.getConnector().getNet().getIpAddress().get(ipAddress);
 		if(obj==null) throw new SQLException("Unable to find IPAddress: "+ipAddress);
 		return obj;
 	}
@@ -160,7 +160,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	public AppProtocol getAppProtocol() throws SQLException, IOException {
-		AppProtocol obj=table.getConnector().getNet().getProtocols().get(app_protocol);
+		AppProtocol obj=table.getConnector().getNet().getAppProtocol().get(app_protocol);
 		if(obj==null) throw new SQLException("Unable to find Protocol: "+app_protocol);
 		return obj;
 	}
@@ -530,63 +530,63 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	public Server getAOServerByDaemonNetBind() throws IOException, SQLException {
-		return table.getConnector().getLinux().getAoServers().getAOServerByDaemonNetBind(this);
+		return table.getConnector().getLinux().getServer().getAOServerByDaemonNetBind(this);
 	}
 
 	public Server getAOServerByJilterNetBind() throws IOException, SQLException {
-		return table.getConnector().getLinux().getAoServers().getAOServerByJilterNetBind(this);
+		return table.getConnector().getLinux().getServer().getAOServerByJilterNetBind(this);
 	}
 
 	public CyrusImapdBind getCyrusImapdBind() throws IOException, SQLException {
-		return table.getConnector().getEmail().getCyrusImapdBinds().get(pkey);
+		return table.getConnector().getEmail().getCyrusImapdBind().get(pkey);
 	}
 
 	public CyrusImapdServer getCyrusImapdServerBySieveNetBind() throws IOException, SQLException {
-		return table.getConnector().getEmail().getCyrusImapdServers().getCyrusImapdServerBySieveNetBind(this);
+		return table.getConnector().getEmail().getCyrusImapdServer().getCyrusImapdServerBySieveNetBind(this);
 	}
 
 	public HttpdBind getHttpdBind() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdBinds().get(pkey);
+		return table.getConnector().getWeb().getHttpdBind().get(pkey);
 	}
 
 	public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByJNPPort() throws IOException, SQLException {
-		return table.getConnector().getWeb_jboss().getHttpdJBossSites().getHttpdJBossSiteByJNPPort(this);
+		return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByJNPPort(this);
 	}
 
 	public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByWebserverPort() throws IOException, SQLException {
-		return table.getConnector().getWeb_jboss().getHttpdJBossSites().getHttpdJBossSiteByWebserverPort(this);
+		return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByWebserverPort(this);
 	}
 
 	public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByRMIPort() throws IOException, SQLException {
-		return table.getConnector().getWeb_jboss().getHttpdJBossSites().getHttpdJBossSiteByRMIPort(this);
+		return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByRMIPort(this);
 	}
 
 	public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByHypersonicPort() throws IOException, SQLException {
-		return table.getConnector().getWeb_jboss().getHttpdJBossSites().getHttpdJBossSiteByHypersonicPort(this);
+		return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByHypersonicPort(this);
 	}
 
 	public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSiteByJMXPort() throws IOException, SQLException {
-		return table.getConnector().getWeb_jboss().getHttpdJBossSites().getHttpdJBossSiteByJMXPort(this);
+		return table.getConnector().getWeb_jboss().getSite().getHttpdJBossSiteByJMXPort(this);
 	}
 
 	public Worker getHttpdWorker() throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdWorkers().getHttpdWorker(this);
+		return table.getConnector().getWeb_tomcat().getWorker().getHttpdWorker(this);
 	}
 
 	public SharedTomcat getHttpdSharedTomcatByShutdownPort() throws SQLException, IOException {
-		return table.getConnector().getWeb_tomcat().getHttpdSharedTomcats().getHttpdSharedTomcatByShutdownPort(this);
+		return table.getConnector().getWeb_tomcat().getSharedTomcat().getHttpdSharedTomcatByShutdownPort(this);
 	}
 
 	public PrivateTomcatSite getHttpdTomcatStdSiteByShutdownPort() throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatStdSites().getHttpdTomcatStdSiteByShutdownPort(this);
+		return table.getConnector().getWeb_tomcat().getPrivateTomcatSite().getHttpdTomcatStdSiteByShutdownPort(this);
 	}
 
 	public SendmailBind getSendmailBind() throws IOException, SQLException {
-		return table.getConnector().getEmail().getSendmailBinds().get(pkey);
+		return table.getConnector().getEmail().getSendmailBind().get(pkey);
 	}
 
 	public List<BindFirewallZone> getNetBindFirewalldZones() throws IOException, SQLException {
-		return table.getConnector().getNet().getNetBindFirewalldZones().getNetBindFirewalldZones(this);
+		return table.getConnector().getNet().getBindFirewallZone().getNetBindFirewalldZones(this);
 	}
 
 	public List<FirewallZone> getFirewalldZones() throws IOException, SQLException {
@@ -608,19 +608,19 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	public TcpRedirect getNetTcpRedirect() throws IOException, SQLException {
-		return table.getConnector().getNet().getNetTcpRedirects().get(pkey);
+		return table.getConnector().getNet().getTcpRedirect().get(pkey);
 	}
 
 	public com.aoindustries.aoserv.client.mysql.Server getMySQLServer() throws IOException, SQLException {
-		return table.getConnector().getMysql().getMysqlServers().getMySQLServer(this);
+		return table.getConnector().getMysql().getServer().getMySQLServer(this);
 	}
 
 	public com.aoindustries.aoserv.client.postgresql.Server getPostgresServer() throws IOException, SQLException {
-		return table.getConnector().getPostgresql().getPostgresServers().getPostgresServer(this);
+		return table.getConnector().getPostgresql().getServer().getPostgresServer(this);
 	}
 
 	public PrivateServer getPrivateFTPServer() throws IOException, SQLException {
-		return table.getConnector().getFtp().getPrivateFTPServers().get(pkey);
+		return table.getConnector().getFtp().getPrivateServer().get(pkey);
 	}
 
 	/**
@@ -690,7 +690,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		if(getPackage()==null) reasons.add(new CannotRemoveReason<Package>("Unable to access package: "+packageName));
 
 		// ao_servers
-		for(Server ao : conn.getLinux().getAoServers().getRows()) {
+		for(Server ao : conn.getLinux().getServer().getRows()) {
 			if(
 				pkey == ao.getDaemonBind_id()
 				|| pkey == ao.getDaemonConnectBind_id()
@@ -699,7 +699,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		}
 
 		// httpd_binds
-		for(HttpdBind hb : conn.getWeb().getHttpdBinds().getRows()) {
+		for(HttpdBind hb : conn.getWeb().getHttpdBind().getRows()) {
 			if(equals(hb.getNetBind())) {
 				HttpdServer hs=hb.getHttpdServer();
 				String name = hs.getName();
@@ -715,7 +715,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		}
 
 		// httpd_jboss_sites
-		for(com.aoindustries.aoserv.client.web.jboss.Site hjb : conn.getWeb_jboss().getHttpdJBossSites().getRows()) {
+		for(com.aoindustries.aoserv.client.web.jboss.Site hjb : conn.getWeb_jboss().getSite().getRows()) {
 			Site hs=hjb.getHttpdTomcatSite().getHttpdSite();
 			if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
 			if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
@@ -725,18 +725,18 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		}
 
 		// httpd_shared_tomcats
-		for(SharedTomcat hst : conn.getWeb_tomcat().getHttpdSharedTomcats().getRows()) {
+		for(SharedTomcat hst : conn.getWeb_tomcat().getSharedTomcat().getRows()) {
 			if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
 		}
 
 		// httpd_tomcat_std_sites
-		for(PrivateTomcatSite hts : conn.getWeb_tomcat().getHttpdTomcatStdSites().getRows()) {
+		for(PrivateTomcatSite hts : conn.getWeb_tomcat().getPrivateTomcatSite().getRows()) {
 			Site hs=hts.getHttpdTomcatSite().getHttpdSite();
 			if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hts));
 		}
 
 		// httpd_workers
-		for(Worker hw : conn.getWeb_tomcat().getHttpdWorkers().getRows()) {
+		for(Worker hw : conn.getWeb_tomcat().getWorker().getRows()) {
 			if(equals(hw.getBind())) {
 				SharedTomcat hst=hw.getHttpdSharedTomcat();
 				if(hst!=null) reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));

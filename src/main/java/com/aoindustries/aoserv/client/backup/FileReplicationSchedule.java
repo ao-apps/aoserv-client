@@ -65,7 +65,7 @@ final public class FileReplicationSchedule extends CachedObjectIntegerKey<FileRe
 	}
 
 	public FileReplication getFailoverFileReplication() throws SQLException, IOException {
-		FileReplication ffr=table.getConnector().getBackup().getFailoverFileReplications().get(replication);
+		FileReplication ffr=table.getConnector().getBackup().getFileReplication().get(replication);
 		if(ffr==null) throw new SQLException("Unable to find FailoverFileReplication: "+replication);
 		return ffr;
 	}

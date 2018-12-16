@@ -172,17 +172,17 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
 
 	public List<SharedTomcatSite> getHttpdTomcatSharedSites() throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatSharedSites().getHttpdTomcatSharedSites(this);
+		return table.getConnector().getWeb_tomcat().getSharedTomcatSite().getHttpdTomcatSharedSites(this);
 	}
 
 	public Version getHttpdTomcatVersion() throws SQLException, IOException {
-		Version obj=table.getConnector().getWeb_tomcat().getHttpdTomcatVersions().get(version);
+		Version obj=table.getConnector().getWeb_tomcat().getVersion().get(version);
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
 		if(
 			obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
@@ -202,7 +202,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	}
 
 	public UserServer getLinuxServerAccount() throws SQLException, IOException {
-		UserServer obj=table.getConnector().getLinux().getLinuxServerAccounts().get(linux_server_account);
+		UserServer obj=table.getConnector().getLinux().getUserServer().get(linux_server_account);
 		if(obj==null) throw new SQLException("Unable to find LinuxServerAccount: "+linux_server_account);
 		return obj;
 	}
@@ -212,7 +212,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	}
 
 	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
-		GroupServer obj=table.getConnector().getLinux().getLinuxServerGroups().get(linux_server_group);
+		GroupServer obj=table.getConnector().getLinux().getGroupServer().get(linux_server_group);
 		if(obj==null) throw new SQLException("Unable to find LinuxServerGroup: "+linux_server_group);
 		return obj;
 	}
@@ -222,7 +222,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server obj=table.getConnector().getLinux().getAoServers().get(ao_server);
+		Server obj=table.getConnector().getLinux().getServer().get(ao_server);
 		if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return obj;
 	}
@@ -234,7 +234,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
 	public Worker getTomcat4Worker() throws SQLException, IOException {
 		if(tomcat4_worker==-1) return null;
-		Worker hw=table.getConnector().getWeb_tomcat().getHttpdWorkers().get(tomcat4_worker);
+		Worker hw=table.getConnector().getWeb_tomcat().getWorker().get(tomcat4_worker);
 		if(hw==null) throw new SQLException("Unable to find HttpdWorker: "+tomcat4_worker);
 		return hw;
 	}
@@ -245,7 +245,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
 	public Bind getTomcat4ShutdownPort() throws IOException, SQLException {
 		if(tomcat4_shutdown_port==-1) return null;
-		Bind nb=table.getConnector().getNet().getNetBinds().get(tomcat4_shutdown_port);
+		Bind nb=table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
 		if(nb==null) throw new SQLException("Unable to find NetBind: "+tomcat4_shutdown_port);
 		return nb;
 	}

@@ -96,9 +96,9 @@ final public class TicketLoggingHandler extends QueuedHandler {
 		business = connector.getThisBusinessAdministrator().getUsername().getPackage().getBusiness();
 		brand = business.getBrand();
 		if(brand==null) throw new SQLException("Unable to find Brand for connector: "+connector);
-		language = connector.getTicket().getLanguages().get(Language.EN);
+		language = connector.getTicket().getLanguage().get(Language.EN);
 		if(language==null) throw new SQLException("Unable to find Language: "+Language.EN);
-		ticketType = connector.getTicket().getTicketTypes().get(TicketType.LOGS);
+		ticketType = connector.getTicket().getTicketType().get(TicketType.LOGS);
 		if(ticketType==null) throw new SQLException("Unable to find TicketType: "+TicketType.LOGS);
 	}
 
@@ -119,7 +119,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
 			String summary = tempSB.toString();
 			// Look for an existing ticket to append
 			Ticket existingTicket = null;
-			for(Ticket ticket : connector.getTicket().getTickets()) {
+			for(Ticket ticket : connector.getTicket().getTicket()) {
 				String status = ticket.getStatus().getStatus();
 				if(
 					(
@@ -150,9 +150,9 @@ final public class TicketLoggingHandler extends QueuedHandler {
 				else if(intLevel<=Level.INFO.intValue()) priorityName = Priority.NORMAL;     // CONFIG < level <=INFO
 				else if(intLevel<=Level.WARNING.intValue()) priorityName = Priority.HIGH;    // INFO < level <=WARNING
 				else priorityName = Priority.URGENT;                                         // WARNING < level
-				Priority priority = connector.getTicket().getTicketPriorities().get(priorityName);
+				Priority priority = connector.getTicket().getPriority().get(priorityName);
 				if(priority==null) throw new SQLException("Unable to find TicketPriority: "+priorityName);
-				connector.getTicket().getTickets().addTicket(
+				connector.getTicket().getTicket().addTicket(
 					brand,
 					business,
 					language,

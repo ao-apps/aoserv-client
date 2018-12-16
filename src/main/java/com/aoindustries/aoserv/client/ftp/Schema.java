@@ -34,11 +34,11 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final GuestUserTable guestUserTable;
-	public GuestUserTable getFtpGuestUsers() {return guestUserTable;}
+	private final GuestUserTable GuestUser;
+	public GuestUserTable getGuestUser() {return GuestUser;}
 
-	private final PrivateServerTable privateServerTable;
-	public PrivateServerTable getPrivateFTPServers() {return privateServerTable;}
+	private final PrivateServerTable PrivateServer;
+	public PrivateServerTable getPrivateServer() {return PrivateServer;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -46,8 +46,8 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(guestUserTable = new GuestUserTable(connector));
-		newTables.add(privateServerTable = new PrivateServerTable(connector));
+		newTables.add(GuestUser = new GuestUserTable(connector));
+		newTables.add(PrivateServer = new PrivateServerTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

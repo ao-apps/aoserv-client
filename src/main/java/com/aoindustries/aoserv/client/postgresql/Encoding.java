@@ -137,7 +137,7 @@ final public class Encoding extends GlobalObjectIntegerKey<Encoding> {
 	}
 
 	public Version getPostgresVersion(AOServConnector connector) throws SQLException, IOException {
-		Version pv=connector.getPostgresql().getPostgresVersions().get(postgres_version);
+		Version pv=connector.getPostgresql().getVersion().get(postgres_version);
 		if(pv==null) throw new SQLException("Unable to find PostgresVersion: "+postgres_version);
 		return pv;
 	}

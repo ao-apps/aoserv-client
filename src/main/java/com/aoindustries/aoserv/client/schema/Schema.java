@@ -34,20 +34,20 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final AoservProtocolTable aoservProtocolTable;
-	public AoservProtocolTable getAoservProtocols() {return aoservProtocolTable;}
+	private final AoservProtocolTable AoservProtocol;
+	public AoservProtocolTable getAoservProtocol() {return AoservProtocol;}
 
-	private final ColumnTable columnTable;
-	public ColumnTable getSchemaColumns() {return columnTable;}
+	private final ColumnTable Column;
+	public ColumnTable getColumn() {return Column;}
 
-	private final ForeignKeyTable foreignKeyTable;
-	public ForeignKeyTable getSchemaForeignKeys() {return foreignKeyTable;}
+	private final ForeignKeyTable ForeignKey;
+	public ForeignKeyTable getForeignKey() {return ForeignKey;}
 
-	private final TableTable tableTable;
-	public TableTable getSchemaTables() {return tableTable;}
+	private final TableTable Table;
+	public TableTable getTable() {return Table;}
 
-	private final TypeTable typeTable;
-	public TypeTable getSchemaTypes() {return typeTable;}
+	private final TypeTable Type;
+	public TypeTable getType() {return Type;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -55,11 +55,11 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(aoservProtocolTable = new AoservProtocolTable(connector));
-		newTables.add(columnTable = new ColumnTable(connector));
-		newTables.add(foreignKeyTable = new ForeignKeyTable(connector));
-		newTables.add(tableTable = new TableTable(connector));
-		newTables.add(typeTable = new TypeTable(connector));
+		newTables.add(AoservProtocol = new AoservProtocolTable(connector));
+		newTables.add(Column = new ColumnTable(connector));
+		newTables.add(ForeignKey = new ForeignKeyTable(connector));
+		newTables.add(Table = new TableTable(connector));
+		newTables.add(Type = new TypeTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

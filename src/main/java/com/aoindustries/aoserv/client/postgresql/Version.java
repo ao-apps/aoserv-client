@@ -113,7 +113,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	 */
 	public SoftwareVersion getPostgisVersion(AOServConnector connector) throws SQLException, IOException {
 		if(postgisVersion == -1) return null;
-		SoftwareVersion tv = connector.getDistribution().getTechnologyVersions().get(postgisVersion);
+		SoftwareVersion tv = connector.getDistribution().getSoftwareVersion().get(postgisVersion);
 		if(tv == null) throw new SQLException("Unable to find TechnologyVersion: " + postgisVersion);
 		if(
 			tv.getOperatingSystemVersion(connector).getPkey()
@@ -130,15 +130,15 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	}
 
 	public List<Encoding> getPostgresEncodings(AOServConnector connector) throws IOException, SQLException {
-		return connector.getPostgresql().getPostgresEncodings().getPostgresEncodings(this);
+		return connector.getPostgresql().getEncoding().getPostgresEncodings(this);
 	}
 
 	public Encoding getPostgresEncoding(AOServConnector connector, String encoding) throws IOException, SQLException {
-		return connector.getPostgresql().getPostgresEncodings().getPostgresEncoding(this, encoding);
+		return connector.getPostgresql().getEncoding().getPostgresEncoding(this, encoding);
 	}
 
 	public SoftwareVersion getTechnologyVersion(AOServConnector connector) throws SQLException, IOException {
-		SoftwareVersion obj = connector.getDistribution().getTechnologyVersions().get(pkey);
+		SoftwareVersion obj = connector.getDistribution().getSoftwareVersion().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
 		return obj;
 	}

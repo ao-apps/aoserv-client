@@ -123,13 +123,13 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 	}
 
 	public Bind getNetBind() throws SQLException, IOException {
-		Bind obj = table.getConnector().getNet().getNetBinds().get(pkey);
+		Bind obj = table.getConnector().getNet().getBind().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find NetBind: " + pkey);
 		return obj;
 	}
 
 	public CyrusImapdServer getCyrusImapdServer() throws SQLException, IOException {
-		CyrusImapdServer obj = table.getConnector().getEmail().getCyrusImapdServers().get(cyrus_imapd_server);
+		CyrusImapdServer obj = table.getConnector().getEmail().getCyrusImapdServer().get(cyrus_imapd_server);
 		if(obj == null) throw new SQLException("Unable to find CyrusImapd: " + cyrus_imapd_server);
 		return obj;
 	}
@@ -151,7 +151,7 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 	public Certificate getCertificate() throws SQLException, IOException {
 		if(certificate == -1) return null;
 		// May be filtered
-		return table.getConnector().getPki().getSslCertificates().get(certificate);
+		return table.getConnector().getPki().getCertificate().get(certificate);
 	}
 
 	/**

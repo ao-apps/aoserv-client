@@ -94,7 +94,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	public Host getServer() throws SQLException, IOException {
-		Host se=table.getConnector().getNet().getServers().get(pkey);
+		Host se=table.getConnector().getNet().getHost().get(pkey);
 		if(se==null) throw new SQLException("Unable to find Server: "+pkey);
 		return se;
 	}
@@ -127,7 +127,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 */
 	public ProcessorType getMinimumProcessorType() throws IOException, SQLException {
 		if(minimumProcessorType==null) return null;
-		ProcessorType pt = table.getConnector().getInfrastructure().getProcessorTypes().get(minimumProcessorType);
+		ProcessorType pt = table.getConnector().getInfrastructure().getProcessorType().get(minimumProcessorType);
 		if(pt==null) throw new SQLException("Unable to find ProcessorType: "+minimumProcessorType);
 		return pt;
 	}
@@ -136,7 +136,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 * Gets the minimum processor architecture.
 	 */
 	public Architecture getMinimumProcessorArchitecture() throws IOException, SQLException {
-		Architecture a = table.getConnector().getDistribution().getArchitectures().get(minimumProcessorArchitecture);
+		Architecture a = table.getConnector().getDistribution().getArchitecture().get(minimumProcessorArchitecture);
 		if(a==null) throw new SQLException("Unable to find Architecture: "+minimumProcessorArchitecture);
 		return a;
 	}
@@ -292,7 +292,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	public List<VirtualDisk> getVirtualDisks() throws IOException, SQLException {
-		return table.getConnector().getInfrastructure().getVirtualDisks().getVirtualDisks(this);
+		return table.getConnector().getInfrastructure().getVirtualDisk().getVirtualDisks(this);
 	}
 
 	/**
@@ -494,7 +494,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 * Gets the physical server that is currently the primary node for this virtual server.
 	 */
 	public PhysicalServer getPrimaryPhysicalServer() throws IOException, SQLException {
-		return table.getConnector().getInfrastructure().getPhysicalServers().get(table.getConnector().requestIntQuery(true,
+		return table.getConnector().getInfrastructure().getPhysicalServer().get(table.getConnector().requestIntQuery(true,
 				AoservProtocol.CommandID.GET_PRIMARY_PHYSICAL_SERVER,
 				pkey
 			)
@@ -505,7 +505,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 * Gets the physical server that is currently the secondary node for this virtual server.
 	 */
 	public PhysicalServer getSecondaryPhysicalServer() throws IOException, SQLException {
-		return table.getConnector().getInfrastructure().getPhysicalServers().get(table.getConnector().requestIntQuery(true,
+		return table.getConnector().getInfrastructure().getPhysicalServer().get(table.getConnector().requestIntQuery(true,
 				AoservProtocol.CommandID.GET_SECONDARY_PHYSICAL_SERVER,
 				pkey
 			)

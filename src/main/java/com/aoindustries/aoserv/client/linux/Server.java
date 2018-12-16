@@ -172,7 +172,7 @@ final public class Server
 	}
 
 	public Host getServer() throws SQLException, IOException {
-		Host se = table.getConnector().getNet().getServers().get(pkey);
+		Host se = table.getConnector().getNet().getHost().get(pkey);
 		if(se == null) throw new SQLException("Unable to find Server: " + pkey);
 		return se;
 	}
@@ -194,7 +194,7 @@ final public class Server
 	public Bind getDaemonBind() throws IOException, SQLException {
 		if(daemon_bind == -1) return null;
 		// May be filtered
-		return table.getConnector().getNet().getNetBinds().get(daemon_bind);
+		return table.getConnector().getNet().getBind().get(daemon_bind);
 	}
 
 	public HashedPassword getDaemonKey() {
@@ -223,7 +223,7 @@ final public class Server
 
 	public Server getFailoverServer() throws SQLException, IOException {
 		if(failover_server == -1) return null;
-		Server se=table.getConnector().getLinux().getAoServers().get(failover_server);
+		Server se=table.getConnector().getLinux().getServer().get(failover_server);
 		if(se==null) throw new SQLException("Unable to find AOServer: "+failover_server);
 		return se;
 	}
@@ -233,7 +233,7 @@ final public class Server
 	}
 
 	public DeviceId getDaemonDeviceId() throws SQLException, IOException {
-		DeviceId obj = table.getConnector().getNet().getNetDeviceIDs().get(daemonDeviceId);
+		DeviceId obj = table.getConnector().getNet().getDeviceId().get(daemonDeviceId);
 		if(obj == null) throw new SQLException("Unable to find NetDeviceID: " + daemonDeviceId);
 		return obj;
 	}
@@ -248,7 +248,7 @@ final public class Server
 	public Bind getDaemonConnectBind() throws IOException, SQLException {
 		if(daemon_connect_bind==-1) return null;
 		// May be filtered
-		return table.getConnector().getNet().getNetBinds().get(daemon_connect_bind);
+		return table.getConnector().getNet().getBind().get(daemon_connect_bind);
 	}
 
 	public String getTimeZone_name() {
@@ -256,7 +256,7 @@ final public class Server
 	}
 
 	public TimeZone getTimeZone() throws SQLException, IOException {
-		TimeZone obj = table.getConnector().getLinux().getTimeZones().get(time_zone);
+		TimeZone obj = table.getConnector().getLinux().getTimeZone().get(time_zone);
 		if(obj == null) throw new SQLException("Unable to find TimeZone: " + time_zone);
 		return obj;
 	}
@@ -268,7 +268,7 @@ final public class Server
 	public Bind getJilterBind() throws IOException, SQLException {
 		if(jilter_bind==-1) return null;
 		// May be filtered
-		return table.getConnector().getNet().getNetBinds().get(jilter_bind);
+		return table.getConnector().getNet().getBind().get(jilter_bind);
 	}
 
 	public boolean getRestrictOutboundEmail() {
@@ -535,7 +535,7 @@ final public class Server
 		GroupServer lsg,
 		long mode
 	) throws IOException, SQLException {
-		return table.getConnector().getScm().getCvsRepositories().addCvsRepository(
+		return table.getConnector().getScm().getCvsRepository().addCvsRepository(
 			this,
 			path,
 			lsa,
@@ -545,11 +545,11 @@ final public class Server
 	}
 
 	public int addEmailDomain(DomainName domain, Package packageObject) throws SQLException, IOException {
-		return table.getConnector().getEmail().getEmailDomains().addEmailDomain(domain, this, packageObject);
+		return table.getConnector().getEmail().getDomain().addEmailDomain(domain, this, packageObject);
 	}
 
 	public int addEmailPipe(String command, Package packageObject) throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailPipes().addEmailPipe(this, command, packageObject);
+		return table.getConnector().getEmail().getPipe().addEmailPipe(this, command, packageObject);
 	}
 
 	public int addHttpdJBossSite(
@@ -564,7 +564,7 @@ final public class Server
 		DomainName[] altHttpHostnames,
 		com.aoindustries.aoserv.client.web.jboss.Version jBossVersion
 	) throws IOException, SQLException {
-		return table.getConnector().getWeb_jboss().getHttpdJBossSites().addHttpdJBossSite(
+		return table.getConnector().getWeb_jboss().getSite().addHttpdJBossSite(
 			this,
 			siteName,
 			packageObj,
@@ -585,7 +585,7 @@ final public class Server
 		UserServer lsa,
 		GroupServer lsg
 	) throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdSharedTomcats().addHttpdSharedTomcat(
+		return table.getConnector().getWeb_tomcat().getSharedTomcat().addHttpdSharedTomcat(
 			name,
 			this,
 			version,
@@ -606,7 +606,7 @@ final public class Server
 		DomainName[] altHttpHostnames,
 		String sharedTomcatName
 	) throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatSharedSites().addHttpdTomcatSharedSite(
+		return table.getConnector().getWeb_tomcat().getSharedTomcatSite().addHttpdTomcatSharedSite(
 			this,
 			siteName,
 			packageObj,
@@ -633,7 +633,7 @@ final public class Server
 		DomainName[] altHttpHostnames,
 		com.aoindustries.aoserv.client.web.tomcat.Version tomcatVersion
 	) throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdTomcatStdSites().addHttpdTomcatStdSite(
+		return table.getConnector().getWeb_tomcat().getPrivateTomcatSite().addHttpdTomcatStdSite(
 			this,
 			siteName,
 			packageObj,
@@ -655,7 +655,7 @@ final public class Server
 	 * expected settings.
 	 */
 	public int addSystemGroup(GroupId groupName, int gid) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerGroups().addSystemGroup(
+		return table.getConnector().getLinux().getGroupServer().addSystemGroup(
 			this,
 			groupName,
 			gid
@@ -679,7 +679,7 @@ final public class Server
 		UnixPath home,
 		UnixPath shell
 	) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerAccounts().addSystemUser(
+		return table.getConnector().getLinux().getUserServer().addSystemUser(
 			this,
 			username,
 			uid,
@@ -694,27 +694,27 @@ final public class Server
 	}
 
 	public List<DaemonAcl> getAOServerDaemonHosts() throws IOException, SQLException {
-		return table.getConnector().getLinux().getAoServerDaemonHosts().getAOServerDaemonHosts(this);
+		return table.getConnector().getLinux().getDaemonAcl().getAOServerDaemonHosts(this);
 	}
 
 	public List<BackupPartition> getBackupPartitions() throws IOException, SQLException {
-		return table.getConnector().getBackup().getBackupPartitions().getBackupPartitions(this);
+		return table.getConnector().getBackup().getBackupPartition().getBackupPartitions(this);
 	}
 
 	public BackupPartition getBackupPartitionForPath(String path) throws IOException, SQLException {
-		return table.getConnector().getBackup().getBackupPartitions().getBackupPartitionForPath(this, path);
+		return table.getConnector().getBackup().getBackupPartition().getBackupPartitionForPath(this, path);
 	}
 
 	public List<BlackholeAddress> getBlackholeEmailAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmail().getBlackholeEmailAddresses().getBlackholeEmailAddresses(this);
+		return table.getConnector().getEmail().getBlackholeAddress().getBlackholeEmailAddresses(this);
 	}
 
 	public CvsRepository getCvsRepository(UnixPath path) throws IOException, SQLException {
-		return table.getConnector().getScm().getCvsRepositories().getCvsRepository(this, path);
+		return table.getConnector().getScm().getCvsRepository().getCvsRepository(this, path);
 	}
 
 	public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
-		return table.getConnector().getScm().getCvsRepositories().getCvsRepositories(this);
+		return table.getConnector().getScm().getCvsRepository().getCvsRepositories(this);
 	}
 
 	public IpAddress getDaemonIPAddress() throws SQLException, IOException {
@@ -733,81 +733,81 @@ final public class Server
 	}
 
 	public CyrusImapdServer getCyrusImapdServer() throws IOException, SQLException {
-		return table.getConnector().getEmail().getCyrusImapdServers().get(pkey);
+		return table.getConnector().getEmail().getCyrusImapdServer().get(pkey);
 	}
 
 	public List<Address> getEmailAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailAddresses().getEmailAddresses(this);
+		return table.getConnector().getEmail().getAddress().getEmailAddresses(this);
 	}
 
 	public Domain getEmailDomain(DomainName domain) throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailDomains().getEmailDomain(this, domain);
+		return table.getConnector().getEmail().getDomain().getEmailDomain(this, domain);
 	}
 
 	public List<Domain> getEmailDomains() throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailDomains().getEmailDomains(this);
+		return table.getConnector().getEmail().getDomain().getEmailDomains(this);
 	}
 
 	public List<Forwarding> getEmailForwarding() throws SQLException, IOException {
-		return table.getConnector().getEmail().getEmailForwardings().getEmailForwarding(this);
+		return table.getConnector().getEmail().getForwarding().getEmailForwarding(this);
 	}
 
 	/**
 	 * Rename to getEmailList when all uses updated.
 	 */
 	public com.aoindustries.aoserv.client.email.List getEmailList(UnixPath path) throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailLists().getEmailList(this, path);
+		return table.getConnector().getEmail().getList().getEmailList(this, path);
 	}
 
 	public List<ListAddress> getEmailListAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailListAddresses().getEmailListAddresses(this);
+		return table.getConnector().getEmail().getListAddress().getEmailListAddresses(this);
 	}
 
 	public List<PipeAddress> getEmailPipeAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailPipeAddresses().getEmailPipeAddresses(this);
+		return table.getConnector().getEmail().getPipeAddress().getEmailPipeAddresses(this);
 	}
 
 	public List<Pipe> getEmailPipes() throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailPipes().getEmailPipes(this);
+		return table.getConnector().getEmail().getPipe().getEmailPipes(this);
 	}
 
 	public SmtpRelay getEmailSmtpRelay(Package pk, HostAddress host) throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailSmtpRelays().getEmailSmtpRelay(pk, this, host);
+		return table.getConnector().getEmail().getSmtpRelay().getEmailSmtpRelay(pk, this, host);
 	}
 
 	/**
 	 * Gets all of the smtp relays settings that apply to either all servers or this server specifically.
 	 */
 	public List<SmtpRelay> getEmailSmtpRelays() throws IOException, SQLException {
-		return table.getConnector().getEmail().getEmailSmtpRelays().getEmailSmtpRelays(this);
+		return table.getConnector().getEmail().getSmtpRelay().getEmailSmtpRelays(this);
 	}
 
 	public List<GuestUser> getFTPGuestUsers() throws IOException, SQLException {
-		return table.getConnector().getFtp().getFtpGuestUsers().getFTPGuestUsers(this);
+		return table.getConnector().getFtp().getGuestUser().getFTPGuestUsers(this);
 	}
 
 	public List<HttpdServer> getHttpdServers() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdServers().getHttpdServers(this);
+		return table.getConnector().getWeb().getHttpdServer().getHttpdServers(this);
 	}
 
 	public List<SharedTomcat> getHttpdSharedTomcats() throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdSharedTomcats().getHttpdSharedTomcats(this);
+		return table.getConnector().getWeb_tomcat().getSharedTomcat().getHttpdSharedTomcats(this);
 	}
 
 	public SharedTomcat getHttpdSharedTomcat(String jvmName) throws IOException, SQLException {
-		return table.getConnector().getWeb_tomcat().getHttpdSharedTomcats().getHttpdSharedTomcat(jvmName, this);
+		return table.getConnector().getWeb_tomcat().getSharedTomcat().getHttpdSharedTomcat(jvmName, this);
 	}
 
 	public Site getHttpdSite(String siteName) throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSites().getHttpdSite(siteName, this);
+		return table.getConnector().getWeb().getSite().getHttpdSite(siteName, this);
 	}
 
 	public List<Site> getHttpdSites() throws IOException, SQLException {
-		return table.getConnector().getWeb().getHttpdSites().getHttpdSites(this);
+		return table.getConnector().getWeb().getSite().getHttpdSites(this);
 	}
 
 	public List<InboxAddress> getLinuxAccAddresses() throws IOException, SQLException {
-		return table.getConnector().getEmail().getLinuxAccAddresses().getLinuxAccAddresses(this);
+		return table.getConnector().getEmail().getInboxAddress().getLinuxAccAddresses(this);
 	}
 
 	public List<User> getLinuxAccounts() throws SQLException, IOException {
@@ -827,31 +827,31 @@ final public class Server
 	}
 
 	public UserServer getLinuxServerAccount(UserId username) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerAccounts().getLinuxServerAccount(this, username);
+		return table.getConnector().getLinux().getUserServer().getLinuxServerAccount(this, username);
 	}
 
 	public UserServer getLinuxServerAccount(LinuxId uid) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerAccounts().getLinuxServerAccount(this, uid);
+		return table.getConnector().getLinux().getUserServer().getLinuxServerAccount(this, uid);
 	}
 
 	public List<UserServer> getLinuxServerAccounts() throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerAccounts().getLinuxServerAccounts(this);
+		return table.getConnector().getLinux().getUserServer().getLinuxServerAccounts(this);
 	}
 
 	public GroupServer getLinuxServerGroup(LinuxId gid) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerGroups().getLinuxServerGroup(this, gid);
+		return table.getConnector().getLinux().getGroupServer().getLinuxServerGroup(this, gid);
 	}
 
 	public GroupServer getLinuxServerGroup(GroupId groupName) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerGroups().getLinuxServerGroup(this, groupName);
+		return table.getConnector().getLinux().getGroupServer().getLinuxServerGroup(this, groupName);
 	}
 
 	public List<GroupServer> getLinuxServerGroups() throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerGroups().getLinuxServerGroups(this);
+		return table.getConnector().getLinux().getGroupServer().getLinuxServerGroups(this);
 	}
 
 	public List<MajordomoServer> getMajordomoServers() throws IOException, SQLException {
-		return table.getConnector().getEmail().getMajordomoServers().getMajordomoServers(this);
+		return table.getConnector().getEmail().getMajordomoServer().getMajordomoServers(this);
 	}
 
 	private static final Map<Integer,Object> mrtgLocks = new HashMap<>();
@@ -920,11 +920,11 @@ final public class Server
 	}
 
 	public com.aoindustries.aoserv.client.mysql.Server getMySQLServer(MySQLServerName name) throws IOException, SQLException {
-		return table.getConnector().getMysql().getMysqlServers().getMySQLServer(name, this);
+		return table.getConnector().getMysql().getServer().getMySQLServer(name, this);
 	}
 
 	public List<com.aoindustries.aoserv.client.mysql.Server> getMySQLServers() throws IOException, SQLException {
-		return table.getConnector().getMysql().getMysqlServers().getMySQLServers(this);
+		return table.getConnector().getMysql().getServer().getMySQLServers(this);
 	}
 
 	public com.aoindustries.aoserv.client.mysql.Server getPreferredMySQLServer() throws IOException, SQLException {
@@ -943,15 +943,15 @@ final public class Server
 	}
 
 	public List<Server> getNestedAOServers() throws IOException, SQLException {
-		return table.getConnector().getLinux().getAoServers().getNestedAOServers(this);
+		return table.getConnector().getLinux().getServer().getNestedAOServers(this);
 	}
 
 	public com.aoindustries.aoserv.client.postgresql.Server getPostgresServer(PostgresServerName name) throws IOException, SQLException {
-		return table.getConnector().getPostgresql().getPostgresServers().getPostgresServer(name, this);
+		return table.getConnector().getPostgresql().getServer().getPostgresServer(name, this);
 	}
 
 	public List<com.aoindustries.aoserv.client.postgresql.Server> getPostgresServers() throws IOException, SQLException {
-		return table.getConnector().getPostgresql().getPostgresServers().getPostgresServers(this);
+		return table.getConnector().getPostgresql().getServer().getPostgresServers(this);
 	}
 
 	public com.aoindustries.aoserv.client.postgresql.Server getPreferredPostgresServer() throws SQLException, IOException {
@@ -984,19 +984,19 @@ final public class Server
 	}*/
 
 	public List<PrivateServer> getPrivateFTPServers() throws IOException, SQLException {
-		return table.getConnector().getFtp().getPrivateFTPServers().getPrivateFTPServers(this);
+		return table.getConnector().getFtp().getPrivateServer().getPrivateFTPServers(this);
 	}
 
 	public List<SendmailServer> getSendmailServers() throws IOException, SQLException {
-		return table.getConnector().getEmail().getSendmailServers().getSendmailServers(this);
+		return table.getConnector().getEmail().getSendmailServer().getSendmailServers(this);
 	}
 
 	public List<Certificate> getSslCertificates() throws IOException, SQLException {
-		return table.getConnector().getPki().getSslCertificates().getSslCertificates(this);
+		return table.getConnector().getPki().getCertificate().getSslCertificates(this);
 	}
 
 	public List<SystemAlias> getSystemEmailAliases() throws IOException, SQLException {
-		return table.getConnector().getEmail().getSystemEmailAliases().getSystemEmailAliases(this);
+		return table.getConnector().getEmail().getSystemAlias().getSystemEmailAliases(this);
 	}
 
 	@Override
@@ -1005,19 +1005,19 @@ final public class Server
 	}
 
 	public boolean isEmailDomainAvailable(DomainName domain) throws SQLException, IOException {
-		return table.getConnector().getEmail().getEmailDomains().isEmailDomainAvailable(this, domain);
+		return table.getConnector().getEmail().getDomain().isEmailDomainAvailable(this, domain);
 	}
 
 	public boolean isHomeUsed(UnixPath directory) throws IOException, SQLException {
-		return table.getConnector().getLinux().getLinuxServerAccounts().isHomeUsed(this, directory);
+		return table.getConnector().getLinux().getUserServer().isHomeUsed(this, directory);
 	}
 
 	public boolean isMySQLServerNameAvailable(MySQLServerName name) throws IOException, SQLException {
-		return table.getConnector().getMysql().getMysqlServers().isMySQLServerNameAvailable(name, this);
+		return table.getConnector().getMysql().getServer().isMySQLServerNameAvailable(name, this);
 	}
 
 	public boolean isPostgresServerNameAvailable(PostgresServerName name) throws IOException, SQLException {
-		return table.getConnector().getPostgresql().getPostgresServers().isPostgresServerNameAvailable(name, this);
+		return table.getConnector().getPostgresql().getServer().isPostgresServerNameAvailable(name, this);
 	}
 
 	public void restartApache() throws IOException, SQLException {
@@ -1080,7 +1080,7 @@ final public class Server
 	}
 
 	public void startDistro(boolean includeUser) throws IOException, SQLException {
-		table.getConnector().getDistribution_management().getDistroFiles().startDistro(this, includeUser);
+		table.getConnector().getDistribution_management().getDistroFile().startDistro(this, includeUser);
 	}
 
 	public void startXfs() throws IOException, SQLException {
@@ -1113,39 +1113,39 @@ final public class Server
 	}
 
 	public void waitForHttpdSiteRebuild() throws IOException, SQLException {
-		table.getConnector().getWeb().getHttpdSites().waitForRebuild(this);
+		table.getConnector().getWeb().getSite().waitForRebuild(this);
 	}
 
 	public void waitForLinuxAccountRebuild() throws IOException, SQLException {
-		table.getConnector().getLinux().getLinuxAccounts().waitForRebuild(this);
+		table.getConnector().getLinux().getUser().waitForRebuild(this);
 	}
 
 	public void waitForMySQLDatabaseRebuild() throws IOException, SQLException {
-		table.getConnector().getMysql().getMysqlDatabases().waitForRebuild(this);
+		table.getConnector().getMysql().getDatabase().waitForRebuild(this);
 	}
 
 	public void waitForMySQLDBUserRebuild() throws IOException, SQLException {
-		table.getConnector().getMysql().getMysqlDBUsers().waitForRebuild(this);
+		table.getConnector().getMysql().getDatabaseUser().waitForRebuild(this);
 	}
 
 	public void waitForMySQLServerRebuild() throws IOException, SQLException {
-		table.getConnector().getMysql().getMysqlServers().waitForRebuild(this);
+		table.getConnector().getMysql().getServer().waitForRebuild(this);
 	}
 
 	public void waitForMySQLUserRebuild() throws IOException, SQLException {
-		table.getConnector().getMysql().getMysqlUsers().waitForRebuild(this);
+		table.getConnector().getMysql().getUser().waitForRebuild(this);
 	}
 
 	public void waitForPostgresDatabaseRebuild() throws IOException, SQLException {
-		table.getConnector().getPostgresql().getPostgresDatabases().waitForRebuild(this);
+		table.getConnector().getPostgresql().getDatabase().waitForRebuild(this);
 	}
 
 	public void waitForPostgresServerRebuild() throws IOException, SQLException {
-		table.getConnector().getPostgresql().getPostgresServers().waitForRebuild(this);
+		table.getConnector().getPostgresql().getServer().waitForRebuild(this);
 	}
 
 	public void waitForPostgresUserRebuild() throws IOException, SQLException {
-		table.getConnector().getPostgresql().getPostgresUsers().waitForRebuild(this);
+		table.getConnector().getPostgresql().getUser().waitForRebuild(this);
 	}
 
 	/**
@@ -2676,7 +2676,7 @@ final public class Server
 	}
 
 	public List<MysqlReplication> getFailoverMySQLReplications() throws IOException, SQLException {
-		return table.getConnector().getBackup().getFailoverMySQLReplications().getFailoverMySQLReplications(this);
+		return table.getConnector().getBackup().getMysqlReplication().getFailoverMySQLReplications(this);
 	}
 
 	/**

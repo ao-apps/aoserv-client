@@ -92,7 +92,7 @@ final public class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
 	}
 
 	public VirtualHost getHttpdSiteBind() throws SQLException, IOException {
-		VirtualHost obj=table.getConnector().getWeb().getHttpdSiteBinds().get(httpd_site_bind);
+		VirtualHost obj=table.getConnector().getWeb().getVirtualHost().get(httpd_site_bind);
 		if(obj==null) throw new SQLException("Unable to find HttpdSiteBind: "+httpd_site_bind);
 		return obj;
 	}

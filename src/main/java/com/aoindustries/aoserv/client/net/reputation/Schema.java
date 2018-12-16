@@ -34,35 +34,23 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final HostTable hostTable;
-	public HostTable getIpReputationSetHosts() {
-		return hostTable;
-	}
+	private final HostTable Host;
+	public HostTable getHost() {return Host;}
 
-	private final LimiterTable limiterTable;
-	public LimiterTable getIpReputationLimiters() {
-		return limiterTable;
-	}
+	private final LimiterTable Limiter;
+	public LimiterTable getLimiter() {return Limiter;}
 
-	private final LimiterClassTable limiterClassTable;
-	public LimiterClassTable getIpReputationLimiterLimits() {
-		return limiterClassTable;
-	}
+	private final LimiterClassTable LimiterClass;
+	public LimiterClassTable getLimiterClass() {return LimiterClass;}
 
-	private final LimiterSetTable limiterSetTable;
-	public LimiterSetTable getIpReputationLimiterSets() {
-		return limiterSetTable;
-	}
+	private final LimiterSetTable LimiterSet;
+	public LimiterSetTable getLimiterSet() {return LimiterSet;}
 
-	private final NetworkTable networkTable;
-	public NetworkTable getIpReputationSetNetworks() {
-		return networkTable;
-	}
+	private final NetworkTable Network;
+	public NetworkTable getNetwork() {return Network;}
 
-	private final SetTable setTable;
-	public SetTable getIpReputationSets() {
-		return setTable;
-	}
+	private final SetTable Set;
+	public SetTable getSet() {return Set;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -70,12 +58,12 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(hostTable = new HostTable(connector));
-		newTables.add(limiterTable = new LimiterTable(connector));
-		newTables.add(limiterClassTable = new LimiterClassTable(connector));
-		newTables.add(limiterSetTable = new LimiterSetTable(connector));
-		newTables.add(networkTable = new NetworkTable(connector));
-		newTables.add(setTable = new SetTable(connector));
+		newTables.add(Host = new HostTable(connector));
+		newTables.add(Limiter = new LimiterTable(connector));
+		newTables.add(LimiterClass = new LimiterClassTable(connector));
+		newTables.add(LimiterSet = new LimiterSetTable(connector));
+		newTables.add(Network = new NetworkTable(connector));
+		newTables.add(Set = new SetTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

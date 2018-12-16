@@ -118,7 +118,7 @@ public class MySQLTODO extends TestCase {
 	private void addMySQLServerUsers() throws Exception {
 		System.out.println("Testing adding MySQLUser to each MySQLServer");
 		System.out.print("    Resolving TEST Package: ");
-		pack=conn.getBilling().getPackages().get(AccountingCode.valueOf("TEST"));
+		pack=conn.getBilling().getPackage().get(AccountingCode.valueOf("TEST"));
 		assertNotNull("Unable to find Package: TEST", pack);
 		System.out.println("Done");
 
@@ -137,13 +137,13 @@ public class MySQLTODO extends TestCase {
 				+(char)('0'+random.nextInt(10))
 				+(char)('0'+random.nextInt(10))
 			);
-			if(conn.getAccount().getUsernames().isUsernameAvailable(temp)) randomUsername=temp;
+			if(conn.getAccount().getUsername().isUsernameAvailable(temp)) randomUsername=temp;
 		}
 		System.out.println(randomUsername);
 
 		System.out.print("    Adding Username: ");
 		pack.addUsername(randomUsername);
-		username=conn.getAccount().getUsernames().get(randomUsername);
+		username=conn.getAccount().getUsername().get(randomUsername);
 		assertNotNull("Username", username);
 		System.out.println("Done");
 
@@ -154,10 +154,10 @@ public class MySQLTODO extends TestCase {
 		System.out.println("Done");
 
 		System.out.println("    Adding MySQLServerUsers:");
-		for(Server mysqlServer : conn.getMysql().getMysqlServers()) {
+		for(Server mysqlServer : conn.getMysql().getServer()) {
 			System.out.print("        "+mysqlServer+": ");
 			int pkey=mysqlUser.addMySQLServerUser(mysqlServer, UserServer.ANY_HOST);
-			UserServer msu=conn.getMysql().getMysqlServerUsers().get(pkey);
+			UserServer msu=conn.getMysql().getUserServer().get(pkey);
 			assertNotNull("MySQLServerUser", msu);
 			mysqlServerUsers.add(msu);
 			mysqlServer.getAoServer().waitForMySQLUserRebuild();
@@ -207,7 +207,7 @@ public class MySQLTODO extends TestCase {
 		System.out.println("Testing adding MySQLDatabase to each MySQLServer");
 
 		Random random=AOServConnector.getRandom();
-		for(Server mysqlServer : conn.getMysql().getMysqlServers()) {
+		for(Server mysqlServer : conn.getMysql().getServer()) {
 			System.out.print("    Generating random database name on "+mysqlServer+": ");
 			MySQLDatabaseName randomName=null;
 			while(randomName==null) {
@@ -229,7 +229,7 @@ public class MySQLTODO extends TestCase {
 
 			System.out.print("    Adding MySQLDatabase to "+mysqlServer+": ");
 			int pkey=mysqlServer.addMySQLDatabase(randomName, pack);
-			Database mysqlDatabase=conn.getMysql().getMysqlDatabases().get(pkey);
+			Database mysqlDatabase=conn.getMysql().getDatabase().get(pkey);
 			assertNotNull("MySQLDatabase", mysqlDatabase);
 			mysqlServer.getAoServer().waitForMySQLDatabaseRebuild();
 			System.out.println("Done");
@@ -370,7 +370,7 @@ public class MySQLTODO extends TestCase {
 	 */
 	private void disableMySQLServerUsers() throws Exception {
 		System.out.print("Disabling MySQLServerUsers: ");
-		DisableLog dl=conn.getAccount().getDisableLogs().get(pack.getBusiness().addDisableLog("Test disabling"));
+		DisableLog dl=conn.getAccount().getDisableLog().get(pack.getBusiness().addDisableLog("Test disabling"));
 		for(UserServer msu : mysqlServerUsers) {
 			System.out.print('.');
 			msu.disable(dl);

@@ -34,23 +34,23 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final PhysicalServerTable physicalServers;
-	public PhysicalServerTable getPhysicalServers() {return physicalServers;}
+	private final PhysicalServerTable PhysicalServer;
+	public PhysicalServerTable getPhysicalServer() {return PhysicalServer;}
 
-	private final ProcessorTypeTable processorTypes;
-	public ProcessorTypeTable getProcessorTypes() {return processorTypes;}
+	private final ProcessorTypeTable ProcessorType;
+	public ProcessorTypeTable getProcessorType() {return ProcessorType;}
 
-	private final RackTable racks;
-	public RackTable getRacks() {return racks;}
+	private final RackTable Rack;
+	public RackTable getRack() {return Rack;}
 
-	private final ServerFarmTable serverFarms;
-	public ServerFarmTable getServerFarms() {return serverFarms;}
+	private final ServerFarmTable ServerFarm;
+	public ServerFarmTable getServerFarm() {return ServerFarm;}
 
-	private final VirtualDiskTable virtualDisks;
-	public VirtualDiskTable getVirtualDisks() {return virtualDisks;}
+	private final VirtualDiskTable VirtualDisk;
+	public VirtualDiskTable getVirtualDisk() {return VirtualDisk;}
 
-	private final VirtualServerTable virtualServers;
-	public VirtualServerTable getVirtualServers() {return virtualServers;}
+	private final VirtualServerTable VirtualServer;
+	public VirtualServerTable getVirtualServer() {return VirtualServer;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -58,12 +58,12 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(physicalServers = new PhysicalServerTable(connector));
-		newTables.add(processorTypes = new ProcessorTypeTable(connector));
-		newTables.add(racks = new RackTable(connector));
-		newTables.add(serverFarms = new ServerFarmTable(connector));
-		newTables.add(virtualDisks = new VirtualDiskTable(connector));
-		newTables.add(virtualServers = new VirtualServerTable(connector));
+		newTables.add(PhysicalServer = new PhysicalServerTable(connector));
+		newTables.add(ProcessorType = new ProcessorTypeTable(connector));
+		newTables.add(Rack = new RackTable(connector));
+		newTables.add(ServerFarm = new ServerFarmTable(connector));
+		newTables.add(VirtualDisk = new VirtualDiskTable(connector));
+		newTables.add(VirtualServer = new VirtualServerTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

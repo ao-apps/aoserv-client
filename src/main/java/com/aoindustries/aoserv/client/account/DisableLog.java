@@ -84,7 +84,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	}
 
 	public Account getBusiness() throws SQLException, IOException {
-		Account bu=table.getConnector().getAccount().getBusinesses().get(accounting);
+		Account bu=table.getConnector().getAccount().getAccount().get(accounting);
 		if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
 		return bu;
 	}
@@ -99,7 +99,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 
 	public Administrator getDisabledBy() throws IOException, SQLException {
 		// May be filtered
-		return table.getConnector().getAccount().getBusinessAdministrators().get(disabled_by);
+		return table.getConnector().getAccount().getAdministrator().get(disabled_by);
 	}
 
 	public String getDisableReason() {

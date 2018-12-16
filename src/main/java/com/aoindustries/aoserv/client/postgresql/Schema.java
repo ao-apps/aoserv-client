@@ -34,23 +34,23 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final DatabaseTable databaseTable;
-	public DatabaseTable getPostgresDatabases() {return databaseTable;}
+	private final DatabaseTable Database;
+	public DatabaseTable getDatabase() {return Database;}
 
-	private final EncodingTable encodingTable;
-	public EncodingTable getPostgresEncodings() {return encodingTable;}
+	private final EncodingTable Encoding;
+	public EncodingTable getEncoding() {return Encoding;}
 
-	private final ServerTable serverTable;
-	public ServerTable getPostgresServers() {return serverTable;}
+	private final ServerTable Server;
+	public ServerTable getServer() {return Server;}
 
-	private final UserTable userTable;
-	public UserTable getPostgresUsers() {return userTable;}
+	private final UserTable User;
+	public UserTable getUser() {return User;}
 
-	private final UserServerTable userServerTable;
-	public UserServerTable getPostgresServerUsers() {return userServerTable;}
+	private final UserServerTable UserServer;
+	public UserServerTable getUserServer() {return UserServer;}
 
-	private final VersionTable versionTable;
-	public VersionTable getPostgresVersions() {return versionTable;}
+	private final VersionTable Version;
+	public VersionTable getVersion() {return Version;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -58,12 +58,12 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(databaseTable = new DatabaseTable(connector));
-		newTables.add(encodingTable = new EncodingTable(connector));
-		newTables.add(serverTable = new ServerTable(connector));
-		newTables.add(userTable = new UserTable(connector));
-		newTables.add(userServerTable = new UserServerTable(connector));
-		newTables.add(versionTable = new VersionTable(connector));
+		newTables.add(Database = new DatabaseTable(connector));
+		newTables.add(Encoding = new EncodingTable(connector));
+		newTables.add(Server = new ServerTable(connector));
+		newTables.add(User = new UserTable(connector));
+		newTables.add(UserServer = new UserServerTable(connector));
+		newTables.add(Version = new VersionTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

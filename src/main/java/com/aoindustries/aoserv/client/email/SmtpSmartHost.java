@@ -60,7 +60,7 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
 	}
 
 	public Bind getNetBind() throws IOException, SQLException {
-		Bind obj=table.getConnector().getNet().getNetBinds().get(pkey);
+		Bind obj=table.getConnector().getNet().getBind().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find NetBind: "+pkey);
 		return obj;
 	}

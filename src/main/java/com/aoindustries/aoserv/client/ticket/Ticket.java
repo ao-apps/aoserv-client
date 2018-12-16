@@ -242,7 +242,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 * May be filtered.
 	 */
 	public Brand getBrand() throws IOException, SQLException {
-		return table.getConnector().getReseller().getBrands().get(brand);
+		return table.getConnector().getReseller().getBrand().get(brand);
 	}
 
 	/**
@@ -250,7 +250,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 */
 	public Reseller getReseller() throws SQLException, IOException {
 		if(reseller == null) return null;
-		return table.getConnector().getReseller().getResellers().get(reseller);
+		return table.getConnector().getReseller().getReseller().get(reseller);
 	}
 
 	/**
@@ -258,11 +258,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 */
 	public Account getBusiness() throws SQLException, IOException {
 		if(accounting==null) return null;
-		return table.getConnector().getAccount().getBusinesses().get(accounting);
+		return table.getConnector().getAccount().getAccount().get(accounting);
 	}
 
 	public Language getLanguage() throws SQLException, IOException {
-		Language la = table.getConnector().getTicket().getLanguages().get(language);
+		Language la = table.getConnector().getTicket().getLanguage().get(language);
 		if(la==null) throw new SQLException("Unable to find Language: "+language);
 		return la;
 	}
@@ -270,18 +270,18 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	public Administrator getCreatedBy() throws IOException, SQLException {
 		if(created_by == null) return null;
 		// Data may be filtered by APIs
-		return table.getConnector().getAccount().getBusinessAdministrators().get(created_by);
+		return table.getConnector().getAccount().getAdministrator().get(created_by);
 	}
 
 	public Category getCategory() throws IOException, SQLException {
 		if(category==-1) return null;
-		Category tc = table.getConnector().getReseller().getTicketCategories().get(category);
+		Category tc = table.getConnector().getReseller().getCategory().get(category);
 		if(tc==null) throw new SQLException("Unable to find TicketCategory: "+category);
 		return tc;
 	}
 
 	public TicketType getTicketType() throws IOException, SQLException {
-		TicketType ticketTypeObject = table.getConnector().getTicket().getTicketTypes().get(ticket_type);
+		TicketType ticketTypeObject = table.getConnector().getTicket().getTicketType().get(ticket_type);
 		if (ticketTypeObject  == null) throw new SQLException("Unable to find TicketType: " + ticket_type);
 		return ticketTypeObject;
 	}
@@ -318,20 +318,20 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}
 
 	public Priority getClientPriority() throws IOException, SQLException {
-		Priority clientPriorityObject = table.getConnector().getTicket().getTicketPriorities().get(client_priority);
+		Priority clientPriorityObject = table.getConnector().getTicket().getPriority().get(client_priority);
 		if (clientPriorityObject == null) throw new SQLException("Unable to find Priority: " + client_priority);
 		return clientPriorityObject;
 	}
 
 	public Priority getAdminPriority() throws IOException, SQLException {
 		if(admin_priority==null) return null;
-		Priority adminPriorityObject = table.getConnector().getTicket().getTicketPriorities().get(admin_priority);
+		Priority adminPriorityObject = table.getConnector().getTicket().getPriority().get(admin_priority);
 		if (adminPriorityObject == null) throw new SQLException("Unable to find Priority: " + admin_priority);
 		return adminPriorityObject;
 	}
 
 	public Status getStatus() throws IOException, SQLException {
-		Status statusObject = table.getConnector().getTicket().getTicketStatuses().get(status);
+		Status statusObject = table.getConnector().getTicket().getStatus().get(status);
 		if (statusObject == null) throw new SQLException("Unable to find status: " + status);
 		return statusObject;
 	}
@@ -359,11 +359,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
 	// <editor-fold desc="Data Access">
 	public List<Action> getTicketActions() throws IOException, SQLException {
-		return table.getConnector().getTicket().getTicketActions().getActions(this);
+		return table.getConnector().getTicket().getAction().getActions(this);
 	}
 
 	public List<Assignment> getTicketAssignments() throws IOException, SQLException {
-		return table.getConnector().getTicket().getTicketAssignments().getTicketAssignments(this);
+		return table.getConnector().getTicket().getAssignment().getTicketAssignments(this);
 	}
 	// </editor-fold>
 

@@ -218,19 +218,19 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	public Account getBusiness() throws SQLException, IOException {
-		Account business = table.getConnector().getAccount().getBusinesses().get(accounting);
+		Account business = table.getConnector().getAccount().getAccount().get(accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 		return business;
 	}
 
 	public Account getSourceBusiness() throws SQLException, IOException {
-		Account business = table.getConnector().getAccount().getBusinesses().get(source_accounting);
+		Account business = table.getConnector().getAccount().getAccount().get(source_accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + source_accounting);
 		return business;
 	}
 
 	public Administrator getBusinessAdministrator() throws SQLException, IOException {
-		Username un=table.getConnector().getAccount().getUsernames().get(username);
+		Username un=table.getConnector().getAccount().getUsername().get(username);
 		// May be filtered
 		if(un==null) return null;
 		Administrator business_administrator = un.getBusinessAdministrator();
@@ -265,14 +265,14 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
 	public Processor getCreditCardProcessor() throws SQLException, IOException {
 		if (processor == null) return null;
-		Processor creditCardProcessor = table.getConnector().getPayment().getCreditCardProcessors().get(processor);
+		Processor creditCardProcessor = table.getConnector().getPayment().getProcessor().get(processor);
 		if (creditCardProcessor == null) throw new SQLException("Unable to find CreditCardProcessor: " + processor);
 		return creditCardProcessor;
 	}
 
 	public Payment getCreditCardTransaction() throws SQLException, IOException {
 		if (creditCardTransaction == -1) return null;
-		Payment cct = table.getConnector().getPayment().getCreditCardTransactions().get(creditCardTransaction);
+		Payment cct = table.getConnector().getPayment().getPayment().get(creditCardTransaction);
 		if (cct == null) throw new SQLException("Unable to find CreditCardTransaction: " + creditCardTransaction);
 		return cct;
 	}
@@ -291,7 +291,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
 	public PaymentType getPaymentType() throws SQLException, IOException {
 		if (payment_type == null) return null;
-		PaymentType paymentType = table.getConnector().getPayment().getPaymentTypes().get(payment_type);
+		PaymentType paymentType = table.getConnector().getPayment().getPaymentType().get(payment_type);
 		if (paymentType == null) throw new SQLException("Unable to find PaymentType: " + payment_type);
 		return paymentType;
 	}
@@ -342,7 +342,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	public TransactionType getType() throws SQLException, IOException {
-		TransactionType tt = table.getConnector().getBilling().getTransactionTypes().get(type);
+		TransactionType tt = table.getConnector().getBilling().getTransactionType().get(type);
 		if (tt == null) throw new SQLException("Unable to find TransactionType: " + type);
 		return tt;
 	}

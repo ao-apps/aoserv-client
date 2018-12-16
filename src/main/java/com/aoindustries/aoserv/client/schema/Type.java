@@ -656,7 +656,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 
 	private static String getZoneForDomainName(AOServConnector conn, DomainName domainName) throws IOException, IllegalArgumentException, SQLException {
 		if(domainName==null) return null;
-		return conn.getDns().getDnsZones().getHostTLD(domainName) + ".";
+		return conn.getDns().getZone().getHostTLD(domainName) + ".";
 	}
 
 	public int compareTo(Object value1, Object value2) throws IllegalArgumentException, SQLException, UnknownHostException {
@@ -823,7 +823,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	}
 
 	public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
-		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(sinceVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocol().get(sinceVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
 		return obj;
 	}
@@ -834,7 +834,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 
 	public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
 		if(lastVersion == null) return null;
-		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(lastVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocol().get(lastVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
 		return obj;
 	}

@@ -34,32 +34,32 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final AppProtocolTable appProtocolTable;
-	public AppProtocolTable getProtocols() {return appProtocolTable;}
+	private final AppProtocolTable AppProtocol;
+	public AppProtocolTable getAppProtocol() {return AppProtocol;}
 
-	private final BindTable bindTable;
-	public BindTable getNetBinds() {return bindTable;}
+	private final BindTable Bind;
+	public BindTable getBind() {return Bind;}
 
-	private final BindFirewallZoneTable bindFirewalldZoneTable;
-	public BindFirewallZoneTable getNetBindFirewalldZones() {return bindFirewalldZoneTable;}
+	private final BindFirewallZoneTable BindFirewallZone;
+	public BindFirewallZoneTable getBindFirewallZone() {return BindFirewallZone;}
 
-	private final DeviceTable deviceTable;
-	public DeviceTable getNetDevices() {return deviceTable;}
+	private final DeviceTable Device;
+	public DeviceTable getDevice() {return Device;}
 
-	private final DeviceIdTable deviceIdTable;
-	public DeviceIdTable getNetDeviceIDs() {return deviceIdTable;}
+	private final DeviceIdTable DeviceId;
+	public DeviceIdTable getDeviceId() {return DeviceId;}
 
-	private final FirewallZoneTable firewallZoneTable;
-	public FirewallZoneTable getFirewalldZones() {return firewallZoneTable;}
+	private final FirewallZoneTable FirewallZone;
+	public FirewallZoneTable getFirewallZone() {return FirewallZone;}
 
-	private final HostTable hostTable;
-	public HostTable getServers() {return hostTable;}
+	private final HostTable Host;
+	public HostTable getHost() {return Host;}
 
-	private final IpAddressTable ipAddressTable;
-	public IpAddressTable getIpAddresses() {return ipAddressTable;}
+	private final IpAddressTable IpAddress;
+	public IpAddressTable getIpAddress() {return IpAddress;}
 
-	private final TcpRedirectTable tcpRedirectTable;
-	public TcpRedirectTable getNetTcpRedirects() {return tcpRedirectTable;}
+	private final TcpRedirectTable TcpRedirect;
+	public TcpRedirectTable getTcpRedirect() {return TcpRedirect;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -67,15 +67,15 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(appProtocolTable = new AppProtocolTable(connector));
-		newTables.add(bindTable = new BindTable(connector));
-		newTables.add(bindFirewalldZoneTable = new BindFirewallZoneTable(connector));
-		newTables.add(deviceTable = new DeviceTable(connector));
-		newTables.add(deviceIdTable = new DeviceIdTable(connector));
-		newTables.add(firewallZoneTable = new FirewallZoneTable(connector));
-		newTables.add(hostTable = new HostTable(connector));
-		newTables.add(ipAddressTable = new IpAddressTable(connector));
-		newTables.add(tcpRedirectTable = new TcpRedirectTable(connector));
+		newTables.add(AppProtocol = new AppProtocolTable(connector));
+		newTables.add(Bind = new BindTable(connector));
+		newTables.add(BindFirewallZone = new BindFirewallZoneTable(connector));
+		newTables.add(Device = new DeviceTable(connector));
+		newTables.add(DeviceId = new DeviceIdTable(connector));
+		newTables.add(FirewallZone = new FirewallZoneTable(connector));
+		newTables.add(Host = new HostTable(connector));
+		newTables.add(IpAddress = new IpAddressTable(connector));
+		newTables.add(TcpRedirect = new TcpRedirectTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

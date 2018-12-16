@@ -93,7 +93,7 @@ final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 	 * @see  Account#getWhoisHistoryAccounts()
 	 */
 	public Account getAccount() throws SQLException, IOException {
-		Account obj = table.getConnector().getAccount().getBusinesses().get(account);
+		Account obj = table.getConnector().getAccount().getAccount().get(account);
 		if (obj == null) throw new SQLException("Unable to find Account: " + account);
 		return obj;
 	}

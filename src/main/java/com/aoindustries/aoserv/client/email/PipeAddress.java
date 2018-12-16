@@ -66,13 +66,13 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 	}
 
 	public Address getEmailAddress() throws SQLException, IOException {
-		Address emailAddressObject = table.getConnector().getEmail().getEmailAddresses().get(email_address);
+		Address emailAddressObject = table.getConnector().getEmail().getAddress().get(email_address);
 		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 		return emailAddressObject;
 	}
 
 	public Pipe getEmailPipe() throws SQLException, IOException {
-		Pipe emailPipeObject = table.getConnector().getEmail().getEmailPipes().get(email_pipe);
+		Pipe emailPipeObject = table.getConnector().getEmail().getPipe().get(email_pipe);
 		if (emailPipeObject == null) throw new SQLException("Unable to find EmailPipe: " + email_pipe);
 		return emailPipeObject;
 	}
@@ -101,7 +101,7 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 		List<CannotRemoveReason<MajordomoList>> reasons=new ArrayList<>();
 
 		// Cannot be used as any part of a majordomo list
-		for(MajordomoList ml : table.getConnector().getEmail().getMajordomoLists().getRows()) {
+		for(MajordomoList ml : table.getConnector().getEmail().getMajordomoList().getRows()) {
 			if(
 				ml.getListPipeAddress().getPkey()==pkey
 				|| ml.getListRequestPipeAddress().getPkey()==pkey
@@ -112,7 +112,7 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 		}
 
 		// Cannot be used as any part of a majordomo server
-		for(MajordomoServer ms : table.getConnector().getEmail().getMajordomoServers().getRows()) {
+		for(MajordomoServer ms : table.getConnector().getEmail().getMajordomoServer().getRows()) {
 			if(ms.getMajordomoPipeAddress().getPkey()==pkey) {
 				Domain ed=ms.getDomain();
 				reasons.add(new CannotRemoveReason("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname()));

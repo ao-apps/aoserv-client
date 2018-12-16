@@ -95,7 +95,7 @@ final public class Network extends CachedObjectLongKey<Network> {
 	}
 
 	public Set getSet() throws SQLException, IOException {
-		Set obj = table.getConnector().getNet_reputation().getIpReputationSets().get(set);
+		Set obj = table.getConnector().getNet_reputation().getSet().get(set);
 		if(obj==null) throw new SQLException("Unable to find IpReputationSet: " + set);
 		return obj;
 	}

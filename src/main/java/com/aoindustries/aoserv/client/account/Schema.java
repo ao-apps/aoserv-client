@@ -34,40 +34,26 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
-	private final AccountTable accountTable;
-	public AccountTable getBusinesses() {
-		return accountTable;
-	}
+	private final AccountTable Account;
+	public AccountTable getAccount() {return Account;}
 
-	private final AccountHostTable accountHostTable;
-	public AccountHostTable getBusinessServers() {
-		return accountHostTable;
-	}
+	private final AccountHostTable AccountHost;
+	public AccountHostTable getAccountHost() {return AccountHost;}
 
-	private final AdministratorTable administratorTable;
-	public AdministratorTable getBusinessAdministrators() {
-		return administratorTable;
-	}
+	private final AdministratorTable Administrator;
+	public AdministratorTable getAdministrator() {return Administrator;}
 
-	private final DisableLogTable disableLogTable;
-	public DisableLogTable getDisableLogs() {
-		return disableLogTable;
-	}
+	private final DisableLogTable DisableLog;
+	public DisableLogTable getDisableLog() {return DisableLog;}
 
-	private final ProfileTable profileTable;
-	public ProfileTable getBusinessProfiles() {
-		return profileTable;
-	}
+	private final ProfileTable Profile;
+	public ProfileTable getProfile() {return Profile;}
 
-	private final UsStateTable usStateTable;
-	public UsStateTable getUsStates() {
-		return usStateTable;
-	}
+	private final UsStateTable UsState;
+	public UsStateTable getUsState() {return UsState;}
 
-	private final UsernameTable usernameTable;
-	public UsernameTable getUsernames() {
-		return usernameTable;
-	}
+	private final UsernameTable Username;
+	public UsernameTable getUsername() {return Username;}
 
 	final List<? extends AOServTable<?,?>> tables;
 
@@ -75,13 +61,13 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
-		newTables.add(accountTable = new AccountTable(connector));
-		newTables.add(accountHostTable = new AccountHostTable(connector));
-		newTables.add(administratorTable = new AdministratorTable(connector));
-		newTables.add(disableLogTable = new DisableLogTable(connector));
-		newTables.add(profileTable = new ProfileTable(connector));
-		newTables.add(usStateTable = new UsStateTable(connector));
-		newTables.add(usernameTable = new UsernameTable(connector));
+		newTables.add(Account = new AccountTable(connector));
+		newTables.add(AccountHost = new AccountHostTable(connector));
+		newTables.add(Administrator = new AdministratorTable(connector));
+		newTables.add(DisableLog = new DisableLogTable(connector));
+		newTables.add(Profile = new ProfileTable(connector));
+		newTables.add(UsState = new UsStateTable(connector));
+		newTables.add(Username = new UsernameTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}
