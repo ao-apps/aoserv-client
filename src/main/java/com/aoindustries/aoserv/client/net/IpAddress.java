@@ -389,6 +389,6 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 	}
 
 	public IpAddressMonitoring getMonitoring() throws IOException, SQLException {
-		return table.getConnector().getNet_monitoring().getIpAddressMonitoring().get(pkey);
+		return table.getConnector().getNet().getMonitoring().getIpAddressMonitoring().get(pkey);
 	}
 }
