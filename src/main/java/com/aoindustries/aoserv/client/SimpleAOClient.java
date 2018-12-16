@@ -464,7 +464,7 @@ final public class SimpleAOClient {
 	}
 
 	private com.aoindustries.aoserv.client.net.reputation.Set getIpReputationSet(String identifier) throws IllegalArgumentException, SQLException, IOException {
-		com.aoindustries.aoserv.client.net.reputation.Set set = connector.getNet_reputation().getSet().get(identifier);
+		com.aoindustries.aoserv.client.net.reputation.Set set = connector.getNet().getReputation().getSet().get(identifier);
 		if(set==null) throw new IllegalArgumentException("Unable to find IpReputationSet: "+identifier);
 		return set;
 	}

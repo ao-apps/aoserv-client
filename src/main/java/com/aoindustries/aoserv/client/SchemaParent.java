@@ -22,50 +22,18 @@
  */
 package com.aoindustries.aoserv.client;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 /**
+ * A parent container of {@link Schema}.
+ *
  * @author  AO Industries, Inc.
  */
-abstract public class Schema implements SchemaParent {
-
-	protected final AOServConnector connector;
-
-	protected Schema(AOServConnector connector) throws IOException {
-		this.connector = connector;
-	}
-
-	final public AOServConnector getConnector() {
-		return connector;
-	}
+public interface SchemaParent {
 
 	/**
-	 * Gets an unmodifiable list of all of the direct sub-schemas of this schema.
-	 *
-	 * @implSpec  This default implementation returns {@link Collections#emptyList()}.
+	 * Gets an unmodifiable list of all of the schemas.
 	 */
-	@Override
-	public List<? extends Schema> getSchemas() {
-		return Collections.emptyList();
-	}
-
-	/**
-	 * Gets an unmodifiable list of all of the tables in the schema.
-	 */
-	abstract public List<? extends AOServTable<?,?>> getTables();
-
-	/**
-	 * Gets the unique name of the schema.
-	 */
-	abstract public String getName();
-
-	/**
-	 * @see  #getName()
-	 */
-	@Override
-	final public String toString() {
-		return getName();
-	}
+	// Java 1.8: default implementation returning empty list
+	List<? extends Schema> getSchemas();
 }

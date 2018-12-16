@@ -251,11 +251,11 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	}
 
 	public List<Host> getHosts() throws IOException, SQLException {
-		return table.getConnector().getNet_reputation().getHost().getHosts(this);
+		return table.getConnector().getNet().getReputation().getHost().getHosts(this);
 	}
 
 	public List<Network> getNetworks() throws IOException, SQLException {
-		return table.getConnector().getNet_reputation().getNetwork().getNetworks(this);
+		return table.getConnector().getNet().getReputation().getNetwork().getNetworks(this);
 	}
 
 	// <editor-fold desc="Commands">

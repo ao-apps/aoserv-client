@@ -34,6 +34,14 @@ import java.util.List;
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
 
+	private final com.aoindustries.aoserv.client.net.monitoring.Schema monitoring;
+	public com.aoindustries.aoserv.client.net.monitoring.Schema getMonitoring() {return monitoring;}
+
+	private final com.aoindustries.aoserv.client.net.reputation.Schema reputation;
+	public com.aoindustries.aoserv.client.net.reputation.Schema getReputation() {return reputation;}
+
+	private final List<? extends com.aoindustries.aoserv.client.Schema> schemas;
+
 	private final AppProtocolTable AppProtocol;
 	public AppProtocolTable getAppProtocol() {return AppProtocol;}
 
@@ -61,10 +69,19 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final TcpRedirectTable TcpRedirect;
 	public TcpRedirectTable getTcpRedirect() {return TcpRedirect;}
 
+	// TODO: Private for all schemas:
 	final List<? extends AOServTable<?,?>> tables;
 
 	public Schema(AOServConnector connector) throws IOException {
 		super(connector);
+
+		// TODO: Load schemas with ServiceLoader
+		ArrayList<com.aoindustries.aoserv.client.Schema> newSchemas = new ArrayList<>();
+		newSchemas.add(monitoring = new com.aoindustries.aoserv.client.net.monitoring.Schema(connector));
+		newSchemas.add(reputation = new com.aoindustries.aoserv.client.net.reputation.Schema(connector));
+		newSchemas.trimToSize();
+		schemas = Collections.unmodifiableList(newSchemas);
+
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
 		newTables.add(AppProtocol = new AppProtocolTable(connector));

@@ -114,10 +114,10 @@ final public class Limiter extends CachedObjectIntegerKey<Limiter> {
 	}
 
 	public List<LimiterClass> getLimits() throws IOException, SQLException {
-		return table.getConnector().getNet_reputation().getLimiterClass().getLimits(this);
+		return table.getConnector().getNet().getReputation().getLimiterClass().getLimits(this);
 	}
 
 	public List<LimiterSet> getSets() throws IOException, SQLException {
-		return table.getConnector().getNet_reputation().getLimiterSet().getSets(this);
+		return table.getConnector().getNet().getReputation().getLimiterSet().getSets(this);
 	}
 }

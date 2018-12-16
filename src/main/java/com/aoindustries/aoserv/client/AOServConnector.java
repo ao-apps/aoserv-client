@@ -73,7 +73,7 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
-abstract public class AOServConnector {
+abstract public class AOServConnector implements SchemaParent {
 
 	/**
 	 * The maximum size of the master entropy pool in bytes.
@@ -246,12 +246,6 @@ abstract public class AOServConnector {
 	private final com.aoindustries.aoserv.client.net.Schema net;
 	public com.aoindustries.aoserv.client.net.Schema getNet() {return net;}
 
-	private final com.aoindustries.aoserv.client.net.monitoring.Schema net_monitoring;
-	public com.aoindustries.aoserv.client.net.monitoring.Schema getNet_monitoring() {return net_monitoring;}
-
-	private final com.aoindustries.aoserv.client.net.reputation.Schema net_reputation;
-	public com.aoindustries.aoserv.client.net.reputation.Schema getNet_reputation() {return net_reputation;}
-
 	private final com.aoindustries.aoserv.client.payment.Schema payment;
 	public com.aoindustries.aoserv.client.payment.Schema getPayment() {return payment;}
 
@@ -285,7 +279,7 @@ abstract public class AOServConnector {
 	private final com.aoindustries.aoserv.client.web.tomcat.Schema web_tomcat;
 	public com.aoindustries.aoserv.client.web.tomcat.Schema getWeb_tomcat() {return web_tomcat;}
 
-	final List<Schema> schemas;
+	private final List<? extends Schema> schemas;
 
 	/**
 	 * The tables are placed in this list in the constructor.
@@ -294,6 +288,7 @@ abstract public class AOServConnector {
 	 *
 	 * @see  Table
 	 */
+	// TODO: Private
 	final List<AOServTable> tables;
 
 	private final SimpleAOClient simpleAOClient;
@@ -335,8 +330,6 @@ abstract public class AOServConnector {
 		newSchemas.add(master = new com.aoindustries.aoserv.client.master.Schema(this));
 		newSchemas.add(mysql = new com.aoindustries.aoserv.client.mysql.Schema(this));
 		newSchemas.add(net = new com.aoindustries.aoserv.client.net.Schema(this));
-		newSchemas.add(net_monitoring = new com.aoindustries.aoserv.client.net.monitoring.Schema(this));
-		newSchemas.add(net_reputation = new com.aoindustries.aoserv.client.net.reputation.Schema(this));
 		newSchemas.add(payment = new com.aoindustries.aoserv.client.payment.Schema(this));
 		newSchemas.add(pki = new com.aoindustries.aoserv.client.pki.Schema(this));
 		newSchemas.add(postgresql = new com.aoindustries.aoserv.client.postgresql.Schema(this));
@@ -436,13 +429,13 @@ abstract public class AOServConnector {
 		newTables.add(web_tomcat.getVersion());
 		newTables.add(web_tomcat.getWorker());
 		newTables.add(net.getIpAddress());
-		newTables.add(net_monitoring.getIpAddressMonitoring());
-		newTables.add(net_reputation.getLimiterClass());
-		newTables.add(net_reputation.getLimiterSet());
-		newTables.add(net_reputation.getLimiter());
-		newTables.add(net_reputation.getHost());
-		newTables.add(net_reputation.getNetwork());
-		newTables.add(net_reputation.getSet());
+		newTables.add(net.getMonitoring().getIpAddressMonitoring());
+		newTables.add(net.getReputation().getLimiterClass());
+		newTables.add(net.getReputation().getLimiterSet());
+		newTables.add(net.getReputation().getLimiter());
+		newTables.add(net.getReputation().getHost());
+		newTables.add(net.getReputation().getNetwork());
+		newTables.add(net.getReputation().getSet());
 		newTables.add(ticket.getLanguage());
 		newTables.add(email.getInboxAddress());
 		newTables.add(linux.getUserType());
@@ -762,9 +755,10 @@ abstract public class AOServConnector {
 	}
 
 	/**
-	 * Gets an unmodifiable list of all of the schemas in the system.
+	 * Gets an unmodifiable list of all of the top-level schemas in the system.
 	 */
-	final public List<Schema> getSchemas() {
+	@Override
+	final public List<? extends Schema> getSchemas() {
 		return schemas;
 	}
 
