@@ -61,7 +61,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final VirtualHostNameTable VirtualHostName;
 	public VirtualHostNameTable getVirtualHostName() {return VirtualHostName;}
 
-	final List<? extends AOServTable<?,?>> tables;
+	private final List<? extends AOServTable<?,?>> tables;
 
 	public Schema(AOServConnector connector) throws IOException {
 		super(connector);

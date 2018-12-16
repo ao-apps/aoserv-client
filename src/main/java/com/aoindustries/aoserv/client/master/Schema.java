@@ -55,7 +55,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final UserHostTable UserHost;
 	public UserHostTable getUserHost() {return UserHost;}
 
-	final List<? extends AOServTable<?,?>> tables;
+	private final List<? extends AOServTable<?,?>> tables;
 
 	public Schema(AOServConnector connector) throws IOException {
 		super(connector);

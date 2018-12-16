@@ -52,7 +52,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final SetTable Set;
 	public SetTable getSet() {return Set;}
 
-	final List<? extends AOServTable<?,?>> tables;
+	private final List<? extends AOServTable<?,?>> tables;
 
 	public Schema(AOServConnector connector) throws IOException {
 		super(connector);

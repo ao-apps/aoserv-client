@@ -63,9 +63,6 @@ public class TCPConnector extends AOServConnector {
 	 */
 	private static final long MAX_IDLE_LISTEN_CACHES = 90L*60*1000;
 
-	/** Avoid repeated copies using static final int. */
-	private static final int numTables = Table.TableID.values().length;
-
 	class CacheMonitor extends Thread {
 
 		CacheMonitor() {
@@ -97,10 +94,10 @@ public class TCPConnector extends AOServConnector {
 										if(timeSince<0) connectionLastUsed=currentTime;
 										else if(timeSince>=MAX_IDLE_LISTEN_CACHES) {
 											// Must also not have any invalidate listeners
-											boolean foundListener=false;
-											for(int c=0;c<numTables;c++) {
-												if(tables.get(c).hasAnyTableListener()) {
-													foundListener=true;
+											boolean foundListener = false;
+											for(AOServTable<?,?> table : getTables()) {
+												if(table.hasAnyTableListener()) {
+													foundListener = true;
 													break;
 												}
 											}

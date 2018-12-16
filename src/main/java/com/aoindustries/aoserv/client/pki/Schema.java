@@ -46,7 +46,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final EncryptionKeyTable EncryptionKey;
 	public EncryptionKeyTable getEncryptionKey() {return EncryptionKey;}
 
-	final List<? extends AOServTable<?,?>> tables;
+	private final List<? extends AOServTable<?,?>> tables;
 
 	public Schema(AOServConnector connector) throws IOException {
 		super(connector);
