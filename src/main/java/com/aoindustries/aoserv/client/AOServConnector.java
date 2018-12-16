@@ -284,12 +284,11 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * The tables are placed in this list in the constructor.
 	 * This list is aligned with the table identifiers in
-	 * <code>SchemaTable</code>.
+	 * {@link Table.TableID}}.
 	 *
-	 * @see  Table
+	 * @see  Table.TableID#ordinal()
 	 */
-	// TODO: Private
-	final List<AOServTable> tables;
+	private final List<AOServTable> tables;
 
 	private final SimpleAOClient simpleAOClient;
 	public SimpleAOClient getSimpleAOClient() {return simpleAOClient;}

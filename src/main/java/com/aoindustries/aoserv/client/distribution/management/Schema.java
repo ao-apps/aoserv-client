@@ -43,7 +43,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final DistroReportTypeTable DistroReportType;
 	public DistroReportTypeTable getDistroReportType() {return DistroReportType;}
 
-	final List<? extends AOServTable<?,?>> tables;
+	private final List<? extends AOServTable<?,?>> tables;
 
 	public Schema(AOServConnector connector) throws IOException {
 		super(connector);

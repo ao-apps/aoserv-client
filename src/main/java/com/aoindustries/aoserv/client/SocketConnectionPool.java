@@ -80,12 +80,12 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 			int totalHashed=0;
 			int totalIndexed=0;
 			int totalRows=0;
-			for(AOServTable table : connector.tables) {
+			for(AOServTable<?,?> table : connector.getTables()) {
 				totalLoaded++;
-				if(table instanceof CachedTable) {
+				if(table instanceof CachedTable<?,?>) {
 					totalCaches++;
 					int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-					CachedTable cached=(CachedTable)table;
+					CachedTable<?,?> cached=(CachedTable<?,?>)table;
 					if(cached.isLoaded()) {
 						totalActive++;
 						for(int d=0;d<columnCount;d++) {
@@ -94,10 +94,10 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 						}
 						totalRows+=cached.size();
 					}
-				} else if(table instanceof GlobalTable) {
+				} else if(table instanceof GlobalTable<?,?>) {
 					totalCaches++;
 					int columnCount=table.getTableSchema().getSchemaColumns(connector).size();
-					GlobalTable global=(GlobalTable)table;
+					GlobalTable<?,?> global=(GlobalTable<?,?>)table;
 					if(global.isLoaded()) {
 						totalActive++;
 						for(int d=0;d<columnCount;d++) {
