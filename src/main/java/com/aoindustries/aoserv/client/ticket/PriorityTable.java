@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class PriorityTable extends GlobalTableStringKey<Priority> {
 
-	public PriorityTable(AOServConnector connector) {
+	PriorityTable(AOServConnector connector) {
 		super(connector, Priority.class);
 	}
 

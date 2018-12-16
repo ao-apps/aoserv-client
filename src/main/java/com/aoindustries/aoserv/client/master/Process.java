@@ -177,7 +177,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 
 	public Administrator getAuthenticatedBusinessAdministrator() throws IOException, SQLException {
 		// Null OK when filtered
-		return table.getConnector().getBusinessAdministrators().get(authenticated_user);
+		return table.getConnector().getAccount().getBusinessAdministrators().get(authenticated_user);
 	}
 
 	public UserId getEffectiveUser() {
@@ -185,7 +185,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	}
 
 	public Administrator getEffectiveBusinessAdministrator() throws SQLException, IOException {
-		Administrator ba=table.getConnector().getBusinessAdministrators().get(effective_user);
+		Administrator ba=table.getConnector().getAccount().getBusinessAdministrators().get(effective_user);
 		if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+effective_user);
 		return ba;
 	}

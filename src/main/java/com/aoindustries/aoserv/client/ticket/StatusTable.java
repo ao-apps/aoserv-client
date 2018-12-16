@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class StatusTable extends GlobalTableStringKey<Status> {
 
-	public StatusTable(AOServConnector connector) {
+	StatusTable(AOServConnector connector) {
 		super(connector, Status.class);
 	}
 

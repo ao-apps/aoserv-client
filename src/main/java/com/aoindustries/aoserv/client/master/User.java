@@ -133,7 +133,7 @@ final public class User extends CachedObjectUserIdKey<User> {
 	}
 
 	public Administrator getBusinessAdministrator() throws SQLException, IOException {
-		Administrator obj=table.getConnector().getBusinessAdministrators().get(pkey);
+		Administrator obj=table.getConnector().getAccount().getBusinessAdministrators().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+pkey);
 		return obj;
 	}

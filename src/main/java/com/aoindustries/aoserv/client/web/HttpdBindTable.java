@@ -41,7 +41,7 @@ import java.util.List;
  */
 final public class HttpdBindTable extends CachedTableIntegerKey<HttpdBind> {
 
-	public HttpdBindTable(AOServConnector connector) {
+	HttpdBindTable(AOServConnector connector) {
 		super(connector, HttpdBind.class);
 	}
 

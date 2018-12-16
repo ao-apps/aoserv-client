@@ -43,7 +43,7 @@ final public class ForeignKeyTable extends GlobalTableIntegerKey<ForeignKey> {
 	private static final Map<Integer,List<ForeignKey>> referencesHash=new HashMap<>();
 	private static final Map<Integer,List<ForeignKey>> referencedByHash=new HashMap<>();
 
-	public ForeignKeyTable(AOServConnector connector) {
+	ForeignKeyTable(AOServConnector connector) {
 		super(connector, ForeignKey.class);
 	}
 

@@ -43,7 +43,7 @@ import java.util.List;
  */
 final public class FileReplicationScheduleTable extends CachedTableIntegerKey<FileReplicationSchedule> {
 
-	public FileReplicationScheduleTable(AOServConnector connector) {
+	FileReplicationScheduleTable(AOServConnector connector) {
 		super(connector, FileReplicationSchedule.class);
 	}
 

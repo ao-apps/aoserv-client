@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class LanguageTable extends GlobalTableStringKey<Language> {
 
-	public LanguageTable(AOServConnector connector) {
+	LanguageTable(AOServConnector connector) {
 		super(connector, Language.class);
 	}
 

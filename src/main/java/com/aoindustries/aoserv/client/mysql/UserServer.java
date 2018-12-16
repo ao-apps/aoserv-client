@@ -168,7 +168,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
@@ -178,11 +178,11 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	public List<DatabaseUser> getMySQLDBUsers() throws IOException, SQLException {
-		return table.getConnector().getMysqlDBUsers().getMySQLDBUsers(this);
+		return table.getConnector().getMysql().getMysqlDBUsers().getMySQLDBUsers(this);
 	}
 
 	public User getMySQLUser() throws SQLException, IOException {
-		User obj=table.getConnector().getMysqlUsers().get(username);
+		User obj=table.getConnector().getMysql().getMysqlUsers().get(username);
 		if(obj==null) throw new SQLException("Unable to find MySQLUser: "+username);
 		return obj;
 	}
@@ -209,7 +209,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	public Server getMySQLServer() throws IOException, SQLException{
 		// May be filtered
-		return table.getConnector().getMysqlServers().get(mysql_server);
+		return table.getConnector().getMysql().getMysqlServers().get(mysql_server);
 	}
 
 	@Override

@@ -39,7 +39,7 @@ import java.util.List;
  */
 final public class BankTransactionTable extends AOServTable<Integer,BankTransaction> {
 
-	public BankTransactionTable(AOServConnector connector) {
+	BankTransactionTable(AOServConnector connector) {
 		super(connector, BankTransaction.class);
 	}
 

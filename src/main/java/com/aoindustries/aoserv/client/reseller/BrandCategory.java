@@ -65,13 +65,13 @@ final public class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 	}
 
 	public Brand getBrand() throws SQLException, IOException {
-		Brand br = table.getConnector().getBrands().get(brand);
+		Brand br = table.getConnector().getReseller().getBrands().get(brand);
 		if(br==null) throw new SQLException("Unable to find Brand: "+brand);
 		return br;
 	}
 
 	public Category getCategory() throws IOException, SQLException {
-		Category tc = table.getConnector().getTicketCategories().get(category);
+		Category tc = table.getConnector().getReseller().getTicketCategories().get(category);
 		if(tc==null) throw new SQLException("Unable to find TicketCategory: "+category);
 		return tc;
 	}

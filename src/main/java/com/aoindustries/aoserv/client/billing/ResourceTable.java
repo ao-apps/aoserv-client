@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class ResourceTable extends GlobalTableStringKey<Resource> {
 
-	public ResourceTable(AOServConnector connector) {
+	ResourceTable(AOServConnector connector) {
 		super(connector, Resource.class);
 	}
 

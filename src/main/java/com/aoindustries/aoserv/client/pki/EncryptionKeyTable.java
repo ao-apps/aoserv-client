@@ -37,7 +37,7 @@ import java.util.List;
  */
 final public class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKey> {
 
-	public EncryptionKeyTable(AOServConnector connector) {
+	EncryptionKeyTable(AOServConnector connector) {
 		super(connector, EncryptionKey.class);
 	}
 

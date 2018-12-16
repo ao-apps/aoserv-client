@@ -60,7 +60,7 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 	private boolean primaryHashBuilt = false;
 	private final Map<UserId,GroupId> primaryHash = new HashMap<>();
 
-	public GroupUserTable(AOServConnector connector) {
+	GroupUserTable(AOServConnector connector) {
 		super(connector, GroupUser.class);
 	}
 
@@ -168,7 +168,7 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 			GroupId groupName = primaryHash.get(account.getUsername_id());
 			if(groupName == null) return null;
 			// May be filtered
-			return connector.getLinuxGroups().get(groupName);
+			return connector.getLinux().getLinuxGroups().get(groupName);
 		}
 	}
 

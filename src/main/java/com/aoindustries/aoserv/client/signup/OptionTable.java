@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class OptionTable extends CachedTableIntegerKey<Option> {
 
-	public OptionTable(AOServConnector connector) {
+	OptionTable(AOServConnector connector) {
 		super(connector, Option.class);
 	}
 

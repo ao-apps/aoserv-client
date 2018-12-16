@@ -39,7 +39,7 @@ import java.sql.SQLException;
  */
 final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 
-	public DisableLogTable(AOServConnector connector) {
+	DisableLogTable(AOServConnector connector) {
 		super(connector, DisableLog.class);
 	}
 

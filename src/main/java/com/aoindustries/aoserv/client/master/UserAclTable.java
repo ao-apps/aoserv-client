@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class UserAclTable extends CachedTableIntegerKey<UserAcl> {
 
-	public UserAclTable(AOServConnector connector) {
+	UserAclTable(AOServConnector connector) {
 		super(connector, UserAcl.class);
 	}
 

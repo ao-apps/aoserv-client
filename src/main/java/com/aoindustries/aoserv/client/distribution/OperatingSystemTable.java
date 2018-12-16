@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 final public class OperatingSystemTable extends GlobalTableStringKey<OperatingSystem> {
 
-	public OperatingSystemTable(AOServConnector connector) {
+	OperatingSystemTable(AOServConnector connector) {
 		super(connector, OperatingSystem.class);
 	}
 

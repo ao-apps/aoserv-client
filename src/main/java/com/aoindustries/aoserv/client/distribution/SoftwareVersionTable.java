@@ -52,7 +52,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 
 	private static long maximumUpdatedTime=-1;
 
-	public SoftwareVersionTable(AOServConnector connector) {
+	SoftwareVersionTable(AOServConnector connector) {
 		super(connector, SoftwareVersion.class);
 	}
 

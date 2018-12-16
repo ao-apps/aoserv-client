@@ -133,7 +133,7 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 	}
 
 	public List getEmailList() throws SQLException, IOException {
-		List obj=table.getConnector().getEmailLists().get(pkey);
+		List obj=table.getConnector().getEmail().getEmailLists().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find EmailList: "+pkey);
 		return obj;
 	}
@@ -153,31 +153,31 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 	}
 
 	public PipeAddress getListPipeAddress() throws SQLException, IOException {
-		PipeAddress pipeAddress=table.getConnector().getEmailPipeAddresses().get(listname_pipe_add);
+		PipeAddress pipeAddress=table.getConnector().getEmail().getEmailPipeAddresses().get(listname_pipe_add);
 		if(pipeAddress==null) throw new SQLException("Unable to find EmailPipeAddress: "+listname_pipe_add);
 		return pipeAddress;
 	}
 
 	public Address getListApprovalAddress() throws SQLException, IOException {
-		Address address=table.getConnector().getEmailAddresses().get(listname_approval_add);
+		Address address=table.getConnector().getEmail().getEmailAddresses().get(listname_approval_add);
 		if(address==null) throw new SQLException("Unable to find EmailAddress: "+listname_approval_add);
 		return address;
 	}
 
 	public ListAddress getListListAddress() throws SQLException, IOException {
-		ListAddress listAddress=table.getConnector().getEmailListAddresses().get(listname_list_add);
+		ListAddress listAddress=table.getConnector().getEmail().getEmailListAddresses().get(listname_list_add);
 		if(listAddress==null) throw new SQLException("Unable to find EmailListAddress: "+listname_list_add);
 		return listAddress;
 	}
 
 	public Address getListOwnerAddress() throws SQLException, IOException {
-		Address address=table.getConnector().getEmailAddresses().get(listname_owner_add);
+		Address address=table.getConnector().getEmail().getEmailAddresses().get(listname_owner_add);
 		if(address==null) throw new SQLException("Unable to find EmailAddress: "+listname_owner_add);
 		return address;
 	}
 
 	public PipeAddress getListRequestPipeAddress() throws SQLException, IOException {
-		PipeAddress pipeAddress=table.getConnector().getEmailPipeAddresses().get(listname_request_pipe_add);
+		PipeAddress pipeAddress=table.getConnector().getEmail().getEmailPipeAddresses().get(listname_request_pipe_add);
 		if(pipeAddress==null) throw new SQLException("Unable to find EmailPipeAddress: "+listname_request_pipe_add);
 		return pipeAddress;
 	}
@@ -187,13 +187,13 @@ final public class MajordomoList extends CachedObjectIntegerKey<MajordomoList> {
 	}
 
 	public Address getOwnerListAddress() throws SQLException, IOException {
-		Address address=table.getConnector().getEmailAddresses().get(owner_listname_add);
+		Address address=table.getConnector().getEmail().getEmailAddresses().get(owner_listname_add);
 		if(address==null) throw new SQLException("Unable to find EmailAddress: "+owner_listname_add);
 		return address;
 	}
 
 	public MajordomoServer getMajordomoServer() throws SQLException, IOException {
-		MajordomoServer obj=table.getConnector().getMajordomoServers().get(majordomo_server);
+		MajordomoServer obj=table.getConnector().getEmail().getMajordomoServers().get(majordomo_server);
 		if(obj==null) throw new SQLException("Unable to find MajordomoServer: "+majordomo_server);
 		return obj;
 	}

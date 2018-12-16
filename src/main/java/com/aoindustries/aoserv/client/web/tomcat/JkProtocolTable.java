@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class JkProtocolTable extends GlobalTableStringKey<JkProtocol> {
 
-	public JkProtocolTable(AOServConnector connector) {
+	JkProtocolTable(AOServConnector connector) {
 		super(connector, JkProtocol.class);
 	}
 

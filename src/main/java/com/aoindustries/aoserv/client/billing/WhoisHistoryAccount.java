@@ -77,7 +77,7 @@ final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 	 * @see  WhoisHistory#getAccounts()
 	 */
 	public WhoisHistory getWhoisHistory() throws SQLException, IOException {
-		WhoisHistory obj = table.getConnector().getWhoisHistory().get(whoisHistory);
+		WhoisHistory obj = table.getConnector().getBilling().getWhoisHistory().get(whoisHistory);
 		if(obj == null) throw new SQLException("Unable to find WhoisHistory: " + whoisHistory);
 		return obj;
 	}
@@ -93,7 +93,7 @@ final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 	 * @see  Account#getWhoisHistoryAccounts()
 	 */
 	public Account getAccount() throws SQLException, IOException {
-		Account obj = table.getConnector().getBusinesses().get(account);
+		Account obj = table.getConnector().getAccount().getBusinesses().get(account);
 		if (obj == null) throw new SQLException("Unable to find Account: " + account);
 		return obj;
 	}

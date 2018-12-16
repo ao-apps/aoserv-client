@@ -52,7 +52,7 @@ import java.util.List;
  */
 final public class HostTable extends CachedTableIntegerKey<Host> {
 
-	public HostTable(AOServConnector connector) {
+	HostTable(AOServConnector connector) {
 		super(connector, Host.class);
 	}
 
@@ -148,7 +148,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		// Is it the exact hostname of an ao_server?
 		try {
 			Server aoServer = DomainName.validate(server).isValid()
-				? connector.getAoServers().get(DomainName.valueOf(server))
+				? connector.getLinux().getAoServers().get(DomainName.valueOf(server))
 				: null;
 			if(aoServer != null) return aoServer.getServer();
 		} catch(ValidationException e) {
@@ -158,7 +158,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		// Look for matching server name (but only one server)
 		Host match = null;
 		int numMatches = 0;
-		for(Host se : connector.getServers().getRows()) {
+		for(Host se : connector.getNet().getServers().getRows()) {
 			if(server.equals(se.getName())) {
 				match = se;
 				numMatches++;
@@ -173,7 +173,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 			if(AccountingCode.validate(packageName).isValid()) {
 				try {
 					String name = server.substring(slashPos+1);
-					Package pk = connector.getPackages().get(AccountingCode.valueOf(packageName));
+					Package pk = connector.getBilling().getPackages().get(AccountingCode.valueOf(packageName));
 					if(pk==null) return null;
 					return pk.getServer(name);
 				} catch(ValidationException e) {
@@ -185,7 +185,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		// Is it an exact server pkey
 		try {
 			int pkey = Integer.parseInt(server);
-			return connector.getServers().get(pkey);
+			return connector.getNet().getServers().get(pkey);
 		} catch(NumberFormatException err) {
 			return null;
 		}

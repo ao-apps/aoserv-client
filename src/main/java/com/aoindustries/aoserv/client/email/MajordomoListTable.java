@@ -43,7 +43,7 @@ import java.util.List;
  */
 final public class MajordomoListTable extends CachedTableIntegerKey<MajordomoList> {
 
-	public MajordomoListTable(AOServConnector connector) {
+	MajordomoListTable(AOServConnector connector) {
 		super(connector, MajordomoList.class);
 	}
 

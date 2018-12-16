@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class AppProtocolTable extends GlobalTableStringKey<AppProtocol> {
 
-	public AppProtocolTable(AOServConnector connector) {
+	AppProtocolTable(AOServConnector connector) {
 		super(connector, AppProtocol.class);
 	}
 

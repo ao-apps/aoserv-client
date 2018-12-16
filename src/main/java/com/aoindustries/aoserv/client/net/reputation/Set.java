@@ -163,7 +163,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	 * May be filtered.
 	 */
 	public Account getBusiness() throws SQLException, IOException {
-		return table.getConnector().getBusinesses().get(accounting);
+		return table.getConnector().getAccount().getBusinesses().get(accounting);
 	}
 
 	/**
@@ -251,11 +251,11 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	}
 
 	public List<Host> getHosts() throws IOException, SQLException {
-		return table.getConnector().getIpReputationSetHosts().getHosts(this);
+		return table.getConnector().getNet_reputation().getIpReputationSetHosts().getHosts(this);
 	}
 
 	public List<Network> getNetworks() throws IOException, SQLException {
-		return table.getConnector().getIpReputationSetNetworks().getNetworks(this);
+		return table.getConnector().getNet_reputation().getIpReputationSetNetworks().getNetworks(this);
 	}
 
 	// <editor-fold desc="Commands">

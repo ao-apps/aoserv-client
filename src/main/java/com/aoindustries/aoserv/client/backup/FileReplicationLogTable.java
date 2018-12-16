@@ -41,7 +41,7 @@ import java.util.List;
  */
 final public class FileReplicationLogTable extends AOServTable<Integer,FileReplicationLog> {
 
-	public FileReplicationLogTable(AOServConnector connector) {
+	FileReplicationLogTable(AOServConnector connector) {
 		super(connector, FileReplicationLog.class);
 	}
 

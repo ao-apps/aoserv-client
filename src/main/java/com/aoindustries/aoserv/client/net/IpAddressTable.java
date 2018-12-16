@@ -43,7 +43,7 @@ import java.util.List;
  */
 final public class IpAddressTable extends CachedTableIntegerKey<IpAddress> {
 
-	public IpAddressTable(AOServConnector connector) {
+	IpAddressTable(AOServConnector connector) {
 		super(connector, IpAddress.class);
 	}
 

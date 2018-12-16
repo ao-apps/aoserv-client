@@ -42,7 +42,7 @@ import java.util.ArrayList;
  */
 final public class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 
-	public ListAddressTable(AOServConnector connector) {
+	ListAddressTable(AOServConnector connector) {
 		super(connector, ListAddress.class);
 	}
 

@@ -49,7 +49,7 @@ import java.util.List;
  */
 public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 
-	public SmtpRelayTable(AOServConnector connector) {
+	SmtpRelayTable(AOServConnector connector) {
 		super(connector, SmtpRelay.class);
 	}
 

@@ -95,11 +95,11 @@ final public class Software extends GlobalObjectStringKey<Software> {
 	}
 
 	public List<SoftwareCategorization> getTechnologies(AOServConnector connector) throws IOException, SQLException {
-		return connector.getTechnologies().getTechnologies(this);
+		return connector.getDistribution().getTechnologies().getTechnologies(this);
 	}
 
 	public SoftwareVersion getTechnologyVersion(AOServConnector connector, String version, OperatingSystemVersion osv) throws IOException, SQLException {
-		return connector.getTechnologyVersions().getTechnologyVersion(this, version, osv);
+		return connector.getDistribution().getTechnologyVersions().getTechnologyVersion(this, version, osv);
 	}
 
 	@Override

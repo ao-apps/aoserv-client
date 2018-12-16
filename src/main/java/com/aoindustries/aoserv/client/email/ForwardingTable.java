@@ -47,7 +47,7 @@ import java.util.List;
  */
 final public class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
 
-	public ForwardingTable(AOServConnector connector) {
+	ForwardingTable(AOServConnector connector) {
 		super(connector, Forwarding.class);
 	}
 

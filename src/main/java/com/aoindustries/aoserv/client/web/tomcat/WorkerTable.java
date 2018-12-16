@@ -43,7 +43,7 @@ import java.util.logging.Level;
  */
 final public class WorkerTable extends CachedTableIntegerKey<Worker> {
 
-	public WorkerTable(AOServConnector connector) {
+	WorkerTable(AOServConnector connector) {
 		super(connector, Worker.class);
 	}
 

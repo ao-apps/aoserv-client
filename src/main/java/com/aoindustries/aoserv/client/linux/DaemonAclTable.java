@@ -36,7 +36,7 @@ import java.util.List;
  */
 public final class DaemonAclTable extends CachedTableIntegerKey<DaemonAcl> {
 
-	public DaemonAclTable(AOServConnector connector) {
+	DaemonAclTable(AOServConnector connector) {
 		super(connector, DaemonAcl.class);
 	}
 

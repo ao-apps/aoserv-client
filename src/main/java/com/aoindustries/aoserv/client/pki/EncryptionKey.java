@@ -177,7 +177,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	private String id;
 
 	public Account getBusiness() throws SQLException, IOException {
-		Account accountingObject = table.getConnector().getBusinesses().get(accounting);
+		Account accountingObject = table.getConnector().getAccount().getBusinesses().get(accounting);
 		if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
 		return accountingObject;
 	}

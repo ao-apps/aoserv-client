@@ -38,7 +38,7 @@ import java.util.List;
  */
 final public class ActionTable extends CachedTableIntegerKey<Action> {
 
-	public ActionTable(AOServConnector connector) {
+	ActionTable(AOServConnector connector) {
 		super(connector, Action.class);
 	}
 

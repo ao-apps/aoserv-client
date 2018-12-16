@@ -92,7 +92,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	}
 
 	public Host getServer() throws SQLException, IOException {
-		Host se=table.getConnector().getServers().get(pkey);
+		Host se=table.getConnector().getNet().getServers().get(pkey);
 		if(se==null) throw new SQLException("Unable to find Server: "+pkey);
 		return se;
 	}
@@ -102,7 +102,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	 */
 	public Rack getRack() throws SQLException, IOException {
 		if(rack==-1) return null;
-		Rack ra = table.getConnector().getRacks().get(rack);
+		Rack ra = table.getConnector().getInfrastructure().getRacks().get(rack);
 		if(ra==null) throw new SQLException("Unable to find Rack: "+rack);
 		return ra;
 	}
@@ -127,7 +127,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	 */
 	public ProcessorType getProcessorType() throws SQLException, IOException {
 		if(processorType==null) return null;
-		ProcessorType pt = table.getConnector().getProcessorTypes().get(processorType);
+		ProcessorType pt = table.getConnector().getInfrastructure().getProcessorTypes().get(processorType);
 		if(pt==null) throw new SQLException("Unable to find ProcessorType: "+processorType);
 		return pt;
 	}

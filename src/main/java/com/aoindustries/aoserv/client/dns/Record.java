@@ -98,7 +98,7 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 	}
 
 	public Zone getZone() throws SQLException, IOException {
-		Zone obj = table.getConnector().getDnsZones().get(zone);
+		Zone obj = table.getConnector().getDns().getDnsZones().get(zone);
 		if(obj == null) throw new SQLException("Unable to find DNSZone: " + zone);
 		return obj;
 	}
@@ -112,7 +112,7 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 	}
 
 	public RecordType getType() throws SQLException, IOException {
-		RecordType obj = table.getConnector().getDnsTypes().get(type);
+		RecordType obj = table.getConnector().getDns().getDnsTypes().get(type);
 		if(obj == null) throw new SQLException("Unable to find DNSType: " + type);
 		return obj;
 	}
@@ -139,7 +139,7 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 
 	public IpAddress getDhcpAddress() throws SQLException, IOException {
 		if(dhcpAddress == -1) return null;
-		IpAddress ia = table.getConnector().getIpAddresses().get(dhcpAddress);
+		IpAddress ia = table.getConnector().getNet().getIpAddresses().get(dhcpAddress);
 		if(ia == null) throw new SQLException("Unable to find IPAddress: " + dhcpAddress);
 		return ia;
 	}

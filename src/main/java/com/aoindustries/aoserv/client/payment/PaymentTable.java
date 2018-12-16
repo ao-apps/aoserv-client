@@ -45,7 +45,7 @@ import java.util.List;
  */
 final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 
-	public PaymentTable(AOServConnector connector) {
+	PaymentTable(AOServConnector connector) {
 		super(connector, Payment.class);
 	}
 

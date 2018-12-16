@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public final class TcpRedirectTable extends CachedTableIntegerKey<TcpRedirect> {
 
-	public TcpRedirectTable(AOServConnector connector) {
+	TcpRedirectTable(AOServConnector connector) {
 		super(connector, TcpRedirect.class);
 	}
 

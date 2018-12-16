@@ -41,7 +41,7 @@ import java.util.List;
  */
 final public class ResellerTable extends CachedTableAccountingCodeKey<Reseller> {
 
-	public ResellerTable(AOServConnector connector) {
+	ResellerTable(AOServConnector connector) {
 		super(connector, Reseller.class);
 	}
 

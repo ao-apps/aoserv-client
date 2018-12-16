@@ -235,6 +235,6 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	 * @see  WhoisHistoryAccountTable#getWhoisHistoryAccounts(com.aoindustries.aoserv.client.billing.WhoisHistory)
 	 */
 	public List<WhoisHistoryAccount> getAccounts() throws IOException, SQLException {
-		return table.getConnector().getWhoisHistoryAccount().getWhoisHistoryAccounts(this);
+		return table.getConnector().getBilling().getWhoisHistoryAccount().getWhoisHistoryAccounts(this);
 	}
 }

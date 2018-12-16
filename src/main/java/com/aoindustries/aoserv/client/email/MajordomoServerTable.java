@@ -45,8 +45,8 @@ import java.util.List;
  */
 final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoServer> {
 
-	public MajordomoServerTable(AOServConnector connector) {
-	super(connector, MajordomoServer.class);
+	MajordomoServerTable(AOServConnector connector) {
+		super(connector, MajordomoServer.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {

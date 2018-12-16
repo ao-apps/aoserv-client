@@ -44,7 +44,7 @@ import java.util.List;
  */
 final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 
-	public TicketTable(AOServConnector connector) {
+	TicketTable(AOServConnector connector) {
 		super(connector, Ticket.class);
 	}
 

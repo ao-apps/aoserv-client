@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class DeviceIdTable extends GlobalTableStringKey<DeviceId> {
 
-	public DeviceIdTable(AOServConnector connector) {
+	DeviceIdTable(AOServConnector connector) {
 		super(connector, DeviceId.class);
 	}
 

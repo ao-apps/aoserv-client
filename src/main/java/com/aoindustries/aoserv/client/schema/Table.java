@@ -291,7 +291,7 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 	}
 
 	public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
-		AoservProtocol obj = connector.getAoservProtocols().get(sinceVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(sinceVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
 		return obj;
 	}
@@ -302,7 +302,7 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 
 	public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
 		if(lastVersion == null) return null;
-		AoservProtocol obj = connector.getAoservProtocols().get(lastVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(lastVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
 		return obj;
 	}
@@ -383,23 +383,23 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 	}
 
 	public List<Command> getAOSHCommands(AOServConnector connector) throws IOException, SQLException {
-		return connector.getAoshCommands().getAOSHCommands(this);
+		return connector.getAosh().getAoshCommands().getAOSHCommands(this);
 	}
 
 	public Column getSchemaColumn(AOServConnector connector, String name) throws IOException, SQLException {
-		return connector.getSchemaColumns().getSchemaColumn(this, name);
+		return connector.getSchema().getSchemaColumns().getSchemaColumn(this, name);
 	}
 
 	public Column getSchemaColumn(AOServConnector connector, int index) throws IOException, SQLException {
-		return connector.getSchemaColumns().getSchemaColumn(this, index);
+		return connector.getSchema().getSchemaColumns().getSchemaColumn(this, index);
 	}
 
 	public List<Column> getSchemaColumns(AOServConnector connector) throws IOException, SQLException {
-		return connector.getSchemaColumns().getSchemaColumns(this);
+		return connector.getSchema().getSchemaColumns().getSchemaColumns(this);
 	}
 
 	public List<ForeignKey> getSchemaForeignKeys(AOServConnector connector) throws IOException, SQLException {
-		return connector.getSchemaForeignKeys().getSchemaForeignKeys(this);
+		return connector.getSchema().getSchemaForeignKeys().getSchemaForeignKeys(this);
 	}
 
 	public void printDescription(AOServConnector connector, TerminalWriter out, boolean isInteractive) throws IOException, SQLException {

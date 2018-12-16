@@ -37,8 +37,8 @@ import java.sql.SQLException;
  */
 final public class UserHostTable extends CachedTableIntegerKey<UserHost> {
 
-	public UserHostTable(AOServConnector connector) {
-	super(connector, UserHost.class);
+	UserHostTable(AOServConnector connector) {
+		super(connector, UserHost.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {

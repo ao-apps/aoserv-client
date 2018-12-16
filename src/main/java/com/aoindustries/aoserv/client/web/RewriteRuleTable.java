@@ -40,7 +40,7 @@ import java.util.List;
  */
 final public class RewriteRuleTable extends CachedTableIntegerKey<RewriteRule> {
 
-	public RewriteRuleTable(AOServConnector connector) {
+	RewriteRuleTable(AOServConnector connector) {
 		super(connector, RewriteRule.class);
 	}
 

@@ -41,7 +41,7 @@ import java.util.List;
  */
 final public class BackupPartitionTable extends CachedTableIntegerKey<BackupPartition> {
 
-	public BackupPartitionTable(AOServConnector connector) {
+	BackupPartitionTable(AOServConnector connector) {
 		super(connector, BackupPartition.class);
 	}
 

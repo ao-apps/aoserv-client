@@ -39,7 +39,7 @@ import java.util.List;
  */
 final public class LimiterClassTable extends CachedTableIntegerKey<LimiterClass> {
 
-	public LimiterClassTable(AOServConnector connector) {
+	LimiterClassTable(AOServConnector connector) {
 		super(connector, LimiterClass.class);
 	}
 

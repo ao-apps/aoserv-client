@@ -40,7 +40,7 @@ import java.util.List;
  */
 final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 
-	public BackupReportTable(AOServConnector connector) {
+	BackupReportTable(AOServConnector connector) {
 		super(connector, BackupReport.class);
 	}
 

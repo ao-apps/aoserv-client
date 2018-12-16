@@ -42,7 +42,7 @@ import java.util.List;
  */
 final public class RecordTable extends CachedTableIntegerKey<Record> {
 
-	public RecordTable(AOServConnector connector) {
+	RecordTable(AOServConnector connector) {
 		super(connector, Record.class);
 	}
 

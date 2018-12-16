@@ -41,7 +41,7 @@ import java.sql.SQLException;
  */
 final public class VirtualServerTable extends CachedTableIntegerKey<VirtualServer> {
 
-	public VirtualServerTable(AOServConnector connector) {
+	VirtualServerTable(AOServConnector connector) {
 		super(connector, VirtualServer.class);
 	}
 

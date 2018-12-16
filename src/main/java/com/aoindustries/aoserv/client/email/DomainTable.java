@@ -48,7 +48,7 @@ import java.util.List;
  */
 public final class DomainTable extends CachedTableIntegerKey<Domain> {
 
-	public DomainTable(AOServConnector connector) {
+	DomainTable(AOServConnector connector) {
 		super(connector, Domain.class);
 	}
 

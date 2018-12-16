@@ -43,7 +43,7 @@ import java.util.List;
  */
 public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageDefinition> {
 
-	public PackageDefinitionTable(AOServConnector connector) {
+	PackageDefinitionTable(AOServConnector connector) {
 		super(connector, PackageDefinition.class);
 	}
 

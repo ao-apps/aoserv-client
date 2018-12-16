@@ -43,7 +43,7 @@ import java.util.List;
  */
 final public class LocationTable extends CachedTableIntegerKey<Location> {
 
-	public LocationTable(AOServConnector connector) {
+	LocationTable(AOServConnector connector) {
 		super(connector, Location.class);
 	}
 

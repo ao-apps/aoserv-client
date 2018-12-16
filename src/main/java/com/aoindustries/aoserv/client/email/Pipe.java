@@ -66,7 +66,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 	int disable_log;
 
 	public int addEmailAddress(Address address) throws IOException, SQLException {
-		return table.getConnector().getEmailPipeAddresses().addEmailPipeAddress(address, this);
+		return table.getConnector().getEmail().getEmailPipeAddresses().addEmailPipeAddress(address, this);
 	}
 
 	@Override
@@ -111,13 +111,13 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
 		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getDisableLogs().get(disable_log);
+		DisableLog obj=table.getConnector().getAccount().getDisableLogs().get(disable_log);
 		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
 		return obj;
 	}
 
 	public Package getPackage() throws IOException, SQLException {
-		Package packageObject = table.getConnector().getPackages().get(packageName);
+		Package packageObject = table.getConnector().getBilling().getPackages().get(packageName);
 		if (packageObject == null) throw new SQLException("Unable to find Package: " + packageName);
 		return packageObject;
 	}
@@ -127,7 +127,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server ao=table.getConnector().getAoServers().get(ao_server);
+		Server ao=table.getConnector().getLinux().getAoServers().get(ao_server);
 		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return ao;
 	}

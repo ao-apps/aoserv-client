@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 public final class AttachmentTypeTable extends GlobalTableStringKey<AttachmentType> {
 
-	public AttachmentTypeTable(AOServConnector connector) {
+	AttachmentTypeTable(AOServConnector connector) {
 		super(connector, AttachmentType.class);
 	}
 

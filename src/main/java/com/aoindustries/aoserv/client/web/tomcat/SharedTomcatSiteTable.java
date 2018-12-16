@@ -51,7 +51,7 @@ import java.util.List;
  */
 final public class SharedTomcatSiteTable extends CachedTableIntegerKey<SharedTomcatSite> {
 
-	public SharedTomcatSiteTable(AOServConnector connector) {
+	SharedTomcatSiteTable(AOServConnector connector) {
 		super(connector, SharedTomcatSite.class);
 	}
 

@@ -36,7 +36,7 @@ import java.util.List;
  */
 final public class HostTable extends CachedTableLongKey<Host> {
 
-	public HostTable(AOServConnector connector) {
+	HostTable(AOServConnector connector) {
 		super(connector, Host.class);
 	}
 

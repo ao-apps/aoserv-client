@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 final public class VersionTable extends GlobalTableIntegerKey<Version> {
 
-	public VersionTable(AOServConnector connector) {
+	VersionTable(AOServConnector connector) {
 		super(connector, Version.class);
 	}
 
@@ -55,7 +55,7 @@ final public class VersionTable extends GlobalTableIntegerKey<Version> {
 	}
 
 	public Version getHttpdJBossVersion(String version, OperatingSystemVersion osv) throws IOException, SQLException {
-		return get(connector.getTechnologyNames()
+		return get(connector.getDistribution().getTechnologyNames()
 			.get(Version.TECHNOLOGY_NAME)
 			.getTechnologyVersion(connector, version, osv)
 			.getPkey()

@@ -72,7 +72,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	private long created;
 
 	public List<UserServer> getAlternateLinuxServerAccounts() throws SQLException, IOException {
-		return table.getConnector().getLinuxServerAccounts().getAlternateLinuxServerAccounts(this);
+		return table.getConnector().getLinux().getLinuxServerAccounts().getAlternateLinuxServerAccounts(this);
 	}
 
 	@Override
@@ -100,7 +100,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	}
 
 	public Group getLinuxGroup() throws SQLException, IOException {
-		Group group = table.getConnector().getLinuxGroups().get(name);
+		Group group = table.getConnector().getLinux().getLinuxGroups().get(name);
 		if (group == null) throw new SQLException("Unable to find LinuxGroup: " + name);
 		return group;
 	}
@@ -110,7 +110,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	}
 
 	public Server getAOServer() throws SQLException, IOException {
-		Server ao=table.getConnector().getAoServers().get(ao_server);
+		Server ao=table.getConnector().getLinux().getAoServers().get(ao_server);
 		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
 		return ao;
 	}
@@ -156,7 +156,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 			if(cr.getLinuxServerGroup_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
 		}
 
-		for(com.aoindustries.aoserv.client.email.List el : table.getConnector().getEmailLists().getRows()) {
+		for(com.aoindustries.aoserv.client.email.List el : table.getConnector().getEmail().getEmailLists().getRows()) {
 			if(el.getLinuxServerGroup_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
 		}
 

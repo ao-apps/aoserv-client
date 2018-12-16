@@ -429,7 +429,7 @@ final public class Command extends GlobalObjectStringKey<Command> {
 	}
 
 	public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
-		AoservProtocol obj = connector.getAoservProtocols().get(sinceVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(sinceVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
 		return obj;
 	}
@@ -440,7 +440,7 @@ final public class Command extends GlobalObjectStringKey<Command> {
 
 	public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
 		if(lastVersion == null) return null;
-		AoservProtocol obj = connector.getAoservProtocols().get(lastVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(lastVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
 		return obj;
 	}
@@ -451,7 +451,7 @@ final public class Command extends GlobalObjectStringKey<Command> {
 
 	public Table getTable(AOServConnector connector) throws SQLException, IOException {
 		if(table == null) return null;
-		Table obj = connector.getSchemaTables().get(table);
+		Table obj = connector.getSchema().getSchemaTables().get(table);
 		if(obj == null) throw new SQLException("Unable to find SchemaTable: " + table);
 		return obj;
 	}

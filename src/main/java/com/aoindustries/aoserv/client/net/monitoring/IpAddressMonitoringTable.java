@@ -43,7 +43,7 @@ import java.sql.SQLException;
  */
 final public class IpAddressMonitoringTable extends CachedTableIntegerKey<IpAddressMonitoring> {
 
-	public IpAddressMonitoringTable(AOServConnector connector) {
+	IpAddressMonitoringTable(AOServConnector connector) {
 		super(connector, IpAddressMonitoring.class);
 	}
 

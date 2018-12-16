@@ -38,7 +38,7 @@ import java.util.List;
  */
 public final class AttachmentBlockTable extends CachedTableIntegerKey<AttachmentBlock> {
 
-	public AttachmentBlockTable(AOServConnector connector) {
+	AttachmentBlockTable(AOServConnector connector) {
 		super(connector, AttachmentBlock.class);
 	}
 

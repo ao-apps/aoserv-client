@@ -44,7 +44,7 @@ import java.util.List;
  */
 final public class PackageTable extends CachedTableIntegerKey<Package> {
 
-	public PackageTable(AOServConnector connector) {
+	PackageTable(AOServConnector connector) {
 		super(connector, Package.class);
 	}
 

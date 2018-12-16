@@ -80,7 +80,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 		UnixPath workDir,
 		boolean serverXmlConfigured
 	) throws IOException, SQLException {
-		return table.getConnector().getHttpdTomcatContexts().addHttpdTomcatContext(
+		return table.getConnector().getWeb_tomcat().getHttpdTomcatContexts().addHttpdTomcatContext(
 			this,
 			className,
 			cookies,
@@ -102,7 +102,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 		String path,
 		boolean mount
 	) throws IOException, SQLException {
-		return table.getConnector().getHttpdTomcatSiteJkMounts().addHttpdTomcatSiteJkMount(
+		return table.getConnector().getWeb_tomcat().getHttpdTomcatSiteJkMounts().addHttpdTomcatSiteJkMount(
 			this,
 			path,
 			mount
@@ -140,33 +140,33 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 	}
 
 	public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSite() throws SQLException, IOException {
-		return table.getConnector().getHttpdJBossSites().get(pkey);
+		return table.getConnector().getWeb_jboss().getHttpdJBossSites().get(pkey);
 	}
 
 	public com.aoindustries.aoserv.client.web.Site getHttpdSite() throws SQLException, IOException {
-		com.aoindustries.aoserv.client.web.Site obj=table.getConnector().getHttpdSites().get(pkey);
+		com.aoindustries.aoserv.client.web.Site obj=table.getConnector().getWeb().getHttpdSites().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find HttpdSite: "+pkey);
 		return obj;
 	}
 
 	public Context getHttpdTomcatContext(String path) throws IOException, SQLException {
-		return table.getConnector().getHttpdTomcatContexts().getHttpdTomcatContext(this, path);
+		return table.getConnector().getWeb_tomcat().getHttpdTomcatContexts().getHttpdTomcatContext(this, path);
 	}
 
 	public List<Context> getHttpdTomcatContexts() throws IOException, SQLException {
-		return table.getConnector().getHttpdTomcatContexts().getHttpdTomcatContexts(this);
+		return table.getConnector().getWeb_tomcat().getHttpdTomcatContexts().getHttpdTomcatContexts(this);
 	}
 
 	public SharedTomcatSite getHttpdTomcatSharedSite() throws IOException, SQLException {
-		return table.getConnector().getHttpdTomcatSharedSites().get(pkey);
+		return table.getConnector().getWeb_tomcat().getHttpdTomcatSharedSites().get(pkey);
 	}
 
 	public PrivateTomcatSite getHttpdTomcatStdSite() throws IOException, SQLException {
-		return table.getConnector().getHttpdTomcatStdSites().get(pkey);
+		return table.getConnector().getWeb_tomcat().getHttpdTomcatStdSites().get(pkey);
 	}
 
 	public Version getHttpdTomcatVersion() throws SQLException, IOException {
-		Version obj=table.getConnector().getHttpdTomcatVersions().get(version);
+		Version obj=table.getConnector().getWeb_tomcat().getHttpdTomcatVersions().get(version);
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
 		if(
 			obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
@@ -188,11 +188,11 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 	}
 
 	public List<Worker> getHttpdWorkers() throws IOException, SQLException {
-		return table.getConnector().getHttpdWorkers().getHttpdWorkers(this);
+		return table.getConnector().getWeb_tomcat().getHttpdWorkers().getHttpdWorkers(this);
 	}
 
 	public List<JkMount> getJkMounts() throws IOException, SQLException {
-		return table.getConnector().getHttpdTomcatSiteJkMounts().getHttpdTomcatSiteJkMounts(this);
+		return table.getConnector().getWeb_tomcat().getHttpdTomcatSiteJkMounts().getHttpdTomcatSiteJkMounts(this);
 	}
 
 	@Override

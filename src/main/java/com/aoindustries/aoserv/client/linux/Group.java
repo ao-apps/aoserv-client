@@ -214,11 +214,11 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 	private String type;
 
 	public int addLinuxAccount(User user) throws IOException, SQLException {
-		return table.getConnector().getLinuxGroupAccounts().addLinuxGroupAccount(this, user);
+		return table.getConnector().getLinux().getLinuxGroupAccounts().addLinuxGroupAccount(this, user);
 	}
 
 	public int addLinuxServerGroup(Server aoServer) throws IOException, SQLException {
-		return table.getConnector().getLinuxServerGroups().addLinuxServerGroup(this, aoServer);
+		return table.getConnector().getLinux().getLinuxServerGroups().addLinuxServerGroup(this, aoServer);
 	}
 
 	@Override
@@ -232,17 +232,17 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 	}
 
 	public GroupType getLinuxGroupType() throws SQLException, IOException {
-		GroupType typeObject = table.getConnector().getLinuxGroupTypes().get(type);
+		GroupType typeObject = table.getConnector().getLinux().getLinuxGroupTypes().get(type);
 		if (typeObject == null) throw new SQLException("Unable to find LinuxGroupType: " + type);
 		return typeObject;
 	}
 
 	public GroupServer getLinuxServerGroup(Server aoServer) throws IOException, SQLException {
-		return table.getConnector().getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
+		return table.getConnector().getLinux().getLinuxServerGroups().getLinuxServerGroup(aoServer, pkey);
 	}
 
 	public List<GroupServer> getLinuxServerGroups() throws IOException, SQLException {
-		return table.getConnector().getLinuxServerGroups().getLinuxServerGroups(this);
+		return table.getConnector().getLinux().getLinuxServerGroups().getLinuxServerGroups(this);
 	}
 
 	public GroupId getName() {
@@ -255,7 +255,7 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 
 	public Package getPackage() throws IOException, SQLException {
 		// null OK because data may be filtered at this point, like the linux group 'mail'
-		return table.getConnector().getPackages().get(packageName);
+		return table.getConnector().getBilling().getPackages().get(packageName);
 	}
 
 	@Override
@@ -290,7 +290,7 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
 		// Cannot be the primary group for any linux accounts
-		for(GroupUser lga : table.getConnector().getLinuxGroupAccounts().getRows()) {
+		for(GroupUser lga : table.getConnector().getLinux().getLinuxGroupAccounts().getRows()) {
 			if(lga.isPrimary() && equals(lga.getGroup())) {
 				reasons.add(new CannotRemoveReason<>("Used as primary group for Linux account "+lga.getUser().getUsername().getUsername(), lga));
 			}

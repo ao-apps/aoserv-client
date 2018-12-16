@@ -37,7 +37,7 @@ import java.sql.SQLException;
  */
 final public class OperatingSystemVersionTable extends GlobalTableIntegerKey<OperatingSystemVersion> {
 
-	public OperatingSystemVersionTable(AOServConnector connector) {
+	OperatingSystemVersionTable(AOServConnector connector) {
 		super(connector, OperatingSystemVersion.class);
 	}
 

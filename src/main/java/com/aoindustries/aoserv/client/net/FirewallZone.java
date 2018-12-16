@@ -94,7 +94,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 	}
 
 	public Host getServer() throws SQLException, IOException {
-		Host se = table.getConnector().getServers().get(server);
+		Host se = table.getConnector().getNet().getServers().get(server);
 		if(se == null) throw new SQLException("Unable to find Server: " + server);
 		return se;
 	}
@@ -116,7 +116,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 	}
 
 	public List<BindFirewallZone> getNetBindFirewalldZones() throws IOException, SQLException {
-		return table.getConnector().getNetBindFirewalldZones().getNetBindFirewalldZones(this);
+		return table.getConnector().getNet().getNetBindFirewalldZones().getNetBindFirewalldZones(this);
 	}
 
 	public List<Bind> getNetBinds() throws IOException, SQLException {

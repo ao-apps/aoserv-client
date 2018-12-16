@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 final public class ShellTable extends GlobalTableUnixPathKey<Shell> {
 
-	public ShellTable(AOServConnector connector) {
+	ShellTable(AOServConnector connector) {
 		super(connector, Shell.class);
 	}
 

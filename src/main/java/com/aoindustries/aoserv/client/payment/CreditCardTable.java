@@ -47,7 +47,7 @@ import java.util.List;
  */
 final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 
-	public CreditCardTable(AOServConnector connector) {
+	CreditCardTable(AOServConnector connector) {
 		super(connector, CreditCard.class);
 	}
 

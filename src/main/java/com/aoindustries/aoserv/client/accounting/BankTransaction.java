@@ -76,7 +76,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	public User getAdministrator() throws SQLException, IOException {
-		User obj = table.getConnector().getMasterUsers().get(administrator);
+		User obj = table.getConnector().getMaster().getMasterUsers().get(administrator);
 		if (obj == null) throw new SQLException("Unable to find MasterUser: " + administrator);
 		return obj;
 	}
@@ -86,13 +86,13 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	public BankAccount getBankAccount() throws SQLException, IOException {
-		BankAccount bankAccountObject = table.getConnector().getBankAccounts().get(account);
+		BankAccount bankAccountObject = table.getConnector().getAccounting().getBankAccounts().get(account);
 		if (bankAccountObject == null) throw new SQLException("BankAccount not found: " + account);
 		return bankAccountObject;
 	}
 
 	public BankTransactionType getBankTransactionType() throws SQLException, IOException {
-		BankTransactionType typeObject = table.getConnector().getBankTransactionTypes().get(type);
+		BankTransactionType typeObject = table.getConnector().getAccounting().getBankTransactionTypes().get(type);
 		if (typeObject == null) throw new SQLException("BankTransactionType not found: " + type);
 		return typeObject;
 	}
@@ -125,14 +125,14 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 
 	public ExpenseCategory getExpenseCategory() throws SQLException, IOException {
 		if(expenseCategory==null) return null;
-		ExpenseCategory cat=table.getConnector().getExpenseCategories().get(expenseCategory);
+		ExpenseCategory cat=table.getConnector().getAccounting().getExpenseCategories().get(expenseCategory);
 		if (cat == null) throw new SQLException("ExpenseCategory not found: " + expenseCategory);
 		return cat;
 	}
 
 	public Processor getCreditCardProcessor() throws SQLException, IOException {
 		if (processor == null) return null;
-		Processor ccProcessor = table.getConnector().getCreditCardProcessors().get(processor);
+		Processor ccProcessor = table.getConnector().getPayment().getCreditCardProcessors().get(processor);
 		if (ccProcessor == null) throw new SQLException("CreditCardProcessor not found: " + processor);
 		return ccProcessor;
 	}

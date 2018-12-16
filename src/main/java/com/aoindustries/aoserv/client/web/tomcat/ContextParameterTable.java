@@ -42,7 +42,7 @@ import java.util.List;
  */
 final public class ContextParameterTable extends CachedTableIntegerKey<ContextParameter> {
 
-	public ContextParameterTable(AOServConnector connector) {
+	ContextParameterTable(AOServConnector connector) {
 		super(connector, ContextParameter.class);
 	}
 

@@ -42,7 +42,7 @@ import java.util.List;
  */
 final public class BrandTable extends CachedTableAccountingCodeKey<Brand> {
 
-	public BrandTable(AOServConnector connector) {
+	BrandTable(AOServConnector connector) {
 		super(connector, Brand.class);
 	}
 

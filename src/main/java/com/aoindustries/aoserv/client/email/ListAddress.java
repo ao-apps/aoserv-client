@@ -72,7 +72,7 @@ final public class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
 	}
 
 	public Address getEmailAddress() throws SQLException, IOException {
-		Address emailAddressObject = table.getConnector().getEmailAddresses().get(email_address);
+		Address emailAddressObject = table.getConnector().getEmail().getEmailAddresses().get(email_address);
 		if (emailAddressObject == null) throw new SQLException("Unable to find EmailAddress: " + email_address);
 		return emailAddressObject;
 	}
@@ -82,7 +82,7 @@ final public class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
 	}
 
 	public List getEmailList() throws SQLException, IOException {
-		List emailListObject = table.getConnector().getEmailLists().get(email_list);
+		List emailListObject = table.getConnector().getEmail().getEmailLists().get(email_list);
 		if (emailListObject == null) throw new SQLException("Unable to find EmailList: " + email_list);
 		return emailListObject;
 	}
@@ -111,7 +111,7 @@ final public class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
 		java.util.List<CannotRemoveReason<MajordomoList>> reasons=new ArrayList<>();
 
 		// Cannot be used as the list for a majordomo list
-		for(MajordomoList ml : table.getConnector().getMajordomoLists().getRows()) {
+		for(MajordomoList ml : table.getConnector().getEmail().getMajordomoLists().getRows()) {
 			if(ml.getListListAddress().getPkey()==pkey) {
 				Domain ed=ml.getMajordomoServer().getDomain();
 				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));

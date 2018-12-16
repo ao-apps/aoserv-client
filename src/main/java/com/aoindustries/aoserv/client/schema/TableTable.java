@@ -46,7 +46,7 @@ import java.util.List;
  */
 final public class TableTable extends GlobalTableIntegerKey<Table> {
 
-	public TableTable(AOServConnector connector) {
+	TableTable(AOServConnector connector) {
 		super(connector, Table.class);
 	}
 
@@ -103,7 +103,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 		if (command.equalsIgnoreCase(Command.DESC) || command.equalsIgnoreCase(Command.DESCRIBE)) {
 			if(AOSH.checkParamCount(Command.DESCRIBE, args, 1, err)) {
 				String tableName=args[1];
-				Table table=connector.getSchemaTables().get(tableName);
+				Table table=connector.getSchema().getSchemaTables().get(tableName);
 				if(table!=null) {
 					table.printDescription(connector, out, isInteractive);
 					out.flush();
@@ -121,7 +121,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 					// Is a select count(*)
 					if ("from".equalsIgnoreCase(args[2])) {
 						String tableName = args[3];
-						Table table = connector.getSchemaTables().get(tableName);
+						Table table = connector.getSchema().getSchemaTables().get(tableName);
 						if (table != null) {
 							Object[] titles = { "count" };
 							Object[] values = { table.getAOServTable(connector).size()};
@@ -160,7 +160,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 					tableName = args[++c];
 					c++;
 
-					Table schemaTable=connector.getSchemaTables().get(tableName);
+					Table schemaTable=connector.getSchema().getSchemaTables().get(tableName);
 					if(schemaTable!=null) {
 						// Substitute any * columnName and ,
 						for(int d=0;d<columnNames.size();d++) {
@@ -249,7 +249,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 							boolean[] orders=new boolean[exprs.length];
 							for(int d=0;d<orders.length;d++) orders[d]=sortOrders.get(d);
 							rows = new ArrayList<>(rows);
-							connector.getSchemaTypes().sort(JavaSort.getInstance(), rows, exprs, orders);
+							connector.getSchema().getSchemaTypes().sort(JavaSort.getInstance(), rows, exprs, orders);
 						}
 
 						// Convert the results

@@ -43,7 +43,7 @@ import java.util.List;
  */
 final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 
-	public VirtualDiskTable(AOServConnector connector) {
+	VirtualDiskTable(AOServConnector connector) {
 		super(connector, VirtualDisk.class);
 	}
 

@@ -44,7 +44,7 @@ import java.util.List;
  */
 final public class FileReplicationTable extends CachedTableIntegerKey<FileReplication> {
 
-	public FileReplicationTable(AOServConnector connector) {
+	FileReplicationTable(AOServConnector connector) {
 		super(connector, FileReplication.class);
 	}
 

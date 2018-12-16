@@ -41,7 +41,7 @@ import java.util.List;
  */
 final public class SendmailBindTable extends CachedTableIntegerKey<SendmailBind> {
 
-	public SendmailBindTable(AOServConnector connector) {
+	SendmailBindTable(AOServConnector connector) {
 		super(connector, SendmailBind.class);
 	}
 

@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class RecordTypeTable extends GlobalTableStringKey<RecordType> {
 
-	public RecordTypeTable(AOServConnector connector) {
+	RecordTypeTable(AOServConnector connector) {
 		super(connector, RecordType.class);
 	}
 

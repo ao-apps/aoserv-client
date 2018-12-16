@@ -67,13 +67,13 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
 	}
 
 	public UserServer getLinuxServerAccount() throws SQLException, IOException {
-		UserServer lsa=table.getConnector().getLinuxServerAccounts().get(linux_server_account);
+		UserServer lsa=table.getConnector().getLinux().getLinuxServerAccounts().get(linux_server_account);
 		if(lsa==null) throw new SQLException("Unable to find LinuxServerAccount: " + linux_server_account);
 		return lsa;
 	}
 
 	public AttachmentType getEmailAttachmentType() throws SQLException, IOException {
-		AttachmentType eat=table.getConnector().getEmailAttachmentTypes().get(extension);
+		AttachmentType eat=table.getConnector().getEmail().getEmailAttachmentTypes().get(extension);
 		if(eat==null) throw new SQLException("Unable to find EmailAttachmentType: " + extension);
 		return eat;
 	}

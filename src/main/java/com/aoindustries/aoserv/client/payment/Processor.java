@@ -62,7 +62,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	private int encryption_recipient;
 
 	public Account getBusiness() throws SQLException, IOException {
-		Account business = table.getConnector().getBusinesses().get(accounting);
+		Account business = table.getConnector().getAccount().getBusinesses().get(accounting);
 		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
 		return business;
 	}
@@ -128,7 +128,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	 */
 	public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
 		if(encryption_from==-1) return null;
-		EncryptionKey ek = table.getConnector().getEncryptionKeys().get(encryption_from);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(encryption_from);
 		if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+encryption_from);
 		return ek;
 	}
@@ -139,7 +139,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	 */
 	public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {
 		if(encryption_recipient==-1) return null;
-		EncryptionKey ek = table.getConnector().getEncryptionKeys().get(encryption_recipient);
+		EncryptionKey ek = table.getConnector().getPki().getEncryptionKeys().get(encryption_recipient);
 		if(ek==null) throw new SQLException("Unable to find EncryptionKey: "+encryption_recipient);
 		return ek;
 	}

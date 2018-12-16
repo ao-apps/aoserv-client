@@ -104,7 +104,7 @@ final public class AppProtocol extends GlobalObjectStringKey<AppProtocol> {
 	}
 
 	public JkProtocol getHttpdJKProtocol(AOServConnector connector) throws IOException, SQLException {
-		return connector.getHttpdJKProtocols().get(pkey);
+		return connector.getWeb_tomcat().getHttpdJKProtocols().get(pkey);
 	}
 
 	public String getName() {

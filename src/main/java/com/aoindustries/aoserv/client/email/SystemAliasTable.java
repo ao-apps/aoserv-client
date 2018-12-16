@@ -37,7 +37,7 @@ import java.util.List;
  */
 final public class SystemAliasTable extends CachedTableIntegerKey<SystemAlias> {
 
-	public SystemAliasTable(AOServConnector connector) {
+	SystemAliasTable(AOServConnector connector) {
 		super(connector, SystemAlias.class);
 	}
 

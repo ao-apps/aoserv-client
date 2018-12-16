@@ -52,7 +52,7 @@ import java.util.Set;
  */
 final public class BindTable extends CachedTableIntegerKey<Bind> {
 
-	public BindTable(AOServConnector connector) {
+	BindTable(AOServConnector connector) {
 		super(connector, Bind.class);
 	}
 

@@ -47,7 +47,7 @@ import java.util.List;
  */
 final public class ZoneTable extends CachedTableStringKey<Zone> {
 
-	public ZoneTable(AOServConnector connector) {
+	ZoneTable(AOServConnector connector) {
 		super(connector, Zone.class);
 	}
 
@@ -65,7 +65,7 @@ final public class ZoneTable extends CachedTableStringKey<Zone> {
 	}
 
 	private List<DomainName> getDNSTLDs() throws IOException, SQLException {
-		List<TopLevelDomain> tlds=connector.getDnsTLDs().getRows();
+		List<TopLevelDomain> tlds=connector.getDns().getDnsTLDs().getRows();
 		List<DomainName> names=new ArrayList<>(tlds.size());
 		for(TopLevelDomain tld : tlds) names.add(tld.getDomain());
 		return names;

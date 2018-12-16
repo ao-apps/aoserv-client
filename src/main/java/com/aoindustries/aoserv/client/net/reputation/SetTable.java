@@ -39,7 +39,7 @@ import java.sql.SQLException;
  */
 final public class SetTable extends CachedTableIntegerKey<Set> {
 
-	public SetTable(AOServConnector connector) {
+	SetTable(AOServConnector connector) {
 		super(connector, Set.class);
 	}
 

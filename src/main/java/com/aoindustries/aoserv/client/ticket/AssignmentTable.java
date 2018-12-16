@@ -39,7 +39,7 @@ import java.util.List;
  */
 final public class AssignmentTable extends CachedTableIntegerKey<Assignment> {
 
-	public AssignmentTable(AOServConnector connector) {
+	AssignmentTable(AOServConnector connector) {
 		super(connector, Assignment.class);
 	}
 

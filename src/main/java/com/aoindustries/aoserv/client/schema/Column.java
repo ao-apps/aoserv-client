@@ -113,7 +113,7 @@ final public class Column extends GlobalObjectIntegerKey<Column> {
 	}
 
 	public Table getTable(AOServConnector connector) throws SQLException, IOException {
-		Table obj = connector.getSchemaTables().get(table);
+		Table obj = connector.getSchema().getSchemaTables().get(table);
 		if(obj == null) throw new SQLException("Unable to find SchemaTable: " + table);
 		return obj;
 	}
@@ -127,7 +127,7 @@ final public class Column extends GlobalObjectIntegerKey<Column> {
 	}
 
 	public AoservProtocol getSinceVersion(AOServConnector connector) throws SQLException, IOException {
-		AoservProtocol obj = connector.getAoservProtocols().get(sinceVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(sinceVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + sinceVersion);
 		return obj;
 	}
@@ -138,7 +138,7 @@ final public class Column extends GlobalObjectIntegerKey<Column> {
 
 	public AoservProtocol getLastVersion(AOServConnector connector) throws SQLException, IOException {
 		if(lastVersion == null) return null;
-		AoservProtocol obj = connector.getAoservProtocols().get(lastVersion);
+		AoservProtocol obj = connector.getSchema().getAoservProtocols().get(lastVersion);
 		if(obj == null) throw new SQLException("Unable to find AOServProtocol: " + lastVersion);
 		return obj;
 	}
@@ -152,7 +152,7 @@ final public class Column extends GlobalObjectIntegerKey<Column> {
 	}
 
 	public Type getType(AOServConnector connector) throws SQLException, IOException {
-		Type obj = connector.getSchemaTypes().get(type);
+		Type obj = connector.getSchema().getSchemaTypes().get(type);
 		if(obj == null) throw new SQLException("Unable to find SchemaType: " + type);
 		return obj;
 	}
@@ -240,10 +240,10 @@ final public class Column extends GlobalObjectIntegerKey<Column> {
 	}
 
 	public List<ForeignKey> getReferencedBy(AOServConnector connector) throws IOException, SQLException {
-		return connector.getSchemaForeignKeys().getSchemaForeignKeysReferencing(this);
+		return connector.getSchema().getSchemaForeignKeys().getSchemaForeignKeysReferencing(this);
 	}
 
 	public List<ForeignKey> getReferences(AOServConnector connector) throws IOException, SQLException {
-		return connector.getSchemaForeignKeys().getSchemaForeignKeysReferencedBy(this);
+		return connector.getSchema().getSchemaForeignKeys().getSchemaForeignKeysReferencedBy(this);
 	}
 }

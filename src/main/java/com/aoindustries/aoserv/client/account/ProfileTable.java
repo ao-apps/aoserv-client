@@ -45,7 +45,7 @@ import java.util.List;
  */
 final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 
-	public ProfileTable(AOServConnector connector) {
+	ProfileTable(AOServConnector connector) {
 		super(connector, Profile.class);
 	}
 

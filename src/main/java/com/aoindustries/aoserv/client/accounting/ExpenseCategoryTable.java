@@ -35,7 +35,7 @@ import java.sql.SQLException;
  */
 final public class ExpenseCategoryTable extends CachedTableStringKey<ExpenseCategory> {
 
-	public ExpenseCategoryTable(AOServConnector connector) {
+	ExpenseCategoryTable(AOServConnector connector) {
 		super(connector, ExpenseCategory.class);
 	}
 

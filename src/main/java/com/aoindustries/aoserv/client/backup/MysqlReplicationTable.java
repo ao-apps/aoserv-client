@@ -40,7 +40,7 @@ import java.util.List;
  */
 final public class MysqlReplicationTable extends CachedTableIntegerKey<MysqlReplication> {
 
-	public MysqlReplicationTable(AOServConnector connector) {
+	MysqlReplicationTable(AOServConnector connector) {
 		super(connector, MysqlReplication.class);
 	}
 

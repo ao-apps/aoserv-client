@@ -36,7 +36,7 @@ import java.util.List;
  */
 final public class WhoisHistoryTable extends CachedTableIntegerKey<WhoisHistory> {
 
-	public WhoisHistoryTable(AOServConnector connector) {
+	WhoisHistoryTable(AOServConnector connector) {
 		super(connector, WhoisHistory.class);
 	}
 
