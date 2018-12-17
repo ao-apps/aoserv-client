@@ -247,11 +247,21 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			created = result.getTimestamp(pos++).getTime();
 			billingContact = result.getString(pos++);
 			// TODO: Array in PostgreSQL
-			billingEmail = AoCollections.optimalUnmodifiableSet(splitEmails(result.getString(pos++)));
+			String billing_email = result.getString(pos++);
+			try {
+				billingEmail = splitEmails(billing_email);
+			} catch(ValidationException e) {
+				throw new SQLException("billing_email = " + billing_email, e);
+			}
 			billingEmailFormat = EmailFormat.valueOf(result.getString(pos++));
 			technicalContact = result.getString(pos++);
 			// TODO: Array in PostgreSQL
-			technicalEmail = AoCollections.optimalUnmodifiableSet(splitEmails(result.getString(pos++)));
+			String technical_email = result.getString(pos++);
+			try {
+				technicalEmail = splitEmails(technical_email);
+			} catch(ValidationException e) {
+				throw new SQLException("technical_email = " + technical_email, e);
+			}
 			technicalEmailFormat = EmailFormat.valueOf(result.getString(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
