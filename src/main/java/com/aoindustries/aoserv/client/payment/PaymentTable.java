@@ -28,10 +28,10 @@ import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -82,7 +82,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 		final String shippingPostalCode,
 		final String shippingCountryCode,
 		final boolean emailCustomer,
-		final String merchantEmail,
+		final Email merchantEmail,
 		final String invoiceNumber,
 		final String purchaseOrderNumber,
 		final String description,
@@ -95,7 +95,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 		final String creditCardFirstName,
 		final String creditCardLastName,
 		final String creditCardCompanyName,
-		final String creditCardEmail,
+		final Email creditCardEmail,
 		final String creditCardPhone,
 		final String creditCardFax,
 		final String creditCardCustomerTaxId,
@@ -121,7 +121,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.CREDIT_CARD_TRANSACTIONS.ordinal());
 					out.writeUTF(processor.getProviderId());
-					out.writeUTF(business.getAccounting().toString());
+					out.writeUTF(business.getName().toString());
 					out.writeNullUTF(groupName);
 					out.writeBoolean(testMode);
 					out.writeCompressedInt(duplicateWindow);
@@ -142,20 +142,20 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 					out.writeNullUTF(shippingPostalCode);
 					out.writeNullUTF(shippingCountryCode);
 					out.writeBoolean(emailCustomer);
-					out.writeNullUTF(merchantEmail);
+					out.writeNullUTF(ObjectUtils.toString(merchantEmail));
 					out.writeNullUTF(invoiceNumber);
 					out.writeNullUTF(purchaseOrderNumber);
 					out.writeNullUTF(description);
 					out.writeUTF(creditCardCreatedBy.getUsername_userId().toString());
 					out.writeNullUTF(creditCardPrincipalName);
-					out.writeUTF(creditCardAccounting.getAccounting().toString());
+					out.writeUTF(creditCardAccounting.getName().toString());
 					out.writeNullUTF(creditCardGroupName);
 					out.writeNullUTF(creditCardProviderUniqueId);
 					out.writeUTF(creditCardMaskedCardNumber);
 					out.writeUTF(creditCardFirstName);
 					out.writeUTF(creditCardLastName);
 					out.writeNullUTF(creditCardCompanyName);
-					out.writeNullUTF(creditCardEmail);
+					out.writeNullUTF(ObjectUtils.toString(creditCardEmail));
 					out.writeNullUTF(creditCardPhone);
 					out.writeNullUTF(creditCardFax);
 					out.writeNullUTF(creditCardCustomerTaxId);
@@ -202,7 +202,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 	}
 
 	public Payment getLastCreditCardTransaction(Account bu) throws IOException, SQLException {
-		AccountingCode accounting = bu.getAccounting();
+		Account.Name accounting = bu.getName();
 		// Sorted by accounting, time, so we search for first match from the bottom
 		// TODO: We could do a binary search on accounting code and time to make this faster
 		List<Payment> ccts = getRows();

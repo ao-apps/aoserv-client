@@ -22,25 +22,30 @@
  */
 package com.aoindustries.aoserv.client.mysql;
 
-import com.aoindustries.aoserv.client.CachedObjectMySQLUserIdKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.DisableLog;
-import com.aoindustries.aoserv.client.account.Username;
+import static com.aoindustries.aoserv.client.mysql.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.validation.InvalidResult;
+import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
+import java.io.ObjectInputValidation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A <code>MySQLUser</code> stores the details of a MySQL account
@@ -51,7 +56,132 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class User extends CachedObjectMySQLUserIdKey<User> implements PasswordProtected, Removable, Disablable {
+final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
+
+	/**
+	 * Represents a MySQL user ID.  {@link User} ids must:
+	 * <ul>
+	 *   <li>Be non-null</li>
+	 *   <li>Be non-empty</li>
+	 *   <li>Be between 1 and 32 characters</li>
+	 *   <li>Must start with <code>[a-z]</code></li>
+	 *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
+	 *   <li>A special exemption is made for the <code>mysql.session</code> and <code>mysql.sys</code> reserved users added in MySQL 5.7.</li>
+	 *   <li>Must not be a MySQL reserved word</li>
+	 *   <li>Must be a valid {@link com.aoindustries.aoserv.client.linux.User.Name} - this is implied by the above rules</li>
+	 * </ul>
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	final static public class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
+		FastExternalizable,
+		ObjectInputValidation
+	{
+
+		/**
+		 * The maximum length of a MySQL username.
+		 *
+		 * @implNote  32 characters as of <a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</a>
+		 */
+		public static final int MAX_LENGTH = 32;
+
+		/**
+		 * Validates a {@link User} name.
+		 */
+		public static ValidationResult validate(String name) {
+			if(name==null) return new InvalidResult(accessor, "User.Name.validate.isNull");
+			if(
+				// Allow specific system users that otherwise do not match our allowed username pattern
+				!"mysql.sys".equals(name)
+				&& !"mysql.session".equals(name)
+			) {
+				int len = name.length();
+				if(len==0) return new InvalidResult(accessor, "User.Name.validate.isEmpty");
+				if(len > MAX_LENGTH) return new InvalidResult(accessor, "User.Name.validate.tooLong", MAX_LENGTH, len);
+
+				// The first character must be [a-z] or [0-9]
+				char ch = name.charAt(0);
+				if(
+					(ch < 'a' || ch > 'z')
+					&& (ch<'0' || ch>'9')
+				) return new InvalidResult(accessor, "User.Name.validate.startAtoZor0to9");
+
+				// The rest may have additional characters
+				for (int c = 1; c < len; c++) {
+					ch = name.charAt(c);
+					if (
+						(ch<'a' || ch>'z')
+						&& (ch<'0' || ch>'9')
+						&& ch!='_'
+					) return new InvalidResult(accessor, "User.Name.validate.illegalCharacter");
+				}
+				if(Server.ReservedWord.isReservedWord(name)) return new InvalidResult(accessor, "User.Name.validate.reservedWord");
+			}
+			assert com.aoindustries.aoserv.client.linux.User.Name.validate(name).isValid() : "A MySQL User.Name is always a valid Linux User.Name.";
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param name  when {@code null}, returns {@code null}
+		 */
+		public static Name valueOf(String name) throws ValidationException {
+			if(name == null) return null;
+			//Name existing = interned.get(name);
+			//return existing!=null ? existing : new Name(name);
+			return new Name(name, true);
+		}
+
+		private Name(String name, boolean validate) throws ValidationException {
+			super(name, validate);
+		}
+
+		/**
+		 * @param  name  Does not validate, should only be used with a known valid value.
+		 */
+		private Name(String name) {
+			super(name);
+		}
+
+		@Override
+		protected void validate() throws ValidationException {
+			ValidationResult result = validate(name);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Name intern() {
+			Name existing = interned.get(name);
+			if(existing==null) {
+				String internedId = name.intern();
+				Name addMe = (name == internedId) ? this : new Name(internedId);
+				existing = interned.putIfAbsent(internedId, addMe);
+				if(existing==null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.MySQLUserName getDto() {
+			return new com.aoindustries.aoserv.client.dto.MySQLUserName(name);
+		}
+
+		// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+		private static final long serialVersionUID = 2L;
+
+		public Name() {
+		}
+
+		@Override
+		public long getSerialVersionUID() {
+			return serialVersionUID;
+		}
+		// </editor-fold>
+	}
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -62,28 +192,28 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 	 * @deprecated  Please use {@link MySQLUserId#MAX_LENGTH} instead.
 	 */
 	@Deprecated
-	public static final int MAX_USERNAME_LENGTH = MySQLUserId.MAX_LENGTH;
+	public static final int MAX_USERNAME_LENGTH = Name.MAX_LENGTH;
 
 	/**
 	 * The username of the MySQL super user.
 	 */
-	public static final MySQLUserId ROOT;
+	public static final Name ROOT;
 
 	/**
 	 * The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7.
 	 */
-	public static final MySQLUserId MYSQL_SESSION;
+	public static final Name MYSQL_SESSION;
 
 	/**
 	 * The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
 	 */
-	public static final MySQLUserId MYSQL_SYS;
+	public static final Name MYSQL_SYS;
 
 	static {
 		try {
-			ROOT = MySQLUserId.valueOf("root").intern();
-			MYSQL_SESSION = MySQLUserId.valueOf("mysql.session").intern();
-			MYSQL_SYS = MySQLUserId.valueOf("mysql.sys").intern();
+			ROOT = Name.valueOf("root").intern();
+			MYSQL_SESSION = Name.valueOf("mysql.session").intern();
+			MYSQL_SYS = Name.valueOf("mysql.sys").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -136,7 +266,7 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		return Username.groupPasswordsSet(getMySQLServerUsers());
+		return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getMySQLServerUsers());
 	}
 
 	public boolean canAlter() {
@@ -270,7 +400,7 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 		return checkPassword(pkey, password);
 	}
 
-	public static List<PasswordChecker.Result> checkPassword(MySQLUserId username, String password) throws IOException {
+	public static List<PasswordChecker.Result> checkPassword(Name username, String password) throws IOException {
 		return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
 	}
 
@@ -355,11 +485,11 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 		return Table.TableID.MYSQL_USERS;
 	}
 
-	public MySQLUserId getUsername_id() {
+	public Name getUsername_id() {
 		return pkey;
 	}
-	public Username getUsername() throws SQLException, IOException {
-		Username obj=table.getConnector().getAccount().getUsername().get(pkey);
+	public com.aoindustries.aoserv.client.account.User getUsername() throws SQLException, IOException {
+		com.aoindustries.aoserv.client.account.User obj=table.getConnector().getAccount().getUser().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
 		return obj;
 	}
@@ -367,7 +497,7 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = MySQLUserId.valueOf(result.getString(1));
+			pkey = Name.valueOf(result.getString(1));
 			select_priv=result.getBoolean(2);
 			insert_priv=result.getBoolean(3);
 			update_priv=result.getBoolean(4);
@@ -406,7 +536,7 @@ final public class User extends CachedObjectMySQLUserIdKey<User> implements Pass
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey = MySQLUserId.valueOf(in.readUTF()).intern();
+			pkey = Name.valueOf(in.readUTF()).intern();
 			select_priv=in.readBoolean();
 			insert_priv=in.readBoolean();
 			update_priv=in.readBoolean();

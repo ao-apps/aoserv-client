@@ -25,7 +25,6 @@ package com.aoindustries.aoserv.client.master;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.HostAddress;
@@ -49,7 +48,7 @@ final public class UserAcl extends CachedObjectIntegerKey<UserAcl> {
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_HOST_name = "host";
 
-	private UserId username;
+	private com.aoindustries.aoserv.client.account.User.Name username;
 	private HostAddress host;
 
 	@Override
@@ -79,7 +78,7 @@ final public class UserAcl extends CachedObjectIntegerKey<UserAcl> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			username = UserId.valueOf(result.getString(2));
+			username = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(2));
 			host = HostAddress.valueOf(result.getString(3));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -90,7 +89,7 @@ final public class UserAcl extends CachedObjectIntegerKey<UserAcl> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			username = UserId.valueOf(in.readUTF()).intern();
+			username = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
 			host = HostAddress.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);

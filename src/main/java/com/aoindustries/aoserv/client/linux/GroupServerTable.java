@@ -30,9 +30,6 @@ import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -71,7 +68,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 		return pkey;
 	}
 
-	int addSystemGroup(Server aoServer, GroupId groupName, int gid) throws IOException, SQLException {
+	int addSystemGroup(Server aoServer, Group.Name groupName, int gid) throws IOException, SQLException {
 		return connector.requestIntQueryIL(true,
 			AoservProtocol.CommandID.ADD_SYSTEM_GROUP,
 			aoServer.getPkey(),
@@ -97,7 +94,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 	}
 
 	public GroupServer getLinuxServerGroup(Server aoServer, Account business) throws IOException, SQLException {
-		AccountingCode accounting=business.getAccounting();
+		Account.Name accounting=business.getName();
 		int aoPKey=aoServer.getPkey();
 
 		List<GroupServer> list = getRows();
@@ -109,7 +106,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 				// Must be for the correct business
 				Group linuxGroup = group.getLinuxGroup();
 				Package pk=linuxGroup.getPackage();
-				if (pk!=null && pk.getBusiness_accounting().equals(accounting)) {
+				if (pk!=null && pk.getAccount_name().equals(accounting)) {
 					// Must be a user group
 					if (linuxGroup.getLinuxGroupType().getName().equals(GroupType.USER)) return group;
 				}
@@ -119,9 +116,9 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 	}
 
 	private boolean nameHashBuilt=false;
-	private final Map<Integer,Map<GroupId,GroupServer>> nameHash=new HashMap<>();
+	private final Map<Integer,Map<Group.Name,GroupServer>> nameHash=new HashMap<>();
 
-	public GroupServer getLinuxServerGroup(Server aoServer, GroupId group_name) throws IOException, SQLException {
+	public GroupServer getLinuxServerGroup(Server aoServer, Group.Name group_name) throws IOException, SQLException {
 		synchronized(nameHash) {
 			if(!nameHashBuilt) {
 				nameHash.clear();
@@ -131,14 +128,14 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 				for(int c=0; c<len; c++) {
 					GroupServer lsg=list.get(c);
 					Integer I=lsg.ao_server;
-					Map<GroupId,GroupServer> serverHash=nameHash.get(I);
+					Map<Group.Name,GroupServer> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
 					if(serverHash.put(lsg.name, lsg)!=null) throw new SQLException("LinuxServerGroup name exists more than once on server: "+lsg.name+" on "+I);
 
 				}
 				nameHashBuilt=true;
 			}
-			Map<GroupId,GroupServer> serverHash=nameHash.get(aoServer.getPkey());
+			Map<Group.Name,GroupServer> serverHash=nameHash.get(aoServer.getPkey());
 			if(serverHash==null) return null;
 			return serverHash.get(group_name);
 		}
@@ -209,7 +206,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 			if(AOSH.checkParamCount(Command.ADD_LINUX_SERVER_GROUP, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().addLinuxServerGroup(
-						AOSH.parseGroupId(args[1], "group"),
+						AOSH.parseGroupName(args[1], "group"),
 						args[2]
 					)
 				);
@@ -219,7 +216,7 @@ final public class GroupServerTable extends CachedTableIntegerKey<GroupServer> {
 		} else if(command.equalsIgnoreCase(Command.REMOVE_LINUX_SERVER_GROUP)) {
 			if(AOSH.checkParamCount(Command.REMOVE_LINUX_SERVER_GROUP, args, 2, err)) {
 				connector.getSimpleAOClient().removeLinuxServerGroup(
-					AOSH.parseGroupId(args[1], "group"),
+					AOSH.parseGroupName(args[1], "group"),
 					args[2]
 				);
 			}

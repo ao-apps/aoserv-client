@@ -22,10 +22,8 @@
  */
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.GlobalObjectUnixPathKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -42,12 +40,12 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class Shell extends GlobalObjectUnixPathKey<Shell> {
+final public class Shell extends GlobalObjectPosixPathKey<Shell> {
 
 	static final int COLUMN_PATH=0;
 	static final String COLUMN_PATH_name = "path";
 
-	public static final UnixPath
+	public static final PosixPath
 		BASH,
 		FALSE,
 		KSH,
@@ -63,18 +61,18 @@ final public class Shell extends GlobalObjectUnixPathKey<Shell> {
 	;
 	static {
 		try {
-			BASH = UnixPath.valueOf("/bin/bash").intern();
-			FALSE = UnixPath.valueOf("/bin/false").intern();
-			KSH = UnixPath.valueOf("/bin/ksh").intern();
-			SH = UnixPath.valueOf("/bin/sh").intern();
-			SYNC = UnixPath.valueOf("/bin/sync").intern();
-			TCSH = UnixPath.valueOf("/bin/tcsh").intern();
-			HALT = UnixPath.valueOf("/sbin/halt").intern();
-			NOLOGIN = UnixPath.valueOf("/sbin/nologin").intern();
-			SHUTDOWN = UnixPath.valueOf("/sbin/shutdown").intern();
-			FTPONLY = UnixPath.valueOf("/usr/bin/ftponly").intern();
-			FTPPASSWD = UnixPath.valueOf("/usr/bin/ftppasswd").intern();
-			PASSWD = UnixPath.valueOf("/usr/bin/passwd").intern();
+			BASH = PosixPath.valueOf("/bin/bash").intern();
+			FALSE = PosixPath.valueOf("/bin/false").intern();
+			KSH = PosixPath.valueOf("/bin/ksh").intern();
+			SH = PosixPath.valueOf("/bin/sh").intern();
+			SYNC = PosixPath.valueOf("/bin/sync").intern();
+			TCSH = PosixPath.valueOf("/bin/tcsh").intern();
+			HALT = PosixPath.valueOf("/sbin/halt").intern();
+			NOLOGIN = PosixPath.valueOf("/sbin/nologin").intern();
+			SHUTDOWN = PosixPath.valueOf("/sbin/shutdown").intern();
+			FTPONLY = PosixPath.valueOf("/usr/bin/ftponly").intern();
+			FTPPASSWD = PosixPath.valueOf("/usr/bin/ftppasswd").intern();
+			PASSWD = PosixPath.valueOf("/usr/bin/passwd").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -91,7 +89,7 @@ final public class Shell extends GlobalObjectUnixPathKey<Shell> {
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
-	public UnixPath getPath() {
+	public PosixPath getPath() {
 		return pkey;
 	}
 
@@ -103,7 +101,7 @@ final public class Shell extends GlobalObjectUnixPathKey<Shell> {
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = UnixPath.valueOf(result.getString(1));
+			pkey = PosixPath.valueOf(result.getString(1));
 			is_login = result.getBoolean(2);
 			is_system = result.getBoolean(3);
 		} catch(ValidationException e) {
@@ -122,7 +120,7 @@ final public class Shell extends GlobalObjectUnixPathKey<Shell> {
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey = UnixPath.valueOf(in.readUTF()).intern();
+			pkey = PosixPath.valueOf(in.readUTF()).intern();
 			is_login=in.readBoolean();
 			is_system=in.readBoolean();
 		} catch(ValidationException e) {

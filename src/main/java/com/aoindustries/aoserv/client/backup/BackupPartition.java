@@ -23,10 +23,10 @@
 package com.aoindustries.aoserv.client.backup;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -49,7 +49,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	static final String COLUMN_PATH_name = "path";
 
 	int ao_server;
-	UnixPath path;
+	PosixPath path;
 	private boolean enabled;
 	private boolean quota_enabled;
 
@@ -79,7 +79,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 		return ao;
 	}
 
-	public UnixPath getPath() {
+	public PosixPath getPath() {
 		return path;
 	}
 
@@ -98,7 +98,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 		try {
 			pkey=result.getInt(1);
 			ao_server=result.getInt(2);
-			path = UnixPath.valueOf(result.getString(3));
+			path = PosixPath.valueOf(result.getString(3));
 			enabled=result.getBoolean(4);
 			quota_enabled=result.getBoolean(5);
 		} catch(ValidationException e) {
@@ -127,7 +127,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 		try {
 			pkey=in.readCompressedInt();
 			ao_server=in.readCompressedInt();
-			path = UnixPath.valueOf(in.readUTF()).intern();
+			path = PosixPath.valueOf(in.readUTF()).intern();
 			enabled=in.readBoolean();
 			quota_enabled=in.readBoolean();
 		} catch(ValidationException e) {

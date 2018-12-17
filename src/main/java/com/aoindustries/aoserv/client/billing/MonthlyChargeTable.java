@@ -29,12 +29,10 @@ import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.backup.MysqlReplication;
 import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.GroupServer;
-import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.linux.UserType;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.PrivateTomcatSite;
@@ -119,10 +117,10 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		Map<Package,Integer> usersPerPackage=new HashMap<>();
 		{
 			for(UserServer lsa : connector.getLinux().getUserServer().getRows()) {
-				UserId username=lsa.getLinuxAccount_username_id();
-				if(!username.equals(User.MAIL)) {
+				com.aoindustries.aoserv.client.linux.User.Name username=lsa.getLinuxAccount_username_id();
+				if(!username.equals(com.aoindustries.aoserv.client.linux.User.MAIL)) {
 					Map<Package,Integer> map;
-					User la=lsa.getLinuxAccount();
+					com.aoindustries.aoserv.client.linux.User la=lsa.getLinuxAccount();
 					if(la.getType().getName().equals(UserType.EMAIL)) map=emailsPerPackage;
 					else map=usersPerPackage;
 
@@ -168,7 +166,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 			Account business=pack.getBusiness();
 			// Only bill when active
 			if(business.getCanceled()==null) {
-				Account acctBusiness=business.getAccountingBusiness();
+				Account acctBusiness=business.getBillingAccount();
 				if(
 					bu==null
 					|| bu.equals(acctBusiness)

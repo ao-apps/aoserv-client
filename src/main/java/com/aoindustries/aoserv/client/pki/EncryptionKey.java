@@ -26,7 +26,6 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -173,7 +172,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 		}
 	}
 
-	private AccountingCode accounting;
+	private Account.Name accounting;
 	private String id;
 
 	public Account getBusiness() throws SQLException, IOException {
@@ -208,7 +207,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			accounting = AccountingCode.valueOf(result.getString(2));
+			accounting = Account.Name.valueOf(result.getString(2));
 			id = result.getString(3);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -219,7 +218,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			accounting = AccountingCode.valueOf(in.readUTF()).intern();
+			accounting = Account.Name.valueOf(in.readUTF()).intern();
 			id = in.readUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);

@@ -24,10 +24,9 @@ package com.aoindustries.aoserv.client.distribution;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
-import com.aoindustries.aoserv.client.master.User;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.web.tomcat.Version;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -53,7 +52,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 
 	String name, version;
 	long updated;
-	private UserId owner;
+	private User.Name owner;
 	private int operating_system_version;
 	private long disable_time;
 	private String disable_reason;
@@ -77,10 +76,10 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 		return connector.getWeb_tomcat().getVersion().get(pkey);
 	}
 
-	public User getOwner(AOServConnector connector) throws SQLException, IOException {
+	public com.aoindustries.aoserv.client.master.User getOwner(AOServConnector connector) throws SQLException, IOException {
 		// May be filtered
 		if(owner == null) return null;
-		User obj = connector.getMaster().getUser().get(owner);
+		com.aoindustries.aoserv.client.master.User obj = connector.getMaster().getUser().get(owner);
 		if (obj == null) throw new SQLException("Unable to find MasterUser: " + owner);
 		return obj;
 	}
@@ -142,7 +141,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 			updated = result.getTimestamp(4).getTime();
 			{
 				String s = result.getString(5);
-				owner = AoservProtocol.FILTERED.equals(s) ? null : UserId.valueOf(s);
+				owner = AoservProtocol.FILTERED.equals(s) ? null : User.Name.valueOf(s);
 			}
 			operating_system_version = result.getInt(6);
 			if(result.wasNull()) operating_system_version = -1;
@@ -166,7 +165,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 				if(AoservProtocol.FILTERED.equals(s)) {
 					owner = null;
 				} else {
-					owner = UserId.valueOf(s).intern();
+					owner = User.Name.valueOf(s).intern();
 				}
 			}
 			operating_system_version = in.readCompressedInt();

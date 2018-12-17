@@ -28,10 +28,10 @@ import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.DisableLog;
 import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -59,10 +59,10 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	/**
 	 * The default directory containing CVS repositories.
 	 */
-	public static final UnixPath DEFAULT_CVS_DIRECTORY;
+	public static final PosixPath DEFAULT_CVS_DIRECTORY;
 	static {
 		try {
-			DEFAULT_CVS_DIRECTORY = UnixPath.valueOf("/var/cvs").intern();
+			DEFAULT_CVS_DIRECTORY = PosixPath.valueOf("/var/cvs").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -87,11 +87,11 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 
 	/**
 	 * Allowed CVS repository paths are constrained beyond the general
-	 * requirements of {@link UnixPath}.
+	 * requirements of {@link PosixPath}.
 	 * May only contain characters in the set:
 	 * <code>[a-z] [A-Z] [0-9] _ . - /</code>
 	 */
-	public static boolean isValidPath(UnixPath path) {
+	public static boolean isValidPath(PosixPath path) {
 		if(path == null) return false;
 		String pathStr = path.toString();
 		int len = pathStr.length();
@@ -110,7 +110,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return true;
 	}
 
-	UnixPath path;
+	PosixPath path;
 	int linux_server_account;
 	int linux_server_group;
 	private long mode;
@@ -166,7 +166,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return obj;
 	}
 
-	public UnixPath getPath() {
+	public PosixPath getPath() {
 		return path;
 	}
 
@@ -207,7 +207,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			path = UnixPath.valueOf(result.getString(2));
+			path = PosixPath.valueOf(result.getString(2));
 			linux_server_account=result.getInt(3);
 			linux_server_group=result.getInt(4);
 			mode=result.getLong(5);
@@ -223,7 +223,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			path = UnixPath.valueOf(in.readUTF());
+			path = PosixPath.valueOf(in.readUTF());
 			linux_server_account=in.readCompressedInt();
 			linux_server_group=in.readCompressedInt();
 			mode=in.readLong();

@@ -28,15 +28,17 @@ import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @see  Profile
@@ -72,10 +74,10 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 		String zip,
 		final boolean sendInvoice,
 		final String billingContact,
-		final String billingEmail,
+		final Set<Email> billingEmail,
 		final Profile.EmailFormat billingEmailFormat,
 		final String technicalContact,
-		final String technicalEmail,
+		final Set<Email> technicalEmail,
 		final Profile.EmailFormat technicalEmailFormat
 	) throws IOException, SQLException {
 		if(fax!=null && fax.length()==0) fax=null;
@@ -87,7 +89,8 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 		if(zip!=null && zip.length()==0) zip=null;
 		final String finalZip = zip;
 		// Create the new profile
-		return connector.requestResult(true,
+		return connector.requestResult(
+			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;
@@ -96,7 +99,7 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.BUSINESS_PROFILES.ordinal());
-					out.writeUTF(business.getAccounting().toString());
+					out.writeUTF(business.getName().toString());
 					out.writeUTF(name);
 					out.writeBoolean(isPrivate);
 					out.writeUTF(phone);
@@ -113,10 +116,12 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 					if(finalZip!=null) out.writeUTF(finalZip);
 					out.writeBoolean(sendInvoice);
 					out.writeUTF(billingContact);
-					out.writeUTF(billingEmail);
+					out.writeCompressedInt(billingEmail.size());
+					for(Email email : billingEmail) out.writeUTF(email.toString());
 					out.writeEnum(billingEmailFormat);
 					out.writeUTF(technicalContact);
-					out.writeUTF(technicalEmail);
+					out.writeCompressedInt(technicalEmail.size());
+					for(Email email : technicalEmail) out.writeUTF(email.toString());
 					out.writeEnum(technicalEmailFormat);
 				}
 
@@ -151,7 +156,7 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 	 * the provided <code>Business</code>.
 	 */
 	Profile getBusinessProfile(Account business) throws IOException, SQLException {
-		AccountingCode accounting=business.getAccounting();
+		Account.Name accounting=business.getName();
 		List<Profile> cached=getRows();
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
@@ -163,7 +168,7 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 	}
 
 	List<Profile> getBusinessProfiles(Account business) throws IOException, SQLException {
-		return getIndexedRows(Profile.COLUMN_ACCOUNTING, business.getAccounting());
+		return getIndexedRows(Profile.COLUMN_ACCOUNTING, business.getName());
 	}
 
 	@Override
@@ -192,15 +197,15 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 							args[11],
 							AOSH.parseBoolean(args[12], "send_invoice"),
 							args[13],
-							args[14],
+							Profile.splitEmails(args[14]),
 							args[15],
 							args[16],
-							args[17],
+							Profile.splitEmails(args[17]),
 							args[18]
 						)
 					);
 					out.flush();
-				} catch(IllegalArgumentException | IOException | SQLException iae) {
+				} catch(IllegalArgumentException | ValidationException | IOException | SQLException iae) {
 					err.print("aosh: "+Command.ADD_BUSINESS_PROFILE+": ");
 					err.println(iae.getMessage());
 					err.flush();

@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.email.SmtpRelay;
 import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.GroupServer;
 import com.aoindustries.aoserv.client.linux.Server;
-import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.mysql.Database;
 import com.aoindustries.aoserv.client.net.Bind;
@@ -41,7 +40,6 @@ import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -71,7 +69,7 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 	static final String COLUMN_ACCOUNTING_name = "accounting";
 	static final String COLUMN_SERVER_name = "server";
 
-	private AccountingCode accounting;
+	private Account.Name accounting;
 	int server;
 	boolean is_default;
 	private boolean
@@ -157,7 +155,7 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			accounting=AccountingCode.valueOf(result.getString(2));
+			accounting=Account.Name.valueOf(result.getString(2));
 			server=result.getInt(3);
 			is_default=result.getBoolean(4);
 			can_control_apache=result.getBoolean(5);
@@ -181,7 +179,7 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			accounting=AccountingCode.valueOf(in.readUTF()).intern();
+			accounting=Account.Name.valueOf(in.readUTF()).intern();
 			server=in.readCompressedInt();
 			is_default=in.readBoolean();
 			can_control_apache=in.readBoolean();
@@ -217,7 +215,7 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 		for(int c=0;c<bus.size();c++) {
 			if(bu.isBusinessOrParentOf(bus.get(c))) {
 				Account bu2=bus.get(c);
-				if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<>("Child business "+bu2.getAccounting()+" still has access to "+se, bu2));
+				if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<>("Child business "+bu2.getName()+" still has access to "+se, bu2));
 				List<Package> pks=bu2.getPackages();
 				for(int d=0;d<pks.size();d++) {
 					Package pk=pks.get(d);
@@ -256,9 +254,9 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 							if(hs.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
 						}
 
-						for(Username un : pk.getUsernames()) {
+						for(User un : pk.getUsernames()) {
 							// linux_server_accounts
-							User la=un.getLinuxAccount();
+							com.aoindustries.aoserv.client.linux.User la=un.getLinuxAccount();
 							if(la!=null) {
 								UserServer lsa=la.getLinuxServerAccount(ao);
 								if(lsa!=null) reasons.add(new CannotRemoveReason<>("Used by Linux account "+un.getUsername()+" on "+ao.getHostname(), lsa));

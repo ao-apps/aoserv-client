@@ -66,7 +66,7 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.DISABLE_LOG.ordinal());
-					out.writeUTF(bu.getAccounting().toString());
+					out.writeUTF(bu.getName().toString());
 					out.writeBoolean(disableReason!=null); if(disableReason!=null) out.writeUTF(disableReason);
 				}
 

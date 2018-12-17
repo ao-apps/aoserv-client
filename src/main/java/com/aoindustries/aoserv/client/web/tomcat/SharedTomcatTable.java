@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client.web.tomcat;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
@@ -34,7 +35,6 @@ import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -132,7 +132,7 @@ final public class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 	}
 
 	public List<SharedTomcat> getHttpdSharedTomcats(Package pk) throws IOException, SQLException {
-		AccountingCode pkname=pk.getName();
+		Account.Name pkname=pk.getName();
 
 		List<SharedTomcat> cached=getRows();
 		int size=cached.size();
@@ -175,8 +175,8 @@ final public class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 						args[1],
 						args[2],
 						args[3],
-						AOSH.parseUserId(args[4], "linux_server_account"),
-						AOSH.parseGroupId(args[5], "linux_server_group")
+						AOSH.parseLinuxUserName(args[4], "linux_server_account"),
+						AOSH.parseGroupName(args[5], "linux_server_group")
 					)
 				);
 				out.flush();

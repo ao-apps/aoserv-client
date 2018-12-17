@@ -24,15 +24,16 @@ package com.aoindustries.aoserv.client.signup;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
 import com.aoindustries.aoserv.client.payment.CountryCode;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
@@ -92,16 +93,16 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 		final String ba_cell_phone,
 		final String ba_home_phone,
 		final String ba_fax,
-		final String ba_email,
+		final Email ba_email,
 		final String ba_address1,
 		final String ba_address2,
 		final String ba_city,
 		final String ba_state,
 		final CountryCode ba_country,
 		final String ba_zip,
-		final UserId ba_username,
+		final User.Name ba_username,
 		final String billing_contact,
-		final String billing_email,
+		final Email billing_email,
 		final boolean billing_use_monthly,
 		final boolean billing_pay_one_year,
 		// Encrypted values
@@ -183,7 +184,7 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 					out.writeBoolean(ba_cell_phone!=null); if(ba_cell_phone!=null) out.writeUTF(ba_cell_phone);
 					out.writeBoolean(ba_home_phone!=null); if(ba_home_phone!=null) out.writeUTF(ba_home_phone);
 					out.writeBoolean(ba_fax!=null); if(ba_fax!=null) out.writeUTF(ba_fax);
-					out.writeUTF(ba_email);
+					out.writeUTF(ba_email.toString());
 					out.writeBoolean(ba_address1!=null); if(ba_address1!=null) out.writeUTF(ba_address1);
 					out.writeBoolean(ba_address2!=null); if(ba_address2!=null) out.writeUTF(ba_address2);
 					out.writeBoolean(ba_city!=null); if(ba_city!=null) out.writeUTF(ba_city);
@@ -192,7 +193,7 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 					out.writeBoolean(ba_zip!=null); if(ba_zip!=null) out.writeUTF(ba_zip);
 					out.writeUTF(ba_username.toString());
 					out.writeUTF(billing_contact);
-					out.writeUTF(billing_email);
+					out.writeUTF(billing_email.toString());
 					out.writeBoolean(billing_use_monthly);
 					out.writeBoolean(billing_pay_one_year);
 					// Encrypted values

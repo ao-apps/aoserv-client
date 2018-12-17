@@ -154,7 +154,7 @@ final public class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
 							addr.substring(0, pos),
 							AOSH.parseDomainName(addr.substring(pos+1), "address"),
 							args[2],
-							AOSH.parseUserId(args[3], "username")
+							AOSH.parseLinuxUserName(args[3], "username")
 						)
 					);
 					out.flush();
@@ -174,7 +174,7 @@ final public class InboxAddressTable extends CachedTableIntegerKey<InboxAddress>
 						addr.substring(0, pos),
 						AOSH.parseDomainName(addr.substring(pos+1), "address"),
 						args[2],
-						AOSH.parseUserId(args[3], "username")
+						AOSH.parseLinuxUserName(args[3], "username")
 					);
 				}
 			}

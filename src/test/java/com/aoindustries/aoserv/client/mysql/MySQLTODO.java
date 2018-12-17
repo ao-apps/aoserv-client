@@ -24,14 +24,11 @@ package com.aoindustries.aoserv.client.mysql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServConnectorTODO;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.DisableLog;
-import com.aoindustries.aoserv.client.account.Username;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.password.PasswordGenerator;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.UserId;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -64,7 +61,7 @@ public class MySQLTODO extends TestCase {
 
 	private AOServConnector conn;
 	private Package pack;
-	private Username username;
+	private com.aoindustries.aoserv.client.account.User username;
 	private User mysqlUser;
 	private final List<UserServer> mysqlServerUsers=new ArrayList<>();
 	private final Map<UserServer,String> mysqlServerUserPasswords=new HashMap<>();
@@ -118,15 +115,15 @@ public class MySQLTODO extends TestCase {
 	private void addMySQLServerUsers() throws Exception {
 		System.out.println("Testing adding MySQLUser to each MySQLServer");
 		System.out.print("    Resolving TEST Package: ");
-		pack=conn.getBilling().getPackage().get(AccountingCode.valueOf("TEST"));
+		pack=conn.getBilling().getPackage().get(Account.Name.valueOf("TEST"));
 		assertNotNull("Unable to find Package: TEST", pack);
 		System.out.println("Done");
 
 		System.out.print("    Generating random username: ");
 		Random random=AOServConnector.getRandom();
-		UserId randomUsername=null;
+		User.Name randomUsername=null;
 		while(randomUsername==null) {
-			UserId temp = UserId.valueOf(
+			User.Name temp = User.Name.valueOf(
 				"test_"
 				+(char)('0'+random.nextInt(10))
 				+(char)('0'+random.nextInt(10))
@@ -137,13 +134,13 @@ public class MySQLTODO extends TestCase {
 				+(char)('0'+random.nextInt(10))
 				+(char)('0'+random.nextInt(10))
 			);
-			if(conn.getAccount().getUsername().isUsernameAvailable(temp)) randomUsername=temp;
+			if(conn.getAccount().getUser().isUsernameAvailable(temp)) randomUsername=temp;
 		}
 		System.out.println(randomUsername);
 
 		System.out.print("    Adding Username: ");
 		pack.addUsername(randomUsername);
-		username=conn.getAccount().getUsername().get(randomUsername);
+		username=conn.getAccount().getUser().get(randomUsername);
 		assertNotNull("Username", username);
 		System.out.println("Done");
 
@@ -209,9 +206,9 @@ public class MySQLTODO extends TestCase {
 		Random random=AOServConnector.getRandom();
 		for(Server mysqlServer : conn.getMysql().getServer()) {
 			System.out.print("    Generating random database name on "+mysqlServer+": ");
-			MySQLDatabaseName randomName=null;
+			Database.Name randomName=null;
 			while(randomName==null) {
-				MySQLDatabaseName temp=MySQLDatabaseName.valueOf(
+				Database.Name temp=Database.Name.valueOf(
 					"test_"
 					+(char)('0'+random.nextInt(10))
 					+(char)('0'+random.nextInt(10))

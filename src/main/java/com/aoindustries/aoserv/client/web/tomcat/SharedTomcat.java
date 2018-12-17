@@ -29,12 +29,12 @@ import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.DisableLog;
 import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -132,9 +132,9 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.HTTPD_SHARED_TOMCATS, pkey);
 	}
 
-	public UnixPath getInstallDirectory() throws SQLException, IOException {
+	public PosixPath getInstallDirectory() throws SQLException, IOException {
 		try {
-			return UnixPath.valueOf(
+			return PosixPath.valueOf(
 				getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
 				+ '/' + name
 			);
@@ -349,7 +349,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	 * Note: This matches the check constraint on the httpd_shared_tomcats table.
 	 * Note: This matches keepWwwgroupDirs in HttpdSharedTomcatManager.
 	 * </p>
-	 * // TODO: Self-validating type
+	 * // TODO: Self-validating type (Shared site Site.Name validator, and/or PosixPortableFilename?)
 	 */
 	public static boolean isValidSharedTomcatName(String name) {
 		// These are the other files/directories that may exist under /www.  To avoid

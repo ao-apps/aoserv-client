@@ -26,6 +26,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.email.CyrusImapdBind;
@@ -36,8 +37,6 @@ import com.aoindustries.aoserv.client.ftp.PrivateServer;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.aoserv.client.web.HttpdBind;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
@@ -92,7 +91,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	public static final String COLUMN_IP_ADDRESS_name = "ipAddress";
 	public static final String COLUMN_PORT_name = "port";
 
-	private AccountingCode packageName;
+	private Account.Name packageName;
 	private int server;
 	private int ipAddress;
 	private Port port;
@@ -122,7 +121,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		return pkey;
 	}
 
-	public AccountingCode getPackage_name() {
+	public Account.Name getPackage_name() {
 		return packageName;
 	}
 
@@ -191,12 +190,12 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			packageName = AccountingCode.valueOf(result.getString(2));
+			packageName = Account.Name.valueOf(result.getString(2));
 			server = result.getInt(3);
 			ipAddress = result.getInt(4);
 			port = Port.valueOf(
 				result.getInt(5),
-				com.aoindustries.net.Protocol.valueOf(result.getString(6).toUpperCase(Locale.ROOT)) // TODO: toUpperCase unnecessary in 1.81.18+ which uses matching PostgreSQL enum
+				com.aoindustries.net.Protocol.valueOf(result.getString(6))
 			);
 			app_protocol = result.getString(7);
 			monitoring_enabled = result.getBoolean(8);
@@ -211,7 +210,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
 			server = in.readCompressedInt();
 			ipAddress = in.readCompressedInt();
 			port = Port.valueOf(
@@ -598,9 +597,9 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		return fzs;
 	}
 
-	public Set<FirewalldZoneName> getFirewalldZoneNames() throws IOException, SQLException {
+	public Set<FirewallZone.Name> getFirewalldZoneNames() throws IOException, SQLException {
 		List<BindFirewallZone> nbfzs = getNetBindFirewalldZones();
-		Set<FirewalldZoneName> fzns = new LinkedHashSet<>(nbfzs.size()*4/3+1);
+		Set<FirewallZone.Name> fzns = new LinkedHashSet<>(nbfzs.size()*4/3+1);
 		for(BindFirewallZone nbfz : nbfzs) {
 			fzns.add(nbfz.getFirewalldZone().getName());
 		}
@@ -777,7 +776,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		);
 	}
 
-	public void setFirewalldZones(final Set<FirewalldZoneName> firewalldZones) throws IOException, SQLException {
+	public void setFirewalldZones(final Set<FirewallZone.Name> firewalldZones) throws IOException, SQLException {
 		table.getConnector().requestUpdate(true,
 			AoservProtocol.CommandID.SET_NET_BIND_FIREWALLD_ZONES,
 			new AOServConnector.UpdateRequest() {
@@ -789,7 +788,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 					int size = firewalldZones.size();
 					out.writeCompressedInt(size);
 					int count = 0;
-					for(FirewalldZoneName firewalldZone : firewalldZones) {
+					for(FirewallZone.Name firewalldZone : firewalldZones) {
 						out.writeUTF(firewalldZone.toString());
 						count++;
 					}

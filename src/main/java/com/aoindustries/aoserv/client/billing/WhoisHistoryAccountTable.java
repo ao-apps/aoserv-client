@@ -72,6 +72,6 @@ final public class WhoisHistoryAccountTable extends CachedTableIntegerKey<WhoisH
 	 * @see  Account#getWhoisHistoryAccounts()
 	 */
 	public List<WhoisHistoryAccount> getWhoisHistoryAccounts(Account account) throws IOException, SQLException {
-		return getIndexedRows(WhoisHistoryAccount.COLUMN_account, account.getAccounting());
+		return getIndexedRows(WhoisHistoryAccount.COLUMN_account, account.getName());
 	}
 }

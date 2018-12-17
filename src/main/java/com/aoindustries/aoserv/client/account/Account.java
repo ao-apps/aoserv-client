@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.account;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedObjectAccountingCodeKey;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.SimpleAOClient;
+import static com.aoindustries.aoserv.client.account.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.billing.MonthlyCharge;
 import com.aoindustries.aoserv.client.billing.NoticeLog;
 import com.aoindustries.aoserv.client.billing.Package;
@@ -39,7 +39,6 @@ import com.aoindustries.aoserv.client.email.Domain;
 import com.aoindustries.aoserv.client.email.Forwarding;
 import com.aoindustries.aoserv.client.linux.GroupServer;
 import com.aoindustries.aoserv.client.linux.Server;
-import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.net.IpAddress;
@@ -53,18 +52,31 @@ import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Ticket;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.io.FastObjectInput;
+import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
+import com.aoindustries.util.Internable;
 import com.aoindustries.util.SortedArrayList;
+import com.aoindustries.validation.InvalidResult;
+import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInput;
+import java.io.ObjectInputValidation;
+import java.io.ObjectOutput;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
@@ -74,7 +86,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A <code>Business</code> is one distinct set of packages, resources, and permissions.
@@ -84,7 +100,215 @@ import java.util.Map;
  *
  * @author  AO Industries, Inc.
  */
-final public class Account extends CachedObjectAccountingCodeKey<Account> implements Disablable, Comparable<Account> {
+final public class Account extends CachedObjectAccountNameKey<Account> implements Disablable, Comparable<Account> {
+
+	/**
+	 * The unique, case-insensitive identifier for an {@link Account}.  Account names must:
+	 * <ul>
+	 *   <li>Be non-null</li>
+	 *   <li>Be non-empty</li>
+	 *   <li>Be between 2 and 32 characters</li>
+	 *   <li>Must start with <code>[A-Z,a-z]</code></li>
+	 *   <li>Must end with <code>[A-Z,a-z,0-9]</code></li>
+	 *   <li>Must contain only <code>[A-Z,a-z,0-9] and underscore(_)</code></li>
+	 *   <li>May not have consecutive underscores</li>
+	 * </ul>
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	final static public class Name implements
+		Comparable<Name>,
+		FastExternalizable,
+		ObjectInputValidation,
+		DtoFactory<com.aoindustries.aoserv.client.dto.AccountName>,
+		Internable<Name>
+	{
+
+		public static final int MIN_LENGTH = 2;
+
+		public static final int MAX_LENGTH = 32;
+
+		/**
+		 * Validates a name.
+		 */
+		public static ValidationResult validate(String name) {
+			if(name==null) return new InvalidResult(accessor, "Account.Name.validate.isNull");
+			int len=name.length();
+
+			if(len<MIN_LENGTH) return new InvalidResult(accessor, "Account.Name.validate.tooShort", MIN_LENGTH, len);
+			if(len>MAX_LENGTH) return new InvalidResult(accessor, "Account.Name.validate.tooLong", MAX_LENGTH, len);
+
+			char ch=name.charAt(0);
+			if(
+				(ch<'A' || ch>'Z')
+				&& (ch<'a' || ch>'z')
+			) return new InvalidResult(accessor, "Account.Name.validate.mustStartAlpha");
+
+			ch=name.charAt(len-1);
+			if(
+				(ch<'A' || ch>'Z')
+				&& (ch<'a' || ch>'z')
+				&& (ch<'0' || ch>'9')
+			) return new InvalidResult(accessor, "Account.Name.validate.mustEndAlphanumeric");
+
+			for(int pos=1;pos<(len-1);pos++) {
+				ch=name.charAt(pos);
+				if(ch=='_') {
+					if(name.charAt(pos-1)=='_') return new InvalidResult(accessor, "Account.Name.validate.consecutiveUnderscores", pos-1);
+				} else if(
+					(ch<'A' || ch>'Z')
+					&& (ch<'a' || ch>'z')
+					&& (ch<'0' || ch>'9')
+				) return new InvalidResult(accessor, "Account.Name.validate.invalidCharacter", ch, pos);
+			}
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param name  when {@code null}, returns {@code null}
+		 */
+		public static Name valueOf(String name) throws ValidationException {
+			if(name == null) return null;
+			//Name existing = interned.get(name);
+			//return existing!=null ? existing : new Name(name);
+			return new Name(name);
+		}
+
+		/*
+		public static Name valueOfInterned(String name) throws ValidationException {
+			Name existing = interned.get(name);
+			return existing!=null ? existing : new Name(name).intern();
+		}*/
+
+		private String name;
+		private String upperName;
+
+		private Name(String name) throws ValidationException {
+			this.name = name;
+			this.upperName = name.toUpperCase(Locale.ROOT);
+			validate();
+		}
+
+		/**
+		 * @param  name  Does not validate, should only be used with a known valid value.
+		 * @param  upperName  Does not validate, should only be used with a known valid value.
+		 */
+		private Name(String name, String upperName) {
+			ValidationResult result;
+			assert (result = validate(name)).isValid() : result.toString();
+			assert name.toUpperCase(Locale.ROOT).equals(upperName);
+			this.name = name;
+			this.upperName = upperName;
+		}
+
+		private void validate() throws ValidationException {
+			ValidationResult result = validate(name);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		@Override
+		public boolean equals(Object O) {
+			return
+				O!=null
+				&& O instanceof Name
+				&& upperName.equals(((Name)O).upperName)
+			;
+		}
+
+		@Override
+		public int hashCode() {
+			return upperName.hashCode();
+		}
+
+		@Override
+		public int compareTo(Name other) {
+			return this==other ? 0 : ComparatorUtils.compareIgnoreCaseConsistentWithEquals(name, other.name);
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		/**
+		 * Gets the upper-case form of the code.  If two different names are
+		 * interned and their toUpperCase is the same String instance, then they are
+		 * equal in case-insensitive manner.
+		 */
+		public String toUpperCase() {
+			return upperName;
+		}
+
+		/**
+		 * Interns this name much in the same fashion as <code>String.intern()</code>.
+		 *
+		 * @see  String#intern()
+		 */
+		@Override
+		public Name intern() {
+			Name existing = interned.get(name);
+			if(existing==null) {
+				String internedName = name.intern();
+				String internedUpperName = upperName.intern();
+				Name addMe = (name == internedName) && (upperName == internedUpperName) ? this : new Name(internedName, internedUpperName);
+				existing = interned.putIfAbsent(internedName, addMe);
+				if(existing==null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.AccountName getDto() {
+			return new com.aoindustries.aoserv.client.dto.AccountName(name);
+		}
+
+		// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+		private static final long serialVersionUID = -4701364475901418693L;
+
+		public Name() {
+		}
+
+		@Override
+		public long getSerialVersionUID() {
+			return serialVersionUID;
+		}
+
+		@Override
+		public void writeExternal(ObjectOutput out) throws IOException {
+			FastObjectOutput fastOut = FastObjectOutput.wrap(out);
+			try {
+				fastOut.writeFastUTF(name);
+			} finally {
+				fastOut.unwrap();
+			}
+		}
+
+		@Override
+		public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+			if(name!=null) throw new IllegalStateException();
+			FastObjectInput fastIn = FastObjectInput.wrap(in);
+			try {
+				name = fastIn.readFastUTF();
+				upperName = name.toUpperCase(Locale.ROOT);
+			} finally {
+				fastIn.unwrap();
+			}
+		}
+
+		@Override
+		public void validateObject() throws InvalidObjectException {
+			try {
+				validate();
+			} catch(ValidationException err) {
+				InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+				newErr.initCause(err);
+				throw newErr;
+			}
+		}
+		// </editor-fold>
+	}
 
 	static final int COLUMN_ACCOUNTING=0;
 	static final String COLUMN_ACCOUNTING_name = "accounting";
@@ -106,7 +330,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 
 	private String cancelReason;
 
-	AccountingCode parent;
+	Name parent;
 
 	private boolean can_add_backup_server;
 	private boolean can_add_businesses;
@@ -130,10 +354,10 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		String zip,
 		boolean sendInvoice,
 		String billingContact,
-		String billingEmail,
+		Set<Email> billingEmail,
 		Profile.EmailFormat billingEmailFormat,
 		String technicalContact,
-		String technicalEmail,
+		Set<Email> technicalEmail,
 		Profile.EmailFormat technicalEmailFormat
 	) throws IOException, SQLException {
 		return table.getConnector().getAccount().getProfile().addBusinessProfile(
@@ -172,7 +396,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		String firstName,
 		String lastName,
 		String companyName,
-		String email,
+		Email email,
 		String phone,
 		String fax,
 		String customerTaxId,
@@ -240,20 +464,20 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		String shippingPostalCode,
 		String shippingCountryCode,
 		boolean emailCustomer,
-		String merchantEmail,
+		Email merchantEmail,
 		String invoiceNumber,
 		String purchaseOrderNumber,
 		String description,
 		Administrator creditCardCreatedBy,
 		String creditCardPrincipalName,
-		Account creditCardAccounting,
+		Account creditCardAccount,
 		String creditCardGroupName,
 		String creditCardProviderUniqueId,
 		String creditCardMaskedCardNumber,
 		String creditCardFirstName,
 		String creditCardLastName,
 		String creditCardCompanyName,
-		String creditCardEmail,
+		Email creditCardEmail,
 		String creditCardPhone,
 		String creditCardFax,
 		String creditCardCustomerTaxId,
@@ -296,7 +520,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 			description,
 			creditCardCreatedBy,
 			creditCardPrincipalName,
-			creditCardAccounting,
+			creditCardAccount,
 			creditCardGroupName,
 			creditCardProviderUniqueId,
 			creditCardMaskedCardNumber,
@@ -327,7 +551,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 
 	public void addNoticeLog(
 		String billingContact,
-		String emailAddress,
+		Email emailAddress,
 		BigDecimal balance,
 		String type,
 		int transid
@@ -343,7 +567,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public int addPackage(
-		AccountingCode name,
+		Name name,
 		PackageDefinition packageDefinition
 	) throws IOException, SQLException {
 		return table.getConnector().getBilling().getPackage().addPackage(
@@ -431,7 +655,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	}
 
 	public boolean isRootBusiness() throws IOException, SQLException {
-		return pkey.equals(table.getConnector().getAccount().getAccount().getRootAccounting());
+		return pkey.equals(table.getConnector().getAccount().getAccount().getRootAccount_name());
 	}
 
 	@Override
@@ -494,8 +718,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		return "$"+getAccountBalance(before);
 	}
 
-	// TODO: Rename "id"
-	public AccountingCode getAccounting() {
+	public Name getName() {
 		return pkey;
 	}
 
@@ -525,21 +748,21 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	 * from the top level business.
 	 */
 	public Account getTopLevelBusiness() throws IOException, SQLException {
-		AccountingCode rootAccounting=table.getConnector().getAccount().getAccount().getRootAccounting();
+		Name rootAccount_name = table.getConnector().getAccount().getAccount().getRootAccount_name();
 		Account bu=this;
 		Account tempParent;
-		while((tempParent=bu.getParentBusiness())!=null && !tempParent.getAccounting().equals(rootAccounting)) bu=tempParent;
+		while((tempParent=bu.getParentBusiness())!=null && !tempParent.getName().equals(rootAccount_name)) bu=tempParent;
 		return bu;
 	}
 
 	/**
-	 * Gets the <code>Business</code> the is responsible for paying the bills created by this business.
+	 * Gets the {@link Account} that is responsible for paying the bills created by this business.
 	 */
-	public Account getAccountingBusiness() throws SQLException, IOException {
+	public Account getBillingAccount() throws SQLException, IOException {
 		Account bu=this;
 		while(bu.bill_parent) {
 			bu=bu.getParentBusiness();
-			if(bu==null) throw new SQLException("Unable to find the accounting business for '"+pkey+'\'');
+			if(bu==null) throw new SQLException("Unable to find the billing account for '"+pkey+'\'');
 		}
 		return bu;
 	}
@@ -655,7 +878,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		return table.getConnector().getLinux().getGroupServer().getLinuxServerGroup(aoServer, this);
 	}
 
-	public List<User> getMailAccounts() throws IOException, SQLException {
+	public List<com.aoindustries.aoserv.client.linux.User> getMailAccounts() throws IOException, SQLException {
 		return table.getConnector().getLinux().getUser().getMailAccounts(this);
 	}
 
@@ -669,7 +892,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 
 	/**
 	 * Gets an approximation of the monthly rate paid by this account.  This is not guaranteed to
-	 * be exactly the same as the underlying accounting database processes.
+	 * be exactly the same as the underlying billing database processes.
 	 */
 	public BigDecimal getMonthlyRate() throws SQLException, IOException {
 		BigDecimal total = BigDecimal.valueOf(0, 2);
@@ -954,7 +1177,7 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 				ip.isAlias()
 				&& !inetAddress.isUnspecified()
 				&& !ip.getDevice().getDeviceId().isLoopback()
-				&& ip.getPackage().getBusiness_accounting().equals(pkey)
+				&& ip.getPackage().getAccount_name().equals(pkey)
 			) {
 				if(out!=null) {
 					out.print("    ");
@@ -1017,13 +1240,13 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = AccountingCode.valueOf(result.getString(1));
+			pkey = Name.valueOf(result.getString(1));
 			contractVersion = result.getString(2);
 			created = result.getTimestamp(3).getTime();
 			Timestamp T = result.getTimestamp(4);
 			canceled = T==null ? -1 : T.getTime();
 			cancelReason = result.getString(5);
-			parent = AccountingCode.valueOf(result.getString(6));
+			parent = Name.valueOf(result.getString(6));
 			can_add_backup_server=result.getBoolean(7);
 			can_add_businesses=result.getBoolean(8);
 			can_see_prices=result.getBoolean(9);
@@ -1040,12 +1263,12 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=AccountingCode.valueOf(in.readUTF()).intern();
+			pkey=Name.valueOf(in.readUTF()).intern();
 			contractVersion=InternUtils.intern(in.readNullUTF());
 			created=in.readLong();
 			canceled=in.readLong();
 			cancelReason=in.readNullUTF();
-			parent=InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
+			parent=InternUtils.intern(Name.valueOf(in.readNullUTF()));
 			can_add_backup_server=in.readBoolean();
 			can_add_businesses=in.readBoolean();
 			can_see_prices=in.readBoolean();
@@ -1058,8 +1281,8 @@ final public class Account extends CachedObjectAccountingCodeKey<Account> implem
 		}
 	}
 
-	public void setAccounting(AccountingCode accounting) throws SQLException, IOException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey.toString(), accounting.toString());
+	public void setName(Name name) throws SQLException, IOException {
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_BUSINESS_ACCOUNTING, this.pkey.toString(), name.toString());
 	}
 
 	@Override

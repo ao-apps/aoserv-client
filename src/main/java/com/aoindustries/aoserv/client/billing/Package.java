@@ -27,7 +27,7 @@ import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.DisableLog;
-import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.backup.BackupReport;
 import com.aoindustries.aoserv.client.backup.MysqlReplication;
 import com.aoindustries.aoserv.client.dns.Zone;
@@ -38,9 +38,6 @@ import com.aoindustries.aoserv.client.email.SmtpRelay;
 import com.aoindustries.aoserv.client.email.SmtpRelayType;
 import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.GroupType;
-import com.aoindustries.aoserv.client.linux.Server;
-import com.aoindustries.aoserv.client.mysql.Database;
-import com.aoindustries.aoserv.client.mysql.User;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.net.IpAddress;
@@ -48,9 +45,6 @@ import com.aoindustries.aoserv.client.pki.Certificate;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.scm.CvsRepository;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
@@ -118,11 +112,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	 */
 	public static final float DEFAULT_EMAIL_RELAY_RATE = .1f;
 
-	AccountingCode name;
-	AccountingCode accounting;
+	Account.Name name;
+	Account.Name account;
 	int package_definition;
 	private long created;
-	private UserId created_by;
+	private com.aoindustries.aoserv.client.account.User.Name created_by;
 	int disable_log;
 	private int email_in_burst;
 	private float email_in_rate;
@@ -135,20 +129,20 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		table.getConnector().getDns().getZone().addDNSZone(this, zone, ip, ttl);
 	}
 
-	public int addEmailSmtpRelay(Server aoServer, HostAddress host, SmtpRelayType type, long duration) throws IOException, SQLException {
+	public int addEmailSmtpRelay(com.aoindustries.aoserv.client.linux.Server aoServer, HostAddress host, SmtpRelayType type, long duration) throws IOException, SQLException {
 		return table.getConnector().getEmail().getSmtpRelay().addEmailSmtpRelay(this, aoServer, host, type, duration);
 	}
 
-	public void addLinuxGroup(GroupId name, GroupType type) throws IOException, SQLException {
+	public void addLinuxGroup(Group.Name name, GroupType type) throws IOException, SQLException {
 		addLinuxGroup(name, type.getName());
 	}
 
-	public void addLinuxGroup(GroupId name, String type) throws IOException, SQLException {
+	public void addLinuxGroup(Group.Name name, String type) throws IOException, SQLException {
 		table.getConnector().getLinux().getGroup().addLinuxGroup(name, this, type);
 	}
 
-	public void addUsername(UserId username) throws IOException, SQLException {
-		table.getConnector().getAccount().getUsername().addUsername(this, username);
+	public void addUsername(com.aoindustries.aoserv.client.account.User.Name username) throws IOException, SQLException {
+		table.getConnector().getAccount().getUser().addUsername(this, username);
 	}
 
 	@Override
@@ -160,7 +154,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		for(SharedTomcat hst : getHttpdSharedTomcats()) if(!hst.isDisabled()) return false;
 		for(Pipe ep : getEmailPipes()) if(!ep.isDisabled()) return false;
 		for(CvsRepository cr : getCvsRepositories()) if(!cr.isDisabled()) return false;
-		for(Username un : getUsernames()) if(!un.isDisabled()) return false;
+		for(User un : getUsernames()) if(!un.isDisabled()) return false;
 		for(Site hs : getHttpdSites()) if(!hs.isDisabled()) return false;
 		for(com.aoindustries.aoserv.client.email.List el : getEmailLists()) if(!el.isDisabled()) return false;
 		for(SmtpRelay ssr : getEmailSmtpRelays()) if(!ssr.isDisabled()) return false;
@@ -189,13 +183,13 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.getConnector().getBackup().getBackupReport().getBackupReports(this);
 	}
 
-	public AccountingCode getBusiness_accounting() {
-		return accounting;
+	public Account.Name getAccount_name() {
+		return account;
 	}
 
 	public Account getBusiness() throws SQLException, IOException {
-		Account accountingObject = table.getConnector().getAccount().getAccount().get(accounting);
-		if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
+		Account accountingObject = table.getConnector().getAccount().getAccount().get(account);
+		if (accountingObject == null) throw new SQLException("Unable to find Business: " + account);
 		return accountingObject;
 	}
 
@@ -204,7 +198,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_NAME: return name;
-			case COLUMN_ACCOUNTING: return accounting;
+			case COLUMN_ACCOUNTING: return account;
 			case COLUMN_PACKAGE_DEFINITION: return package_definition;
 			case 4: return getCreated();
 			case 5: return created_by;
@@ -224,7 +218,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator createdByObject = table.getConnector().getAccount().getUsername().get(created_by).getBusinessAdministrator();
+		Administrator createdByObject = table.getConnector().getAccount().getUser().get(created_by).getBusinessAdministrator();
 		if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
 		return createdByObject;
 	}
@@ -326,7 +320,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.getConnector().getLinux().getGroup().getLinuxGroups(this);
 	}
 
-	public List<Database> getMySQLDatabases() throws IOException, SQLException {
+	public List<com.aoindustries.aoserv.client.mysql.Database> getMySQLDatabases() throws IOException, SQLException {
 		return table.getConnector().getMysql().getDatabase().getMySQLDatabases(this);
 	}
 
@@ -334,11 +328,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.getConnector().getBackup().getMysqlReplication().getFailoverMySQLReplications(this);
 	}
 
-	public List<User> getMySQLUsers() throws IOException, SQLException {
+	public List<com.aoindustries.aoserv.client.mysql.User> getMySQLUsers() throws IOException, SQLException {
 		return table.getConnector().getMysql().getUser().getMySQLUsers(this);
 	}
 
-	public AccountingCode getName() {
+	public Account.Name getName() {
 		return name;
 	}
 
@@ -393,8 +387,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return Table.TableID.PACKAGES;
 	}
 
-	public List<Username> getUsernames() throws IOException, SQLException {
-		return table.getConnector().getAccount().getUsername().getUsernames(this);
+	public List<User> getUsernames() throws IOException, SQLException {
+		return table.getConnector().getAccount().getUser().getUsernames(this);
 	}
 
 	@Override
@@ -402,11 +396,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		try {
 			int pos = 1;
 			pkey = result.getInt(pos++);
-			name = AccountingCode.valueOf(result.getString(pos++));
-			accounting = AccountingCode.valueOf(result.getString(pos++));
+			name = Account.Name.valueOf(result.getString(pos++));
+			account = Account.Name.valueOf(result.getString(pos++));
 			package_definition = result.getInt(pos++);
 			created = result.getTimestamp(pos++).getTime();
-			created_by = UserId.valueOf(result.getString(pos++));
+			created_by = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(pos++));
 			disable_log=result.getInt(pos++);
 			if(result.wasNull()) disable_log = -1;
 			email_in_burst=result.getInt(pos++);
@@ -430,11 +424,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			name = AccountingCode.valueOf(in.readUTF()).intern();
-			accounting=AccountingCode.valueOf(in.readUTF()).intern();
+			name = Account.Name.valueOf(in.readUTF()).intern();
+			account=Account.Name.valueOf(in.readUTF()).intern();
 			package_definition=in.readCompressedInt();
 			created=in.readLong();
-			created_by = UserId.valueOf(in.readUTF()).intern();
+			created_by = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
 			disable_log=in.readCompressedInt();
 			email_in_burst=in.readCompressedInt();
 			email_in_rate=in.readFloat();
@@ -451,7 +445,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name.toString());
-		out.writeUTF(accounting.toString());
+		out.writeUTF(account.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) {
 			out.writeUTF("unknown");
 			out.writeCompressedInt(0);

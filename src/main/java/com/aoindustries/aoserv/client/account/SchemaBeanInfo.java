@@ -44,7 +44,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 					new PropertyDescriptor("DisableLog", Schema.class, "getDisableLog", null),
 					new PropertyDescriptor("Profile", Schema.class, "getProfile", null),
 					new PropertyDescriptor("UsState", Schema.class, "getUsState", null),
-					new PropertyDescriptor("Username", Schema.class, "getUsername", null),
+					new PropertyDescriptor("User", Schema.class, "getUser", null),
 				};
 				properties = props;
 			}

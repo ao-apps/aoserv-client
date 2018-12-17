@@ -27,7 +27,6 @@ import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -49,7 +48,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	static final String COLUMN_ACCOUNTING_name = "accounting";
 	static final String COLUMN_PROVIDER_ID_name = "provider_id";
 
-	private AccountingCode accounting;
+	private Account.Name accounting;
 	private String className;
 	private String param1;
 	private String param2;
@@ -154,7 +153,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 		try {
 			int pos = 1;
 			pkey = result.getString(pos++);
-			accounting = AccountingCode.valueOf(result.getString(pos++));
+			accounting = Account.Name.valueOf(result.getString(pos++));
 			className = result.getString(pos++);
 			param1 = result.getString(pos++);
 			param2 = result.getString(pos++);
@@ -176,7 +175,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readUTF().intern();
-			accounting=AccountingCode.valueOf(in.readUTF()).intern();
+			accounting=Account.Name.valueOf(in.readUTF()).intern();
 			className = in.readUTF();
 			param1 = in.readNullUTF();
 			param2 = in.readNullUTF();

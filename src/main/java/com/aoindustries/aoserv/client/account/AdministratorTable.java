@@ -23,17 +23,16 @@
 package com.aoindustries.aoserv.client.account;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedTableUserIdKey;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.io.Reader;
@@ -46,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class AdministratorTable extends CachedTableUserIdKey<Administrator> {
+final public class AdministratorTable extends CachedTableUserNameKey<Administrator> {
 
 	AdministratorTable(AOServConnector connector) {
 		super(connector, Administrator.class);
@@ -61,7 +60,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 	}
 
 	void addBusinessAdministrator(
-		final Username username,
+		final User username,
 		final String name,
 		String title,
 		final Date birthday,
@@ -70,7 +69,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 		String homePhone,
 		String cellPhone,
 		String fax,
-		final String email,
+		final Email email,
 		String address1,
 		String address2,
 		String city,
@@ -115,7 +114,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 					out.writeBoolean(finalHomePhone!=null); if(finalHomePhone!=null) out.writeUTF(finalHomePhone);
 					out.writeBoolean(finalCellPhone!=null); if(finalCellPhone!=null) out.writeUTF(finalCellPhone);
 					out.writeBoolean(finalFax!=null); if(finalFax!=null) out.writeUTF(finalFax);
-					out.writeUTF(email);
+					out.writeUTF(email.toString());
 					out.writeBoolean(finalAddress1!=null); if(finalAddress1!=null) out.writeUTF(finalAddress1);
 					out.writeBoolean(finalAddress2!=null); if(finalAddress2!=null) out.writeUTF(finalAddress2);
 					out.writeBoolean(finalCity!=null); if(finalCity!=null) out.writeUTF(finalCity);
@@ -147,7 +146,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 	 * Gets one BusinessAdministrator from the database.
 	 */
 	@Override
-	public Administrator get(UserId username) throws IOException, SQLException {
+	public Administrator get(User.Name username) throws IOException, SQLException {
 		return getUniqueRow(Administrator.COLUMN_USERNAME, username);
 	}
 
@@ -163,7 +162,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 		if(command.equalsIgnoreCase(Command.ADD_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(Command.ADD_BUSINESS_ADMINISTRATOR, args, 17, err)) {
 				connector.getSimpleAOClient().addBusinessAdministrator(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseUserName(args[1], "username"),
 					args[2],
 					args[3],
 					args[4].length()==0?null:AOSH.parseDate(args[4], "birthday"),
@@ -172,7 +171,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 					args[7],
 					args[8],
 					args[9],
-					args[10],
+					AOSH.parseEmail(args[10], "email"),
 					args[11],
 					args[12],
 					args[13],
@@ -186,7 +185,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 		} else if(command.equalsIgnoreCase(Command.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
 				List<PasswordChecker.Result> results = SimpleAOClient.checkBusinessAdministratorPassword(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseUserName(args[1], "username"),
 					args[2]
 				);
 				if(PasswordChecker.hasResults(results)) {
@@ -199,7 +198,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 			if(AOSH.checkParamCount(Command.DISABLE_BUSINESS_ADMINISTRATOR, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().disableBusinessAdministrator(
-						AOSH.parseUserId(args[1], "username"),
+						AOSH.parseUserName(args[1], "username"),
 						args[2]
 					)
 				);
@@ -209,7 +208,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 		} else if(command.equalsIgnoreCase(Command.ENABLE_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(Command.ENABLE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
 				connector.getSimpleAOClient().enableBusinessAdministrator(
-					AOSH.parseUserId(args[1], "username")
+					AOSH.parseUserName(args[1], "username")
 				);
 			}
 			return true;
@@ -217,7 +216,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 			if(AOSH.checkParamCount(Command.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, args, 1, err)) {
 				out.println(
 					connector.getSimpleAOClient().isBusinessAdministratorPasswordSet(
-						AOSH.parseUserId(args[1], "username")
+						AOSH.parseUserName(args[1], "username")
 					)
 				);
 				out.flush();
@@ -226,14 +225,14 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 		} else if(command.equalsIgnoreCase(Command.REMOVE_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(Command.REMOVE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
 				connector.getSimpleAOClient().removeBusinessAdministrator(
-					AOSH.parseUserId(args[1], "username")
+					AOSH.parseUserName(args[1], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(Command.SET_BUSINESS_ADMINISTRATOR_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.SET_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
 				connector.getSimpleAOClient().setBusinessAdministratorPassword(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseUserName(args[1], "username"),
 					args[2]
 				);
 			}
@@ -241,7 +240,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 		} else if(command.equalsIgnoreCase(Command.SET_BUSINESS_ADMINISTRATOR_PROFILE)) {
 			if(AOSH.checkParamCount(Command.SET_BUSINESS_ADMINISTRATOR_PROFILE, args, 16, err)) {
 				connector.getSimpleAOClient().setBusinessAdministratorProfile(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseUserName(args[1], "username"),
 					args[2],
 					args[3],
 					AOSH.parseDate(args[4], "birthday"),
@@ -250,7 +249,7 @@ final public class AdministratorTable extends CachedTableUserIdKey<Administrator
 					args[7],
 					args[8],
 					args[9],
-					args[10],
+					AOSH.parseEmail(args[10], "email"),
 					args[11],
 					args[12],
 					args[13],

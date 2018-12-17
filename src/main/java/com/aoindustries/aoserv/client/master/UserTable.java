@@ -23,9 +23,8 @@
 package com.aoindustries.aoserv.client.master;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedTableUserIdKey;
+import com.aoindustries.aoserv.client.account.CachedTableUserNameKey;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -34,7 +33,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserTable extends CachedTableUserIdKey<User> {
+final public class UserTable extends CachedTableUserNameKey<User> {
 
 	UserTable(AOServConnector connector) {
 		super(connector, User.class);
@@ -49,7 +48,7 @@ final public class UserTable extends CachedTableUserIdKey<User> {
 	}
 
 	@Override
-	public User get(UserId username) throws IOException, SQLException {
+	public User get(com.aoindustries.aoserv.client.account.User.Name username) throws IOException, SQLException {
 		return getUniqueRow(User.COLUMN_USERNAME, username);
 	}
 

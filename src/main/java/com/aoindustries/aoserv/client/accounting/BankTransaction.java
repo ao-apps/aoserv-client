@@ -25,11 +25,10 @@ package com.aoindustries.aoserv.client.accounting;
 import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
-import com.aoindustries.aoserv.client.master.User;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.payment.Processor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -57,7 +56,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	private String
 		account,
 		processor;
-	private UserId administrator;
+	private User.Name administrator;
 	private String
 		type,
 		expenseCategory,
@@ -75,8 +74,8 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		;
 	}
 
-	public User getAdministrator() throws SQLException, IOException {
-		User obj = table.getConnector().getMaster().getUser().get(administrator);
+	public com.aoindustries.aoserv.client.master.User getAdministrator() throws SQLException, IOException {
+		com.aoindustries.aoserv.client.master.User obj = table.getConnector().getMaster().getUser().get(administrator);
 		if (obj == null) throw new SQLException("Unable to find MasterUser: " + administrator);
 		return obj;
 	}
@@ -178,7 +177,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 			time = result.getTimestamp(pos++).getTime();
 			account = result.getString(pos++);
 			processor = result.getString(pos++);
-			administrator = UserId.valueOf(result.getString(pos++));
+			administrator = User.Name.valueOf(result.getString(pos++));
 			type = result.getString(pos++);
 			expenseCategory = result.getString(pos++);
 			description = result.getString(pos++);
@@ -201,7 +200,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 			time = in.readLong();
 			account = in.readUTF().intern();
 			processor = InternUtils.intern(in.readNullUTF());
-			administrator = UserId.valueOf(in.readUTF()).intern();
+			administrator = User.Name.valueOf(in.readUTF()).intern();
 			type = in.readUTF().intern();
 			expenseCategory = InternUtils.intern(in.readNullUTF());
 			description = in.readUTF();

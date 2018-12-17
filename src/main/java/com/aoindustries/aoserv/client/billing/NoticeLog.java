@@ -26,9 +26,9 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Email;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -57,9 +57,9 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	public static final int NO_TRANSACTION=-1;
 
 	private long create_time;
-	private AccountingCode accounting;
+	private Account.Name accounting;
 	private String billing_contact;
-	private String billing_email;
+	private Email billing_email;
 	private int balance;
 	private String notice_type;
 	private int transid;
@@ -72,7 +72,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 		return billing_contact;
 	}
 
-	public String getBillingEmail() {
+	public Email getBillingEmail() {
 		return billing_email;
 	}
 
@@ -124,9 +124,9 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 		try {
 			pkey=result.getInt(1);
 			create_time=result.getTimestamp(2).getTime();
-			accounting=AccountingCode.valueOf(result.getString(3));
+			accounting=Account.Name.valueOf(result.getString(3));
 			billing_contact=result.getString(4);
-			billing_email=result.getString(5);
+			billing_email=Email.valueOf(result.getString(5));
 			balance=SQLUtility.getPennies(result.getString(6));
 			notice_type=result.getString(7);
 			transid=result.getInt(8);
@@ -141,9 +141,9 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 		try {
 			pkey=in.readCompressedInt();
 			create_time=in.readLong();
-			accounting=AccountingCode.valueOf(in.readUTF()).intern();
+			accounting=Account.Name.valueOf(in.readUTF()).intern();
 			billing_contact=in.readUTF();
-			billing_email=in.readUTF();
+			billing_email=Email.valueOf(in.readUTF());
 			balance=in.readCompressedInt();
 			notice_type=in.readUTF().intern();
 			transid=in.readCompressedInt();
@@ -163,7 +163,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 		out.writeLong(create_time);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(billing_contact);
-		out.writeUTF(billing_email);
+		out.writeUTF(billing_email.toString());
 		out.writeCompressedInt(balance);
 		out.writeUTF(notice_type);
 		out.writeCompressedInt(transid);

@@ -25,12 +25,10 @@ package com.aoindustries.aoserv.client.distribution.management;
 import com.aoindustries.aoserv.client.FilesystemCachedObject;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -71,12 +69,12 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 
 	private int pkey;
 	private int operating_system_version;
-	private UnixPath path;
+	private PosixPath path;
 	private boolean optional;
 	private String type;
 	private long mode;
-	private UserId linux_account;
-	private GroupId linux_group;
+	private User.Name linux_account;
+	private Group.Name linux_group;
 	private long size;
 	private boolean has_file_sha256;
 	private long file_sha256_0;
@@ -124,7 +122,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		return osv;
 	}
 
-	public UnixPath getPath() {
+	public PosixPath getPath() {
 		return path;
 	}
 
@@ -205,12 +203,12 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 			int pos = 1;
 			pkey = result.getInt(pos++);
 			operating_system_version = result.getInt(pos++);
-			path = UnixPath.valueOf(result.getString(pos++));
+			path = PosixPath.valueOf(result.getString(pos++));
 			optional = result.getBoolean(pos++);
 			type = result.getString(pos++);
 			mode = result.getLong(pos++);
-			linux_account = UserId.valueOf(result.getString(pos++));
-			linux_group = GroupId.valueOf(result.getString(pos++));
+			linux_account = User.Name.valueOf(result.getString(pos++));
+			linux_group = Group.Name.valueOf(result.getString(pos++));
 			size = result.getLong(pos++);
 			if(result.wasNull()) size = NULL_SIZE;
 			file_sha256_0 = result.getLong(pos++);
@@ -229,12 +227,12 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		try {
 			pkey = in.readCompressedInt();
 			operating_system_version = in.readCompressedInt();
-			path = UnixPath.valueOf(in.readCompressedUTF());
+			path = PosixPath.valueOf(in.readCompressedUTF());
 			optional = in.readBoolean();
 			type = in.readCompressedUTF().intern();
 			mode = in.readLong();
-			linux_account = UserId.valueOf(in.readCompressedUTF()).intern();
-			linux_group = GroupId.valueOf(in.readCompressedUTF()).intern();
+			linux_account = User.Name.valueOf(in.readCompressedUTF()).intern();
+			linux_group = Group.Name.valueOf(in.readCompressedUTF()).intern();
 			size = in.readLong();
 			has_file_sha256 = in.readBoolean();
 			if(has_file_sha256) {
@@ -273,12 +271,12 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 		try {
 			pkey = in.readInt();
 			operating_system_version = in.readInt();
-			path = UnixPath.valueOf(readChars(in));
+			path = PosixPath.valueOf(readChars(in));
 			optional = in.readBoolean();
 			type = readChars(in).intern();
 			mode = in.readLong();
-			linux_account = UserId.valueOf(readChars(in)).intern();
-			linux_group = GroupId.valueOf(readChars(in)).intern();
+			linux_account = User.Name.valueOf(readChars(in)).intern();
+			linux_group = Group.Name.valueOf(readChars(in)).intern();
 			size = in.readLong();
 			has_file_sha256 = in.readBoolean();
 			if(has_file_sha256) {

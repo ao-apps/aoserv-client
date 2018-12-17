@@ -29,6 +29,8 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Email;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -53,9 +55,8 @@ final public class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
 	static final String COLUMN_EMAIL_ADDRESS_name = "email_address";
 	static final String COLUMN_DESTINATION_name = "destination";
 
-	int email_address;
-	// TODO: Email type
-	String destination;
+	private int email_address;
+	private Email destination;
 
 	@Override
 	protected Object getColumnImpl(int i) {
@@ -70,7 +71,7 @@ final public class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
 	/**
 	 * Gets the <code>destination</code>
 	 */
-	public String getDestination() {
+	public Email getDestination() {
 		return destination;
 	}
 
@@ -90,16 +91,24 @@ final public class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		email_address=result.getInt(2);
-		destination=result.getString(3);
+		try {
+			pkey=result.getInt(1);
+			email_address=result.getInt(2);
+			destination=Email.valueOf(result.getString(3));
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		email_address=in.readCompressedInt();
-		destination=in.readUTF();
+		try {
+			pkey=in.readCompressedInt();
+			email_address=in.readCompressedInt();
+			destination=Email.valueOf(in.readUTF());
+		} catch(ValidationException e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -125,6 +134,6 @@ final public class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(email_address);
-		out.writeUTF(destination);
+		out.writeUTF(destination.toString());
 	}
 }

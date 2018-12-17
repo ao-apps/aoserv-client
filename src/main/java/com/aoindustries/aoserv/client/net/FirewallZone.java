@@ -23,18 +23,29 @@
 package com.aoindustries.aoserv.client.net;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import static com.aoindustries.aoserv.client.net.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
+import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.InternUtils;
+import com.aoindustries.util.Internable;
+import com.aoindustries.validation.InvalidResult;
+import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectInputValidation;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Defines a firewalld zone that exists on a {@link Host}.
@@ -44,9 +55,182 @@ import java.util.List;
 public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 
 	/**
+	 * Represents a name that may be used for a {@link FirewallZone}.  Zones names must:
+	 * <ul>
+	 *   <li>Be non-null</li>
+	 *   <li>Be non-empty</li>
+	 *   <li>Be between 1 and 17 characters</li>
+	 *   <li>Contain the characters [a-z], [A-Z], [0-9], underscore (_), hyphen (-), and slash (/)</li>
+	 *   <li>Not begin with a slash (/)</li>
+	 *   <li>Not end with a slash (/)</li>
+	 *   <li>Not contain more than one slash (/)</li>
+	 * </ul>
+	 * <p>
+	 *   We're unable to find well-defined rules for valid zone names.  The rules above are based on the source code
+	 *   for <a href="https://firewalld.org/">firewalld</a> included with CentOS 7.
+	 * </p>
+	 * <ol>
+	 *   <li>See <code>/usr/lib/python2.7/site-packages/firewall/core/io/zone.py</code>, <code>check_name</code>.</li>
+	 *   <li>See <code>/usr/lib/python2.7/site-packages/firewall/core/io/io_object.py</code>, <code>check_name</code>.</li>
+	 *   <li>See <code>/usr/lib/python2.7/site-packages/firewall/functions.py</code>, <code>max_zone_name_len</code>.</li>
+	 * </ol>
+	 * <p>
+	 * Additionally, we tried creating a new zone with some UTF-8 characters, specifically Japanese,
+	 * and <code>firewalld-cmd</code> just stalled, not even responding to <kbd>Ctrl-C</kbd>.  We are implementing with a
+	 * strict ASCII-compatible definition of "alphanumeric".
+	 * </p>
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	final static public class Name implements
+		Comparable<Name>,
+		Serializable,
+		ObjectInputValidation,
+		DtoFactory<com.aoindustries.aoserv.client.dto.FirewallZoneName>,
+		Internable<Name>
+	{
+
+		private static final long serialVersionUID = 1L;
+
+		/**
+		 * The longest name allowed for a {@link FirewallZone}.
+		 */
+		public static final int MAX_LENGTH = 17;
+
+		/**
+		 * Validates a {@link FirewallZone} name.
+		 */
+		public static ValidationResult validate(String name) {
+			if(name == null) return new InvalidResult(accessor, "FirewallZone.Name.validate.isNull");
+			int len = name.length();
+			if(len == 0) return new InvalidResult(accessor, "FirewallZone.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(accessor, "FirewallZone.Name.validate.tooLong", MAX_LENGTH, len);
+
+			// Contain the characters [a-z], [A-Z], [0-9], underscore (_), hyphen (-), and slash (/)
+			for (int c = 0; c < len; c++) {
+				char ch = name.charAt(c);
+				if (
+					(ch<'a' || ch>'z')
+					&& (ch < 'A' || ch > 'Z')
+					&& (ch < '0' || ch > '9')
+					&& ch != '_'
+					&& ch != '-'
+					&& ch != '/'
+				) return new InvalidResult(accessor, "FirewallZone.Name.validate.illegalCharacter");
+			}
+			// Not begin with a slash (/)
+			if(name.charAt(0) == '/') return new InvalidResult(accessor, "FirewallZone.Name.validate.startsWithSlash");
+			// Not end with a slash (/)
+			if(name.charAt(len - 1) == '/') return new InvalidResult(accessor, "FirewallZone.Name.validate.endsWithSlash");
+			// Not contain more than one slash (/)
+			int slashPos = name.indexOf('/');
+			if(slashPos != -1 && name.indexOf('/', slashPos + 1) != -1) return new InvalidResult(accessor, "FirewallZone.Name.validate.moreThanOneSlash");
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param name  when {@code null}, returns {@code null}
+		 */
+		public static Name valueOf(String name) throws ValidationException {
+			if(name == null) return null;
+			//Name existing = interned.get(name);
+			//return existing!=null ? existing : new Name(name);
+			return new Name(name, true);
+		}
+
+		final private String name;
+
+		private Name(String name, boolean validate) throws ValidationException {
+			this.name = name;
+			if(validate) validate();
+		}
+
+		/**
+		 * @param  name  Does not validate, should only be used with a known valid value.
+		 */
+		private Name(String name) {
+			ValidationResult result;
+			assert (result = validate(name)).isValid() : result.toString();
+			this.name = name;
+		}
+
+		private void validate() throws ValidationException {
+			ValidationResult result = validate(name);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		/**
+		 * Perform same validation as constructor on readObject.
+		 */
+		private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+			ois.defaultReadObject();
+			validateObject();
+		}
+
+		@Override
+		public void validateObject() throws InvalidObjectException {
+			try {
+				validate();
+			} catch(ValidationException err) {
+				InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+				newErr.initCause(err);
+				throw newErr;
+			}
+		}
+
+		@Override
+		public boolean equals(Object O) {
+			return
+				O != null
+				&& O instanceof Name
+				&& name.equals(((Name)O).name)
+			;
+		}
+
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+		}
+
+		@Override
+		public int compareTo(Name other) {
+			return (this == other) ? 0 : name.compareTo(other.name);
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		/**
+		 * Interns this name much in the same fashion as <code>String.intern()</code>.
+		 *
+		 * @see  String#intern()
+		 */
+		@Override
+		public Name intern() {
+			Name existing = interned.get(name);
+			if(existing == null) {
+				String internedName = name.intern();
+				Name addMe = (name == internedName) ? this : new Name(internedName);
+				existing = interned.putIfAbsent(internedName, addMe);
+				if(existing == null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.FirewallZoneName getDto() {
+			return new com.aoindustries.aoserv.client.dto.FirewallZoneName(name);
+		}
+	}
+
+	/**
 	 * Some Firewalld Zone names used within code.
 	 */
-	public static final FirewalldZoneName
+	public static final Name
 		DMZ,
 		EXTERNAL,
 		HOME,
@@ -56,12 +240,12 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 	;
 	static {
 		try {
-			DMZ = FirewalldZoneName.valueOf("dmz");
-			EXTERNAL = FirewalldZoneName.valueOf("external");
-			HOME = FirewalldZoneName.valueOf("home");
-			INTERNAL = FirewalldZoneName.valueOf("internal");
-			PUBLIC = FirewalldZoneName.valueOf("public");
-			WORK = FirewalldZoneName.valueOf("work");
+			DMZ = Name.valueOf("dmz");
+			EXTERNAL = Name.valueOf("external");
+			HOME = Name.valueOf("home");
+			INTERNAL = Name.valueOf("internal");
+			PUBLIC = Name.valueOf("public");
+			WORK = Name.valueOf("work");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -75,7 +259,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 	static final String COLUMN_NAME_name = "name";
 
 	int server;
-	private FirewalldZoneName name;
+	private Name name;
 	private String _short;
 	private String description;
 	private boolean fail2ban;
@@ -99,7 +283,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 		return se;
 	}
 
-	public FirewalldZoneName getName() {
+	public Name getName() {
 		return name;
 	}
 
@@ -138,7 +322,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 		try {
 			pkey        = result.getInt(1);
 			server      = result.getInt(2);
-			name        = FirewalldZoneName.valueOf(result.getString(3));
+			name        = Name.valueOf(result.getString(3));
 			_short      = result.getString(4);
 			description = result.getString(5);
 			fail2ban    = result.getBoolean(6);
@@ -152,7 +336,7 @@ public final class FirewallZone extends CachedObjectIntegerKey<FirewallZone> {
 		try {
 			pkey = in.readCompressedInt();
 			server = in.readCompressedInt();
-			name = FirewalldZoneName.valueOf(in.readUTF()).intern();
+			name = Name.valueOf(in.readUTF()).intern();
 			_short = InternUtils.intern(in.readNullUTF());
 			description = InternUtils.intern(in.readNullUTF());
 			fail2ban = in.readBoolean();

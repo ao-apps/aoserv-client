@@ -26,10 +26,10 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -61,8 +61,8 @@ final public class LocationTable extends CachedTableIntegerKey<Location> {
 		String path,
 		boolean isRegularExpression,
 		String authName,
-		UnixPath authGroupFile,
-		UnixPath authUserFile,
+		PosixPath authGroupFile,
+		PosixPath authUserFile,
 		String require,
 		String handler
 	) throws IOException, SQLException {

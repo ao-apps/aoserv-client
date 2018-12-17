@@ -28,13 +28,14 @@ import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
@@ -109,14 +110,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	private String processorId;
-	AccountingCode accounting;
+	Account.Name accounting;
 	private String groupName;
 	private String cardInfo;
 	private String providerUniqueId;
 	private String firstName;
 	private String lastName;
 	private String companyName;
-	private String email;
+	private Email email;
 	private String phone;
 	private String fax;
 	private String customerTaxId;
@@ -127,7 +128,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	private String postalCode;
 	private String countryCode;
 	private long created;
-	private UserId createdBy;
+	private User.Name createdBy;
 	private String principalName;
 	private boolean useMonthly;
 	private boolean isActive;
@@ -171,6 +172,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		Processor ccp = table.getConnector().getPayment().getProcessor().get(processorId);
 		if(ccp==null) throw new SQLException("Unable to find CreditCardProcessor: "+processorId);
 		return ccp;
+	}
+
+	public Account.Name getAccount_name() {
+		return accounting;
 	}
 
 	public Account getBusiness() throws SQLException, IOException {
@@ -268,7 +273,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return companyName;
 	}
 
-	public String getEmail() {
+	public Email getEmail() {
 		return email;
 	}
 
@@ -315,7 +320,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator business_administrator = table.getConnector().getAccount().getUsername().get(createdBy).getBusinessAdministrator();
+		Administrator business_administrator = table.getConnector().getAccount().getAdministrator().get(createdBy);
 		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + createdBy);
 		return business_administrator;
 	}
@@ -382,14 +387,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			int pos = 1;
 			pkey = result.getInt(pos++);
 			processorId = result.getString(pos++);
-			accounting = AccountingCode.valueOf(result.getString(pos++));
+			accounting = Account.Name.valueOf(result.getString(pos++));
 			groupName = result.getString(pos++);
 			cardInfo = result.getString(pos++);
 			providerUniqueId = result.getString(pos++);
 			firstName = result.getString(pos++);
 			lastName = result.getString(pos++);
 			companyName = result.getString(pos++);
-			email = result.getString(pos++);
+			email = Email.valueOf(result.getString(pos++));
 			phone = result.getString(pos++);
 			fax = result.getString(pos++);
 			customerTaxId = result.getString(pos++);
@@ -400,7 +405,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			postalCode = result.getString(pos++);
 			countryCode = result.getString(pos++);
 			created = result.getTimestamp(pos++).getTime();
-			createdBy = UserId.valueOf(result.getString(pos++));
+			createdBy = User.Name.valueOf(result.getString(pos++));
 			principalName = result.getString(pos++);
 			useMonthly = result.getBoolean(pos++);
 			isActive = result.getBoolean(pos++);
@@ -432,14 +437,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		try {
 			pkey=in.readCompressedInt();
 			processorId=in.readUTF().intern();
-			accounting=AccountingCode.valueOf(in.readUTF()).intern();
+			accounting=Account.Name.valueOf(in.readUTF()).intern();
 			groupName=in.readNullUTF();
 			cardInfo=in.readUTF();
 			providerUniqueId=in.readUTF();
 			firstName=in.readUTF();
 			lastName=in.readUTF();
 			companyName=in.readNullUTF();
-			email=in.readNullUTF();
+			email=Email.valueOf(in.readNullUTF());
 			phone=in.readNullUTF();
 			fax=in.readNullUTF();
 			customerTaxId=in.readNullUTF();
@@ -450,7 +455,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			postalCode=in.readNullUTF();
 			countryCode=in.readUTF().intern();
 			created=in.readLong();
-			createdBy = UserId.valueOf(in.readUTF()).intern();
+			createdBy = User.Name.valueOf(in.readUTF()).intern();
 			principalName=in.readNullUTF();
 			useMonthly=in.readBoolean();
 			isActive=in.readBoolean();
@@ -505,7 +510,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			out.writeUTF(firstName);
 			out.writeUTF(lastName);
 			out.writeNullUTF(companyName);
-			out.writeNullUTF(email);
+			out.writeNullUTF(ObjectUtils.toString(email));
 			out.writeNullUTF(phone);
 			out.writeNullUTF(fax);
 			out.writeNullUTF(customerTaxId);
@@ -542,7 +547,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		String firstName,
 		String lastName,
 		String companyName,
-		String email,
+		Email email,
 		String phone,
 		String fax,
 		String customerTaxId,
@@ -560,7 +565,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			firstName,
 			lastName,
 			companyName==null ? "" : companyName,
-			email==null ? "" : email,
+			email==null ? "" : email.toString(),
 			phone==null ? "" : phone,
 			fax==null ? "" : fax,
 			customerTaxId==null ? "" : customerTaxId,

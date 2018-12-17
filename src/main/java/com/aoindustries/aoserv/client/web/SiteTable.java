@@ -29,10 +29,10 @@ import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.WriterOutputStream;
 import java.io.IOException;
@@ -112,7 +112,7 @@ final public class SiteTable extends CachedTableIntegerKey<Site> {
 	}
 
 	public List<Site> getHttpdSites(UserServer lsa) throws IOException, SQLException {
-		UserId lsaUsername = lsa.getLinuxAccount_username_id();
+		User.Name lsaUsername = lsa.getLinuxAccount_username_id();
 		int aoServer = lsa.getAoServer_server_id();
 
 		List<Site> cached=getRows();

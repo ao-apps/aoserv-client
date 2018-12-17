@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.web.tomcat;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -53,7 +53,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 
 	static final String COLUMN_VERSION_name = "version";
 
-	private UnixPath install_dir;
+	private PosixPath install_dir;
 	private boolean requires_mod_jk;
 
 	public static final String TECHNOLOGY_NAME="jakarta-tomcat";
@@ -104,7 +104,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 		}
 	}
 
-	public UnixPath getInstallDirectory() {
+	public PosixPath getInstallDirectory() {
 		return install_dir;
 	}
 
@@ -123,7 +123,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			install_dir = UnixPath.valueOf(result.getString(2));
+			install_dir = PosixPath.valueOf(result.getString(2));
 			requires_mod_jk = result.getBoolean(3);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -192,7 +192,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			install_dir = UnixPath.valueOf(in.readUTF());
+			install_dir = PosixPath.valueOf(in.readUTF());
 			requires_mod_jk = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);

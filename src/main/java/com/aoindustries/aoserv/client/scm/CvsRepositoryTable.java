@@ -24,17 +24,17 @@ package com.aoindustries.aoserv.client.scm;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.linux.UserType;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.io.TerminalWriter;
@@ -69,7 +69,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 
 	public int addCvsRepository(
 		Server ao,
-		UnixPath path,
+		PosixPath path,
 		UserServer lsa,
 		GroupServer lsg,
 		long mode
@@ -93,7 +93,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	/**
 	 * Gets one <code>CvsRepository</code> from the database.
 	 */
-	public CvsRepository getCvsRepository(Server aoServer, UnixPath path) throws IOException, SQLException {
+	public CvsRepository getCvsRepository(Server aoServer, PosixPath path) throws IOException, SQLException {
 		int aoPKey=aoServer.getPkey();
 
 		List<CvsRepository> cached=getRows();
@@ -119,7 +119,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 	}
 
 	public List<CvsRepository> getCvsRepositories(Package pk) throws IOException, SQLException {
-		AccountingCode pkname = pk.getName();
+		Account.Name pkname = pk.getName();
 
 		List<CvsRepository> cached=getRows();
 		int size=cached.size();
@@ -140,9 +140,9 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 		return Table.TableID.CVS_REPOSITORIES;
 	}
 
-	public SortedSet<UnixPath> getValidPrefixes() throws IOException, SQLException {
+	public SortedSet<PosixPath> getValidPrefixes() throws IOException, SQLException {
 		try {
-			SortedSet<UnixPath> prefixes=new TreeSet<>();
+			SortedSet<PosixPath> prefixes=new TreeSet<>();
 
 			// Home directories
 			for(UserServer lsa : connector.getLinux().getUserServer().getRows()) {
@@ -159,8 +159,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			// HttpdSharedTomcats
 			for(SharedTomcat tomcat : connector.getWeb_tomcat().getSharedTomcat().getRows()) {
 				if(!tomcat.isDisabled()) {
-					prefixes.add(
-						UnixPath.valueOf(
+					prefixes.add(PosixPath.valueOf(
 							tomcat.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
 							+ '/' + tomcat.getName()
 						)
@@ -186,8 +185,8 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 					connector.getSimpleAOClient().addCvsRepository(
 						args[1],
 						AOSH.parseUnixPath(args[2], "path"),
-						AOSH.parseUserId(args[3], "username"),
-						AOSH.parseGroupId(args[4], "group"),
+						AOSH.parseLinuxUserName(args[3], "username"),
+						AOSH.parseGroupName(args[4], "group"),
 						AOSH.parseOctalLong(args[5], "mode")
 					)
 				);

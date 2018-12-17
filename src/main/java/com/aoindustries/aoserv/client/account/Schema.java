@@ -52,8 +52,8 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final UsStateTable UsState;
 	public UsStateTable getUsState() {return UsState;}
 
-	private final UsernameTable Username;
-	public UsernameTable getUsername() {return Username;}
+	private final UserTable User;
+	public UserTable getUser() {return User;}
 
 	private final List<? extends AOServTable<?,?>> tables;
 
@@ -67,7 +67,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		newTables.add(DisableLog = new DisableLogTable(connector));
 		newTables.add(Profile = new ProfileTable(connector));
 		newTables.add(UsState = new UsStateTable(connector));
-		newTables.add(Username = new UsernameTable(connector));
+		newTables.add(User = new UserTable(connector));
 		newTables.trimToSize();
 		tables = Collections.unmodifiableList(newTables);
 	}

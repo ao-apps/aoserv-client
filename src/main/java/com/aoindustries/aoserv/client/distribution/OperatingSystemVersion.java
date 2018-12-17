@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.distribution;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.email.List;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -193,15 +193,15 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that stores websites for this operating system or <code>null</code>
 	 * if this OS doesn't support web sites.
 	 */
-	public UnixPath getHttpdSitesDirectory() {
+	public PosixPath getHttpdSitesDirectory() {
 		return getHttpdSitesDirectory(pkey);
 	}
 
-	private static final UnixPath WWW, VAR_WWW;
+	private static final PosixPath WWW, VAR_WWW;
 	static {
 		try {
-			WWW = UnixPath.valueOf("/www").intern();
-			VAR_WWW = UnixPath.valueOf("/var/www").intern();
+			WWW = PosixPath.valueOf("/www").intern();
+			VAR_WWW = PosixPath.valueOf("/var/www").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -211,7 +211,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that stores websites for this operating system or <code>null</code>
 	 * if this OS doesn't support web sites.
 	 */
-	public static UnixPath getHttpdSitesDirectory(int osv) {
+	public static PosixPath getHttpdSitesDirectory(int osv) {
 		switch(osv) {
 			case MANDRIVA_2006_0_I586 :
 			case REDHAT_ES_4_X86_64 :
@@ -232,15 +232,15 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that contains the shared tomcat directories or <code>null</code>
 	 * if this OS doesn't support shared tomcats.
 	 */
-	public UnixPath getHttpdSharedTomcatsDirectory() {
+	public PosixPath getHttpdSharedTomcatsDirectory() {
 		return getHttpdSharedTomcatsDirectory(pkey);
 	}
 
-	private static final UnixPath WWWGROUP, VAR_OPT_APACHE_TOMCAT;
+	private static final PosixPath WWWGROUP, VAR_OPT_APACHE_TOMCAT;
 	static {
 		try {
-			WWWGROUP = UnixPath.valueOf("/wwwgroup").intern();
-			VAR_OPT_APACHE_TOMCAT = UnixPath.valueOf("/var/opt/apache-tomcat").intern();
+			WWWGROUP = PosixPath.valueOf("/wwwgroup").intern();
+			VAR_OPT_APACHE_TOMCAT = PosixPath.valueOf("/var/opt/apache-tomcat").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -250,7 +250,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that contains the shared tomcat directories or <code>null</code>
 	 * if this OS doesn't support shared tomcats.
 	 */
-	public static UnixPath getHttpdSharedTomcatsDirectory(int osv) {
+	public static PosixPath getHttpdSharedTomcatsDirectory(int osv) {
 		switch(osv) {
 			case MANDRIVA_2006_0_I586 :
 			case REDHAT_ES_4_X86_64 :
@@ -271,15 +271,15 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that contains the per-virtual-host HTTP logs or <code>null</code>
 	 * if this OS doesn't support web sites.
 	 */
-	public UnixPath getHttpdSiteLogsDirectory() {
+	public PosixPath getHttpdSiteLogsDirectory() {
 		return getHttpdSiteLogsDirectory(pkey);
 	}
 
-	private static final UnixPath LOGS, VAR_LOG_HTTPD_SITES;
+	private static final PosixPath LOGS, VAR_LOG_HTTPD_SITES;
 	static {
 		try {
-			LOGS = UnixPath.valueOf("/logs").intern();
-			VAR_LOG_HTTPD_SITES = UnixPath.valueOf("/var/log/httpd-sites").intern();
+			LOGS = PosixPath.valueOf("/logs").intern();
+			VAR_LOG_HTTPD_SITES = PosixPath.valueOf("/var/log/httpd-sites").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -289,7 +289,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	 * Gets the directory that contains the per-virtual-host HTTP logs or <code>null</code>
 	 * if this OS doesn't support web sites.
 	 */
-	public static UnixPath getHttpdSiteLogsDirectory(int osv) {
+	public static PosixPath getHttpdSiteLogsDirectory(int osv) {
 		switch(osv) {
 			case MANDRIVA_2006_0_I586 :
 			case REDHAT_ES_4_X86_64 :
@@ -309,14 +309,14 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	/**
 	 * @see  EmailList#getListPath(java.lang.String, int)
 	 */
-	public UnixPath getEmailListPath(String name) throws ValidationException {
+	public PosixPath getEmailListPath(String name) throws ValidationException {
 		return List.getListPath(name, pkey);
 	}
 
 	/**
 	 * @see  EmailList#isValidRegularPath(com.aoindustries.aoserv.client.validator.UnixPath, int)
 	 */
-	public boolean isValidEmailListRegularPath(UnixPath path) {
+	public boolean isValidEmailListRegularPath(PosixPath path) {
 		return List.isValidRegularPath(path, pkey);
 	}
 }

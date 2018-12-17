@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
@@ -60,7 +59,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	}
 
 	int addMySQLServer(
-		MySQLServerName name,
+		Server.Name name,
 		Server aoServer,
 		SoftwareVersion version,
 		int maxConnections
@@ -89,7 +88,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		return getIndexedRows(Server.COLUMN_AO_SERVER, ao.getPkey());
 	}
 
-	public Server getMySQLServer(MySQLServerName name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
+	public Server getMySQLServer(Server.Name name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
 		// Use the index first
 		List<Server> table=getMySQLServers(ao);
 		int size=table.size();
@@ -110,7 +109,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		String command=args[0];
 		if(command.equalsIgnoreCase(Command.CHECK_MYSQL_SERVER_NAME)) {
 			if(AOSH.checkParamCount(Command.CHECK_MYSQL_SERVER_NAME, args, 1, err)) {
-				ValidationResult validationResult = MySQLServerName.validate(args[1]);
+				ValidationResult validationResult = Server.Name.validate(args[1]);
 				out.println(validationResult.isValid());
 				out.flush();
 				if(!validationResult.isValid()) {
@@ -170,7 +169,7 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		return false;
 	}
 
-	public boolean isMySQLServerNameAvailable(MySQLServerName name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
+	public boolean isMySQLServerNameAvailable(Server.Name name, com.aoindustries.aoserv.client.linux.Server ao) throws IOException, SQLException {
 		return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_MYSQL_SERVER_NAME_AVAILABLE, name, ao.getPkey());
 	}
 

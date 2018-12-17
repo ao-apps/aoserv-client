@@ -26,7 +26,6 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -53,7 +52,7 @@ final public class UserHost extends CachedObjectIntegerKey<UserHost> {
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_SERVER_name = "server";
 
-	private UserId username;
+	private com.aoindustries.aoserv.client.account.User.Name username;
 	private int server;
 
 	@Override
@@ -91,7 +90,7 @@ final public class UserHost extends CachedObjectIntegerKey<UserHost> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			username = UserId.valueOf(result.getString(2));
+			username = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(2));
 			server = result.getInt(3);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -102,7 +101,7 @@ final public class UserHost extends CachedObjectIntegerKey<UserHost> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			username = UserId.valueOf(in.readUTF()).intern();
+			username = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
 			server = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);

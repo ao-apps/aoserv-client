@@ -28,14 +28,12 @@ import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
-import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.payment.Payment;
 import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.payment.Processor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -74,9 +72,9 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
 	private long time;
 	private int transid;
-	private AccountingCode accounting;
-	private AccountingCode source_accounting;
-	private UserId username;
+	private Account.Name accounting;
+	private Account.Name source_accounting;
+	private User.Name username;
 	private String type;
 	private String description;
 
@@ -230,7 +228,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	public Administrator getBusinessAdministrator() throws SQLException, IOException {
-		Username un=table.getConnector().getAccount().getUsername().get(username);
+		User un=table.getConnector().getAccount().getUser().get(username);
 		// May be filtered
 		if(un==null) return null;
 		Administrator business_administrator = un.getBusinessAdministrator();
@@ -358,9 +356,9 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 			int pos = 1;
 			time = result.getTimestamp(pos++).getTime();
 			transid = result.getInt(pos++);
-			accounting = AccountingCode.valueOf(result.getString(pos++));
-			source_accounting = AccountingCode.valueOf(result.getString(pos++));
-			username = UserId.valueOf(result.getString(pos++));
+			accounting = Account.Name.valueOf(result.getString(pos++));
+			source_accounting = Account.Name.valueOf(result.getString(pos++));
+			username = User.Name.valueOf(result.getString(pos++));
 			type = result.getString(pos++);
 			description = result.getString(pos++);
 			quantity = SQLUtility.getMillis(result.getString(pos++));
@@ -385,9 +383,9 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		try {
 			time=in.readLong();
 			transid=in.readCompressedInt();
-			accounting=AccountingCode.valueOf(in.readCompressedUTF()).intern();
-			source_accounting=AccountingCode.valueOf(in.readCompressedUTF()).intern();
-			username = UserId.valueOf(in.readCompressedUTF()).intern();
+			accounting=Account.Name.valueOf(in.readCompressedUTF()).intern();
+			source_accounting=Account.Name.valueOf(in.readCompressedUTF()).intern();
+			username = User.Name.valueOf(in.readCompressedUTF()).intern();
 			type=in.readCompressedUTF().intern();
 			description=in.readCompressedUTF();
 			quantity=in.readCompressedInt();

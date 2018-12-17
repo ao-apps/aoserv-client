@@ -22,25 +22,29 @@
  */
 package com.aoindustries.aoserv.client.postgresql;
 
-import com.aoindustries.aoserv.client.CachedObjectPostgresUserIdKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.DisableLog;
-import com.aoindustries.aoserv.client.account.Username;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.FastExternalizable;
+import com.aoindustries.validation.InvalidResult;
+import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
+import java.io.ObjectInputValidation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A <code>PostgresUser</code> may have access to multiple servers.  The information
@@ -50,7 +54,128 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class User extends CachedObjectPostgresUserIdKey<User> implements Removable, PasswordProtected, Disablable {
+final public class User extends CachedObjectUserNameKey<User> implements Removable, PasswordProtected, Disablable {
+
+	/**
+	 * Represents a PostgreSQL user ID.  PostgreSQL user ids must:
+	 * <ul>
+	 *   <li>Be non-null</li>
+	 *   <li>Be non-empty</li>
+	 *   <li>Be between 1 and 31 characters</li>
+	 *   <li>Must start with <code>[a-z]</code></li>
+	 *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
+	 *   <li>Must not be a PostgreSQL reserved word</li>
+	 *   <li>Must be a valid <code>UserId</code> - this is implied by the above rules</li>
+	 * </ul>
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	final static public class Name extends com.aoindustries.aoserv.client.linux.User.Name implements
+		FastExternalizable,
+		ObjectInputValidation
+	{
+
+		/**
+		 * The maximum length of a PostgreSQL username.
+		 */
+		public static final int MAX_LENGTH = 31;
+
+		/**
+		 * Validates a PostgreSQL user id.
+		 */
+		public static ValidationResult validate(String id) {
+			if(id==null) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.isNull");
+			int len = id.length();
+			if(len==0) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.tooLong", MAX_LENGTH, len);
+
+			// The first character must be [a-z] or [0-9]
+			char ch = id.charAt(0);
+			if(
+				(ch < 'a' || ch > 'z')
+				&& (ch<'0' || ch>'9')
+			) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.startAtoZor0to9");
+
+			// The rest may have additional characters
+			for (int c = 1; c < len; c++) {
+				ch = id.charAt(c);
+				if (
+					(ch<'a' || ch>'z')
+					&& (ch<'0' || ch>'9')
+					&& ch!='_'
+				) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.illegalCharacter");
+			}
+			if(
+				id.equals("sameuser")
+				|| id.equals("samegroup")
+				|| id.equals("all")
+				|| Server.ReservedWord.isReservedWord(id)
+			) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.reservedWord");
+			assert com.aoindustries.aoserv.client.linux.User.Name.validate(id).isValid() : "A PostgreSQL User.Name is always a valid Linux User.Name.";
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param id  when {@code null}, returns {@code null}
+		 */
+		public static Name valueOf(String id) throws ValidationException {
+			if(id == null) return null;
+			//Name existing = interned.get(id);
+			//return existing!=null ? existing : new Name(id);
+			return new Name(id, true);
+		}
+
+		private Name(String id, boolean validate) throws ValidationException {
+			super(id, validate);
+		}
+
+		/**
+		 * @param  id  Does not validate, should only be used with a known valid value.
+		 */
+		private Name(String id) {
+			super(id);
+		}
+
+		@Override
+		protected void validate() throws ValidationException {
+			ValidationResult result = validate(name);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Name intern() {
+			Name existing = interned.get(name);
+			if(existing==null) {
+				String internedId = name.intern();
+				Name addMe = (name == internedId) ? this : new Name(internedId);
+				existing = interned.putIfAbsent(internedId, addMe);
+				if(existing==null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.PostgresUserName getDto() {
+			return new com.aoindustries.aoserv.client.dto.PostgresUserName(name);
+		}
+
+		// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+		private static final long serialVersionUID = 2L;
+
+		public Name() {
+		}
+
+		@Override
+		public long getSerialVersionUID() {
+			return serialVersionUID;
+		}
+		// </editor-fold>
+	}
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -61,12 +186,12 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 	 * @deprecated  Please use {@link PostgresUserId#MAX_LENGTH} instead.
 	 */
 	@Deprecated
-	public static final int MAX_USERNAME_LENGTH = PostgresUserId.MAX_LENGTH;
+	public static final int MAX_USERNAME_LENGTH = Name.MAX_LENGTH;
 
 	/**
 	 * The username of the PostgreSQL special users.
 	 */
-	public static final PostgresUserId
+	public static final Name
 		POSTGRES,
 		AOADMIN,
 		AOSERV_APP,
@@ -74,10 +199,10 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 	;
 	static {
 		try {
-			POSTGRES = PostgresUserId.valueOf("postgres");
-			AOADMIN = PostgresUserId.valueOf("aoadmin");
-			AOSERV_APP = PostgresUserId.valueOf("aoserv_app");
-			AOWEB_APP = PostgresUserId.valueOf("aoweb_app");
+			POSTGRES = Name.valueOf("postgres");
+			AOADMIN = Name.valueOf("aoadmin");
+			AOSERV_APP = Name.valueOf("aoserv_app");
+			AOWEB_APP = Name.valueOf("aoweb_app");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -105,7 +230,7 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		return Username.groupPasswordsSet(getPostgresServerUsers());
+		return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getPostgresServerUsers());
 	}
 
 	public boolean canCatUPD() {
@@ -139,7 +264,7 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 		return checkPassword(pkey, password);
 	}
 
-	public static List<PasswordChecker.Result> checkPassword(PostgresUserId username, String password) throws IOException {
+	public static List<PasswordChecker.Result> checkPassword(Name username, String password) throws IOException {
 		return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
 	}
 
@@ -198,12 +323,12 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 		return Table.TableID.POSTGRES_USERS;
 	}
 
-	public PostgresUserId getUsername_username_id() {
+	public Name getUsername_username_id() {
 		return pkey;
 	}
 
-	public Username getUsername() throws SQLException, IOException {
-		Username username=table.getConnector().getAccount().getUsername().get(this.pkey);
+	public com.aoindustries.aoserv.client.account.User getUsername() throws SQLException, IOException {
+		com.aoindustries.aoserv.client.account.User username=table.getConnector().getAccount().getUser().get(this.pkey);
 		if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
 		return username;
 	}
@@ -211,7 +336,7 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = PostgresUserId.valueOf(result.getString(1));
+			pkey = Name.valueOf(result.getString(1));
 			createdb=result.getBoolean(2);
 			trace=result.getBoolean(3);
 			superPriv=result.getBoolean(4);
@@ -230,7 +355,7 @@ final public class User extends CachedObjectPostgresUserIdKey<User> implements R
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey = PostgresUserId.valueOf(in.readUTF()).intern();
+			pkey = Name.valueOf(in.readUTF()).intern();
 			createdb=in.readBoolean();
 			trace=in.readBoolean();
 			superPriv=in.readBoolean();

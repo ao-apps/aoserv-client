@@ -24,6 +24,8 @@ package com.aoindustries.aoserv.client.net;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
@@ -32,8 +34,6 @@ import com.aoindustries.aoserv.client.infrastructure.ServerFarm;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -72,7 +72,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		final String description,
 		final int backup_hour,
 		final OperatingSystemVersion os_version,
-		final UserId username,
+		final User.Name username,
 		final String password,
 		final String contact_phone,
 		final String contact_email
@@ -170,10 +170,10 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		int slashPos = server.indexOf('/');
 		if(slashPos!=-1) {
 			String packageName = server.substring(0, slashPos);
-			if(AccountingCode.validate(packageName).isValid()) {
+			if(Account.Name.validate(packageName).isValid()) {
 				try {
 					String name = server.substring(slashPos+1);
-					Package pk = connector.getBilling().getPackage().get(AccountingCode.valueOf(packageName));
+					Package pk = connector.getBilling().getPackage().get(Account.Name.valueOf(packageName));
 					if(pk==null) return null;
 					return pk.getServer(name);
 				} catch(ValidationException e) {
@@ -229,7 +229,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 						args[6],
 						args[7],
 						args[8],
-						AOSH.parseUserId(args[9], "username"),
+						AOSH.parseUserName(args[9], "username"),
 						args[10],
 						args[11],
 						args[12]

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
@@ -196,14 +196,14 @@ final public class AOServClientConfiguration {
 	/**
 	 * Gets the optional default username.
 	 */
-	public static UserId getUsername() throws IOException {
+	public static User.Name getUsername() throws IOException {
 		String username = getProperty("aoserv.client.username");
 		if(
 			username == null
 			|| (username = username.trim()).isEmpty()
 		) return null;
 		try {
-			return UserId.valueOf(username);
+			return User.Name.valueOf(username);
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}

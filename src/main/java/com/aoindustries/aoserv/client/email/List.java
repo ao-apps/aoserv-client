@@ -29,10 +29,10 @@ import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.DisableLog;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.StringUtility;
@@ -69,7 +69,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	 */
 	public static final int MAX_NAME_LENGTH=64;
 
-	UnixPath path;
+	PosixPath path;
 	int linux_server_account;
 	int linux_server_group;
 	int disable_log;
@@ -184,13 +184,13 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	 *
 	 * @see  OperatingSystemVersion#getEmailListPath(java.lang.String)
 	 */
-	public static UnixPath getListPath(String name, int osv) throws ValidationException {
+	public static PosixPath getListPath(String name, int osv) throws ValidationException {
 		switch(osv) {
 			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
 			case OperatingSystemVersion.REDHAT_ES_4_X86_64 :
 			case OperatingSystemVersion.CENTOS_5_I686_AND_X86_64 :
 				if(name.length() > 1) {
-					return UnixPath.valueOf(
+					return PosixPath.valueOf(
 						LIST_DIRECTORY
 						+ '/'
 						+ Character.toLowerCase(name.charAt(0))
@@ -200,12 +200,12 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 				} else {
 					// This will always be invalid, exception expected
 					String invalidPath = LIST_DIRECTORY + "//";
-					UnixPath.valueOf(invalidPath);
+					PosixPath.valueOf(invalidPath);
 					throw new AssertionError(invalidPath + " is invalid and should have already thrown " + ValidationException.class.getName());
 				}
 			case OperatingSystemVersion.CENTOS_7_X86_64 :
 				if(name.length() > 1) {
-					return UnixPath.valueOf(
+					return PosixPath.valueOf(
 						LIST_DIRECTORY
 						+ '/'
 						+ name
@@ -213,7 +213,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 				} else {
 					// This will always be invalid, exception expected
 					String invalidPath = LIST_DIRECTORY + "/";
-					UnixPath.valueOf(invalidPath);
+					PosixPath.valueOf(invalidPath);
 					throw new AssertionError(invalidPath + " is invalid and should have already thrown " + ValidationException.class.getName());
 				}
 			default :
@@ -225,7 +225,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 		return table.getConnector().getEmail().getMajordomoList().get(pkey);
 	}
 
-	public UnixPath getPath() {
+	public PosixPath getPath() {
 		return path;
 	}
 
@@ -238,7 +238,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			path = UnixPath.valueOf(result.getString(2));
+			path = PosixPath.valueOf(result.getString(2));
 			linux_server_account = result.getInt(3);
 			linux_server_group = result.getInt(4);
 			disable_log=result.getInt(5);
@@ -255,7 +255,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	 *
 	 * @see  OperatingSystemVersion#isValidEmailListRegularPath(com.aoindustries.aoserv.client.validator.UnixPath)
 	 */
-	public static boolean isValidRegularPath(UnixPath path, int osv) {
+	public static boolean isValidRegularPath(PosixPath path, int osv) {
 		// Must start with LIST_DIRECTORY
 		if(path == null) return false;
 		String pathStr = path.toString();
@@ -327,7 +327,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			path = UnixPath.valueOf(in.readUTF());
+			path = PosixPath.valueOf(in.readUTF());
 			linux_server_account=in.readCompressedInt();
 			linux_server_group=in.readCompressedInt();
 			disable_log=in.readCompressedInt();

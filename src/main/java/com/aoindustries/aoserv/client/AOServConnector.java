@@ -22,24 +22,17 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.aosh.AOSH;
+import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.LinuxId;
+import com.aoindustries.aoserv.client.linux.PosixPath;
+import com.aoindustries.aoserv.client.linux.User.Gecos;
+import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.HashedPassword;
-import com.aoindustries.aoserv.client.validator.LinuxId;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
-import com.aoindustries.aoserv.client.validator.MySQLTableName;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
-import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
-import com.aoindustries.aoserv.client.validator.PostgresServerName;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.CompressedWritable;
@@ -175,12 +168,12 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * @see  #getConnectedAs()
 	 */
-	final UserId connectAs;
+	final User.Name connectAs;
 
 	/**
 	 * @see  #getAuthenticatedAs()
 	 */
-	final UserId authenticateAs;
+	final User.Name authenticateAs;
 
 	final DomainName daemonServer;
 
@@ -297,8 +290,8 @@ abstract public class AOServConnector implements SchemaParent {
 		HostAddress hostname,
 		InetAddress local_ip,
 		Port port,
-		UserId connectAs,
-		UserId authenticateAs,
+		User.Name connectAs,
+		User.Name authenticateAs,
 		String password,
 		DomainName daemonServer,
 		Logger logger
@@ -518,7 +511,7 @@ abstract public class AOServConnector implements SchemaParent {
 		newTables.add(billing.getTransactionType());
 		newTables.add(billing.getTransaction());
 		newTables.add(account.getUsState());
-		newTables.add(account.getUsername());
+		newTables.add(account.getUser());
 		newTables.add(infrastructure.getVirtualDisk());
 		newTables.add(infrastructure.getVirtualServer());
 		newTables.add(billing.getWhoisHistory());
@@ -603,7 +596,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @exception  IOException  if no connection can be established
 	 */
 	public static AOServConnector getConnector(Logger logger) throws IOException {
-		UserId username = AOServClientConfiguration.getUsername();
+		User.Name username = AOServClientConfiguration.getUsername();
 		DomainName daemonServer = AOServClientConfiguration.getDaemonServer();
 		return getConnector(
 			username,
@@ -628,7 +621,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @exception  IOException  if no connection can be established
 	 */
-	public static AOServConnector getConnector(UserId username, String password, Logger logger) throws IOException {
+	public static AOServConnector getConnector(User.Name username, String password, Logger logger) throws IOException {
 		return getConnector(username, username, password, null, logger);
 	}
 
@@ -650,8 +643,8 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @exception  IOException  if no connection can be established
 	 */
 	public static AOServConnector getConnector(
-		UserId connectAs,
-		UserId authenticateAs,
+		User.Name connectAs,
+		User.Name authenticateAs,
 		String password,
 		DomainName daemonServer,
 		Logger logger
@@ -921,32 +914,33 @@ abstract public class AOServConnector implements SchemaParent {
 				out.write(bytes, 0, bytes.length);
 			}
 			// Self-validating types
-			else if(param instanceof AccountingCode) out.writeUTF(param.toString());
+			else if(param instanceof Account.Name) out.writeUTF(param.toString());
 			else if(param instanceof Email) out.writeUTF(param.toString());
 			else if(param instanceof HostAddress) out.writeUTF(param.toString());
 			else if(param instanceof InetAddress) out.writeUTF(param.toString());
-			else if(param instanceof UnixPath) out.writeUTF(param.toString());
-			else if(param instanceof UserId) out.writeUTF(param.toString());
+			else if(param instanceof PosixPath) out.writeUTF(param.toString());
+			else if(param instanceof User.Name) out.writeUTF(param.toString());
 			else if(param instanceof DomainLabel) out.writeUTF(param.toString());
 			else if(param instanceof DomainLabels) out.writeUTF(param.toString());
 			else if(param instanceof DomainName) out.writeUTF(param.toString());
 			else if(param instanceof Gecos) out.writeUTF(param.toString());
-			else if(param instanceof GroupId) out.writeUTF(param.toString());
+			else if(param instanceof Group.Name) out.writeUTF(param.toString());
 			else if(param instanceof HashedPassword) out.writeUTF(param.toString());
 			else if(param instanceof LinuxId) out.writeCompressedInt(((LinuxId)param).getId());
+			else if(param instanceof com.aoindustries.aoserv.client.linux.User.Name) out.writeUTF(param.toString());
 			else if(param instanceof MacAddress) out.writeUTF(param.toString());
-			else if(param instanceof MySQLDatabaseName) out.writeUTF(param.toString());
-			else if(param instanceof MySQLServerName) out.writeUTF(param.toString());
-			else if(param instanceof MySQLTableName) out.writeUTF(param.toString());
-			else if(param instanceof MySQLUserId) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.mysql.Database.Name) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.mysql.Server.Name) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.mysql.Table_Name) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.mysql.User.Name) out.writeUTF(param.toString());
 			else if(param instanceof Port) {
 				Port port = (Port)param;
 				out.writeCompressedInt(port.getPort());
 				out.writeEnum(port.getProtocol());
 			}
-			else if(param instanceof PostgresDatabaseName) out.writeUTF(param.toString());
-			else if(param instanceof PostgresServerName) out.writeUTF(param.toString());
-			else if(param instanceof PostgresUserId) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.postgresql.Database.Name) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.postgresql.Server.Name) out.writeUTF(param.toString());
+			else if(param instanceof com.aoindustries.aoserv.client.postgresql.User.Name) out.writeUTF(param.toString());
 			// Any other Writable
 			else if(param instanceof AOServWritable) ((AOServWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION);
 			else if(param instanceof CompressedWritable) ((CompressedWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION.getVersion());
@@ -1590,7 +1584,7 @@ abstract public class AOServConnector implements SchemaParent {
 		throw new InterruptedIOException();
 	}
 
-	public abstract AOServConnector switchUsers(UserId username) throws IOException;
+	public abstract AOServConnector switchUsers(User.Name username) throws IOException;
 
 	final public void tablesUpdated(IntList invalidateList) {
 		if(invalidateList!=null) {

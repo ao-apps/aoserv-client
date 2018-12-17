@@ -25,20 +25,14 @@ package com.aoindustries.aoserv.client.aosh;
 import com.aoindustries.aoserv.client.AOServClientConfiguration;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.User;
+import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.PosixPath;
+import com.aoindustries.aoserv.client.linux.User.Gecos;
+import com.aoindustries.aoserv.client.net.FirewallZone;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.TableTable;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
-import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
-import com.aoindustries.aoserv.client.validator.PostgresServerName;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
@@ -238,7 +232,7 @@ final public class AOSH extends ShellInterpreter {
 		TerminalWriter out=new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
 		TerminalWriter err=System.out==System.err ? out : new TerminalWriter(new BufferedWriter(new OutputStreamWriter(System.err)));
 		try {
-			UserId username = getConfigUsername(System.in, err);
+			User.Name username = getConfigUsername(System.in, err);
 			String password = getConfigPassword(System.in, err);
 			AOServConnector connector=AOServConnector.getConnector(username, password, logger);
 			AOSH aosh=new AOSH(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, args);
@@ -253,8 +247,8 @@ final public class AOSH extends ShellInterpreter {
 		}
 	}
 
-	public static UserId getConfigUsername(InputStream in, TerminalWriter err) throws IOException {
-		UserId username = AOServClientConfiguration.getUsername();
+	public static User.Name getConfigUsername(InputStream in, TerminalWriter err) throws IOException {
+		User.Name username = AOServClientConfiguration.getUsername();
 		if(username == null) {
 			try {
 				// Prompt for the username
@@ -263,10 +257,10 @@ final public class AOSH extends ShellInterpreter {
 				if(console == null) {
 					err.print(prompt);
 					err.flush();
-					username = UserId.valueOf(readLine(in));
+					username = User.Name.valueOf(readLine(in));
 					err.flush();
 				} else {
-					username = UserId.valueOf(console.readLine(prompt));
+					username = User.Name.valueOf(console.readLine(prompt));
 					if(username == null) throw new EOFException("End-of-file reading username");
 				}
 			} catch(ValidationException e) {
@@ -301,9 +295,9 @@ final public class AOSH extends ShellInterpreter {
 		return new AOSH(connector, in, out, err, args);
 	}
 
-	public static AccountingCode parseAccountingCode(String S, String field) {
+	public static Account.Name parseAccountingCode(String S, String field) {
 		try {
-			return AccountingCode.valueOf(S);
+			return Account.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for accounting ("+field+"): "+S, err);
 		}
@@ -344,9 +338,9 @@ final public class AOSH extends ShellInterpreter {
 		}
 	}
 
-	public static FirewalldZoneName parseFirewalldZoneName(String S, String field) {
+	public static FirewallZone.Name parseFirewalldZoneName(String S, String field) {
 		try {
-			return FirewalldZoneName.valueOf(S);
+			return FirewallZone.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for firewalld zone ("+field+"): "+S, err);
 		}
@@ -448,9 +442,9 @@ final public class AOSH extends ShellInterpreter {
 		}
 	}
 
-	public static GroupId parseGroupId(String S, String field) {
+	public static Group.Name parseGroupName(String S, String field) {
 		try {
-			return GroupId.valueOf(S);
+			return Group.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for group ("+field+"): "+S, err);
 		}
@@ -464,25 +458,33 @@ final public class AOSH extends ShellInterpreter {
 		}
 	}
 
-	public static MySQLDatabaseName parseMySQLDatabaseName(String S, String field) {
+	public static com.aoindustries.aoserv.client.linux.User.Name parseLinuxUserName(String S, String field) {
 		try {
-			return MySQLDatabaseName.valueOf(S);
+			return com.aoindustries.aoserv.client.linux.User.Name.valueOf(S);
+		} catch(ValidationException err) {
+			throw new IllegalArgumentException("Invalid argument for Linux username ("+field+"): "+S, err);
+		}
+	}
+
+	public static com.aoindustries.aoserv.client.mysql.Database.Name parseMySQLDatabaseName(String S, String field) {
+		try {
+			return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for MySQL database name ("+field+"): "+S, err);
 		}
 	}
 
-	public static MySQLServerName parseMySQLServerName(String S, String field) {
+	public static com.aoindustries.aoserv.client.mysql.Server.Name parseMySQLServerName(String S, String field) {
 		try {
-			return MySQLServerName.valueOf(S);
+			return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for MySQL server name ("+field+"): "+S, err);
 		}
 	}
 
-	public static MySQLUserId parseMySQLUserId(String S, String field) {
+	public static com.aoindustries.aoserv.client.mysql.User.Name parseMySQLUserName(String S, String field) {
 		try {
-			return MySQLUserId.valueOf(S);
+			return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for MySQL username ("+field+"): "+S, err);
 		}
@@ -511,41 +513,41 @@ final public class AOSH extends ShellInterpreter {
 		}
 	}
 
-	public static PostgresDatabaseName parsePostgresDatabaseName(String S, String field) {
+	public static com.aoindustries.aoserv.client.postgresql.Database.Name parsePostgresDatabaseName(String S, String field) {
 		try {
-			return PostgresDatabaseName.valueOf(S);
+			return com.aoindustries.aoserv.client.postgresql.Database.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for PostgreSQL database name ("+field+"): "+S, err);
 		}
 	}
 
-	public static PostgresServerName parsePostgresServerName(String S, String field) {
+	public static com.aoindustries.aoserv.client.postgresql.Server.Name parsePostgresServerName(String S, String field) {
 		try {
-			return PostgresServerName.valueOf(S);
+			return com.aoindustries.aoserv.client.postgresql.Server.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for PostgreSQL server name ("+field+"): "+S, err);
 		}
 	}
 
-	public static PostgresUserId parsePostgresUserId(String S, String field) {
+	public static com.aoindustries.aoserv.client.postgresql.User.Name parsePostgresUserName(String S, String field) {
 		try {
-			return PostgresUserId.valueOf(S);
+			return com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for PostgreSQL username ("+field+"): "+S, err);
 		}
 	}
 
-	public static UnixPath parseUnixPath(String S, String field) {
+	public static PosixPath parseUnixPath(String S, String field) {
 		try {
-			return UnixPath.valueOf(S);
+			return PosixPath.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for POSIX path ("+field+"): "+S, err);
 		}
 	}
 
-	public static UserId parseUserId(String S, String field) {
+	public static User.Name parseUserName(String S, String field) {
 		try {
-			return UserId.valueOf(S);
+			return User.Name.valueOf(S);
 		} catch(ValidationException err) {
 			throw new IllegalArgumentException("Invalid argument for username ("+field+"): "+S, err);
 		}
@@ -635,8 +637,7 @@ final public class AOSH extends ShellInterpreter {
 				newArgs[pos++]="--";
 				System.arraycopy(args, 2, newArgs, pos, argCount-2);
 				new AOSH(
-					connector.switchUsers(
-						UserId.valueOf(args[1])
+					connector.switchUsers(User.Name.valueOf(args[1])
 					),
 					in,
 					out,

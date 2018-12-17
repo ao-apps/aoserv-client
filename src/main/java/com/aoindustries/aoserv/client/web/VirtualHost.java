@@ -26,12 +26,12 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.account.DisableLog;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.net.AppProtocol;
 import com.aoindustries.aoserv.client.pki.Certificate;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.util.SystemdUtil;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -62,8 +62,8 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	int httpd_site;
 	private int httpd_bind;
 	private String name;
-	private UnixPath access_log;
-	private UnixPath error_log;
+	private PosixPath access_log;
+	private PosixPath error_log;
 	private int certificate;
 	int disable_log;
 	private String predisable_config;
@@ -72,9 +72,9 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	private String include_site_config;
 
 	// Used for protocol conversion only
-	private UnixPath oldSslCertFile;
-	private UnixPath oldSslCertKeyFile;
-	private UnixPath oldSslCertChainFile;
+	private PosixPath oldSslCertFile;
+	private PosixPath oldSslCertKeyFile;
+	private PosixPath oldSslCertChainFile;
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
@@ -119,8 +119,8 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 			httpd_site = result.getInt(pos++);
 			httpd_bind = result.getInt(pos++);
 			name = result.getString(pos++);
-			access_log = UnixPath.valueOf(result.getString(pos++));
-			error_log = UnixPath.valueOf(result.getString(pos++));
+			access_log = PosixPath.valueOf(result.getString(pos++));
+			error_log = PosixPath.valueOf(result.getString(pos++));
 			certificate = result.getInt(pos++);
 			if(result.wasNull()) certificate = -1;
 			disable_log = result.getInt(pos++);
@@ -129,9 +129,9 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 			isManual = result.getBoolean(pos++);
 			redirect_to_primary_hostname = result.getBoolean(pos++);
 			include_site_config = result.getString(pos++);
-			oldSslCertFile = UnixPath.valueOf(result.getString(pos++));
-			oldSslCertKeyFile = UnixPath.valueOf(result.getString(pos++));
-			oldSslCertChainFile = UnixPath.valueOf(result.getString(pos++));
+			oldSslCertFile = PosixPath.valueOf(result.getString(pos++));
+			oldSslCertKeyFile = PosixPath.valueOf(result.getString(pos++));
+			oldSslCertChainFile = PosixPath.valueOf(result.getString(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -144,8 +144,8 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 			httpd_site = in.readCompressedInt();
 			httpd_bind = in.readCompressedInt();
 			name = in.readNullUTF();
-			access_log = UnixPath.valueOf(in.readUTF());
-			error_log = UnixPath.valueOf(in.readUTF());
+			access_log = PosixPath.valueOf(in.readUTF());
+			error_log = PosixPath.valueOf(in.readUTF());
 			certificate = in.readCompressedInt();
 			disable_log = in.readCompressedInt();
 			predisable_config = in.readNullUTF();
@@ -221,11 +221,11 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 		return SystemdUtil.encode(name);
 	}
 
-	public UnixPath getAccessLog() {
+	public PosixPath getAccessLog() {
 		return access_log;
 	}
 
-	public UnixPath getErrorLog() {
+	public PosixPath getErrorLog() {
 		return error_log;
 	}
 

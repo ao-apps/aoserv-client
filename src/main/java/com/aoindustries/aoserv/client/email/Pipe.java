@@ -26,12 +26,12 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.DisableLog;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -62,7 +62,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 
 	int ao_server;
 	private String command;
-	AccountingCode packageName;
+	Account.Name packageName;
 	int disable_log;
 
 	public int addEmailAddress(Address address) throws IOException, SQLException {
@@ -143,7 +143,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 			pkey = result.getInt(1);
 			ao_server = result.getInt(2);
 			command = result.getString(3);
-			packageName = AccountingCode.valueOf(result.getString(4));
+			packageName = Account.Name.valueOf(result.getString(4));
 			disable_log=result.getInt(5);
 			if(result.wasNull()) disable_log=-1;
 		} catch(ValidationException e) {
@@ -157,7 +157,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 			pkey=in.readCompressedInt();
 			ao_server=in.readCompressedInt();
 			command = in.readUTF();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
 			disable_log=in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);

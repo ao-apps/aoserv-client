@@ -23,7 +23,6 @@
 package com.aoindustries.aoserv.client.account;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedObjectUserIdKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
@@ -31,20 +30,19 @@ import com.aoindustries.aoserv.client.billing.MonthlyCharge;
 import com.aoindustries.aoserv.client.billing.Transaction;
 import com.aoindustries.aoserv.client.master.AdministratorPermission;
 import com.aoindustries.aoserv.client.master.Permission;
-import com.aoindustries.aoserv.client.master.User;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.payment.CountryCode;
+import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Action;
 import com.aoindustries.aoserv.client.ticket.Assignment;
 import com.aoindustries.aoserv.client.ticket.Ticket;
-import com.aoindustries.aoserv.client.validator.HashedPassword;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -66,7 +64,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Administrator extends CachedObjectUserIdKey<Administrator> implements PasswordProtected, Removable, Disablable, Comparable<Administrator> {
+final public class Administrator extends CachedObjectUserNameKey<Administrator> implements PasswordProtected, Removable, Disablable, Comparable<Administrator> {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -84,8 +82,9 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 		work_phone,
 		home_phone,
 		cell_phone,
-		fax,
-		email,
+		fax;
+	private Email email;
+	private String
 		address1,
 		address2,
 		city,
@@ -141,7 +140,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	 * Validates a password and returns a description of the problem.  If the
 	 * password is valid, then <code>null</code> is returned.
 	 */
-	public static List<PasswordChecker.Result> checkPassword(UserId username, String password) throws IOException {
+	public static List<PasswordChecker.Result> checkPassword(User.Name username, String password) throws IOException {
 		return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
 	}
 
@@ -256,7 +255,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 		return obj;
 	}
 
-	public String getEmail() {
+	public Email getEmail() {
 		return email;
 	}
 
@@ -268,7 +267,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 		return home_phone;
 	}
 
-	public User getMasterUser() throws IOException, SQLException {
+	public com.aoindustries.aoserv.client.master.User getMasterUser() throws IOException, SQLException {
 		return table.getConnector().getMaster().getUser().get(pkey);
 	}
 
@@ -308,12 +307,12 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 		return table.getConnector().getBilling().getTransaction().getTransactions(this);
 	}
 
-	public UserId getUsername_userId() {
+	public User.Name getUsername_userId() {
 		return pkey;
 	}
 
-	public Username getUsername() throws SQLException, IOException {
-		Username usernameObject = table.getConnector().getAccount().getUsername().get(pkey);
+	public User getUsername() throws SQLException, IOException {
+		User usernameObject = table.getConnector().getAccount().getUser().get(pkey);
 		if (usernameObject == null) throw new SQLException("Username not found: " + pkey);
 		return usernameObject;
 	}
@@ -327,7 +326,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public boolean isActiveAccounting() throws IOException, SQLException {
-		User user=getMasterUser();
+		com.aoindustries.aoserv.client.master.User user=getMasterUser();
 		return 
 			user!=null
 			&& user.isActive()
@@ -336,7 +335,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public boolean isActiveBankAccounting() throws IOException, SQLException {
-		User user=getMasterUser();
+		com.aoindustries.aoserv.client.master.User user=getMasterUser();
 		return 
 			user!=null
 			&& user.isActive()
@@ -345,7 +344,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public boolean isActiveDNSAdmin() throws IOException, SQLException {
-		User user=getMasterUser();
+		com.aoindustries.aoserv.client.master.User user=getMasterUser();
 		return 
 			user!=null
 			&& user.isActive()
@@ -354,7 +353,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public boolean isActiveTableInvalidator() throws IOException, SQLException {
-		User user=getMasterUser();
+		com.aoindustries.aoserv.client.master.User user=getMasterUser();
 		return 
 			user!=null
 			&& user.isActive()
@@ -363,7 +362,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	}
 
 	public boolean isActiveWebAdmin() throws IOException, SQLException {
-		User user=getMasterUser();
+		com.aoindustries.aoserv.client.master.User user=getMasterUser();
 		return 
 			user!=null
 			&& user.isActive()
@@ -382,7 +381,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = UserId.valueOf(result.getString(1));
+			pkey = User.Name.valueOf(result.getString(1));
 			password = HashedPassword.valueOf(result.getString(2));
 			name = result.getString(3);
 			title = result.getString(4);
@@ -395,7 +394,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 			home_phone = result.getString(10);
 			cell_phone = result.getString(11);
 			fax = result.getString(12);
-			email = result.getString(13);
+			email = Email.valueOf(result.getString(13));
 			address1 = result.getString(14);
 			address2 = result.getString(15);
 			city = result.getString(16);
@@ -414,7 +413,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey = UserId.valueOf(in.readUTF()).intern();
+			pkey = User.Name.valueOf(in.readUTF()).intern();
 			password=HashedPassword.valueOf(in.readNullUTF());
 			name=in.readUTF();
 			title=in.readNullUTF();
@@ -426,7 +425,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 			home_phone=in.readNullUTF();
 			cell_phone=in.readNullUTF();
 			fax=in.readNullUTF();
-			email=in.readUTF();
+			email=Email.valueOf(in.readUTF());
 			address1=in.readNullUTF();
 			address2=in.readNullUTF();
 			city=in.readNullUTF();
@@ -491,7 +490,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 		String homePhone,
 		String cellPhone,
 		String fax,
-		final String email,
+		final Email email,
 		String address1,
 		String address2,
 		String city,
@@ -535,7 +534,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 					out.writeBoolean(finalHomePhone!=null); if(finalHomePhone!=null) out.writeUTF(finalHomePhone);
 					out.writeBoolean(finalCellPhone!=null); if(finalCellPhone!=null) out.writeUTF(finalCellPhone);
 					out.writeBoolean(finalFax!=null); if(finalFax!=null) out.writeUTF(finalFax);
-					out.writeUTF(email);
+					out.writeUTF(email.toString());
 					out.writeBoolean(finalAddress1!=null); if(finalAddress1!=null) out.writeUTF(finalAddress1);
 					out.writeBoolean(finalAddress2!=null); if(finalAddress2!=null) out.writeUTF(finalAddress2);
 					out.writeBoolean(finalCity!=null); if(finalCity!=null) out.writeUTF(finalCity);
@@ -577,7 +576,7 @@ final public class Administrator extends CachedObjectUserIdKey<Administrator> im
 		out.writeNullUTF(home_phone);
 		out.writeNullUTF(cell_phone);
 		out.writeNullUTF(fax);
-		out.writeUTF(email);
+		out.writeUTF(email.toString());
 		out.writeNullUTF(address1);
 		out.writeNullUTF(address2);
 		out.writeNullUTF(city);

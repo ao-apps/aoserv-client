@@ -26,10 +26,10 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -66,7 +66,7 @@ final public class ContextTable extends CachedTableIntegerKey<Context> {
 		final String className,
 		final boolean cookies,
 		final boolean crossContext,
-		final UnixPath docBase,
+		final PosixPath docBase,
 		final boolean override,
 		final String path,
 		final boolean privileged,
@@ -74,7 +74,7 @@ final public class ContextTable extends CachedTableIntegerKey<Context> {
 		final boolean useNaming,
 		final String wrapperClass,
 		final int debug,
-		final UnixPath workDir,
+		final PosixPath workDir,
 		final boolean serverXmlConfigured
 	) throws IOException, SQLException {
 		return connector.requestResult(true,

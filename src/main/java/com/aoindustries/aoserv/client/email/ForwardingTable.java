@@ -63,7 +63,8 @@ final public class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
 	}
 
 	int addEmailForwarding(Address emailAddressObject, Email destination) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true,
+		return connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.EMAIL_FORWARDING,
 			emailAddressObject.getPkey(),
@@ -104,11 +105,8 @@ final public class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
 
 	Forwarding getEmailForwarding(Address ea, Email destination) throws IOException, SQLException {
 		// Use index first
-		List<Forwarding> cached=getEmailForwardings(ea);
-		int len=cached.size();
-		for (int c=0;c<len;c++) {
-			Forwarding forward=cached.get(c);
-			if(forward.destination.equals(destination.toString())) return forward;
+		for(Forwarding forward : getEmailForwardings(ea)) {
+			if(forward.getDestination().equals(destination)) return forward;
 		}
 		return null;
 	}

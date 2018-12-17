@@ -28,8 +28,6 @@ import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.lang.NullArgumentException;
 import com.aoindustries.util.AoCollections;
@@ -51,14 +49,14 @@ import java.util.Map;
 final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 
 	private boolean hashBuilt = false;
-	private final Map<Tuple2<GroupId,UserId>,List<GroupUser>> hash = new HashMap<>();
+	private final Map<Tuple2<Group.Name,User.Name>,List<GroupUser>> hash = new HashMap<>();
 
 	/**
 	 * The group name of the primary group is hashed on first use for fast
 	 * lookups.
 	 */
 	private boolean primaryHashBuilt = false;
-	private final Map<UserId,GroupId> primaryHash = new HashMap<>();
+	private final Map<User.Name,Group.Name> primaryHash = new HashMap<>();
 
 	GroupUserTable(AOServConnector connector) {
 		super(connector, GroupUser.class);
@@ -92,20 +90,20 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 	}
 
 	public List<GroupUser> getLinuxGroupAccounts(
-		GroupId group,
-		UserId user
+		Group.Name group,
+		User.Name user
 	) throws IOException, SQLException {
 		synchronized(hash) {
 			if(!hashBuilt) {
 				hash.clear();
 				for(GroupUser lga : getRows()) {
-					Tuple2<GroupId,UserId> key = new Tuple2<>(lga.getGroup_name(), lga.getUser_username());
+					Tuple2<Group.Name,User.Name> key = new Tuple2<>(lga.getGroup_name(), lga.getUser_username());
 					List<GroupUser> list = hash.get(key);
 					if(list == null) hash.put(key, list = new ArrayList<>());
 					list.add(lga);
 				}
 				// Make entries unmodifiable
-				for(Map.Entry<Tuple2<GroupId,UserId>,List<GroupUser>> entry : hash.entrySet()) {
+				for(Map.Entry<Tuple2<Group.Name,User.Name>,List<GroupUser>> entry : hash.entrySet()) {
 					entry.setValue(
 						AoCollections.optimalUnmodifiableList(entry.getValue())
 					);
@@ -119,7 +117,7 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 	}
 
 	List<Group> getLinuxGroups(User linuxAccount) throws IOException, SQLException {
-		UserId username = linuxAccount.getUsername_id();
+		User.Name username = linuxAccount.getUsername_id();
 		List<GroupUser> rows = getRows();
 		int len = rows.size();
 		List<Group> matches = new ArrayList<>(GroupUser.MAX_GROUPS);
@@ -145,9 +143,9 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 				for(int c = 0; c < len; c++) {
 					GroupUser lga = cache.get(c);
 					if(lga.isPrimary()) {
-						UserId username = lga.getUser_username();
-						GroupId groupName = lga.getGroup_name();
-						GroupId existing = primaryHash.put(username, groupName);
+						User.Name username = lga.getUser_username();
+						Group.Name groupName = lga.getGroup_name();
+						Group.Name existing = primaryHash.put(username, groupName);
 						if(
 							existing != null
 							&& !existing.equals(groupName)
@@ -165,7 +163,7 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 				}
 				primaryHashBuilt = true;
 			}
-			GroupId groupName = primaryHash.get(account.getUsername_id());
+			Group.Name groupName = primaryHash.get(account.getUsername_id());
 			if(groupName == null) return null;
 			// May be filtered
 			return connector.getLinux().getGroup().get(groupName);
@@ -184,8 +182,8 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 			if(AOSH.checkParamCount(Command.ADD_LINUX_GROUP_ACCOUNT, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().addLinuxGroupAccount(
-						AOSH.parseGroupId(args[1], "group"),
-						AOSH.parseUserId(args[2], "username")
+						AOSH.parseGroupName(args[1], "group"),
+						AOSH.parseLinuxUserName(args[2], "username")
 					)
 				);
 				out.flush();
@@ -194,16 +192,16 @@ final public class GroupUserTable extends CachedTableIntegerKey<GroupUser> {
 		} else if(command.equalsIgnoreCase(Command.REMOVE_LINUX_GROUP_ACCOUNT)) {
 			if(AOSH.checkParamCount(Command.REMOVE_LINUX_GROUP_ACCOUNT, args, 2, err)) {
 				connector.getSimpleAOClient().removeLinuxGroupAccount(
-					AOSH.parseGroupId(args[1], "group"),
-					AOSH.parseUserId(args[2], "username")
+					AOSH.parseGroupName(args[1], "group"),
+					AOSH.parseLinuxUserName(args[2], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT)) {
 			if(AOSH.checkParamCount(Command.SET_PRIMARY_LINUX_GROUP_ACCOUNT, args, 2, err)) {
 				connector.getSimpleAOClient().setPrimaryLinuxGroupAccount(
-					AOSH.parseGroupId(args[1], "group"),
-					AOSH.parseUserId(args[2], "username")
+					AOSH.parseGroupName(args[1], "group"),
+					AOSH.parseLinuxUserName(args[2], "username")
 				);
 			}
 			return true;

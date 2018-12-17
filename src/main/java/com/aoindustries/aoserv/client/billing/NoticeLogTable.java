@@ -29,8 +29,8 @@ import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.net.Email;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -58,9 +58,9 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	}
 
 	public void addNoticeLog(
-		AccountingCode accounting,
+		Account.Name accounting,
 		String billingContact,
-		String emailAddress,
+		Email emailAddress,
 		BigDecimal balance,
 		String type,
 		int transid
@@ -83,7 +83,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	}
 
 	public List<NoticeLog> getNoticeLogs(Account bu) throws IOException, SQLException {
-		return getIndexedRows(NoticeLog.COLUMN_ACCOUNTING, bu.getAccounting());
+		return getIndexedRows(NoticeLog.COLUMN_ACCOUNTING, bu.getName());
 	}
 
 	@Override
@@ -99,7 +99,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 				connector.getSimpleAOClient().addNoticeLog(
 					AOSH.parseAccountingCode(args[1], "business"),
 					args[2],
-					args[3],
+					AOSH.parseEmail(args[3], "email_address"),
 					BigDecimal.valueOf(AOSH.parsePennies(args[4], "balance"), 2),
 					args[5],
 					AOSH.parseInt(args[6], "transid")

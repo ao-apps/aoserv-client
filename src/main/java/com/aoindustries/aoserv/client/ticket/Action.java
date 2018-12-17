@@ -25,15 +25,15 @@ package com.aoindustries.aoserv.client.ticket;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accessor;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -63,26 +63,26 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	static final String COLUMN_PKEY_name = "pkey";
 
 	private int ticket;
-	private UserId administrator;
+	private User.Name administrator;
 	private long time;
 	private String action_type;
-	private AccountingCode old_accounting;
-	private AccountingCode new_accounting;
+	private Account.Name old_accounting;
+	private Account.Name new_accounting;
 	private String old_priority;
 	private String new_priority;
 	private String old_type;
 	private String new_type;
 	private String old_status;
 	private String new_status;
-	private UserId old_assigned_to;
-	private UserId new_assigned_to;
+	private User.Name old_assigned_to;
+	private User.Name new_assigned_to;
 	private int old_category;
 	private int new_category;
 	private boolean oldValueLoaded;
 	private String old_value;
 	private boolean newValueLoaded;
 	private String new_value;
-	private String from_address;
+	private Email from_address;
 	private String summary;
 	private boolean detailsLoaded;
 	private String details;
@@ -264,7 +264,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		return new_value;
 	}
 
-	public String getFromAddress() {
+	public Email getFromAddress() {
 		return from_address;
 	}
 
@@ -353,26 +353,26 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 			int pos = 1;
 			pkey = result.getInt(pos++);
 			ticket = result.getInt(pos++);
-			administrator = UserId.valueOf(result.getString(pos++));
+			administrator = User.Name.valueOf(result.getString(pos++));
 			time = result.getTimestamp(pos++).getTime();
 			action_type = result.getString(pos++);
-			old_accounting = AccountingCode.valueOf(result.getString(pos++));
-			new_accounting = AccountingCode.valueOf(result.getString(pos++));
+			old_accounting = Account.Name.valueOf(result.getString(pos++));
+			new_accounting = Account.Name.valueOf(result.getString(pos++));
 			old_priority = result.getString(pos++);
 			new_priority = result.getString(pos++);
 			old_type = result.getString(pos++);
 			new_type = result.getString(pos++);
 			old_status = result.getString(pos++);
 			new_status = result.getString(pos++);
-			old_assigned_to = UserId.valueOf(result.getString(pos++));
-			new_assigned_to = UserId.valueOf(result.getString(pos++));
+			old_assigned_to = User.Name.valueOf(result.getString(pos++));
+			new_assigned_to = User.Name.valueOf(result.getString(pos++));
 			old_category = result.getInt(pos++);
 			if(result.wasNull()) old_category = -1;
 			new_category = result.getInt(pos++);
 			if(result.wasNull()) new_category = -1;
 			// Loaded only when needed: old_value = result.getString(pos++);
 			// Loaded only when needed: new_value = result.getString(pos++);
-			from_address = result.getString(pos++);
+			from_address = Email.valueOf(result.getString(pos++));
 			summary = result.getString(pos++);
 			// Loaded only when needed: details = result.getString(pos++);
 			// Loaded only when needed: raw_email = result.getString(pos++);
@@ -386,24 +386,24 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		try {
 			pkey = in.readCompressedInt();
 			ticket = in.readCompressedInt();
-			administrator = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			administrator = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			time = in.readLong();
 			action_type = in.readUTF().intern();
-			old_accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
-			new_accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
+			old_accounting = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
+			new_accounting = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
 			old_priority = InternUtils.intern(in.readNullUTF());
 			new_priority = InternUtils.intern(in.readNullUTF());
 			old_type = InternUtils.intern(in.readNullUTF());
 			new_type = InternUtils.intern(in.readNullUTF());
 			old_status = InternUtils.intern(in.readNullUTF());
 			new_status = InternUtils.intern(in.readNullUTF());
-			old_assigned_to = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
-			new_assigned_to = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			old_assigned_to = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
+			new_assigned_to = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			old_category = in.readCompressedInt();
 			new_category = in.readCompressedInt();
 			// Loaded only when needed: old_value
 			// Loaded only when needed: new_value
-			from_address = in.readNullUTF();
+			from_address = Email.valueOf(in.readNullUTF());
 			summary = in.readNullUTF();
 			// Loaded only when needed: details
 			// Loaded only when needed: raw_email
@@ -441,7 +441,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		out.writeCompressedInt(new_category);
 		// Loaded only when needed: old_value
 		// Loaded only when needed: new_value
-		out.writeNullUTF(from_address);
+		out.writeNullUTF(ObjectUtils.toString(from_address));
 		out.writeNullUTF(summary);
 		// Loaded only when needed: details
 		// Loaded only when needed: raw_email

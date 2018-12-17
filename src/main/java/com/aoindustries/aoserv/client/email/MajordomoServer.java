@@ -26,10 +26,10 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -58,10 +58,10 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	/**
 	 * The directory that stores the majordomo servers.
 	 */
-	public static final UnixPath MAJORDOMO_SERVER_DIRECTORY;
+	public static final PosixPath MAJORDOMO_SERVER_DIRECTORY;
 	static {
 		try {
-			MAJORDOMO_SERVER_DIRECTORY = UnixPath.valueOf("/etc/mail/majordomo");
+			MAJORDOMO_SERVER_DIRECTORY = PosixPath.valueOf("/etc/mail/majordomo");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}

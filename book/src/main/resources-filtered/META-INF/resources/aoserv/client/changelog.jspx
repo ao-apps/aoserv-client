@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2018-12-15T22:20:48-0600"
+		dateModified="2018-12-16T06:56:39-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -742,6 +742,20 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						consistency with their representation in the database.  We are choosing to make Java
 						conform to other systems, for consistency across the platform.
 					</li>
+					<li>Moved self-validating type implementations into per-package schemas:
+						<ol>
+							<li>Renamed to match and support master server schema changes in the process.</li>
+							<li>Renamed <code>account.Username</code> to <code>account.User</code></li>
+							<li>Added <code>linux_username</code> to <code>schema.Type</code></li>
+							<li>Changed <code>linux.User.username</code> to <code>linux_username</code> type</li>
+							<li>Changed <code>web.Site.linux_account</code> to <code>linux_username</code> type</li>
+							<li>Changed <code>linux.UserServer.username</code> to <code>linux_username</code> type</li>
+							<li>Changed <code>linux.GroupUser.name</code> to <code>linux_username</code> type</li>
+							<li>Changed <code>ftp.GuestUser.username</code> to <code>linux_username</code> type</li>
+							<li>Changed <code>distribution.management.DistroFile.linux_account</code> to <code>linux_username</code> type</li>
+						</ol>
+					</li>
+					<%-- TODO: Rename schema pki to crypto --%>
 				</ul>
 			</changelog:release>
 		</c:if>

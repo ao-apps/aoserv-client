@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.reseller;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedTableAccountingCodeKey;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.CachedTableAccountNameKey;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.util.tree.Node;
 import com.aoindustries.util.tree.Tree;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ResellerTable extends CachedTableAccountingCodeKey<Reseller> {
+final public class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 
 	ResellerTable(AOServConnector connector) {
 		super(connector, Reseller.class);
@@ -57,7 +57,7 @@ final public class ResellerTable extends CachedTableAccountingCodeKey<Reseller> 
 	 * Gets a <code>Reseller</code> from the database.
 	 */
 	@Override
-	public Reseller get(AccountingCode accounting) throws IOException, SQLException {
+	public Reseller get(Account.Name accounting) throws IOException, SQLException {
 		return getUniqueRow(Reseller.COLUMN_ACCOUNTING, accounting);
 	}
 

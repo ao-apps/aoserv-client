@@ -49,18 +49,10 @@ import com.aoindustries.aoserv.client.net.DeviceId;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.pki.Certificate;
-import com.aoindustries.aoserv.client.postgresql.Version;
+import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.scm.CvsRepository;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.HashedPassword;
-import com.aoindustries.aoserv.client.validator.LinuxId;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
-import com.aoindustries.aoserv.client.validator.PostgresServerName;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
@@ -101,7 +93,7 @@ import java.util.Map;
  */
 final public class Server
 	extends CachedObjectIntegerKey<Server>
-	implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServer>
+	implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxServer>
 {
 
 	static final int COLUMN_SERVER = 0;
@@ -530,7 +522,7 @@ final public class Server
 	}
 
 	public int addCvsRepository(
-		UnixPath path,
+		PosixPath path,
 		UserServer lsa,
 		GroupServer lsg,
 		long mode
@@ -654,7 +646,7 @@ final public class Server
 	 * installation.  The master will check that the requested group matches
 	 * expected settings.
 	 */
-	public int addSystemGroup(GroupId groupName, int gid) throws IOException, SQLException {
+	public int addSystemGroup(Group.Name groupName, int gid) throws IOException, SQLException {
 		return table.getConnector().getLinux().getGroupServer().addSystemGroup(
 			this,
 			groupName,
@@ -669,15 +661,15 @@ final public class Server
 	 * expected settings.
 	 */
 	public int addSystemUser(
-		UserId username,
+		User.Name username,
 		int uid,
 		int gid,
-		Gecos fullName,
-		Gecos officeLocation,
-		Gecos officePhone,
-		Gecos homePhone,
-		UnixPath home,
-		UnixPath shell
+		User.Gecos fullName,
+		User.Gecos officeLocation,
+		User.Gecos officePhone,
+		User.Gecos homePhone,
+		PosixPath home,
+		PosixPath shell
 	) throws IOException, SQLException {
 		return table.getConnector().getLinux().getUserServer().addSystemUser(
 			this,
@@ -709,7 +701,7 @@ final public class Server
 		return table.getConnector().getEmail().getBlackholeAddress().getBlackholeEmailAddresses(this);
 	}
 
-	public CvsRepository getCvsRepository(UnixPath path) throws IOException, SQLException {
+	public CvsRepository getCvsRepository(PosixPath path) throws IOException, SQLException {
 		return table.getConnector().getScm().getCvsRepository().getCvsRepository(this, path);
 	}
 
@@ -755,7 +747,7 @@ final public class Server
 	/**
 	 * Rename to getEmailList when all uses updated.
 	 */
-	public com.aoindustries.aoserv.client.email.List getEmailList(UnixPath path) throws IOException, SQLException {
+	public com.aoindustries.aoserv.client.email.List getEmailList(PosixPath path) throws IOException, SQLException {
 		return table.getConnector().getEmail().getList().getEmailList(this, path);
 	}
 
@@ -826,7 +818,7 @@ final public class Server
 		return lg;
 	}
 
-	public UserServer getLinuxServerAccount(UserId username) throws IOException, SQLException {
+	public UserServer getLinuxServerAccount(User.Name username) throws IOException, SQLException {
 		return table.getConnector().getLinux().getUserServer().getLinuxServerAccount(this, username);
 	}
 
@@ -842,7 +834,7 @@ final public class Server
 		return table.getConnector().getLinux().getGroupServer().getLinuxServerGroup(this, gid);
 	}
 
-	public GroupServer getLinuxServerGroup(GroupId groupName) throws IOException, SQLException {
+	public GroupServer getLinuxServerGroup(Group.Name groupName) throws IOException, SQLException {
 		return table.getConnector().getLinux().getGroupServer().getLinuxServerGroup(this, groupName);
 	}
 
@@ -919,7 +911,7 @@ final public class Server
 		}
 	}
 
-	public com.aoindustries.aoserv.client.mysql.Server getMySQLServer(MySQLServerName name) throws IOException, SQLException {
+	public com.aoindustries.aoserv.client.mysql.Server getMySQLServer(com.aoindustries.aoserv.client.mysql.Server.Name name) throws IOException, SQLException {
 		return table.getConnector().getMysql().getServer().getMySQLServer(name, this);
 	}
 
@@ -946,7 +938,7 @@ final public class Server
 		return table.getConnector().getLinux().getServer().getNestedAOServers(this);
 	}
 
-	public com.aoindustries.aoserv.client.postgresql.Server getPostgresServer(PostgresServerName name) throws IOException, SQLException {
+	public com.aoindustries.aoserv.client.postgresql.Server getPostgresServer(com.aoindustries.aoserv.client.postgresql.Server.Name name) throws IOException, SQLException {
 		return table.getConnector().getPostgresql().getServer().getPostgresServer(name, this);
 	}
 
@@ -957,7 +949,7 @@ final public class Server
 	public com.aoindustries.aoserv.client.postgresql.Server getPreferredPostgresServer() throws SQLException, IOException {
 		// Look for the most-preferred version that has an instance on the server
 		List<com.aoindustries.aoserv.client.postgresql.Server> pss=getPostgresServers();
-		String[] preferredMinorVersions=Version.getPreferredMinorVersions();
+		String[] preferredMinorVersions = com.aoindustries.aoserv.client.postgresql.Version.getPreferredMinorVersions();
 		for(String version : preferredMinorVersions) {
 			for (com.aoindustries.aoserv.client.postgresql.Server ps : pss) {
 				if(ps.getVersion().getMinorVersion().equals(version)) {
@@ -1008,15 +1000,15 @@ final public class Server
 		return table.getConnector().getEmail().getDomain().isEmailDomainAvailable(this, domain);
 	}
 
-	public boolean isHomeUsed(UnixPath directory) throws IOException, SQLException {
+	public boolean isHomeUsed(PosixPath directory) throws IOException, SQLException {
 		return table.getConnector().getLinux().getUserServer().isHomeUsed(this, directory);
 	}
 
-	public boolean isMySQLServerNameAvailable(MySQLServerName name) throws IOException, SQLException {
+	public boolean isMySQLServerNameAvailable(com.aoindustries.aoserv.client.mysql.Server.Name name) throws IOException, SQLException {
 		return table.getConnector().getMysql().getServer().isMySQLServerNameAvailable(name, this);
 	}
 
-	public boolean isPostgresServerNameAvailable(PostgresServerName name) throws IOException, SQLException {
+	public boolean isPostgresServerNameAvailable(com.aoindustries.aoserv.client.postgresql.Server.Name name) throws IOException, SQLException {
 		return table.getConnector().getPostgresql().getServer().isPostgresServerNameAvailable(name, this);
 	}
 
@@ -2695,8 +2687,8 @@ final public class Server
 
 	// <editor-fold defaultstate="collapsed" desc="DTO">
 	@Override
-	public com.aoindustries.aoserv.client.dto.AOServer getDto() {
-		return new com.aoindustries.aoserv.client.dto.AOServer(
+	public com.aoindustries.aoserv.client.dto.LinuxServer getDto() {
+		return new com.aoindustries.aoserv.client.dto.LinuxServer(
 			getPkey(),
 			getDto(hostname),
 			daemon_bind==-1 ? null : daemon_bind,

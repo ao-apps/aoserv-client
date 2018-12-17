@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client.password;
 
+import com.aoindustries.aoserv.client.account.User;
 import static com.aoindustries.aoserv.client.password.ApplicationResources.accessor;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.util.EncodingUtils;
 import com.aoindustries.util.zip.CorrectedGZIPInputStream;
@@ -111,7 +111,7 @@ final public class PasswordChecker {
 		STRICT
 	}
 
-	public static List<Result> checkPassword(UserId username, String password, PasswordStrength strength) throws IOException {
+	public static List<Result> checkPassword(User.Name username, String password, PasswordStrength strength) throws IOException {
 		if(strength==null) throw new IllegalArgumentException("strength==null");
 		List<Result> results = getAllGoodResults();
 		int passwordLen = password.length();

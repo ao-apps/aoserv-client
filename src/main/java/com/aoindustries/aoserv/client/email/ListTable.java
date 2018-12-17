@@ -29,12 +29,11 @@ import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -62,7 +61,7 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 	}
 
 	public int addEmailList(
-		UnixPath path,
+		PosixPath path,
 		UserServer lsa,
 		GroupServer lsg
 	) throws IllegalArgumentException, IOException, SQLException {
@@ -91,7 +90,7 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 	}
 
 	public java.util.List<List> getEmailLists(Account business) throws IOException, SQLException {
-		AccountingCode accounting=business.getAccounting();
+		Account.Name accounting=business.getName();
 		java.util.List<List> cached = getRows();
 		int len = cached.size();
 		java.util.List<List> matches=new ArrayList<>(len);
@@ -102,7 +101,7 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 				.getLinuxServerGroup()
 				.getLinuxGroup()
 				.getPackage()
-				.getBusiness_accounting()
+				.getAccount_name()
 				.equals(accounting)
 			) matches.add(list);
 		}
@@ -110,7 +109,7 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 	}
 
 	public java.util.List<List> getEmailLists(Package pack) throws IOException, SQLException {
-		AccountingCode packName=pack.getName();
+		Account.Name packName=pack.getName();
 
 		java.util.List<List> cached=getRows();
 		int size=cached.size();
@@ -126,7 +125,7 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 		return getIndexedRows(List.COLUMN_LINUX_SERVER_ACCOUNT, lsa.getPkey());
 	}
 
-	public List getEmailList(Server ao, UnixPath path) throws IOException, SQLException {
+	public List getEmailList(Server ao, PosixPath path) throws IOException, SQLException {
 		int aoPKey=ao.getPkey();
 		java.util.List<List> cached=getRows();
 		int size=cached.size();
@@ -151,8 +150,8 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 					connector.getSimpleAOClient().addEmailList(
 						args[1],
 						AOSH.parseUnixPath(args[2], "path"),
-						AOSH.parseUserId(args[3], "username"),
-						AOSH.parseGroupId(args[4], "group")
+						AOSH.parseLinuxUserName(args[3], "username"),
+						AOSH.parseGroupName(args[4], "group")
 					)
 				);
 				out.flush();

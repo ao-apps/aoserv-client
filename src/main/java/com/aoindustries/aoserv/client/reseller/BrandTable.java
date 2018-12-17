@@ -23,10 +23,9 @@
 package com.aoindustries.aoserv.client.reseller;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedTableAccountingCodeKey;
 import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.CachedTableAccountNameKey;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.util.tree.Node;
 import com.aoindustries.util.tree.Tree;
 import java.io.IOException;
@@ -40,7 +39,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class BrandTable extends CachedTableAccountingCodeKey<Brand> {
+final public class BrandTable extends CachedTableAccountNameKey<Brand> {
 
 	BrandTable(AOServConnector connector) {
 		super(connector, Brand.class);
@@ -58,7 +57,7 @@ final public class BrandTable extends CachedTableAccountingCodeKey<Brand> {
 	 * Gets a <code>Brand</code> from the database.
 	 */
 	@Override
-	public Brand get(AccountingCode accounting) throws IOException, SQLException {
+	public Brand get(Account.Name accounting) throws IOException, SQLException {
 		return getUniqueRow(Brand.COLUMN_ACCOUNTING, accounting);
 	}
 
@@ -66,7 +65,7 @@ final public class BrandTable extends CachedTableAccountingCodeKey<Brand> {
 	 * Gets a <code>Brand</code> given its business.
 	 */
 	public Brand getBrand(Account business) throws IOException, SQLException {
-		return getUniqueRow(Brand.COLUMN_ACCOUNTING, business.getAccounting());
+		return getUniqueRow(Brand.COLUMN_ACCOUNTING, business.getName());
 	}
 
 	@Override

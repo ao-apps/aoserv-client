@@ -24,9 +24,9 @@ package com.aoindustries.aoserv.client.web.tomcat;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -69,7 +69,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 		String className,
 		boolean cookies,
 		boolean crossContext,
-		UnixPath docBase,
+		PosixPath docBase,
 		boolean override,
 		String path,
 		boolean privileged,
@@ -77,7 +77,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 		boolean useNaming,
 		String wrapperClass,
 		int debug,
-		UnixPath workDir,
+		PosixPath workDir,
 		boolean serverXmlConfigured
 	) throws IOException, SQLException {
 		return table.getConnector().getWeb_tomcat().getContext().addHttpdTomcatContext(

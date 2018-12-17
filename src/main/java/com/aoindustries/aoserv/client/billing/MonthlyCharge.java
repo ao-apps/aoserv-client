@@ -25,10 +25,9 @@ package com.aoindustries.aoserv.client.billing;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -59,14 +58,14 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	static final String COLUMN_TYPE_name = "type";
 	static final String COLUMN_CREATED_name = "created";
 
-	private AccountingCode accounting;
-	AccountingCode packageName;
+	private Account.Name accounting;
+	Account.Name packageName;
 	private String type;
 	private String description;
 	private int quantity;
 	private int rate;
 	private long created;
-	private UserId created_by;
+	private User.Name created_by;
 	private boolean active;
 
 	public MonthlyCharge() {
@@ -84,7 +83,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	) {
 		setTable(table);
 		this.pkey=-1;
-		this.accounting = business.getAccounting();
+		this.accounting = business.getName();
 		this.packageName = packageObject.getName();
 		this.type = typeObject.getName();
 		this.description=description;
@@ -117,7 +116,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator createdByObject = table.getConnector().getAccount().getUsername().get(created_by).getBusinessAdministrator();
+		Administrator createdByObject = table.getConnector().getAccount().getAdministrator().get(created_by);
 		if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
 		return createdByObject;
 	}
@@ -170,14 +169,14 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			accounting = AccountingCode.valueOf(result.getString(2));
-			packageName = AccountingCode.valueOf(result.getString(3));
+			accounting = Account.Name.valueOf(result.getString(2));
+			packageName = Account.Name.valueOf(result.getString(3));
 			type = result.getString(4);
 			description = result.getString(5);
 			quantity = SQLUtility.getMillis(result.getString(6));
 			rate = SQLUtility.getPennies(result.getString(7));
 			created = result.getTimestamp(8).getTime();
-			created_by = UserId.valueOf(result.getString(9));
+			created_by = User.Name.valueOf(result.getString(9));
 			active = result.getBoolean(10);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -192,14 +191,14 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			accounting=AccountingCode.valueOf(in.readUTF()).intern();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			accounting=Account.Name.valueOf(in.readUTF()).intern();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
 			type=in.readUTF().intern();
 			description=in.readNullUTF();
 			quantity=in.readCompressedInt();
 			rate=in.readCompressedInt();
 			created=in.readLong();
-			created_by = UserId.valueOf(in.readUTF()).intern();
+			created_by = User.Name.valueOf(in.readUTF()).intern();
 			active=in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);

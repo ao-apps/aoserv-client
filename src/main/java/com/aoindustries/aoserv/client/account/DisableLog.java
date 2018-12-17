@@ -25,8 +25,6 @@ package com.aoindustries.aoserv.client.account;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -48,8 +46,8 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	static final String COLUMN_PKEY_name = "pkey";
 
 	private long time;
-	private AccountingCode accounting;
-	private UserId disabled_by;
+	private Account.Name accounting;
+	private User.Name disabled_by;
 	private String disable_reason;
 
 	/**
@@ -93,7 +91,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		return new Timestamp(time);
 	}
 
-	public UserId getDisabledByUsername() {
+	public User.Name getDisabledByUsername() {
 		return disabled_by;
 	}
 
@@ -116,8 +114,8 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		try {
 			pkey=result.getInt(1);
 			time=result.getTimestamp(2).getTime();
-			accounting=AccountingCode.valueOf(result.getString(3));
-			disabled_by = UserId.valueOf(result.getString(4));
+			accounting=Account.Name.valueOf(result.getString(3));
+			disabled_by = User.Name.valueOf(result.getString(4));
 			disable_reason=result.getString(5);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -129,8 +127,8 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		try {
 			pkey=in.readCompressedInt();
 			time=in.readLong();
-			accounting=AccountingCode.valueOf(in.readUTF()).intern();
-			disabled_by = UserId.valueOf(in.readUTF()).intern();
+			accounting=Account.Name.valueOf(in.readUTF()).intern();
+			disabled_by = User.Name.valueOf(in.readUTF()).intern();
 			disable_reason=in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);

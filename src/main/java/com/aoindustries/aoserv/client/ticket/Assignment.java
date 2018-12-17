@@ -23,12 +23,12 @@
 package com.aoindustries.aoserv.client.ticket;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.reseller.Reseller;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -55,8 +55,8 @@ final public class Assignment extends CachedObjectIntegerKey<Assignment> {
 	static final String COLUMN_ADMINISTRATOR_name = "administrator";
 
 	private int ticket;
-	private AccountingCode reseller;
-	private UserId administrator;
+	private Account.Name reseller;
+	private User.Name administrator;
 
 	@Override
 	protected Object getColumnImpl(int i) {
@@ -100,8 +100,8 @@ final public class Assignment extends CachedObjectIntegerKey<Assignment> {
 		try {
 			pkey = result.getInt(1);
 			ticket = result.getInt(2);
-			reseller = AccountingCode.valueOf(result.getString(3));
-			administrator = UserId.valueOf(result.getString(4));
+			reseller = Account.Name.valueOf(result.getString(3));
+			administrator = User.Name.valueOf(result.getString(4));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -112,8 +112,8 @@ final public class Assignment extends CachedObjectIntegerKey<Assignment> {
 		try {
 			pkey = in.readCompressedInt();
 			ticket = in.readCompressedInt();
-			reseller = AccountingCode.valueOf(in.readUTF()).intern();
-			administrator = UserId.valueOf(in.readUTF()).intern();
+			reseller = Account.Name.valueOf(in.readUTF()).intern();
+			administrator = User.Name.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}

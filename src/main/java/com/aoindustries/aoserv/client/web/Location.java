@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client.web;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -38,8 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * TODO: Since this now has a "handler", should this become "HttpdSiteLocation"
- * with the authentication aspect optional?
+ * TODO: Make the authentication aspect optional since this now has an optional handler.
  *
  * @see  Site
  *
@@ -91,13 +90,13 @@ final public class Location extends CachedObjectIntegerKey<Location> implements 
 		return validateNonQuoteAscii(authName, "AuthName");
 	}
 
-	public static String validateAuthGroupFile(UnixPath authGroupFile) {
+	public static String validateAuthGroupFile(PosixPath authGroupFile) {
 		// May be empty
 		if(authGroupFile == null) return null;
 		return validateNonQuoteAscii(authGroupFile.toString(), "AuthGroupFile");
 	}
 
-	public static String validateAuthUserFile(UnixPath authUserFile) {
+	public static String validateAuthUserFile(PosixPath authUserFile) {
 		// May be empty
 		if(authUserFile == null) return null;
 		return validateNonQuoteAscii(authUserFile.toString(), "AuthUserFile");
@@ -111,8 +110,8 @@ final public class Location extends CachedObjectIntegerKey<Location> implements 
 	private String path;
 	private boolean is_regular_expression;
 	private String auth_name;
-	private UnixPath auth_group_file;
-	private UnixPath auth_user_file;
+	private PosixPath auth_group_file;
+	private PosixPath auth_user_file;
 	private String require;
 	private String handler;
 
@@ -155,11 +154,11 @@ final public class Location extends CachedObjectIntegerKey<Location> implements 
 		return auth_name;
 	}
 
-	public UnixPath getAuthGroupFile() {
+	public PosixPath getAuthGroupFile() {
 		return auth_group_file;
 	}
 
-	public UnixPath getAuthUserFile() {
+	public PosixPath getAuthUserFile() {
 		return auth_user_file;
 	}
 
@@ -191,11 +190,11 @@ final public class Location extends CachedObjectIntegerKey<Location> implements 
 			auth_name=result.getString(5);
 			{
 				String s = result.getString(6);
-				auth_group_file = s.isEmpty() ? null : UnixPath.valueOf(s);
+				auth_group_file = s.isEmpty() ? null : PosixPath.valueOf(s);
 			}
 			{
 				String s = result.getString(7);
-				auth_user_file = s.isEmpty() ? null : UnixPath.valueOf(s);
+				auth_user_file = s.isEmpty() ? null : PosixPath.valueOf(s);
 			}
 			require=result.getString(8);
 			handler = result.getString(9);
@@ -214,11 +213,11 @@ final public class Location extends CachedObjectIntegerKey<Location> implements 
 			auth_name=in.readCompressedUTF();
 			{
 				String s = in.readCompressedUTF();
-				auth_group_file = s.isEmpty() ? null : UnixPath.valueOf(s);
+				auth_group_file = s.isEmpty() ? null : PosixPath.valueOf(s);
 			}
 			{
 				String s = in.readCompressedUTF();
-				auth_user_file = s.isEmpty() ? null : UnixPath.valueOf(s);
+				auth_user_file = s.isEmpty() ? null : PosixPath.valueOf(s);
 			}
 			require=in.readCompressedUTF().intern();
 			handler = in.readBoolean() ? in.readCompressedUTF().intern() : null;
@@ -236,8 +235,8 @@ final public class Location extends CachedObjectIntegerKey<Location> implements 
 		String path,
 		boolean isRegularExpression,
 		String authName,
-		UnixPath authGroupFile,
-		UnixPath authUserFile,
+		PosixPath authGroupFile,
+		PosixPath authUserFile,
 		String require,
 		String handler
 	) throws IOException, SQLException {

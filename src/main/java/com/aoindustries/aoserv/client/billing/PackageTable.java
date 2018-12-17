@@ -29,7 +29,6 @@ import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -57,7 +56,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	}
 
 	public int addPackage(
-		AccountingCode name,
+		Account.Name name,
 		Account business,
 		PackageDefinition packageDefinition
 	) throws IOException, SQLException {
@@ -65,7 +64,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.PACKAGES,
 			name,
-			business.getAccounting(),
+			business.getName(),
 			packageDefinition.getPkey()
 		);
 	}
@@ -80,7 +79,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	public Package get(Object pkey) throws IOException, SQLException {
 		if(pkey == null) return null;
 		if(pkey instanceof Integer) return get(((Integer)pkey).intValue());
-		if(pkey instanceof AccountingCode) return get((AccountingCode)pkey);
+		if(pkey instanceof Account.Name) return get((Account.Name)pkey);
 		throw new IllegalArgumentException("pkey must be either an Integer or an AccountingCode");
 	}
 
@@ -95,20 +94,20 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 	/**
 	 * @see  #get(java.lang.Object)
 	 */
-	public Package get(AccountingCode name) throws IOException, SQLException {
+	public Package get(Account.Name name) throws IOException, SQLException {
 		return getUniqueRow(Package.COLUMN_NAME, name);
 	}
 
-	public AccountingCode generatePackageName(AccountingCode template) throws IOException, SQLException {
+	public Account.Name generatePackageName(Account.Name template) throws IOException, SQLException {
 		try {
-			return AccountingCode.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GENERATE_PACKAGE_NAME, template));
+			return Account.Name.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GENERATE_PACKAGE_NAME, template));
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
 	}
 
 	public List<Package> getPackages(Account business) throws IOException, SQLException {
-		return getIndexedRows(Package.COLUMN_ACCOUNTING, business.getAccounting());
+		return getIndexedRows(Package.COLUMN_ACCOUNTING, business.getName());
 	}
 
 	List<Package> getPackages(PackageDefinition pd) throws IOException, SQLException {
@@ -188,7 +187,7 @@ final public class PackageTable extends CachedTableIntegerKey<Package> {
 		} else return false;
 	}
 
-	public boolean isPackageNameAvailable(AccountingCode packageName) throws SQLException, IOException {
+	public boolean isPackageNameAvailable(Account.Name packageName) throws SQLException, IOException {
 		return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_PACKAGE_NAME_AVAILABLE, packageName);
 	}
 }

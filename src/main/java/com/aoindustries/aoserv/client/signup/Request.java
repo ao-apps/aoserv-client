@@ -23,17 +23,18 @@
 package com.aoindustries.aoserv.client.signup;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
@@ -58,7 +59,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	static final String COLUMN_BRAND_name = "brand";
 	static final String COLUMN_TIME_name = "time";
 
-	private AccountingCode brand;
+	private Account.Name brand;
 	private long time;
 	private InetAddress ip_address;
 	private int package_definition;
@@ -77,22 +78,22 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	private String ba_cell_phone;
 	private String ba_home_phone;
 	private String ba_fax;
-	private String ba_email;
+	private Email ba_email;
 	private String ba_address1;
 	private String ba_address2;
 	private String ba_city;
 	private String ba_state;
 	private String ba_country;
 	private String ba_zip;
-	private UserId ba_username;
+	private User.Name ba_username;
 	private String billing_contact;
-	private String billing_email;
+	private Email billing_email;
 	private boolean billing_use_monthly;
 	private boolean billing_pay_one_year;
 	private String encrypted_data;
 	private int encryption_from;
 	private int encryption_recipient;
-	private UserId completed_by;
+	private User.Name completed_by;
 	private long completed_time;
 
 	// These are not pulled from the database, but are decrypted from encrypted_data by GPG
@@ -161,7 +162,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		try {
 			int pos = 1;
 			pkey = result.getInt(pos++);
-			brand = AccountingCode.valueOf(result.getString(pos++));
+			brand = Account.Name.valueOf(result.getString(pos++));
 			time = result.getTimestamp(pos++).getTime();
 			ip_address=InetAddress.valueOf(result.getString(pos++));
 			package_definition=result.getInt(pos++);
@@ -180,22 +181,22 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 			ba_cell_phone=result.getString(pos++);
 			ba_home_phone=result.getString(pos++);
 			ba_fax=result.getString(pos++);
-			ba_email=result.getString(pos++);
+			ba_email=Email.valueOf(result.getString(pos++));
 			ba_address1=result.getString(pos++);
 			ba_address2=result.getString(pos++);
 			ba_city=result.getString(pos++);
 			ba_state=result.getString(pos++);
 			ba_country=result.getString(pos++);
 			ba_zip=result.getString(pos++);
-			ba_username = UserId.valueOf(result.getString(pos++));
+			ba_username = User.Name.valueOf(result.getString(pos++));
 			billing_contact=result.getString(pos++);
-			billing_email=result.getString(pos++);
+			billing_email=Email.valueOf(result.getString(pos++));
 			billing_use_monthly=result.getBoolean(pos++);
 			billing_pay_one_year=result.getBoolean(pos++);
 			encrypted_data=result.getString(pos++);
 			encryption_from=result.getInt(pos++);
 			encryption_recipient=result.getInt(pos++);
-			completed_by = UserId.valueOf(result.getString(pos++));
+			completed_by = User.Name.valueOf(result.getString(pos++));
 			Timestamp T = result.getTimestamp(pos++);
 			completed_time = T==null ? -1 : T.getTime();
 		} catch(ValidationException e) {
@@ -207,7 +208,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			brand=AccountingCode.valueOf(in.readUTF()).intern();
+			brand=Account.Name.valueOf(in.readUTF()).intern();
 			time=in.readLong();
 			ip_address=InetAddress.valueOf(in.readUTF());
 			package_definition=in.readCompressedInt();
@@ -226,22 +227,22 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 			ba_cell_phone=in.readNullUTF();
 			ba_home_phone=in.readNullUTF();
 			ba_fax=in.readNullUTF();
-			ba_email=in.readUTF();
+			ba_email=Email.valueOf(in.readUTF());
 			ba_address1=in.readNullUTF();
 			ba_address2=in.readNullUTF();
 			ba_city=in.readNullUTF();
 			ba_state=InternUtils.intern(in.readNullUTF());
 			ba_country=InternUtils.intern(in.readNullUTF());
 			ba_zip=in.readNullUTF();
-			ba_username = UserId.valueOf(in.readUTF()).intern();
+			ba_username = User.Name.valueOf(in.readUTF()).intern();
 			billing_contact=in.readUTF();
-			billing_email=in.readUTF();
+			billing_email=Email.valueOf(in.readUTF());
 			billing_use_monthly=in.readBoolean();
 			billing_pay_one_year=in.readBoolean();
 			encrypted_data=in.readUTF();
 			encryption_from=in.readCompressedInt();
 			encryption_recipient=in.readCompressedInt();
-			completed_by = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			completed_by = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			completed_time=in.readLong();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -270,7 +271,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		out.writeNullUTF(ba_cell_phone);
 		out.writeNullUTF(ba_home_phone);
 		out.writeNullUTF(ba_fax);
-		out.writeUTF(ba_email);
+		out.writeUTF(ba_email.toString());
 		out.writeNullUTF(ba_address1);
 		out.writeNullUTF(ba_address2);
 		out.writeNullUTF(ba_city);
@@ -279,7 +280,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		out.writeNullUTF(ba_zip);
 		out.writeUTF(ba_username.toString());
 		out.writeUTF(billing_contact);
-		out.writeUTF(billing_email);
+		out.writeUTF(billing_email.toString());
 		out.writeBoolean(billing_use_monthly);
 		out.writeBoolean(billing_pay_one_year);
 		out.writeUTF(encrypted_data);
@@ -369,7 +370,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return ba_fax;
 	}
 
-	public String getBaEmail() {
+	public Email getBaEmail() {
 		return ba_email;
 	}
 
@@ -397,7 +398,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return ba_zip;
 	}
 
-	public UserId getBaUsername() {
+	public User.Name getBaUsername() {
 		return ba_username;
 	}
 
@@ -405,7 +406,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return billing_contact;
 	}
 
-	public String getBillingEmail() {
+	public Email getBillingEmail() {
 		return billing_email;
 	}
 

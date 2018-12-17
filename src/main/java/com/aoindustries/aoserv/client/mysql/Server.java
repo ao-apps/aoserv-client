@@ -24,23 +24,30 @@ package com.aoindustries.aoserv.client.mysql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.backup.MysqlReplication;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
+import com.aoindustries.aoserv.client.linux.PosixPath;
+import static com.aoindustries.aoserv.client.mysql.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Port;
 import com.aoindustries.util.AoCollections;
+import com.aoindustries.util.Internable;
+import com.aoindustries.validation.InvalidResult;
+import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectInputValidation;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,6 +56,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A <code>MySQLServer</code> corresponds to a unique MySQL install
@@ -62,6 +71,159 @@ import java.util.Set;
  * @author  AO Industries, Inc.
  */
 final public class Server extends CachedObjectIntegerKey<Server> {
+
+	/**
+	 * Represents a name that may be used for a MySQL installation.  Names must:
+	 * <ul>
+	 *   <li>Be non-null</li>
+	 *   <li>Be non-empty</li>
+	 *   <li>Be between 1 and 255 characters</li>
+	 *   <li>Must start with <code>[a-z]</code> or <code>[0-9]</code></li>
+	 *   <li>The rest of the characters may contain [a-z], [0-9], period (.), hyphen (-), and underscore (_)</li>
+	 * </ul>
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	final static public class Name implements
+		Comparable<Name>,
+		Serializable,
+		ObjectInputValidation,
+		DtoFactory<com.aoindustries.aoserv.client.dto.MySQLServerName>,
+		Internable<Name>
+	{
+
+		private static final long serialVersionUID = 6148467549389988813L;
+
+		public static final int MAX_LENGTH = 255;
+
+		/**
+		 * Validates a MySQL server name.
+		 */
+		public static ValidationResult validate(String name) {
+			if(name==null) return new InvalidResult(accessor, "Server.Name.validate.isNull");
+			int len = name.length();
+			if(len==0) return new InvalidResult(accessor, "Server.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(accessor, "Server.Name.validate.tooLong", MAX_LENGTH, len);
+
+			// The first character must be [a-z] or [0-9]
+			char ch = name.charAt(0);
+			if(
+				(ch < 'a' || ch > 'z')
+				&& (ch<'0' || ch>'9')
+			) return new InvalidResult(accessor, "Server.Name.validate.startAtoZor0to9");
+
+			// The rest may have additional characters
+			for (int c = 1; c < len; c++) {
+				ch = name.charAt(c);
+				if (
+					(ch<'a' || ch>'z')
+					&& (ch<'0' || ch>'9')
+					&& ch!='.'
+					&& ch!='-'
+					&& ch!='_'
+				) return new InvalidResult(accessor, "Server.Name.validate.illegalCharacter");
+			}
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param name  when {@code null}, returns {@code null}
+		 */
+		public static Name valueOf(String name) throws ValidationException {
+			if(name == null) return null;
+			//Name existing = interned.get(name);
+			//return existing!=null ? existing : new Name(name);
+			return new Name(name, true);
+		}
+
+		final private String name;
+
+		private Name(String name, boolean validate) throws ValidationException {
+			this.name = name;
+			if(validate) validate();
+		}
+
+		/**
+		 * @param  name  Does not validate, should only be used with a known valid value.
+		 */
+		private Name(String name) {
+			ValidationResult result;
+			assert (result = validate(name)).isValid() : result.toString();
+			this.name = name;
+		}
+
+		private void validate() throws ValidationException {
+			ValidationResult result = validate(name);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		/**
+		 * Perform same validation as constructor on readObject.
+		 */
+		private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+			ois.defaultReadObject();
+			validateObject();
+		}
+
+		@Override
+		public void validateObject() throws InvalidObjectException {
+			try {
+				validate();
+			} catch(ValidationException err) {
+				InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+				newErr.initCause(err);
+				throw newErr;
+			}
+		}
+
+		@Override
+		public boolean equals(Object O) {
+			return
+				O!=null
+				&& O instanceof Name
+				&& name.equals(((Name)O).name)
+			;
+		}
+
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+		}
+
+		@Override
+		public int compareTo(Name other) {
+			return this==other ? 0 : name.compareTo(other.name);
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		/**
+		 * Interns this name much in the same fashion as <code>String.intern()</code>.
+		 *
+		 * @see  String#intern()
+		 */
+		@Override
+		public Name intern() {
+			Name existing = interned.get(name);
+			if(existing==null) {
+				String internedName = name.intern();
+				Name addMe = (name == internedName) ? this : new Name(internedName);
+				existing = interned.putIfAbsent(internedName, addMe);
+				if(existing==null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.MySQLServerName getDto() {
+			return new com.aoindustries.aoserv.client.dto.MySQLServerName(name);
+		}
+	}
 
 	// <editor-fold defaultstate="collapsed" desc="Constants">
 	/**
@@ -92,10 +254,10 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	/**
 	 * The directory that contains the MySQL data files.
 	 */
-	public static final UnixPath DATA_BASE_DIR;
+	public static final PosixPath DATA_BASE_DIR;
 	static {
 		try {
-			DATA_BASE_DIR = UnixPath.valueOf("/var/lib/mysql");
+			DATA_BASE_DIR = PosixPath.valueOf("/var/lib/mysql");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -118,6 +280,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		)
 	);
 
+	// TODO: Move to top-level class in schema, add to SQL implementation
 	public enum ReservedWord {
 		ACTION,
 		ADD,
@@ -383,14 +546,14 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	 * @deprecated  Please use {@link MySQLServerName#MAX_LENGTH} instead.
 	 */
 	@Deprecated
-	public static final int MAX_SERVER_NAME_LENGTH = MySQLServerName.MAX_LENGTH;
+	public static final int MAX_SERVER_NAME_LENGTH = Name.MAX_LENGTH;
 
-	private MySQLServerName name;
+	private Name name;
 	private int ao_server;
 	private int version;
 	private int max_connections;
 	// Protocol conversion
-	private AccountingCode packageName;
+	private Account.Name packageName;
 
 	@Override
 	protected Object getColumnImpl(int i) {
@@ -414,7 +577,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		return nb;
 	}
 
-	public MySQLServerName getName() {
+	public Name getName() {
 		return name;
 	}
 
@@ -449,12 +612,12 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		try {
 			int pos = 1;
 			pkey = result.getInt(pos++);
-			name = MySQLServerName.valueOf(result.getString(pos++));
+			name = Name.valueOf(result.getString(pos++));
 			ao_server = result.getInt(pos++);
 			version = result.getInt(pos++);
 			max_connections = result.getInt(pos++);
 			// Protocol conversion
-			packageName = AccountingCode.valueOf(result.getString(pos++));
+			packageName = Account.Name.valueOf(result.getString(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -464,7 +627,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			name = MySQLServerName.valueOf(in.readUTF()).intern();
+			name = Server.Name.valueOf(in.readUTF()).intern();
 			ao_server = in.readCompressedInt();
 			version = in.readCompressedInt();
 			max_connections = in.readCompressedInt();
@@ -487,7 +650,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	}
 
 	public int addMySQLDatabase(
-		MySQLDatabaseName name,
+		Database.Name name,
 		Package pack
 	) throws IOException, SQLException {
 		return table.getConnector().getMysql().getDatabase().addMySQLDatabase(
@@ -497,9 +660,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		);
 	}
 
-	public UnixPath getDataDirectory() {
+	public PosixPath getDataDirectory() {
 		try {
-			return UnixPath.valueOf(DATA_BASE_DIR.toString() + '/' + name.toString());
+			return PosixPath.valueOf(DATA_BASE_DIR.toString() + '/' + name.toString());
 		} catch(ValidationException e) {
 			AssertionError ae = new AssertionError();
 			ae.initCause(e);
@@ -522,7 +685,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		return S;
 	}
 
-	public Database getMySQLDatabase(MySQLDatabaseName name) throws IOException, SQLException {
+	public Database getMySQLDatabase(Database.Name name) throws IOException, SQLException {
 		return table.getConnector().getMysql().getDatabase().getMySQLDatabase(name, this);
 	}
 
@@ -538,7 +701,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		return table.getConnector().getMysql().getDatabaseUser().getMySQLDBUsers(this);
 	}
 
-	public UserServer getMySQLServerUser(MySQLUserId username) throws IOException, SQLException {
+	public UserServer getMySQLServerUser(User.Name username) throws IOException, SQLException {
 		return table.getConnector().getMysql().getUserServer().getMySQLServerUser(username, this);
 	}
 
@@ -559,7 +722,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		return Table.TableID.MYSQL_SERVERS;
 	}
 
-	public boolean isMySQLDatabaseNameAvailable(MySQLDatabaseName name) throws IOException, SQLException {
+	public boolean isMySQLDatabaseNameAvailable(Database.Name name) throws IOException, SQLException {
 		return table.getConnector().getMysql().getDatabase().isMySQLDatabaseNameAvailable(name, this);
 	}
 

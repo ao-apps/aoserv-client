@@ -28,7 +28,6 @@ import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -59,7 +58,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		return defaultOrderBy;
 	}
 
-	int addMySQLServerUser(final MySQLUserId username, final Server mysqlServer, final String host) throws IOException, SQLException {
+	int addMySQLServerUser(final User.Name username, final Server mysqlServer, final String host) throws IOException, SQLException {
 		return connector.requestResult(true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
@@ -100,7 +99,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		return getUniqueRow(UserServer.COLUMN_PKEY, pkey);
 	}
 
-	UserServer getMySQLServerUser(MySQLUserId username, Server ms) throws IOException, SQLException {
+	UserServer getMySQLServerUser(User.Name username, Server ms) throws IOException, SQLException {
 		int msPKey=ms.getPkey();
 
 		List<UserServer> table=getRows();
@@ -132,7 +131,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			if(AOSH.checkParamCount(Command.ADD_MYSQL_SERVER_USER, args, 4, err)) {
 				out.println(
 					connector.getSimpleAOClient().addMySQLServerUser(
-						AOSH.parseMySQLUserId(args[1], "username"),
+						AOSH.parseMySQLUserName(args[1], "username"),
 						AOSH.parseMySQLServerName(args[2], "mysql_server"),
 						args[3],
 						args[4]
@@ -145,7 +144,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			if(AOSH.checkParamCount(Command.DISABLE_MYSQL_SERVER_USER, args, 4, err)) {
 				out.println(
 					connector.getSimpleAOClient().disableMySQLServerUser(
-						AOSH.parseMySQLUserId(args[1], "username"),
+						AOSH.parseMySQLUserName(args[1], "username"),
 						AOSH.parseMySQLServerName(args[2], "mysql_server"),
 						args[3],
 						args[4]
@@ -157,7 +156,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.ENABLE_MYSQL_SERVER_USER)) {
 			if(AOSH.checkParamCount(Command.ENABLE_MYSQL_SERVER_USER, args, 3, err)) {
 				connector.getSimpleAOClient().enableMySQLServerUser(
-					AOSH.parseMySQLUserId(args[1], "username"),
+					AOSH.parseMySQLUserName(args[1], "username"),
 					AOSH.parseMySQLServerName(args[2], "mysql_server"),
 					args[3]
 				);
@@ -167,7 +166,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			if(AOSH.checkParamCount(Command.IS_MYSQL_SERVER_USER_PASSWORD_SET, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().isMySQLServerUserPasswordSet(
-						AOSH.parseMySQLUserId(args[1], "username"),
+						AOSH.parseMySQLUserName(args[1], "username"),
 						AOSH.parseMySQLServerName(args[2], "mysql_server"),
 						args[3]
 					)
@@ -178,7 +177,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.REMOVE_MYSQL_SERVER_USER)) {
 			if(AOSH.checkParamCount(Command.REMOVE_MYSQL_SERVER_USER, args, 3, err)) {
 				connector.getSimpleAOClient().removeMySQLServerUser(
-					AOSH.parseMySQLUserId(args[1], "username"),
+					AOSH.parseMySQLUserName(args[1], "username"),
 					AOSH.parseMySQLServerName(args[2], "mysql_server"),
 					args[3]
 				);
@@ -187,7 +186,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_MYSQL_SERVER_USER_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.SET_MYSQL_SERVER_USER_PASSWORD, args, 4, err)) {
 				connector.getSimpleAOClient().setMySQLServerUserPassword(
-					AOSH.parseMySQLUserId(args[1], "username"),
+					AOSH.parseMySQLUserName(args[1], "username"),
 					AOSH.parseMySQLServerName(args[2], "mysql_server"),
 					args[3],
 					args[4]
