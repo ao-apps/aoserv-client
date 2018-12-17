@@ -160,7 +160,12 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			Timestamp temp = result.getTimestamp(pos++);
 			status_timeout = temp == null ? -1 : temp.getTime();
 			// TODO: Array in PostgreSQL
-			contact_emails = Profile.splitEmails(result.getString(pos++));
+			String str = result.getString(pos++);
+			try {
+				contact_emails = Profile.splitEmails(str);
+			} catch(ValidationException e) {
+				throw new SQLException("contact_emails = " + str, e);
+			}
 			contact_phone_numbers = result.getString(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
