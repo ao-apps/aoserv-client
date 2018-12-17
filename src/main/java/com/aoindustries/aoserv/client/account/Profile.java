@@ -219,7 +219,10 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	public static Set<Email> splitEmails(String value) throws ValidationException {
 		List<String> split = StringUtility.splitStringCommaSpace(value);
 		Set<Email> emails = new LinkedHashSet<>(split.size());
-		for(String s : split) emails.add(Email.valueOf(s));
+		for(String s : split) {
+			s = s.trim();
+			if(!s.isEmpty()) emails.add(Email.valueOf(s));
+		}
 		return emails;
 	}
 
