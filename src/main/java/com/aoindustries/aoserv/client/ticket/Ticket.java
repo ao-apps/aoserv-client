@@ -26,24 +26,29 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.Profile;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.aoserv.client.reseller.Reseller;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
+import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
+import com.aoindustries.util.StringUtility;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The <code>Ticket</code> system allows clients to submit support
@@ -58,14 +63,14 @@ import java.util.List;
 final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
 	// <editor-fold desc="Fields">
-	private AccountingCode brand;
-	private AccountingCode reseller;
-	private AccountingCode accounting;
+	private Account.Name brand;
+	private Account.Name reseller;
+	private Account.Name accounting;
 	private String language;
-	private UserId created_by;
+	private User.Name created_by;
 	private int category;
 	private String ticket_type;
-	private String from_address;
+	private Email from_address;
 	private String summary;
 	private boolean detailsLoaded;
 	private String details;
@@ -76,7 +81,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	private String admin_priority;
 	private String status;
 	private long status_timeout;
-	private String contact_emails;
+	private Set<Email> contact_emails;
 	private String contact_phone_numbers;
 	private boolean internalNotesLoaded;
 	private String internal_notes;
@@ -121,7 +126,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			case 14: return admin_priority;
 			case 15: return status;
 			case 16: return getStatusTimeout();
-			case 17: return contact_emails;
+			// TODO: Support array types
+			case 17: return StringUtility.join(contact_emails, ", ");
 			case 18: return contact_phone_numbers;
 			case 19: return getInternalNotes();
 			default: throw new IllegalArgumentException("Invalid index: "+i);
@@ -138,14 +144,14 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		try {
 			int pos = 1;
 			pkey = result.getInt(pos++);
-			brand = AccountingCode.valueOf(result.getString(pos++));
-			reseller = AccountingCode.valueOf(result.getString(pos++));
-			accounting = AccountingCode.valueOf(result.getString(pos++));
+			brand = Account.Name.valueOf(result.getString(pos++));
+			reseller = Account.Name.valueOf(result.getString(pos++));
+			accounting = Account.Name.valueOf(result.getString(pos++));
 			language = result.getString(pos++);
-			created_by = UserId.valueOf(result.getString(pos++));
+			created_by = User.Name.valueOf(result.getString(pos++));
 			category = result.getInt(pos++); if(result.wasNull()) category = -1;
 			ticket_type = result.getString(pos++);
-			from_address = result.getString(pos++);
+			from_address = Email.valueOf(result.getString(pos++));
 			summary = result.getString(pos++);
 			open_date = result.getTimestamp(pos++).getTime();
 			client_priority = result.getString(pos++);
@@ -153,7 +159,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			status = result.getString(pos++);
 			Timestamp temp = result.getTimestamp(pos++);
 			status_timeout = temp == null ? -1 : temp.getTime();
-			contact_emails = result.getString(pos++);
+			// TODO: Array in PostgreSQL
+			contact_emails = Profile.splitEmails(result.getString(pos++));
 			contact_phone_numbers = result.getString(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -164,26 +171,33 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			brand = AccountingCode.valueOf(in.readUTF()).intern();
+			brand = Account.Name.valueOf(in.readUTF()).intern();
 			String resellerStr = in.readUTF();
 			if(AoservProtocol.FILTERED.equals(resellerStr)) {
 				reseller = null;
 			} else {
-				reseller = AccountingCode.valueOf(resellerStr).intern();
+				reseller = Account.Name.valueOf(resellerStr).intern();
 			}
-			accounting = InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
+			accounting = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
 			language = in.readUTF().intern();
-			created_by = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			created_by = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			category = in.readCompressedInt();
 			ticket_type = in.readUTF().intern();
-			from_address = in.readNullUTF();
+			from_address = Email.valueOf(in.readNullUTF());
 			summary = in.readUTF();
 			open_date = in.readLong();
 			client_priority = in.readUTF().intern();
 			admin_priority = InternUtils.intern(in.readNullUTF());
 			status = in.readUTF().intern();
 			status_timeout = in.readLong();
-			contact_emails = in.readUTF();
+			{
+				int size = in.readCompressedInt();
+				Set<Email> emails = new LinkedHashSet<>(size*4/3+1);
+				for(int i = 0; i < size; i++) {
+					emails.add(Email.valueOf(in.readUTF()));
+				}
+				contact_emails = AoCollections.optimalUnmodifiableSet(emails);
+			}
 			contact_phone_numbers = in.readUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -208,7 +222,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeCompressedInt(category);
 		out.writeUTF(ticket_type);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(from_address);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(ObjectUtils.toString(from_address));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeUTF(summary);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_14)<=0) out.writeUTF("");
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_15)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeCompressedInt(0); // details
@@ -227,7 +241,13 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeLong(status_timeout);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // assigned_to
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0) {
-			out.writeUTF(contact_emails);
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_22) < 0) {
+				out.writeUTF(StringUtility.join(contact_emails, ", "));
+			} else {
+				int size = contact_emails.size();
+				out.writeCompressedInt(size);
+				for(Email email : contact_emails) out.writeUTF(email.toString());
+			}
 			out.writeUTF(contact_phone_numbers);
 		}
 	}
@@ -286,10 +306,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return ticketTypeObject;
 	}
 
-	/**
-	 * TODO: Email self-validating type
-	 */
-	public String getFromAddress() {
+	public Email getFromAddress() {
 		return from_address;
 	}
 
@@ -340,7 +357,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return status_timeout==-1 ? null : new Timestamp(status_timeout);
 	}
 
-	public String getContactEmails() {
+	public Set<Email> getContactEmails() {
 		return contact_emails;
 	}
 
@@ -421,8 +438,38 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_TICKET_ASSIGNED_TO, pkey, assignedTo==null?"":assignedTo.getUsername().getUsername(), business_administrator.getUsername_userId(), comments);
 	}
 
-	public void setContactEmails(String contactEmails) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_TICKET_CONTACT_EMAILS, pkey, contactEmails);
+	public void setContactEmails(final Set<Email> contactEmails) throws IOException, SQLException {
+		final AOServConnector connector = table.getConnector();
+		connector.requestUpdate(
+			true,
+			AoservProtocol.CommandID.SET_TICKET_CONTACT_EMAILS,
+			new AOServConnector.UpdateRequest() {
+				IntList invalidateList;
+
+				@Override
+				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					out.writeCompressedInt(pkey);
+					out.writeCompressedInt(contactEmails.size());
+					for(Email email : contactEmails) out.writeUTF(email.toString());
+				}
+
+				@Override
+				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					int code=in.readByte();
+					if(code==AoservProtocol.DONE) {
+						invalidateList=AOServConnector.readInvalidateList(in);
+					} else {
+						AoservProtocol.checkResult(code, in);
+						throw new IOException("Unexpected response code: "+code);
+					}
+				}
+
+				@Override
+				public void afterRelease() {
+					connector.tablesUpdated(invalidateList);
+				}
+			}
+		);
 	}
 
 	public void setContactPhoneNumbers(String contactPhoneNumbers) throws IOException, SQLException {
@@ -462,8 +509,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return table.getConnector().requestBooleanQueryIL(true,
 			AoservProtocol.CommandID.SET_TICKET_BUSINESS,
 			pkey,
-			oldBusiness==null ? "" : oldBusiness.getAccounting().toString(),
-			newBusiness==null ? "" : newBusiness.getAccounting().toString()
+			oldBusiness==null ? "" : oldBusiness.getName().toString(),
+			newBusiness==null ? "" : newBusiness.getName().toString()
 		);
 	}
 

@@ -22,12 +22,11 @@
  */
 package com.aoindustries.aoserv.client.reseller;
 
-import com.aoindustries.aoserv.client.CachedObjectAccountingCodeKey;
 import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.CachedObjectAccountNameKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Assignment;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -45,7 +44,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
+final public class Reseller extends CachedObjectAccountNameKey<Reseller> {
 
 	static final int COLUMN_ACCOUNTING = 0;
 	static final String COLUMN_ACCOUNTING_name = "accounting";
@@ -61,7 +60,7 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 		}
 	}
 
-	public AccountingCode getBrand_business_accounting() {
+	public Account.Name getBrand_business_accounting() {
 		return pkey;
 	}
 
@@ -84,7 +83,7 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			int pos = 1;
-			pkey = AccountingCode.valueOf(result.getString(pos++));
+			pkey = Account.Name.valueOf(result.getString(pos++));
 			ticket_auto_escalate = result.getBoolean(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -94,7 +93,7 @@ final public class Reseller extends CachedObjectAccountingCodeKey<Reseller> {
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=AccountingCode.valueOf(in.readUTF()).intern();
+			pkey=Account.Name.valueOf(in.readUTF()).intern();
 			ticket_auto_escalate = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);

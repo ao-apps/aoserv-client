@@ -23,13 +23,13 @@
 package com.aoindustries.aoserv.client.ftp;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedTableUserIdKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.linux.CachedTableUserNameKey;
 import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class GuestUserTable extends CachedTableUserIdKey<GuestUser> {
+final public class GuestUserTable extends CachedTableUserNameKey<GuestUser> {
 
 	GuestUserTable(AOServConnector connector) {
 		super(connector, GuestUser.class);
@@ -56,7 +56,7 @@ final public class GuestUserTable extends CachedTableUserIdKey<GuestUser> {
 		return defaultOrderBy;
 	}
 
-	public void addFTPGuestUser(UserId username) throws IOException, SQLException {
+	public void addFTPGuestUser(User.Name username) throws IOException, SQLException {
 		connector.requestUpdateIL(true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.FTP_GUEST_USERS,
@@ -76,7 +76,7 @@ final public class GuestUserTable extends CachedTableUserIdKey<GuestUser> {
 	}
 
 	@Override
-	public GuestUser get(UserId username) throws IOException, SQLException {
+	public GuestUser get(User.Name username) throws IOException, SQLException {
 		return getUniqueRow(GuestUser.COLUMN_USERNAME, username);
 	}
 
@@ -91,14 +91,14 @@ final public class GuestUserTable extends CachedTableUserIdKey<GuestUser> {
 		if(command.equalsIgnoreCase(Command.ADD_FTP_GUEST_USER)) {
 			if(AOSH.checkParamCount(Command.ADD_FTP_GUEST_USER, args, 1, err)) {
 				connector.getSimpleAOClient().addFTPGuestUser(
-					AOSH.parseUserId(args[1], "username")
+					AOSH.parseLinuxUserName(args[1], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(Command.REMOVE_FTP_GUEST_USER)) {
 			if(AOSH.checkParamCount(Command.REMOVE_FTP_GUEST_USER, args, 1, err)) {
 				connector.getSimpleAOClient().removeFTPGuestUser(
-					AOSH.parseUserId(args[1], "username")
+					AOSH.parseLinuxUserName(args[1], "username")
 				);
 			}
 			return true;

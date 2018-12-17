@@ -26,7 +26,6 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -50,7 +49,7 @@ final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 	static final String COLUMN_account_name = "account";
 
 	private int whoisHistory;
-	private AccountingCode account;
+	private Account.Name account;
 
 	@Override
 	protected Object getColumnImpl(int i) throws IOException, SQLException {
@@ -85,7 +84,7 @@ final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 	/**
 	 * @see  #getAccount()
 	 */
-	public AccountingCode getAccount_id() {
+	public Account.Name getAccount_id() {
 		return account;
 	}
 
@@ -109,7 +108,7 @@ final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 			int pos = 1;
 			pkey = result.getInt(pos++);
 			whoisHistory = result.getInt(pos++);
-			account = AccountingCode.valueOf(result.getString(pos++));
+			account = Account.Name.valueOf(result.getString(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -120,7 +119,7 @@ final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 		try {
 			pkey = in.readCompressedInt();
 			whoisHistory = in.readCompressedInt();
-			account = AccountingCode.valueOf(in.readUTF()).intern();
+			account = Account.Name.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}

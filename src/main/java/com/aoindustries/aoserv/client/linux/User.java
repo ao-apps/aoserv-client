@@ -22,32 +22,42 @@
  */
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.CachedObjectUserIdKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.DisableLog;
-import com.aoindustries.aoserv.client.account.Username;
 import com.aoindustries.aoserv.client.ftp.GuestUser;
+import static com.aoindustries.aoserv.client.linux.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
+import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
+import com.aoindustries.util.ComparatorUtils;
+import com.aoindustries.util.Internable;
+import com.aoindustries.validation.InvalidResult;
+import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectInputValidation;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * One user may have shell, FTP, and/or email access to any number
@@ -57,7 +67,316 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class User extends CachedObjectUserIdKey<User> implements PasswordProtected, Removable, Disablable {
+final public class User extends CachedObjectUserNameKey<User> implements PasswordProtected, Removable, Disablable {
+
+	/**
+	 * Used for the various user-provided fields in the <code>/etc/passwd</code> file.
+	 * <p>
+	 * <a href="https://en.wikipedia.org/wiki/Gecos_field">https://en.wikipedia.org/wiki/Gecos_field</a>
+	 * </p>
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	final public static class Gecos implements
+		Comparable<Gecos>,
+		Serializable,
+		ObjectInputValidation,
+		DtoFactory<com.aoindustries.aoserv.client.dto.Gecos>,
+		Internable<Gecos> {
+
+		private static final long serialVersionUID = -117164942375352467L;
+
+		public static final int MAX_LENGTH = 100;
+
+		/**
+		 * Determines if a name can be used as a GECOS field.  A GECOS field
+		 * is valid if it is between 1 and 100 characters in length and uses only
+		 * <code>[a-z,A-Z,0-9,-,_,@, ,.,#,=,/,$,%,^,&,*,(,),?,']</code> for each
+		 * character.<br>
+		 * <br>
+		 * Refer to <code>man 5 passwd</code>
+		 */
+		public static ValidationResult validate(String value) {
+			// Be non-null
+			if(value==null) return new InvalidResult(accessor, "User.Gecos.validate.isNull");
+			int len = value.length();
+			if(len==0) return new InvalidResult(accessor, "User.Gecos.validate.isEmpty");
+			if(len>MAX_LENGTH) return new InvalidResult(accessor, "User.Gecos.validate.tooLong", MAX_LENGTH, len);
+
+			for (int c = 0; c < len; c++) {
+				char ch = value.charAt(c);
+				if (
+					(ch < 'a' || ch > 'z')
+					&& (ch<'A' || ch>'Z')
+					&& (ch < '0' || ch > '9')
+					&& ch != '-'
+					&& ch != '_'
+					&& ch != '@'
+					&& ch != ' '
+					&& ch != '.'
+					&& ch != '#'
+					&& ch != '='
+					&& ch != '/'
+					&& ch != '$'
+					&& ch != '%'
+					&& ch != '^'
+					&& ch != '&'
+					&& ch != '*'
+					&& ch != '('
+					&& ch != ')'
+					&& ch != '?'
+					&& ch != '\''
+					&& ch != '+'
+				) return new InvalidResult(accessor, "User.Gecos.validate.invalidCharacter", ch);
+			}
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Gecos> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param value  when {@code null}, returns {@code null}
+		 */
+		public static Gecos valueOf(String value) throws ValidationException {
+			if(value == null) return null;
+			//Gecos existing = interned.get(value);
+			//return existing!=null ? existing : new Gecos(value);
+			return new Gecos(value, true);
+		}
+
+		final private String value;
+
+		private Gecos(String value, boolean validate) throws ValidationException {
+			this.value = value;
+			if(validate) validate();
+		}
+
+		/**
+		 * @param  value  Does not validate, should only be used with a known valid value.
+		 */
+		private Gecos(String value) {
+			ValidationResult result;
+			assert (result = validate(value)).isValid() : result.toString();
+			this.value = value;
+		}
+
+		private void validate() throws ValidationException {
+			ValidationResult result = validate(value);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		/**
+		 * Perform same validation as constructor on readObject.
+		 */
+		private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+			ois.defaultReadObject();
+			validateObject();
+		}
+
+		@Override
+		public void validateObject() throws InvalidObjectException {
+			try {
+				validate();
+			} catch(ValidationException err) {
+				InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+				newErr.initCause(err);
+				throw newErr;
+			}
+		}
+
+		@Override
+		public boolean equals(Object O) {
+			return
+				O!=null
+				&& O instanceof Gecos
+				&& value.equals(((Gecos)O).value)
+			;
+		}
+
+		@Override
+		public int hashCode() {
+			return value.hashCode();
+		}
+
+		@Override
+		public int compareTo(Gecos other) {
+			return this==other ? 0 : ComparatorUtils.compareIgnoreCaseConsistentWithEquals(value, other.value);
+		}
+
+		@Override
+		public String toString() {
+			return value;
+		}
+
+		/**
+		 * Interns this id much in the same fashion as <code>String.intern()</code>.
+		 *
+		 * @see  String#intern()
+		 */
+		@Override
+		public Gecos intern() {
+			Gecos existing = interned.get(value);
+			if(existing==null) {
+				String internedValue = value.intern();
+				Gecos addMe = (value == internedValue) ? this : new Gecos(internedValue); // Using identity String comparison to see if already interned
+				existing = interned.putIfAbsent(internedValue, addMe);
+				if(existing==null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.Gecos getDto() {
+			return new com.aoindustries.aoserv.client.dto.Gecos(value);
+		}
+	}
+
+	/**
+	 * Represents a Linux username.  {@link User} names must:
+	 * <ul>
+	 *   <li>Be non-null</li>
+	 *   <li>Be non-empty</li>
+	 *   <li>Be between 1 and 32 characters</li>
+	 *   <li>Must start with <code>[a-z]</code></li>
+	 *   <li>Uses only ASCII 0x21 through 0x7f, excluding <code>space , : ( ) [ ] ' " | & ; A-Z \ /</code></li>
+	 *   <li>
+	 *     If contains any @ symbol, must also be a valid email address.  Please note that the
+	 *     reverse is not implied - email addresses may exist that are not valid user ids.
+	 *   </li>
+	 *   <li>May not start with cyrus@</li>
+	 *   <li>TODO: May only end on "$"?</li>
+	 *   <li>TODO: "+" is allowed, "lost+found" should be specifically disallowed due to /home/lost+found on mount points.</li>
+	 *   <li>Must be a valid {@link com.aoindustries.aoserv.client.account.User.Name} - this is implied by the above rules</li>
+	 * </ul>
+	 *
+	 * @see Email#validate(java.lang.String)
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	// TODO: Update for IEEE Std 1003.1.2001 "3.426 User Name"? https://paulgorman.org/technical/presentations/linux_username_conventions.pdf
+	// TODO: Rename "LinuxName" and combined with "GroupName" as "PosixName" (and an associated "PosixPortableFilename")?
+	public static class Name extends com.aoindustries.aoserv.client.account.User.Name implements
+		FastExternalizable,
+		ObjectInputValidation
+	{
+
+		/**
+		 * The maximum length of a Linux username.
+		 *
+		 * @implNote  32 characters
+		 */
+		public static final int MAX_LENGTH = 32;
+
+		/**
+		 * Validates a {@link User} name.
+		 */
+		public static ValidationResult validate(String name) {
+			if(name==null) return new InvalidResult(accessor, "User.Name.validate.isNull");
+			int len = name.length();
+			if(len==0) return new InvalidResult(accessor, "User.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(accessor, "User.Name.validate.tooLong", MAX_LENGTH, len);
+
+			// The first character must be [a-z]
+			char ch = name.charAt(0);
+			if(ch < 'a' || ch > 'z') return new InvalidResult(accessor, "User.Name.validate.startAToZ");
+
+			// The rest may have additional characters
+			boolean hasAt = false;
+			for (int c = 1; c < len; c++) {
+				ch = name.charAt(c);
+				if(ch==' ') return new InvalidResult(accessor, "User.Name.validate.noSpace");
+				if(ch<=0x21 || ch>0x7f) return new InvalidResult(accessor, "User.Name.validate.specialCharacter");
+				if(ch>='A' && ch<='Z') return new InvalidResult(accessor, "User.Name.validate.noCapital");
+				switch(ch) {
+					case ',' : return new InvalidResult(accessor, "User.Name.validate.comma");
+					case ':' : return new InvalidResult(accessor, "User.Name.validate.colon");
+					case '(' : return new InvalidResult(accessor, "User.Name.validate.leftParen");
+					case ')' : return new InvalidResult(accessor, "User.Name.validate.rightParen");
+					case '[' : return new InvalidResult(accessor, "User.Name.validate.leftSquare");
+					case ']' : return new InvalidResult(accessor, "User.Name.validate.rightSquare");
+					case '\'' : return new InvalidResult(accessor, "User.Name.validate.apostrophe");
+					case '"' : return new InvalidResult(accessor, "User.Name.validate.quote");
+					case '|' : return new InvalidResult(accessor, "User.Name.validate.verticalBar");
+					case '&' : return new InvalidResult(accessor, "User.Name.validate.ampersand");
+					case ';' : return new InvalidResult(accessor, "User.Name.validate.semicolon");
+					case '\\' : return new InvalidResult(accessor, "User.Name.validate.backslash");
+					case '/' : return new InvalidResult(accessor, "User.Name.validate.slash");
+					case '@' : hasAt = true; break;
+				}
+			}
+
+			// More strict at sign control is required for user@domain structure in Cyrus virtdomains.
+			if(hasAt) {
+				// Must also be a valid email address
+				ValidationResult result = Email.validate(name);
+				if(!result.isValid()) return result;
+				if(name.startsWith("cyrus@")) return new InvalidResult(accessor, "User.Name.validate.startWithCyrusAt");
+			}
+			assert com.aoindustries.aoserv.client.account.User.Name.validate(name).isValid() : "A Linux User.Name is always a valid Account User.Name.";
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param name  when {@code null}, returns {@code null}
+		 */
+		public static Name valueOf(String name) throws ValidationException {
+			if(name == null) return null;
+			//Name existing = interned.get(name);
+			//return existing!=null ? existing : new Name(name);
+			return new Name(name, true);
+		}
+
+		protected Name(String name, boolean validate) throws ValidationException {
+			super(name, validate);
+		}
+
+		/**
+		 * @param  name  Does not validate, should only be used with a known valid value.
+		 */
+		protected Name(String name) {
+			super(name);
+		}
+
+		@Override
+		protected void validate() throws ValidationException {
+			ValidationResult result = validate(name);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Name intern() {
+			Name existing = interned.get(name);
+			if(existing==null) {
+				String internedId = name.intern();
+				Name addMe = (name == internedId) ? this : new Name(internedId);
+				existing = interned.putIfAbsent(internedId, addMe);
+				if(existing==null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.LinuxUserName getDto() {
+			return new com.aoindustries.aoserv.client.dto.LinuxUserName(name);
+		}
+
+		// <editor-fold defaultstate="collapsed" desc="FastExternalizable">
+		private static final long serialVersionUID = 2L;
+
+		public Name() {
+		}
+
+		@Override
+		public long getSerialVersionUID() {
+			return serialVersionUID;
+		}
+		// </editor-fold>
+	}
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -65,7 +384,7 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	/**
 	 * Some commonly used system and application account usernames.
 	 */
-	public static final UserId
+	public static final Name
 		ADM,
 		AOADMIN,
 		AOSERV_JILTER,
@@ -119,58 +438,58 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	 * @deprecated  User httpd no longer used.
 	 */
 	@Deprecated
-	public static final UserId HTTPD;
+	public static final Name HTTPD;
 	static {
 		try {
-			ADM = UserId.valueOf("adm");
-			AOADMIN = UserId.valueOf("aoadmin");
-			AOSERV_JILTER = UserId.valueOf("aoserv-jilter");
-			AOSERV_XEN_MIGRATION = UserId.valueOf("aoserv-xen-migration");
-			APACHE = UserId.valueOf("apache");
-			AVAHI_AUTOIPD = UserId.valueOf("avahi-autoipd");
-			AWSTATS = UserId.valueOf("awstats");
-			BIN = UserId.valueOf("bin");
-			BIRD = UserId.valueOf("bird");
-			CHRONY = UserId.valueOf("chrony");
-			CLAMSCAN = UserId.valueOf("clamscan");
-			CLAMUPDATE = UserId.valueOf("clamupdate");
-			CYRUS = UserId.valueOf("cyrus");
-			DAEMON = UserId.valueOf("daemon");
-			DBUS = UserId.valueOf("dbus");
-			DHCPD = UserId.valueOf("dhcpd");
-			EMAILMON = UserId.valueOf("emailmon");
-			FTP = UserId.valueOf("ftp");
-			FTPMON = UserId.valueOf("ftpmon");
-			GAMES = UserId.valueOf("games");
-			HALT = UserId.valueOf("halt");
-			INTERBASE = UserId.valueOf("interbase");
-			LP = UserId.valueOf("lp");
-			MAIL = UserId.valueOf("mail");
-			MAILNULL = UserId.valueOf("mailnull");
-			MEMCACHED = UserId.valueOf("memcached");
-			MYSQL = UserId.valueOf("mysql");
-			NAMED = UserId.valueOf("named");
-			NFSNOBODY = UserId.valueOf("nfsnobody");
-			NGINX = UserId.valueOf("nginx");
-			NOBODY = UserId.valueOf("nobody");
-			OPERATOR = UserId.valueOf("operator");
-			POLKITD = UserId.valueOf("polkitd");
-			POSTGRES = UserId.valueOf("postgres");
-			ROOT = UserId.valueOf("root");
-			RPC = UserId.valueOf("rpc");
-			RPCUSER = UserId.valueOf("rpcuser");
-			SASLAUTH = UserId.valueOf("saslauth");
-			SHUTDOWN = UserId.valueOf("shutdown");
-			SMMSP = UserId.valueOf("smmsp");
-			SSHD = UserId.valueOf("sshd");
-			SYNC = UserId.valueOf("sync");
-			SYSTEMD_BUS_PROXY = UserId.valueOf("systemd-bus-proxy");
-			SYSTEMD_NETWORK = UserId.valueOf("systemd-network");
-			TCPDUMP = UserId.valueOf("tcpdump");
-			TSS = UserId.valueOf("tss");
-			UNBOUND = UserId.valueOf("unbound");
+			ADM = Name.valueOf("adm");
+			AOADMIN = Name.valueOf("aoadmin");
+			AOSERV_JILTER = Name.valueOf("aoserv-jilter");
+			AOSERV_XEN_MIGRATION = Name.valueOf("aoserv-xen-migration");
+			APACHE = Name.valueOf("apache");
+			AVAHI_AUTOIPD = Name.valueOf("avahi-autoipd");
+			AWSTATS = Name.valueOf("awstats");
+			BIN = Name.valueOf("bin");
+			BIRD = Name.valueOf("bird");
+			CHRONY = Name.valueOf("chrony");
+			CLAMSCAN = Name.valueOf("clamscan");
+			CLAMUPDATE = Name.valueOf("clamupdate");
+			CYRUS = Name.valueOf("cyrus");
+			DAEMON = Name.valueOf("daemon");
+			DBUS = Name.valueOf("dbus");
+			DHCPD = Name.valueOf("dhcpd");
+			EMAILMON = Name.valueOf("emailmon");
+			FTP = Name.valueOf("ftp");
+			FTPMON = Name.valueOf("ftpmon");
+			GAMES = Name.valueOf("games");
+			HALT = Name.valueOf("halt");
+			INTERBASE = Name.valueOf("interbase");
+			LP = Name.valueOf("lp");
+			MAIL = Name.valueOf("mail");
+			MAILNULL = Name.valueOf("mailnull");
+			MEMCACHED = Name.valueOf("memcached");
+			MYSQL = Name.valueOf("mysql");
+			NAMED = Name.valueOf("named");
+			NFSNOBODY = Name.valueOf("nfsnobody");
+			NGINX = Name.valueOf("nginx");
+			NOBODY = Name.valueOf("nobody");
+			OPERATOR = Name.valueOf("operator");
+			POLKITD = Name.valueOf("polkitd");
+			POSTGRES = Name.valueOf("postgres");
+			ROOT = Name.valueOf("root");
+			RPC = Name.valueOf("rpc");
+			RPCUSER = Name.valueOf("rpcuser");
+			SASLAUTH = Name.valueOf("saslauth");
+			SHUTDOWN = Name.valueOf("shutdown");
+			SMMSP = Name.valueOf("smmsp");
+			SSHD = Name.valueOf("sshd");
+			SYNC = Name.valueOf("sync");
+			SYSTEMD_BUS_PROXY = Name.valueOf("systemd-bus-proxy");
+			SYSTEMD_NETWORK = Name.valueOf("systemd-network");
+			TCPDUMP = Name.valueOf("tcpdump");
+			TSS = Name.valueOf("tss");
+			UNBOUND = Name.valueOf("unbound");
 			// Now unused
-			HTTPD = UserId.valueOf("httpd");
+			HTTPD = Name.valueOf("httpd");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -183,7 +502,7 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	private Gecos office_phone;
 	private Gecos home_phone;
 	private String type;
-	private UnixPath shell;
+	private PosixPath shell;
 	private long created;
 	int disable_log;
 
@@ -195,13 +514,13 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 		table.getConnector().getLinux().getGroupUser().addLinuxGroupAccount(group, this);
 	}
 
-	public int addLinuxServerAccount(Server aoServer, UnixPath home) throws IOException, SQLException {
+	public int addLinuxServerAccount(Server aoServer, PosixPath home) throws IOException, SQLException {
 		return table.getConnector().getLinux().getUserServer().addLinuxServerAccount(this, aoServer, home);
 	}
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		return Username.groupPasswordsSet(getLinuxServerAccounts());
+		return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getLinuxServerAccounts());
 	}
 
 	@Override
@@ -235,7 +554,7 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	 * @see  LinuxAccountType#enforceStrongPassword(String)
 	 * @see  PasswordChecker#checkPassword(String,String,boolean,boolean)
 	 */
-	public static List<PasswordChecker.Result> checkPassword(UserId username, String type, String password) throws IOException {
+	public static List<PasswordChecker.Result> checkPassword(Name username, String type, String password) throws IOException {
 		return PasswordChecker.checkPassword(username, password, UserType.getPasswordStrength(type));
 	}
 
@@ -335,23 +654,23 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 		return typeObject;
 	}
 
-	public UserId getUsername_id() {
+	public Name getUsername_id() {
 		return pkey;
 	}
 
-	public Username getUsername() throws SQLException, IOException {
-		Username usernameObject = table.getConnector().getAccount().getUsername().get(pkey);
+	public com.aoindustries.aoserv.client.account.User getUsername() throws SQLException, IOException {
+		com.aoindustries.aoserv.client.account.User usernameObject = table.getConnector().getAccount().getUser().get(pkey);
 		if (usernameObject == null) throw new SQLException("Unable to find Username: " + pkey);
 		return usernameObject;
 	}
 
-	public List<UnixPath> getValidHomeDirectories(Server ao) throws SQLException, IOException {
+	public List<PosixPath> getValidHomeDirectories(Server ao) throws SQLException, IOException {
 		return getValidHomeDirectories(pkey, ao);
 	}
 
-	public static List<UnixPath> getValidHomeDirectories(UserId username, Server ao) throws SQLException, IOException {
+	public static List<PosixPath> getValidHomeDirectories(Name username, Server ao) throws SQLException, IOException {
 		try {
-			List<UnixPath> dirs=new ArrayList<>();
+			List<PosixPath> dirs=new ArrayList<>();
 			if(username != null) {
 				dirs.add(UserServer.getDefaultHomeDirectory(username));
 				dirs.add(UserServer.getHashedHomeDirectory(username));
@@ -360,10 +679,10 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 			int hsslen=hss.size();
 			for(int c=0;c<hsslen;c++) {
 				Site hs=hss.get(c);
-				UnixPath siteDir=hs.getInstallDirectory();
+				PosixPath siteDir=hs.getInstallDirectory();
 				dirs.add(siteDir);
 				if(hs.getHttpdTomcatSite()!=null) {
-					dirs.add(UnixPath.valueOf(siteDir.toString() + "/webapps"));
+					dirs.add(PosixPath.valueOf(siteDir.toString() + "/webapps"));
 				}
 			}
 
@@ -372,7 +691,7 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 			for(int c=0;c<hstslen;c++) {
 				SharedTomcat hst=hsts.get(c);
 				dirs.add(
-					UnixPath.valueOf(
+					PosixPath.valueOf(
 						hst.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
 						+ '/' + hst.getName()
 					)
@@ -387,13 +706,13 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = UserId.valueOf(result.getString(1));
+			pkey = Name.valueOf(result.getString(1));
 			name = Gecos.valueOf(result.getString(2));
 			office_location = Gecos.valueOf(result.getString(3));
 			office_phone = Gecos.valueOf(result.getString(4));
 			home_phone = Gecos.valueOf(result.getString(5));
 			type = result.getString(6);
-			shell = UnixPath.valueOf(result.getString(7));
+			shell = PosixPath.valueOf(result.getString(7));
 			created = result.getTimestamp(8).getTime();
 			disable_log=result.getInt(9);
 			if(result.wasNull()) disable_log=-1;
@@ -405,13 +724,13 @@ final public class User extends CachedObjectUserIdKey<User> implements PasswordP
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey = UserId.valueOf(in.readUTF()).intern();
+			pkey = Name.valueOf(in.readUTF()).intern();
 			name = Gecos.valueOf(in.readNullUTF());
 			office_location = Gecos.valueOf(in.readNullUTF());
 			office_phone = Gecos.valueOf(in.readNullUTF());
 			home_phone = Gecos.valueOf(in.readNullUTF());
 			type = in.readUTF().intern();
-			shell = UnixPath.valueOf(in.readUTF()).intern();
+			shell = PosixPath.valueOf(in.readUTF()).intern();
 			created = in.readLong();
 			disable_log = in.readCompressedInt();
 		} catch(ValidationException e) {

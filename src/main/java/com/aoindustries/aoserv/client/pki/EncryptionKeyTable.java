@@ -56,7 +56,7 @@ final public class EncryptionKeyTable extends CachedTableIntegerKey<EncryptionKe
 	}
 
 	public List<EncryptionKey> getEncryptionKeys(Account business) throws IOException, SQLException {
-		return getIndexedRows(EncryptionKey.COLUMN_ACCOUNTING, business.getAccounting());
+		return getIndexedRows(EncryptionKey.COLUMN_ACCOUNTING, business.getName());
 	}
 
 	@Override

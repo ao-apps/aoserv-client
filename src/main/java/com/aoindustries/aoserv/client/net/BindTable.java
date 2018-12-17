@@ -24,13 +24,12 @@ package com.aoindustries.aoserv.client.net;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -75,7 +74,7 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 		final Port port,
 		final AppProtocol appProtocol,
 		final boolean monitoringEnabled,
-		final Set<FirewalldZoneName> firewalldZones
+		final Set<FirewallZone.Name> firewalldZones
 	) throws IOException, SQLException {
 		return connector.requestResult(true,
 			AoservProtocol.CommandID.ADD,
@@ -96,7 +95,7 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 					int size = firewalldZones.size();
 					out.writeCompressedInt(size);
 					int count = 0;
-					for(FirewalldZoneName firewalldZone : firewalldZones) {
+					for(FirewallZone.Name firewalldZone : firewalldZones) {
 						out.writeUTF(firewalldZone.toString());
 						count++;
 					}
@@ -138,7 +137,7 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 	}
 
 	public List<Bind> getNetBinds(Package pk, IpAddress ip) throws IOException, SQLException {
-		AccountingCode packageName=pk.getName();
+		Account.Name packageName=pk.getName();
 		// Use the index first
 		List<Bind> cached=getNetBinds(ip);
 		int size=cached.size();
@@ -212,9 +211,9 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 		if(command.equalsIgnoreCase(Command.ADD_NET_BIND)) {
 			if(AOSH.checkMinParamCount(Command.ADD_NET_BIND, args, 8, err)) {
 				final int varargStart = 9;
-				Set<FirewalldZoneName> firewalldZones = new LinkedHashSet<>((args.length - varargStart)*4/3+1);
+				Set<FirewallZone.Name> firewalldZones = new LinkedHashSet<>((args.length - varargStart)*4/3+1);
 				for(int i = varargStart; i < args.length; i++) {
-					FirewalldZoneName name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
+					FirewallZone.Name name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
 					if(!firewalldZones.add(name)) {
 						throw new IllegalArgumentException("Duplicate firewalld zone name: " + name);
 					}
@@ -247,9 +246,9 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 		} else if(command.equalsIgnoreCase(Command.SET_NET_BIND_FIREWALLD_ZONES)) {
 			if(AOSH.checkMinParamCount(Command.SET_NET_BIND_FIREWALLD_ZONES, args, 1, err)) {
 				final int varargStart = 2;
-				Set<FirewalldZoneName> firewalldZones = new LinkedHashSet<>((args.length - varargStart)*4/3+1);
+				Set<FirewallZone.Name> firewalldZones = new LinkedHashSet<>((args.length - varargStart)*4/3+1);
 				for(int i = varargStart; i < args.length; i++) {
-					FirewalldZoneName name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
+					FirewallZone.Name name = AOSH.parseFirewalldZoneName(args[i], "firewalld_zone[" + (i - varargStart) + "]");
 					if(!firewalldZones.add(name)) {
 						throw new IllegalArgumentException("Duplicate firewalld zone name: " + name);
 					}

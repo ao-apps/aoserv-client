@@ -34,8 +34,6 @@ import com.aoindustries.aoserv.client.infrastructure.VirtualServer;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Port;
@@ -74,7 +72,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	private boolean monitoring_enabled;
 
 	public void addBusiness(
-		AccountingCode accounting,
+		Account.Name accounting,
 		String contractVersion,
 		Account parent,
 		boolean can_add_backup_servers,
@@ -86,7 +84,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 			accounting,
 			contractVersion,
 			this,
-			parent.getAccounting(),
+			parent.getName(),
 			can_add_backup_servers,
 			can_add_businesses,
 			can_see_prices,
@@ -100,7 +98,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 		Port port,
 		AppProtocol appProtocol,
 		boolean monitoringEnabled,
-		Set<FirewalldZoneName> firewalldZones
+		Set<FirewallZone.Name> firewalldZones
 	) throws IOException, SQLException {
 		return table.getConnector().getNet().getBind().addNetBind(
 			this,

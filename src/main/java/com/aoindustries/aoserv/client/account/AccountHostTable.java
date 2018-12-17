@@ -59,7 +59,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 	}
 
 	int addBusinessServer(Account business, Host server) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true, AoservProtocol.CommandID.ADD, Table.TableID.BUSINESS_SERVERS, business.getAccounting().toString(), server.getPkey());
+		return connector.requestIntQueryIL(true, AoservProtocol.CommandID.ADD, Table.TableID.BUSINESS_SERVERS, business.getName().toString(), server.getPkey());
 	}
 
 	@Override
@@ -68,7 +68,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 	}
 
 	List<AccountHost> getBusinessServers(Account bu) throws IOException, SQLException {
-		return getIndexedRows(AccountHost.COLUMN_ACCOUNTING, bu.getAccounting());
+		return getIndexedRows(AccountHost.COLUMN_ACCOUNTING, bu.getName());
 	}
 
 	List<AccountHost> getBusinessServers(Host server) throws IOException, SQLException {

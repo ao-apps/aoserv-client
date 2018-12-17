@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,10 +46,10 @@ public class AOServConnectorTODO extends TestCase {
 
 	private static final Logger logger = Logger.getLogger(AOServConnectorTODO.class.getName());
 
-	public static final UserId REGULAR_USER_USERNAME;
+	public static final User.Name REGULAR_USER_USERNAME;
 	static {
 		try {
-			REGULAR_USER_USERNAME = UserId.valueOf("testuser");
+			REGULAR_USER_USERNAME = User.Name.valueOf("testuser");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -59,15 +59,15 @@ public class AOServConnectorTODO extends TestCase {
 
 	/**
 	 * Gets the list of connectors to be used during testing.  This represents the three different
-	 * filter modes.  Regular user (testuser), unrestritected master (aoweb_app), and a single server
+	 * filter modes.  Regular user (testuser), unrestricted master (aoweb_app), and a single server
 	 * (mandriva20060_svr).
 	 */
 	static List<AOServConnector> getTestConnectors() throws IOException {
 		try {
 			List<AOServConnector> conns = new ArrayList<>();
-			conns.add(AOServConnector.getConnector(UserId.valueOf("aoweb_app"), "changeme", logger));
+			conns.add(AOServConnector.getConnector(User.Name.valueOf("aoweb_app"), "changeme", logger));
 			conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD, logger));
-			conns.add(AOServConnector.getConnector(UserId.valueOf("mandriva20060_svr"), "Ogrol3Veve5", logger));
+			conns.add(AOServConnector.getConnector(User.Name.valueOf("mandriva20060_svr"), "Ogrol3Veve5", logger));
 			return conns;
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -102,7 +102,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testClearCaches() throws Exception {
 		System.out.println("Testing clearCaches");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			for(int c=0;c<1000;c++) conn.clearCaches();
 		}
@@ -114,7 +114,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testExecuteCommand() throws Exception {
 		System.out.println("Testing executeCommand");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			assertEquals(username+"\n", conn.executeCommand(new String[] {"whoami"}));
 		}
@@ -126,7 +126,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testGetConnectorID() throws Exception {
 		System.out.println("Testing getConnectorID");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			long connectorID=conn.getConnectorID();
 			for(AOServConnector conn2 : conns) {
@@ -148,7 +148,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testGetHostname() throws Exception {
 		System.out.println("Testing getHostname");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			assertEquals("192.168.1.129", conn.getHostname());
 		}
@@ -160,7 +160,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testGetPort() throws Exception {
 		System.out.println("Testing getPort");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			assertEquals(4582, conn.getPort());
 		}
@@ -172,7 +172,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testGetProtocol() throws Exception {
 		System.out.println("Testing getProtocol");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			assertEquals(TCPConnector.PROTOCOL, conn.getProtocol());
 		}
@@ -185,7 +185,7 @@ public class AOServConnectorTODO extends TestCase {
 		System.out.println("Testing getRandom");
 		Random random=AOServConnector.getRandom();
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			final int NUM_BYTES=1000000;
 			final int CHECKPOINTS=100000;
@@ -217,7 +217,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testIsSecure() throws Exception {
 		System.out.println("Testing isSecure");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			assertTrue(conn.isSecure());
 		}
@@ -229,7 +229,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testPing() throws Exception {
 		System.out.print("Testing ping: ");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			int totalTime=0;
 			for(int c=0;c<50;c++) {
@@ -248,7 +248,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testGetConnection() throws Exception {
 		System.out.println("Testing getConnection and releaseConnection");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			for(int c=0;c<1000;c++) {
 				AOServConnection connection=conn.getConnection(1);
@@ -263,7 +263,7 @@ public class AOServConnectorTODO extends TestCase {
 	public void testGetTable() throws Exception {
 		System.out.println("Testing getTable and getTables");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			int numTables = Table.TableID.values().length;
 			AOServTable[] tables=new AOServTable[numTables];

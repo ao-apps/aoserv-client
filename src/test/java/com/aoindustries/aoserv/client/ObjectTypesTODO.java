@@ -22,10 +22,10 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
-import com.aoindustries.aoserv.client.validator.UserId;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
@@ -75,7 +75,7 @@ public class ObjectTypesTODO extends TestCase {
 		System.out.println("U = Unsupported Operation");
 		int numTables = Table.TableID.values().length;
 		for(AOServConnector conn : conns) {
-			UserId connUsername = conn.getThisBusinessAdministrator().pkey;
+			User.Name connUsername = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+connUsername);
 			for(int c=0;c<numTables;c++) {
 				// Excluded for testing speed

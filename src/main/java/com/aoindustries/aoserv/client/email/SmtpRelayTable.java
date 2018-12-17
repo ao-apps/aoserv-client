@@ -24,13 +24,13 @@ package com.aoindustries.aoserv.client.email;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -107,7 +107,7 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 	}
 
 	public SmtpRelay getEmailSmtpRelay(Package pk, Server ao, HostAddress host) throws IOException, SQLException {
-		AccountingCode packageName=pk.getName();
+		Account.Name packageName=pk.getName();
 		int aoPKey=ao.getPkey();
 
 		List<SmtpRelay> cached = getRows();

@@ -26,13 +26,13 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -58,7 +58,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	static final String COLUMN_PKEY_name = "pkey";
 
 	private String processorId;
-	AccountingCode accounting;
+	Account.Name accounting;
 	private String groupName;
 	private boolean testMode;
 	private int duplicateWindow;
@@ -79,20 +79,20 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String shippingPostalCode;
 	private String shippingCountryCode;
 	private boolean emailCustomer;
-	private String merchantEmail;
+	private Email merchantEmail;
 	private String invoiceNumber;
 	private String purchaseOrderNumber;
 	private String description;
-	private UserId creditCardCreatedBy;
+	private User.Name creditCardCreatedBy;
 	private String creditCardPrincipalName;
-	private AccountingCode creditCardAccounting;
+	private Account.Name creditCardAccounting;
 	private String creditCardGroupName;
 	private String creditCardProviderUniqueId;
 	private String creditCardMaskedCardNumber;
 	private String creditCardFirstName;
 	private String creditCardLastName;
 	private String creditCardCompanyName;
-	private String creditCardEmail;
+	private Email creditCardEmail;
 	private String creditCardPhone;
 	private String creditCardFax;
 	private String creditCardCustomerTaxId;
@@ -104,7 +104,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String creditCardCountryCode;
 	private String creditCardComments;
 	private long authorizationTime;
-	private UserId authorizationUsername;
+	private User.Name authorizationUsername;
 	private String authorizationPrincipalName;
 	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
 	private String authorizationCommunicationResult;
@@ -130,7 +130,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String authorizationAvsResult;
 	private String authorizationApprovalCode;
 	private long captureTime;
-	private UserId captureUsername;
+	private User.Name captureUsername;
 	private String capturePrincipalName;
 	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
 	private String captureCommunicationResult;
@@ -140,7 +140,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String captureProviderErrorMessage;
 	private String captureProviderUniqueId;
 	private long voidTime;
-	private UserId voidUsername;
+	private User.Name voidUsername;
 	private String voidPrincipalName;
 	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
 	private String voidCommunicationResult;
@@ -294,7 +294,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return emailCustomer;
 	}
 
-	public String getMerchantEmail() {
+	public Email getMerchantEmail() {
 		return merchantEmail;
 	}
 
@@ -349,7 +349,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return creditCardCompanyName;
 	}
 
-	public String getCreditCardEmail() {
+	public Email getCreditCardEmail() {
 		return creditCardEmail;
 	}
 
@@ -691,7 +691,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			int pos = 1;
 			pkey = result.getInt(pos++);
 			processorId = result.getString(pos++);
-			accounting = AccountingCode.valueOf(result.getString(pos++));
+			accounting = Account.Name.valueOf(result.getString(pos++));
 			groupName = result.getString(pos++);
 			testMode = result.getBoolean(pos++);
 			duplicateWindow = result.getInt(pos++);
@@ -712,20 +712,20 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			shippingPostalCode = result.getString(pos++);
 			shippingCountryCode = result.getString(pos++);
 			emailCustomer = result.getBoolean(pos++);
-			merchantEmail = result.getString(pos++);
+			merchantEmail = Email.valueOf(result.getString(pos++));
 			invoiceNumber = result.getString(pos++);
 			purchaseOrderNumber = result.getString(pos++);
 			description = result.getString(pos++);
-			creditCardCreatedBy = UserId.valueOf(result.getString(pos++));
+			creditCardCreatedBy = User.Name.valueOf(result.getString(pos++));
 			creditCardPrincipalName = result.getString(pos++);
-			creditCardAccounting = AccountingCode.valueOf(result.getString(pos++));
+			creditCardAccounting = Account.Name.valueOf(result.getString(pos++));
 			creditCardGroupName = result.getString(pos++);
 			creditCardProviderUniqueId = result.getString(pos++);
 			creditCardMaskedCardNumber = result.getString(pos++);
 			creditCardFirstName = result.getString(pos++);
 			creditCardLastName = result.getString(pos++);
 			creditCardCompanyName = result.getString(pos++);
-			creditCardEmail = result.getString(pos++);
+			creditCardEmail = Email.valueOf(result.getString(pos++));
 			creditCardPhone = result.getString(pos++);
 			creditCardFax = result.getString(pos++);
 			creditCardCustomerTaxId = result.getString(pos++);
@@ -737,7 +737,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardCountryCode = result.getString(pos++);
 			creditCardComments = result.getString(pos++);
 			authorizationTime = result.getTimestamp(pos++).getTime();
-			authorizationUsername = UserId.valueOf(result.getString(pos++));
+			authorizationUsername = User.Name.valueOf(result.getString(pos++));
 			authorizationPrincipalName = result.getString(pos++);
 			authorizationCommunicationResult = result.getString(pos++);
 			authorizationProviderErrorCode = result.getString(pos++);
@@ -757,7 +757,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationApprovalCode = result.getString(pos++);
 			Timestamp T = result.getTimestamp(pos++);
 			captureTime = T==null ? -1 : T.getTime();
-			captureUsername = UserId.valueOf(result.getString(pos++));
+			captureUsername = User.Name.valueOf(result.getString(pos++));
 			capturePrincipalName = result.getString(pos++);
 			captureCommunicationResult = result.getString(pos++);
 			captureProviderErrorCode = result.getString(pos++);
@@ -766,7 +766,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			captureProviderUniqueId = result.getString(pos++);
 			T = result.getTimestamp(pos++);
 			voidTime = T==null ? -1 : T.getTime();
-			voidUsername = UserId.valueOf(result.getString(pos++));
+			voidUsername = User.Name.valueOf(result.getString(pos++));
 			voidPrincipalName = result.getString(pos++);
 			voidCommunicationResult = result.getString(pos++);
 			voidProviderErrorCode = result.getString(pos++);
@@ -784,7 +784,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		try {
 			pkey = in.readCompressedInt();
 			processorId = in.readUTF().intern();
-			accounting = AccountingCode.valueOf(in.readUTF()).intern();
+			accounting = Account.Name.valueOf(in.readUTF()).intern();
 			groupName = in.readNullUTF();
 			testMode = in.readBoolean();
 			duplicateWindow = in.readCompressedInt();
@@ -808,20 +808,20 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			shippingPostalCode = in.readNullUTF();
 			shippingCountryCode = InternUtils.intern(in.readNullUTF());
 			emailCustomer = in.readBoolean();
-			merchantEmail = in.readNullUTF();
+			merchantEmail = Email.valueOf(in.readNullUTF());
 			invoiceNumber = in.readNullUTF();
 			purchaseOrderNumber = in.readNullUTF();
 			description = in.readNullUTF();
-			creditCardCreatedBy = UserId.valueOf(in.readUTF()).intern();
+			creditCardCreatedBy = User.Name.valueOf(in.readUTF()).intern();
 			creditCardPrincipalName = in.readNullUTF();
-			creditCardAccounting = AccountingCode.valueOf(in.readUTF()).intern();
+			creditCardAccounting = Account.Name.valueOf(in.readUTF()).intern();
 			creditCardGroupName = in.readNullUTF();
 			creditCardProviderUniqueId = in.readNullUTF();
 			creditCardMaskedCardNumber = in.readUTF();
 			creditCardFirstName = in.readUTF();
 			creditCardLastName = in.readUTF();
 			creditCardCompanyName = in.readNullUTF();
-			creditCardEmail = in.readNullUTF();
+			creditCardEmail = Email.valueOf(in.readNullUTF());
 			creditCardPhone = in.readNullUTF();
 			creditCardFax = in.readNullUTF();
 			creditCardCustomerTaxId = in.readNullUTF();
@@ -833,7 +833,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardCountryCode = in.readUTF().intern();
 			creditCardComments = in.readNullUTF();
 			authorizationTime = in.readLong();
-			authorizationUsername = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			authorizationUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			authorizationPrincipalName = InternUtils.intern(in.readNullUTF());
 			authorizationCommunicationResult = InternUtils.intern(in.readNullUTF());
 			authorizationProviderErrorCode = InternUtils.intern(in.readNullUTF());
@@ -852,7 +852,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationAvsResult = InternUtils.intern(in.readNullUTF());
 			authorizationApprovalCode = in.readNullUTF();
 			captureTime = in.readLong();
-			captureUsername = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			captureUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			capturePrincipalName = InternUtils.intern(in.readNullUTF());
 			captureCommunicationResult = InternUtils.intern(in.readNullUTF());
 			captureProviderErrorCode = InternUtils.intern(in.readNullUTF());
@@ -860,7 +860,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			captureProviderErrorMessage = in.readNullUTF();
 			captureProviderUniqueId = in.readNullUTF();
 			voidTime = in.readLong();
-			voidUsername = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			voidUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			voidPrincipalName = InternUtils.intern(in.readNullUTF());
 			voidCommunicationResult = InternUtils.intern(in.readNullUTF());
 			voidProviderErrorCode = InternUtils.intern(in.readNullUTF());
@@ -898,7 +898,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(shippingPostalCode);
 		out.writeNullUTF(shippingCountryCode);
 		out.writeBoolean(emailCustomer);
-		out.writeNullUTF(merchantEmail);
+		out.writeNullUTF(ObjectUtils.toString(merchantEmail));
 		out.writeNullUTF(invoiceNumber);
 		out.writeNullUTF(purchaseOrderNumber);
 		out.writeNullUTF(description);
@@ -911,7 +911,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeUTF(creditCardFirstName);
 		out.writeUTF(creditCardLastName);
 		out.writeNullUTF(creditCardCompanyName);
-		out.writeNullUTF(creditCardEmail);
+		out.writeNullUTF(ObjectUtils.toString(creditCardEmail));
 		out.writeNullUTF(creditCardPhone);
 		out.writeNullUTF(creditCardFax);
 		out.writeNullUTF(creditCardCustomerTaxId);

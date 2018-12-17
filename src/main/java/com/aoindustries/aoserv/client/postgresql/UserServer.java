@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -62,7 +61,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
 
-	PostgresUserId username;
+	User.Name username;
 	int postgres_server;
 	int disable_log;
 	private String predisable_password;
@@ -159,7 +158,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			username = PostgresUserId.valueOf(result.getString(2));
+			username = User.Name.valueOf(result.getString(2));
 			postgres_server=result.getInt(3);
 			disable_log=result.getInt(4);
 			if(result.wasNull()) disable_log=-1;
@@ -173,7 +172,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			username = PostgresUserId.valueOf(in.readUTF()).intern();
+			username = User.Name.valueOf(in.readUTF()).intern();
 			postgres_server=in.readCompressedInt();
 			disable_log=in.readCompressedInt();
 			predisable_password=in.readNullUTF();

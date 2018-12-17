@@ -56,7 +56,7 @@ final public class ProcessorTable extends CachedTableStringKey<Processor> {
 	}
 
 	public List<Processor> getCreditCardProcessors(Account business) throws IOException, SQLException {
-		return getIndexedRows(Processor.COLUMN_ACCOUNTING, business.getAccounting());
+		return getIndexedRows(Processor.COLUMN_ACCOUNTING, business.getName());
 	}
 
 	@Override

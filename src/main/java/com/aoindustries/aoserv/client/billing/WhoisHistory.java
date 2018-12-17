@@ -24,9 +24,9 @@ package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
@@ -65,7 +65,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	private String error;
 
 	// Protocol conversion
-	private AccountingCode accounting;
+	private Account.Name accounting;
 
 	@Override
 	protected Object getColumnImpl(int i) throws IOException, SQLException {
@@ -185,7 +185,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 			// error = result.getString(pos++);
 
 			// Protocol conversion
-			accounting = AccountingCode.valueOf(result.getString(pos++));
+			accounting = Account.Name.valueOf(result.getString(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}

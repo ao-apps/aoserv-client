@@ -27,7 +27,6 @@ import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -80,7 +79,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.PACKAGE_DEFINITIONS.ordinal());
-					out.writeUTF(business.getAccounting().toString());
+					out.writeUTF(business.getName().toString());
 					out.writeUTF(category.getName());
 					out.writeUTF(name);
 					out.writeUTF(version);
@@ -120,7 +119,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	}
 
 	public PackageDefinition getPackageDefinition(Account business, PackageCategory category, String name, String version) throws IOException, SQLException {
-		AccountingCode accounting=business.getAccounting();
+		Account.Name accounting=business.getName();
 		String categoryName=category.getName();
 		List<PackageDefinition> pds=getRows();
 		int size=pds.size();
@@ -137,7 +136,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	}
 
 	public List<PackageDefinition> getPackageDefinitions(Account business, PackageCategory category) throws IOException, SQLException {
-		AccountingCode accounting=business.getAccounting();
+		Account.Name accounting=business.getName();
 		String categoryName=category.getName();
 
 		List<PackageDefinition> cached = getRows();

@@ -25,14 +25,12 @@ package com.aoindustries.aoserv.client.postgresql;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.StreamHandler;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
-import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationException;
 import com.aoindustries.validation.ValidationResult;
@@ -65,7 +63,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 	}
 
 	int addPostgresDatabase(
-		PostgresDatabaseName name,
+		Database.Name name,
 		Server postgresServer,
 		UserServer datdba,
 		Encoding encoding,
@@ -83,9 +81,9 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		return pkey;
 	}
 
-	public PostgresDatabaseName generatePostgresDatabaseName(String template_base, String template_added) throws IOException, SQLException {
+	public Database.Name generatePostgresDatabaseName(String template_base, String template_added) throws IOException, SQLException {
 		try {
-			return PostgresDatabaseName.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added));
+			return Database.Name.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GENERATE_POSTGRES_DATABASE_NAME, template_base, template_added));
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -96,14 +94,14 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		return getUniqueRow(Database.COLUMN_PKEY, pkey);
 	}
 
-	Database getPostgresDatabase(PostgresDatabaseName name, Server postgresServer) throws IOException, SQLException {
+	Database getPostgresDatabase(Database.Name name, Server postgresServer) throws IOException, SQLException {
 		// Use the index first
 		for(Database pd : getPostgresDatabases(postgresServer)) if(pd.name.equals(name)) return pd;
 		return null;
 	}
 
 	public List<Database> getPostgresDatabases(Package pack) throws IOException, SQLException {
-		AccountingCode name = pack.getName();
+		Account.Name name = pack.getName();
 
 		List<Database> cached=getRows();
 		int size=cached.size();
@@ -138,7 +136,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 						AOSH.parsePostgresDatabaseName(args[1], "database_name"),
 						AOSH.parsePostgresServerName(args[2], "postgres_server"),
 						args[3],
-						AOSH.parsePostgresUserId(args[4], "datdba"),
+						AOSH.parsePostgresUserName(args[4], "datdba"),
 						args[5],
 						AOSH.parseBoolean(args[6], "enable_postgis")
 					)
@@ -148,7 +146,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.CHECK_POSTGRES_DATABASE_NAME)) {
 			if(AOSH.checkParamCount(Command.CHECK_POSTGRES_DATABASE_NAME, args, 1, err)) {
-				ValidationResult validationResult = PostgresDatabaseName.validate(args[1]);
+				ValidationResult validationResult = Database.Name.validate(args[1]);
 				out.println(validationResult.isValid());
 				out.flush();
 				if(!validationResult.isValid()) {
@@ -161,8 +159,8 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		} else if(command.equalsIgnoreCase(Command.DUMP_POSTGRES_DATABASE)) {
 			if(AOSH.checkParamCount(Command.DUMP_POSTGRES_DATABASE, args, 4, err)) {
 				try {
-					PostgresDatabaseName dbName = AOSH.parsePostgresDatabaseName(args[1], "database_name");
-					PostgresServerName serverName = AOSH.parsePostgresServerName(args[2], "postgres_server");
+					Database.Name dbName = AOSH.parsePostgresDatabaseName(args[1], "database_name");
+					Server.Name serverName = AOSH.parsePostgresServerName(args[2], "postgres_server");
 					String aoServer = args[3];
 					if(AOSH.parseBoolean(args[4], "gzip")) {
 						connector.getSimpleAOClient().dumpPostgresDatabase(
@@ -240,7 +238,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		return false;
 	}
 
-	boolean isPostgresDatabaseNameAvailable(PostgresDatabaseName name, Server postgresServer) throws IOException, SQLException {
+	boolean isPostgresDatabaseNameAvailable(Database.Name name, Server postgresServer) throws IOException, SQLException {
 		return connector.requestBooleanQuery(true,
 			AoservProtocol.CommandID.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
 			name,

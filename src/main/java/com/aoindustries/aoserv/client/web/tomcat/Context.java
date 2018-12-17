@@ -26,9 +26,9 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -68,7 +68,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 	public static final boolean DEFAULT_USE_NAMING=true;
 	public static final String DEFAULT_WRAPPER_CLASS=null;
 	public static final int DEFAULT_DEBUG=0;
-	public static final UnixPath DEFAULT_WORK_DIR = null;
+	public static final PosixPath DEFAULT_WORK_DIR = null;
 	public static final boolean DEFAULT_SERVER_XML_CONFIGURED = true;
 
 	/**
@@ -81,7 +81,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 	private String class_name;
 	private boolean cookies;
 	private boolean cross_context;
-	private UnixPath doc_base;
+	private PosixPath doc_base;
 	private boolean override;
 	String path;
 	private boolean privileged;
@@ -89,7 +89,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 	private boolean use_naming;
 	private String wrapper_class;
 	private int debug;
-	private UnixPath work_dir;
+	private PosixPath work_dir;
 	private boolean server_xml_configured;
 
 	public int addHttpdTomcatDataSource(
@@ -168,7 +168,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 		return cross_context;
 	}
 
-	public UnixPath getDocBase() {
+	public PosixPath getDocBase() {
 		return doc_base;
 	}
 
@@ -200,7 +200,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 		return debug;
 	}
 
-	public UnixPath getWorkDir() {
+	public PosixPath getWorkDir() {
 		return work_dir;
 	}
 
@@ -237,7 +237,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 			class_name=result.getString(3);
 			cookies=result.getBoolean(4);
 			cross_context=result.getBoolean(5);
-			doc_base = UnixPath.valueOf(result.getString(6));
+			doc_base = PosixPath.valueOf(result.getString(6));
 			override=result.getBoolean(7);
 			path=result.getString(8);
 			privileged=result.getBoolean(9);
@@ -245,14 +245,14 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 			use_naming=result.getBoolean(11);
 			wrapper_class=result.getString(12);
 			debug=result.getInt(13);
-			work_dir = UnixPath.valueOf(result.getString(14));
+			work_dir = PosixPath.valueOf(result.getString(14));
 			server_xml_configured = result.getBoolean(15);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
 	}
 
-	public static boolean isValidDocBase(UnixPath docBase) {
+	public static boolean isValidDocBase(PosixPath docBase) {
 		String docBaseStr = docBase.toString();
 		return
 			/* UnixPath checks these:
@@ -273,15 +273,15 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 			return
 				path.length() == 0
 				|| (
-					UnixPath.validate(path).isValid()
-					&& isValidDocBase(UnixPath.valueOf(path))
+					PosixPath.validate(path).isValid()
+					&& isValidDocBase(PosixPath.valueOf(path))
 				);
 		} catch(ValidationException e) {
 			throw new AssertionError("Already validated", e);
 		}
 	}
 
-	public static boolean isValidWorkDir(UnixPath workDir) {
+	public static boolean isValidWorkDir(PosixPath workDir) {
 		return workDir==null || isValidDocBase(workDir);
 	}
 
@@ -293,7 +293,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 			class_name=in.readNullUTF();
 			cookies=in.readBoolean();
 			cross_context=in.readBoolean();
-			doc_base = UnixPath.valueOf(in.readUTF());
+			doc_base = PosixPath.valueOf(in.readUTF());
 			override=in.readBoolean();
 			path=in.readUTF();
 			privileged=in.readBoolean();
@@ -301,7 +301,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 			use_naming=in.readBoolean();
 			wrapper_class=in.readNullUTF();
 			debug=in.readCompressedInt();
-			work_dir = UnixPath.valueOf(in.readNullUTF());
+			work_dir = PosixPath.valueOf(in.readNullUTF());
 			server_xml_configured = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -312,7 +312,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 		final String className,
 		final boolean cookies,
 		final boolean crossContext,
-		final UnixPath docBase,
+		final PosixPath docBase,
 		final boolean override,
 		final String path,
 		final boolean privileged,
@@ -320,7 +320,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 		final boolean useNaming,
 		final String wrapperClass,
 		final int debug,
-		final UnixPath workDir,
+		final PosixPath workDir,
 		final boolean serverXmlConfigured
 	) throws IOException, SQLException {
 		table.getConnector().requestUpdate(true,

@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.master;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ final public class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
 	/**
 	 * Caches the permission lookups for speed.
 	 */
-	private Map<UserId,SortedSet<String>> cachedPermissions;
+	private Map<User.Name,SortedSet<String>> cachedPermissions;
 
 	@Override
 	public void clearCache() {
@@ -85,10 +85,10 @@ final public class AdministratorPermissionTable extends CachedTableIntegerKey<Ad
 	public boolean hasPermission(Administrator ba, String permission) throws IOException, SQLException {
 		synchronized(this) {
 			if(cachedPermissions==null) {
-				Map<UserId,SortedSet<String>> newCachedPermissions = new HashMap<>();
+				Map<User.Name,SortedSet<String>> newCachedPermissions = new HashMap<>();
 				List<AdministratorPermission> baps = getRows();
 				for(AdministratorPermission bap : baps) {
-					UserId bapUsername = bap.username;
+					User.Name bapUsername = bap.username;
 					String bapPermission = bap.permission;
 					SortedSet<String> perms = newCachedPermissions.get(bapUsername);
 					if(perms==null) newCachedPermissions.put(bapUsername, perms = new TreeSet<>());

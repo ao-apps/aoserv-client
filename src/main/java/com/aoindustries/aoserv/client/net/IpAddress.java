@@ -23,11 +23,11 @@
 package com.aoindustries.aoserv.client.net;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.net.monitoring.IpAddressMonitoring;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -160,7 +160,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 	private InetAddress externalInetAddress;
 	private String netmask;
 	// Protocol conversion
-	private AccountingCode packageName;
+	private Account.Name packageName;
 	private boolean pingMonitorEnabled;
 	private boolean checkBlacklistsOverSmtp;
 	private boolean monitoringEnabled;
@@ -286,7 +286,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 			externalInetAddress = InetAddress.valueOf(result.getString(pos++));
 			netmask = result.getString(pos++);
 			// Protocol conversion
-			packageName = AccountingCode.valueOf(result.getString(pos++));
+			packageName = Account.Name.valueOf(result.getString(pos++));
 			pingMonitorEnabled = result.getBoolean(pos++);
 			checkBlacklistsOverSmtp = result.getBoolean(pos++);
 			monitoringEnabled = result.getBoolean(pos++);

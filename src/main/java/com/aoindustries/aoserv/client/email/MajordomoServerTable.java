@@ -104,8 +104,8 @@ final public class MajordomoServerTable extends CachedTableIntegerKey<MajordomoS
 				connector.getSimpleAOClient().addMajordomoServer(
 					AOSH.parseDomainName(args[1], "domain"),
 					args[2],
-					AOSH.parseUserId(args[3], "linux_account"),
-					AOSH.parseGroupId(args[4], "linux_group"),
+					AOSH.parseLinuxUserName(args[3], "linux_account"),
+					AOSH.parseGroupName(args[4], "linux_group"),
 					args[5]
 				);
 			}

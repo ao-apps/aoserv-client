@@ -43,7 +43,7 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
-	implements DtoFactory<com.aoindustries.aoserv.client.dto.AOServerDaemonHost> {
+	implements DtoFactory<com.aoindustries.aoserv.client.dto.LinuxDaemonAcl> {
 
 	static final int
 		COLUMN_PKEY=0,
@@ -116,8 +116,8 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
 
 	// <editor-fold defaultstate="collapsed" desc="DTO">
 	@Override
-	public com.aoindustries.aoserv.client.dto.AOServerDaemonHost getDto() {
-		return new com.aoindustries.aoserv.client.dto.AOServerDaemonHost(getPkey(), aoServer, getDto(host));
+	public com.aoindustries.aoserv.client.dto.LinuxDaemonAcl getDto() {
+		return new com.aoindustries.aoserv.client.dto.LinuxDaemonAcl(getPkey(), aoServer, getDto(host));
 	}
 	// </editor-fold>
 }

@@ -24,9 +24,9 @@ package com.aoindustries.aoserv.client.master;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -48,7 +48,7 @@ final public class AdministratorPermission extends CachedObjectIntegerKey<Admini
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_PERMISSION_name = "permission";
 
-	UserId username;
+	User.Name username;
 	String permission;
 
 	@Override
@@ -82,7 +82,7 @@ final public class AdministratorPermission extends CachedObjectIntegerKey<Admini
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			username = UserId.valueOf(result.getString(2));
+			username = User.Name.valueOf(result.getString(2));
 			permission = result.getString(3);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -93,7 +93,7 @@ final public class AdministratorPermission extends CachedObjectIntegerKey<Admini
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			username = UserId.valueOf(in.readUTF()).intern();
+			username = User.Name.valueOf(in.readUTF()).intern();
 			permission = in.readUTF().intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);

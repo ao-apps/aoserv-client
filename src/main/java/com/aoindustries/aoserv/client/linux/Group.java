@@ -22,22 +22,32 @@
  */
 package com.aoindustries.aoserv.client.linux;
 
-import com.aoindustries.aoserv.client.CachedObjectGroupIdKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
+import static com.aoindustries.aoserv.client.linux.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.Internable;
+import com.aoindustries.validation.InvalidResult;
+import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectInputValidation;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A <code>LinuxGroup</code> may exist on multiple <code>Server</code>s.
@@ -47,7 +57,172 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Group extends CachedObjectGroupIdKey<Group> implements Removable {
+final public class Group extends CachedObjectGroupNameKey<Group> implements Removable {
+
+	/**
+	 * Represents a group ID that may be used by certain types of groups.  Group ids must:
+	 * <ul>
+	 *   <li>Be non-null</li>
+	 *   <li>Be non-empty</li>
+	 *   <li>Be between 1 and 32 characters</li>
+	 *   <li>Must start with <code>[a-z]</code></li>
+	 *   <li>Uses only ASCII 0x21 through 0x7f, excluding <code>space , : ( ) [ ] ' " | & ; A-Z \ / @</code></li>
+	 *   <li>TODO: May only end on "$"?</li>
+	 * </ul>
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	// TODO: Update for IEEE Std 1003.1.2001 "3.426 User Name"? https://paulgorman.org/technical/presentations/linux_username_conventions.pdf
+	// TODO: Combined with "UserName" as "PosixName" (and an associated "PosixPortableFilename")?
+	final static public class Name implements
+		Comparable<Name>,
+		Serializable,
+		ObjectInputValidation,
+		DtoFactory<com.aoindustries.aoserv.client.dto.LinuxGroupName>,
+		Internable<Name>
+	{
+
+		private static final long serialVersionUID = 5758732021942097608L;
+
+		public static final int MAX_LENGTH = 32;
+
+		/**
+		 * Validates a group name.
+		 */
+		public static ValidationResult validate(String name) {
+			if(name==null) return new InvalidResult(accessor, "Group.Name.validate.isNull");
+			int len = name.length();
+			if(len==0) return new InvalidResult(accessor, "Group.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(accessor, "Group.Name.validate.tooLong", MAX_LENGTH, len);
+
+			// The first character must be [a-z]
+			char ch = name.charAt(0);
+			if(ch < 'a' || ch > 'z') return new InvalidResult(accessor, "Group.Name.validate.startAToZ");
+
+			// The rest may have additional characters
+			for (int c = 1; c < len; c++) {
+				ch = name.charAt(c);
+				if(ch==' ') return new InvalidResult(accessor, "Group.Name.validate.noSpace");
+				if(ch<=0x21 || ch>0x7f) return new InvalidResult(accessor, "Group.Name.validate.specialCharacter");
+				if(ch>='A' && ch<='Z') return new InvalidResult(accessor, "Group.Name.validate.noCapital");
+				switch(ch) {
+					case ',' : return new InvalidResult(accessor, "Group.Name.validate.comma");
+					case ':' : return new InvalidResult(accessor, "Group.Name.validate.colon");
+					case '(' : return new InvalidResult(accessor, "Group.Name.validate.leftParen");
+					case ')' : return new InvalidResult(accessor, "Group.Name.validate.rightParen");
+					case '[' : return new InvalidResult(accessor, "Group.Name.validate.leftSquare");
+					case ']' : return new InvalidResult(accessor, "Group.Name.validate.rightSquare");
+					case '\'' : return new InvalidResult(accessor, "Group.Name.validate.apostrophe");
+					case '"' : return new InvalidResult(accessor, "Group.Name.validate.quote");
+					case '|' : return new InvalidResult(accessor, "Group.Name.validate.verticalBar");
+					case '&' : return new InvalidResult(accessor, "Group.Name.validate.ampersand");
+					case ';' : return new InvalidResult(accessor, "Group.Name.validate.semicolon");
+					case '\\' : return new InvalidResult(accessor, "Group.Name.validate.backslash");
+					case '/' : return new InvalidResult(accessor, "Group.Name.validate.slash");
+					case '@' : return new InvalidResult(accessor, "Group.Name.validate.at");
+				}
+			}
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param name  when {@code null}, returns {@code null}
+		 */
+		public static Name valueOf(String name) throws ValidationException {
+			if(name == null) return null;
+			//Name existing = interned.get(name);
+			//return existing!=null ? existing : new Name(name);
+			return new Name(name, true);
+		}
+
+		final private String name;
+
+		private Name(String name, boolean validate) throws ValidationException {
+			this.name = name;
+			if(validate) validate();
+		}
+
+		/**
+		 * @param  name  Does not validate, should only be used with a known valid value.
+		 */
+		private Name(String name) {
+			ValidationResult result;
+			assert (result = validate(name)).isValid() : result.toString();
+			this.name = name;
+		}
+
+		private void validate() throws ValidationException {
+			ValidationResult result = validate(name);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		/**
+		 * Perform same validation as constructor on readObject.
+		 */
+		private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+			ois.defaultReadObject();
+			validateObject();
+		}
+
+		@Override
+		public void validateObject() throws InvalidObjectException {
+			try {
+				validate();
+			} catch(ValidationException err) {
+				InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+				newErr.initCause(err);
+				throw newErr;
+			}
+		}
+
+		@Override
+		public boolean equals(Object O) {
+			return
+				O!=null
+				&& O instanceof Name
+				&& name.equals(((Name)O).name)
+			;
+		}
+
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+		}
+
+		@Override
+		public int compareTo(Name other) {
+			return this==other ? 0 : name.compareTo(other.name);
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		/**
+		 * Interns this name much in the same fashion as <code>String.intern()</code>.
+		 *
+		 * @see  String#intern()
+		 */
+		@Override
+		public Name intern() {
+			Name existing = interned.get(name);
+			if(existing==null) {
+				String internedId = name.intern();
+				Name addMe = (name == internedId) ? this : new Name(internedId); // Using identity String comparison to see if already interned
+				existing = interned.putIfAbsent(internedId, addMe);
+				if(existing==null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.LinuxGroupName getDto() {
+			return new com.aoindustries.aoserv.client.dto.LinuxGroupName(name);
+		}
+	}
 
 	static final int
 		COLUMN_NAME=0,
@@ -58,7 +233,7 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 	/**
 	 * Some commonly used system and application groups.
 	 */
-	public static final GroupId
+	public static final Name
 		ADM,
 		AOADMIN,
 		AOSERV_JILTER,
@@ -132,85 +307,85 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 	 * @deprecated  Group httpd no longer used.
 	 */
 	@Deprecated
-	public static final GroupId HTTPD;
+	public static final Name HTTPD;
 
 	static {
 		try {
-			ADM = GroupId.valueOf("adm");
-			AOADMIN = GroupId.valueOf("aoadmin");
-			AOSERV_JILTER = GroupId.valueOf("aoserv-jilter");
-			AOSERV_XEN_MIGRATION = GroupId.valueOf("aoserv-xen-migration");
-			APACHE = GroupId.valueOf("apache");
-			AUDIO = GroupId.valueOf("audio");
-			AVAHI_AUTOIPD = GroupId.valueOf("avahi-autoipd");
-			AWSTATS = GroupId.valueOf("awstats");
-			BIN = GroupId.valueOf("bin");
-			BIRD = GroupId.valueOf("bird");
-			CDROM = GroupId.valueOf("cdrom");
-			CGRED = GroupId.valueOf("cgred");
-			CHRONY = GroupId.valueOf("chrony");
-			CLAMSCAN = GroupId.valueOf("clamscan");
-			CLAMUPDATE = GroupId.valueOf("clamupdate");
-			DAEMON = GroupId.valueOf("daemon");
-			DBUS = GroupId.valueOf("dbus");
-			DHCPD = GroupId.valueOf("dhcpd");
-			DIALOUT = GroupId.valueOf("dialout");
-			DIP = GroupId.valueOf("dip");
-			DISK = GroupId.valueOf("disk");
-			FLOPPY = GroupId.valueOf("floppy");
-			FTP = GroupId.valueOf("ftp");
-			FTPONLY = GroupId.valueOf("ftponly");
-			GAMES = GroupId.valueOf("games");
-			INPUT = GroupId.valueOf("input");
-			KMEM = GroupId.valueOf("kmem");
-			LOCK = GroupId.valueOf("lock");
-			LP = GroupId.valueOf("lp");
-			MAIL = GroupId.valueOf("mail");
-			MAILNULL = GroupId.valueOf("mailnull");
-			MAILONLY = GroupId.valueOf("mailonly");
-			MAN = GroupId.valueOf("man");
-			MEM = GroupId.valueOf("mem");
-			MEMCACHED = GroupId.valueOf("memcached");
-			MYSQL = GroupId.valueOf("mysql");
-			NAMED = GroupId.valueOf("named");
-			NGINX = GroupId.valueOf("nginx");
-			NFSNOBODY = GroupId.valueOf("nfsnobody");
-			NOBODY = GroupId.valueOf("nobody");
-			NOGROUP = GroupId.valueOf("nogroup");
-			POLKITD = GroupId.valueOf("polkitd");
-			POSTGRES = GroupId.valueOf("postgres");
-			PROFTPD_JAILED = GroupId.valueOf("proftpd_jailed");
-			ROOT = GroupId.valueOf("root");
-			RPC = GroupId.valueOf("rpc");
-			RPCUSER = GroupId.valueOf("rpcuser");
-			SASLAUTH = GroupId.valueOf("saslauth");
-			SCREEN = GroupId.valueOf("screen");
-			SMMSP = GroupId.valueOf("smmsp");
-			SSH_KEYS = GroupId.valueOf("ssh_keys");
-			SSHD = GroupId.valueOf("sshd");
-			SYS = GroupId.valueOf("sys");
-			SYSTEMD_BUS_PROXY = GroupId.valueOf("systemd-bus-proxy");
-			SYSTEMD_JOURNAL = GroupId.valueOf("systemd-journal");
-			SYSTEMD_NETWORK = GroupId.valueOf("systemd-network");
-			TAPE = GroupId.valueOf("tape");
-			TCPDUMP = GroupId.valueOf("tcpdump");
-			TSS = GroupId.valueOf("tss");
-			TTY = GroupId.valueOf("tty");
-			UNBOUND = GroupId.valueOf("unbound");
-			USERS = GroupId.valueOf("users");
-			UTEMPTER = GroupId.valueOf("utempter");
-			UTMP = GroupId.valueOf("utmp");
-			VIDEO = GroupId.valueOf("video");
-			VIRUSGROUP = GroupId.valueOf("virusgroup");
-			WHEEL = GroupId.valueOf("wheel");
+			ADM = Name.valueOf("adm");
+			AOADMIN = Name.valueOf("aoadmin");
+			AOSERV_JILTER = Name.valueOf("aoserv-jilter");
+			AOSERV_XEN_MIGRATION = Name.valueOf("aoserv-xen-migration");
+			APACHE = Name.valueOf("apache");
+			AUDIO = Name.valueOf("audio");
+			AVAHI_AUTOIPD = Name.valueOf("avahi-autoipd");
+			AWSTATS = Name.valueOf("awstats");
+			BIN = Name.valueOf("bin");
+			BIRD = Name.valueOf("bird");
+			CDROM = Name.valueOf("cdrom");
+			CGRED = Name.valueOf("cgred");
+			CHRONY = Name.valueOf("chrony");
+			CLAMSCAN = Name.valueOf("clamscan");
+			CLAMUPDATE = Name.valueOf("clamupdate");
+			DAEMON = Name.valueOf("daemon");
+			DBUS = Name.valueOf("dbus");
+			DHCPD = Name.valueOf("dhcpd");
+			DIALOUT = Name.valueOf("dialout");
+			DIP = Name.valueOf("dip");
+			DISK = Name.valueOf("disk");
+			FLOPPY = Name.valueOf("floppy");
+			FTP = Name.valueOf("ftp");
+			FTPONLY = Name.valueOf("ftponly");
+			GAMES = Name.valueOf("games");
+			INPUT = Name.valueOf("input");
+			KMEM = Name.valueOf("kmem");
+			LOCK = Name.valueOf("lock");
+			LP = Name.valueOf("lp");
+			MAIL = Name.valueOf("mail");
+			MAILNULL = Name.valueOf("mailnull");
+			MAILONLY = Name.valueOf("mailonly");
+			MAN = Name.valueOf("man");
+			MEM = Name.valueOf("mem");
+			MEMCACHED = Name.valueOf("memcached");
+			MYSQL = Name.valueOf("mysql");
+			NAMED = Name.valueOf("named");
+			NGINX = Name.valueOf("nginx");
+			NFSNOBODY = Name.valueOf("nfsnobody");
+			NOBODY = Name.valueOf("nobody");
+			NOGROUP = Name.valueOf("nogroup");
+			POLKITD = Name.valueOf("polkitd");
+			POSTGRES = Name.valueOf("postgres");
+			PROFTPD_JAILED = Name.valueOf("proftpd_jailed");
+			ROOT = Name.valueOf("root");
+			RPC = Name.valueOf("rpc");
+			RPCUSER = Name.valueOf("rpcuser");
+			SASLAUTH = Name.valueOf("saslauth");
+			SCREEN = Name.valueOf("screen");
+			SMMSP = Name.valueOf("smmsp");
+			SSH_KEYS = Name.valueOf("ssh_keys");
+			SSHD = Name.valueOf("sshd");
+			SYS = Name.valueOf("sys");
+			SYSTEMD_BUS_PROXY = Name.valueOf("systemd-bus-proxy");
+			SYSTEMD_JOURNAL = Name.valueOf("systemd-journal");
+			SYSTEMD_NETWORK = Name.valueOf("systemd-network");
+			TAPE = Name.valueOf("tape");
+			TCPDUMP = Name.valueOf("tcpdump");
+			TSS = Name.valueOf("tss");
+			TTY = Name.valueOf("tty");
+			UNBOUND = Name.valueOf("unbound");
+			USERS = Name.valueOf("users");
+			UTEMPTER = Name.valueOf("utempter");
+			UTMP = Name.valueOf("utmp");
+			VIDEO = Name.valueOf("video");
+			VIRUSGROUP = Name.valueOf("virusgroup");
+			WHEEL = Name.valueOf("wheel");
 			// Unused ones
-			HTTPD = GroupId.valueOf("httpd");
+			HTTPD = Name.valueOf("httpd");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
 	}
 
-	AccountingCode packageName;
+	Account.Name packageName;
 	private String type;
 
 	public int addLinuxAccount(User user) throws IOException, SQLException {
@@ -245,11 +420,11 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 		return table.getConnector().getLinux().getGroupServer().getLinuxServerGroups(this);
 	}
 
-	public GroupId getName() {
+	public Name getName() {
 		return pkey;
 	}
 
-	public AccountingCode getPackage_name() {
+	public Account.Name getPackage_name() {
 		return packageName;
 	}
 
@@ -266,8 +441,8 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = GroupId.valueOf(result.getString(1));
-			packageName = AccountingCode.valueOf(result.getString(2));
+			pkey = Name.valueOf(result.getString(1));
+			packageName = Account.Name.valueOf(result.getString(2));
 			type = result.getString(3);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -277,8 +452,8 @@ final public class Group extends CachedObjectGroupIdKey<Group> implements Remova
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey = GroupId.valueOf(in.readUTF()).intern();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			pkey = Name.valueOf(in.readUTF()).intern();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
 			type=in.readUTF().intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);

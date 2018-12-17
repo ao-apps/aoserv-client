@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class GetUniqueRowTODO extends TestCase {
 	public void testGetUniqueRows() throws Exception {
 		System.out.println("Testing all unique rows:");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			Map<Object,AOServObject> uniqueMap=new HashMap<>();
 			int numTables = Table.TableID.values().length;

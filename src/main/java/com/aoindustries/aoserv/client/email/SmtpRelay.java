@@ -26,12 +26,12 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.DisableLog;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.HostAddress;
@@ -65,7 +65,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	 */
 	public static final int HISTORY_DAYS=92;
 
-	AccountingCode packageName;
+	Account.Name packageName;
 	int ao_server;
 	private HostAddress host;
 	String type;
@@ -182,7 +182,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			packageName = AccountingCode.valueOf(result.getString(2));
+			packageName = Account.Name.valueOf(result.getString(2));
 			ao_server=result.getInt(3);
 			if(result.wasNull()) ao_server=-1;
 			host=HostAddress.valueOf(result.getString(4));
@@ -203,7 +203,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			host=HostAddress.valueOf(in.readUTF());
 			type=in.readUTF().intern();

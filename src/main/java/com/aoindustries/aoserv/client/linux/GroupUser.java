@@ -28,8 +28,6 @@ import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -65,8 +63,8 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 	 */
 	public static final int MAX_GROUPS = 65536;
 
-	private GroupId group;
-	private UserId user;
+	private Group.Name group;
+	private User.Name user;
 	private boolean isPrimary;
 	private int operatingSystemVersion;
 
@@ -86,7 +84,7 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 		return pkey;
 	}
 
-	public GroupId getGroup_name() {
+	public Group.Name getGroup_name() {
 		return group;
 	}
 
@@ -96,12 +94,12 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 		return groupNameObject;
 	}
 
-	public UserId getUser_username() {
+	public User.Name getUser_username() {
 		return user;
 	}
 
 	public User getUser() throws SQLException, IOException {
-		User usernameObject = table.getConnector().getAccount().getUsername().get(user).getLinuxAccount();
+		User usernameObject = table.getConnector().getLinux().getUser().get(user);
 		if (usernameObject == null) throw new SQLException("Unable to find LinuxAccount: " + user);
 		return usernameObject;
 	}
@@ -126,8 +124,8 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 		try {
 			int pos = 1;
 			pkey = result.getInt(pos++);
-			group = GroupId.valueOf(result.getString(pos++));
-			user = UserId.valueOf(result.getString(pos++));
+			group = Group.Name.valueOf(result.getString(pos++));
+			user = User.Name.valueOf(result.getString(pos++));
 			isPrimary = result.getBoolean(pos++);
 			operatingSystemVersion = result.getInt(pos++);
 			if(result.wasNull()) operatingSystemVersion = -1;
@@ -140,8 +138,8 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			group = GroupId.valueOf(in.readUTF()).intern();
-			user = UserId.valueOf(in.readUTF()).intern();
+			group = Group.Name.valueOf(in.readUTF()).intern();
+			user = User.Name.valueOf(in.readUTF()).intern();
 			isPrimary = in.readBoolean();
 			operatingSystemVersion = in.readCompressedInt();
 		} catch(ValidationException e) {

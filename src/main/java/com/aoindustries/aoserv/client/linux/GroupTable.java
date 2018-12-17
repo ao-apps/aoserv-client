@@ -23,13 +23,11 @@
 package com.aoindustries.aoserv.client.linux;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedTableGroupIdKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.GroupId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
@@ -42,7 +40,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class GroupTable extends CachedTableGroupIdKey<Group> {
+final public class GroupTable extends CachedTableGroupNameKey<Group> {
 
 	GroupTable(AOServConnector connector) {
 		super(connector, Group.class);
@@ -56,7 +54,7 @@ final public class GroupTable extends CachedTableGroupIdKey<Group> {
 		return defaultOrderBy;
 	}
 
-	public void addLinuxGroup(GroupId name, Package packageObject, String type) throws IOException, SQLException {
+	public void addLinuxGroup(Group.Name name, Package packageObject, String type) throws IOException, SQLException {
 		connector.requestUpdateIL(true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.LINUX_GROUPS,
@@ -67,7 +65,7 @@ final public class GroupTable extends CachedTableGroupIdKey<Group> {
 	}
 
 	@Override
-	public Group get(GroupId name) throws IOException, SQLException {
+	public Group get(Group.Name name) throws IOException, SQLException {
 		return getUniqueRow(Group.COLUMN_NAME, name);
 	}
 
@@ -86,7 +84,7 @@ final public class GroupTable extends CachedTableGroupIdKey<Group> {
 		if(command.equalsIgnoreCase(Command.ADD_LINUX_GROUP)) {
 			if(AOSH.checkParamCount(Command.ADD_LINUX_GROUP, args, 3, err)) {
 				connector.getSimpleAOClient().addLinuxGroup(
-					AOSH.parseGroupId(args[1], "group"),
+					AOSH.parseGroupName(args[1], "group"),
 					AOSH.parseAccountingCode(args[2], "package"),
 					args[3]
 				);
@@ -94,7 +92,7 @@ final public class GroupTable extends CachedTableGroupIdKey<Group> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.CHECK_LINUX_GROUP_NAME)) {
 			if(AOSH.checkParamCount(Command.CHECK_LINUX_GROUP_NAME, args, 1, err)) {
-				ValidationResult validationResult = GroupId.validate(args[1]);
+				ValidationResult validationResult = Group.Name.validate(args[1]);
 				out.println(validationResult.isValid());
 				out.flush();
 				if(!validationResult.isValid()) {
@@ -109,7 +107,7 @@ final public class GroupTable extends CachedTableGroupIdKey<Group> {
 				try {
 					out.println(
 						connector.getSimpleAOClient().isLinuxGroupNameAvailable(
-							AOSH.parseGroupId(args[1], "groupname")
+							AOSH.parseGroupName(args[1], "groupname")
 						)
 					);
 					out.flush();
@@ -123,7 +121,7 @@ final public class GroupTable extends CachedTableGroupIdKey<Group> {
 		} else if(command.equalsIgnoreCase(Command.REMOVE_LINUX_GROUP)) {
 			if(AOSH.checkParamCount(Command.REMOVE_LINUX_GROUP, args, 1, err)) {
 				connector.getSimpleAOClient().removeLinuxGroup(
-					AOSH.parseGroupId(args[1], "group")
+					AOSH.parseGroupName(args[1], "group")
 				);
 			}
 			return true;
@@ -131,7 +129,7 @@ final public class GroupTable extends CachedTableGroupIdKey<Group> {
 		return false;
 	}
 
-	public boolean isLinuxGroupNameAvailable(GroupId groupname) throws SQLException, IOException {
+	public boolean isLinuxGroupNameAvailable(Group.Name groupname) throws SQLException, IOException {
 		return connector.requestBooleanQuery(true, AoservProtocol.CommandID.IS_LINUX_GROUP_NAME_AVAILABLE, groupname);
 	}
 }

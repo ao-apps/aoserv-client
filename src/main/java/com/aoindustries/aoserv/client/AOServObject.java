@@ -22,22 +22,16 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.User;
+import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.PosixPath;
+import com.aoindustries.aoserv.client.linux.User.Gecos;
+import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.HashedPassword;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
-import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
-import com.aoindustries.aoserv.client.validator.PostgresServerName;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -188,9 +182,9 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe accounting code conversion.
 	 */
-	protected static AccountingCode getAccountingCode(com.aoindustries.aoserv.client.dto.AccountingCode accounting) throws ValidationException {
+	protected static Account.Name getAccountingCode(com.aoindustries.aoserv.client.dto.AccountName accounting) throws ValidationException {
 		if(accounting==null) return null;
-		return AccountingCode.valueOf(accounting.getAccounting());
+		return Account.Name.valueOf(accounting.getAccounting());
 	}
 
 	/**
@@ -246,9 +240,9 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe group id conversion.
 	 */
-	protected static GroupId getGroupId(com.aoindustries.aoserv.client.dto.GroupId gid) throws ValidationException {
+	protected static Group.Name getGroupId(com.aoindustries.aoserv.client.dto.LinuxGroupName gid) throws ValidationException {
 		if(gid==null) return null;
-		return GroupId.valueOf(gid.getId());
+		return Group.Name.valueOf(gid.getName());
 	}
 
 	/**
@@ -278,10 +272,19 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe Linux id conversion.
 	 */
-	protected static com.aoindustries.aoserv.client.validator.LinuxId getLinuxID(com.aoindustries.aoserv.client.dto.LinuxId lid) throws ValidationException {
+	protected static com.aoindustries.aoserv.client.linux.LinuxId getLinuxID(com.aoindustries.aoserv.client.dto.LinuxId lid) throws ValidationException {
 		if(lid==null) return null;
-		return com.aoindustries.aoserv.client.validator.LinuxId.valueOf(lid.getId());
+		return com.aoindustries.aoserv.client.linux.LinuxId.valueOf(lid.getId());
 	}
+
+	/**
+	 * null-safe Linux user name conversion.
+	 */
+	protected static com.aoindustries.aoserv.client.linux.User.Name getLinuxUserName(com.aoindustries.aoserv.client.dto.LinuxUserName linuxUserName) throws ValidationException {
+		if(linuxUserName == null) return null;
+		return com.aoindustries.aoserv.client.linux.User.Name.valueOf(linuxUserName.getName());
+	}
+
 
 	/**
 	 * null-safe MAC address conversion.
@@ -294,25 +297,26 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe MySQL database name conversion.
 	 */
-	protected static MySQLDatabaseName getMySQLDatabaseName(com.aoindustries.aoserv.client.dto.MySQLDatabaseName databaseName) throws ValidationException {
+	protected static com.aoindustries.aoserv.client.mysql.Database.Name getMySQLDatabaseName(com.aoindustries.aoserv.client.dto.MySQLDatabaseName databaseName) throws ValidationException {
 		if(databaseName==null) return null;
-		return MySQLDatabaseName.valueOf(databaseName.getName());
+		return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(databaseName.getName());
 	}
 
 	/**
 	 * null-safe MySQL server name conversion.
 	 */
-	protected static MySQLServerName getMySQLServerName(com.aoindustries.aoserv.client.dto.MySQLServerName serverName) throws ValidationException {
+	protected static com.aoindustries.aoserv.client.mysql.Server.Name getMySQLServerName(com.aoindustries.aoserv.client.dto.MySQLServerName serverName) throws ValidationException {
 		if(serverName==null) return null;
-		return MySQLServerName.valueOf(serverName.getName());
+		return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(serverName.getName());
 	}
 
 	/**
-	 * null-safe MySQL user id conversion.
+	 * null-safe MySQL user name conversion.
 	 */
-	protected static MySQLUserId getMySQLUserId(com.aoindustries.aoserv.client.dto.MySQLUserId mysqlUserId) throws ValidationException {
+	// TODO: Move this, and others to schemas?
+	protected static com.aoindustries.aoserv.client.mysql.User.Name getMysqlUserName(com.aoindustries.aoserv.client.dto.MySQLUserName mysqlUserId) throws ValidationException {
 		if(mysqlUserId==null) return null;
-		return MySQLUserId.valueOf(mysqlUserId.getId());
+		return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(mysqlUserId.getName());
 	}
 
 	/**
@@ -329,25 +333,25 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe PostgreSQL database name conversion.
 	 */
-	protected static PostgresDatabaseName getPostgresDatabaseName(com.aoindustries.aoserv.client.dto.PostgresDatabaseName databaseName) throws ValidationException {
+	protected static com.aoindustries.aoserv.client.postgresql.Database.Name getPostgresDatabaseName(com.aoindustries.aoserv.client.dto.PostgresDatabaseName databaseName) throws ValidationException {
 		if(databaseName==null) return null;
-		return PostgresDatabaseName.valueOf(databaseName.getName());
+		return com.aoindustries.aoserv.client.postgresql.Database.Name.valueOf(databaseName.getName());
 	}
 
 	/**
 	 * null-safe PostgreSQL server name conversion.
 	 */
-	protected static PostgresServerName getPostgresServerName(com.aoindustries.aoserv.client.dto.PostgresServerName serverName) throws ValidationException {
+	protected static com.aoindustries.aoserv.client.postgresql.Server.Name getPostgresServerName(com.aoindustries.aoserv.client.dto.PostgresServerName serverName) throws ValidationException {
 		if(serverName==null) return null;
-		return PostgresServerName.valueOf(serverName.getName());
+		return com.aoindustries.aoserv.client.postgresql.Server.Name.valueOf(serverName.getName());
 	}
 
 	/**
 	 * null-safe PostgreSQL user id conversion.
 	 */
-	protected static PostgresUserId getPostgresUserId(com.aoindustries.aoserv.client.dto.PostgresUserId postgresUserId) throws ValidationException {
+	protected static com.aoindustries.aoserv.client.postgresql.User.Name getPostgresUserId(com.aoindustries.aoserv.client.dto.PostgresUserName postgresUserId) throws ValidationException {
 		if(postgresUserId==null) return null;
-		return PostgresUserId.valueOf(postgresUserId.getId());
+		return com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(postgresUserId.getName());
 	}
 
 	/**
@@ -369,17 +373,17 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * null-safe Unix path conversion.
 	 */
-	protected static UnixPath getUnixPath(com.aoindustries.aoserv.client.dto.UnixPath unixPath) throws ValidationException {
+	protected static PosixPath getUnixPath(com.aoindustries.aoserv.client.dto.PosixPath unixPath) throws ValidationException {
 		if(unixPath==null) return null;
-		return UnixPath.valueOf(unixPath.getPath());
+		return PosixPath.valueOf(unixPath.getPath());
 	}
 
 	/**
 	 * null-safe user id conversion.
 	 */
-	protected static UserId getUserId(com.aoindustries.aoserv.client.dto.UserId userId) throws ValidationException {
+	protected static User.Name getUserId(com.aoindustries.aoserv.client.dto.UserName userId) throws ValidationException {
 		if(userId==null) return null;
-		return UserId.valueOf(userId.getId());
+		return User.Name.valueOf(userId.getName());
 	}
 
 	/**

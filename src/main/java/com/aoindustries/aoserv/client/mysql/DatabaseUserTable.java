@@ -199,7 +199,7 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 						AOSH.parseMySQLDatabaseName(args[1], "database_name"),
 						AOSH.parseMySQLServerName(args[2], "mysql_server"),
 						args[3],
-						AOSH.parseMySQLUserId(args[4], "username"),
+						AOSH.parseMySQLUserName(args[4], "username"),
 						AOSH.parseBoolean(args[5], "can_select"),
 						AOSH.parseBoolean(args[6], "can_insert"),
 						AOSH.parseBoolean(args[7], "can_update"),
@@ -229,7 +229,7 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 					AOSH.parseMySQLDatabaseName(args[1], "database_name"),
 					AOSH.parseMySQLServerName(args[2], "mysql_server"),
 					args[3],
-					AOSH.parseMySQLUserId(args[4], "username")
+					AOSH.parseMySQLUserName(args[4], "username")
 				);
 			}
 			return true;

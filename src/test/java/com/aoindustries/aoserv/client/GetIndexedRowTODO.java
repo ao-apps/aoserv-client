@@ -22,9 +22,9 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +72,7 @@ public class GetIndexedRowTODO extends TestCase {
 		System.out.println("+ means supported");
 		System.out.println("- means unsupported");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			int numTables = Table.TableID.values().length;
 			for(int c=0;c<numTables;c++) {

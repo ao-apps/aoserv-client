@@ -24,9 +24,9 @@ package com.aoindustries.aoserv.client.payment;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableStringKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Profile;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -65,9 +65,9 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 		Map<String,int[]> counts = new HashMap<>();
 
 		// Add the business_profiles
-		Set<AccountingCode> finishedBusinesses=new HashSet<>();
+		Set<Account.Name> finishedBusinesses=new HashSet<>();
 		for(Profile profile : connector.getAccount().getProfile().getRows()) {
-			AccountingCode accounting = profile.getBusiness_accounting();
+			Account.Name accounting = profile.getBusiness_accounting();
 			if(!finishedBusinesses.contains(accounting)) {
 				finishedBusinesses.add(accounting);
 				String code = profile.getCountry_code();

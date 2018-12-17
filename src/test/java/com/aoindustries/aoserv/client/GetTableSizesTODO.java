@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client;
 
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -67,7 +67,7 @@ public class GetTableSizesTODO extends TestCase {
 		final int PASSES=10;
 		System.out.println("Testing getTable(tableID).size()");
 		for(AOServConnector conn : conns) {
-			UserId username = conn.getThisBusinessAdministrator().pkey;
+			User.Name username = conn.getThisBusinessAdministrator().getKey();
 			System.out.println("    "+username);
 			int numTables = Table.TableID.values().length;
 			int[][] counts=new int[PASSES][numTables];

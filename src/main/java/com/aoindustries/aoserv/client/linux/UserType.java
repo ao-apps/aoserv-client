@@ -27,7 +27,6 @@ import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import java.io.IOException;
@@ -70,24 +69,24 @@ final public class UserType extends GlobalObjectStringKey<UserType> {
 		APPLICATION="application"
 	;
 
-	private static final UnixPath[] backupShells={
+	private static final PosixPath[] backupShells={
 		Shell.BASH
 	};
 
-	private static final UnixPath[] emailShells={
+	private static final PosixPath[] emailShells={
 		Shell.PASSWD
 	};
 
-	private static final UnixPath[] ftpShells={
+	private static final PosixPath[] ftpShells={
 		Shell.FTPONLY,
 		Shell.FTPPASSWD
 	};
 
-	private static final UnixPath[] mercenaryShells={
+	private static final PosixPath[] mercenaryShells={
 		Shell.BASH
 	};
 
-	private static final UnixPath[] systemShells={
+	private static final PosixPath[] systemShells={
 		Shell.BASH,
 		Shell.FALSE,
 		Shell.NOLOGIN,
@@ -97,14 +96,14 @@ final public class UserType extends GlobalObjectStringKey<UserType> {
 		//Shell.TRUE
 	};
 
-	private static final UnixPath[] applicationShells={
+	private static final PosixPath[] applicationShells={
 		Shell.BASH,
 		Shell.FALSE//,
 		//Shell.NULL,
 		//Shell.TRUE
 	};
 
-	private static final UnixPath[] userShells={
+	private static final PosixPath[] userShells={
 		//Shell.ASH,
 		Shell.BASH,
 		//Shell.BASH2,
@@ -126,7 +125,7 @@ final public class UserType extends GlobalObjectStringKey<UserType> {
 	}
 
 	public List<Shell> getAllowedShells(AOServConnector connector) throws SQLException, IOException {
-		UnixPath[] paths=getShellList(pkey);
+		PosixPath[] paths=getShellList(pkey);
 
 		ShellTable shellTable=connector.getLinux().getShell();
 		int len=paths.length;
@@ -155,7 +154,7 @@ final public class UserType extends GlobalObjectStringKey<UserType> {
 		return pkey;
 	}
 
-	private static UnixPath[] getShellList(String type) throws SQLException {
+	private static PosixPath[] getShellList(String type) throws SQLException {
 		if(type.equals(BACKUP)) return backupShells;
 		if(type.equals(EMAIL)) return emailShells;
 		if(type.equals(FTPONLY)) return ftpShells;
@@ -182,12 +181,12 @@ final public class UserType extends GlobalObjectStringKey<UserType> {
 		return isAllowedShell(shell.getPath());
 	}
 
-	public boolean isAllowedShell(UnixPath path) throws SQLException {
+	public boolean isAllowedShell(PosixPath path) throws SQLException {
 		return isAllowedShell(pkey, path);
 	}
 
-	public static boolean isAllowedShell(String type, UnixPath path) throws SQLException {
-		UnixPath[] paths=getShellList(type);
+	public static boolean isAllowedShell(String type, PosixPath path) throws SQLException {
+		PosixPath[] paths=getShellList(type);
 		int len=paths.length;
 		for(int c=0;c<len;c++) {
 			if(paths[c].equals(path)) return true;

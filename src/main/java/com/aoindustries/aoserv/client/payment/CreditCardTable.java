@@ -30,10 +30,11 @@ import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.io.Reader;
@@ -69,7 +70,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		final String firstName,
 		final String lastName,
 		final String companyName,
-		final String email,
+		final Email email,
 		final String phone,
 		final String fax,
 		final String customerTaxId,
@@ -116,14 +117,14 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.CREDIT_CARDS.ordinal());
 					out.writeUTF(processor.getProviderId());
-					out.writeUTF(business.getAccounting().toString());
+					out.writeUTF(business.getName().toString());
 					out.writeNullUTF(groupName);
 					out.writeUTF(cardInfo);
 					out.writeUTF(providerUniqueId);
 					out.writeUTF(firstName);
 					out.writeUTF(lastName);
 					out.writeNullUTF(companyName);
-					out.writeNullUTF(email);
+					out.writeNullUTF(ObjectUtils.toString(email));
 					out.writeNullUTF(phone);
 					out.writeNullUTF(fax);
 					out.writeNullUTF(customerTaxId);
@@ -168,7 +169,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	}
 
 	public List<CreditCard> getCreditCards(Account business) throws IOException, SQLException {
-		return getIndexedRows(CreditCard.COLUMN_ACCOUNTING, business.getAccounting());
+		return getIndexedRows(CreditCard.COLUMN_ACCOUNTING, business.getName());
 	}
 
 	/**
@@ -179,7 +180,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	 * @return  the <code>CreditCard</code> or <code>null</code> if none found
 	 */
 	public CreditCard getMonthlyCreditCard(Account business) throws IOException, SQLException {
-		AccountingCode accounting = business.getAccounting();
+		Account.Name accounting = business.getName();
 		List<CreditCard> cards = getRows();
 		int size = cards.size();
 		for (int c = 0; c < size; c++) {

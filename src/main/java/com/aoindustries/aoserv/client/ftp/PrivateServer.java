@@ -24,14 +24,15 @@ package com.aoindustries.aoserv.client.ftp;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Email;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -52,9 +53,9 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	static final int COLUMN_NET_BIND=0;
 	static final String COLUMN_NET_BIND_name = "net_bind";
 
-	private UnixPath logfile;
+	private PosixPath logfile;
 	private DomainName hostname;
-	private String email;
+	private Email email;
 	private long created;
 	int pub_linux_server_account;
 	private boolean allow_anonymous;
@@ -77,7 +78,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 		return new Timestamp(created);
 	}
 
-	public String getEmail() {
+	public Email getEmail() {
 		return email;
 	}
 
@@ -91,7 +92,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 		return nb;
 	}
 
-	public UnixPath getLogfile() {
+	public PosixPath getLogfile() {
 		return logfile;
 	}
 
@@ -119,7 +120,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	/**
 	 * @deprecated  use getLinuxServerAccount().getHome()
 	 */
-	public UnixPath getRoot() throws SQLException, IOException {
+	public PosixPath getRoot() throws SQLException, IOException {
 		return getLinuxServerAccount().getHome();
 	}
 
@@ -132,9 +133,9 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			logfile = UnixPath.valueOf(result.getString(2));
+			logfile = PosixPath.valueOf(result.getString(2));
 			hostname = DomainName.valueOf(result.getString(3));
-			email = result.getString(4);
+			email = Email.valueOf(result.getString(4));
 			created = result.getTimestamp(5).getTime();
 			pub_linux_server_account=result.getInt(6);
 			allow_anonymous=result.getBoolean(7);
@@ -147,9 +148,9 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			logfile = UnixPath.valueOf(in.readUTF());
+			logfile = PosixPath.valueOf(in.readUTF());
 			hostname=DomainName.valueOf(in.readUTF());
-			email=in.readUTF();
+			email=Email.valueOf(in.readUTF());
 			created=in.readLong();
 			pub_linux_server_account=in.readCompressedInt();
 			allow_anonymous=in.readBoolean();
@@ -170,7 +171,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_38)<=0) out.writeUTF("Upgrade AOServClient to version "+AoservProtocol.Version.VERSION_1_39+" or newer");
 		out.writeUTF(logfile.toString());
 		out.writeUTF(hostname.toString());
-		out.writeUTF(email);
+		out.writeUTF(email.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
 		out.writeLong(created);
 		out.writeCompressedInt(pub_linux_server_account);

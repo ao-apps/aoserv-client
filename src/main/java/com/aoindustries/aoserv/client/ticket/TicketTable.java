@@ -32,10 +32,13 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @see  Ticket
@@ -63,11 +66,11 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 		final Language language,
 		final Category category,
 		final TicketType ticketType,
-		final String fromAddress,
+		final Email fromAddress,
 		final String summary,
 		final String details,
 		final Priority clientPriority,
-		final String contactEmails,
+		final Set<Email> contactEmails,
 		final String contactPhoneNumbers
 	) throws IOException, SQLException {
 		return connector.requestResult(true,
@@ -80,15 +83,17 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.TICKETS.ordinal());
 					out.writeUTF(brand.getBusiness_accounting().toString());
-					out.writeNullUTF(business==null ? null : business.getAccounting().toString());
+					out.writeNullUTF(business==null ? null : business.getName().toString());
 					out.writeUTF(language.getCode());
 					out.writeCompressedInt(category==null ? -1 : category.getPkey());
 					out.writeUTF(ticketType.getType());
-					out.writeNullUTF(fromAddress);
+					out.writeNullUTF(ObjectUtils.toString(fromAddress));
 					out.writeUTF(summary);
 					out.writeNullLongUTF(details);
 					out.writeUTF(clientPriority.getPriority());
-					out.writeUTF(contactEmails);
+					int size = contactEmails.size();
+					out.writeCompressedInt(size);
+					for(Email email : contactEmails) out.writeUTF(email.toString());
 					out.writeUTF(contactPhoneNumbers);
 				}
 
@@ -124,7 +129,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 	}
 
 	public List<Ticket> getTickets(Account business) throws IOException, SQLException {
-		return getIndexedRows(Ticket.COLUMN_ACCOUNTING, business.getAccounting());
+		return getIndexedRows(Ticket.COLUMN_ACCOUNTING, business.getName());
 	}
 
 	public List<Ticket> getCreatedTickets(Administrator ba) throws IOException, SQLException {

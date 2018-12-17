@@ -29,7 +29,6 @@ import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
@@ -57,7 +56,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_VERSION_name = "version";
 
-	AccountingCode accounting;
+	Account.Name accounting;
 	String category;
 	String name;
 	String version;
@@ -225,7 +224,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			accounting=AccountingCode.valueOf(result.getString(2));
+			accounting=Account.Name.valueOf(result.getString(2));
 			category=result.getString(3);
 			name=result.getString(4);
 			version=result.getString(5);
@@ -247,7 +246,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			accounting=AccountingCode.valueOf(in.readUTF()).intern();
+			accounting=Account.Name.valueOf(in.readUTF()).intern();
 			category=in.readUTF().intern();
 			name=in.readUTF();
 			version=in.readUTF();
@@ -323,7 +322,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(pkey);
-					out.writeUTF(business.getAccounting().toString());
+					out.writeUTF(business.getName().toString());
 					out.writeUTF(category.getName());
 					out.writeUTF(name);
 					out.writeUTF(version);

@@ -28,11 +28,11 @@ import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.email.CyrusImapdBind;
 import com.aoindustries.aoserv.client.email.CyrusImapdServer;
 import com.aoindustries.aoserv.client.email.SendmailServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.monitoring.AlertLevel;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import com.aoindustries.aoserv.client.web.VirtualHost;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -60,10 +60,10 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 
 	private int ao_server;
 	private int packageNum;
-	private UnixPath keyFile;
-	private UnixPath csrFile;
-	private UnixPath certFile;
-	private UnixPath chainFile;
+	private PosixPath keyFile;
+	private PosixPath csrFile;
+	private PosixPath certFile;
+	private PosixPath chainFile;
 	private String certbotName;
 
 	@Override
@@ -98,10 +98,10 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 			pkey = result.getInt(pos++);
 			ao_server = result.getInt(pos++);
 			packageNum = result.getInt(pos++);
-			keyFile = UnixPath.valueOf(result.getString(pos++));
-			csrFile = UnixPath.valueOf(result.getString(pos++));
-			certFile = UnixPath.valueOf(result.getString(pos++));
-			chainFile = UnixPath.valueOf(result.getString(pos++));
+			keyFile = PosixPath.valueOf(result.getString(pos++));
+			csrFile = PosixPath.valueOf(result.getString(pos++));
+			certFile = PosixPath.valueOf(result.getString(pos++));
+			chainFile = PosixPath.valueOf(result.getString(pos++));
 			certbotName = result.getString(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -114,10 +114,10 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 			pkey = in.readCompressedInt();
 			ao_server = in.readCompressedInt();
 			packageNum = in.readCompressedInt();
-			keyFile = UnixPath.valueOf(in.readUTF());
-			csrFile = UnixPath.valueOf(in.readNullUTF());
-			certFile = UnixPath.valueOf(in.readUTF());
-			chainFile = UnixPath.valueOf(in.readNullUTF());
+			keyFile = PosixPath.valueOf(in.readUTF());
+			csrFile = PosixPath.valueOf(in.readNullUTF());
+			certFile = PosixPath.valueOf(in.readUTF());
+			chainFile = PosixPath.valueOf(in.readNullUTF());
 			certbotName = in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -152,28 +152,28 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 	/**
 	 * The private key file.
 	 */
-	public UnixPath getKeyFile() {
+	public PosixPath getKeyFile() {
 		return keyFile;
 	}
 
 	/**
 	 * The optional CSR file.
 	 */
-	public UnixPath getCsrFile() {
+	public PosixPath getCsrFile() {
 		return csrFile;
 	}
 
 	/**
 	 * The public key file.
 	 */
-	public UnixPath getCertFile() {
+	public PosixPath getCertFile() {
 		return certFile;
 	}
 
 	/**
 	 * The optional certificate chain file.
 	 */
-	public UnixPath getChainFile() {
+	public PosixPath getChainFile() {
 		return chainFile;
 	}
 

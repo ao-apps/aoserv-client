@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client.reseller;
 
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -49,7 +49,7 @@ final public class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 	static final String COLUMN_BRAND_name = "brand";
 	static final String COLUMN_CATEGORY_name = "category";
 
-	private AccountingCode brand;
+	private Account.Name brand;
 	private int category;
 	private boolean enabled;
 
@@ -89,7 +89,7 @@ final public class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			brand = AccountingCode.valueOf(result.getString(2));
+			brand = Account.Name.valueOf(result.getString(2));
 			category = result.getInt(3);
 			enabled = result.getBoolean(4);
 		} catch(ValidationException e) {
@@ -101,7 +101,7 @@ final public class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			brand = AccountingCode.valueOf(in.readUTF()).intern();
+			brand = Account.Name.valueOf(in.readUTF()).intern();
 			category = in.readCompressedInt();
 			enabled = in.readBoolean();
 		} catch(ValidationException e) {

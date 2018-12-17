@@ -27,12 +27,14 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.DisableLog;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.distribution.Software;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
 import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.GroupServer;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.linux.UserServer;
@@ -40,10 +42,6 @@ import com.aoindustries.aoserv.client.net.AppProtocol;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Email;
@@ -97,10 +95,10 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	private int ao_server;
 	private String name;
 	private boolean list_first;
-	private AccountingCode packageName;
-	private UserId linuxAccount;
-	private GroupId linuxGroup;
-	private String serverAdmin;
+	private Account.Name packageName;
+	private User.Name linuxAccount;
+	private Group.Name linuxGroup;
+	private Email serverAdmin;
 	private int disable_log;
 	private boolean isManual;
 	private String awstatsSkipFiles;
@@ -167,7 +165,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		return list_first;
 	}
 
-	public AccountingCode getPackage_name() {
+	public Account.Name getPackage_name() {
 		return packageName;
 	}
 
@@ -177,7 +175,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		return obj;
 	}
 
-	public UserId getLinuxAccount_username() {
+	public User.Name getLinuxAccount_username() {
 		return linuxAccount;
 	}
 
@@ -191,7 +189,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		return lsa;
 	}
 
-	public GroupId getLinuxGroup_name() {
+	public Group.Name getLinuxGroup_name() {
 		return linuxGroup;
 	}
 
@@ -203,7 +201,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		return lsg;
 	}
 
-	public String getServerAdmin() {
+	public Email getServerAdmin() {
 		return serverAdmin;
 	}
 
@@ -317,10 +315,10 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 			ao_server = result.getInt(pos++);
 			name = result.getString(pos++);
 			list_first = result.getBoolean(pos++);
-			packageName = AccountingCode.valueOf(result.getString(pos++));
-			linuxAccount = UserId.valueOf(result.getString(pos++));
-			linuxGroup = GroupId.valueOf(result.getString(pos++));
-			serverAdmin = result.getString(pos++);
+			packageName = Account.Name.valueOf(result.getString(pos++));
+			linuxAccount = User.Name.valueOf(result.getString(pos++));
+			linuxGroup = Group.Name.valueOf(result.getString(pos++));
+			serverAdmin = Email.valueOf(result.getString(pos++));
 			disable_log = result.getInt(pos++);
 			if(result.wasNull()) disable_log=-1;
 			isManual = result.getBoolean(pos++);
@@ -349,10 +347,10 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 			ao_server = in.readCompressedInt();
 			name = in.readUTF();
 			list_first = in.readBoolean();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
-			linuxAccount = UserId.valueOf(in.readUTF()).intern();
-			linuxGroup = GroupId.valueOf(in.readUTF()).intern();
-			serverAdmin = in.readUTF();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
+			linuxAccount = User.Name.valueOf(in.readUTF()).intern();
+			linuxGroup = Group.Name.valueOf(in.readUTF()).intern();
+			serverAdmin = Email.valueOf(in.readUTF());
 			disable_log = in.readCompressedInt();
 			isManual = in.readBoolean();
 			awstatsSkipFiles = in.readNullUTF();
@@ -381,7 +379,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		out.writeUTF(packageName.toString());
 		out.writeUTF(linuxAccount.toString());
 		out.writeUTF(linuxGroup.toString());
-		out.writeUTF(serverAdmin);
+		out.writeUTF(serverAdmin.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_9) <= 0) {
 			out.writeNullUTF(null); // contentSrc
 		}
@@ -425,8 +423,8 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		String path,
 		boolean isRegularExpression,
 		String authName,
-		UnixPath authGroupFile,
-		UnixPath authUserFile,
+		PosixPath authGroupFile,
+		PosixPath authUserFile,
 		String require,
 		String handler
 	) throws IOException, SQLException {
@@ -478,9 +476,9 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	/**
 	 * Gets the directory where this site is installed.
 	 */
-	public UnixPath getInstallDirectory() throws SQLException, IOException {
+	public PosixPath getInstallDirectory() throws SQLException, IOException {
 		try {
-			return UnixPath.valueOf(
+			return PosixPath.valueOf(
 				getAoServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory()
 				+ "/" + name
 			);
@@ -619,7 +617,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	 * Note: This matches the check constraint on the httpd_sites table.
 	 * Note: This matches keepWwwDirs in HttpdSiteManager.
 	 * </p>
-	 * TODO: Self-validating type for site names
+	 * TODO: Self-validating type for site names (Build on PosixPortableFilename, once it exists?)
 	 */
 	public static boolean isValidSiteName(String name) {
 		// These are the other files/directories that may exist under /www.  To avoid

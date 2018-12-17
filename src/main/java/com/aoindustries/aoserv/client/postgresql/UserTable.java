@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.postgresql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedTablePostgresUserIdKey;
 import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.billing.Package;
@@ -32,8 +32,6 @@ import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
@@ -47,7 +45,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class UserTable extends CachedTablePostgresUserIdKey<User> {
+final public class UserTable extends CachedTableUserNameKey<User> {
 
 	UserTable(AOServConnector connector) {
 		super(connector, User.class);
@@ -61,7 +59,7 @@ final public class UserTable extends CachedTablePostgresUserIdKey<User> {
 		return defaultOrderBy;
 	}
 
-	public void addPostgresUser(PostgresUserId username) throws IOException, SQLException {
+	public void addPostgresUser(User.Name username) throws IOException, SQLException {
 		connector.requestUpdateIL(true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.POSTGRES_USERS,
@@ -70,12 +68,12 @@ final public class UserTable extends CachedTablePostgresUserIdKey<User> {
 	}
 
 	@Override
-	public User get(PostgresUserId username) throws IOException, SQLException {
+	public User get(User.Name username) throws IOException, SQLException {
 		return getUniqueRow(User.COLUMN_USERNAME, username);
 	}
 
 	public List<User> getPostgresUsers(Package pack) throws SQLException, IOException {
-		AccountingCode name=pack.getName();
+		Account.Name name=pack.getName();
 
 		List<User> cached=getRows();
 		int size=cached.size();
@@ -98,14 +96,14 @@ final public class UserTable extends CachedTablePostgresUserIdKey<User> {
 		if(command.equalsIgnoreCase(Command.ADD_POSTGRES_USER)) {
 			if(AOSH.checkParamCount(Command.ADD_POSTGRES_USER, args, 1, err)) {
 				connector.getSimpleAOClient().addPostgresUser(
-					AOSH.parsePostgresUserId(args[1], "username")
+					AOSH.parsePostgresUserName(args[1], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(Command.ARE_POSTGRES_USER_PASSWORDS_SET)) {
 			if(AOSH.checkParamCount(Command.ARE_POSTGRES_USER_PASSWORDS_SET, args, 1, err)) {
 				int result=connector.getSimpleAOClient().arePostgresUserPasswordsSet(
-					AOSH.parsePostgresUserId(args[1], "username")
+					AOSH.parsePostgresUserName(args[1], "username")
 				);
 				if(result==PasswordProtected.NONE) out.println("none");
 				else if(result==PasswordProtected.SOME) out.println("some");
@@ -117,7 +115,7 @@ final public class UserTable extends CachedTablePostgresUserIdKey<User> {
 		} else if(command.equalsIgnoreCase(Command.CHECK_POSTGRES_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.CHECK_POSTGRES_PASSWORD, args, 2, err)) {
 				List<PasswordChecker.Result> results = SimpleAOClient.checkPostgresPassword(
-					AOSH.parsePostgresUserId(args[1], "username"),
+					AOSH.parsePostgresUserName(args[1], "username"),
 					args[2]
 				);
 				if(PasswordChecker.hasResults(results)) {
@@ -128,7 +126,7 @@ final public class UserTable extends CachedTablePostgresUserIdKey<User> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.CHECK_POSTGRES_USERNAME)) {
 			if(AOSH.checkParamCount(Command.CHECK_POSTGRES_USERNAME, args, 1, err)) {
-				ValidationResult validationResult = PostgresUserId.validate(args[1]);
+				ValidationResult validationResult = User.Name.validate(args[1]);
 				out.println(validationResult.isValid());
 				out.flush();
 				if(!validationResult.isValid()) {
@@ -142,7 +140,7 @@ final public class UserTable extends CachedTablePostgresUserIdKey<User> {
 			if(AOSH.checkParamCount(Command.DISABLE_POSTGRES_USER, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().disablePostgresUser(
-						AOSH.parsePostgresUserId(args[1], "username"),
+						AOSH.parsePostgresUserName(args[1], "username"),
 						args[2]
 					)
 				);
@@ -152,21 +150,21 @@ final public class UserTable extends CachedTablePostgresUserIdKey<User> {
 		} else if(command.equalsIgnoreCase(Command.ENABLE_POSTGRES_USER)) {
 			if(AOSH.checkParamCount(Command.ENABLE_POSTGRES_USER, args, 1, err)) {
 				connector.getSimpleAOClient().enablePostgresUser(
-					AOSH.parsePostgresUserId(args[1], "username")
+					AOSH.parsePostgresUserName(args[1], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(Command.REMOVE_POSTGRES_USER)) {
 			if(AOSH.checkParamCount(Command.REMOVE_POSTGRES_USER, args, 1, err)) {
 				connector.getSimpleAOClient().removePostgresUser(
-					AOSH.parsePostgresUserId(args[1], "username")
+					AOSH.parsePostgresUserName(args[1], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(Command.SET_POSTGRES_USER_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.SET_POSTGRES_USER_PASSWORD, args, 2, err)) {
 				connector.getSimpleAOClient().setPostgresUserPassword(
-					AOSH.parsePostgresUserId(args[1], "username"),
+					AOSH.parsePostgresUserName(args[1], "username"),
 					args[2]
 				);
 			}

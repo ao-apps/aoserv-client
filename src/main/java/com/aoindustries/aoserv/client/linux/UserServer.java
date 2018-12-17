@@ -28,7 +28,6 @@ import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.DisableLog;
-import com.aoindustries.aoserv.client.account.Username;
 import com.aoindustries.aoserv.client.email.Address;
 import com.aoindustries.aoserv.client.email.AttachmentBlock;
 import com.aoindustries.aoserv.client.email.Domain;
@@ -42,9 +41,6 @@ import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.scm.CvsRepository;
-import com.aoindustries.aoserv.client.validator.LinuxId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
@@ -105,10 +101,10 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	 */
 	public static final int DEFAULT_SPAM_ASSASSIN_DISCARD_SCORE = 20;
 
-	UserId username;
+	User.Name username;
 	int ao_server;
 	LinuxId uid;
-	private UnixPath home;
+	private PosixPath home;
 	int autoresponder_from;
 	private String autoresponder_subject;
 	private String autoresponder_path;
@@ -272,9 +268,9 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	/**
 	 * Gets the default non-hashed home directory of <code>/home/<i>username</i></code>.
 	 */
-	public static UnixPath getDefaultHomeDirectory(UserId username) {
+	public static PosixPath getDefaultHomeDirectory(User.Name username) {
 		try {
-			return UnixPath.valueOf("/home/" + username);
+			return PosixPath.valueOf("/home/" + username);
 		} catch(ValidationException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -283,10 +279,10 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	/**
 	 * Gets the optional hashed home directory of <code>/home/<i>u</i>/<i>username</i></code>.
 	 */
-	public static UnixPath getHashedHomeDirectory(UserId username) {
+	public static PosixPath getHashedHomeDirectory(User.Name username) {
 		try {
 			String usernameStr = username.toString();
-			return UnixPath.valueOf("/home/" + usernameStr.charAt(0) + '/' + usernameStr);
+			return PosixPath.valueOf("/home/" + usernameStr.charAt(0) + '/' + usernameStr);
 		} catch(ValidationException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -389,18 +385,16 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return table.getConnector().getEmail().getInboxAddress().getLinuxAccAddresses(this);
 	}
 
-	public UnixPath getHome() {
+	public PosixPath getHome() {
 		return home;
 	}
 
-	public UserId getLinuxAccount_username_id() {
+	public User.Name getLinuxAccount_username_id() {
 		return username;
 	}
 
 	public User getLinuxAccount() throws SQLException, IOException {
-		Username usernameObj=table.getConnector().getAccount().getUsername().get(username);
-		if(usernameObj==null) throw new SQLException("Unable to find Username: "+username);
-		User linuxAccountObject = usernameObj.getLinuxAccount();
+		User linuxAccountObject = table.getConnector().getLinux().getUser().get(username);
 		if (linuxAccountObject == null) throw new SQLException("Unable to find LinuxAccount: " + username);
 		return linuxAccountObject;
 	}
@@ -494,10 +488,10 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		try {
 			int pos=1;
 			pkey=result.getInt(pos++);
-			username = UserId.valueOf(result.getString(pos++));
+			username = User.Name.valueOf(result.getString(pos++));
 			ao_server=result.getInt(pos++);
 			uid = LinuxId.valueOf(result.getInt(pos++));
-			home = UnixPath.valueOf(result.getString(pos++));
+			home = PosixPath.valueOf(result.getString(pos++));
 			autoresponder_from=result.getInt(pos++);
 			if(result.wasNull()) autoresponder_from=-1;
 			autoresponder_subject = result.getString(pos++);
@@ -535,10 +529,10 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			username = UserId.valueOf(in.readUTF()).intern();
+			username = User.Name.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			uid=LinuxId.valueOf(in.readCompressedInt());
-			home = UnixPath.valueOf(in.readUTF());
+			home = PosixPath.valueOf(in.readUTF());
 			autoresponder_from=in.readCompressedInt();
 			autoresponder_subject=in.readNullUTF();
 			autoresponder_path=in.readNullUTF();

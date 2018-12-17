@@ -23,13 +23,11 @@
 package com.aoindustries.aoserv.client.account;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.CachedTableAccountingCodeKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -51,9 +49,9 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
+final public class AccountTable extends CachedTableAccountNameKey<Account> {
 
-	private AccountingCode rootAccounting;
+	private Account.Name rootAccounting;
 
 	AccountTable(AOServConnector connector) {
 		super(connector, Account.class);
@@ -68,10 +66,10 @@ final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
 	}
 
 	public void addBusiness(
-		final AccountingCode accounting,
+		final Account.Name accounting,
 		final String contractNumber,
 		final Host defaultServer,
-		final AccountingCode parent,
+		final Account.Name parent,
 		final boolean canAddBackupServers,
 		final boolean canAddBusinesses,
 		final boolean canSeePrices,
@@ -122,9 +120,11 @@ final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
 		}
 	}
 
-	public AccountingCode generateAccountingCode(AccountingCode template) throws IOException, SQLException {
+	public Account.Name generateAccountingCode(Account.Name template) throws IOException, SQLException {
 		try {
-			return AccountingCode.valueOf(connector.requestStringQuery(true,
+			return Account.Name.valueOf(
+				connector.requestStringQuery(
+					true,
 					AoservProtocol.CommandID.GENERATE_ACCOUNTING_CODE,
 					template.toString()
 				)
@@ -138,12 +138,12 @@ final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
 	 * Gets one <code>Business</code> from the database.
 	 */
 	@Override
-	public Account get(AccountingCode accounting) throws IOException, SQLException {
+	public Account get(Account.Name accounting) throws IOException, SQLException {
 		return getUniqueRow(Account.COLUMN_ACCOUNTING, accounting);
 	}
 
 	List<Account> getChildBusinesses(Account business) throws IOException, SQLException {
-		AccountingCode accounting=business.getAccounting();
+		Account.Name accounting=business.getName();
 
 		List<Account> cached=getRows();
 		List<Account> matches=new ArrayList<>();
@@ -155,10 +155,10 @@ final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
 		return matches;
 	}
 
-	synchronized public AccountingCode getRootAccounting() throws IOException, SQLException {
+	synchronized public Account.Name getRootAccount_name() throws IOException, SQLException {
 		if(rootAccounting==null) {
 			try {
-			   rootAccounting=AccountingCode.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GET_ROOT_BUSINESS));
+			   rootAccounting=Account.Name.valueOf(connector.requestStringQuery(true, AoservProtocol.CommandID.GET_ROOT_BUSINESS));
 			} catch(ValidationException e) {
 				throw new IOException(e);
 			}
@@ -167,7 +167,7 @@ final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
 	}
 
 	public Account getRootBusiness() throws IOException, SQLException {
-		AccountingCode accounting=getRootAccounting();
+		Account.Name accounting=getRootAccount_name();
 		Account bu=get(accounting);
 		if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
 		return bu;
@@ -226,7 +226,7 @@ final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.CHECK_ACCOUNTING)) {
 			if(AOSH.checkParamCount(Command.CHECK_ACCOUNTING, args, 1, err)) {
-				ValidationResult validationResult = AccountingCode.validate(args[1]);
+				ValidationResult validationResult = Account.Name.validate(args[1]);
 				out.println(validationResult.isValid());
 				out.flush();
 				if(!validationResult.isValid()) {
@@ -308,7 +308,7 @@ final public class AccountTable extends CachedTableAccountingCodeKey<Account> {
 		} else return false;
 	}
 
-	public boolean isAccountingAvailable(AccountingCode accounting) throws SQLException, IOException {
+	public boolean isAccountingAvailable(Account.Name accounting) throws SQLException, IOException {
 		return connector.requestBooleanQuery(true,
 			AoservProtocol.CommandID.IS_ACCOUNTING_AVAILABLE,
 			accounting.toString()

@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.validation.ValidationResult;
@@ -77,14 +76,14 @@ public final class DomainTable extends CachedTableIntegerKey<Domain> {
 	}
 
 	public List<Domain> getEmailDomains(Account owner) throws SQLException, IOException {
-		AccountingCode accounting=owner.getAccounting();
+		Account.Name accounting=owner.getName();
 
 		List<Domain> cached = getRows();
 		int len = cached.size();
 		List<Domain> matches=new ArrayList<>(len);
 		for (int c = 0; c < len; c++) {
 			Domain domain = cached.get(c);
-			if (domain.getPackage().getBusiness_accounting().equals(accounting)) matches.add(domain);
+			if (domain.getPackage().getAccount_name().equals(accounting)) matches.add(domain);
 		}
 		return matches;
 	}

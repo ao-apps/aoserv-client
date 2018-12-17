@@ -30,17 +30,17 @@ import com.aoindustries.aoserv.client.JdbcProvider;
 import com.aoindustries.aoserv.client.NestedInputStream;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.StreamHandler;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.backup.MysqlReplication;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.distribution.OperatingSystemVersion;
 import com.aoindustries.aoserv.client.monitoring.AlertLevel;
+import static com.aoindustries.aoserv.client.mysql.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.MySQLTableName;
+import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.ByteCountInputStream;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -48,12 +48,20 @@ import com.aoindustries.io.IoUtils;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.nio.charset.Charsets;
+import com.aoindustries.util.Internable;
+import com.aoindustries.validation.InvalidResult;
+import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
+import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectInputValidation;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.sql.ResultSet;
@@ -64,6 +72,8 @@ import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A <code>MySQLDatabase</code> corresponds to a unique MySQL table
@@ -76,6 +86,164 @@ import java.util.List;
  * @author  AO Industries, Inc.
  */
 final public class Database extends CachedObjectIntegerKey<Database> implements Removable, Dumpable, JdbcProvider {
+
+	/**
+	 * Represents a name that may be used for a {@link Database}.  Database names must:
+	 * <ul>
+	 *   <li>Be non-null</li>
+	 *   <li>Be non-empty</li>
+	 *   <li>Be between 1 and 64 characters</li>
+	 *   <li>Must start with <code>[a-z], [A-Z], or [0-9]</code></li>
+	 *   <li>The rest of the characters may contain [a-z], [A-Z], [0-9], and underscore (_)</li>
+	 *   <li>Must not be a {@link Server.ReservedWord MySQL reserved word}</li>
+	 * </ul>
+	 *
+	 * @author  AO Industries, Inc.
+	 */
+	final static public class Name implements
+		Comparable<Name>,
+		Serializable,
+		ObjectInputValidation,
+		DtoFactory<com.aoindustries.aoserv.client.dto.MySQLDatabaseName>,
+		Internable<Name>
+	{
+
+		private static final long serialVersionUID = 1495532864586195961L;
+
+		/**
+		 * The longest name allowed for a MySQL database.
+		 */
+		public static final int MAX_LENGTH = 64;
+
+		/**
+		 * Validates a MySQL database name.
+		 */
+		public static ValidationResult validate(String name) {
+			if(name==null) return new InvalidResult(accessor, "Database.Name.validate.isNull");
+			int len = name.length();
+			if(len==0) return new InvalidResult(accessor, "Database.Name.validate.isEmpty");
+			if(len > MAX_LENGTH) return new InvalidResult(accessor, "Database.Name.validate.tooLong", MAX_LENGTH, len);
+
+			// The first character must be [a-z],  or [0-9]
+			char ch = name.charAt(0);
+			if(
+				(ch < 'a' || ch > 'z')
+				&& (ch < 'A' || ch > 'Z')
+				&& (ch < '0' || ch > '9')
+			) return new InvalidResult(accessor, "Database.Name.validate.startAtoZor0to9");
+
+			// The rest may have additional characters
+			for (int c = 1; c < len; c++) {
+				ch = name.charAt(c);
+				if (
+					(ch<'a' || ch>'z')
+					&& (ch < 'A' || ch > 'Z')
+					&& (ch < '0' || ch > '9')
+					&& ch != '_'
+				) return new InvalidResult(accessor, "Database.Name.validate.illegalCharacter");
+			}
+			if(Server.ReservedWord.isReservedWord(name)) return new InvalidResult(accessor, "Database.Name.validate.reservedWord");
+			return ValidResult.getInstance();
+		}
+
+		private static final ConcurrentMap<String,Name> interned = new ConcurrentHashMap<>();
+
+		/**
+		 * @param name  when {@code null}, returns {@code null}
+		 */
+		public static Name valueOf(String name) throws ValidationException {
+			if(name == null) return null;
+			//Name existing = interned.get(name);
+			//return existing!=null ? existing : new Name(name);
+			return new Name(name, true);
+		}
+
+		final private String name;
+
+		private Name(String name, boolean validate) throws ValidationException {
+			this.name = name;
+			if(validate) validate();
+		}
+
+		/**
+		 * @param  name  Does not validate, should only be used with a known valid value.
+		 */
+		private Name(String name) {
+			ValidationResult result;
+			assert (result = validate(name)).isValid() : result.toString();
+			this.name = name;
+		}
+
+		private void validate() throws ValidationException {
+			ValidationResult result = validate(name);
+			if(!result.isValid()) throw new ValidationException(result);
+		}
+
+		/**
+		 * Perform same validation as constructor on readObject.
+		 */
+		private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+			ois.defaultReadObject();
+			validateObject();
+		}
+
+		@Override
+		public void validateObject() throws InvalidObjectException {
+			try {
+				validate();
+			} catch(ValidationException err) {
+				InvalidObjectException newErr = new InvalidObjectException(err.getMessage());
+				newErr.initCause(err);
+				throw newErr;
+			}
+		}
+
+		@Override
+		public boolean equals(Object O) {
+			return
+				O!=null
+				&& O instanceof Name
+				&& name.equals(((Name)O).name)
+			;
+		}
+
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+		}
+
+		@Override
+		public int compareTo(Name other) {
+			return this==other ? 0 : name.compareTo(other.name);
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		/**
+		 * Interns this name much in the same fashion as <code>String.intern()</code>.
+		 *
+		 * @see  String#intern()
+		 */
+		@Override
+		public Name intern() {
+			Name existing = interned.get(name);
+			if(existing==null) {
+				String internedName = name.intern();
+				Name addMe = (name == internedName) ? this : new Name(internedName);
+				existing = interned.putIfAbsent(internedName, addMe);
+				if(existing==null) existing = addMe;
+			}
+			return existing;
+		}
+
+		@Override
+		public com.aoindustries.aoserv.client.dto.MySQLDatabaseName getDto() {
+			return new com.aoindustries.aoserv.client.dto.MySQLDatabaseName(name);
+		}
+	}
 
 	static final int
 		COLUMN_PKEY=0,
@@ -108,12 +276,12 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	/**
 	 * The root database for a mysql installation.
 	 */
-	public static final MySQLDatabaseName MYSQL;
+	public static final Name MYSQL;
 
 	/**
 	 * Special databases that are never removed.
 	 */
-	public static final MySQLDatabaseName
+	public static final Name
 		INFORMATION_SCHEMA,
 		PERFORMANCE_SCHEMA,
 		SYS
@@ -121,18 +289,18 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 	static {
 		try {
-			MYSQL = MySQLDatabaseName.valueOf("mysql");
-			INFORMATION_SCHEMA = MySQLDatabaseName.valueOf("information_schema");
-			PERFORMANCE_SCHEMA = MySQLDatabaseName.valueOf("performance_schema");
-			SYS = MySQLDatabaseName.valueOf("sys");
+			MYSQL = Name.valueOf("mysql");
+			INFORMATION_SCHEMA = Name.valueOf("information_schema");
+			PERFORMANCE_SCHEMA = Name.valueOf("performance_schema");
+			SYS = Name.valueOf("sys");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
 	}
 
-	MySQLDatabaseName name;
+	Name name;
 	int mysql_server;
-	AccountingCode packageName;
+	Account.Name packageName;
 	private AlertLevel maxCheckTableAlertLevel;
 
 	public int addMySQLServerUser(
@@ -360,7 +528,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		return table.getConnector().getMysql().getDatabaseUser().getMySQLServerUsers(this);
 	}
 
-	public MySQLDatabaseName getName() {
+	public Name getName() {
 		return name;
 	}
 
@@ -389,9 +557,9 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			name = MySQLDatabaseName.valueOf(result.getString(2));
+			name = Name.valueOf(result.getString(2));
 			mysql_server=result.getInt(3);
-			packageName = AccountingCode.valueOf(result.getString(4));
+			packageName = Account.Name.valueOf(result.getString(4));
 			maxCheckTableAlertLevel = AlertLevel.valueOf(result.getString(5));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -402,9 +570,9 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			name = MySQLDatabaseName.valueOf(in.readUTF());
+			name = Name.valueOf(in.readUTF());
 			mysql_server=in.readCompressedInt();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
 			maxCheckTableAlertLevel = AlertLevel.valueOf(in.readCompressedUTF());
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -482,8 +650,12 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		PERFORMANCE_SCHEMA
 	}
 
+	// TODO: Pull-out into outer class "Table", with TableName inside it was "Name"
+	// TODO: Also make a full-on AOServTable?
 	public static class TableStatus {
 
+		// TODO: How to handle unknown versions over protocols by time?  An "UNKNOWN" that new are converted to, with a "sinceVersion" and "lastVersion" settings?
+		// TODO: This would be a general solution for enums that may be extended with older clients still in use.
 		public enum RowFormat {
 			Compact,
 			Dynamic,
@@ -500,7 +672,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			utf8mb4_unicode_520_ci
 		}
 
-		private final MySQLTableName name;
+		private final Table_Name name;
 		private final Engine engine;
 		private final Integer version;
 		private final RowFormat rowFormat;
@@ -520,7 +692,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		private final String comment;
 
 		public TableStatus(
-			MySQLTableName name,
+			Table_Name name,
 			Engine engine,
 			Integer version,
 			RowFormat rowFormat,
@@ -562,7 +734,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		/**
 		 * @return the name
 		 */
-		public MySQLTableName getName() {
+		public Table_Name getName() {
 			return name;
 		}
 
@@ -718,7 +890,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 							try {
 								tableStatuses.add(
 									new TableStatus(
-										MySQLTableName.valueOf(in.readUTF()), // name
+										Table_Name.valueOf(in.readUTF()), // name
 										in.readNullEnum(Engine.class), // engine
 										in.readNullInteger(), // version
 										in.readNullEnum(TableStatus.RowFormat.class), // rowFormat
@@ -769,13 +941,13 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			Error
 		}
 
-		private final MySQLTableName table;
+		private final Table_Name table;
 		private final long duration;
 		private final MsgType msgType;
 		private final String msgText;
 
 		public CheckTableResult(
-			MySQLTableName table,
+			Table_Name table,
 			long duration,
 			MsgType msgType,
 			String msgText
@@ -789,7 +961,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		/**
 		 * @return the table
 		 */
-		public MySQLTableName getTable() {
+		public Table_Name getTable() {
 			return table;
 		}
 
@@ -818,14 +990,14 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	/**
 	 * Gets the table status on the master server.
 	 */
-	public List<CheckTableResult> checkTables(final Collection<MySQLTableName> tableNames) throws IOException, SQLException {
+	public List<CheckTableResult> checkTables(final Collection<Table_Name> tableNames) throws IOException, SQLException {
 		return checkTables(null, tableNames);
 	}
 
 	/**
 	 * Gets the table status on the master server or provided slave server.
 	 */
-	public List<CheckTableResult> checkTables(final MysqlReplication mysqlSlave, final Collection<MySQLTableName> tableNames) throws IOException, SQLException {
+	public List<CheckTableResult> checkTables(final MysqlReplication mysqlSlave, final Collection<Table_Name> tableNames) throws IOException, SQLException {
 		if(tableNames.isEmpty()) return Collections.emptyList();
 		return table.getConnector().requestResult(true,
 			AoservProtocol.CommandID.CHECK_MYSQL_TABLES,
@@ -839,7 +1011,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 					int size = tableNames.size();
 					out.writeCompressedInt(size);
 					int count = 0;
-					Iterator<MySQLTableName> iter = tableNames.iterator();
+					Iterator<Table_Name> iter = tableNames.iterator();
 					while(count<size && iter.hasNext()) {
 						out.writeUTF(iter.next().toString());
 						count++;
@@ -857,7 +1029,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 							try {
 								checkTableResults.add(
 									new CheckTableResult(
-										MySQLTableName.valueOf(in.readUTF()), // table
+										Table_Name.valueOf(in.readUTF()), // table
 										in.readLong(), // duration
 										in.readNullEnum(CheckTableResult.MsgType.class), // msgType
 										in.readNullUTF() // msgText
@@ -886,7 +1058,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 * Determines if a name is safe for use as a table/column name, the name identifier
 	 * should be enclosed with backticks (`).
 	 *
-	 * TODO: Is this more restrictive than {@link MySQLDatabaseName} and {@link MySQLTableName}?
+	 * TODO: Is this more restrictive than {@link Name} and {@link Table_Name}?
 	 */
 	public static boolean isSafeName(String name) {
 		// Must be a-z first, then a-z or 0-9 or _ or -

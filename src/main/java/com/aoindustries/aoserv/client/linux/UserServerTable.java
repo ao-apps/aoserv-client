@@ -32,11 +32,6 @@ import com.aoindustries.aoserv.client.email.Domain;
 import com.aoindustries.aoserv.client.email.InboxAttributes;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.LinuxId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.security.AccountDisabledException;
@@ -71,7 +66,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		return defaultOrderBy;
 	}
 
-	int addLinuxServerAccount(User linuxAccount, Server aoServer, UnixPath home) throws IOException, SQLException {
+	int addLinuxServerAccount(User linuxAccount, Server aoServer, PosixPath home) throws IOException, SQLException {
 		int pkey=connector.requestIntQueryIL(true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.LINUX_SERVER_ACCOUNTS,
@@ -84,15 +79,15 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 
 	int addSystemUser(
 		Server aoServer,
-		UserId username,
+		User.Name username,
 		int uid,
 		int gid,
-		Gecos fullName,
-		Gecos officeLocation,
-		Gecos officePhone,
-		Gecos homePhone,
-		UnixPath home,
-		UnixPath shell
+		User.Gecos fullName,
+		User.Gecos officeLocation,
+		User.Gecos officePhone,
+		User.Gecos homePhone,
+		PosixPath home,
+		PosixPath shell
 	) throws IOException, SQLException {
 		return connector.requestIntQueryIL(true,
 			AoservProtocol.CommandID.ADD_SYSTEM_USER,
@@ -128,7 +123,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	List<UserServer> getAlternateLinuxServerAccounts(GroupServer group) throws SQLException, IOException {
 		Server aoServer = group.getAOServer();
 		int osv = aoServer.getServer().getOperatingSystemVersion_id();
-		GroupId groupName = group.getLinuxGroup().getName();
+		Group.Name groupName = group.getLinuxGroup().getName();
 
 		List<UserServer> rows = getRows();
 		int cachedLen = rows.size();
@@ -136,7 +131,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		for(int c = 0; c < cachedLen; c++) {
 			UserServer linuxServerAccount = rows.get(c);
 			if(linuxServerAccount.ao_server == aoServer.getPkey()) {
-				UserId username = linuxServerAccount.username;
+				User.Name username = linuxServerAccount.username;
 
 				// Must also have a non-primary entry in the LinuxGroupAccounts that is also a group on this server
 				for(GroupUser lga : connector.getLinux().getGroupUser().getLinuxGroupAccounts(groupName, username)) {
@@ -157,9 +152,9 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	}
 
 	private boolean nameHashBuilt=false;
-	private final Map<Integer,Map<UserId,UserServer>> nameHash=new HashMap<>();
+	private final Map<Integer,Map<User.Name,UserServer>> nameHash=new HashMap<>();
 
-	UserServer getLinuxServerAccount(Server aoServer, UserId username) throws IOException, SQLException {
+	UserServer getLinuxServerAccount(Server aoServer, User.Name username) throws IOException, SQLException {
 		synchronized(nameHash) {
 			if(!nameHashBuilt) {
 				nameHash.clear();
@@ -169,13 +164,13 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				for(int c=0; c<len; c++) {
 					UserServer lsa=list.get(c);
 					Integer I=lsa.getAOServer().getPkey();
-					Map<UserId,UserServer> serverHash=nameHash.get(I);
+					Map<User.Name,UserServer> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
 					if(serverHash.put(lsa.username, lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.username+" on "+I);
 				}
 				nameHashBuilt=true;
 			}
-			Map<UserId,UserServer> serverHash=nameHash.get(aoServer.getPkey());
+			Map<User.Name,UserServer> serverHash=nameHash.get(aoServer.getPkey());
 			if(serverHash==null) return null;
 			return serverHash.get(username);
 		}
@@ -189,7 +184,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	 *
 	 * @exception  LoginException  if a possible account match is found but the account is disabled or has a different password
 	 */
-	public UserServer getLinuxServerAccountFromUsernamePassword(UserId username, String password, boolean emailOnly) throws LoginException, IOException, SQLException {
+	public UserServer getLinuxServerAccountFromUsernamePassword(User.Name username, String password, boolean emailOnly) throws LoginException, IOException, SQLException {
 		List<UserServer> list = getRows();
 		UserServer badPasswordLSA=null;
 		UserServer disabledLSA=null;
@@ -328,7 +323,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			if(AOSH.checkParamCount(Command.ADD_LINUX_SERVER_ACCOUNT, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().addLinuxServerAccount(
-						AOSH.parseUserId(args[1], "username"),
+						AOSH.parseLinuxUserName(args[1], "username"),
 						args[2],
 						args[3].isEmpty() ? null : AOSH.parseUnixPath(args[3], "home_directory")
 					)
@@ -339,7 +334,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.COMPARE_LINUX_SERVER_ACCOUNT_PASSWORD, args, 3, err)) {
 				boolean result=connector.getSimpleAOClient().compareLinuxServerAccountPassword(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					args[3]
 				);
@@ -350,7 +345,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.COPY_HOME_DIRECTORY)) {
 			if(AOSH.checkParamCount(Command.COPY_HOME_DIRECTORY, args, 3, err)) {
 				long byteCount=connector.getSimpleAOClient().copyHomeDirectory(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					args[3]
 				);
@@ -364,9 +359,9 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.COPY_LINUX_SERVER_ACCOUNT_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.COPY_LINUX_SERVER_ACCOUNT_PASSWORD, args, 4, err)) {
 				connector.getSimpleAOClient().copyLinuxServerAccountPassword(
-					AOSH.parseUserId(args[1], "from_username"),
+					AOSH.parseLinuxUserName(args[1], "from_username"),
 					args[2],
-					AOSH.parseUserId(args[3], "to_username"),
+					AOSH.parseLinuxUserName(args[3], "to_username"),
 					args[4]
 				);
 			}
@@ -375,7 +370,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			if(AOSH.checkParamCount(Command.DISABLE_LINUX_SERVER_ACCOUNT, args, 3, err)) {
 				out.println(
 					connector.getSimpleAOClient().disableLinuxServerAccount(
-						AOSH.parseUserId(args[1], "username"),
+						AOSH.parseLinuxUserName(args[1], "username"),
 						args[2],
 						args[3]
 					)
@@ -386,7 +381,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.ENABLE_LINUX_SERVER_ACCOUNT)) {
 			if(AOSH.checkParamCount(Command.ENABLE_LINUX_SERVER_ACCOUNT, args, 2, err)) {
 				connector.getSimpleAOClient().enableLinuxServerAccount(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2]
 				);
 			}
@@ -395,7 +390,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			if(AOSH.checkParamCount(Command.GET_CRON_TABLE, args, 2, err)) {
 				out.print(
 					connector.getSimpleAOClient().getCronTable(
-						AOSH.parseUserId(args[1], "username"),
+						AOSH.parseLinuxUserName(args[1], "username"),
 						args[2]
 					)
 				);
@@ -407,7 +402,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				String[] folderNames=new String[args.length-3];
 				System.arraycopy(args, 3, folderNames, 0, folderNames.length);
 				long[] sizes=connector.getSimpleAOClient().getImapFolderSizes(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					folderNames
 				);
@@ -423,7 +418,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.GET_INBOX_ATTRIBUTES)) {
 			if(AOSH.checkParamCount(Command.GET_INBOX_ATTRIBUTES, args, 2, err)) {
 				InboxAttributes attr=connector.getSimpleAOClient().getInboxAttributes(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2]
 				);
 				out.print("System Time..: ");
@@ -444,7 +439,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			if(AOSH.checkParamCount(Command.IS_LINUX_SERVER_ACCOUNT_PASSWORD_SET, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().isLinuxServerAccountPasswordSet(
-						AOSH.parseUserId(args[1], "username"),
+						AOSH.parseLinuxUserName(args[1], "username"),
 						args[2]
 					)
 				);
@@ -455,7 +450,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			if(AOSH.checkParamCount(Command.IS_LINUX_SERVER_ACCOUNT_PROCMAIL_MANUAL, args, 2, err)) {
 				out.println(
 					connector.getSimpleAOClient().isLinuxServerAccountProcmailManual(
-						AOSH.parseUserId(args[1], "username"),
+						AOSH.parseLinuxUserName(args[1], "username"),
 						args[2]
 					)
 				);
@@ -465,7 +460,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.REMOVE_LINUX_SERVER_ACCOUNT)) {
 			if(AOSH.checkParamCount(Command.REMOVE_LINUX_SERVER_ACCOUNT, args, 2, err)) {
 				connector.getSimpleAOClient().removeLinuxServerAccount(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2]
 				);
 			}
@@ -473,7 +468,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_AUTORESPONDER)) {
 			if(AOSH.checkParamCount(Command.SET_AUTORESPONDER, args, 7, err)) {
 				connector.getSimpleAOClient().setAutoresponder(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					args[3],
 					args[4].length()==0 ? null : AOSH.parseDomainName(args[4], "from_domain"),
@@ -486,7 +481,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_CRON_TABLE)) {
 			if(AOSH.checkParamCount(Command.SET_CRON_TABLE, args, 3, err)) {
 				connector.getSimpleAOClient().setCronTable(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					args[3]
 				);
@@ -495,7 +490,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION)) {
 			if(AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_JUNK_EMAIL_RETENTION, args, 3, err)) {
 				connector.getSimpleAOClient().setLinuxServerAccountJunkEmailRetention(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					args[3]==null||args[3].length()==0?-1:AOSH.parseInt(args[3], "junk_email_retention")
 				);
@@ -504,7 +499,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_PASSWORD, args, 3, err)) {
 				connector.getSimpleAOClient().setLinuxServerAccountPassword(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					args[3]
 				);
@@ -513,7 +508,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_INTEGRATION_MODE)) {
 			if(AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_INTEGRATION_MODE, args, 3, err)) {
 				connector.getSimpleAOClient().setLinuxServerAccountSpamAssassinIntegrationMode(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					args[3]
 				);
@@ -522,7 +517,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE)) {
 			if(AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_SPAMASSASSIN_REQUIRED_SCORE, args, 3, err)) {
 				connector.getSimpleAOClient().setLinuxServerAccountSpamAssassinRequiredScore(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					AOSH.parseFloat(args[3], "required_score")
 				);
@@ -531,7 +526,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION)) {
 			if(AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_TRASH_EMAIL_RETENTION, args, 3, err)) {
 				connector.getSimpleAOClient().setLinuxServerAccountTrashEmailRetention(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					args[3]==null||args[3].length()==0?-1:AOSH.parseInt(args[3], "trash_email_retention")
 				);
@@ -540,7 +535,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		} else if(command.equalsIgnoreCase(Command.SET_LINUX_SERVER_ACCOUNT_USE_INBOX)) {
 			if(AOSH.checkParamCount(Command.SET_LINUX_SERVER_ACCOUNT_USE_INBOX, args, 3, err)) {
 				connector.getSimpleAOClient().setLinuxServerAccountUseInbox(
-					AOSH.parseUserId(args[1], "username"),
+					AOSH.parseLinuxUserName(args[1], "username"),
 					args[2],
 					AOSH.parseBoolean(args[3], "use_inbox")
 				);
@@ -550,7 +545,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		return false;
 	}
 
-	boolean isHomeUsed(Server aoServer, UnixPath directory) throws IOException, SQLException {
+	boolean isHomeUsed(Server aoServer, PosixPath directory) throws IOException, SQLException {
 		int pkey=aoServer.getPkey();
 
 		String directoryStr = directory.toString();
@@ -561,7 +556,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		for(int c=0;c<size;c++) {
 			UserServer lsa=cached.get(c);
 			if(lsa.ao_server==pkey) {
-				UnixPath home=lsa.getHome();
+				PosixPath home=lsa.getHome();
 				if(
 					home.equals(directory)
 					|| home.toString().startsWith(startsWith)

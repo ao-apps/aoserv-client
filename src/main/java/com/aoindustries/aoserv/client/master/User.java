@@ -22,11 +22,10 @@
  */
 package com.aoindustries.aoserv.client.master;
 
-import com.aoindustries.aoserv.client.CachedObjectUserIdKey;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.CachedObjectUserNameKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -46,7 +45,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class User extends CachedObjectUserIdKey<User> {
+final public class User extends CachedObjectUserNameKey<User> {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -70,7 +69,7 @@ final public class User extends CachedObjectUserIdKey<User> {
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey                   = UserId.valueOf(result.getString(1));
+			pkey                   = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(1));
 			is_active              = result.getBoolean(2);
 			can_access_accounting  = result.getBoolean(3);
 			can_access_bank_account= result.getBoolean(4);
@@ -102,7 +101,7 @@ final public class User extends CachedObjectUserIdKey<User> {
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey                    = UserId.valueOf(in.readUTF()).intern();
+			pkey                    = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
 			is_active               = in.readBoolean();
 			can_access_accounting   = in.readBoolean();
 			can_access_bank_account = in.readBoolean();

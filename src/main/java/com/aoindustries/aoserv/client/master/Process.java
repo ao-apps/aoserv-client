@@ -26,9 +26,9 @@ import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -72,8 +72,8 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 
 	long process_id;
 	private long connector_id=-1;
-	private UserId authenticated_user;
-	private UserId effective_user;
+	private User.Name authenticated_user;
+	private User.Name effective_user;
 	private int daemon_server;
 	private InetAddress host;
 	private String protocol;
@@ -171,7 +171,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		return connector_id;
 	}
 
-	public UserId getAuthenticatedUser() {
+	public User.Name getAuthenticatedUser() {
 		return authenticated_user;
 	}
 
@@ -180,7 +180,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		return table.getConnector().getAccount().getAdministrator().get(authenticated_user);
 	}
 
-	public UserId getEffectiveUser() {
+	public User.Name getEffectiveUser() {
 		return effective_user;
 	}
 
@@ -260,8 +260,8 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		try {
 			process_id=in.readLong();
 			connector_id=in.readLong();
-			authenticated_user = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
-			effective_user = InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			authenticated_user = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
+			effective_user = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			daemon_server=in.readCompressedInt();
 			host=InetAddress.valueOf(in.readUTF()).intern();
 			protocol=in.readUTF().intern();
@@ -312,7 +312,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		return SB.toString();
 	}
 
-	public void setAuthenticatedUser(UserId username) {
+	public void setAuthenticatedUser(User.Name username) {
 		authenticated_user = username;
 	}
 
@@ -324,7 +324,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		daemon_server=server;
 	}
 
-	public void setEffectiveUser(UserId username) {
+	public void setEffectiveUser(User.Name username) {
 		effective_user = username;
 	}
 

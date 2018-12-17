@@ -23,9 +23,7 @@
 package com.aoindustries.aoserv.client.linux;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.GlobalTableUnixPathKey;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UnixPath;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -34,7 +32,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ShellTable extends GlobalTableUnixPathKey<Shell> {
+final public class ShellTable extends GlobalTablePosixPathKey<Shell> {
 
 	ShellTable(AOServConnector connector) {
 		super(connector, Shell.class);
@@ -54,7 +52,7 @@ final public class ShellTable extends GlobalTableUnixPathKey<Shell> {
 	}
 
 	@Override
-	public Shell get(UnixPath path) throws IOException, SQLException {
+	public Shell get(PosixPath path) throws IOException, SQLException {
 		return getUniqueRow(Shell.COLUMN_PATH, path);
 	}
 }

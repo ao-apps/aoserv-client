@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client;
 
-import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
@@ -71,8 +71,8 @@ public class SSLConnector extends TCPConnector {
 		HostAddress hostname,
 		InetAddress local_ip,
 		Port port,
-		UserId connectAs,
-		UserId authenticateAs,
+		User.Name connectAs,
+		User.Name authenticateAs,
 		String password,
 		DomainName daemonServer,
 		int poolSize,
@@ -131,8 +131,8 @@ public class SSLConnector extends TCPConnector {
 		HostAddress hostname,
 		InetAddress local_ip,
 		Port port,
-		UserId connectAs,
-		UserId authenticateAs,
+		User.Name connectAs,
+		User.Name authenticateAs,
 		String password,
 		DomainName daemonServer,
 		int poolSize,
@@ -189,7 +189,7 @@ public class SSLConnector extends TCPConnector {
 	}
 
 	@Override
-	public AOServConnector switchUsers(UserId username) throws IOException {
+	public AOServConnector switchUsers(User.Name username) throws IOException {
 		if(username.equals(connectAs)) return this;
 		return getSSLConnector(
 			hostname,

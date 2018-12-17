@@ -22,13 +22,12 @@
  */
 package com.aoindustries.aoserv.client.ftp;
 
-import com.aoindustries.aoserv.client.CachedObjectUserIdKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.linux.CachedObjectUserNameKey;
 import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.validation.ValidationException;
@@ -48,7 +47,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class GuestUser extends CachedObjectUserIdKey<GuestUser> implements Removable {
+final public class GuestUser extends CachedObjectUserNameKey<GuestUser> implements Removable {
 
 	static final int COLUMN_USERNAME=0;
 	static final String COLUMN_USERNAME_name = "username";
@@ -73,7 +72,7 @@ final public class GuestUser extends CachedObjectUserIdKey<GuestUser> implements
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = UserId.valueOf(result.getString(1));
+			pkey = User.Name.valueOf(result.getString(1));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -82,7 +81,7 @@ final public class GuestUser extends CachedObjectUserIdKey<GuestUser> implements
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey = UserId.valueOf(in.readUTF()).intern();
+			pkey = User.Name.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}

@@ -26,10 +26,10 @@ import com.aoindustries.aoserv.client.CachedObjectStringKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Dumpable;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.AddressFamily;
@@ -85,7 +85,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	public static final int DEFAULT_MX_PRIORITY = 10;
 
 	private String file;
-	AccountingCode packageName;
+	Account.Name packageName;
 	private String hostmaster;
 	private long serial;
 	private int ttl;
@@ -236,7 +236,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 		try {
 			pkey=result.getString(1);
 			file=result.getString(2);
-			packageName = AccountingCode.valueOf(result.getString(3));
+			packageName = Account.Name.valueOf(result.getString(3));
 			hostmaster=result.getString(4);
 			serial=result.getLong(5);
 			ttl=result.getInt(6);
@@ -412,7 +412,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 		try {
 			pkey=in.readUTF().intern();
 			file=in.readUTF();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
 			hostmaster=in.readUTF().intern();
 			serial=in.readLong();
 			ttl=in.readCompressedInt();

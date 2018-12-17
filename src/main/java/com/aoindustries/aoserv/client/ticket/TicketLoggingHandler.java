@@ -27,12 +27,15 @@ import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.lang.ObjectUtils;
+import com.aoindustries.net.Email;
 import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.logging.QueuedHandler;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -152,6 +155,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
 				else priorityName = Priority.URGENT;                                         // WARNING < level
 				Priority priority = connector.getTicket().getPriority().get(priorityName);
 				if(priority==null) throw new SQLException("Unable to find TicketPriority: "+priorityName);
+				Set<Email> noContacts = Collections.emptySet();
 				connector.getTicket().getTicket().addTicket(
 					brand,
 					business,
@@ -162,7 +166,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
 					summary,
 					fullReport,
 					priority,
-					"",
+					noContacts,
 					""
 				);
 			}

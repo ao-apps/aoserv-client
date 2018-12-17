@@ -24,27 +24,19 @@ package com.aoindustries.aoserv.client.schema;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.linux.LinuxId;
+import com.aoindustries.aoserv.client.linux.PosixPath;
+import com.aoindustries.aoserv.client.linux.User.Gecos;
+import com.aoindustries.aoserv.client.net.FirewallZone;
 import com.aoindustries.aoserv.client.net.IpAddress;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.FirewalldZoneName;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.HashedPassword;
-import com.aoindustries.aoserv.client.validator.LinuxId;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
-import com.aoindustries.aoserv.client.validator.MySQLTableName;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
-import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
-import com.aoindustries.aoserv.client.validator.PostgresServerName;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
+import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
@@ -75,62 +67,239 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	static final int COLUMN_NAME = 1;
 	public static final String DATE_name = "date";
 
+	// TODO: No longer pass type ids, instead pass per-protocol schema+type names
+
 	/**
-	 * The different types of values.
+	 * @see com.aoindustries.aoserv.client.account.Account.Name
 	 */
-	// TODO: No longer pass type ids, instead pass per-protocol type names, and use an enum here
-	public static final int
-		ACCOUNTING             =  0, // com.aoindustries.aoserv.client.validator.AccountingCode
-		BOOLEAN                =  1, // boolean/java.lang.Boolean
-		//BYTE                 =  2, // byte/java.lang.Byte
-		//CITY                 =  3, // java.lang.String
-		//COUNTRY              =  4, // java.lang.String
-		DATE                   =  5, // java.sql.Date
-		DECIMAL_2              =  6, // java.math.BigDecimal
-		DECIMAL_3              =  7, // java.math.BigDecimal
-		DOUBLE                 =  8, // double/java.lang.Double
-		EMAIL                  =  9, // com.aoindustries.net.Email
-		FKEY                   = 10, // int/java.lang.Integer
-		FLOAT                  = 11, // float/java.lang.Float
-		HOSTNAME               = 12, // com.aoindustries.net.HostAddress
-		INT                    = 13, // int/java.lang.Integer
-		INTERVAL               = 14, // long/java.lang.Long
-		IP_ADDRESS             = 15, // com.aoindustries.net.InetAddress
-		LONG                   = 16, // long/java.lang.Long
-		//OCTAL_INT            = 17, // int/java.lang.Integer
-		OCTAL_LONG             = 18, // long/java.lang.Long
-		//PACKAGE              = 19, // com.aoindustries.aoserv.client.validator.AccountingCode
-		PKEY                   = 20, // int/java.lang.Integer
-		PATH                   = 21, // com.aoindustries.aoserv.client.validator.UnixPath
-		PHONE                  = 22, // java.lang.String
-		SHORT                  = 23, // short/java.lang.Short
-		//STATE                = 24, // java.lang.String
-		STRING                 = 25, // java.lang.String
-		TIME                   = 26, // java.sql.Timestamp
-		URL                    = 27, // java.net.URL
-		USERNAME               = 28, // com.aoindustries.aoserv.client.validator.UserId
-		//ZIP                  = 29, // java.lang.String
-		ZONE                   = 30, // com.aoindustries.aoserv.client.validator.Zone
-		BIG_DECIMAL            = 31, // java.math.BigDecimal
-		DOMAIN_LABEL           = 32, // com.aoindustries.net.DomainLabel
-		DOMAIN_LABELS          = 33, // com.aoindustries.net.DomainLabels
-		DOMAIN_NAME            = 34, // com.aoindustries.net.DomainName
-		GECOS                  = 35, // com.aoindustries.aoserv.client.validator.Gecos
-		GROUP_ID               = 36, // com.aoindustries.aoserv.client.validator.GroupId
-		HASHED_PASSWORD        = 37, // com.aoindustries.aoserv.client.validator.HashedPassword
-		LINUX_ID               = 38, // com.aoindustries.aoserv.client.validator.LinuxId
-		MAC_ADDRESS            = 39, // com.aoindustries.net.MacAddress
-		MONEY                  = 40, // com.aoindustries.util.i18n.Money
-		MYSQL_DATABASE_NAME    = 41, // com.aoindustries.aoserv.client.validator.MySQLDatabaseName
-		MYSQL_SERVER_NAME      = 42, // com.aoindustries.aoserv.client.validator.MySQLServerName
-		MYSQL_TABLE_NAME       = 43, // com.aoindustries.aoserv.client.validator.MySQLTableName
-		MYSQL_USERNAME         = 44, // com.aoindustries.aoserv.client.validator.MySQLUserId
-		NET_PORT               = 45, // com.aoindustries.net.NetPort
-		POSTGRES_DATABASE_NAME = 46, // com.aoindustries.aoserv.client.validator.PostgresDatabaseName
-		POSTGRES_SERVER_NAME   = 47, // com.aoindustries.aoserv.client.validator.PostgresServerName
-		POSTGRES_USERNAME      = 48, // com.aoindustries.aoserv.client.validator.PostgresUserId
-		FIREWALLD_ZONE_NAME    = 49  // com.aoindustries.aoserv.client.validator.FirewalldZoneName
-	;
+	public static final int ACCOUNTING =  0;
+
+	/**
+	 * @see java.lang.Boolean
+	 */
+	public static final int BOOLEAN =  1;
+
+	//public static final int BYTE =  2; // byte/java.lang.Byte
+	//public static final int CITY =  3; // java.lang.String
+	//public static final int COUNTRY =  4; // java.lang.String
+
+	/**
+	 * @see java.sql.Date
+	 */
+	public static final int DATE =  5;
+
+	/**
+	 * @see java.math.BigDecimal
+	 */
+	public static final int DECIMAL_2 =  6;
+
+	/**
+	 * @see java.math.BigDecimal
+	 */
+	public static final int DECIMAL_3 =  7;
+
+	/**
+	 * @see java.lang.Double
+	 */
+	public static final int DOUBLE =  8;
+
+	/**
+	 * @see com.aoindustries.net.Email
+	 */
+	public static final int EMAIL =  9;
+
+	/**
+	 * @see java.lang.Integer
+	 */
+	public static final int FKEY = 10;
+
+	/**
+	 * @see java.lang.Float
+	 */
+	public static final int FLOAT = 11;
+
+	/**
+	 * @see com.aoindustries.net.HostAddress
+	 */
+	public static final int HOSTNAME = 12;
+
+	/**
+	 * @see java.lang.Integer
+	 */
+	public static final int INT = 13;
+
+	/**
+	 * @see java.lang.Long
+	 */
+	public static final int INTERVAL = 14;
+
+	/**
+	 * @see com.aoindustries.net.InetAddress
+	 */
+	public static final int IP_ADDRESS = 15;
+
+	/**
+	 * @see java.lang.Long
+	 */
+	public static final int LONG = 16;
+
+	//public static final int OCTAL_INT = 17; // int/java.lang.Integer
+
+	/**
+	 * @see java.lang.Long
+	 */
+	public static final int OCTAL_LONG = 18;
+
+	//public static final int PACKAGE = 19; // com.aoindustries.aoserv.client.validator.AccountingCode
+
+	/**
+	 * @see java.lang.Integer
+	 */
+	public static final int PKEY = 20;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.linux.PosixPath
+	 */
+	public static final int PATH = 21;
+
+	/**
+	 * @see java.lang.String
+	 */
+	public static final int PHONE = 22;
+
+	/**
+	 * @see java.lang.Short
+	 */
+	public static final int SHORT = 23; // short/java.lang.Short
+
+	//public static final int STATE = 24; // java.lang.String
+
+	/**
+	 * @see java.lang.String
+	 */
+	public static final int STRING = 25;
+
+	/**
+	 * @see java.sql.Timestamp
+	 */
+	public static final int TIME = 26;
+
+	/**
+	 * @see java.net.URL
+	 */
+	public static final int URL = 27;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.account.User.Name
+	 */
+	public static final int USERNAME = 28;
+
+	//public static final int ZIP = 29; // java.lang.String
+
+	/**
+	 * @see java.lang.String
+	 */
+	public static final int ZONE = 30;
+
+	/**
+	 * @see java.math.BigDecimal
+	 */
+	public static final int BIG_DECIMAL = 31;
+
+	/**
+	 * @see com.aoindustries.net.DomainLabel
+	 */
+	public static final int DOMAIN_LABEL = 32;
+
+	/**
+	 * @see com.aoindustries.net.DomainLabels
+	 */
+	public static final int DOMAIN_LABELS = 33;
+
+	/**
+	 * @see com.aoindustries.net.DomainName
+	 */
+	public static final int DOMAIN_NAME = 34;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.linux.User.Gecos
+	 */
+	public static final int GECOS = 35;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.linux.Group.Name
+	 */
+	public static final int GROUP_ID = 36;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.pki.HashedPassword
+	 */
+	public static final int HASHED_PASSWORD = 37;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.linux.LinuxId
+	 */
+	public static final int LINUX_ID = 38;
+
+	/**
+	 * @see com.aoindustries.net.MacAddress
+	 */
+	public static final int MAC_ADDRESS = 39;
+
+	/**
+	 * @see com.aoindustries.util.i18n.Money
+	 */
+	public static final int MONEY = 40;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.mysql.Database.Name
+	 */
+	public static final int MYSQL_DATABASE_NAME = 41;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.mysql.Server.Name
+	 */
+	public static final int MYSQL_SERVER_NAME = 42;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.mysql.Table_Name
+	 */
+	public static final int MYSQL_TABLE_NAME = 43;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.mysql.User.Name
+	 */
+	public static final int MYSQL_USERNAME = 44;
+
+	/**
+	 * @see com.aoindustries.net.Port
+	 */
+	public static final int NET_PORT = 45;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.postgresql.Database.Name
+	 */
+	public static final int POSTGRES_DATABASE_NAME = 46;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.postgresql.Server.Name
+	 */
+	public static final int POSTGRES_SERVER_NAME = 47;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.postgresql.User.Name
+	 */
+	public static final int POSTGRES_USERNAME = 48;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.net.FirewallZone.Name
+	 */
+	public static final int FIREWALLD_ZONE_NAME = 49;
+
+	/**
+	 * @see com.aoindustries.aoserv.client.linux.User.Name
+	 */
+	public static final int LINUX_USERNAME = 50;
 
 	private static final BigDecimal
 		bigDecimalNegativeOne = BigDecimal.valueOf(-1),
@@ -182,20 +351,20 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *                                                                                            S M       R T P R
 	 *                                                                                            Q Y M     E G O E
 	 *                                                                                    H       L S Y     S R S W
-	 *                                                                                    A       _ Q S M   _ E T A
-	 *                                                                            D       S       D L Q Y   D S G L
-	 *                                                                          D O       H       A _ L S   A _ R L
-	 *                                                                        B O M D     E   M   T S _ Q   T S E D
-	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S _
-	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _ Z
-	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U O
-	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S N
-	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E E
-	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R _
-	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N
-	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A
-	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M
-	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E
+	 *                                                                                    A       _ Q S M   _ E T A L
+	 *                                                                            D       S       D L Q Y   D S G L I
+	 *                                                                          D O       H       A _ L S   A _ R L N
+	 *                                                                        B O M D     E   M   T S _ Q   T S E D U
+	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S _ X
+	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _ Z _
+	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U O U
+	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S N S
+	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E E E
+	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R _ R
+	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N N
+	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A A
+	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M M
+	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E E
 	 *
 	 *             ACCOUNTING X                                     X
 	 *                BOOLEAN   X   X X X     X   X     X X       X X         X
@@ -203,7 +372,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *              DECIMAL_2   X   X X X     X   X X   X X       X X         X
 	 *              DECIMAL_3   X   X X X     X   X X   X X       X X         X
 	 *                 DOUBLE   X   X X X     X   X X   X X       X X         X
-	 *                  EMAIL             X     X                   X   X X X       X
+	 *                  EMAIL             X     X                   X   X X X       X                               X
 	 *                   FKEY               X     X         X       X
 	 *                  FLOAT   X   X X X     X   X X   X X       X X         X
 	 *               HOSTNAME                   X     X             X       X       X
@@ -216,10 +385,10 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *                   PATH                                 X     X
 	 *                  PHONE                                   X   X
 	 *                  SHORT   X X X X X     X   X X   X X       X X         X
-	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X X
+	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X X X
 	 *                   TIME     X                     X X         X X
 	 *                    URL                   X             X     X   X   X       X
-	 *               USERNAME                                       X     X                             X       X
+	 *               USERNAME                                       X     X                             X       X   X
 	 *                   ZONE                   X                   X       X       X
 	 *            BIG_DECIMAL   X   X X X     X   X X   X X       X X         X
 	 *           DOMAIN_LABEL                                       X           X X X
@@ -234,12 +403,13 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *    MYSQL_DATABASE_NAME                                       X                             X
 	 *      MYSQL_SERVER_NAME                                       X                               X
 	 *       MYSQL_TABLE_NAME                                       X                                 X
-	 *         MYSQL_USERNAME                                       X     X                             X
+	 *         MYSQL_USERNAME                                       X     X                             X           X
 	 *               NET_PORT                     X                 X                                     X
 	 * POSTGRES_DATABASE_NAME                                       X                                       X
 	 *   POSTGRES_SERVER_NAME                                       X                                         X
-	 *      POSTGRES_USERNAME                                       X     X                                     X
+	 *      POSTGRES_USERNAME                                       X     X                                     X   X
 	 *    FIREWALLD_ZONE_NAME                                       X                                             X
+	 *         LINUX_USERNAME                                       X     X                             X       X   X
 	 * </pre>
 	 */
 	public Object cast(AOServConnector conn, Object value, Type castToType) throws IOException, SQLException {
@@ -255,19 +425,17 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					// No special casts
 					break;
 				case BOOLEAN:
-					{
-						boolean bvalue=value==null?false:((Boolean)value);
-						switch(castToType.getId()) {
-							case DECIMAL_2: return value==null?null:Integer.valueOf(bvalue?-100:0);
-							case DECIMAL_3: return value==null?null:Integer.valueOf(bvalue?-1000:0);
-							case DOUBLE: return value==null?null:new Double(bvalue?-1:0);
-							case FLOAT: return value==null?null:Float.valueOf(bvalue?-1:0);
-							case INT: return value==null?null:Integer.valueOf(bvalue?-1:0);
-							case LONG: return value==null?null:Long.valueOf(bvalue?(long)-1:0);
-							case OCTAL_LONG: return value==null?null:Long.valueOf(bvalue?(long)-1:0);
-							case SHORT: return value==null?null:Short.valueOf(bvalue?(short)-1:0);
-							case BIG_DECIMAL: return value==null?null:bvalue?bigDecimalNegativeOne:BigDecimal.ZERO;
-						}
+					switch(castToType.getId()) {
+						case DECIMAL_2: return value==null?null:Integer.valueOf((Boolean)value?-100:0);
+						case DECIMAL_3: return value==null?null:Integer.valueOf((Boolean)value?-1000:0);
+						case DOUBLE: return value==null?null:new Double((Boolean)value?-1:0);
+						case FLOAT: return value==null?null:Float.valueOf((Boolean)value?-1:0);
+						case INT: return value==null?null:Integer.valueOf((Boolean)value?-1:0);
+						case LONG:
+						case OCTAL_LONG:
+							return value==null?null:Long.valueOf((Boolean)value?(long)-1:0);
+						case SHORT: return value==null?null:Short.valueOf((Boolean)value?(short)-1:0);
+						case BIG_DECIMAL: return value==null?null:(Boolean)value?bigDecimalNegativeOne:BigDecimal.ZERO;
 					}
 					break;
 				case DATE:
@@ -279,8 +447,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 							case DOUBLE: return value==null?null:new Double(SQLUtility.getDaysFromMillis(tvalue));
 							case FLOAT: return value==null?null:Float.valueOf(SQLUtility.getDaysFromMillis(tvalue));
 							case INT: return value==null?null:Integer.valueOf((int)(SQLUtility.getDaysFromMillis(tvalue)));
-							case LONG: return value==null?null:Long.valueOf(SQLUtility.getDaysFromMillis(tvalue));
-							case OCTAL_LONG: return value==null?null:Long.valueOf(SQLUtility.getDaysFromMillis(tvalue));
+							case LONG:
+							case OCTAL_LONG:
+								return value==null?null:Long.valueOf(SQLUtility.getDaysFromMillis(tvalue));
 							case SHORT: return value==null?null:Short.valueOf((short)(SQLUtility.getDaysFromMillis(tvalue)));
 							case TIME: return value==null?null:new java.sql.Timestamp(SQLUtility.roundToDay(tvalue));
 							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(SQLUtility.getDaysFromMillis(tvalue));
@@ -288,64 +457,58 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					}
 					break;
 				case DECIMAL_2:
-					{
-						int ivalue=value==null?0:((Integer)value);
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:ivalue!=0;
-							case DECIMAL_3: return value==null?null:Integer.valueOf(ivalue*10);
-							case DOUBLE: return value==null?null:new Double((double)ivalue/100);
-							case FLOAT: return value==null?null:Float.valueOf((float)ivalue/100);
-							case INT: return value==null?null:Integer.valueOf(ivalue/100);
-							case INTERVAL: return value==null?null:Long.valueOf(ivalue/100);
-							case LONG: return value==null?null:Long.valueOf(ivalue/100);
-							case OCTAL_LONG: return value==null?null:Long.valueOf(ivalue/100);
-							case SHORT: return value==null?null:Short.valueOf((short)(ivalue/100));
-							case BIG_DECIMAL: return value==null?null:new BigDecimal(SQLUtility.getDecimal(ivalue));
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:(Integer)value!=0;
+						case DECIMAL_3: return value==null?null:Integer.valueOf((Integer)value*10);
+						case DOUBLE: return value==null?null:new Double((double)(Integer)value/100);
+						case FLOAT: return value==null?null:Float.valueOf((float)(Integer)value/100);
+						case INT: return value==null?null:Integer.valueOf((Integer)value/100);
+						case INTERVAL: return value==null?null:Long.valueOf((Integer)value/100);
+						case LONG:
+						case OCTAL_LONG:
+							return value==null?null:Long.valueOf((Integer)value/100);
+						case SHORT: return value==null?null:Short.valueOf((short)((Integer)value/100));
+						case BIG_DECIMAL: return value==null?null:new BigDecimal(SQLUtility.getDecimal((Integer)value));
 					}
 					break;
 				case DECIMAL_3:
-					{
-						int ivalue=value==null?0:((Integer)value);
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:ivalue!=0;
-							case DECIMAL_2: return value==null?null:Integer.valueOf(ivalue/10);
-							case DOUBLE: return value==null?null:new Double((double)ivalue/1000);
-							case FLOAT: return value==null?null:Float.valueOf((float)ivalue/1000);
-							case INT: return value==null?null:Integer.valueOf(ivalue/1000);
-							case INTERVAL: return value==null?null:Long.valueOf(ivalue/1000);
-							case LONG: return value==null?null:Long.valueOf(ivalue/1000);
-							case OCTAL_LONG: return value==null?null:Long.valueOf(ivalue/1000);
-							case SHORT: return value==null?null:Short.valueOf((short)(ivalue/1000));
-							case BIG_DECIMAL: return value==null?null:new BigDecimal(SQLUtility.getDecimal(ivalue));
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:(Integer)value!=0;
+						case DECIMAL_2: return value==null?null:Integer.valueOf((Integer)value/10);
+						case DOUBLE: return value==null?null:new Double((double)(Integer)value/1000);
+						case FLOAT: return value==null?null:Float.valueOf((float)(Integer)value/1000);
+						case INT: return value==null?null:Integer.valueOf((Integer)value/1000);
+						case INTERVAL: return value==null?null:Long.valueOf((Integer)value/1000);
+						case LONG:
+						case OCTAL_LONG:
+							return value==null?null:Long.valueOf((Integer)value/1000);
+						case SHORT: return value==null?null:Short.valueOf((short)((Integer)value/1000));
+						case BIG_DECIMAL: return value==null?null:new BigDecimal(SQLUtility.getDecimal((Integer)value));
 					}
 					break;
 				case DOUBLE:
-					{
-						double dvalue=value==null?0:((Double)value);
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:dvalue!=0;
-							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(dvalue*100));
-							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(dvalue*1000));
-							case FLOAT: return value==null?null:Float.valueOf((float)dvalue);
-							case INT: return value==null?null:Integer.valueOf((int)dvalue);
-							case INTERVAL: return value==null?null:Long.valueOf((long)dvalue);
-							case LONG: return value==null?null:Long.valueOf((long)dvalue);
-							case OCTAL_LONG: return value==null?null:Long.valueOf((long)dvalue);
-							case SHORT: return value==null?null:Short.valueOf((short)dvalue);
-							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(dvalue);
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:(Double)value!=0;
+						case DECIMAL_2: return value==null?null:Integer.valueOf((int)((Double)value*100));
+						case DECIMAL_3: return value==null?null:Integer.valueOf((int)((Double)value*1000));
+						case FLOAT: return value==null?null:Float.valueOf(((Double)value).floatValue());
+						case INT: return value==null?null:Integer.valueOf(((Double)value).intValue());
+						case INTERVAL: return value==null?null:Long.valueOf(((Double)value).longValue());
+						case LONG:
+						case OCTAL_LONG:
+							return value==null?null:Long.valueOf(((Double)value).longValue());
+						case SHORT: return value==null?null:Short.valueOf(((Double)value).shortValue());
+						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf((Double)value);
 					}
 					break;
 				case EMAIL:
-					// TODO: com.aoindustries.net.Email
 					switch(castToType.getId()) {
-						case HOSTNAME:    return value==null ? null : HostAddress.valueOf(getDomainNameForEmail((String)value));
-						case URL:         return value==null ? null : "mailto:"+((String)value);
-						case USERNAME:    return value==null ? null : UserId.valueOf(getUsernameForEmail((String)value));
-						case ZONE:        return value==null ? null : getZoneForDomainName(conn, getDomainNameForEmail((String)value));
-						case DOMAIN_NAME: return value==null ? null : getDomainNameForEmail((String)value);
+						case HOSTNAME:       return value==null ? null : HostAddress.valueOf(((Email)value).getDomain());
+						case URL:            return value==null ? null : "mailto:" + value;
+						case USERNAME:       return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(getUsernameForEmail((Email)value));
+						case ZONE:           return value==null ? null : getZoneForDomainName(conn, ((Email)value).getDomain());
+						case DOMAIN_NAME:    return value==null ? null : ((Email)value).getDomain();
+						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(getUsernameForEmail((Email)value));
 					}
 					break;
 				case FKEY:
@@ -355,20 +518,18 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					}
 					break;
 				case FLOAT:
-					{
-						float fvalue=value==null?0:((Float)value);
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:fvalue!=0;
-							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(fvalue*100));
-							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(fvalue*1000));
-							case DOUBLE: return value==null?null:new Double(fvalue);
-							case INT: return value==null?null:Integer.valueOf((int)fvalue);
-							case INTERVAL: return value==null?null:Long.valueOf((long)fvalue);
-							case LONG: return value==null?null:Long.valueOf((long)fvalue);
-							case OCTAL_LONG: return value==null?null:Long.valueOf((long)fvalue);
-							case SHORT: return value==null?null:Short.valueOf((short)fvalue);
-							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(fvalue);
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:(Float)value!=0;
+						case DECIMAL_2: return value==null?null:Integer.valueOf((int)((Float)value*100));
+						case DECIMAL_3: return value==null?null:Integer.valueOf((int)((Float)value*1000));
+						case DOUBLE: return value==null?null:new Double(((Float)value).doubleValue());
+						case INT: return value==null?null:Integer.valueOf(((Float)value).intValue());
+						case INTERVAL: return value==null?null:Long.valueOf(((Float)value).longValue());
+						case LONG:
+						case OCTAL_LONG:
+							return value==null?null:Long.valueOf(((Float)value).longValue());
+						case SHORT: return value==null?null:Short.valueOf(((Float)value).shortValue());
+						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(((Float)value).doubleValue());
 					}
 					break;
 				case HOSTNAME:
@@ -379,82 +540,60 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					}
 					break;
 				case INT:
-					{
-						int ivalue=value==null?0:((Integer)value);
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:ivalue!=0;
-							case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays(ivalue));
-							case DECIMAL_2: return value==null?null:Integer.valueOf(ivalue*100);
-							case DECIMAL_3: return value==null?null:Integer.valueOf(ivalue*1000);
-							case DOUBLE: return value==null?null:new Double(ivalue);
-							case FKEY: return value;
-							case FLOAT: return value==null?null:Float.valueOf((float)ivalue);
-							case INTERVAL: return value==null?null:Long.valueOf(ivalue);
-							case IP_ADDRESS: return value==null?null:InetAddress.valueOf(IpAddress.getIPAddressForInt(ivalue));
-							case LONG: return value==null?null:Long.valueOf(ivalue);
-							case OCTAL_LONG: return value==null?null:Long.valueOf(ivalue);
-							case PKEY: return value;
-							case SHORT: return value==null?null:Short.valueOf((short)ivalue);
-							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(ivalue);
-							case LINUX_ID: return value==null?null:LinuxId.valueOf(ivalue);
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:(Integer)value!=0;
+						case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays((Integer)value));
+						case DECIMAL_2: return value==null?null:Integer.valueOf((Integer)value*100);
+						case DECIMAL_3: return value==null?null:Integer.valueOf((Integer)value*1000);
+						case DOUBLE: return value==null?null:new Double(((Integer)value).doubleValue());
+						case FKEY: return value;
+						case FLOAT: return value==null?null:Float.valueOf(((Integer)value).floatValue());
+						case INTERVAL: return value==null?null:Long.valueOf(((Integer)value).longValue());
+						case IP_ADDRESS: return value==null?null:InetAddress.valueOf(IpAddress.getIPAddressForInt((Integer)value));
+						case LONG:
+						case OCTAL_LONG:
+							return value==null?null:Long.valueOf(((Integer)value).longValue());
+						case PKEY: return value;
+						case SHORT: return value==null?null:Short.valueOf(((Integer)value).shortValue());
+						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(((Integer)value).doubleValue());
+						case LINUX_ID: return value==null?null:LinuxId.valueOf((Integer)value);
 					}
 					break;
 				case INTERVAL:
-					{
-						long lvalue=value==null?0:((Long)value);
-						switch(castToType.getId()) {
-							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
-							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(lvalue*1000));
-							case DOUBLE: return value==null?null:new Double((double)lvalue);
-							case FLOAT: return value==null?null:Float.valueOf((float)lvalue);
-							case INT: return value==null?null:Integer.valueOf((int)lvalue);
-							case LONG: return value;
-							case OCTAL_LONG: return value;
-							case SHORT: return value==null?null:Short.valueOf((short)lvalue);
-							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(lvalue);
-						}
+					switch(castToType.getId()) {
+						case DECIMAL_2: return value==null?null:Integer.valueOf((int)((Long)value*100));
+						case DECIMAL_3: return value==null?null:Integer.valueOf((int)((Long)value*1000));
+						case DOUBLE: return value==null?null:new Double(((Long)value).doubleValue());
+						case FLOAT: return value==null?null:Float.valueOf(((Long)value).floatValue());
+						case INT: return value==null?null:Integer.valueOf(((Long)value).intValue());
+						case LONG:
+						case OCTAL_LONG:
+							return value;
+						case SHORT: return value==null?null:Short.valueOf(((Long)value).shortValue());
+						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf((Long)value);
+						// TODO: Should casts to/from Interval add decimal places, since interval represents milliseconds
+						//       Interval of (long)234 would become (decimal_2)23, (decimal_3)234, BigDecimal(0.234), ...
 					}
 					break;
 				case IP_ADDRESS:
 					// No special casts
 					break;
 				case LONG:
-					{
-						long lvalue=value==null?0:((Long)value);
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:lvalue!=0;
-							case DATE: return value==null?null:new java.sql.Date(lvalue);
-							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
-							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(lvalue*1000));
-							case DOUBLE: return value==null?null:new Double((double)lvalue);
-							case FLOAT: return value==null?null:Float.valueOf((float)lvalue);
-							case INT: return value==null?null:Integer.valueOf((int)lvalue);
-							case INTERVAL: return value;
-							case OCTAL_LONG: return value;
-							case SHORT: return value==null?null:Short.valueOf((short)lvalue);
-							case TIME: return value==null?null:new java.sql.Timestamp(lvalue);
-							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(lvalue);
-						}
-					}
-					break;
 				case OCTAL_LONG:
-					{
-						long lvalue=value==null?0:((Long)value);
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:lvalue!=0;
-							case DATE: return value==null?null:new java.sql.Date(lvalue);
-							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(lvalue*100));
-							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(lvalue*1000));
-							case DOUBLE: return value==null?null:new Double((double)lvalue);
-							case FLOAT: return value==null?null:Float.valueOf((float)lvalue);
-							case INT: return value==null?null:Integer.valueOf((int)lvalue);
-							case INTERVAL: return value;
-							case LONG: return value;
-							case SHORT: return value==null?null:Short.valueOf((short)lvalue);
-							case TIME: return value==null?null:new java.sql.Timestamp(lvalue);
-							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(lvalue);
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:(Long)value!=0;
+						case DATE: return value==null?null:new java.sql.Date((Long)value);
+						case DECIMAL_2: return value==null?null:Integer.valueOf((int)((Long)value*100));
+						case DECIMAL_3: return value==null?null:Integer.valueOf((int)((Long)value*1000));
+						case DOUBLE: return value==null?null:new Double(((Long)value).doubleValue());
+						case FLOAT: return value==null?null:Float.valueOf(((Long)value).floatValue());
+						case INT: return value==null?null:Integer.valueOf(((Long)value).intValue());
+						case INTERVAL: return value;
+						case LONG: return value;
+						case OCTAL_LONG: return value;
+						case SHORT: return value==null?null:Short.valueOf(((Long)value).shortValue());
+						case TIME: return value==null?null:new java.sql.Timestamp((Long)value);
+						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf((Long)value);
 					}
 					break;
 				case PKEY:
@@ -470,21 +609,19 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					// No special casts
 					break;
 				case SHORT:
-					{
-						short svalue=value==null?0:((Short)value);
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:svalue!=0;
-							case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays(svalue));
-							case DECIMAL_2: return value==null?null:Integer.valueOf(svalue*100);
-							case DECIMAL_3: return value==null?null:Integer.valueOf(svalue*1000);
-							case DOUBLE: return value==null?null:new Double((double)svalue);
-							case FLOAT: return value==null?null:Float.valueOf((float)svalue);
-							case INT: return value==null?null:Integer.valueOf(svalue);
-							case INTERVAL: return value==null?null:Long.valueOf(svalue);
-							case LONG: return value==null?null:Long.valueOf(svalue);
-							case OCTAL_LONG: return value==null?null:Long.valueOf(svalue);
-							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(svalue);
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:(Short)value!=0;
+						case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays((Short)value));
+						case DECIMAL_2: return value==null?null:Integer.valueOf((Short)value*100);
+						case DECIMAL_3: return value==null?null:Integer.valueOf((Short)value*1000);
+						case DOUBLE: return value==null?null:new Double(((Short)value).doubleValue());
+						case FLOAT: return value==null?null:Float.valueOf(((Short)value).floatValue());
+						case INT: return value==null?null:Integer.valueOf(((Short)value).intValue());
+						case INTERVAL: return value==null?null:Long.valueOf(((Short)value).longValue());
+						case LONG:
+						case OCTAL_LONG:
+							return value==null?null:Long.valueOf(((Short)value).longValue());
+						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(((Short)value).longValue());
 					}
 					break;
 				case STRING:
@@ -494,8 +631,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						long lvalue=value==null?0:((java.sql.Timestamp)value).getTime();
 						switch(castToType.getId()) {
 							case DATE: return value==null?null:new java.sql.Date(lvalue);
-							case LONG: return value==null?null:Long.valueOf(lvalue);
-							case OCTAL_LONG: return value==null?null:Long.valueOf(lvalue);
+							case LONG:
+							case OCTAL_LONG:
+								return value==null?null:Long.valueOf(lvalue);
 						}
 					}
 					break;
@@ -503,20 +641,20 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					// TODO: URL as URI (no resolve stuff)?
 					switch(castToType.getId()) {
 						case HOSTNAME: return value==null?null:HostAddress.valueOf(new URL((String)value).getHost());
-						case PATH: return value==null?null:UnixPath.valueOf(new URL((String)value).getPath());
+						case PATH: return value==null?null:PosixPath.valueOf(new URL((String)value).getPath());
 						case ZONE: return value==null?null:getZoneForDomainName(conn, DomainName.valueOf(new URL((String)value).getHost()));
 						case DOMAIN_NAME: return value==null?null:DomainName.valueOf(new URL((String)value).getHost());
 					}
 					break;
 				case USERNAME:
-					// TODO: com.aoindustries.aoserv.client.validator.UserId
 					switch(castToType.getId()) {
-						case MYSQL_USERNAME: return value==null ? null : MySQLUserId.valueOf(value.toString());
-						case POSTGRES_USERNAME: return value==null ? null : PostgresUserId.valueOf(value.toString());
+						case MYSQL_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(value.toString());
+						case POSTGRES_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(value.toString());
+						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(value.toString());
 					}
 					break;
 				case ZONE:
-					// TODO: com.aoindustries.aoserv.client.validator.Zone
+					// TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
 					switch(castToType.getId()) {
 						case HOSTNAME: {
 							String hname = (String)value;
@@ -527,37 +665,29 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					}
 					break;
 				case BIG_DECIMAL:
-					{
-						BigDecimal bvalue = (BigDecimal)value;
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:bvalue.compareTo(BigDecimal.ZERO)!=0;
-							case DECIMAL_2: return value==null?null:bvalue.multiply(bigDecimal100).intValue();
-							case DECIMAL_3: return value==null?null:bvalue.multiply(bigDecimal1000).intValue();
-							case DOUBLE: return value==null?null:bvalue.doubleValue();
-							case FLOAT: return value==null?null:bvalue.floatValue();
-							case INT: return value==null?null:bvalue.intValue();
-							case INTERVAL: return value==null?null:bvalue.longValue();
-							case LONG: return value==null?null:bvalue.longValue();
-							case OCTAL_LONG: return value==null?null:bvalue.longValue();
-							case SHORT: return value==null?null:bvalue.shortValue();
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:((BigDecimal)value).compareTo(BigDecimal.ZERO)!=0;
+						case DECIMAL_2: return value==null?null:((BigDecimal)value).multiply(bigDecimal100).intValue();
+						case DECIMAL_3: return value==null?null:((BigDecimal)value).multiply(bigDecimal1000).intValue();
+						case DOUBLE: return value==null?null:((BigDecimal)value).doubleValue();
+						case FLOAT: return value==null?null:((BigDecimal)value).floatValue();
+						case INT: return value==null?null:((BigDecimal)value).intValue();
+						case INTERVAL: return value==null?null:((BigDecimal)value).longValue();
+						case LONG:
+						case OCTAL_LONG:
+							return value==null?null:((BigDecimal)value).longValue();
+						case SHORT: return value==null?null:((BigDecimal)value).shortValue();
 					}
 					break;
 				case DOMAIN_LABEL:
-					{
-						DomainLabel dlvalue = (DomainLabel)value;
-						switch(castToType.getId()) {
-							case DOMAIN_LABELS: return value==null?null:DomainLabels.valueOf(dlvalue.toString());
-							case DOMAIN_NAME: return value==null?null:DomainName.valueOf(dlvalue.toString());
-						}
+					switch(castToType.getId()) {
+						case DOMAIN_LABELS: return value==null?null:DomainLabels.valueOf(((DomainLabel)value).toString());
+						case DOMAIN_NAME: return value==null?null:DomainName.valueOf(((DomainLabel)value).toString());
 					}
 					break;
 				case DOMAIN_LABELS:
-					{
-						DomainLabels dlvalue = (DomainLabels)value;
-						switch(castToType.getId()) {
-							case DOMAIN_NAME: return DomainName.valueOf(((DomainLabels)value).toString());
-						}
+					switch(castToType.getId()) {
+						case DOMAIN_NAME: return DomainName.valueOf(((DomainLabels)value).toString());
 					}
 					break;
 				case DOMAIN_NAME:
@@ -577,21 +707,17 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					// No special casts
 					break;
 				case LINUX_ID:
-					{
-						switch(castToType.getId()) {
-							case BOOLEAN: return value==null?null:((LinuxId)value).getId()!=0;
-							case INT: return value==null?null:Integer.valueOf(((LinuxId)value).getId());
-						}
+					switch(castToType.getId()) {
+						case BOOLEAN: return value==null?null:((LinuxId)value).getId()!=0;
+						case INT: return value==null?null:Integer.valueOf(((LinuxId)value).getId());
 					}
 					break;
 				case MAC_ADDRESS:
 					// No special casts
 					break;
 				case MONEY:
-					{
-						switch(castToType.getId()) {
-							case BIG_DECIMAL: return value==null?null:((Money)value).getValue();
-						}
+					switch(castToType.getId()) {
+						case BIG_DECIMAL: return value==null?null:((Money)value).getValue();
 					}
 					break;
 				case MYSQL_DATABASE_NAME:
@@ -604,17 +730,14 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					// No special casts
 					break;
 				case MYSQL_USERNAME:
-					{
-						switch(castToType.getId()) {
-							case USERNAME: return value;
-						}
+					switch(castToType.getId()) {
+						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(value.toString());
+						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(value.toString());
 					}
 					break;
 				case NET_PORT:
-					{
-						switch(castToType.getId()) {
-							case INT: return value==null?null:Integer.valueOf(((Port)value).getPort());
-						}
+					switch(castToType.getId()) {
+						case INT: return value==null?null:Integer.valueOf(((Port)value).getPort());
 					}
 					break;
 				case POSTGRES_DATABASE_NAME:
@@ -624,14 +747,20 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					// No special casts
 					break;
 				case POSTGRES_USERNAME:
-					{
-						switch(castToType.getId()) {
-							case USERNAME: return value;
-						}
+					switch(castToType.getId()) {
+						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(value.toString());
+						case LINUX_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.linux.User.Name.valueOf(value.toString());
 					}
 					break;
 				case FIREWALLD_ZONE_NAME:
 					// No special casts
+					break;
+				case LINUX_USERNAME:
+					switch(castToType.getId()) {
+						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(value.toString());
+						case MYSQL_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(value.toString());
+						case POSTGRES_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(value.toString());
+					}
 					break;
 			}
 			throw new IllegalArgumentException("Unable to cast from "+name+" to "+castToType.getName());
@@ -639,19 +768,19 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 		}
 	}
-	private static DomainName getDomainNameForEmail(String email) throws ValidationException {
-		int pos=email.indexOf('@');
-		if(pos==-1) throw new IllegalArgumentException("Unable to find @ in email address: "+email);
-		return DomainName.valueOf(email.substring(pos+1));
-	}
 	private static DomainName getDomainNameForZone(String zone) throws ValidationException {
 		while(zone.endsWith(".")) zone=zone.substring(0, zone.length()-1);
 		return DomainName.valueOf(zone);
 	}
-	private static String getUsernameForEmail(String email) {
-		int pos=email.indexOf('@');
-		if(pos==-1) throw new IllegalArgumentException("Unable to find @ in email address: "+email);
-		return email.substring(0, pos);
+
+	/**
+	 * Gets the username for an email address, which is the local part, up to the first '+' address (at position >= 1) (skipping any plus addressing)
+	 */
+	private static String getUsernameForEmail(Email email) {
+		String localPart = email.getLocalPart();
+        int plusPos = localPart.indexOf('+', 1);
+        if(plusPos==-1) return localPart;
+		return localPart.substring(0, plusPos);
 	}
 
 	private static String getZoneForDomainName(AOServConnector conn, DomainName domainName) throws IOException, IllegalArgumentException, SQLException {
@@ -679,124 +808,114 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 * @exception  IllegalArgumentException  if the type is invalid
 	 */
 	public static int compareTo(Object value1, Object value2, int id) throws IllegalArgumentException, SQLException, UnknownHostException {
-		try {
-			if(value1==null) {
-				return value2==null?0:-1;
-			} else {
-				if(value2==null) return 1;
-				switch(id) {
-					case ACCOUNTING:
-						return ((AccountingCode)value1).compareTo((AccountingCode)value2);
-					case PHONE:
-					case STRING:
-					case URL:
-						return StringUtility.compareToIgnoreCaseCarefulEquals((String)value1, (String)value2);
-					case USERNAME:
-						return ((UserId)value1).compareTo((UserId)value2);
-					case PATH:
-						return ((UnixPath)value1).compareTo((UnixPath)value2);
-					case BOOLEAN:
-						// Sorts false before true
-						return
-							((Boolean)value1)
-							?(((Boolean)value2)?0:1)
-							:(((Boolean)value2)?-1:0)
-						;
-					case DATE:
-						{
-							long t1=SQLUtility.roundToDay(((java.sql.Date)value1).getTime());
-							long t2=SQLUtility.roundToDay(((java.sql.Date)value2).getTime());
-							return t1>t2?1:t1<t2?-1:0;
-						}
-					case DECIMAL_2:
-						{
-							int i1=((Integer)value1);
-							int i2=((Integer)value2);
-							return i1>i2?1:i1<i2?-1:0;
-						}
-					case DECIMAL_3:
-						{
-							int i1=((Integer)value1);
-							int i2=((Integer)value2);
-							return i1>i2?1:i1<i2?-1:0;
-						}
-					case FKEY:
-					case INT:
-					case PKEY:
-						return ((Integer)value1).compareTo((Integer)value2);
-					case DOUBLE:
-						return ((Double)value1).compareTo((Double)value2);
-					case EMAIL:
-						// TODO: com.aoindustries.net.Email
-						return compareEmailAddresses((String)value1, (String)value2);
-					case FLOAT:
-						return ((Float)value1).compareTo((Float)value2);
-					case HOSTNAME:
-						return ((HostAddress)value1).compareTo((HostAddress)value2);
-					case ZONE:
-						// TODO: com.aoindustries.aoserv.client.validator.Zone
-						return DomainName.compareLabels((String)value1, (String)value2);
-					case INTERVAL:
-					case LONG:
-					case OCTAL_LONG:
-						return ((Long)value1).compareTo((Long)value2);
-					case IP_ADDRESS:
-						return ((InetAddress)value1).compareTo((InetAddress)value2);
-					case SHORT:
-						return ((Short)value1).compareTo((Short)value2);
-					case TIME:
-						return ((java.sql.Timestamp)value1).compareTo((java.sql.Timestamp)value2);
-					case BIG_DECIMAL:
-						return ((BigDecimal)value1).compareTo((BigDecimal)value2);
-					case DOMAIN_LABEL:
-						return ((DomainLabel)value1).compareTo((DomainLabel)value2);
-					case DOMAIN_LABELS:
-						return ((DomainLabels)value1).compareTo((DomainLabels)value2);
-					case DOMAIN_NAME:
-						return ((DomainName)value1).compareTo((DomainName)value2);
-					case GECOS:
-						return ((Gecos)value1).compareTo((Gecos)value2);
-					case GROUP_ID:
-						return ((GroupId)value1).compareTo((GroupId)value2);
-					case HASHED_PASSWORD:
-						return ((HashedPassword)value1).compareTo((HashedPassword)value2);
-					case LINUX_ID:
-						return ((LinuxId)value1).compareTo((LinuxId)value2);
-					case MAC_ADDRESS:
-						return ((MacAddress)value1).compareTo((MacAddress)value2);
-					case MONEY:
-						return ((Money)value1).compareTo((Money)value2);
-					case MYSQL_DATABASE_NAME:
-						return ((MySQLDatabaseName)value1).compareTo((MySQLDatabaseName)value2);
-					case MYSQL_SERVER_NAME:
-						return ((MySQLServerName)value1).compareTo((MySQLServerName)value2);
-					case MYSQL_TABLE_NAME:
-						return ((MySQLTableName)value1).compareTo((MySQLTableName)value2);
-					case MYSQL_USERNAME:
-						return ((MySQLUserId)value1).compareTo((MySQLUserId)value2);
-					case NET_PORT:
-						return ((Port)value1).compareTo((Port)value2);
-					case POSTGRES_DATABASE_NAME:
-						return ((PostgresDatabaseName)value1).compareTo((PostgresDatabaseName)value2);
-					case POSTGRES_SERVER_NAME:
-						return ((PostgresServerName)value1).compareTo((PostgresServerName)value2);
-					case POSTGRES_USERNAME:
-						return ((PostgresUserId)value1).compareTo((PostgresUserId)value2);
-					case FIREWALLD_ZONE_NAME:
-						return ((FirewalldZoneName)value1).compareTo((FirewalldZoneName)value2);
-					default: throw new IllegalArgumentException("Unknown type: "+id);
-				}
+		if(value1==null) {
+			return value2==null?0:-1;
+		} else {
+			if(value2==null) return 1;
+			switch(id) {
+				case ACCOUNTING:
+					return ((Account.Name)value1).compareTo((Account.Name)value2);
+				case PHONE:
+				case STRING:
+				case URL:
+					return StringUtility.compareToIgnoreCaseCarefulEquals((String)value1, (String)value2);
+				case USERNAME:
+					return ((com.aoindustries.aoserv.client.account.User.Name)value1).compareTo((com.aoindustries.aoserv.client.account.User.Name)value2);
+				case PATH:
+					return ((PosixPath)value1).compareTo((PosixPath)value2);
+				case BOOLEAN:
+					// Sorts false before true
+					return
+						((Boolean)value1)
+						?(((Boolean)value2)?0:1)
+						:(((Boolean)value2)?-1:0)
+					;
+				case DATE:
+					{
+						long t1=SQLUtility.roundToDay(((java.sql.Date)value1).getTime());
+						long t2=SQLUtility.roundToDay(((java.sql.Date)value2).getTime());
+						return t1>t2?1:t1<t2?-1:0;
+					}
+				case DECIMAL_2:
+					{
+						int i1=((Integer)value1);
+						int i2=((Integer)value2);
+						return i1>i2?1:i1<i2?-1:0;
+					}
+				case DECIMAL_3:
+					{
+						int i1=((Integer)value1);
+						int i2=((Integer)value2);
+						return i1>i2?1:i1<i2?-1:0;
+					}
+				case FKEY:
+				case INT:
+				case PKEY:
+					return ((Integer)value1).compareTo((Integer)value2);
+				case DOUBLE:
+					return ((Double)value1).compareTo((Double)value2);
+				case EMAIL:
+					return ((Email)value1).compareTo((Email)value2);
+				case FLOAT:
+					return ((Float)value1).compareTo((Float)value2);
+				case HOSTNAME:
+					return ((HostAddress)value1).compareTo((HostAddress)value2);
+				case ZONE:
+					// TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
+					return DomainName.compareLabels((String)value1, (String)value2);
+				case INTERVAL:
+				case LONG:
+				case OCTAL_LONG:
+					return ((Long)value1).compareTo((Long)value2);
+				case IP_ADDRESS:
+					return ((InetAddress)value1).compareTo((InetAddress)value2);
+				case SHORT:
+					return ((Short)value1).compareTo((Short)value2);
+				case TIME:
+					return ((java.sql.Timestamp)value1).compareTo((java.sql.Timestamp)value2);
+				case BIG_DECIMAL:
+					return ((BigDecimal)value1).compareTo((BigDecimal)value2);
+				case DOMAIN_LABEL:
+					return ((DomainLabel)value1).compareTo((DomainLabel)value2);
+				case DOMAIN_LABELS:
+					return ((DomainLabels)value1).compareTo((DomainLabels)value2);
+				case DOMAIN_NAME:
+					return ((DomainName)value1).compareTo((DomainName)value2);
+				case GECOS:
+					return ((Gecos)value1).compareTo((Gecos)value2);
+				case GROUP_ID:
+					return ((com.aoindustries.aoserv.client.linux.Group.Name)value1).compareTo((com.aoindustries.aoserv.client.linux.Group.Name)value2);
+				case HASHED_PASSWORD:
+					return ((HashedPassword)value1).compareTo((HashedPassword)value2);
+				case LINUX_ID:
+					return ((LinuxId)value1).compareTo((LinuxId)value2);
+				case MAC_ADDRESS:
+					return ((MacAddress)value1).compareTo((MacAddress)value2);
+				case MONEY:
+					return ((Money)value1).compareTo((Money)value2);
+				case MYSQL_DATABASE_NAME:
+					return ((com.aoindustries.aoserv.client.mysql.Database.Name)value1).compareTo((com.aoindustries.aoserv.client.mysql.Database.Name)value2);
+				case MYSQL_SERVER_NAME:
+					return ((com.aoindustries.aoserv.client.mysql.Server.Name)value1).compareTo((com.aoindustries.aoserv.client.mysql.Server.Name)value2);
+				case MYSQL_TABLE_NAME:
+					return ((com.aoindustries.aoserv.client.mysql.Table_Name)value1).compareTo((com.aoindustries.aoserv.client.mysql.Table_Name)value2);
+				case MYSQL_USERNAME:
+					return ((com.aoindustries.aoserv.client.mysql.User.Name)value1).compareTo((com.aoindustries.aoserv.client.mysql.User.Name)value2);
+				case NET_PORT:
+					return ((Port)value1).compareTo((Port)value2);
+				case POSTGRES_DATABASE_NAME:
+					return ((com.aoindustries.aoserv.client.postgresql.Database.Name)value1).compareTo((com.aoindustries.aoserv.client.postgresql.Database.Name)value2);
+				case POSTGRES_SERVER_NAME:
+					return ((com.aoindustries.aoserv.client.postgresql.Server.Name)value1).compareTo((com.aoindustries.aoserv.client.postgresql.Server.Name)value2);
+				case POSTGRES_USERNAME:
+					return ((com.aoindustries.aoserv.client.postgresql.User.Name)value1).compareTo((com.aoindustries.aoserv.client.postgresql.User.Name)value2);
+				case FIREWALLD_ZONE_NAME:
+					return ((FirewallZone.Name)value1).compareTo((FirewallZone.Name)value2);
+				case LINUX_USERNAME:
+					return ((com.aoindustries.aoserv.client.linux.User.Name)value1).compareTo((com.aoindustries.aoserv.client.linux.User.Name)value2);
+				default: throw new IllegalArgumentException("Unknown type: "+id);
 			}
-		} catch(ValidationException e) {
-			throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 		}
-	}
-
-	// TODO: Should not exist once using Email validator type
-	private static int compareEmailAddresses(String address1, String address2) throws SQLException, ValidationException {
-		int diff=getDomainNameForEmail(address1).compareTo(getDomainNameForEmail(address2));
-		if(diff!=0) return diff;
-		return getUsernameForEmail(address1).compareTo(getUsernameForEmail(address2));
 	}
 
 	@Override
@@ -894,7 +1013,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case DECIMAL_2: return SQLUtility.getDecimal(((Integer)value));
 			case DECIMAL_3: return SQLUtility.getMilliDecimal(((Integer)value));
 			case DOUBLE: return value.toString();
-			case EMAIL: return (String)value; // TODO: com.aoindustries.net.Email
+			case EMAIL: return value.toString();
 			case FKEY: return value.toString();
 			case FLOAT: return value.toString();
 			case HOSTNAME: return value.toString();
@@ -911,7 +1030,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case TIME: return SQLUtility.getDateTime(((java.sql.Timestamp)value).getTime(), false);
 			case URL: return (String)value;
 			case USERNAME: return value.toString();
-			case ZONE: return (String)value; // TODO: com.aoindustries.aoserv.client.validator.Zone
+			case ZONE: return (String)value; // TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
 			case BIG_DECIMAL: return value.toString();
 			case DOMAIN_LABEL: return value.toString();
 			case DOMAIN_LABELS: return value.toString();
@@ -931,6 +1050,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case POSTGRES_SERVER_NAME: return value.toString();
 			case POSTGRES_USERNAME: return value.toString();
 			case FIREWALLD_ZONE_NAME: return value.toString();
+			case LINUX_USERNAME: return value.toString();
 			default: throw new IllegalArgumentException("Unknown SchemaType: " + id);
 		}
 	}
@@ -944,17 +1064,18 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			if(S == null) return null;
 			switch(id) {
 				case ACCOUNTING:
-					return AccountingCode.valueOf(S);
-				case EMAIL: // TODO: com.aoindustries.net.Email
+					return Account.Name.valueOf(S);
+				case EMAIL:
+					return Email.valueOf(S);
 				case PHONE:
 				case STRING:
 				case URL:
-				case ZONE: // TODO: com.aoindustries.aoserv.client.validator.Zone
+				case ZONE: // TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
 					return S;
 				case USERNAME:
-					return UserId.valueOf(S);
+					return com.aoindustries.aoserv.client.account.User.Name.valueOf(S);
 				case PATH:
-					return UnixPath.valueOf(S);
+					return PosixPath.valueOf(S);
 				case HOSTNAME:
 					return HostAddress.valueOf(S);
 				case IP_ADDRESS:
@@ -1008,7 +1129,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case GECOS:
 					return Gecos.valueOf(S);
 				case GROUP_ID:
-					return GroupId.valueOf(S);
+					return com.aoindustries.aoserv.client.linux.Group.Name.valueOf(S);
 				case HASHED_PASSWORD:
 					return HashedPassword.valueOf(S);
 				case LINUX_ID:
@@ -1018,13 +1139,13 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case MONEY:
 					throw new IllegalArgumentException("Parsing from String to Money is not supported.");
 				case MYSQL_DATABASE_NAME:
-					return MySQLDatabaseName.valueOf(S);
+					return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(S);
 				case MYSQL_SERVER_NAME:
-					return MySQLServerName.valueOf(S);
+					return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(S);
 				case MYSQL_TABLE_NAME:
-					return MySQLTableName.valueOf(S);
+					return com.aoindustries.aoserv.client.mysql.Table_Name.valueOf(S);
 				case MYSQL_USERNAME:
-					return MySQLUserId.valueOf(S);
+					return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(S);
 				case NET_PORT:
 					{
 						int slashPos = S.indexOf('/');
@@ -1035,13 +1156,15 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						);
 					}
 				case POSTGRES_DATABASE_NAME:
-					return PostgresDatabaseName.valueOf(S);
+					return com.aoindustries.aoserv.client.postgresql.Database.Name.valueOf(S);
 				case POSTGRES_SERVER_NAME:
-					return PostgresServerName.valueOf(S);
+					return com.aoindustries.aoserv.client.postgresql.Server.Name.valueOf(S);
 				case POSTGRES_USERNAME:
-					return PostgresUserId.valueOf(S);
+					return com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(S);
 				case FIREWALLD_ZONE_NAME:
-					return FirewalldZoneName.valueOf(S);
+					return FirewallZone.Name.valueOf(S);
+				case LINUX_USERNAME:
+					return com.aoindustries.aoserv.client.linux.User.Name.valueOf(S);
 				default:
 					throw new IllegalArgumentException("Unknown SchemaType: "+id);
 			}

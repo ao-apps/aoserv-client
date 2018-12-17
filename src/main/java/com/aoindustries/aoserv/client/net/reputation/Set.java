@@ -27,7 +27,6 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -56,7 +55,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	;
 	static final String COLUMN_IDENTIFIER_name= "identifier";
 
-	private AccountingCode accounting;
+	private Account.Name accounting;
 	private String identifier;
 	private boolean allowSubaccountUse;
 	private int maxHosts;
@@ -80,7 +79,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 		try {
 			int pos = 1;
 			pkey = result.getInt(pos++);
-			accounting = AccountingCode.valueOf(result.getString(pos++));
+			accounting = Account.Name.valueOf(result.getString(pos++));
 			identifier = result.getString(pos++);
 			allowSubaccountUse = result.getBoolean(pos++);
 			maxHosts = result.getInt(pos++);
@@ -120,7 +119,7 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			accounting = AccountingCode.valueOf(in.readCompressedUTF()).intern();
+			accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
 			identifier = in.readUTF();
 			allowSubaccountUse = in.readBoolean();
 			maxHosts = in.readCompressedInt();

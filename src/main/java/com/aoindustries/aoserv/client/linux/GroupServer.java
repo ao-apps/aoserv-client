@@ -30,8 +30,6 @@ import com.aoindustries.aoserv.client.email.MajordomoServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.scm.CvsRepository;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.LinuxId;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
@@ -66,7 +64,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_AO_SERVER_name = "ao_server";
 
-	GroupId name;
+	Group.Name name;
 	int ao_server;
 	LinuxId gid;
 	private long created;
@@ -95,7 +93,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		return new Timestamp(created);
 	}
 
-	public GroupId getLinuxGroup_name() {
+	public Group.Name getLinuxGroup_name() {
 		return name;
 	}
 
@@ -124,7 +122,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt(1);
-			name = GroupId.valueOf(result.getString(2));
+			name = Group.Name.valueOf(result.getString(2));
 			ao_server = result.getInt(3);
 			gid = LinuxId.valueOf(result.getInt(4));
 			created = result.getTimestamp(5).getTime();
@@ -137,7 +135,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			name = GroupId.valueOf(in.readUTF()).intern();
+			name = Group.Name.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			gid = LinuxId.valueOf(in.readCompressedInt());
 			created=in.readLong();

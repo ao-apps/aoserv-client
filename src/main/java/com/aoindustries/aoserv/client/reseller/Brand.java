@@ -22,15 +22,14 @@
  */
 package com.aoindustries.aoserv.client.reseller;
 
-import com.aoindustries.aoserv.client.CachedObjectAccountingCodeKey;
 import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.CachedObjectAccountNameKey;
 import com.aoindustries.aoserv.client.email.Address;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -53,7 +52,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
+final public class Brand extends CachedObjectAccountNameKey<Brand> {
 
 	static final int COLUMN_ACCOUNTING = 0;
 	static final String COLUMN_ACCOUNTING_name = "accounting";
@@ -143,7 +142,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 		}
 	}
 
-	public AccountingCode getBusiness_accounting() {
+	public Account.Name getBusiness_accounting() {
 		return pkey;
 	}
 
@@ -348,7 +347,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			int pos = 1;
-			pkey = AccountingCode.valueOf(result.getString(pos++));
+			pkey = Account.Name.valueOf(result.getString(pos++));
 			nameserver1 = DomainName.valueOf(result.getString(pos++));
 			nameserver2 = DomainName.valueOf(result.getString(pos++));
 			nameserver3 = DomainName.valueOf(result.getString(pos++));
@@ -395,7 +394,7 @@ final public class Brand extends CachedObjectAccountingCodeKey<Brand> {
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=AccountingCode.valueOf(in.readUTF()).intern();
+			pkey=Account.Name.valueOf(in.readUTF()).intern();
 			nameserver1 = DomainName.valueOf(in.readUTF());
 			nameserver2 = DomainName.valueOf(in.readUTF());
 			nameserver3 = DomainName.valueOf(in.readNullUTF());

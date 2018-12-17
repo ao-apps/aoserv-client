@@ -23,9 +23,8 @@
 package com.aoindustries.aoserv.client;
 
 import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
@@ -204,8 +203,8 @@ public class TCPConnector extends AOServConnector {
 		HostAddress hostname,
 		com.aoindustries.net.InetAddress local_ip,
 		Port port,
-		UserId connectAs,
-		UserId authenticateAs,
+		User.Name connectAs,
+		User.Name authenticateAs,
 		String password,
 		DomainName daemonServer,
 		int poolSize,
@@ -257,8 +256,8 @@ public class TCPConnector extends AOServConnector {
 		HostAddress hostname,
 		com.aoindustries.net.InetAddress local_ip,
 		Port port,
-		UserId connectAs,
-		UserId authenticateAs,
+		User.Name connectAs,
+		User.Name authenticateAs,
 		String password,
 		DomainName daemonServer,
 		int poolSize,
@@ -344,7 +343,7 @@ public class TCPConnector extends AOServConnector {
 	}
 
 	@Override
-	public AOServConnector switchUsers(UserId username) throws IOException {
+	public AOServConnector switchUsers(User.Name username) throws IOException {
 		if(username.equals(connectAs)) return this;
 		return getTCPConnector(
 			hostname,

@@ -26,10 +26,9 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServStreamable;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.lang.ObjectUtils;
@@ -58,9 +57,9 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 
 	long before;
 	int transid;
-	private AccountingCode business;
-	private AccountingCode sourceBusiness;
-	UserId business_administrator;
+	private Account.Name business;
+	private Account.Name sourceBusiness;
+	User.Name business_administrator;
 	String type;
 	String description;
 	String paymentType;
@@ -122,8 +121,8 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		this.after = after;
 		this.before = before;
 		this.transid = transid;
-		this.business = business==null?null:business.getAccounting();
-		this.sourceBusiness = sourceBusiness==null?null:sourceBusiness.getAccounting();
+		this.business = business==null?null:business.getName();
+		this.sourceBusiness = sourceBusiness==null?null:sourceBusiness.getName();
 		this.business_administrator = business_administrator==null?null:business_administrator.getUsername_userId();
 		this.type = type==null?null:type.getName();
 		this.description = description;
@@ -160,7 +159,7 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		after = cal.getTime().getTime();
 
 		transid = ANY;
-		business = business_administrator == null ? null : business_administrator.getUsername().getPackage().getBusiness().getAccounting();
+		business = business_administrator == null ? null : business_administrator.getUsername().getPackage().getBusiness().getName();
 		sourceBusiness = null;
 		this.business_administrator = null;
 		type = null;
@@ -178,15 +177,15 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		return before;
 	}
 
-	public AccountingCode getBusiness() {
+	public Account.Name getBusiness() {
 		return business;
 	}
 
-	public AccountingCode getSourceBusiness() {
+	public Account.Name getSourceBusiness() {
 		return sourceBusiness;
 	}
 
-	public UserId getBusinessAdministrator() {
+	public User.Name getBusinessAdministrator() {
 		return business_administrator;
 	}
 
@@ -232,9 +231,9 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 			after=in.readLong();
 			before=in.readLong();
 			transid=in.readCompressedInt();
-			business=InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
-			sourceBusiness=InternUtils.intern(AccountingCode.valueOf(in.readNullUTF()));
-			business_administrator=InternUtils.intern(UserId.valueOf(in.readNullUTF()));
+			business=InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
+			sourceBusiness=InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
+			business_administrator=InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			type=InternUtils.intern(in.readNullUTF());
 			description=in.readNullUTF();
 			paymentType=InternUtils.intern(in.readNullUTF());
@@ -256,15 +255,15 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		this.before=before;
 	}
 
-	public void setBusiness(AccountingCode business) {
+	public void setBusiness(Account.Name business) {
 		this.business=business;
 	}
 
-	public void setSourceBusiness(AccountingCode sourceBusiness) {
+	public void setSourceBusiness(Account.Name sourceBusiness) {
 		this.sourceBusiness=sourceBusiness;
 	}
 
-	public void setBusinessAdministrator(UserId business_administrator) {
+	public void setBusinessAdministrator(User.Name business_administrator) {
 		this.business_administrator = business_administrator;
 	}
 

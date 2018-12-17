@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
@@ -97,7 +96,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		ANY_LOCAL_HOST=null
 	;
 
-	MySQLUserId username;
+	User.Name username;
 	int mysql_server;
 	String host;
 	int disable_log;
@@ -221,7 +220,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey=result.getInt(1);
-			username = MySQLUserId.valueOf(result.getString(2));
+			username = User.Name.valueOf(result.getString(2));
 			mysql_server=result.getInt(3);
 			host=result.getString(4);
 			disable_log=result.getInt(5);
@@ -240,7 +239,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
-			username = MySQLUserId.valueOf(in.readUTF()).intern();
+			username = User.Name.valueOf(in.readUTF()).intern();
 			mysql_server=in.readCompressedInt();
 			host=InternUtils.intern(in.readNullUTF());
 			disable_log=in.readCompressedInt();

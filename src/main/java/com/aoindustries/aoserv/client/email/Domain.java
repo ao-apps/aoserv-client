@@ -25,13 +25,13 @@ package com.aoindustries.aoserv.client.email;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.GroupServer;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
@@ -69,7 +69,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 
 	private DomainName domain;
 	int ao_server;
-	AccountingCode packageName;
+	Account.Name packageName;
 
 	public int addEmailAddress(String address) throws SQLException, IOException {
 		return table.getConnector().getEmail().getAddress().addEmailAddress(address, this);
@@ -138,7 +138,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 			pkey=result.getInt(1);
 			domain=DomainName.valueOf(result.getString(2));
 			ao_server=result.getInt(3);
-			packageName = AccountingCode.valueOf(result.getString(4));
+			packageName = Account.Name.valueOf(result.getString(4));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -150,7 +150,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 			pkey = in.readCompressedInt();
 			domain = DomainName.valueOf(in.readUTF());
 			ao_server = in.readCompressedInt();
-			packageName = AccountingCode.valueOf(in.readUTF()).intern();
+			packageName = Account.Name.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
