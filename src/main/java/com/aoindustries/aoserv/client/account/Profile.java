@@ -34,9 +34,11 @@ import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -226,6 +228,23 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return emails;
 	}
 
+	private static Set<Email> getEmailSet(Array array) throws SQLException, ValidationException {
+		// TODO; Get this going:
+		//if(USE_SQL_DATA) {
+			// This does not locate duplicates like the ResultSet implementation below
+		//	return new LinkedHashSet<>(Arrays.asList((Email[])array.getArray()));
+		//} else {
+			Set<Email> set = new LinkedHashSet<>();
+			try (ResultSet result = array.getResultSet()) {
+				while(result.next()) {
+					Email email = Email.valueOf(result.getString(2));
+					if(!set.add(email)) throw new SQLException("Email not unique: " + email);
+				}
+			}
+			return set;
+		//}
+	}
+
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
@@ -263,6 +282,10 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 				throw new SQLException("technical_email = " + technical_email, e);
 			}
 			technicalEmailFormat = EmailFormat.valueOf(result.getString(pos++));
+			Set<Email> billingEmailNew = getEmailSet(result.getArray("billingEmail{}"));
+			if(!billingEmailNew.equals(billingEmail)) throw new SQLException("billingEmailNew != billingEmail: " + billingEmailNew + " != " + billingEmail);
+			Set<Email> technicalEmailNew = getEmailSet(result.getArray("technicalEmail{}"));
+			if(!technicalEmailNew.equals(technicalEmail)) throw new SQLException("technicalEmailNew != technicalEmail: " + technicalEmailNew + " != " + technicalEmail);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}

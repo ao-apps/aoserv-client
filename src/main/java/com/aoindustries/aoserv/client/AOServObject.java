@@ -50,6 +50,7 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
+import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,6 +69,13 @@ import java.util.List;
  * @see  AOServTable
  */
 abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row, AOServStreamable {
+
+	/**
+	 * Enables the use of {@link SQLData}.  This currently requires our forked PostgreSQL JDBC driver to
+	 * function correctly.  See <a href="https://github.com/pgjdbc/pgjdbc/issues/641">Issue #641</a> for more
+	 * details.
+	 */
+	public static final boolean USE_SQL_DATA = true;
 
 	protected AOServObject() {
 	}
