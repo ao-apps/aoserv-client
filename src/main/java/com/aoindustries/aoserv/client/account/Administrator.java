@@ -394,7 +394,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 			home_phone = result.getString(10);
 			cell_phone = result.getString(11);
 			fax = result.getString(12);
-			email = Email.valueOf(result.getString(13));
+			email = USE_SQL_DATA ? result.getObject(13, Email.class) : Email.valueOf(result.getString(13));
 			address1 = result.getString(14);
 			address2 = result.getString(15);
 			city = result.getString(16);
