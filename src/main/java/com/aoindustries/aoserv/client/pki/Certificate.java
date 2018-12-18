@@ -36,7 +36,6 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.web.VirtualHost;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -44,6 +43,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author  AO Industries, Inc.
@@ -125,15 +125,14 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation") // Java 1.7: Do not suppress
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(packageNum);
 		out.writeUTF(keyFile.toString());
-		out.writeNullUTF(ObjectUtils.toString(csrFile));
+		out.writeNullUTF(Objects.toString(csrFile, null));
 		out.writeUTF(certFile.toString());
-		out.writeNullUTF(ObjectUtils.toString(chainFile));
+		out.writeNullUTF(Objects.toString(chainFile, null));
 		out.writeNullUTF(certbotName);
 	}
 

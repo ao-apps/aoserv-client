@@ -126,6 +126,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -232,10 +233,9 @@ final public class SimpleAOClient {
 		return replication;
 	}
 
-	@SuppressWarnings("deprecation") // Java 1.7: Do not suppress
 	private HttpdServer getHttpdServer(String aoServer, String name) throws IllegalArgumentException, IOException, SQLException {
 		for(HttpdServer hs : getAOServer(aoServer).getHttpdServers()) {
-			if(ObjectUtils.equals(name, hs.getName())) {
+			if(Objects.equals(name, hs.getName())) {
 				return hs;
 			}
 		}
