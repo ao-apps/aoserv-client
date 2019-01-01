@@ -229,11 +229,10 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	}
 
 	private static Set<Email> getEmailSet(Array array) throws SQLException, ValidationException {
-		// TODO; Get this going:
-		//if(USE_SQL_DATA) {
+		if(USE_SQL_DATA && USE_ARRAY_OF_DOMAIN) {
 			// This does not locate duplicates like the ResultSet implementation below
-		//	return new LinkedHashSet<>(Arrays.asList((Email[])array.getArray()));
-		//} else {
+			return new LinkedHashSet<>(Arrays.asList((Email[])array.getArray()));
+		} else {
 			Set<Email> set = new LinkedHashSet<>();
 			try (ResultSet result = array.getResultSet()) {
 				while(result.next()) {
@@ -242,7 +241,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 				}
 			}
 			return set;
-		//}
+		}
 	}
 
 	@Override
