@@ -192,14 +192,28 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	 * The username of the PostgreSQL special users.
 	 */
 	public static final Name
+		// Super user
 		POSTGRES,
+		// System roles
+		PG_MONITOR,
+		PG_READ_ALL_SETTINGS,
+		PG_READ_ALL_STATS,
+		PG_SIGNAL_BACKEND,
+		PG_STAT_SCAN_TABLES,
+		// AO Admin
 		AOADMIN,
+		// AO Applications
 		AOSERV_APP,
 		AOWEB_APP
 	;
 	static {
 		try {
 			POSTGRES = Name.valueOf("postgres");
+			PG_MONITOR = Name.valueOf("pg_monitor");
+			PG_READ_ALL_SETTINGS = Name.valueOf("pg_read_all_settings");
+			PG_READ_ALL_STATS = Name.valueOf("pg_read_all_stats");
+			PG_SIGNAL_BACKEND = Name.valueOf("pg_signal_backend");
+			PG_STAT_SCAN_TABLES = Name.valueOf("pg_stat_scan_tables");
 			AOADMIN = Name.valueOf("aoadmin");
 			AOSERV_APP = Name.valueOf("aoserv_app");
 			AOWEB_APP = Name.valueOf("aoweb_app");
