@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -65,6 +65,8 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 
 	private static final OrderBy[] defaultOrderBy = {
 		new OrderBy(Transaction.COLUMN_TIME_name+"::"+Type.DATE_name, ASCENDING),
+		new OrderBy(Transaction.COLUMN_SOURCE_ACCOUNTING_name, ASCENDING),
+		new OrderBy(Transaction.COLUMN_TIME_name, ASCENDING),
 		new OrderBy(Transaction.COLUMN_TRANSID_name, ASCENDING)
 	};
 	@Override
