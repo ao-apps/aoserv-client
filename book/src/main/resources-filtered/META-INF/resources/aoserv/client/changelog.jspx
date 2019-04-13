@@ -678,7 +678,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<ao:a href="apidocs/com/aoindustries/aoserv/client/ProgressListener.html">ProgressListener</ao:a> and
 						<ao:a href="apidocs/com/aoindustries/aoserv/client/TableLoadListener.html">TableLoadListener</ao:a>
 						now notified of row counts using a 64-bit integer to handle results with more than
-						<code>CompressedDataOutputStream.MAX_COMPRESSED_INT_VALUE</code><%-- TODO: SemanticCMS 2: link --%>
+						<code>CompressedDataOutputStream.MAX_COMPRESSED_INT_VALUE</code><!-- TODO: SemanticCMS 2: link -->
 						rows.
 					</li>
 					<li>Improved registrable domain management:
@@ -787,7 +787,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				</li>
 				<li>
 					<ao:a href="https://en.wikipedia.org/wiki/Top-level_domain">Top-level domains</ao:a> change frequently these days.
-					Top reduce code maintenance, using new <core:link book="/ao-tlds" page="/" />
+					Top reduce code maintenance, using new <core:link book="/ao-tlds" page="/index.jspx" />
 					project to have a self-updating list of top-level domains.
 				</li>
 				<li>
@@ -822,7 +822,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<li>Servers that are upgraded retain compatibility links at the old paths.</li>
 					</ol>
 				</li>
-				<li>Moved the following classes to the new <core:link book="/ao-lang" page="/" /> project:
+				<li>Moved the following classes to the new <core:link book="/ao-lang" page="/index.jspx" /> project:
 					<ol>
 						<li><code>com.aoindustries.aoserv.client.DtoFactory</code></li>
 						<li><code>com.aoindustries.aoserv.client.validator.InvalidResult</code></li>
@@ -831,7 +831,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						<li><code>com.aoindustries.aoserv.client.validator.ValidResult</code></li>
 					</ol>
 				</li>
-				<li>Moved the following classes to the new <core:link book="/ao-net-types" page="/" /> project:
+				<li>Moved the following classes to the new <core:link book="/ao-net-types" page="/index.jspx" /> project:
 					<ol>
 						<li><code>com.aoindustries.aoserv.client.dto.DomainLabel</code></li>
 						<li><code>com.aoindustries.aoserv.client.dto.DomainLabels</code></li>
@@ -1048,7 +1048,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 			scmUrl="@{documented.scm.url}"
 		>
 			<ul>
-				<li>New <core:link book="/ao-oss-parent" page="/" /> POM to simplify <code>pom.xml</code> files.</li>
+				<li>New <core:link book="/ao-oss-parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
 				<li>Project documentation moved to per-project book in <ao:a href="https://semanticcms.com/">SemanticCMS</ao:a> format.</li>
 				<li>Added changelog as top-level project link.</li>
 				<li>Default DNS zone TTL changed from 43200 (12 hours) to 3600 (1 hour).</li>
