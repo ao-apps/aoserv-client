@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoserv-client - Java client for the AOServ Platform.
-Copyright (C) 2016, 2017, 2018  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -33,14 +33,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 	<packaging>bundle</packaging>
 
 	<properties>
-		<javaVersion>1.7</javaVersion>
-		<compiler.bootclasspath>${bootclasspath.jdk17}</compiler.bootclasspath>
-		<!--
-			Java 1.8 javadoc bug: https://bugs.openjdk.java.net/browse/JDK-8041628
-			Java 1.9: Set this back to jdk17.
-		-->
-		<javac.bootclasspath>${bootclasspath.jdk18}</javac.bootclasspath>
-		<javac.link.javaApi>${javac.link.javaApi.jdk17}</javac.link.javaApi>
 		<javadoc.breadcrumbs><![CDATA[<a target="_top" href="https://aoindustries.com/aoserv/">AOServ</a>
 / <a target="_top" href="${project.url}">${shortTitle}</a>]]></javadoc.breadcrumbs>
 		<shortTitle>Client</shortTitle>
