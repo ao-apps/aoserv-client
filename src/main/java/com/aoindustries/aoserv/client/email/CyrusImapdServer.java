@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.validation.ValidationException;
@@ -40,6 +39,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * An <code>CyrusImapdServer</code> represents one running instance of Cyrus IMAPD.
@@ -236,7 +236,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(sieveNetBind);
-		out.writeNullUTF(ObjectUtils.toString(servername));
+		out.writeNullUTF(Objects.toString(servername, null));
 		out.writeCompressedInt(certificate);
 		out.writeBoolean(allowPlaintextAuth);
 		out.writeFloat(deleteDuration);

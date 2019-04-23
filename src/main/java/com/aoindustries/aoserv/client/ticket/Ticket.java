@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.IntList;
@@ -48,6 +47,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -217,17 +217,17 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)<=0) {
 			out.writeUTF(accounting==null ? "" : accounting.toString());
 		} else {
-			out.writeNullUTF(ObjectUtils.toString(accounting));
+			out.writeNullUTF(Objects.toString(accounting, null));
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeUTF(language);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)<=0) {
 			out.writeUTF(created_by==null ? "" : created_by.toString());
 		} else {
-			out.writeNullUTF(ObjectUtils.toString(created_by));
+			out.writeNullUTF(Objects.toString(created_by, null));
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeCompressedInt(category);
 		out.writeUTF(ticket_type);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(ObjectUtils.toString(from_address));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeNullUTF(Objects.toString(from_address, null));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeUTF(summary);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_14)<=0) out.writeUTF("");
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_15)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeCompressedInt(0); // details

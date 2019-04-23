@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -38,7 +38,6 @@ import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.FastExternalizable;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.Internable;
@@ -56,6 +55,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -803,11 +803,11 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			// Older clients require name, use "*" as name when none set
 			out.writeUTF(name==null ? "*" : name.toString());
 		} else {
-			out.writeNullUTF(ObjectUtils.toString(name));
+			out.writeNullUTF(Objects.toString(name, null));
 		}
-		out.writeNullUTF(ObjectUtils.toString(office_location));
-		out.writeNullUTF(ObjectUtils.toString(office_phone));
-		out.writeNullUTF(ObjectUtils.toString(home_phone));
+		out.writeNullUTF(Objects.toString(office_location, null));
+		out.writeNullUTF(Objects.toString(office_phone, null));
+		out.writeNullUTF(Objects.toString(home_phone, null));
 		out.writeUTF(type);
 		out.writeUTF(shell.toString());
 		out.writeLong(created);

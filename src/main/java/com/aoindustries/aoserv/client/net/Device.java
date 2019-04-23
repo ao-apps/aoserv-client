@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,7 +27,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
 import com.aoindustries.util.InternUtils;
@@ -37,6 +36,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Each server has multiple network devices, each listening on different
@@ -245,14 +245,14 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 		out.writeUTF(deviceId);
 		out.writeUTF(description);
 		out.writeNullUTF(delete_route);
-		out.writeNullUTF(ObjectUtils.toString(gateway));
+		out.writeNullUTF(Objects.toString(gateway, null));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_37)<=0) out.writeUTF("255.255.255.0");
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_112)>=0) {
-			out.writeNullUTF(ObjectUtils.toString(network));
-			out.writeNullUTF(ObjectUtils.toString(broadcast));
+			out.writeNullUTF(Objects.toString(network, null));
+			out.writeNullUTF(Objects.toString(broadcast, null));
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_128)>=0) {
-			out.writeNullUTF(ObjectUtils.toString(mac_address));
+			out.writeNullUTF(Objects.toString(mac_address, null));
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_2)>=0) {
 			out.writeLong(max_bit_rate);

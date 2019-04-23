@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -41,7 +41,6 @@ import com.aoindustries.aoserv.client.ticket.Assignment;
 import com.aoindustries.aoserv.client.ticket.Ticket;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
@@ -53,6 +52,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A <code>BusinessAdministrator</code> is a username and password pair, usually
@@ -565,7 +565,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_68)<=0) out.writeUTF(password==null ? "*" : password.toString());
-		else out.writeNullUTF(ObjectUtils.toString(password));
+		else out.writeNullUTF(Objects.toString(password, null));
 		out.writeUTF(name);
 		out.writeNullUTF(title);
 		out.writeLong(birthday);

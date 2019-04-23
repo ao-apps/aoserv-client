@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.schema.Table;
 import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accessor;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -40,6 +39,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * <code>TicketAction</code>s represent a complete history of the changes that have been made to a ticket.
@@ -276,8 +276,8 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		final String oldValue;
 		final String newValue;
 		if(action_type.equals(ActionType.SET_BUSINESS)) {
-			oldValue = ObjectUtils.toString(old_accounting);
-			newValue = ObjectUtils.toString(new_accounting);
+			oldValue = Objects.toString(old_accounting, null);
+			newValue = Objects.toString(new_accounting, null);
 		} else if(
 			action_type.equals(ActionType.SET_CLIENT_PRIORITY)
 			|| action_type.equals(ActionType.SET_ADMIN_PRIORITY)
@@ -421,12 +421,12 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ticket);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_50)>=0) out.writeNullUTF(ObjectUtils.toString(administrator));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_50)>=0) out.writeNullUTF(Objects.toString(administrator, null));
 		else out.writeUTF(administrator==null ? "aoadmin" : administrator.toString());
 		out.writeLong(time);
 		out.writeUTF(action_type);
-		out.writeNullUTF(ObjectUtils.toString(old_accounting));
-		out.writeNullUTF(ObjectUtils.toString(new_accounting));
+		out.writeNullUTF(Objects.toString(old_accounting, null));
+		out.writeNullUTF(Objects.toString(new_accounting, null));
 		out.writeNullUTF(old_priority);
 		out.writeNullUTF(new_priority);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_49)>=0) {
@@ -435,13 +435,13 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		}
 		out.writeNullUTF(old_status);
 		out.writeNullUTF(new_status);
-		out.writeNullUTF(ObjectUtils.toString(old_assigned_to));
-		out.writeNullUTF(ObjectUtils.toString(new_assigned_to));
+		out.writeNullUTF(Objects.toString(old_assigned_to, null));
+		out.writeNullUTF(Objects.toString(new_assigned_to, null));
 		out.writeCompressedInt(old_category);
 		out.writeCompressedInt(new_category);
 		// Loaded only when needed: old_value
 		// Loaded only when needed: new_value
-		out.writeNullUTF(ObjectUtils.toString(from_address));
+		out.writeNullUTF(Objects.toString(from_address, null));
 		out.writeNullUTF(summary);
 		// Loaded only when needed: details
 		// Loaded only when needed: raw_email

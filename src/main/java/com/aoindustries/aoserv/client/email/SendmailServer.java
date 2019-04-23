@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.util.SystemdUtil;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.AddressFamily;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
@@ -41,6 +40,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * An <code>SendmailServer</code> represents one running instance of Sendmail.
@@ -248,7 +248,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		out.writeCompressedInt(ao_server);
 		out.writeNullUTF(name);
 		out.writeCompressedInt(packageNum);
-		out.writeNullUTF(ObjectUtils.toString(hostname));
+		out.writeNullUTF(Objects.toString(hostname, null));
 		out.writeCompressedInt(serverCertificate);
 		out.writeCompressedInt(clientCertificate);
 		out.writeBoolean(allowPlaintextAuth);
