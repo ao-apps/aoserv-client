@@ -75,7 +75,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 
 	<dependencies>
 		<dependency>
-			<groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.11</version>
+			<groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.15</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
