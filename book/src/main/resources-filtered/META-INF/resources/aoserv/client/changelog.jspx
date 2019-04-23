@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-02-16T17:47:59-0600"
+		dateModified="2019-04-22T22:19:12-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -52,714 +52,723 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			>
-				<ul>
-					<li>Now managing Firewalld zone settings on a per-port basis:
-						<ol>
-							<li>New self-validating type <code>FirewalldZoneName</code>.</li>
-							<li>New schema type: <code>firewalld_zone_name</code>.</li>
-							<li>New table <code>firewalld_zones</code> that defines the zones managed on a per-server basis.</li>
-							<li>New table <code>net_bind_firewalld_zones</code> that maps each port to the specific set of zones it is added to.</li>
-							<li>
-								<code>addNetBind</code> now takes a set of <code>FirewalldZoneName</code> instead of a single boolean <code>open_firewall</code>.
-								Older clients that provide <code>true</code> for <code>open_firewall</code> will be added to the
-								"public" zone.
-							</li>
-							<li>
-								Updated the <code>add_net_bind</code> AOSH command to take a variable number of Firewall zone names instead of
-								the single boolean <code>open_firewall</code>.
-							</li>
-							<li>
-								Removed <code>net_binds.open_firewall</code> and <code>NetBind.isFirewallOpen()</code>.
-								This will be <code>true</code> on older clients when the port is in the "public" zone.
-							</li>
-							<li>
-								Removed <code>NetBind.setOpenFirewall</code>.  Older clients are supported by adding or
-								removing the "public" zone.
-							</li>
-							<li>Removed the <code>set_net_bind_open_firewall</code> AOSH command.</li>
-							<li>New method <code>NetBind.setFirewalldZones</code> for fine-grained control over zones on a per-port basis.</li>
-							<li>Added the <code>set_net_bind_firewalld_zones</code> AOSH command.</li>
-							<li>New table <code>httpd_site_bind_redirects</code> that configures redirects on a per-httpd_site_bind basis.</li>
-						</ol>
-					</li>
-					<li>Parsing command-line <code>com.aoindustries.net.Protocol</code> in case-insensitive manner.</li>
-					<li>
-						Net ports are now allocated unique-per-server, not globally unique.  It has been a full decade since we've
-						used chroot-based virtual servers.
-					</li>
-					<li>New protocol <code>memcached</code>, defaulting to port 11211.</li>
-					<li><code>EmailSpamAssassinIntegrationMode.DEFAULT_SPAMASSASSIN_INTEGRATION_MODE</code> changed from <code>pop3</code> to <code>none</code>.</li>
-					<li>New "mysql.session" reserved account for MySQL 5.7: <code>MySQLUser.MYSQL_SESSION</code>.</li>
-					<li>
-						Added <code>can_reference</code> parameter to <code>add_mysql_db_user</code> AOSH command.
-						Existing <code>mysql_db_users</code> granted <code>references_priv</code> matching existing <code>drop_priv</code>.
-						Old client versions granted <code>references_priv</code> matching <code>drop_priv</code>.
-					</li>
-					<li>
-						May now optionally exclude context configuration from <code>conf/server.xml</code>.
-						This then allows deployment of the context by simply overwriting the WAR file.
-						This also allows deployment through the Tomcat Manager webapp, when enabled
-						(disabled by default for static production configuration).
-						<ol>
-							<li>Added <code>httpd_tomcat_contexts.server_xml_configured</code> column, defaulting to <code>true</code> for existing contexts.</li>
-							<li>Added <code>server_xml_configured</code> parameter to the <code>add_httpd_tomcat_context</code> AOSH command.</li>
-							<li>Added <code>server_xml_configured</code> parameter to the <code>set_httpd_tomcat_context_attributes</code> AOSH command.</li>
-						</ol>
-					</li>
-					<li>
-						To support <ao:a href="https://letsencrypt.org/">Let's Encrypt</ao:a> certificates,
-						added <code>httpd_site_binds.ssl_cert_chain_file</code> column.
-						<ao:a href="https://certbot.eff.org/">Certbot</ao:a> installs certificates in a structure
-						incompatible with our previous automatic chain detection.  With this new column, the
-						chain file may be specified directly.
-					</li>
-					<li>
-						Added <code>httpd_site_bind_redirects.no_escape</code> column to support the
-						<ao:a href="https://httpd.apache.org/docs/2.4/rewrite/flags.html#flag_ne">noescape RewriteRule Flag</ao:a>,
-						defaulting to <code>false</code>.
-					</li>
-					<li>
-						Added <code>ao_servers.sftp_umask</code> column to support the <code>-u umask</code> option for
-						<code>sftp-server</code> in <code>/etc/ssh/sshd_config</code>.
-					</li>
-					<li>
-						Per-site features now all default to <code>false</code> to begin in the safest configuration:
-						<ol>
-							<li><code>httpd_sites.enable_cgi</code> now defaults to <code>false</code>.</li>
-							<li><code>httpd_sites.enable_ssi</code> now defaults to <code>false</code>.</li>
-							<li><code>httpd_sites.enable_htaccess</code> now defaults to <code>false</code>.</li>
-							<li><code>httpd_sites.enable_indexes</code> now defaults to <code>false</code>.</li>
-							<li><code>httpd_sites.enable_follow_symlinks</code> now defaults to <code>false</code>.</li>
-							<li><code>httpd_sites.enable_anonymous_ftp</code> now defaults to <code>false</code>.</li>
-							<li>Removed parameters from <code>add_httpd_jboss_site</code> command to use defaults.</li>
-							<li>Removed parameters from <code>add_httpd_tomcat_shared_site</code> command to use defaults.</li>
-							<li>Removed parameters from <code>add_httpd_tomcat_std_site</code> command to use defaults.</li>
-						</ol>
-					</li>
-					<li>
-						Added options to selectively disable protections that have been always on up to this point.
-						These all default to <code>true</code> to begin in the safest configuration.  When an application
-						takes full control over the URL space, these default protections might get in the way.
-						They should only be disabled with full understanding and careful consideration.
-						<ol>
-							<li>
-								<p>
-									Added <code>httpd_sites.block_trace_track</code> column, which enables the blocking of
-									<ao:a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8">TRACE</ao:a>
-									and TRACK <ao:a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">HTTP methods</ao:a>.
-								</p>
-								<p>
-									Leave this enabled unless you intend to handle these methods and understand the consequences.
-								</p>
-								<p>
-									May be configured with the <code>set_httpd_site_block_trace_track</code> AOSH command.
-								</p>
-							</li>
-							<li>
-								<p>
-									Added <code>httpd_sites.block_scm</code> column, which enables the blocking of URL
-									patterns associated with source control management systems.  It is possible for SCM
-									files, such as <code>CVS/Root</code> and <code>.git/config</code> to have authentication
-									credentials.
-								</p>
-								<p>
-									Currently has protections for <ao:a href="http://savannah.nongnu.org/projects/cvs">CVS</ao:a>,
-									<ao:a href="https://subversion.apache.org/">Subversion</ao:a>, and
-									<ao:a href="https://git-scm.com/">Git</ao:a>.
-								</p>
-								<p>
-									Leave this enabled when pulling web root content directly from revision control systems.
-								</p>
-								<p>
-									May be configured with the <code>set_httpd_site_block_scm</code> AOSH command.
-								</p>
-							</li>
-							<li>
-								<p>
-									Added <code>httpd_sites.block_core_dumps</code> column, which enables blocking of core dumps.
-									Core dumps could potentially expose sensitive information and have predictable filename patterns.
-								</p>
-								<p>
-									Leave this enabled when scripts may leave core dumps; if in doubt, leave this on.
-								</p>
-								<p>
-									May be configured with the <code>set_httpd_site_block_core_dumps</code> AOSH command.
-								</p>
-							</li>
-							<li>
-								<p>
-									Added <code>httpd_sites.block_editor_backups</code> column, which enables blocking filename patterns
-									associated with editor automatic backups.  Without this protection, it is possible for source code
-									to be leaked by accessing the URL associated with the automatic backups.
-								</p>
-								<p>
-									Currently has protections for <ao:a href="https://www.gnu.org/software/emacs/">Emacs</ao:a>
-									and <ao:a href="http://www.vim.org/">Vim</ao:a>.
-								</p>
-								<p>
-									May be configured with the <code>set_httpd_site_block_editor_backups</code> AOSH command.
-								</p>
-							</li>
-							<li>
-								<p>
-									Added <code>httpd_tomcat_sites.block_webinf</code> column, which blocks access to <code>/META-INF</code>
-									and <code>/WEB-INF</code> at the <ao:a href="https://httpd.apache.org/">Apache</ao:a> level.  When
-									<ao:a href="https://httpd.apache.org/">Apache</ao:a> serves content directly, instead of passing all
-									requests to <ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>, this helps ensure proper protection
-									of these paths.
-								</p>
-								<p>
-									Leave this enable unless trying to squeeze every last drop of performance out of a system
-									and are 100% confident <code>/META-INF</code> and <code>/WEB-INF</code> are mapped to
-									<ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>.  Just leave this on; it's only two
-									<ao:a href="https://httpd.apache.org/docs/2.4/mod/core.html#location">Location</ao:a>
-									directives for each <ao:a href="apidocs/com/aoindustries/aoserv/client/HttpdTomcatContext.html">HttpdTomcatContext</ao:a>.
-								</p>
-								<p>
-									May be configured with the <code>set_httpd_tomcat_site_block_webinf</code> AOSH command.
-								</p>
-							</li>
-							<li>Fixed bug in <code>add_email_list_address</code> AOSH command implementation.</li>
-						</ol>
-					</li>
-					<li>
-						New table <code>httpd_tomcat_site_jk_mounts</code> that configures the request mappings between
-						<ao:a href="https://httpd.apache.org/">Apache</ao:a> and <ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>
-						via the <ao:a href="https://tomcat.apache.org/connectors-doc/reference/apache.html">JkMount and JkUnMount directives</ao:a>:
-						<ol type="a">
-							<li>
-								Added the <code>httpd_tomcat_site_jk_mounts</code> table, with default values matching the configurations
-								derived from the old <code>httpd_tomcat_sites.use_apache</code> flag.
-							</li>
-							<li>Added the <code>add_httpd_tomcat_site_jk_mount</code> AOSH command.</li>
-							<li>Added the <code>remove_httpd_tomcat_site_jk_mount</code> AOSH command.</li>
-							<li>
-								Removed the <code>httpd_tomcat_sites.use_apache</code> column, with <code>true</code>
-								provided to older clients when <code>httpd_tomcat_site_jk_mounts</code> does not contain
-								<code>JkMount /*</code> for the site.
-							</li>
-							<li>
-								Removed the <code>set_httpd_tomcat_site_use_apache</code> AOSH command, with older clients
-								toggling the existence of <code>JkMount /*</code>.
-							</li>
-						</ol>
-					</li>
-					<li>
-						<p>
-							May now manually configure which <ao:a href="https://httpd.apache.org/docs/2.4/mod/">Apache Modules</ao:a> are loaded
-							on a per-<ao:a href="https://httpd.apache.org/">Apache</ao:a>-instance basis.  Any value left at
-							<code>null</code>, the default, with be in automatic mode.  Automatic mode minimizes the number
-							of loaded modules given the current system configuration.  Automatic mode does not parse the
-							contents of <code>.htaccess</code> files, so non-default modules may be enabled manually
-							as-needed.
-						</p>
-						<p>
-							The following columns within the <code>httpd_servers</code> table control each module,
-							with default automatic behavior described for each:
-						</p>
-						<ol>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_access_compat.html">mod_access_compat</ao:a> defaults:
-								<ul>
-									<li>Enabled when <code>aoserv-httpd-config-compat</code> package is installed.</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_actions.html">mod_actions</ao:a> defaults:
-								<ul>
-									<li>Enabled when CGI-based PHP exists on a site and mod_php is not used on this instance.</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html">mod_alias</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when <code>mod_autoindex</code> enabled (for <code>/icons/</code>
-										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html#alias">Alias</ao:a>
-										in <code>/etc/httpd/aoserv.conf.d/mod_autoindex.conf</code>).
-									</li>
-									<li>
-										Enabled when any site has a secondary context (contexts other than <code>webapps/ROOT</code>
-										are added by <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html#alias">Alias</ao:a>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_auth_basic.html">mod_auth_basic</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
-										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authtype">AuthType Basic</ao:a>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html">mod_authn_core</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
-										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authtype">AuthType Basic</ao:a>).
-									</li>
-									<li>
-										Enabled when has any <code>httpd_site_authenticated_locations.auth_name</code>
-										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authname">AuthName</ao:a>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_file.html">mod_authn_file</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
-										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_file.html#authuserfile">AuthUserFile</ao:a>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html">mod_authz_core</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled by default (for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#reqall">Require all granted</ao:a>
-										and <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#reqall">Require all denied</ao:a>
-										used in <code>/etc/httpd/aoserv.conf.d/*.conf</code> and per-site and per-bind configs).
-									</li>
-								</ul>
-								<p>
-									When <code>mod_authz_core</code> is manually disabled, the server will still run, but many protections
-									will be disabled.  This might result in open proxies, unexpected access to URLs or files, and
-									other serious issues.  Only disable when all consequences are fully analyzed and understood.
-								</p>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_groupfile.html">mod_authz_groupfile</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when has any <code>httpd_site_authenticated_locations.auth_group_file</code>
-										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_groupfile.html">AuthGroupFile</ao:a>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html">mod_authz_host</ao:a> defaults:
-								<ul>
-									<li>Disabled, no auto condition currently to turn it on.</li>
-								</ul>
-								<p>
-									Might be needed for <code>.htaccess</code> or manual override for
-									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqip">Require ip</ao:a>,
-									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqhost">Require host</ao:a>,
-									or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqlocal">Require local</ao:a>.
-								</p>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html">mod_authz_user</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when has any <code>httpd_site_authenticated_locations.require</code>
-										(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html#requser">Require user</ao:a>
-										or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html#reqvaliduser">Require valid-user</ao:a>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_autoindex.html">mod_autoindex</ao:a> defaults:
-								<ul>
-									<li>Enabled when has any <code>httpd_sites.enable_indexes</code>.</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_deflate.html">mod_deflate</ao:a> defaults:
-								<ul>
-									<li>Enabled by default (unless explicitly disabled).</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_dir.html">mod_dir</ao:a> defaults:
-								<ul>
-									<li>Enabled by default (unless explicitly disabled).</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_filter.html">mod_filter</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when <code>mod_deflate</code> is enabled (for
-										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_filter.html#addoutputfilterbytype">AddOutputFilterByType</ao:a>
-										in <code>/etc/httpd/aoserv.conf.d/mod_deflate.conf</code>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html">mod_headers</ao:a> defaults:
-								<ul>
-									<li>Disabled, no auto condition currently to turn it on.</li>
-								</ul>
-								<p>
-									Might be needed for <code>.htaccess</code> or manual override for
-									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header">Header</ao:a>
-									or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html#requestheader">RequestHeader</ao:a>.
-								</p>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_include.html">mod_include</ao:a> defaults:
-								<ul>
-									<li>Enabled when has any <code>httpd_sites.enable_ssi</code>.</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://tomcat.apache.org/connectors-doc/reference/apache.html">mod_jk</ao:a> defaults:
-								<ul>
-									<li>Enabled when any site has a <code>JkMount</code> or <code>JkUnMount</code>.</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_log_config.html">mod_log_config</ao:a> defaults:
-								<ul>
-									<li>Enabled by default (unless explicitly disabled).</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html">mod_mime</ao:a> defaults:
-								<ul>
-									<li>Enabled by default (unless explicitly disabled).</li>
-									<li>
-										Enabled when has <code>mod_php</code> (for
-										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addtype">AddType .php</ao:a>
-										and <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addtype">AddType .phps</ao:a>).
-									</li>
-									<li>
-										Enabled when <code>mod_negotiation</code> is enabled (for
-										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addhandler">AddHandler .var</ao:a>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime_magic.html">mod_mime_magic</ao:a> defaults:
-								<ul>
-									<li>Enabled by default (unless explicitly disabled).</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_negotiation.html">mod_negotiation</ao:a> defaults:
-								<ul>
-									<li>Disabled by default (unless explicitly enabled).</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy.html">mod_proxy</ao:a> defaults:
-								<ul>
-									<li>Enabled when <code>mod_proxy_http</code> is enabled.</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_http.html">mod_proxy_http</ao:a> defaults:
-								<ul>
-									<li>Disabled by default (unless explicitly enabled).</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_reqtimeout.html">mod_reqtimeout</ao:a> defaults:
-								<ul>
-									<li>Enabled by default (unless explicitly disabled).</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html">mod_rewrite</ao:a> defaults:
-								<ul>
-									<li>Enabled when has any <code>httpd_sites.block_trace_track</code>.</li>
-									<li>Enabled when has any <code>httpd_site_binds.redirect_to_primary_hostname</code>.</li>
-									<li>Enabled when has any <code>httpd_site_bind_redirects</code>.</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_setenvif.html">mod_setenvif</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when <code>mod_ssl</code> is enabled (for
-										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_setenvif.html">BrowserMatch</ao:a>
-										SSL downgrade of ancient browsers).
-									</li>
-								</ul>
-								<p>
-									It is safe to disable this module if not concerned about ancient browser support and the module
-									is otherwise not needed.
-								</p>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_socache_shmcb.html">mod_socache_shmcb</ao:a> defaults:
-								<ul>
-									<li>
-										Enabled when <code>mod_ssl</code> is enabled (for
-										<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslsessioncache">SSLSessionCache shmcb:/run/httpd</ao:a>).
-									</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html">mod_ssl</ao:a> defaults:
-								<ul>
-									<li>Enabled when has any <code>httpd_site_binds.ssl_cert_file</code>.</li>
-								</ul>
-							</li>
-							<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_status.html">mod_status</ao:a> defaults:
-								<ul>
-									<li>Disabled by default (unless explicitly enabled).</li>
-								</ul>
-							</li>
-							<li>New system groups:
-								<ol>
-									<li><code>bird</code></li>
-									<li><code>clamscan</code></li>
-									<li><code>clamupdate</code></li>
-									<li><code>virusgroup</code></li>
-								</ol>
-							</li>
-							<li>New system users:
-								<ol>
-									<li><code>bird</code></li>
-									<li><code>clamscan</code></li>
-									<li><code>clamupdate</code></li>
-								</ol>
-							</li>
-							<li>Added pkey output from some AOSH commands that were otherwise quiet upon successful addition of the resource:
-								<ul>
-									<li><code>add_business_profile</code></li>
-									<li><code>add_linux_group_account</code></li>
-									<li><code>add_net_bind</code></li>
-								</ul>
-							</li>
-						</ol>
-					</li>
-					<li>
-						Renamed <code>httpd_servers.number</code> to <code>name</code> and changed type
-						from <code>int</code> to <code>string</code>.
-					</li>
-					<li>New constants for default ports:
-						<ul>
-							<li><code>MySQLServer.DEFAULT_PORT</code></li>
-							<li><code>PostgresServer.DEFAULT_PORT</code></li>
-						</ul>
-					</li>
-					<li>Generated JDBC URLs no longer include the port number when it is the default value.</li>
-					<li>Now supporting <code>mod_wsgi</code>:
-						<ul>
-							<li>Added <code>httpd_servers.mod_wsgi</code> column</li>
-						</ul>
-					</li>
-					<li>Now supporting <code>httpd_site_binds</code> that do not necessarily include the per-site configuration file:
-						<ul>
-							<li>Added <code>httpd_site_binds.include_site_config</code> column</li>
-						</ul>
-					</li>
-					<li>Now managing SSL certificates through APIs instead of manually:
-						<ul>
-							<li>Added <code>ssl_certificates</code> table</li>
-							<li>Added <code>ssl_certificate_names</code> table</li>
-							<li>Added <code>httpd_site_binds.certificate</code> column</li>
-							<li>Removed <code>httpd_site_binds.ssl_cert_file</code> column</li>
-							<li>Removed <code>httpd_site_binds.ssl_cert_key_file</code> column</li>
-							<li>Removed <code>httpd_site_binds.ssl_cert_chain_file</code> column</li>
-							<li>Added <code>check_ssl_certificate</code> AOSH command</li>
-						</ul>
-					</li>
-					<li>Now supporting per-IP/port SSL certificates on Cyrus IMAPD:
-						<ul>
-							<li>Added <code>cyrus_imapd_binds</code> table</li>
-							<li>Added <code>cyrus_imapd_servers</code> table</li>
-						</ul>
-					</li>
-					<li>Now supporting multiple instances of Sendmail on a server in order to have per-IP/port SSL certificates:
-						<ul>
-							<li>Added <code>sendmail_binds</code> table</li>
-							<li>Added <code>sendmail_servers</code> table</li>
-						</ul>
-					</li>
-					<li>Removed some old, unused features:
-						<ul>
-							<li>Removed <code>set_imap_folder_subscribed</code> AOSH command</li>
-							<li>Removed <code>httpd_servers.is_mod_jk</code> column</li>
-							<li>Removed <code>httpd_servers.max_binds</code> column</li>
-							<li>Removed <code>httpd_shared_tomcats.is_secure</code> column</li>
-							<li>Removed <code>httpd_shared_tomcats.is_overflow</code> column</li>
-							<li>Removed <code>httpd_sites.content_src</code> column</li>
-							<li>Removed <code>is_secure</code> and <code>is_overflow</code> parameters from <code>add_httpd_shared_tomcat</code> AOSH command</li>
-							<li>Removed <code>content_source</code> parameter from <code>add_httpd_jboss_site</code> AOSH command</li>
-							<li>Removed <code>tomcat_version</code> and <code>content_source</code> parameters from <code>add_httpd_tomcat_shared_site</code> AOSH command</li>
-							<li>Removed <code>content_source</code> parameter from <code>add_httpd_tomcat_std_site</code> AOSH command</li>
-						</ul>
-					</li>
-					<li>Generating JDBC URLs for MySQL and PostgreSQL more precisely based on the <code>net_binds</code> settings.</li>
-					<li>Now monitoring Apache concurrency:
-						<ul>
-							<li>Added <code>httpd_servers.monitoring_concurrency_low</code> column</li>
-							<li>Added <code>httpd_servers.monitoring_concurrency_medium</code> column</li>
-							<li>Added <code>httpd_servers.monitoring_concurrency_high</code> column</li>
-							<li>Added <code>httpd_servers.monitoring_concurrency_critical</code> column</li>
-							<li>Added <code>get_httpd_server_concurrency</code> AOSH command</li>
-						</ul>
-					</li>
-					<li>Using <code>System.console()</code> to no longer echo password during login.</li>
-					<li>
-						Now detects multiple <code>DNSRecords</code> of type <code>TXT</code> with destination <code>"v=spf1"</code>
-						as conflicts, to help in compliance of <ao:a href="http://www.openspf.org/RFC_4408#version">SPF: RFC 4408</ao:a>.
-					</li>
-					<li>Added support for newer versions of PostgreSQL:
-						<ol>
-							<li>Added support for <ao:a href="https://www.postgresql.org/docs/9.5/index.html">PostgreSQL 9.5</ao:a>.</li>
-							<li>Added support for <ao:a href="https://www.postgresql.org/docs/9.6/index.html">PostgreSQL 9.6</ao:a>.</li>
-							<li>Added support for <ao:a href="https://www.postgresql.org/docs/10/index.html">PostgreSQL 10</ao:a>.</li>
-							<li>Added support for <ao:a href="https://www.postgresql.org/docs/11/index.html">PostgreSQL 11</ao:a>.</li>
-						</ol>
-					</li>
-					<li>Maximum MySQL username is now 32 characters as of <ao:a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</ao:a>.</li>
-					<li>Added support for MySQL 8.0.</li>
-					<li>Added support for newer versions of <ao:a href="https://tomcat.apache.org/">Apache Tomcat</ao:a>:
-						<ol>
-							<li>Added support for <ao:a href="https://tomcat.apache.org/tomcat-8.5-doc/">Apache Tomcat 8.5</ao:a>.</li>
-							<li>Added support for <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/">Apache Tomcat 9.0</ao:a>.</li>
-						</ol>
-					</li>
-					<li>May now update Tomcat versions in-place.
-						<ol>
-							<li>In-place upgrades are supported from Tomcat versions 4.1 and above.</li>
-							<li>In-place upgrades and downgrades are supported to Tomcat versions 8.5 and above.</li>
-							<li>Added the following AOSH commands:
-								<ol type="a">
-									<li><code>set_httpd_shared_tomcat_version</code></li>
-									<li><code>set_httpd_tomcat_std_site_version</code></li>
-								</ol>
-							</li>
-						</ol>
-					</li>
-					<li>Now supporting per-location Apache handlers:
-						<ol>
-							<li>Added <code>httpd_site_authenticated_locations.handler</code> column</li>
-							<li>Added <code>add_httpd_site_authenticated_location</code> AOSH command</li>
-							<li>Added <code>set_httpd_site_authenticated_location_attributes</code> AOSH command</li>
-						</ol>
-					</li>
-					<li>
-						<p>
-							Now supporting multiple site-bind configurations per unique <code>(site, ip, port)</code>.
-							Previously, there was at most one Apache configuration file per unique <code>(site, ip, port)</code>
-							combination.  We now support multiple Apache configuration files per unique <code>(site, ip, port, <strong>name</strong>)</code>,
-							where <code>name</code> is either <code>null</code> (for the default), or a user/API-provided
-							meaningful name to identify the bind.
-						</p>
-						<p>
-							We host applications that respond to different, unrelated hostnames/domains, then internally perform
-							virtual hosting or content negotiation to serve different, unrelated clients.  With HTTP, this all
-							works well under a single per-<code>(site, ip, port)</code> Apache configuration file.
-						</p>
-						<p>
-							However, as part of our initiative to achieve 100% encryption via <ao:a href="https://letsencrypt.org/">Let's Encrypt</ao:a>,
-							and given that these hostnames/domains are for unrelated clients, we need to support different SSL certificates
-							for different clients.  Previously, we would accomplish this with each SSL certificate on a different IP address.
-							Now with the ubiquity of <ao:a href="https://en.wikipedia.org/wiki/Server_Name_Indication">SNI</ao:a>,
-							we want to run different SSL certificates on the same IP address, and thus our unique constraint on
-							<code>(site, ip, port)</code> was too restrictive.
-						</p>
-						<p>
-							API compatibility for older clients is maintained by only manipulating the <code>null</code>
-							(default) bind.
-						</p>
-						<ol>
-							<li>Added <code>httpd_site_binds.name</code> column</li>
-						</ol>
-					</li>
-					<li>New table <code>httpd_site_bind_headers</code> that configures headers on a per-httpd_site_bind basis.</li>
-					<li>
-						New table <code>ssl_certificate_other_uses</code> that configures configured manual uses of SSL certificates.
-						This will avoid warnings in monitoring and avoid removal in management.
-					</li>
-					<li>
-						May now disable monitoring on a per-IP basis, which is useful to avoid alerts during routine maintenance
-						or while allocating and releasing resources:
-						<ol>
-							<li>Added <code>ip_addresses.monitoring_enabled</code> column</li>
-							<li>Added <code>set_ip_address_monitoring_enabled</code> AOSH command</li>
-						</ol>
-					</li>
-					<li>
-						Moved monitoring configuration into a separate schema.  This results in the following changes:
-						<ol>
-							<li>Added <code>IpAddressMonitoring</code> table</li>
-						</ol>
-					</li>
-					<li>
-						<code>UID_MAX</code> and <code>GID_MAX</code> are now configurable on a per-server basis.
-						Also, uid and gid allocation proceeds from the last one allocated, wrapping back to <code>UID_MIN</code>
-						once <code>UID_MAX</code> is achieved.  Previously, the first available uid, starting at <code>UID_MIN</code>
-						was used, which could cause a new user to have access to orphaned files from an old, deleted user.
-					</li>
-					<li>Schema changes, with some moves toward:
-						<ol>
-							<li>Schema support</li>
-							<li>Singular table names, PascalCase</li>
-							<li>camelCase column names</li>
-							<li>Generated numeric keys <code>id</code> instead of <code>pkey</code></li>
-						</ol>
-					</li>
-					<li>Restructured into package names matching recently introduced master server schemas.</li>
-					<li>Renamed classes to match new table names.</li>
-					<li>
-						<ao:a href="apidocs/com/aoindustries/aoserv/client/ProgressListener.html">ProgressListener</ao:a> and
-						<ao:a href="apidocs/com/aoindustries/aoserv/client/TableLoadListener.html">TableLoadListener</ao:a>
-						now notified of row counts using a 64-bit integer to handle results with more than
-						<code>CompressedDataOutputStream.MAX_COMPRESSED_INT_VALUE</code><!-- TODO: SemanticCMS 2: link -->
-						rows.
-					</li>
-					<li>Improved registrable domain management:
-						<ol>
-							<li>Renamed table <code>billing.whois_history</code> to <code>billing.WhoisHistory</code></li>
-							<li>Added table <code>billing.WhoisHistoryAccount</code></li>
-							<li>Changes to <code>billing.WhoisHistory</code>:
-								<ol type="a">
-									<li>Changed <code>zone</code> to <code>domain</code> type (without the trailing period).</li>
-									<li>Renamed <code>zone</code> to <code>registrableDomain</code></li>
-									<li>Added column <code>exitStatus</code></li>
-									<li>Renamed <code>whois_output</code> to <code>output</code></li>
-									<li>Added column <code>error</code></li>
-									<li>Removed column <code>accounting</code></li>
-								</ol>
-							</li>
-							<!-- TODO:
-							<li>Renamed <code>dns.TopLevelDomain</code> to <code>dns.Suffix</code>:
-								<ol type="a">
-									<li>Added column <code>isRegistrable</code></li>
-									<li>Added column <code>isPublicSuffix</code></li>
-									<li>Added column <code>isManual</code></li>
-								</ol>
-							</li>
-							-->
-						</ol>
-					</li>
-					<li>
-						<p>
-							May now select the format for outgoing emails.  May be one of:
-						</p>
-						<ul>
-							<li><code>HTML</code> - HTML allowing embedded images (the default).</li>
-							<li><code>HTML_ONLY</code> - HTML without any embedded images.</li>
-							<li><code>TEXT</code> - Plaintext only.</li>
-						</ul>
-						<p>
-							Made the following schema changes to support this:
-						</p>
-						<ol>
-							<li>Added enum <code>account.Profile.EmailFormat</code></li>
-							<li>Added column <code>account.Profile.billingEmailFormat</code></li>
-							<li>Added column <code>account.Profile.technicalEmailFormat</code></li>
-							<li>Updated <code>add_business_profile</code> AOSH command</li>
-						</ol>
-					</li>
-					<li>Allowing direct control over the <ao:a href="https://httpd.apache.org/docs/2.4/rewrite/flags.html">RewriteRule Flags</ao:a>:
-						<ol>
-							<li>Renamed table <code>httpd_site_bind_redirect</code> to <code>RewriteRule</code></li>
-							<li>Renamed column <code>RewriteRule.pkey</code> to <code>id</code></li>
-							<li>Renamed column <code>RewriteRule.httpd_site_bind</code> to <code>virtualHost</code></li>
-							<li>Renamed column <code>RewriteRule.sort_order</code> to <code>sortOrder</code></li>
-							<li>Added column <code>RewriteRule.flags</code></li>
-							<li>Removed column <code>RewriteRule.no_escape</code></li>
-						</ol>
-					</li>
-					<li>Moved table getters into per-package schemas.</li>
-					<li>
-						Changed table getters to be consistent with database table names.
-						Unusual for Java, these property names are Pascal-case (CapitalCamelCase), for
-						consistency with their representation in the database.  We are choosing to make Java
-						conform to other systems, for consistency across the platform.
-					</li>
-					<li>Moved self-validating type implementations into per-package schemas:
-						<ol>
-							<li>Renamed to match and support master server schema changes in the process.</li>
-							<li>Renamed <code>account.Username</code> to <code>account.User</code></li>
-							<li>Added <code>linux_username</code> to <code>schema.Type</code></li>
-							<li>Changed <code>linux.User.username</code> to <code>linux_username</code> type</li>
-							<li>Changed <code>web.Site.linux_account</code> to <code>linux_username</code> type</li>
-							<li>Changed <code>linux.UserServer.username</code> to <code>linux_username</code> type</li>
-							<li>Changed <code>linux.GroupUser.name</code> to <code>linux_username</code> type</li>
-							<li>Changed <code>ftp.GuestUser.username</code> to <code>linux_username</code> type</li>
-							<li>Changed <code>distribution.management.DistroFile.linux_account</code> to <code>linux_username</code> type</li>
-						</ol>
-					</li>
-					<!-- TODO: Rename schema pki to crypto -->
-					<li>Changed default ordering of <code>billing.Transaction</code> from <code>time::date, transid</code> to <code>time::date, source_accounting, time, transid</code>.</li>
-				</ul>
-			</changelog:release>
+			/>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="1.81.22"
+			datePublished="2019-04-22T22:19:12-0500"
+			groupId="@{documented.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{documented.scm.url}"
+		>
+			<ul>
+				<li>Now managing Firewalld zone settings on a per-port basis:
+					<ol>
+						<li>New self-validating type <code>FirewalldZoneName</code>.</li>
+						<li>New schema type: <code>firewalld_zone_name</code>.</li>
+						<li>New table <code>firewalld_zones</code> that defines the zones managed on a per-server basis.</li>
+						<li>New table <code>net_bind_firewalld_zones</code> that maps each port to the specific set of zones it is added to.</li>
+						<li>
+							<code>addNetBind</code> now takes a set of <code>FirewalldZoneName</code> instead of a single boolean <code>open_firewall</code>.
+							Older clients that provide <code>true</code> for <code>open_firewall</code> will be added to the
+							"public" zone.
+						</li>
+						<li>
+							Updated the <code>add_net_bind</code> AOSH command to take a variable number of Firewall zone names instead of
+							the single boolean <code>open_firewall</code>.
+						</li>
+						<li>
+							Removed <code>net_binds.open_firewall</code> and <code>NetBind.isFirewallOpen()</code>.
+							This will be <code>true</code> on older clients when the port is in the "public" zone.
+						</li>
+						<li>
+							Removed <code>NetBind.setOpenFirewall</code>.  Older clients are supported by adding or
+							removing the "public" zone.
+						</li>
+						<li>Removed the <code>set_net_bind_open_firewall</code> AOSH command.</li>
+						<li>New method <code>NetBind.setFirewalldZones</code> for fine-grained control over zones on a per-port basis.</li>
+						<li>Added the <code>set_net_bind_firewalld_zones</code> AOSH command.</li>
+						<li>New table <code>httpd_site_bind_redirects</code> that configures redirects on a per-httpd_site_bind basis.</li>
+					</ol>
+				</li>
+				<li>Parsing command-line <code>com.aoindustries.net.Protocol</code> in case-insensitive manner.</li>
+				<li>
+					Net ports are now allocated unique-per-server, not globally unique.  It has been a full decade since we've
+					used chroot-based virtual servers.
+				</li>
+				<li>New protocol <code>memcached</code>, defaulting to port 11211.</li>
+				<li><code>EmailSpamAssassinIntegrationMode.DEFAULT_SPAMASSASSIN_INTEGRATION_MODE</code> changed from <code>pop3</code> to <code>none</code>.</li>
+				<li>New "mysql.session" reserved account for MySQL 5.7: <code>MySQLUser.MYSQL_SESSION</code>.</li>
+				<li>
+					Added <code>can_reference</code> parameter to <code>add_mysql_db_user</code> AOSH command.
+					Existing <code>mysql_db_users</code> granted <code>references_priv</code> matching existing <code>drop_priv</code>.
+					Old client versions granted <code>references_priv</code> matching <code>drop_priv</code>.
+				</li>
+				<li>
+					May now optionally exclude context configuration from <code>conf/server.xml</code>.
+					This then allows deployment of the context by simply overwriting the WAR file.
+					This also allows deployment through the Tomcat Manager webapp, when enabled
+					(disabled by default for static production configuration).
+					<ol>
+						<li>Added <code>httpd_tomcat_contexts.server_xml_configured</code> column, defaulting to <code>true</code> for existing contexts.</li>
+						<li>Added <code>server_xml_configured</code> parameter to the <code>add_httpd_tomcat_context</code> AOSH command.</li>
+						<li>Added <code>server_xml_configured</code> parameter to the <code>set_httpd_tomcat_context_attributes</code> AOSH command.</li>
+					</ol>
+				</li>
+				<li>
+					To support <ao:a href="https://letsencrypt.org/">Let's Encrypt</ao:a> certificates,
+					added <code>httpd_site_binds.ssl_cert_chain_file</code> column.
+					<ao:a href="https://certbot.eff.org/">Certbot</ao:a> installs certificates in a structure
+					incompatible with our previous automatic chain detection.  With this new column, the
+					chain file may be specified directly.
+				</li>
+				<li>
+					Added <code>httpd_site_bind_redirects.no_escape</code> column to support the
+					<ao:a href="https://httpd.apache.org/docs/2.4/rewrite/flags.html#flag_ne">noescape RewriteRule Flag</ao:a>,
+					defaulting to <code>false</code>.
+				</li>
+				<li>
+					Added <code>ao_servers.sftp_umask</code> column to support the <code>-u umask</code> option for
+					<code>sftp-server</code> in <code>/etc/ssh/sshd_config</code>.
+				</li>
+				<li>
+					Per-site features now all default to <code>false</code> to begin in the safest configuration:
+					<ol>
+						<li><code>httpd_sites.enable_cgi</code> now defaults to <code>false</code>.</li>
+						<li><code>httpd_sites.enable_ssi</code> now defaults to <code>false</code>.</li>
+						<li><code>httpd_sites.enable_htaccess</code> now defaults to <code>false</code>.</li>
+						<li><code>httpd_sites.enable_indexes</code> now defaults to <code>false</code>.</li>
+						<li><code>httpd_sites.enable_follow_symlinks</code> now defaults to <code>false</code>.</li>
+						<li><code>httpd_sites.enable_anonymous_ftp</code> now defaults to <code>false</code>.</li>
+						<li>Removed parameters from <code>add_httpd_jboss_site</code> command to use defaults.</li>
+						<li>Removed parameters from <code>add_httpd_tomcat_shared_site</code> command to use defaults.</li>
+						<li>Removed parameters from <code>add_httpd_tomcat_std_site</code> command to use defaults.</li>
+					</ol>
+				</li>
+				<li>
+					Added options to selectively disable protections that have been always on up to this point.
+					These all default to <code>true</code> to begin in the safest configuration.  When an application
+					takes full control over the URL space, these default protections might get in the way.
+					They should only be disabled with full understanding and careful consideration.
+					<ol>
+						<li>
+							<p>
+								Added <code>httpd_sites.block_trace_track</code> column, which enables the blocking of
+								<ao:a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8">TRACE</ao:a>
+								and TRACK <ao:a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">HTTP methods</ao:a>.
+							</p>
+							<p>
+								Leave this enabled unless you intend to handle these methods and understand the consequences.
+							</p>
+							<p>
+								May be configured with the <code>set_httpd_site_block_trace_track</code> AOSH command.
+							</p>
+						</li>
+						<li>
+							<p>
+								Added <code>httpd_sites.block_scm</code> column, which enables the blocking of URL
+								patterns associated with source control management systems.  It is possible for SCM
+								files, such as <code>CVS/Root</code> and <code>.git/config</code> to have authentication
+								credentials.
+							</p>
+							<p>
+								Currently has protections for <ao:a href="http://savannah.nongnu.org/projects/cvs">CVS</ao:a>,
+								<ao:a href="https://subversion.apache.org/">Subversion</ao:a>, and
+								<ao:a href="https://git-scm.com/">Git</ao:a>.
+							</p>
+							<p>
+								Leave this enabled when pulling web root content directly from revision control systems.
+							</p>
+							<p>
+								May be configured with the <code>set_httpd_site_block_scm</code> AOSH command.
+							</p>
+						</li>
+						<li>
+							<p>
+								Added <code>httpd_sites.block_core_dumps</code> column, which enables blocking of core dumps.
+								Core dumps could potentially expose sensitive information and have predictable filename patterns.
+							</p>
+							<p>
+								Leave this enabled when scripts may leave core dumps; if in doubt, leave this on.
+							</p>
+							<p>
+								May be configured with the <code>set_httpd_site_block_core_dumps</code> AOSH command.
+							</p>
+						</li>
+						<li>
+							<p>
+								Added <code>httpd_sites.block_editor_backups</code> column, which enables blocking filename patterns
+								associated with editor automatic backups.  Without this protection, it is possible for source code
+								to be leaked by accessing the URL associated with the automatic backups.
+							</p>
+							<p>
+								Currently has protections for <ao:a href="https://www.gnu.org/software/emacs/">Emacs</ao:a>
+								and <ao:a href="http://www.vim.org/">Vim</ao:a>.
+							</p>
+							<p>
+								May be configured with the <code>set_httpd_site_block_editor_backups</code> AOSH command.
+							</p>
+						</li>
+						<li>
+							<p>
+								Added <code>httpd_tomcat_sites.block_webinf</code> column, which blocks access to <code>/META-INF</code>
+								and <code>/WEB-INF</code> at the <ao:a href="https://httpd.apache.org/">Apache</ao:a> level.  When
+								<ao:a href="https://httpd.apache.org/">Apache</ao:a> serves content directly, instead of passing all
+								requests to <ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>, this helps ensure proper protection
+								of these paths.
+							</p>
+							<p>
+								Leave this enable unless trying to squeeze every last drop of performance out of a system
+								and are 100% confident <code>/META-INF</code> and <code>/WEB-INF</code> are mapped to
+								<ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>.  Just leave this on; it's only two
+								<ao:a href="https://httpd.apache.org/docs/2.4/mod/core.html#location">Location</ao:a>
+								directives for each <ao:a href="apidocs/com/aoindustries/aoserv/client/HttpdTomcatContext.html">HttpdTomcatContext</ao:a>.
+							</p>
+							<p>
+								May be configured with the <code>set_httpd_tomcat_site_block_webinf</code> AOSH command.
+							</p>
+						</li>
+						<li>Fixed bug in <code>add_email_list_address</code> AOSH command implementation.</li>
+					</ol>
+				</li>
+				<li>
+					New table <code>httpd_tomcat_site_jk_mounts</code> that configures the request mappings between
+					<ao:a href="https://httpd.apache.org/">Apache</ao:a> and <ao:a href="http://tomcat.apache.org/">Tomcat</ao:a>
+					via the <ao:a href="https://tomcat.apache.org/connectors-doc/reference/apache.html">JkMount and JkUnMount directives</ao:a>:
+					<ol type="a">
+						<li>
+							Added the <code>httpd_tomcat_site_jk_mounts</code> table, with default values matching the configurations
+							derived from the old <code>httpd_tomcat_sites.use_apache</code> flag.
+						</li>
+						<li>Added the <code>add_httpd_tomcat_site_jk_mount</code> AOSH command.</li>
+						<li>Added the <code>remove_httpd_tomcat_site_jk_mount</code> AOSH command.</li>
+						<li>
+							Removed the <code>httpd_tomcat_sites.use_apache</code> column, with <code>true</code>
+							provided to older clients when <code>httpd_tomcat_site_jk_mounts</code> does not contain
+							<code>JkMount /*</code> for the site.
+						</li>
+						<li>
+							Removed the <code>set_httpd_tomcat_site_use_apache</code> AOSH command, with older clients
+							toggling the existence of <code>JkMount /*</code>.
+						</li>
+					</ol>
+				</li>
+				<li>
+					<p>
+						May now manually configure which <ao:a href="https://httpd.apache.org/docs/2.4/mod/">Apache Modules</ao:a> are loaded
+						on a per-<ao:a href="https://httpd.apache.org/">Apache</ao:a>-instance basis.  Any value left at
+						<code>null</code>, the default, with be in automatic mode.  Automatic mode minimizes the number
+						of loaded modules given the current system configuration.  Automatic mode does not parse the
+						contents of <code>.htaccess</code> files, so non-default modules may be enabled manually
+						as-needed.
+					</p>
+					<p>
+						The following columns within the <code>httpd_servers</code> table control each module,
+						with default automatic behavior described for each:
+					</p>
+					<ol>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_access_compat.html">mod_access_compat</ao:a> defaults:
+							<ul>
+								<li>Enabled when <code>aoserv-httpd-config-compat</code> package is installed.</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_actions.html">mod_actions</ao:a> defaults:
+							<ul>
+								<li>Enabled when CGI-based PHP exists on a site and mod_php is not used on this instance.</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html">mod_alias</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when <code>mod_autoindex</code> enabled (for <code>/icons/</code>
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html#alias">Alias</ao:a>
+									in <code>/etc/httpd/aoserv.conf.d/mod_autoindex.conf</code>).
+								</li>
+								<li>
+									Enabled when any site has a secondary context (contexts other than <code>webapps/ROOT</code>
+									are added by <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html#alias">Alias</ao:a>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_auth_basic.html">mod_auth_basic</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
+									(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authtype">AuthType Basic</ao:a>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html">mod_authn_core</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
+									(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authtype">AuthType Basic</ao:a>).
+								</li>
+								<li>
+									Enabled when has any <code>httpd_site_authenticated_locations.auth_name</code>
+									(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authname">AuthName</ao:a>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_file.html">mod_authn_file</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when has any <code>httpd_site_authenticated_locations.auth_user_file</code>
+									(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authn_file.html#authuserfile">AuthUserFile</ao:a>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html">mod_authz_core</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled by default (for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#reqall">Require all granted</ao:a>
+									and <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#reqall">Require all denied</ao:a>
+									used in <code>/etc/httpd/aoserv.conf.d/*.conf</code> and per-site and per-bind configs).
+								</li>
+							</ul>
+							<p>
+								When <code>mod_authz_core</code> is manually disabled, the server will still run, but many protections
+								will be disabled.  This might result in open proxies, unexpected access to URLs or files, and
+								other serious issues.  Only disable when all consequences are fully analyzed and understood.
+							</p>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_groupfile.html">mod_authz_groupfile</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when has any <code>httpd_site_authenticated_locations.auth_group_file</code>
+									(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_groupfile.html">AuthGroupFile</ao:a>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html">mod_authz_host</ao:a> defaults:
+							<ul>
+								<li>Disabled, no auto condition currently to turn it on.</li>
+							</ul>
+							<p>
+								Might be needed for <code>.htaccess</code> or manual override for
+								<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqip">Require ip</ao:a>,
+								<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqhost">Require host</ao:a>,
+								or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html#reqlocal">Require local</ao:a>.
+							</p>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html">mod_authz_user</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when has any <code>httpd_site_authenticated_locations.require</code>
+									(for <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html#requser">Require user</ao:a>
+									or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_user.html#reqvaliduser">Require valid-user</ao:a>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_autoindex.html">mod_autoindex</ao:a> defaults:
+							<ul>
+								<li>Enabled when has any <code>httpd_sites.enable_indexes</code>.</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_deflate.html">mod_deflate</ao:a> defaults:
+							<ul>
+								<li>Enabled by default (unless explicitly disabled).</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_dir.html">mod_dir</ao:a> defaults:
+							<ul>
+								<li>Enabled by default (unless explicitly disabled).</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_filter.html">mod_filter</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when <code>mod_deflate</code> is enabled (for
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_filter.html#addoutputfilterbytype">AddOutputFilterByType</ao:a>
+									in <code>/etc/httpd/aoserv.conf.d/mod_deflate.conf</code>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html">mod_headers</ao:a> defaults:
+							<ul>
+								<li>Disabled, no auto condition currently to turn it on.</li>
+							</ul>
+							<p>
+								Might be needed for <code>.htaccess</code> or manual override for
+								<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html#header">Header</ao:a>
+								or <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_headers.html#requestheader">RequestHeader</ao:a>.
+							</p>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_include.html">mod_include</ao:a> defaults:
+							<ul>
+								<li>Enabled when has any <code>httpd_sites.enable_ssi</code>.</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://tomcat.apache.org/connectors-doc/reference/apache.html">mod_jk</ao:a> defaults:
+							<ul>
+								<li>Enabled when any site has a <code>JkMount</code> or <code>JkUnMount</code>.</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_log_config.html">mod_log_config</ao:a> defaults:
+							<ul>
+								<li>Enabled by default (unless explicitly disabled).</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html">mod_mime</ao:a> defaults:
+							<ul>
+								<li>Enabled by default (unless explicitly disabled).</li>
+								<li>
+									Enabled when has <code>mod_php</code> (for
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addtype">AddType .php</ao:a>
+									and <ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addtype">AddType .phps</ao:a>).
+								</li>
+								<li>
+									Enabled when <code>mod_negotiation</code> is enabled (for
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime.html#addhandler">AddHandler .var</ao:a>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_mime_magic.html">mod_mime_magic</ao:a> defaults:
+							<ul>
+								<li>Enabled by default (unless explicitly disabled).</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_negotiation.html">mod_negotiation</ao:a> defaults:
+							<ul>
+								<li>Disabled by default (unless explicitly enabled).</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy.html">mod_proxy</ao:a> defaults:
+							<ul>
+								<li>Enabled when <code>mod_proxy_http</code> is enabled.</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_http.html">mod_proxy_http</ao:a> defaults:
+							<ul>
+								<li>Disabled by default (unless explicitly enabled).</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_reqtimeout.html">mod_reqtimeout</ao:a> defaults:
+							<ul>
+								<li>Enabled by default (unless explicitly disabled).</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html">mod_rewrite</ao:a> defaults:
+							<ul>
+								<li>Enabled when has any <code>httpd_sites.block_trace_track</code>.</li>
+								<li>Enabled when has any <code>httpd_site_binds.redirect_to_primary_hostname</code>.</li>
+								<li>Enabled when has any <code>httpd_site_bind_redirects</code>.</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_setenvif.html">mod_setenvif</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when <code>mod_ssl</code> is enabled (for
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_setenvif.html">BrowserMatch</ao:a>
+									SSL downgrade of ancient browsers).
+								</li>
+							</ul>
+							<p>
+								It is safe to disable this module if not concerned about ancient browser support and the module
+								is otherwise not needed.
+							</p>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_socache_shmcb.html">mod_socache_shmcb</ao:a> defaults:
+							<ul>
+								<li>
+									Enabled when <code>mod_ssl</code> is enabled (for
+									<ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslsessioncache">SSLSessionCache shmcb:/run/httpd</ao:a>).
+								</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_ssl.html">mod_ssl</ao:a> defaults:
+							<ul>
+								<li>Enabled when has any <code>httpd_site_binds.ssl_cert_file</code>.</li>
+							</ul>
+						</li>
+						<li><ao:a href="https://httpd.apache.org/docs/2.4/mod/mod_status.html">mod_status</ao:a> defaults:
+							<ul>
+								<li>Disabled by default (unless explicitly enabled).</li>
+							</ul>
+						</li>
+						<li>New system groups:
+							<ol>
+								<li><code>bird</code></li>
+								<li><code>clamscan</code></li>
+								<li><code>clamupdate</code></li>
+								<li><code>virusgroup</code></li>
+							</ol>
+						</li>
+						<li>New system users:
+							<ol>
+								<li><code>bird</code></li>
+								<li><code>clamscan</code></li>
+								<li><code>clamupdate</code></li>
+							</ol>
+						</li>
+						<li>Added pkey output from some AOSH commands that were otherwise quiet upon successful addition of the resource:
+							<ul>
+								<li><code>add_business_profile</code></li>
+								<li><code>add_linux_group_account</code></li>
+								<li><code>add_net_bind</code></li>
+							</ul>
+						</li>
+					</ol>
+				</li>
+				<li>
+					Renamed <code>httpd_servers.number</code> to <code>name</code> and changed type
+					from <code>int</code> to <code>string</code>.
+				</li>
+				<li>New constants for default ports:
+					<ul>
+						<li><code>MySQLServer.DEFAULT_PORT</code></li>
+						<li><code>PostgresServer.DEFAULT_PORT</code></li>
+					</ul>
+				</li>
+				<li>Generated JDBC URLs no longer include the port number when it is the default value.</li>
+				<li>Now supporting <code>mod_wsgi</code>:
+					<ul>
+						<li>Added <code>httpd_servers.mod_wsgi</code> column</li>
+					</ul>
+				</li>
+				<li>Now supporting <code>httpd_site_binds</code> that do not necessarily include the per-site configuration file:
+					<ul>
+						<li>Added <code>httpd_site_binds.include_site_config</code> column</li>
+					</ul>
+				</li>
+				<li>Now managing SSL certificates through APIs instead of manually:
+					<ul>
+						<li>Added <code>ssl_certificates</code> table</li>
+						<li>Added <code>ssl_certificate_names</code> table</li>
+						<li>Added <code>httpd_site_binds.certificate</code> column</li>
+						<li>Removed <code>httpd_site_binds.ssl_cert_file</code> column</li>
+						<li>Removed <code>httpd_site_binds.ssl_cert_key_file</code> column</li>
+						<li>Removed <code>httpd_site_binds.ssl_cert_chain_file</code> column</li>
+						<li>Added <code>check_ssl_certificate</code> AOSH command</li>
+					</ul>
+				</li>
+				<li>Now supporting per-IP/port SSL certificates on Cyrus IMAPD:
+					<ul>
+						<li>Added <code>cyrus_imapd_binds</code> table</li>
+						<li>Added <code>cyrus_imapd_servers</code> table</li>
+					</ul>
+				</li>
+				<li>Now supporting multiple instances of Sendmail on a server in order to have per-IP/port SSL certificates:
+					<ul>
+						<li>Added <code>sendmail_binds</code> table</li>
+						<li>Added <code>sendmail_servers</code> table</li>
+					</ul>
+				</li>
+				<li>Removed some old, unused features:
+					<ul>
+						<li>Removed <code>set_imap_folder_subscribed</code> AOSH command</li>
+						<li>Removed <code>httpd_servers.is_mod_jk</code> column</li>
+						<li>Removed <code>httpd_servers.max_binds</code> column</li>
+						<li>Removed <code>httpd_shared_tomcats.is_secure</code> column</li>
+						<li>Removed <code>httpd_shared_tomcats.is_overflow</code> column</li>
+						<li>Removed <code>httpd_sites.content_src</code> column</li>
+						<li>Removed <code>is_secure</code> and <code>is_overflow</code> parameters from <code>add_httpd_shared_tomcat</code> AOSH command</li>
+						<li>Removed <code>content_source</code> parameter from <code>add_httpd_jboss_site</code> AOSH command</li>
+						<li>Removed <code>tomcat_version</code> and <code>content_source</code> parameters from <code>add_httpd_tomcat_shared_site</code> AOSH command</li>
+						<li>Removed <code>content_source</code> parameter from <code>add_httpd_tomcat_std_site</code> AOSH command</li>
+					</ul>
+				</li>
+				<li>Generating JDBC URLs for MySQL and PostgreSQL more precisely based on the <code>net_binds</code> settings.</li>
+				<li>Now monitoring Apache concurrency:
+					<ul>
+						<li>Added <code>httpd_servers.monitoring_concurrency_low</code> column</li>
+						<li>Added <code>httpd_servers.monitoring_concurrency_medium</code> column</li>
+						<li>Added <code>httpd_servers.monitoring_concurrency_high</code> column</li>
+						<li>Added <code>httpd_servers.monitoring_concurrency_critical</code> column</li>
+						<li>Added <code>get_httpd_server_concurrency</code> AOSH command</li>
+					</ul>
+				</li>
+				<li>Using <code>System.console()</code> to no longer echo password during login.</li>
+				<li>
+					Now detects multiple <code>DNSRecords</code> of type <code>TXT</code> with destination <code>"v=spf1"</code>
+					as conflicts, to help in compliance of <ao:a href="http://www.openspf.org/RFC_4408#version">SPF: RFC 4408</ao:a>.
+				</li>
+				<li>Added support for newer versions of PostgreSQL:
+					<ol>
+						<li>Added support for <ao:a href="https://www.postgresql.org/docs/9.5/index.html">PostgreSQL 9.5</ao:a>.</li>
+						<li>Added support for <ao:a href="https://www.postgresql.org/docs/9.6/index.html">PostgreSQL 9.6</ao:a>.</li>
+						<li>Added support for <ao:a href="https://www.postgresql.org/docs/10/index.html">PostgreSQL 10</ao:a>.</li>
+						<li>Added support for <ao:a href="https://www.postgresql.org/docs/11/index.html">PostgreSQL 11</ao:a>.</li>
+					</ol>
+				</li>
+				<li>Maximum MySQL username is now 32 characters as of <ao:a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</ao:a>.</li>
+				<li>Added support for MySQL 8.0.</li>
+				<li>Added support for newer versions of <ao:a href="https://tomcat.apache.org/">Apache Tomcat</ao:a>:
+					<ol>
+						<li>Added support for <ao:a href="https://tomcat.apache.org/tomcat-8.5-doc/">Apache Tomcat 8.5</ao:a>.</li>
+						<li>Added support for <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/">Apache Tomcat 9.0</ao:a>.</li>
+					</ol>
+				</li>
+				<li>May now update Tomcat versions in-place.
+					<ol>
+						<li>In-place upgrades are supported from Tomcat versions 4.1 and above.</li>
+						<li>In-place upgrades and downgrades are supported to Tomcat versions 8.5 and above.</li>
+						<li>Added the following AOSH commands:
+							<ol type="a">
+								<li><code>set_httpd_shared_tomcat_version</code></li>
+								<li><code>set_httpd_tomcat_std_site_version</code></li>
+							</ol>
+						</li>
+					</ol>
+				</li>
+				<li>Now supporting per-location Apache handlers:
+					<ol>
+						<li>Added <code>httpd_site_authenticated_locations.handler</code> column</li>
+						<li>Added <code>add_httpd_site_authenticated_location</code> AOSH command</li>
+						<li>Added <code>set_httpd_site_authenticated_location_attributes</code> AOSH command</li>
+					</ol>
+				</li>
+				<li>
+					<p>
+						Now supporting multiple site-bind configurations per unique <code>(site, ip, port)</code>.
+						Previously, there was at most one Apache configuration file per unique <code>(site, ip, port)</code>
+						combination.  We now support multiple Apache configuration files per unique <code>(site, ip, port, <strong>name</strong>)</code>,
+						where <code>name</code> is either <code>null</code> (for the default), or a user/API-provided
+						meaningful name to identify the bind.
+					</p>
+					<p>
+						We host applications that respond to different, unrelated hostnames/domains, then internally perform
+						virtual hosting or content negotiation to serve different, unrelated clients.  With HTTP, this all
+						works well under a single per-<code>(site, ip, port)</code> Apache configuration file.
+					</p>
+					<p>
+						However, as part of our initiative to achieve 100% encryption via <ao:a href="https://letsencrypt.org/">Let's Encrypt</ao:a>,
+						and given that these hostnames/domains are for unrelated clients, we need to support different SSL certificates
+						for different clients.  Previously, we would accomplish this with each SSL certificate on a different IP address.
+						Now with the ubiquity of <ao:a href="https://en.wikipedia.org/wiki/Server_Name_Indication">SNI</ao:a>,
+						we want to run different SSL certificates on the same IP address, and thus our unique constraint on
+						<code>(site, ip, port)</code> was too restrictive.
+					</p>
+					<p>
+						API compatibility for older clients is maintained by only manipulating the <code>null</code>
+						(default) bind.
+					</p>
+					<ol>
+						<li>Added <code>httpd_site_binds.name</code> column</li>
+					</ol>
+				</li>
+				<li>New table <code>httpd_site_bind_headers</code> that configures headers on a per-httpd_site_bind basis.</li>
+				<li>
+					New table <code>ssl_certificate_other_uses</code> that configures configured manual uses of SSL certificates.
+					This will avoid warnings in monitoring and avoid removal in management.
+				</li>
+				<li>
+					May now disable monitoring on a per-IP basis, which is useful to avoid alerts during routine maintenance
+					or while allocating and releasing resources:
+					<ol>
+						<li>Added <code>ip_addresses.monitoring_enabled</code> column</li>
+						<li>Added <code>set_ip_address_monitoring_enabled</code> AOSH command</li>
+					</ol>
+				</li>
+				<li>
+					Moved monitoring configuration into a separate schema.  This results in the following changes:
+					<ol>
+						<li>Added <code>IpAddressMonitoring</code> table</li>
+					</ol>
+				</li>
+				<li>
+					<code>UID_MAX</code> and <code>GID_MAX</code> are now configurable on a per-server basis.
+					Also, uid and gid allocation proceeds from the last one allocated, wrapping back to <code>UID_MIN</code>
+					once <code>UID_MAX</code> is achieved.  Previously, the first available uid, starting at <code>UID_MIN</code>
+					was used, which could cause a new user to have access to orphaned files from an old, deleted user.
+				</li>
+				<li>Schema changes, with some moves toward:
+					<ol>
+						<li>Schema support</li>
+						<li>Singular table names, PascalCase</li>
+						<li>camelCase column names</li>
+						<li>Generated numeric keys <code>id</code> instead of <code>pkey</code></li>
+					</ol>
+				</li>
+				<li>Restructured into package names matching recently introduced master server schemas.</li>
+				<li>Renamed classes to match new table names.</li>
+				<li>
+					<ao:a href="apidocs/com/aoindustries/aoserv/client/ProgressListener.html">ProgressListener</ao:a> and
+					<ao:a href="apidocs/com/aoindustries/aoserv/client/TableLoadListener.html">TableLoadListener</ao:a>
+					now notified of row counts using a 64-bit integer to handle results with more than
+					<code>CompressedDataOutputStream.MAX_COMPRESSED_INT_VALUE</code><!-- TODO: SemanticCMS 2: link -->
+					rows.
+				</li>
+				<li>Improved registrable domain management:
+					<ol>
+						<li>Renamed table <code>billing.whois_history</code> to <code>billing.WhoisHistory</code></li>
+						<li>Added table <code>billing.WhoisHistoryAccount</code></li>
+						<li>Changes to <code>billing.WhoisHistory</code>:
+							<ol type="a">
+								<li>Changed <code>zone</code> to <code>domain</code> type (without the trailing period).</li>
+								<li>Renamed <code>zone</code> to <code>registrableDomain</code></li>
+								<li>Added column <code>exitStatus</code></li>
+								<li>Renamed <code>whois_output</code> to <code>output</code></li>
+								<li>Added column <code>error</code></li>
+								<li>Removed column <code>accounting</code></li>
+							</ol>
+						</li>
+						<!-- TODO:
+						<li>Renamed <code>dns.TopLevelDomain</code> to <code>dns.Suffix</code>:
+							<ol type="a">
+								<li>Added column <code>isRegistrable</code></li>
+								<li>Added column <code>isPublicSuffix</code></li>
+								<li>Added column <code>isManual</code></li>
+							</ol>
+						</li>
+						-->
+					</ol>
+				</li>
+				<li>
+					<p>
+						May now select the format for outgoing emails.  May be one of:
+					</p>
+					<ul>
+						<li><code>HTML</code> - HTML allowing embedded images (the default).</li>
+						<li><code>HTML_ONLY</code> - HTML without any embedded images.</li>
+						<li><code>TEXT</code> - Plaintext only.</li>
+					</ul>
+					<p>
+						Made the following schema changes to support this:
+					</p>
+					<ol>
+						<li>Added enum <code>account.Profile.EmailFormat</code></li>
+						<li>Added column <code>account.Profile.billingEmailFormat</code></li>
+						<li>Added column <code>account.Profile.technicalEmailFormat</code></li>
+						<li>Updated <code>add_business_profile</code> AOSH command</li>
+					</ol>
+				</li>
+				<li>Allowing direct control over the <ao:a href="https://httpd.apache.org/docs/2.4/rewrite/flags.html">RewriteRule Flags</ao:a>:
+					<ol>
+						<li>Renamed table <code>httpd_site_bind_redirect</code> to <code>RewriteRule</code></li>
+						<li>Renamed column <code>RewriteRule.pkey</code> to <code>id</code></li>
+						<li>Renamed column <code>RewriteRule.httpd_site_bind</code> to <code>virtualHost</code></li>
+						<li>Renamed column <code>RewriteRule.sort_order</code> to <code>sortOrder</code></li>
+						<li>Added column <code>RewriteRule.flags</code></li>
+						<li>Removed column <code>RewriteRule.no_escape</code></li>
+					</ol>
+				</li>
+				<li>Moved table getters into per-package schemas.</li>
+				<li>
+					Changed table getters to be consistent with database table names.
+					Unusual for Java, these property names are Pascal-case (CapitalCamelCase), for
+					consistency with their representation in the database.  We are choosing to make Java
+					conform to other systems, for consistency across the platform.
+				</li>
+				<li>Moved self-validating type implementations into per-package schemas:
+					<ol>
+						<li>Renamed to match and support master server schema changes in the process.</li>
+						<li>Renamed <code>account.Username</code> to <code>account.User</code></li>
+						<li>Added <code>linux_username</code> to <code>schema.Type</code></li>
+						<li>Changed <code>linux.User.username</code> to <code>linux_username</code> type</li>
+						<li>Changed <code>web.Site.linux_account</code> to <code>linux_username</code> type</li>
+						<li>Changed <code>linux.UserServer.username</code> to <code>linux_username</code> type</li>
+						<li>Changed <code>linux.GroupUser.name</code> to <code>linux_username</code> type</li>
+						<li>Changed <code>ftp.GuestUser.username</code> to <code>linux_username</code> type</li>
+						<li>Changed <code>distribution.management.DistroFile.linux_account</code> to <code>linux_username</code> type</li>
+					</ol>
+				</li>
+				<!-- TODO: Rename schema pki to crypto -->
+				<li>Changed default ordering of <code>billing.Transaction</code> from <code>time::date, transid</code> to <code>time::date, source_accounting, time, transid</code>.</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
