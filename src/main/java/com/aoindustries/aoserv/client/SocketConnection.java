@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,7 +25,6 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -33,6 +32,7 @@ import java.io.InterruptedIOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
@@ -86,7 +86,7 @@ final public class SocketConnection extends AOServConnection {
 			in = new CompressedDataInputStream(new BufferedInputStream(socket.getInputStream()));
 
 			out.writeUTF(AoservProtocol.Version.CURRENT_VERSION.getVersion());
-			out.writeNullUTF(ObjectUtils.toString(connector.daemonServer));
+			out.writeNullUTF(Objects.toString(connector.daemonServer, null));
 			out.writeUTF(connector.connectAs.toString());
 			out.writeUTF(connector.authenticateAs.toString());
 			out.writeUTF(connector.password);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,7 +24,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.AOPool;
-import com.aoindustries.util.EncodingUtils;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.sql.SQLException;
@@ -71,6 +70,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 	private static final int numTables = Table.TableID.values().length;
 
 	@Override
+	@SuppressWarnings("deprecation")
 	protected void printConnectionStats(Appendable out) throws IOException {
 		try {
 			// Create statistics on the caches
@@ -123,14 +123,14 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 					+ "<table>\n"
 					+ "  <tr><th colspan='2'><span style='font-size:large;'>TCP Connection Pool</span></th></tr>\n"
 					+ "  <tr><td>Host:</td><td>");
-			EncodingUtils.encodeHtml(connector.hostname, out);
+			com.aoindustries.util.EncodingUtils.encodeHtml(connector.hostname, out);
 			out.append("</td></tr>\n"
 					+ "  <tr><td>Port:</td><td>").append(Integer.toString(connector.port.getPort())).append("</td></tr>\n"
 					+ "  <tr><td>Connected As:</td><td>");
-			EncodingUtils.encodeHtml(connector.connectAs, out);
+			com.aoindustries.util.EncodingUtils.encodeHtml(connector.connectAs, out);
 			out.append("</td></tr>\n"
 					+ "  <tr><td>Authenticated As:</td><td>");
-			EncodingUtils.encodeHtml(connector.authenticateAs, out);
+			com.aoindustries.util.EncodingUtils.encodeHtml(connector.authenticateAs, out);
 			out.append("</td></tr>\n"
 					+ "  <tr><td>Password:</td><td>");
 			String password=connector.password;

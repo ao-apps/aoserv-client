@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,7 +30,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.StringUtility;
@@ -40,6 +39,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -325,7 +325,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_68) <= 0) {
 			out.writeUTF(hostname==null ? "*" : hostname.toString());
 		} else {
-			out.writeNullUTF(ObjectUtils.toString(hostname));
+			out.writeNullUTF(Objects.toString(hostname, null));
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
 			out.writeUTF(packageName.toString());
@@ -343,7 +343,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		) {
 			out.writeBoolean(pingMonitorEnabled);
 		}
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_34) >= 0) out.writeNullUTF(ObjectUtils.toString(externalInetAddress));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_34) >= 0) out.writeNullUTF(Objects.toString(externalInetAddress, null));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_38) >= 0) out.writeUTF(netmask);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_75) >= 0) out.writeBoolean(checkBlacklistsOverSmtp);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,7 +34,6 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.util.SystemdUtil;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
@@ -42,6 +41,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @see  Site
@@ -170,10 +170,10 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_10) >= 0) {
 			out.writeCompressedInt(certificate);
 		} else {
-			out.writeNullUTF(ObjectUtils.toString(oldSslCertFile));
-			out.writeNullUTF(ObjectUtils.toString(oldSslCertKeyFile));
+			out.writeNullUTF(Objects.toString(oldSslCertFile, null));
+			out.writeNullUTF(Objects.toString(oldSslCertKeyFile, null));
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_4) >= 0) {
-				out.writeNullUTF(ObjectUtils.toString(oldSslCertChainFile));
+				out.writeNullUTF(Objects.toString(oldSslCertChainFile, null));
 			}
 		}
 		out.writeCompressedInt(disable_log);

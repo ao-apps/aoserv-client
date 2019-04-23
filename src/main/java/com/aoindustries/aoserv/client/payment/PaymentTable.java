@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,13 +30,13 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @see  Payment
@@ -128,10 +128,10 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 					out.writeNullUTF(orderNumber);
 					out.writeUTF(currencyCode);
 					out.writeUTF(amount.toString());
-					out.writeNullUTF(ObjectUtils.toString(taxAmount));
+					out.writeNullUTF(Objects.toString(taxAmount, null));
 					out.writeBoolean(taxExempt);
-					out.writeNullUTF(ObjectUtils.toString(shippingAmount));
-					out.writeNullUTF(ObjectUtils.toString(dutyAmount));
+					out.writeNullUTF(Objects.toString(shippingAmount, null));
+					out.writeNullUTF(Objects.toString(dutyAmount, null));
 					out.writeNullUTF(shippingFirstName);
 					out.writeNullUTF(shippingLastName);
 					out.writeNullUTF(shippingCompanyName);
@@ -142,7 +142,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 					out.writeNullUTF(shippingPostalCode);
 					out.writeNullUTF(shippingCountryCode);
 					out.writeBoolean(emailCustomer);
-					out.writeNullUTF(ObjectUtils.toString(merchantEmail));
+					out.writeNullUTF(Objects.toString(merchantEmail, null));
 					out.writeNullUTF(invoiceNumber);
 					out.writeNullUTF(purchaseOrderNumber);
 					out.writeNullUTF(description);
@@ -155,7 +155,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 					out.writeUTF(creditCardFirstName);
 					out.writeUTF(creditCardLastName);
 					out.writeNullUTF(creditCardCompanyName);
-					out.writeNullUTF(ObjectUtils.toString(creditCardEmail));
+					out.writeNullUTF(Objects.toString(creditCardEmail, null));
 					out.writeNullUTF(creditCardPhone);
 					out.writeNullUTF(creditCardFax);
 					out.writeNullUTF(creditCardCustomerTaxId);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -26,7 +26,6 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.reseller.Category;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.ErrorPrinter;
 import com.aoindustries.util.logging.QueuedHandler;
@@ -35,6 +34,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -134,7 +134,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
 					&& language.equals(ticket.getLanguage())
 					&& ticketType.equals(ticket.getTicketType())
 					&& ticket.getSummary().equals(summary) // level, prefix, classname, and method
-					&& ObjectUtils.equals(category, ticket.getCategory())
+					&& Objects.equals(category, ticket.getCategory())
 				) {
 					existingTicket = ticket;
 					break;

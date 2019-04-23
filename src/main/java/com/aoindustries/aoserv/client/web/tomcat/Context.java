@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -39,6 +38,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents one context within a <code>HttpdTomcatSite</code>.
@@ -342,7 +342,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 					out.writeBoolean(useNaming);
 					out.writeNullUTF(wrapperClass);
 					out.writeCompressedInt(debug);
-					out.writeNullUTF(ObjectUtils.toString(workDir));
+					out.writeNullUTF(Objects.toString(workDir, null));
 					out.writeBoolean(serverXmlConfigured);
 				}
 
@@ -384,7 +384,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 		out.writeBoolean(use_naming);
 		out.writeNullUTF(wrapper_class);
 		out.writeCompressedInt(debug);
-		out.writeNullUTF(ObjectUtils.toString(work_dir));
+		out.writeNullUTF(Objects.toString(work_dir, null));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_3) >= 0) {
 			out.writeBoolean(server_xml_configured);
 		}

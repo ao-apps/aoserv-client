@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -28,7 +28,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.Port;
@@ -43,6 +42,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -276,12 +276,12 @@ public class TCPConnector extends AOServConnector {
 			if(connector.password==null) throw new NullPointerException("connector.password is null");
 			if(
 				connector.hostname.equals(hostname)
-				&& ObjectUtils.equals(local_ip, connector.local_ip)
+				&& Objects.equals(local_ip, connector.local_ip)
 				&& connector.port==port
 				&& connector.connectAs.equals(connectAs)
 				&& connector.authenticateAs.equals(authenticateAs)
 				&& connector.password.equals(password)
-				&& ObjectUtils.equals(daemonServer, connector.daemonServer)
+				&& Objects.equals(daemonServer, connector.daemonServer)
 				&& connector.poolSize==poolSize
 				&& connector.maxConnectionAge==maxConnectionAge
 			) return connector;

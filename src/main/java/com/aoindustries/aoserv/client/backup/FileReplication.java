@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.BitRateProvider;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
@@ -43,6 +42,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Causes a server to replicate itself to another machine on a regular basis.
@@ -253,8 +253,8 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) out.writeLong(-1); // last_start_time
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_9)>=0) out.writeBoolean(use_compression);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_13)>=0) out.writeShort(retention);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_14)>=0) out.writeNullUTF(ObjectUtils.toString(connect_address));
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_22)>=0) out.writeNullUTF(ObjectUtils.toString(connect_from));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_14)>=0) out.writeNullUTF(Objects.toString(connect_address, null));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_22)>=0) out.writeNullUTF(Objects.toString(connect_from, null));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_15)>=0) out.writeBoolean(enabled);
 		if(
 			protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_17)>=0

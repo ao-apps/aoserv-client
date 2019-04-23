@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,7 +33,6 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationResult;
 import java.io.IOException;
@@ -41,6 +40,7 @@ import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @see  User
@@ -81,10 +81,10 @@ final public class UserTable extends CachedTableUserNameKey<User> {
 					out.writeCompressedInt(Table.TableID.LINUX_ACCOUNTS.ordinal());
 					out.writeUTF(usernameObject.getUsername().toString());
 					out.writeUTF(primaryGroup.toString());
-					out.writeNullUTF(ObjectUtils.toString(name));
-					out.writeNullUTF(ObjectUtils.toString(office_location));
-					out.writeNullUTF(ObjectUtils.toString(office_phone));
-					out.writeNullUTF(ObjectUtils.toString(home_phone));
+					out.writeNullUTF(Objects.toString(name, null));
+					out.writeNullUTF(Objects.toString(office_location, null));
+					out.writeNullUTF(Objects.toString(office_phone, null));
+					out.writeNullUTF(Objects.toString(home_phone, null));
 					out.writeUTF(type);
 					out.writeUTF(shell.toString());
 				}

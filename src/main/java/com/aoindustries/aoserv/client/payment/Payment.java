@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
@@ -41,6 +40,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * A <code>CreditCardTransaction</code> stores the complete history of credit card transactions.
@@ -884,10 +884,10 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(orderNumber);
 		out.writeUTF(currencyCode);
 		out.writeUTF(amount.toString());
-		out.writeNullUTF(ObjectUtils.toString(taxAmount));
+		out.writeNullUTF(Objects.toString(taxAmount, null));
 		out.writeBoolean(taxExempt);
-		out.writeNullUTF(ObjectUtils.toString(shippingAmount));
-		out.writeNullUTF(ObjectUtils.toString(dutyAmount));
+		out.writeNullUTF(Objects.toString(shippingAmount, null));
+		out.writeNullUTF(Objects.toString(dutyAmount, null));
 		out.writeNullUTF(shippingFirstName);
 		out.writeNullUTF(shippingLastName);
 		out.writeNullUTF(shippingCompanyName);
@@ -898,7 +898,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(shippingPostalCode);
 		out.writeNullUTF(shippingCountryCode);
 		out.writeBoolean(emailCustomer);
-		out.writeNullUTF(ObjectUtils.toString(merchantEmail));
+		out.writeNullUTF(Objects.toString(merchantEmail, null));
 		out.writeNullUTF(invoiceNumber);
 		out.writeNullUTF(purchaseOrderNumber);
 		out.writeNullUTF(description);
@@ -911,7 +911,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeUTF(creditCardFirstName);
 		out.writeUTF(creditCardLastName);
 		out.writeNullUTF(creditCardCompanyName);
-		out.writeNullUTF(ObjectUtils.toString(creditCardEmail));
+		out.writeNullUTF(Objects.toString(creditCardEmail, null));
 		out.writeNullUTF(creditCardPhone);
 		out.writeNullUTF(creditCardFax);
 		out.writeNullUTF(creditCardCustomerTaxId);
@@ -923,7 +923,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeUTF(creditCardCountryCode);
 		out.writeNullUTF(creditCardComments);
 		out.writeLong(authorizationTime);
-		out.writeNullUTF(ObjectUtils.toString(authorizationUsername));
+		out.writeNullUTF(Objects.toString(authorizationUsername, null));
 		out.writeNullUTF(authorizationPrincipalName);
 		out.writeNullUTF(authorizationCommunicationResult);
 		out.writeNullUTF(authorizationProviderErrorCode);
@@ -942,7 +942,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(authorizationAvsResult);
 		out.writeNullUTF(authorizationApprovalCode);
 		out.writeLong(captureTime);
-		out.writeNullUTF(ObjectUtils.toString(captureUsername));
+		out.writeNullUTF(Objects.toString(captureUsername, null));
 		out.writeNullUTF(capturePrincipalName);
 		out.writeNullUTF(captureCommunicationResult);
 		out.writeNullUTF(captureProviderErrorCode);
@@ -950,7 +950,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(captureProviderErrorMessage);
 		out.writeNullUTF(captureProviderUniqueId);
 		out.writeLong(voidTime);
-		out.writeNullUTF(ObjectUtils.toString(voidUsername));
+		out.writeNullUTF(Objects.toString(voidUsername, null));
 		out.writeNullUTF(voidPrincipalName);
 		out.writeNullUTF(voidCommunicationResult);
 		out.writeNullUTF(voidProviderErrorCode);

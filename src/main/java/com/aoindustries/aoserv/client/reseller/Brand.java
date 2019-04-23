@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.validation.ValidationException;
@@ -43,6 +42,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A brand has separate website, packages, nameservers, and support.
@@ -443,13 +443,13 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 		out.writeUTF(pkey.toString());
 		out.writeUTF(nameserver1.toString());
 		out.writeUTF(nameserver2.toString());
-		out.writeNullUTF(ObjectUtils.toString(nameserver3));
-		out.writeNullUTF(ObjectUtils.toString(nameserver4));
+		out.writeNullUTF(Objects.toString(nameserver3, null));
+		out.writeNullUTF(Objects.toString(nameserver4, null));
 		out.writeCompressedInt(smtp_linux_server_account);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(smtp_host));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(Objects.toString(smtp_host, null));
 		out.writeUTF(smtp_password);
 		out.writeCompressedInt(imap_linux_server_account);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(ObjectUtils.toString(imap_host));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_46)>=0) out.writeNullUTF(Objects.toString(imap_host, null));
 		out.writeUTF(imap_password);
 		out.writeCompressedInt(support_email_address);
 		out.writeUTF(support_email_display);

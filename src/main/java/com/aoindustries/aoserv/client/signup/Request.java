@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,7 +33,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.InternUtils;
@@ -44,6 +43,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Stores a single sign-up request.
@@ -286,7 +286,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		out.writeUTF(encrypted_data);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(encryption_from);
 		out.writeCompressedInt(encryption_recipient); // Used to be called encryption_key
-		out.writeNullUTF(ObjectUtils.toString(completed_by));
+		out.writeNullUTF(Objects.toString(completed_by, null));
 		out.writeLong(completed_time);
 	}
 

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,13 +31,13 @@ import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A <code>TransactionSearchCriteria</code> stores all the parameters
@@ -323,9 +323,9 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		out.writeLong(after);
 		out.writeLong(before);
 		out.writeCompressedInt(transid);
-		out.writeNullUTF(ObjectUtils.toString(business));
-		out.writeNullUTF(ObjectUtils.toString(sourceBusiness));
-		out.writeNullUTF(ObjectUtils.toString(business_administrator));
+		out.writeNullUTF(Objects.toString(business, null));
+		out.writeNullUTF(Objects.toString(sourceBusiness, null));
+		out.writeNullUTF(Objects.toString(business_administrator, null));
 		out.writeNullUTF(type);
 		out.writeNullUTF(description);
 		out.writeNullUTF(paymentType);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,7 @@ import java.util.NoSuchElementException;
  */
 final class EntrySet<K,V extends AOServObject<K,V>> extends AbstractSet<Map.Entry<K,V>> {
 
-	private List<V> objs;
+	private final List<V> objs;
 
 	EntrySet(List<V> objs) {
 		this.objs=objs;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -193,7 +193,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			if(columnHashes!=null) {
 				int len=columnHashes.size();
 				for(int c=0;c<len;c++) {
-					Map map=columnHashes.get(c);
+					Map<Object,V> map = columnHashes.get(c);
 					if(map!=null) map.clear();
 				}
 			}
@@ -225,7 +225,7 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 			if(columnHashes!=null) {
 				int len=columnHashes.size();
 				for(int c=0;c<len;c++) {
-					Map map=columnHashes.get(c);
+					Map<Object,V> map = columnHashes.get(c);
 					if(map!=null) map.clear();
 				}
 			}

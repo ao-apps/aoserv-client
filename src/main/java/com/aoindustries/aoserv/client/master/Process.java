@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -39,6 +38,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * Each <code>Thread</code> on the master reports its activities so that
@@ -347,8 +347,8 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(process_id);
 		out.writeLong(connector_id);
-		out.writeNullUTF(ObjectUtils.toString(authenticated_user));
-		out.writeNullUTF(ObjectUtils.toString(effective_user));
+		out.writeNullUTF(Objects.toString(authenticated_user, null));
+		out.writeNullUTF(Objects.toString(effective_user, null));
 		out.writeCompressedInt(daemon_server);
 		out.writeUTF(host.toString());
 		out.writeUTF(protocol);

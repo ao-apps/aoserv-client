@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -59,7 +59,6 @@ import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
 import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.sql.SQLUtility;
@@ -88,6 +87,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -1292,7 +1292,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		out.writeLong(created);
 		out.writeLong(canceled);
 		out.writeNullUTF(cancelReason);
-		out.writeNullUTF(ObjectUtils.toString(parent));
+		out.writeNullUTF(Objects.toString(parent, null));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);
 		out.writeBoolean(can_add_businesses);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) out.writeBoolean(false);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -59,7 +59,6 @@ import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
@@ -85,6 +84,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * An <code>AOServer</code> stores the details about a server that runs the AOServ distribution.
@@ -498,7 +498,7 @@ final public class Server
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_2)>=0) out.writeUTF(time_zone);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_7)>=0) out.writeCompressedInt(jilter_bind);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_8)>=0) out.writeBoolean(restrict_outbound_email);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(ObjectUtils.toString(daemon_connect_address));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_11)>=0) out.writeNullUTF(Objects.toString(daemon_connect_address, null));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_12)>=0) out.writeCompressedInt(failover_batch_size);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_35)>=0) {
 			out.writeFloat(monitoring_load_low);

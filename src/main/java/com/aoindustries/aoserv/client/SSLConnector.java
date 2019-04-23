@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,7 +24,6 @@ package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.io.AOPool;
-import com.aoindustries.lang.ObjectUtils;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
@@ -34,6 +33,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -153,16 +153,16 @@ public class SSLConnector extends TCPConnector {
 			if(connector.password==null) throw new NullPointerException("connector.password is null");
 			if(
 				connector.hostname.equals(hostname)
-				&& ObjectUtils.equals(local_ip, connector.local_ip)
+				&& Objects.equals(local_ip, connector.local_ip)
 				&& connector.port==port
 				&& connector.connectAs.equals(connectAs)
 				&& connector.authenticateAs.equals(authenticateAs)
 				&& connector.password.equals(password)
-				&& ObjectUtils.equals(daemonServer, connector.daemonServer)
+				&& Objects.equals(daemonServer, connector.daemonServer)
 				&& connector.poolSize==poolSize
 				&& connector.maxConnectionAge==maxConnectionAge
-				&& ObjectUtils.equals(SSLConnector.trustStorePath, trustStorePath)
-				&& ObjectUtils.equals(SSLConnector.trustStorePassword, trustStorePassword)
+				&& Objects.equals(SSLConnector.trustStorePath, trustStorePath)
+				&& Objects.equals(SSLConnector.trustStorePassword, trustStorePassword)
 			) return connector;
 		}
 		SSLConnector newConnector=new SSLConnector(
