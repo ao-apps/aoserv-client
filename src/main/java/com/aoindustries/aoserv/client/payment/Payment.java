@@ -113,6 +113,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String authorizationErrorCode;
 	private String authorizationProviderErrorMessage;
 	private String authorizationProviderUniqueId;
+	private String authorizationProviderReplacementMaskedCardNumber;
+	private String authorizationReplacementMaskedCardNumber;
 	private String authorizationProviderApprovalResult;
 	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.ApprovalResult
 	private String authorizationApprovalResult;
@@ -446,6 +448,14 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return authorizationProviderUniqueId;
 	}
 
+	public String getAuthorizationProviderReplacementMaskedCardNumber() {
+		return authorizationProviderReplacementMaskedCardNumber;
+	}
+
+	public String getAuthorizationReplacementMaskedCardNumber() {
+		return authorizationReplacementMaskedCardNumber;
+	}
+
 	public String getAuthorizationProviderApprovalResult() {
 		return authorizationProviderApprovalResult;
 	}
@@ -648,34 +658,36 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			case 52: return authorizationErrorCode;
 			case 53: return authorizationProviderErrorMessage;
 			case 54: return authorizationProviderUniqueId;
-			case 55: return authorizationProviderApprovalResult;
-			case 56: return authorizationApprovalResult;
-			case 57: return authorizationProviderDeclineReason;
-			case 58: return authorizationDeclineReason;
-			case 59: return authorizationProviderReviewReason;
-			case 60: return authorizationReviewReason;
-			case 61: return authorizationProviderCvvResult;
-			case 62: return authorizationCvvResult;
-			case 63: return authorizationProviderAvsResult;
-			case 64: return authorizationAvsResult;
-			case 65: return authorizationApprovalCode;
-			case 66: return getCaptureTime();
-			case 67: return captureUsername;
-			case 68: return capturePrincipalName;
-			case 69: return captureCommunicationResult;
-			case 70: return captureProviderErrorCode;
-			case 71: return captureErrorCode;
-			case 72: return captureProviderErrorMessage;
-			case 73: return captureProviderUniqueId;
-			case 74: return getVoidTime();
-			case 75: return voidUsername;
-			case 76: return voidPrincipalName;
-			case 77: return voidCommunicationResult;
-			case 78: return voidProviderErrorCode;
-			case 79: return voidErrorCode;
-			case 80: return voidProviderErrorMessage;
-			case 81: return voidProviderUniqueId;
-			case 82: return status;
+			case 55: return authorizationProviderReplacementMaskedCardNumber;
+			case 56: return authorizationReplacementMaskedCardNumber;
+			case 57: return authorizationProviderApprovalResult;
+			case 58: return authorizationApprovalResult;
+			case 59: return authorizationProviderDeclineReason;
+			case 60: return authorizationDeclineReason;
+			case 61: return authorizationProviderReviewReason;
+			case 62: return authorizationReviewReason;
+			case 63: return authorizationProviderCvvResult;
+			case 64: return authorizationCvvResult;
+			case 65: return authorizationProviderAvsResult;
+			case 66: return authorizationAvsResult;
+			case 67: return authorizationApprovalCode;
+			case 68: return getCaptureTime();
+			case 69: return captureUsername;
+			case 70: return capturePrincipalName;
+			case 71: return captureCommunicationResult;
+			case 72: return captureProviderErrorCode;
+			case 73: return captureErrorCode;
+			case 74: return captureProviderErrorMessage;
+			case 75: return captureProviderUniqueId;
+			case 76: return getVoidTime();
+			case 77: return voidUsername;
+			case 78: return voidPrincipalName;
+			case 79: return voidCommunicationResult;
+			case 80: return voidProviderErrorCode;
+			case 81: return voidErrorCode;
+			case 82: return voidProviderErrorMessage;
+			case 83: return voidProviderUniqueId;
+			case 84: return status;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -744,6 +756,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationErrorCode = result.getString(pos++);
 			authorizationProviderErrorMessage = result.getString(pos++);
 			authorizationProviderUniqueId = result.getString(pos++);
+			authorizationProviderReplacementMaskedCardNumber = result.getString(pos++);
+			authorizationReplacementMaskedCardNumber = result.getString(pos++);
 			authorizationProviderApprovalResult = result.getString(pos++);
 			authorizationApprovalResult = result.getString(pos++);
 			authorizationProviderDeclineReason = result.getString(pos++);
@@ -840,6 +854,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationErrorCode = InternUtils.intern(in.readNullUTF());
 			authorizationProviderErrorMessage = in.readNullUTF();
 			authorizationProviderUniqueId = in.readNullUTF();
+			authorizationProviderReplacementMaskedCardNumber = in.readNullUTF();
+			authorizationReplacementMaskedCardNumber = in.readNullUTF();
 			authorizationProviderApprovalResult = InternUtils.intern(in.readNullUTF());
 			authorizationApprovalResult = InternUtils.intern(in.readNullUTF());
 			authorizationProviderDeclineReason = InternUtils.intern(in.readNullUTF());
@@ -930,6 +946,10 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(authorizationErrorCode);
 		out.writeNullUTF(authorizationProviderErrorMessage);
 		out.writeNullUTF(authorizationProviderUniqueId);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_0) >= 0) {
+			out.writeNullUTF(authorizationProviderReplacementMaskedCardNumber);
+			out.writeNullUTF(authorizationReplacementMaskedCardNumber);
+		}
 		out.writeNullUTF(authorizationProviderApprovalResult);
 		out.writeNullUTF(authorizationApprovalResult);
 		out.writeNullUTF(authorizationProviderDeclineReason);
@@ -969,6 +989,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		final String authorizationErrorCode,
 		final String authorizationProviderErrorMessage,
 		final String authorizationProviderUniqueId,
+		final String authorizationProviderReplacementMaskedCardNumber,
+		final String authorizationReplacementMaskedCardNumber,
 		final String providerApprovalResult,
 		final String approvalResult,
 		final String providerDeclineReason,
@@ -1004,6 +1026,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 					out.writeNullUTF(authorizationErrorCode);
 					out.writeNullUTF(authorizationProviderErrorMessage);
 					out.writeNullUTF(authorizationProviderUniqueId);
+					out.writeNullUTF(authorizationProviderReplacementMaskedCardNumber);
+					out.writeNullUTF(authorizationReplacementMaskedCardNumber);
 					out.writeNullUTF(providerApprovalResult);
 					out.writeNullUTF(approvalResult);
 					out.writeNullUTF(providerDeclineReason);
@@ -1053,6 +1077,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		final String authorizationErrorCode,
 		final String authorizationProviderErrorMessage,
 		final String authorizationProviderUniqueId,
+		final String authorizationProviderReplacementMaskedCardNumber,
+		final String authorizationReplacementMaskedCardNumber,
 		final String providerApprovalResult,
 		final String approvalResult,
 		final String providerDeclineReason,
@@ -1081,6 +1107,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 					out.writeNullUTF(authorizationErrorCode);
 					out.writeNullUTF(authorizationProviderErrorMessage);
 					out.writeNullUTF(authorizationProviderUniqueId);
+					out.writeNullUTF(authorizationProviderReplacementMaskedCardNumber);
+					out.writeNullUTF(authorizationReplacementMaskedCardNumber);
 					out.writeNullUTF(providerApprovalResult);
 					out.writeNullUTF(approvalResult);
 					out.writeNullUTF(providerDeclineReason);

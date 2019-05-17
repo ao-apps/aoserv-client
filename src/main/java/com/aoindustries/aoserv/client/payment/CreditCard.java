@@ -112,7 +112,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	private String processorId;
 	Account.Name accounting;
 	private String groupName;
-	private String cardInfo;
+	private String cardInfo; // TODO: Rename to maskedCardNumber
 	private String providerUniqueId;
 	private String firstName;
 	private String lastName;
@@ -544,6 +544,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 * Updates the credit card information (not including the card number).
 	 */
 	public void update(
+		String cardInfo,
 		String firstName,
 		String lastName,
 		String companyName,
@@ -562,6 +563,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		table.getConnector().requestUpdateIL(true,
 			AoservProtocol.CommandID.UPDATE_CREDIT_CARD,
 			pkey,
+			cardInfo,
 			firstName,
 			lastName,
 			companyName==null ? "" : companyName,
