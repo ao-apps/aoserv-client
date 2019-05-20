@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-05-16T21:09:59-0500"
+		dateModified="2019-05-19T20:15:04-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -59,6 +59,13 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>payment.Payment.authorizationProviderReplacementMaskedCardNumber</code> column</li>
 							<li>Added <code>payment.Payment.authorizationReplacementMaskedCardNumber</code> column</li>
 						</ol>
+					</li>
+					<li>Transaction <code>paymentInfo</code> may now be updated on <code>approved</code>, <code>declined</code>, and <code>held</code>.
+						<p>
+							Transactions are initially created in a pending state with the expected <code>paymentInfo</code>.
+							This allows for updating the <code>paymentInfo</code> to the actual value used, as
+							obtained from <code>AuthorizationResult.replacementMaskedCardNumber</code>.
+						</p>
 					</li>
 				</ul>
 			</changelog:release>
