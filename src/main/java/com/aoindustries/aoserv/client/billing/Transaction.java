@@ -106,7 +106,10 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
 	private byte payment_confirmed;
 
-	public void approved(final int creditCardTransaction) throws IOException, SQLException {
+	/**
+	 * @param  paymentInfo  (Optional) The card info may have been updated during the transaction.
+	 */
+	public void approved(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
 		table.getConnector().requestUpdate(true,
 			AoservProtocol.CommandID.TRANSACTION_APPROVED,
 			new AOServConnector.UpdateRequest() {
@@ -116,6 +119,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(transid);
 					out.writeCompressedInt(creditCardTransaction);
+					out.writeNullUTF(paymentInfo);
 				}
 
 				@Override
@@ -136,7 +140,20 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		);
 	}
 
-	public void declined(final int creditCardTransaction) throws IOException, SQLException {
+	/**
+	 * @deprecated  Please provide updated cardInfo via {@link #approved(int, java.lang.String)}.
+	 *
+	 * @see  #approved(int, java.lang.String)
+	 */
+	@Deprecated
+	public void approved(int creditCardTransaction) throws IOException, SQLException {
+		approved(creditCardTransaction, null);
+	}
+
+	/**
+	 * @param  paymentInfo  (Optional) The card info may have been updated during the transaction.
+	 */
+	public void declined(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
 		table.getConnector().requestUpdate(true,
 			AoservProtocol.CommandID.TRANSACTION_DECLINED,
 			new AOServConnector.UpdateRequest() {
@@ -146,6 +163,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(transid);
 					out.writeCompressedInt(creditCardTransaction);
+					out.writeNullUTF(paymentInfo);
 				}
 
 				@Override
@@ -166,7 +184,20 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		);
 	}
 
-	public void held(final int creditCardTransaction) throws IOException, SQLException {
+	/**
+	 * @deprecated  Please provide updated cardInfo via {@link #declined(int, java.lang.String)}.
+	 *
+	 * @see  #declined(int, java.lang.String)
+	 */
+	@Deprecated
+	public void declined(int creditCardTransaction) throws IOException, SQLException {
+		declined(creditCardTransaction, null);
+	}
+
+	/**
+	 * @param  paymentInfo  (Optional) The card info may have been updated during the transaction.
+	 */
+	public void held(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
 		table.getConnector().requestUpdate(true,
 			AoservProtocol.CommandID.TRANSACTION_HELD,
 			new AOServConnector.UpdateRequest() {
@@ -176,6 +207,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(transid);
 					out.writeCompressedInt(creditCardTransaction);
+					out.writeNullUTF(paymentInfo);
 				}
 
 				@Override
@@ -194,6 +226,16 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 				}
 			}
 		);
+	}
+
+	/**
+	 * @deprecated  Please provide updated cardInfo via {@link #held(int, java.lang.String)}.
+	 *
+	 * @see  #held(int, java.lang.String)
+	 */
+	@Deprecated
+	public void held(int creditCardTransaction) throws IOException, SQLException {
+		held(creditCardTransaction, null);
 	}
 
 	@Override
