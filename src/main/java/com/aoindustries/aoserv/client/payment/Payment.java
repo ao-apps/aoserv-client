@@ -872,8 +872,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardGroupName = in.readNullUTF();
 			creditCardProviderUniqueId = in.readNullUTF();
 			creditCardMaskedCardNumber = in.readUTF();
-			creditCard_expirationMonth = in.readBoolean() ? in.readByte() : null; // TODO: in.readNullByte();
-			creditCard_expirationYear = in.readBoolean() ? in.readShort() : null; // TODO: in.readNullShort();
+			creditCard_expirationMonth = in.readNullByte();
+			creditCard_expirationYear = in.readNullShort();
 			creditCardFirstName = in.readUTF();
 			creditCardLastName = in.readUTF();
 			creditCardCompanyName = in.readNullUTF();
@@ -899,8 +899,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationResult_providerReplacementMaskedCardNumber = in.readNullUTF();
 			authorizationResult_replacementMaskedCardNumber = in.readNullUTF();
 			authorizationResult_providerReplacementExpiration = in.readNullUTF();
-			authorizationResult_replacementExpirationMonth = in.readBoolean() ? in.readByte() : null; // TODO: in.readNullByte();
-			authorizationResult_replacementExpirationYear = in.readBoolean() ? in.readShort() : null; // TODO: in.readNullShort();
+			authorizationResult_replacementExpirationMonth = in.readNullByte();
+			authorizationResult_replacementExpirationYear = in.readNullShort();
 			authorizationProviderApprovalResult = InternUtils.intern(in.readNullUTF());
 			authorizationApprovalResult = InternUtils.intern(in.readNullUTF());
 			authorizationProviderDeclineReason = InternUtils.intern(in.readNullUTF());
@@ -970,12 +970,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(creditCardProviderUniqueId);
 		out.writeUTF(creditCardMaskedCardNumber);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_0) >= 0) {
-			out.writeBoolean(creditCard_expirationMonth != null);
-			if(creditCard_expirationMonth != null) out.writeByte(creditCard_expirationMonth);
-			// TODO: out.writeNullByte(creditCard_expirationMonth);
-			out.writeBoolean(creditCard_expirationYear != null);
-			if(creditCard_expirationYear != null) out.writeShort(creditCard_expirationYear);
-			// TODO: out.writeNullShort(creditCard_expirationYear);
+			out.writeNullByte(creditCard_expirationMonth);
+			out.writeNullShort(creditCard_expirationYear);
 		}
 		out.writeUTF(creditCardFirstName);
 		out.writeUTF(creditCardLastName);
@@ -1003,12 +999,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
 			out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
 			out.writeNullUTF(authorizationResult_providerReplacementExpiration);
-			out.writeBoolean(authorizationResult_replacementExpirationMonth != null);
-			if(authorizationResult_replacementExpirationMonth != null) out.writeByte(authorizationResult_replacementExpirationMonth);
-			// TODO: out.writeNullByte(authorizationResult_replacementExpirationMonth);
-			out.writeBoolean(authorizationResult_replacementExpirationYear != null);
-			if(authorizationResult_replacementExpirationYear != null) out.writeShort(authorizationResult_replacementExpirationYear);
-			// TODO: out.writeNullShort(authorizationResult_replacementExpirationYear);
+			out.writeNullByte(authorizationResult_replacementExpirationMonth);
+			out.writeNullShort(authorizationResult_replacementExpirationYear);
 		}
 		out.writeNullUTF(authorizationProviderApprovalResult);
 		out.writeNullUTF(authorizationApprovalResult);
@@ -1092,12 +1084,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 					out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
 					out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
 					out.writeNullUTF(authorizationResult_providerReplacementExpiration);
-					out.writeBoolean(authorizationResult_replacementExpirationMonth != null);
-					if(authorizationResult_replacementExpirationMonth != null) out.writeByte(authorizationResult_replacementExpirationMonth);
-					// TODO: out.writeNullByte(authorizationResult_replacementExpirationMonth);
-					out.writeBoolean(authorizationResult_replacementExpirationYear != null);
-					if(authorizationResult_replacementExpirationYear != null) out.writeShort(authorizationResult_replacementExpirationYear);
-					// TODO: out.writeNullShort(authorizationResult_replacementExpirationYear);
+					out.writeNullByte(authorizationResult_replacementExpirationMonth);
+					out.writeNullShort(authorizationResult_replacementExpirationYear);
 					out.writeNullUTF(providerApprovalResult);
 					out.writeNullUTF(approvalResult);
 					out.writeNullUTF(providerDeclineReason);
@@ -1183,12 +1171,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 					out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
 					out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
 					out.writeNullUTF(authorizationResult_providerReplacementExpiration);
-					out.writeBoolean(authorizationResult_replacementExpirationMonth != null);
-					if(authorizationResult_replacementExpirationMonth != null) out.writeByte(authorizationResult_replacementExpirationMonth);
-					// TODO: out.writeNullByte(authorizationResult_replacementExpirationMonth);
-					out.writeBoolean(authorizationResult_replacementExpirationYear != null);
-					if(authorizationResult_replacementExpirationYear != null) out.writeShort(authorizationResult_replacementExpirationYear);
-					// TODO: out.writeNullShort(authorizationResult_replacementExpirationYear);
+					out.writeNullByte(authorizationResult_replacementExpirationMonth);
+					out.writeNullShort(authorizationResult_replacementExpirationYear);
 					out.writeNullUTF(providerApprovalResult);
 					out.writeNullUTF(approvalResult);
 					out.writeNullUTF(providerDeclineReason);
