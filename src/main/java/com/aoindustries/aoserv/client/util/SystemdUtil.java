@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018  AO Industries, Inc.
+ * Copyright (C) 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client.util;
 
-import com.aoindustries.nio.charset.Charsets;
 import com.aoindustries.util.StringUtility;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Systemd utilities
@@ -41,7 +41,7 @@ public class SystemdUtil {
 	 */
 	public static String encode(String value) {
 		if(value == null) return null;
-		byte[] utf8 = value.getBytes(Charsets.UTF_8);
+		byte[] utf8 = value.getBytes(StandardCharsets.UTF_8);
 		StringBuilder escaped = new StringBuilder(utf8.length);
 		for(int i = 0; i < utf8.length; i++) {
 			byte b = utf8[i];

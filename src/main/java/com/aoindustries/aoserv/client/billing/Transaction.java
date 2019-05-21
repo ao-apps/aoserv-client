@@ -253,6 +253,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	 * @see  #getCreditCardTransaction()
 	 * @see  CreditCardTransaction#getAuthorizationApprovalCode()
 	 */
+	@Deprecated
 	public String getAprNum() throws SQLException, IOException {
 		Payment cct = getCreditCardTransaction();
 		return cct==null ? null : cct.getAuthorizationApprovalCode();

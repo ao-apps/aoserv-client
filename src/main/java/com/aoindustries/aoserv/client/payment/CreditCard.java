@@ -213,6 +213,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 *
 	 * @deprecated  Please use <code>com.aoindustries.creditcards.CreditCard#maskCardNumber(String)</code> instead.
 	 */
+	@Deprecated
 	public static String getCardInfo(String cardNumber) {
 		String nums = "";
 		int len = cardNumber.length();

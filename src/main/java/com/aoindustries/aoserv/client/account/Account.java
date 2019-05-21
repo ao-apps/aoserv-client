@@ -962,6 +962,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	/**
 	 * @deprecated  Please use <code>isBusinessOrParentOf</code> instead.
 	 */
+	@Deprecated
 	public boolean isBusinessOrParent(Account other) throws IOException, SQLException {
 		return isBusinessOrParentOf(other);
 	}

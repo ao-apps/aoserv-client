@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-05-20T17:40:19-0500"
+		dateModified="2019-05-20T21:56:40-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -81,6 +81,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							obtained from <code>AuthorizationResult.replacementMaskedCardNumber</code>.
 						</p>
 					</li>
+					<li>Reduced use of deprecated APIs.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

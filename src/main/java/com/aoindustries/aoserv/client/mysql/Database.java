@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -47,7 +47,6 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
-import com.aoindustries.nio.charset.Charsets;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
@@ -64,6 +63,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -359,7 +359,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	/**
 	 * The character set used by the dumps.
 	 */
-	public static final Charset DUMP_ENCODING = Charsets.UTF_8;
+	public static final Charset DUMP_ENCODING = StandardCharsets.UTF_8;
 
 	/**
 	 * Dumps the database into textual representation, not gzipped.

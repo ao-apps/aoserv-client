@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,7 +24,6 @@ package com.aoindustries.aoserv.client.linux;
 
 import static com.aoindustries.aoserv.client.linux.ApplicationResources.accessor;
 import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
@@ -132,7 +131,7 @@ final public class LinuxId implements
 
 	@Override
 	public int compareTo(LinuxId other) {
-		return this==other ? 0 : ComparatorUtils.compare(id, other.id);
+		return this==other ? 0 : Integer.compare(id, other.id);
 	}
 
 	@Override

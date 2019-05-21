@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.net.AddressFamily;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.validation.ValidationException;
 import java.io.ByteArrayOutputStream;
@@ -130,7 +129,8 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	}
 
 	public static String getArpaZoneForIPAddress(InetAddress ip, String netmask) throws IllegalArgumentException {
-		AddressFamily addressFamily = ip.getAddressFamily();
+		@SuppressWarnings("deprecation")
+		com.aoindustries.net.AddressFamily addressFamily = ip.getAddressFamily();
 		switch(addressFamily) {
 			case INET : {
 				String ipStr = ip.toString();

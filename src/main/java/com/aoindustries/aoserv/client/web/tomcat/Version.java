@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -138,6 +138,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	 * @see  #isTomcat5_5_X(AOServConnector)
 	 * @see  #isTomcat6_0_X(AOServConnector)
 	 */
+	@Deprecated
 	public boolean isTomcat4(AOServConnector connector) throws SQLException, IOException {
 		String version = getTechnologyVersion(connector).getVersion();
 		return version.startsWith("4.") || version.startsWith("5.");
