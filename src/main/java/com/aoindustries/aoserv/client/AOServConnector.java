@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -907,6 +907,7 @@ abstract public class AOServConnector implements SchemaParent {
 			else if(param instanceof Long) out.writeLong((Long)param);
 			else if(param instanceof Boolean) out.writeBoolean((Boolean)param);
 			else if(param instanceof Short) out.writeShort((Short)param);
+			else if(param instanceof Byte) out.writeByte((Short)param);
 			else if(param instanceof Enum) out.writeEnum((Enum)param);
 			else if(param instanceof byte[]) {
 				byte[] bytes=(byte[])param;
