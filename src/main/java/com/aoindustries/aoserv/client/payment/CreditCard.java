@@ -429,8 +429,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			accounting=Account.Name.valueOf(in.readUTF()).intern();
 			groupName=in.readNullUTF();
 			cardInfo=in.readUTF();
-			expirationMonth = in.readBoolean() ? in.readByte() : null; // TODO: in.readNullByte();
-			expirationYear = in.readBoolean() ? in.readShort() : null; // TODO: in.readNullShort();
+			expirationMonth = in.readNullByte();
+			expirationYear = in.readNullShort();
 			providerUniqueId=in.readUTF();
 			firstName=in.readUTF();
 			lastName=in.readUTF();
@@ -484,12 +484,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(groupName);
 		out.writeUTF(cardInfo);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_0) >= 0) {
-			out.writeBoolean(expirationMonth != null);
-			if(expirationMonth != null) out.writeByte(expirationMonth);
-			// TODO: out.writeNullByte(expirationMonth);
-			out.writeBoolean(expirationYear != null);
-			if(expirationYear != null) out.writeShort(expirationYear);
-			// TODO: out.writeNullShort(expirationYear);
+			out.writeNullByte(expirationMonth);
+			out.writeNullShort(expirationYear);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28)<=0) {
 			out.writeCompressedInt(0);
