@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -109,6 +109,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	/**
 	 * @deprecated  use getLinuxServerAccount().getPrimaryLinuxServerGroup()
 	 */
+	@Deprecated
 	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
 		return getLinuxServerAccount().getPrimaryLinuxServerGroup();
 	}
@@ -120,6 +121,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	/**
 	 * @deprecated  use getLinuxServerAccount().getHome()
 	 */
+	@Deprecated
 	public PosixPath getRoot() throws SQLException, IOException {
 		return getLinuxServerAccount().getHome();
 	}

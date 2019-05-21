@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,7 +27,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.net.AddressFamily;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.validation.ValidationException;
@@ -75,6 +74,7 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 		checkDestination(pkey, destination);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void checkDestination(String type, String destination) throws IllegalArgumentException {
 		String origDest=destination;
 		if(destination.length()==0) throw new IllegalArgumentException("Destination may not by empty");
@@ -82,14 +82,14 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 		if(type.equals(A)) {
 			try {
 				InetAddress parsed = InetAddress.valueOf(destination);
-				if(parsed.getAddressFamily() != AddressFamily.INET) throw new IllegalArgumentException("A type requires IPv4 address: "+destination);
+				if(parsed.getAddressFamily() != com.aoindustries.net.AddressFamily.INET) throw new IllegalArgumentException("A type requires IPv4 address: "+destination);
 			} catch(ValidationException e) {
 				throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 			}
 		} else if(type.equals(AAAA)) {
 			try {
 				InetAddress parsed = InetAddress.valueOf(destination);
-				if(parsed.getAddressFamily() != AddressFamily.INET6) throw new IllegalArgumentException("AAAA type requires IPv6 address: "+destination);
+				if(parsed.getAddressFamily() != com.aoindustries.net.AddressFamily.INET6) throw new IllegalArgumentException("AAAA type requires IPv6 address: "+destination);
 			} catch(ValidationException e) {
 				throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 			}

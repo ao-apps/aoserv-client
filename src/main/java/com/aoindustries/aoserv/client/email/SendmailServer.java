@@ -32,7 +32,6 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.util.SystemdUtil;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.net.AddressFamily;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.validation.ValidationException;
@@ -435,13 +434,14 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	/**
 	 * The <code>Addr</code> for <code>ClientPortOptions</code> with <code>Family=inet</code> or {@code null} if not set.
 	 */
+	@SuppressWarnings("deprecation")
 	public IpAddress getClientAddrInet() throws IOException, SQLException {
 		if(clientAddrInet == -1) return null;
 		IpAddress obj = table.getConnector().getNet().getIpAddress().get(clientAddrInet);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + clientAddrInet);
 		InetAddress address = obj.getInetAddress();
-		AddressFamily family = address.getAddressFamily();
-		if(family != AddressFamily.INET) throw new SQLException("Unexpected address family for clientAddrInet #" + clientAddrInet + ": " + family);
+		com.aoindustries.net.AddressFamily family = address.getAddressFamily();
+		if(family != com.aoindustries.net.AddressFamily.INET) throw new SQLException("Unexpected address family for clientAddrInet #" + clientAddrInet + ": " + family);
 		if(address.isUnspecified()) throw new SQLException("May not use unspecified address for clientAddrInet #" + clientAddrInet);
 		if(!getAoServer().getServer().equals(obj.getDevice().getServer())) throw new SQLException("IPAddress is not on this server for clientAddrInet #" + clientAddrInet);
 		return obj;
@@ -454,13 +454,14 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	/**
 	 * The <code>Addr</code> for <code>ClientPortOptions</code> with <code>Family=inet6</code> or {@code null} if not set.
 	 */
+	@SuppressWarnings("deprecation")
 	public IpAddress getClientAddrInet6() throws IOException, SQLException {
 		if(clientAddrInet6 == -1) return null;
 		IpAddress obj = table.getConnector().getNet().getIpAddress().get(clientAddrInet6);
 		if(obj == null) throw new SQLException("Unable to find IPAddress: " + clientAddrInet6);
 		InetAddress address = obj.getInetAddress();
-		AddressFamily family = address.getAddressFamily();
-		if(family != AddressFamily.INET6) throw new SQLException("Unexpected address family for clientAddrInet6 #" + clientAddrInet6 + ": " + family);
+		com.aoindustries.net.AddressFamily family = address.getAddressFamily();
+		if(family != com.aoindustries.net.AddressFamily.INET6) throw new SQLException("Unexpected address family for clientAddrInet6 #" + clientAddrInet6 + ": " + family);
 		if(address.isUnspecified()) throw new SQLException("May not use unspecified address for clientAddrInet6 #" + clientAddrInet6);
 		if(!getAoServer().getServer().equals(obj.getDevice().getServer())) throw new SQLException("IPAddress is not on this server for clientAddrInet6 #" + clientAddrInet6);
 		return obj;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,7 +25,6 @@ package com.aoindustries.aoserv.client.password;
 import com.aoindustries.aoserv.client.account.User;
 import static com.aoindustries.aoserv.client.password.ApplicationResources.accessor;
 import com.aoindustries.io.IoUtils;
-import com.aoindustries.util.EncodingUtils;
 import com.aoindustries.util.zip.CorrectedGZIPInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -335,13 +334,14 @@ final public class PasswordChecker {
 	/**
 	 * Prints the results in HTML format.
 	 */
+	@SuppressWarnings("deprecation")
 	public static void printResultsHtml(List<Result> results, Appendable out) throws IOException {
 		out.append("    <table style='border:0px;' cellspacing='0' cellpadding='4'>\n");
 		for(Result result : results) {
 			out.append("      <tr><td style='white-space:nowrap'>");
-			EncodingUtils.encodeHtml(result.getCategory(), out);
+			com.aoindustries.util.EncodingUtils.encodeHtml(result.getCategory(), out);
 			out.append(":</td><td style='white-space:nowrap'>");
-			EncodingUtils.encodeHtml(result.getResult(), out);
+			com.aoindustries.util.EncodingUtils.encodeHtml(result.getResult(), out);
 			out.append("</td></tr>\n");
 		}
 		out.append("    </table>\n");
