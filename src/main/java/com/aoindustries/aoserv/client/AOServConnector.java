@@ -907,7 +907,7 @@ abstract public class AOServConnector implements SchemaParent {
 			else if(param instanceof Long) out.writeLong((Long)param);
 			else if(param instanceof Boolean) out.writeBoolean((Boolean)param);
 			else if(param instanceof Short) out.writeShort((Short)param);
-			else if(param instanceof Byte) out.writeByte((Short)param);
+			else if(param instanceof Byte) out.writeByte((Byte)param);
 			else if(param instanceof Enum) out.writeEnum((Enum)param);
 			else if(param instanceof byte[]) {
 				byte[] bytes=(byte[])param;
