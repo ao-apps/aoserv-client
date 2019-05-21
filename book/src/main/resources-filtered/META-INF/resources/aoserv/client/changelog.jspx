@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-05-19T20:15:04-0500"
+		dateModified="2019-05-20T17:40:19-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -54,10 +54,24 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				scmUrl="@{documented.scm.url}"
 			>
 				<ul>
-					<li>Now updating stored masked card number when an updated card is used for a payment:
+					<li>Bank card expiration month and year is now stored in the clear when available:
 						<ol>
-							<li>Added <code>payment.Payment.authorizationProviderReplacementMaskedCardNumber</code> column</li>
-							<li>Added <code>payment.Payment.authorizationReplacementMaskedCardNumber</code> column</li>
+							<li>Added <code>payment.CreditCard.expirationMonth</code> column</li>
+							<li>Added <code>payment.CreditCard.expirationYear</code> column</li>
+							<li>Removed <code>payment.CreditCard.encrypted_expiration</code> column</li>
+							<li>Removed <code>payment.CreditCard.encryption_expiration_from</code> column</li>
+							<li>Removed <code>payment.CreditCard.encryption_expiration_recipient</code> column</li>
+						</ol>
+					</li>
+					<li>Now updating stored masked card number and expiration date when an updated card is used for a payment:
+						<ol>
+							<li>Added <code>payment.Payment.creditCard.expirationMonth</code> column</li>
+							<li>Added <code>payment.Payment.creditCard.expirationYear</code> column</li>
+							<li>Added <code>payment.Payment.authorizationResult.providerReplacementMaskedCardNumber</code> column</li>
+							<li>Added <code>payment.Payment.authorizationResult.replacementMaskedCardNumber</code> column</li>
+							<li>Added <code>payment.Payment.authorizationResult.providerReplacementExpiration</code> column</li>
+							<li>Added <code>payment.Payment.authorizationResult.replacementExpirationMonth</code> column</li>
+							<li>Added <code>payment.Payment.authorizationResult.replacementExpirationYear</code> column</li>
 						</ol>
 					</li>
 					<li>Transaction <code>paymentInfo</code> may now be updated on <code>approved</code>, <code>declined</code>, and <code>held</code>.

@@ -66,6 +66,8 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		final Account business,
 		final String groupName,
 		final String cardInfo,
+		final byte expirationMonth,
+		final short expirationYear,
 		final String providerUniqueId,
 		final String firstName,
 		final String lastName,
@@ -83,9 +85,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		final String principalName,
 		final String description,
 		// Encrypted values
-		String card_number,
-		byte expiration_month,
-		short expiration_year
+		String card_number
 	) throws IOException, SQLException {
 		// Validate the encrypted parameters
 		if(card_number==null) throw new NullPointerException("billing_card_number is null");
@@ -97,14 +97,11 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
 		final EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
 		final String encryptedCardNumber;
-		final String encryptedExpiration;
-		if(encryptionFrom!=null && encryptionRecipient!=null) {
-			// Encrypt the card number and expiration
+		if(encryptionFrom != null && encryptionRecipient != null) {
+			// Encrypt the card number
 			encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, CreditCard.randomize(card_number));
-			encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, CreditCard.randomize(expiration_month+"/"+expiration_year));
 		} else {
 			encryptedCardNumber = null;
-			encryptedExpiration = null;
 		}
 
 		return connector.requestResult(true,
@@ -120,6 +117,8 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 					out.writeUTF(business.getName().toString());
 					out.writeNullUTF(groupName);
 					out.writeUTF(cardInfo);
+					out.writeByte(expirationMonth);
+					out.writeShort(expirationYear);
 					out.writeUTF(providerUniqueId);
 					out.writeUTF(firstName);
 					out.writeUTF(lastName);
@@ -137,7 +136,6 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 					out.writeNullUTF(principalName);
 					out.writeNullUTF(description);
 					out.writeNullUTF(encryptedCardNumber);
-					out.writeNullUTF(encryptedExpiration);
 					out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
 					out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
 				}

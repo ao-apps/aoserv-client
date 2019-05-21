@@ -392,6 +392,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		Processor processor,
 		String groupName,
 		String cardInfo,
+		byte expirationMonth,
+		short expirationYear,
 		String providerUniqueId,
 		String firstName,
 		String lastName,
@@ -408,15 +410,15 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		CountryCode countryCode,
 		String principalName,
 		String description,
-		String cardNumber,
-		byte expirationMonth,
-		short expirationYear
+		String cardNumber
 	) throws IOException, SQLException {
 		return table.getConnector().getPayment().getCreditCard().addCreditCard(
 			processor,
 			this,
 			groupName,
 			cardInfo,
+			expirationMonth,
+			expirationYear,
 			providerUniqueId,
 			firstName,
 			lastName,
@@ -433,9 +435,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			countryCode,
 			principalName,
 			description,
-			cardNumber,
-			expirationMonth,
-			expirationYear
+			cardNumber
 		);
 	}
 
@@ -474,6 +474,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		String creditCardGroupName,
 		String creditCardProviderUniqueId,
 		String creditCardMaskedCardNumber,
+		Byte creditCard_expirationMonth,
+		Short creditCard_expirationYear,
 		String creditCardFirstName,
 		String creditCardLastName,
 		String creditCardCompanyName,
@@ -524,6 +526,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			creditCardGroupName,
 			creditCardProviderUniqueId,
 			creditCardMaskedCardNumber,
+			creditCard_expirationMonth,
+			creditCard_expirationYear,
 			creditCardFirstName,
 			creditCardLastName,
 			creditCardCompanyName,
