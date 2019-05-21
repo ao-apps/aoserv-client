@@ -34,6 +34,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
@@ -113,6 +114,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	Account.Name accounting;
 	private String groupName;
 	private String cardInfo; // TODO: Rename to maskedCardNumber
+	private Byte expirationMonth;
+	private Short expirationYear;
 	private String providerUniqueId;
 	private String firstName;
 	private String lastName;
@@ -138,16 +141,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	private String encrypted_card_number;
 	private int encryption_card_number_from;
 	private int encryption_card_number_recipient;
-	private String encrypted_expiration;
-	private int encryption_expiration_from;
-	private int encryption_expiration_recipient;
 
 	// These are not pulled from the database, but are decrypted by GPG
 	transient private String decryptCardNumberPassphrase;
 	transient private String card_number;
-	transient private String decryptExpirationPassphrase;
-	transient private byte expiration_month;
-	transient private short expiration_year;
 
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() {
@@ -195,6 +192,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return cardInfo;
 	}
 
+	public Byte getExpirationMonth() {
+		return expirationMonth;
+	}
+
+	public Short getExpirationYear() {
+		return expirationYear;
+	}
+
 	/**
 	 * Gets the unique identifier that represents the CISP - compliant storage mechanism for the card
 	 * number and expiration date.
@@ -229,34 +234,33 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			case COLUMN_ACCOUNTING: return accounting;
 			case 3: return groupName;
 			case 4: return cardInfo;
-			case 5: return providerUniqueId;
-			case 6: return firstName;
-			case 7: return lastName;
-			case 8: return companyName;
-			case 9: return email;
-			case 10: return phone;
-			case 11: return fax;
-			case 12: return customerTaxId;
-			case 13: return streetAddress1;
-			case 14: return streetAddress2;
-			case 15: return city;
-			case 16: return state;
-			case 17: return postalCode;
-			case 18: return countryCode;
-			case 19: return getCreated();
-			case 20: return createdBy;
-			case 21: return principalName;
-			case 22: return useMonthly;
-			case 23: return isActive;
-			case 24: return getDeactivatedOn();
-			case 25: return deactivateReason;
-			case 26: return description;
-			case 27: return encrypted_card_number;
-			case 28: return encryption_card_number_from;
-			case 29: return encryption_card_number_recipient;
-			case 30: return encrypted_expiration;
-			case 31: return encryption_expiration_from;
-			case 32: return encryption_expiration_recipient;
+			case 5: return expirationMonth == null ? null : expirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
+			case 6: return expirationYear;
+			case 7: return providerUniqueId;
+			case 8: return firstName;
+			case 9: return lastName;
+			case 10: return companyName;
+			case 11: return email;
+			case 12: return phone;
+			case 13: return fax;
+			case 14: return customerTaxId;
+			case 15: return streetAddress1;
+			case 16: return streetAddress2;
+			case 17: return city;
+			case 18: return state;
+			case 19: return postalCode;
+			case 20: return countryCode;
+			case 21: return getCreated();
+			case 22: return createdBy;
+			case 23: return principalName;
+			case 24: return useMonthly;
+			case 25: return isActive;
+			case 26: return getDeactivatedOn();
+			case 27: return deactivateReason;
+			case 28: return description;
+			case 29: return encrypted_card_number;
+			case 30: return encryption_card_number_from;
+			case 31: return encryption_card_number_recipient;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -362,20 +366,6 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return er;
 	}
 
-	public EncryptionKey getEncryptionExpirationFrom() throws SQLException, IOException {
-		if(encryption_expiration_from==-1) return null;
-		EncryptionKey ek = table.getConnector().getPki().getEncryptionKey().get(encryption_expiration_from);
-		if(ek == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_expiration_from);
-		return ek;
-	}
-
-	public EncryptionKey getEncryptionExpirationRecipient() throws SQLException, IOException {
-		if(encryption_expiration_recipient==-1) return null;
-		EncryptionKey er = table.getConnector().getPki().getEncryptionKey().get(encryption_expiration_recipient);
-		if(er == null) throw new SQLException("Unable to find EncryptionKey: "+encryption_expiration_recipient);
-		return er;
-	}
-
 	@Override
 	public Table.TableID getTableID() {
 		return Table.TableID.CREDIT_CARDS;
@@ -390,6 +380,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			accounting = Account.Name.valueOf(result.getString(pos++));
 			groupName = result.getString(pos++);
 			cardInfo = result.getString(pos++);
+			expirationMonth = SafeMath.castByte(result.getShort(pos++));
+			if(result.wasNull()) expirationMonth = null;
+			expirationYear = result.getShort(pos++);
+			if(result.wasNull()) expirationYear = null;
 			providerUniqueId = result.getString(pos++);
 			firstName = result.getString(pos++);
 			lastName = result.getString(pos++);
@@ -418,11 +412,6 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			if(result.wasNull()) encryption_card_number_from = -1;
 			encryption_card_number_recipient = result.getInt(pos++);
 			if(result.wasNull()) encryption_card_number_recipient = -1;
-			encrypted_expiration = result.getString(pos++);
-			encryption_expiration_from = result.getInt(pos++);
-			if(result.wasNull()) encryption_expiration_from = -1;
-			encryption_expiration_recipient = result.getInt(pos++);
-			if(result.wasNull()) encryption_expiration_recipient = -1;
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -440,6 +429,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			accounting=Account.Name.valueOf(in.readUTF()).intern();
 			groupName=in.readNullUTF();
 			cardInfo=in.readUTF();
+			expirationMonth = in.readBoolean() ? in.readByte() : null; // TODO: in.readNullByte();
+			expirationYear = in.readBoolean() ? in.readShort() : null; // TODO: in.readNullShort();
 			providerUniqueId=in.readUTF();
 			firstName=in.readUTF();
 			lastName=in.readUTF();
@@ -465,9 +456,6 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			encrypted_card_number=in.readNullUTF();
 			encryption_card_number_from=in.readCompressedInt();
 			encryption_card_number_recipient=in.readCompressedInt();
-			encrypted_expiration=in.readNullUTF();
-			encryption_expiration_from=in.readCompressedInt();
-			encryption_expiration_recipient=in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -480,7 +468,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
 	@Override
 	public String toStringImpl() {
-		return cardInfo;
+		return providerUniqueId != null ? providerUniqueId : cardInfo;
 	}
 
 	public boolean getUseMonthly() {
@@ -495,6 +483,14 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(0);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(groupName);
 		out.writeUTF(cardInfo);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_0) >= 0) {
+			out.writeBoolean(expirationMonth != null);
+			if(expirationMonth != null) out.writeByte(expirationMonth);
+			// TODO: out.writeNullByte(expirationMonth);
+			out.writeBoolean(expirationYear != null);
+			if(expirationYear != null) out.writeShort(expirationYear);
+			// TODO: out.writeNullShort(expirationYear);
+		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28)<=0) {
 			out.writeCompressedInt(0);
 			out.writeCompressedInt(0);
@@ -534,14 +530,16 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			out.writeNullUTF(encrypted_card_number);
 			out.writeCompressedInt(encryption_card_number_from);
 			out.writeCompressedInt(encryption_card_number_recipient);
-			out.writeNullUTF(encrypted_expiration);
-			out.writeCompressedInt(encryption_expiration_from);
-			out.writeCompressedInt(encryption_expiration_recipient);
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_0) < 0) {
+				out.writeNullUTF(null); // encrypted_expiration
+				out.writeCompressedInt(-1); // encryption_expiration_from
+				out.writeCompressedInt(-1); // encryption_expiration_recipient
+			}
 		}
 	}
 
 	/**
-	 * Updates the credit card information (not including the card number).
+	 * Updates the credit card information (not including the card number or expiration).
 	 */
 	public void update(
 		String cardInfo,
@@ -589,21 +587,18 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	public void updateCardNumberAndExpiration(
 		final String maskedCardNumber,
 		String cardNumber,
-		byte expirationMonth,
-		short expirationYear
+		final byte expirationMonth,
+		final short expirationYear
 	) throws IOException, SQLException {
 		Processor processor = getCreditCardProcessor();
 		final EncryptionKey encryptionFrom = processor.getEncryptionFrom();
 		final EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
 		final String encryptedCardNumber;
-		final String encryptedExpiration;
-		if(encryptionFrom!=null && encryptionRecipient!=null) {
+		if(encryptionFrom != null && encryptionRecipient != null) {
 			// Encrypt the card number and expiration
 			encryptedCardNumber = encryptionFrom.encrypt(encryptionRecipient, randomize(cardNumber));
-			encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
 		} else {
 			encryptedCardNumber = null;
-			encryptedExpiration = null;
 		}
 
 		table.getConnector().requestUpdate(true,
@@ -615,8 +610,9 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeUTF(maskedCardNumber);
+					out.writeByte(expirationMonth);
+					out.writeShort(expirationYear);
 					out.writeNullUTF(encryptedCardNumber);
-					out.writeNullUTF(encryptedExpiration);
 					out.writeCompressedInt(encryptionFrom==null ? -1 : encryptionFrom.getPkey());
 					out.writeCompressedInt(encryptionRecipient==null ? -1 : encryptionRecipient.getPkey());
 				}
@@ -648,20 +644,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		byte expirationMonth,
 		short expirationYear
 	) throws IOException, SQLException {
-		Processor processor = getCreditCardProcessor();
-		EncryptionKey encryptionFrom = processor.getEncryptionFrom();
-		EncryptionKey encryptionRecipient = processor.getEncryptionRecipient();
-		if(encryptionFrom!=null && encryptionRecipient!=null) {
-			// Encrypt the expiration
-			String encryptedExpiration = encryptionFrom.encrypt(encryptionRecipient, randomize(expirationMonth+"/"+expirationYear));
-			table.getConnector().requestUpdateIL(true,
-				AoservProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
-				pkey,
-				encryptedExpiration,
-				encryptionFrom.getPkey(),
-				encryptionRecipient.getPkey()
-			);
-		}
+		table.getConnector().requestUpdateIL(true,
+			AoservProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
+			pkey,
+			expirationMonth,
+			expirationYear
+		);
 	}
 
 	/**
@@ -691,50 +679,5 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			decryptCardNumberPassphrase=passphrase;
 		}
 		return card_number;
-	}
-
-	synchronized private void decryptExpiration(String passphrase) throws IOException, SQLException {
-		// If a different passphrase is provided, don't use the cached values, clear, and re-decrypt
-		if(decryptExpirationPassphrase==null || !passphrase.equals(decryptExpirationPassphrase)) {
-			// Clear first just in case there is a problem in part of the decryption
-			decryptExpirationPassphrase=null;
-			expiration_month=-1;
-			expiration_year=-1;
-
-			if(encrypted_expiration!=null) {
-				// Perform the decryption
-				String decrypted = getEncryptionExpirationRecipient().decrypt(encrypted_expiration, passphrase);
-				// Strip all characters except 0-9, and /
-				StringBuilder stripped = new StringBuilder(decrypted.length());
-				for(int c=0, len=decrypted.length();c<len;c++) {
-					char ch = decrypted.charAt(c);
-					if(
-						(ch>='0' && ch<='0')
-						|| ch=='/'
-					) stripped.append(ch);
-				}
-				int pos = stripped.indexOf("/");
-				if(pos==-1) throw new IOException("Unable to find /");
-				expiration_month = Byte.parseByte(stripped.substring(0, pos));
-				expiration_year = Short.parseShort(stripped.substring(pos+1));
-			}
-			decryptExpirationPassphrase=passphrase;
-		}
-	}
-
-	/**
-	 * Gets the expiration month or <code>-1</code> if not stored.
-	 */
-	synchronized public byte getExpirationMonth(String passphrase) throws IOException, SQLException {
-		decryptExpiration(passphrase);
-		return expiration_month;
-	}
-
-	/**
-	 * Gets the expiration year or <code>-1</code> if not stored.
-	 */
-	synchronized public short getExpirationYear(String passphrase) throws IOException, SQLException {
-		decryptExpiration(passphrase);
-		return expiration_year;
 	}
 }

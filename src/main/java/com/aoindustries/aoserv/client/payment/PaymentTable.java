@@ -92,6 +92,8 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 		final String creditCardGroupName,
 		final String creditCardProviderUniqueId,
 		final String creditCardMaskedCardNumber,
+		final Byte creditCard_expirationMonth,
+		final Short creditCard_expirationYear,
 		final String creditCardFirstName,
 		final String creditCardLastName,
 		final String creditCardCompanyName,
@@ -152,6 +154,12 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 					out.writeNullUTF(creditCardGroupName);
 					out.writeNullUTF(creditCardProviderUniqueId);
 					out.writeUTF(creditCardMaskedCardNumber);
+					out.writeBoolean(creditCard_expirationMonth != null);
+					if(creditCard_expirationMonth != null) out.writeByte(creditCard_expirationMonth);
+					// TODO: out.writeNullByte(creditCard_expirationMonth);
+					out.writeBoolean(creditCard_expirationYear != null);
+					if(creditCard_expirationYear != null) out.writeShort(creditCard_expirationYear);
+					// TODO: out.writeNullShort(creditCard_expirationYear);
 					out.writeUTF(creditCardFirstName);
 					out.writeUTF(creditCardLastName);
 					out.writeNullUTF(creditCardCompanyName);

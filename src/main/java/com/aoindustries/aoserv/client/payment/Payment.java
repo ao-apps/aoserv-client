@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
@@ -89,6 +90,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String creditCardGroupName;
 	private String creditCardProviderUniqueId;
 	private String creditCardMaskedCardNumber;
+	private Byte creditCard_expirationMonth;
+	private Short creditCard_expirationYear;
 	private String creditCardFirstName;
 	private String creditCardLastName;
 	private String creditCardCompanyName;
@@ -113,8 +116,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String authorizationErrorCode;
 	private String authorizationProviderErrorMessage;
 	private String authorizationProviderUniqueId;
-	private String authorizationProviderReplacementMaskedCardNumber;
-	private String authorizationReplacementMaskedCardNumber;
+	private String authorizationResult_providerReplacementMaskedCardNumber;
+	private String authorizationResult_replacementMaskedCardNumber;
+	private String authorizationResult_providerReplacementExpiration;
+	private Byte authorizationResult_replacementExpirationMonth;
+	private Short authorizationResult_replacementExpirationYear;
 	private String authorizationProviderApprovalResult;
 	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.ApprovalResult
 	private String authorizationApprovalResult;
@@ -339,6 +345,14 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return creditCardMaskedCardNumber;
 	}
 
+	public Byte getCreditCard_expirationMonth() {
+		return creditCard_expirationMonth;
+	}
+
+	public Short getCreditCard_expirationYear() {
+		return creditCard_expirationYear;
+	}
+
 	public String getCreditCardFirstName() {
 		return creditCardFirstName;
 	}
@@ -449,11 +463,23 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	public String getAuthorizationProviderReplacementMaskedCardNumber() {
-		return authorizationProviderReplacementMaskedCardNumber;
+		return authorizationResult_providerReplacementMaskedCardNumber;
 	}
 
 	public String getAuthorizationReplacementMaskedCardNumber() {
-		return authorizationReplacementMaskedCardNumber;
+		return authorizationResult_replacementMaskedCardNumber;
+	}
+
+	public String getAuthorizationProviderReplacementExpiration() {
+		return authorizationResult_providerReplacementExpiration;
+	}
+
+	public Byte getAuthorizationReplacementExpirationMonth() {
+		return authorizationResult_replacementExpirationMonth;
+	}
+
+	public Short getAuthorizationReplacementExpirationYear() {
+		return authorizationResult_replacementExpirationYear;
 	}
 
 	public String getAuthorizationProviderApprovalResult() {
@@ -636,58 +662,63 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			case 30: return creditCardGroupName;
 			case 31: return creditCardProviderUniqueId;
 			case 32: return creditCardMaskedCardNumber;
-			case 33: return creditCardFirstName;
-			case 34: return creditCardLastName;
-			case 35: return creditCardCompanyName;
-			case 36: return creditCardEmail;
-			case 37: return creditCardPhone;
-			case 38: return creditCardFax;
-			case 39: return creditCardCustomerTaxId;
-			case 40: return creditCardStreetAddress1;
-			case 41: return creditCardStreetAddress2;
-			case 42: return creditCardCity;
-			case 43: return creditCardState;
-			case 44: return creditCardPostalCode;
-			case 45: return creditCardCountryCode;
-			case 46: return creditCardComments;
-			case 47: return getAuthorizationTime();
-			case 48: return authorizationUsername;
-			case 49: return authorizationPrincipalName;
-			case 50: return authorizationCommunicationResult;
-			case 51: return authorizationProviderErrorCode;
-			case 52: return authorizationErrorCode;
-			case 53: return authorizationProviderErrorMessage;
-			case 54: return authorizationProviderUniqueId;
-			case 55: return authorizationProviderReplacementMaskedCardNumber;
-			case 56: return authorizationReplacementMaskedCardNumber;
-			case 57: return authorizationProviderApprovalResult;
-			case 58: return authorizationApprovalResult;
-			case 59: return authorizationProviderDeclineReason;
-			case 60: return authorizationDeclineReason;
-			case 61: return authorizationProviderReviewReason;
-			case 62: return authorizationReviewReason;
-			case 63: return authorizationProviderCvvResult;
-			case 64: return authorizationCvvResult;
-			case 65: return authorizationProviderAvsResult;
-			case 66: return authorizationAvsResult;
-			case 67: return authorizationApprovalCode;
-			case 68: return getCaptureTime();
-			case 69: return captureUsername;
-			case 70: return capturePrincipalName;
-			case 71: return captureCommunicationResult;
-			case 72: return captureProviderErrorCode;
-			case 73: return captureErrorCode;
-			case 74: return captureProviderErrorMessage;
-			case 75: return captureProviderUniqueId;
-			case 76: return getVoidTime();
-			case 77: return voidUsername;
-			case 78: return voidPrincipalName;
-			case 79: return voidCommunicationResult;
-			case 80: return voidProviderErrorCode;
-			case 81: return voidErrorCode;
-			case 82: return voidProviderErrorMessage;
-			case 83: return voidProviderUniqueId;
-			case 84: return status;
+			case 33: return creditCard_expirationMonth == null ? null : creditCard_expirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
+			case 34: return creditCard_expirationYear;
+			case 35: return creditCardFirstName;
+			case 36: return creditCardLastName;
+			case 37: return creditCardCompanyName;
+			case 38: return creditCardEmail;
+			case 39: return creditCardPhone;
+			case 40: return creditCardFax;
+			case 41: return creditCardCustomerTaxId;
+			case 42: return creditCardStreetAddress1;
+			case 43: return creditCardStreetAddress2;
+			case 44: return creditCardCity;
+			case 45: return creditCardState;
+			case 46: return creditCardPostalCode;
+			case 47: return creditCardCountryCode;
+			case 48: return creditCardComments;
+			case 49: return getAuthorizationTime();
+			case 50: return authorizationUsername;
+			case 51: return authorizationPrincipalName;
+			case 52: return authorizationCommunicationResult;
+			case 53: return authorizationProviderErrorCode;
+			case 54: return authorizationErrorCode;
+			case 55: return authorizationProviderErrorMessage;
+			case 56: return authorizationProviderUniqueId;
+			case 57: return authorizationResult_providerReplacementMaskedCardNumber;
+			case 58: return authorizationResult_replacementMaskedCardNumber;
+			case 59: return authorizationResult_providerReplacementExpiration;
+			case 60: return authorizationResult_replacementExpirationMonth == null ? null : authorizationResult_replacementExpirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
+			case 61: return authorizationResult_replacementExpirationYear;
+			case 62: return authorizationProviderApprovalResult;
+			case 63: return authorizationApprovalResult;
+			case 64: return authorizationProviderDeclineReason;
+			case 65: return authorizationDeclineReason;
+			case 66: return authorizationProviderReviewReason;
+			case 67: return authorizationReviewReason;
+			case 68: return authorizationProviderCvvResult;
+			case 69: return authorizationCvvResult;
+			case 70: return authorizationProviderAvsResult;
+			case 71: return authorizationAvsResult;
+			case 72: return authorizationApprovalCode;
+			case 73: return getCaptureTime();
+			case 74: return captureUsername;
+			case 75: return capturePrincipalName;
+			case 76: return captureCommunicationResult;
+			case 77: return captureProviderErrorCode;
+			case 78: return captureErrorCode;
+			case 79: return captureProviderErrorMessage;
+			case 80: return captureProviderUniqueId;
+			case 81: return getVoidTime();
+			case 82: return voidUsername;
+			case 83: return voidPrincipalName;
+			case 84: return voidCommunicationResult;
+			case 85: return voidProviderErrorCode;
+			case 86: return voidErrorCode;
+			case 87: return voidProviderErrorMessage;
+			case 88: return voidProviderUniqueId;
+			case 89: return status;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
 	}
@@ -734,6 +765,10 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardGroupName = result.getString(pos++);
 			creditCardProviderUniqueId = result.getString(pos++);
 			creditCardMaskedCardNumber = result.getString(pos++);
+			creditCard_expirationMonth = SafeMath.castByte(result.getShort(pos++));
+			if(result.wasNull()) creditCard_expirationMonth = null;
+			creditCard_expirationYear = result.getShort(pos++);
+			if(result.wasNull()) creditCard_expirationYear = null;
 			creditCardFirstName = result.getString(pos++);
 			creditCardLastName = result.getString(pos++);
 			creditCardCompanyName = result.getString(pos++);
@@ -756,8 +791,13 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationErrorCode = result.getString(pos++);
 			authorizationProviderErrorMessage = result.getString(pos++);
 			authorizationProviderUniqueId = result.getString(pos++);
-			authorizationProviderReplacementMaskedCardNumber = result.getString(pos++);
-			authorizationReplacementMaskedCardNumber = result.getString(pos++);
+			authorizationResult_providerReplacementMaskedCardNumber = result.getString(pos++);
+			authorizationResult_replacementMaskedCardNumber = result.getString(pos++);
+			authorizationResult_providerReplacementExpiration = result.getString(pos++);
+			authorizationResult_replacementExpirationMonth = SafeMath.castByte(result.getShort(pos++));
+			if(result.wasNull()) authorizationResult_replacementExpirationMonth = null;
+			authorizationResult_replacementExpirationYear = result.getShort(pos++);
+			if(result.wasNull()) authorizationResult_replacementExpirationYear = null;
 			authorizationProviderApprovalResult = result.getString(pos++);
 			authorizationApprovalResult = result.getString(pos++);
 			authorizationProviderDeclineReason = result.getString(pos++);
@@ -832,6 +872,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardGroupName = in.readNullUTF();
 			creditCardProviderUniqueId = in.readNullUTF();
 			creditCardMaskedCardNumber = in.readUTF();
+			creditCard_expirationMonth = in.readBoolean() ? in.readByte() : null; // TODO: in.readNullByte();
+			creditCard_expirationYear = in.readBoolean() ? in.readShort() : null; // TODO: in.readNullShort();
 			creditCardFirstName = in.readUTF();
 			creditCardLastName = in.readUTF();
 			creditCardCompanyName = in.readNullUTF();
@@ -854,8 +896,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationErrorCode = InternUtils.intern(in.readNullUTF());
 			authorizationProviderErrorMessage = in.readNullUTF();
 			authorizationProviderUniqueId = in.readNullUTF();
-			authorizationProviderReplacementMaskedCardNumber = in.readNullUTF();
-			authorizationReplacementMaskedCardNumber = in.readNullUTF();
+			authorizationResult_providerReplacementMaskedCardNumber = in.readNullUTF();
+			authorizationResult_replacementMaskedCardNumber = in.readNullUTF();
+			authorizationResult_providerReplacementExpiration = in.readNullUTF();
+			authorizationResult_replacementExpirationMonth = in.readBoolean() ? in.readByte() : null; // TODO: in.readNullByte();
+			authorizationResult_replacementExpirationYear = in.readBoolean() ? in.readShort() : null; // TODO: in.readNullShort();
 			authorizationProviderApprovalResult = InternUtils.intern(in.readNullUTF());
 			authorizationApprovalResult = InternUtils.intern(in.readNullUTF());
 			authorizationProviderDeclineReason = InternUtils.intern(in.readNullUTF());
@@ -924,6 +969,14 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(creditCardGroupName);
 		out.writeNullUTF(creditCardProviderUniqueId);
 		out.writeUTF(creditCardMaskedCardNumber);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_0) >= 0) {
+			out.writeBoolean(creditCard_expirationMonth != null);
+			if(creditCard_expirationMonth != null) out.writeByte(creditCard_expirationMonth);
+			// TODO: out.writeNullByte(creditCard_expirationMonth);
+			out.writeBoolean(creditCard_expirationYear != null);
+			if(creditCard_expirationYear != null) out.writeShort(creditCard_expirationYear);
+			// TODO: out.writeNullShort(creditCard_expirationYear);
+		}
 		out.writeUTF(creditCardFirstName);
 		out.writeUTF(creditCardLastName);
 		out.writeNullUTF(creditCardCompanyName);
@@ -947,8 +1000,15 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(authorizationProviderErrorMessage);
 		out.writeNullUTF(authorizationProviderUniqueId);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_0) >= 0) {
-			out.writeNullUTF(authorizationProviderReplacementMaskedCardNumber);
-			out.writeNullUTF(authorizationReplacementMaskedCardNumber);
+			out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
+			out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
+			out.writeNullUTF(authorizationResult_providerReplacementExpiration);
+			out.writeBoolean(authorizationResult_replacementExpirationMonth != null);
+			if(authorizationResult_replacementExpirationMonth != null) out.writeByte(authorizationResult_replacementExpirationMonth);
+			// TODO: out.writeNullByte(authorizationResult_replacementExpirationMonth);
+			out.writeBoolean(authorizationResult_replacementExpirationYear != null);
+			if(authorizationResult_replacementExpirationYear != null) out.writeShort(authorizationResult_replacementExpirationYear);
+			// TODO: out.writeNullShort(authorizationResult_replacementExpirationYear);
 		}
 		out.writeNullUTF(authorizationProviderApprovalResult);
 		out.writeNullUTF(authorizationApprovalResult);
@@ -989,8 +1049,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		final String authorizationErrorCode,
 		final String authorizationProviderErrorMessage,
 		final String authorizationProviderUniqueId,
-		final String authorizationProviderReplacementMaskedCardNumber,
-		final String authorizationReplacementMaskedCardNumber,
+		final String authorizationResult_providerReplacementMaskedCardNumber,
+		final String authorizationResult_replacementMaskedCardNumber,
+		final String authorizationResult_providerReplacementExpiration,
+		final Byte authorizationResult_replacementExpirationMonth,
+		final Short authorizationResult_replacementExpirationYear,
 		final String providerApprovalResult,
 		final String approvalResult,
 		final String providerDeclineReason,
@@ -1026,8 +1089,15 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 					out.writeNullUTF(authorizationErrorCode);
 					out.writeNullUTF(authorizationProviderErrorMessage);
 					out.writeNullUTF(authorizationProviderUniqueId);
-					out.writeNullUTF(authorizationProviderReplacementMaskedCardNumber);
-					out.writeNullUTF(authorizationReplacementMaskedCardNumber);
+					out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
+					out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
+					out.writeNullUTF(authorizationResult_providerReplacementExpiration);
+					out.writeBoolean(authorizationResult_replacementExpirationMonth != null);
+					if(authorizationResult_replacementExpirationMonth != null) out.writeByte(authorizationResult_replacementExpirationMonth);
+					// TODO: out.writeNullByte(authorizationResult_replacementExpirationMonth);
+					out.writeBoolean(authorizationResult_replacementExpirationYear != null);
+					if(authorizationResult_replacementExpirationYear != null) out.writeShort(authorizationResult_replacementExpirationYear);
+					// TODO: out.writeNullShort(authorizationResult_replacementExpirationYear);
 					out.writeNullUTF(providerApprovalResult);
 					out.writeNullUTF(approvalResult);
 					out.writeNullUTF(providerDeclineReason);
@@ -1077,8 +1147,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		final String authorizationErrorCode,
 		final String authorizationProviderErrorMessage,
 		final String authorizationProviderUniqueId,
-		final String authorizationProviderReplacementMaskedCardNumber,
-		final String authorizationReplacementMaskedCardNumber,
+		final String authorizationResult_providerReplacementMaskedCardNumber,
+		final String authorizationResult_replacementMaskedCardNumber,
+		final String authorizationResult_providerReplacementExpiration,
+		final Byte authorizationResult_replacementExpirationMonth,
+		final Short authorizationResult_replacementExpirationYear,
 		final String providerApprovalResult,
 		final String approvalResult,
 		final String providerDeclineReason,
@@ -1107,8 +1180,15 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 					out.writeNullUTF(authorizationErrorCode);
 					out.writeNullUTF(authorizationProviderErrorMessage);
 					out.writeNullUTF(authorizationProviderUniqueId);
-					out.writeNullUTF(authorizationProviderReplacementMaskedCardNumber);
-					out.writeNullUTF(authorizationReplacementMaskedCardNumber);
+					out.writeNullUTF(authorizationResult_providerReplacementMaskedCardNumber);
+					out.writeNullUTF(authorizationResult_replacementMaskedCardNumber);
+					out.writeNullUTF(authorizationResult_providerReplacementExpiration);
+					out.writeBoolean(authorizationResult_replacementExpirationMonth != null);
+					if(authorizationResult_replacementExpirationMonth != null) out.writeByte(authorizationResult_replacementExpirationMonth);
+					// TODO: out.writeNullByte(authorizationResult_replacementExpirationMonth);
+					out.writeBoolean(authorizationResult_replacementExpirationYear != null);
+					if(authorizationResult_replacementExpirationYear != null) out.writeShort(authorizationResult_replacementExpirationYear);
+					// TODO: out.writeNullShort(authorizationResult_replacementExpirationYear);
 					out.writeNullUTF(providerApprovalResult);
 					out.writeNullUTF(approvalResult);
 					out.writeNullUTF(providerDeclineReason);
