@@ -83,6 +83,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Reduced use of deprecated APIs.</li>
 					<li>Fixed <code>NullPointerException</code> in <code>com.aoindustries.aoserv.client.linux.ServerTable</code>.</li>
+					<li>Fixed <code>NullPointerException</code> in <code>com.aoindustries.aoserv.client.net.Bind</code>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

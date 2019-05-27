@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -690,11 +690,14 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 
 		// ao_servers
 		for(Server ao : conn.getLinux().getServer().getRows()) {
+			Integer daemonBind_id = ao.getDaemonBind_id();
+			Integer daemonConnectBind_id = ao.getDaemonConnectBind_id();
 			if(
-				pkey == ao.getDaemonBind_id()
-				|| pkey == ao.getDaemonConnectBind_id()
+				(daemonBind_id != null && pkey == daemonBind_id)
+				|| (daemonConnectBind_id != null && pkey == daemonConnectBind_id)
 			) reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon port for server: "+ao.getHostname(), ao));
-			if(pkey == ao.getJilterBind_id()) reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon jilter port for server: "+ao.getHostname(), ao));
+			Integer jilterBind_id = ao.getJilterBind_id();
+			if(jilterBind_id != null && pkey == jilterBind_id) reasons.add(new CannotRemoveReason<>("Used as aoserv-daemon jilter port for server: "+ao.getHostname(), ao));
 		}
 
 		// httpd_binds
