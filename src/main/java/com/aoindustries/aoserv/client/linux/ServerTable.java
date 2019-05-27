@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -90,7 +90,8 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		int size=servers.size();
 		for(int c=0;c<size;c++) {
 			Server se=servers.get(c);
-			if(se.getDaemonBind_id() == bind_id) return se;
+			Integer daemonBind_id = se.getDaemonBind_id();
+			if(daemonBind_id != null && daemonBind_id == bind_id) return se;
 		}
 		return null;
 	}
@@ -101,7 +102,8 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		int size=servers.size();
 		for(int c=0;c<size;c++) {
 			Server se=servers.get(c);
-			if(se.getJilterBind_id() == bind_id) return se;
+			Integer jilterBind_id = se.getJilterBind_id();
+			if(jilterBind_id != null && jilterBind_id == bind_id) return se;
 		}
 		return null;
 	}
