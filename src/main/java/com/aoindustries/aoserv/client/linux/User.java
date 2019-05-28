@@ -72,7 +72,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	/**
 	 * Used for the various user-provided fields in the <code>/etc/passwd</code> file.
 	 * <p>
-	 * <a href="https://en.wikipedia.org/wiki/Gecos_field">https://en.wikipedia.org/wiki/Gecos_field</a>
+	 * <a href="https://wikipedia.org/wiki/Gecos_field">https://wikipedia.org/wiki/Gecos_field</a>
 	 * </p>
 	 *
 	 * @author  AO Industries, Inc.
