@@ -100,6 +100,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 		final Email creditCardEmail,
 		final String creditCardPhone,
 		final String creditCardFax,
+		final String creditCardCustomerId,
 		final String creditCardCustomerTaxId,
 		final String creditCardStreetAddress1,
 		final String creditCardStreetAddress2,
@@ -162,6 +163,7 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 					out.writeNullUTF(Objects.toString(creditCardEmail, null));
 					out.writeNullUTF(creditCardPhone);
 					out.writeNullUTF(creditCardFax);
+					out.writeNullUTF(creditCardCustomerId);
 					out.writeNullUTF(creditCardCustomerTaxId);
 					out.writeUTF(creditCardStreetAddress1);
 					out.writeNullUTF(creditCardStreetAddress2);

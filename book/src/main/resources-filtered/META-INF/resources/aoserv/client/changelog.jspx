@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-05-28T13:56:27-0500"
+		dateModified="2019-05-29T21:42:33-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -84,6 +84,12 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Reduced use of deprecated APIs.</li>
 					<li>Fixed <code>NullPointerException</code> in <code>com.aoindustries.aoserv.client.linux.ServerTable</code>.</li>
 					<li>Fixed <code>NullPointerException</code> in <code>com.aoindustries.aoserv.client.net.Bind</code>.</li>
+					<li>Added missing <code>CreditCard.customerId</code> from <core:link book="/aoserv/credit-cards" page="/index.jspx">persistence implementation</core:link>:
+						<ol>
+							<li>Added <code>payment.CreditCard.customerId</code> column</li>
+							<li>Added <code>payment.Payment.creditCard.customerId</code> column</li>
+						</ol>
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>

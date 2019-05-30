@@ -123,6 +123,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	private Email email;
 	private String phone;
 	private String fax;
+	private String customerId;
 	private String customerTaxId;
 	private String streetAddress1;
 	private String streetAddress2;
@@ -244,25 +245,26 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			case 11: return email;
 			case 12: return phone;
 			case 13: return fax;
-			case 14: return customerTaxId;
-			case 15: return streetAddress1;
-			case 16: return streetAddress2;
-			case 17: return city;
-			case 18: return state;
-			case 19: return postalCode;
-			case 20: return countryCode;
-			case 21: return getCreated();
-			case 22: return createdBy;
-			case 23: return principalName;
-			case 24: return useMonthly;
-			case 25: return isActive;
-			case 26: return getDeactivatedOn();
-			case 27: return deactivateReason;
-			case 28: return description;
-			case 29: return encrypted_card_number;
-			case 30: return encryption_card_number_from;
-			case 31: return encryption_card_number_recipient;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 14: return customerId;
+			case 15: return customerTaxId;
+			case 16: return streetAddress1;
+			case 17: return streetAddress2;
+			case 18: return city;
+			case 19: return state;
+			case 20: return postalCode;
+			case 21: return countryCode;
+			case 22: return getCreated();
+			case 23: return createdBy;
+			case 24: return principalName;
+			case 25: return useMonthly;
+			case 26: return isActive;
+			case 27: return getDeactivatedOn();
+			case 28: return deactivateReason;
+			case 29: return description;
+			case 30: return encrypted_card_number;
+			case 31: return encryption_card_number_from;
+			case 32: return encryption_card_number_recipient;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -288,6 +290,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
 	public String getFax() {
 		return fax;
+	}
+
+	public String getCustomerId() {
+		return customerId;
 	}
 
 	public String getCustomerTaxId() {
@@ -392,6 +398,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			email = Email.valueOf(result.getString(pos++));
 			phone = result.getString(pos++);
 			fax = result.getString(pos++);
+			customerId = result.getString(pos++);
 			customerTaxId = result.getString(pos++);
 			streetAddress1 = result.getString(pos++);
 			streetAddress2 = result.getString(pos++);
@@ -439,6 +446,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			email=Email.valueOf(in.readNullUTF());
 			phone=in.readNullUTF();
 			fax=in.readNullUTF();
+			customerId = in.readNullUTF();
 			customerTaxId=in.readNullUTF();
 			streetAddress1=in.readUTF();
 			streetAddress2=in.readNullUTF();
@@ -506,6 +514,9 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			out.writeNullUTF(Objects.toString(email, null));
 			out.writeNullUTF(phone);
 			out.writeNullUTF(fax);
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_1) >= 0) {
+				out.writeNullUTF(customerId);
+			}
 			out.writeNullUTF(customerTaxId);
 			out.writeUTF(streetAddress1);
 			out.writeNullUTF(streetAddress2);
@@ -546,6 +557,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		Email email,
 		String phone,
 		String fax,
+		String customerId,
 		String customerTaxId,
 		String streetAddress1,
 		String streetAddress2,
@@ -565,6 +577,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			email==null ? "" : email.toString(),
 			phone==null ? "" : phone,
 			fax==null ? "" : fax,
+			customerId == null ? "" : customerId,
 			customerTaxId==null ? "" : customerTaxId,
 			streetAddress1,
 			streetAddress2==null ? "" : streetAddress2,

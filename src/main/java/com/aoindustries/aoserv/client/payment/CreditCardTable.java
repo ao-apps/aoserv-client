@@ -75,6 +75,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		final Email email,
 		final String phone,
 		final String fax,
+		final String customerId,
 		final String customerTaxId,
 		final String streetAddress1,
 		final String streetAddress2,
@@ -126,6 +127,7 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 					out.writeNullUTF(Objects.toString(email, null));
 					out.writeNullUTF(phone);
 					out.writeNullUTF(fax);
+					out.writeNullUTF(customerId);
 					out.writeNullUTF(customerTaxId);
 					out.writeUTF(streetAddress1);
 					out.writeNullUTF(streetAddress2);
