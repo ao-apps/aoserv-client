@@ -33,6 +33,7 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * A <code>CreditCardProcessor</code> represents on Merchant account used for credit card processing.
@@ -207,5 +208,9 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 			out.writeCompressedInt(encryption_from);
 			out.writeCompressedInt(encryption_recipient);
 		}
+	}
+
+	public List<CreditCard> getCreditCards() throws IOException, SQLException {
+		return table.getConnector().getPayment().getCreditCard().getCreditCards(this);
 	}
 }

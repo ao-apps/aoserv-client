@@ -173,6 +173,10 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 		return getIndexedRows(CreditCard.COLUMN_ACCOUNTING, business.getName());
 	}
 
+	List<CreditCard> getCreditCards(Processor processor) throws IOException, SQLException {
+		return getIndexedRows(CreditCard.COLUMN_PROCESSOR_ID, processor.getProviderId());
+	}
+
 	/**
 	 * Gets the active credit card with the highest priority for a business.
 	 *
