@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -178,7 +178,8 @@ final public class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
 		int maxWait,
 		String validationQuery
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.UPDATE_HTTPD_TOMCAT_DATA_SOURCE,
 			pkey,
 			name,

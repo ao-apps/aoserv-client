@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -69,7 +69,8 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		Encoding encoding,
 		boolean enablePostgis
 	) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(true,
+		int pkey=connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.POSTGRES_DATABASES,
 			name,
@@ -239,7 +240,8 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 	}
 
 	boolean isPostgresDatabaseNameAvailable(Database.Name name, Server postgresServer) throws IOException, SQLException {
-		return connector.requestBooleanQuery(true,
+		return connector.requestBooleanQuery(
+			true,
 			AoservProtocol.CommandID.IS_POSTGRES_DATABASE_NAME_AVAILABLE,
 			name,
 			postgresServer.getBind_id()
@@ -247,7 +249,8 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 	}
 
 	public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.WAIT_FOR_REBUILD,
 			Table.TableID.POSTGRES_DATABASES,
 			aoServer.getPkey()

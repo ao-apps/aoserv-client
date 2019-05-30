@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -270,7 +270,8 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 	 * Performs a status check on this certificate.
 	 */
 	public List<Check> check() throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.CHECK_SSL_CERTIFICATE,
 			new AOServConnector.ResultRequest<List<Check>>() {
 				private List<Check> result;

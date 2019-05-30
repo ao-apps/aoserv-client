@@ -289,7 +289,8 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	}
 
 	public void setPredisableConfig(final String config) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_HTTPD_SITE_BIND_PREDISABLE_CONFIG,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

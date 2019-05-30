@@ -301,7 +301,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 * Dumps the database into textual representation, not gzipped.
 	 */
 	public void dump(final Writer out) throws IOException, SQLException {
-		table.getConnector().requestUpdate(false,
+		table.getConnector().requestUpdate(
+			false,
 			AoservProtocol.CommandID.DUMP_POSTGRES_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
@@ -340,7 +341,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		final boolean gzip,
 		final StreamHandler streamHandler
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdate(false,
+		table.getConnector().requestUpdate(
+			false,
 			AoservProtocol.CommandID.DUMP_POSTGRES_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
@@ -530,7 +532,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.POSTGRES_DATABASES,
 			pkey

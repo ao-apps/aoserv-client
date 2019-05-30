@@ -629,7 +629,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		// Now cancel the account
 		if(cancelReason!=null && (cancelReason=cancelReason.trim()).length()==0) cancelReason=null;
 		final String finalCancelReason = cancelReason;
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.CANCEL_BUSINESS,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -1328,7 +1329,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	 * be deselected.  If <code>creditCard</code> is null, none will be used automatically.
 	 */
 	public void setUseMonthlyCreditCard(CreditCard creditCard) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.SET_CREDIT_CARD_USE_MONTHLY,
 			pkey.toString(),
 			creditCard==null ? -1 : creditCard.getPkey()

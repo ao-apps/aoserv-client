@@ -289,7 +289,8 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 	}
 
 	public Server.DaemonAccess requestReplicationDaemonAccess() throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.REQUEST_REPLICATION_DAEMON_ACCESS,
 			new AOServConnector.ResultRequest<Server.DaemonAccess>() {
 				private Server.DaemonAccess daemonAccess;
@@ -355,7 +356,8 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 	}
 
 	public Activity getActivity() throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.GET_FAILOVER_FILE_REPLICATION_ACTIVITY,
 			new AOServConnector.ResultRequest<Activity>() {
 				Activity activity;

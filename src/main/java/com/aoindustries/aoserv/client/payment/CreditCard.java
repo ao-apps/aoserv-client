@@ -156,7 +156,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 * Flags a card as declined.
 	 */
 	public void declined(String reason) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.CREDIT_CARD_DECLINED,
 			pkey,
 			reason
@@ -567,7 +568,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		CountryCode countryCode,
 		String description
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.UPDATE_CREDIT_CARD,
 			pkey,
 			cardInfo,
@@ -611,7 +613,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			encryptedCardNumber = null;
 		}
 
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.UPDATE_CREDIT_CARD_NUMBER_AND_EXPIRATION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -654,7 +657,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		byte expirationMonth,
 		short expirationYear
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.UPDATE_CREDIT_CARD_EXPIRATION,
 			pkey,
 			expirationMonth,
@@ -666,7 +670,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 * Reactivates a credit card.
 	 */
 	public void reactivate() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REACTIVATE_CREDIT_CARD,
 			pkey
 		);

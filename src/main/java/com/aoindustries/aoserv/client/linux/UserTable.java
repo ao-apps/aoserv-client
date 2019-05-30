@@ -71,7 +71,8 @@ final public class UserTable extends CachedTableUserNameKey<User> {
 		final String type,
 		final PosixPath shell
 	) throws IOException, SQLException {
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -285,7 +286,8 @@ final public class UserTable extends CachedTableUserNameKey<User> {
 	}
 
 	void waitForRebuild(Server aoServer) throws IOException, SQLException {
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.WAIT_FOR_REBUILD,
 			Table.TableID.LINUX_ACCOUNTS,
 			aoServer.getPkey()

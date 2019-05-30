@@ -77,7 +77,8 @@ final public class ContextTable extends CachedTableIntegerKey<Context> {
 		final PosixPath workDir,
 		final boolean serverXmlConfigured
 	) throws IOException, SQLException {
-		return connector.requestResult(true,
+		return connector.requestResult(
+			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;

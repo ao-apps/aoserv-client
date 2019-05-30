@@ -98,7 +98,8 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		return table.getConnector().requestBooleanQuery(true,
+		return table.getConnector().requestBooleanQuery(
+			true,
 			AoservProtocol.CommandID.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET,
 			pkey
 		) ? PasswordProtected.ALL : PasswordProtected.NONE;
@@ -462,7 +463,8 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.BUSINESS_ADMINISTRATORS,
 			pkey
@@ -518,7 +520,8 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 		final String finalCountry = country;
 		if(zip!=null && zip.length()==0) zip=null;
 		final String finalZip = zip;
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_BUSINESS_ADMINISTRATOR_PROFILE,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

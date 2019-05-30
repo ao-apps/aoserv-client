@@ -752,7 +752,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.LINUX_ACCOUNTS,
 			pkey
@@ -770,7 +771,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	}
 
 	public void setName(Gecos name) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.SET_LINUX_ACCOUNT_NAME,
 			pkey,
 			name==null ? "" : name.toString()

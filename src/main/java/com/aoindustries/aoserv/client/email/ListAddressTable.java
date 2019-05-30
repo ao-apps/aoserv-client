@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -58,7 +58,8 @@ final public class ListAddressTable extends CachedTableIntegerKey<ListAddress> {
 	}
 
 	int addEmailListAddress(Address emailAddressObject, List emailListObject) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true,
+		return connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.EMAIL_LIST_ADDRESSES,
 			emailAddressObject.getPkey(),

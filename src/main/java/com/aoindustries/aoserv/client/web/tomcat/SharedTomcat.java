@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -289,7 +289,8 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	}
 
 	public void setMaxPostSize(final int maxPostSize) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

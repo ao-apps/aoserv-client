@@ -87,7 +87,8 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 		final Processor processor,
 		final byte payment_confirmed
 	) throws IOException, SQLException {
-		return connector.requestResult(false,
+		return connector.requestResult(
+			false,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int transid;

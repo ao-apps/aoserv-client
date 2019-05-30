@@ -105,7 +105,8 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 			encryptedCardNumber = null;
 		}
 
-		return connector.requestResult(true,
+		return connector.requestResult(
+			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;

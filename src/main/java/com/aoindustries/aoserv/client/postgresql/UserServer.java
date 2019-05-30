@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -197,7 +197,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.POSTGRES_SERVER_USERS,
 			pkey
@@ -209,7 +210,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		AOServConnector connector=table.getConnector();
 		if(!connector.isSecure()) throw new IOException("Passwords for PostgreSQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_POSTGRES_SERVER_USER_PASSWORD,
 			new AOServConnector.UpdateRequest() {
 				@Override
@@ -233,7 +235,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	public void setPredisablePassword(final String password) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -161,7 +161,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	public long copyHomeDirectory(final Server toServer) throws IOException, SQLException {
-		return table.getConnector().requestResult(false,
+		return table.getConnector().requestResult(
+			false,
 			AoservProtocol.CommandID.COPY_HOME_DIRECTORY,
 			new AOServConnector.ResultRequest<Long>() {
 				long result;
@@ -309,7 +310,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	public InboxAttributes getInboxAttributes() throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.GET_INBOX_ATTRIBUTES,
 			new AOServConnector.ResultRequest<InboxAttributes>() {
 
@@ -347,7 +349,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	public long[] getImapFolderSizes(final String[] folderNames) throws IOException, SQLException {
 		final long[] sizes=new long[folderNames.length];
 		if(sizes.length>0) {
-			table.getConnector().requestUpdate(true,
+			table.getConnector().requestUpdate(
+				true,
 				AoservProtocol.CommandID.GET_IMAP_FOLDER_SIZES,
 				new AOServConnector.UpdateRequest() {
 					@Override
@@ -621,7 +624,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.LINUX_SERVER_ACCOUNTS,
 			pkey
@@ -645,7 +649,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		final String content,
 		final boolean enabled
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_AUTORESPONDER,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -704,7 +709,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	public void setPredisablePassword(final String password) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_LINUX_SERVER_ACCOUNT_PREDISABLE_PASSWORD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

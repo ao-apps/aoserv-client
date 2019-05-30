@@ -873,7 +873,8 @@ final public class Server
 		}
 
 		try {
-			table.getConnector().requestUpdate(false,
+			table.getConnector().requestUpdate(
+				false,
 				AoservProtocol.CommandID.GET_MRTG_FILE,
 				new AOServConnector.UpdateRequest() {
 					@Override
@@ -2309,7 +2310,8 @@ final public class Server
 	 */
 	public LvmReport getLvmReport() throws IOException, SQLException, ParseException {
 		try {
-			return table.getConnector().requestResult(true,
+			return table.getConnector().requestResult(
+				true,
 				AoservProtocol.CommandID.GET_AO_SERVER_LVM_REPORT,
 				new AOServConnector.ResultRequest<LvmReport>() {
 					String vgs;
@@ -2650,7 +2652,8 @@ final public class Server
 	 * Checks a port from the daemon's point of view.  This is required for monitoring of private and loopback IPs.
 	 */
 	public String checkPort(InetAddress ipAddress, Port port, String appProtocol, HttpParameters monitoringParameters) throws IOException, SQLException {
-		return table.getConnector().requestStringQuery(true,
+		return table.getConnector().requestStringQuery(
+			true,
 			AoservProtocol.CommandID.AO_SERVER_CHECK_PORT,
 			pkey,
 			ipAddress.toString(),

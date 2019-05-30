@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2005-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2005-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -119,7 +119,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	}
 
 	public void setLimits(final PackageDefinitionLimit[] limits) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_PACKAGE_DEFINITION_LIMITS,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -295,7 +296,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.PACKAGE_DEFINITIONS,
 			pkey
@@ -314,7 +316,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 		final int monthlyRate,
 		final TransactionType monthlyRateTransactionType
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.UPDATE_PACKAGE_DEFINITION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2012-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -355,7 +355,8 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	public void addReputation(final Collection<AddReputation> addReputations) throws IOException, SQLException {
 		final int size = addReputations.size();
 		if(size>0) {
-			table.getConnector().requestUpdate(true,
+			table.getConnector().requestUpdate(
+				true,
 				AoservProtocol.CommandID.ADD_IP_REPUTATION,
 				new AOServConnector.UpdateRequest() {
 					IntList invalidateList;

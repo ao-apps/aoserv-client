@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -77,7 +77,8 @@ final public class FileReplicationScheduleTable extends CachedTableIntegerKey<Fi
 	void setFailoverFileSchedules(final FileReplication ffr, final List<Short> hours, final List<Short> minutes) throws IOException, SQLException {
 		if(hours.size()!=minutes.size()) throw new IllegalArgumentException("hours.size()!=minutes.size(): "+hours.size()+"!="+minutes.size());
 
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_FAILOVER_FILE_SCHEDULES,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

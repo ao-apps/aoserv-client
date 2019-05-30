@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -75,7 +75,8 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		final boolean canSeePrices,
 		final boolean billParent
 	) throws IOException, SQLException {
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -309,7 +310,8 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 	}
 
 	public boolean isAccountingAvailable(Account.Name accounting) throws SQLException, IOException {
-		return connector.requestBooleanQuery(true,
+		return connector.requestBooleanQuery(
+			true,
 			AoservProtocol.CommandID.IS_ACCOUNTING_AVAILABLE,
 			accounting.toString()
 		);

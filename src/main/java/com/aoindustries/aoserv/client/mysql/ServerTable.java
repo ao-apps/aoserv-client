@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2006-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -65,7 +65,8 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 		int maxConnections
 	) throws SQLException, IOException {
 		if(!version.getTechnologyName_name().equals(Software.MYSQL)) throw new SQLException("TechnologyVersion must have name of "+Software.MYSQL+": "+version.getTechnologyName_name());
-		return connector.requestIntQueryIL(true,
+		return connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.MYSQL_SERVERS,
 			name,
@@ -174,7 +175,8 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	}
 
 	public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.WAIT_FOR_REBUILD,
 			Table.TableID.MYSQL_SERVERS,
 			aoServer.getPkey()
