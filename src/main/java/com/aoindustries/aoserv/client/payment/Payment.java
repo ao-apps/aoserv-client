@@ -98,6 +98,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private Email creditCardEmail;
 	private String creditCardPhone;
 	private String creditCardFax;
+	private String creditCardCustomerId;
 	private String creditCardCustomerTaxId;
 	private String creditCardStreetAddress1;
 	private String creditCardStreetAddress2;
@@ -377,6 +378,10 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 
 	public String getCreditCardFax() {
 		return creditCardFax;
+	}
+
+	public String getCreditCardCustomerId() {
+		return creditCardCustomerId;
 	}
 
 	public String getCreditCardCustomerTaxId() {
@@ -673,56 +678,57 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			case 38: return creditCardEmail;
 			case 39: return creditCardPhone;
 			case 40: return creditCardFax;
-			case 41: return creditCardCustomerTaxId;
-			case 42: return creditCardStreetAddress1;
-			case 43: return creditCardStreetAddress2;
-			case 44: return creditCardCity;
-			case 45: return creditCardState;
-			case 46: return creditCardPostalCode;
-			case 47: return creditCardCountryCode;
-			case 48: return creditCardComments;
-			case 49: return getAuthorizationTime();
-			case 50: return authorizationUsername;
-			case 51: return authorizationPrincipalName;
-			case 52: return authorizationCommunicationResult;
-			case 53: return authorizationProviderErrorCode;
-			case 54: return authorizationErrorCode;
-			case 55: return authorizationProviderErrorMessage;
-			case 56: return authorizationProviderUniqueId;
-			case 57: return authorizationResult_providerReplacementMaskedCardNumber;
-			case 58: return authorizationResult_replacementMaskedCardNumber;
-			case 59: return authorizationResult_providerReplacementExpiration;
-			case 60: return authorizationResult_replacementExpirationMonth == null ? null : authorizationResult_replacementExpirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
-			case 61: return authorizationResult_replacementExpirationYear;
-			case 62: return authorizationProviderApprovalResult;
-			case 63: return authorizationApprovalResult;
-			case 64: return authorizationProviderDeclineReason;
-			case 65: return authorizationDeclineReason;
-			case 66: return authorizationProviderReviewReason;
-			case 67: return authorizationReviewReason;
-			case 68: return authorizationProviderCvvResult;
-			case 69: return authorizationCvvResult;
-			case 70: return authorizationProviderAvsResult;
-			case 71: return authorizationAvsResult;
-			case 72: return authorizationApprovalCode;
-			case 73: return getCaptureTime();
-			case 74: return captureUsername;
-			case 75: return capturePrincipalName;
-			case 76: return captureCommunicationResult;
-			case 77: return captureProviderErrorCode;
-			case 78: return captureErrorCode;
-			case 79: return captureProviderErrorMessage;
-			case 80: return captureProviderUniqueId;
-			case 81: return getVoidTime();
-			case 82: return voidUsername;
-			case 83: return voidPrincipalName;
-			case 84: return voidCommunicationResult;
-			case 85: return voidProviderErrorCode;
-			case 86: return voidErrorCode;
-			case 87: return voidProviderErrorMessage;
-			case 88: return voidProviderUniqueId;
-			case 89: return status;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 41: return creditCardCustomerId;
+			case 42: return creditCardCustomerTaxId;
+			case 43: return creditCardStreetAddress1;
+			case 44: return creditCardStreetAddress2;
+			case 45: return creditCardCity;
+			case 46: return creditCardState;
+			case 47: return creditCardPostalCode;
+			case 48: return creditCardCountryCode;
+			case 49: return creditCardComments;
+			case 50: return getAuthorizationTime();
+			case 51: return authorizationUsername;
+			case 52: return authorizationPrincipalName;
+			case 53: return authorizationCommunicationResult;
+			case 54: return authorizationProviderErrorCode;
+			case 55: return authorizationErrorCode;
+			case 56: return authorizationProviderErrorMessage;
+			case 57: return authorizationProviderUniqueId;
+			case 58: return authorizationResult_providerReplacementMaskedCardNumber;
+			case 59: return authorizationResult_replacementMaskedCardNumber;
+			case 60: return authorizationResult_providerReplacementExpiration;
+			case 61: return authorizationResult_replacementExpirationMonth == null ? null : authorizationResult_replacementExpirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
+			case 62: return authorizationResult_replacementExpirationYear;
+			case 63: return authorizationProviderApprovalResult;
+			case 64: return authorizationApprovalResult;
+			case 65: return authorizationProviderDeclineReason;
+			case 66: return authorizationDeclineReason;
+			case 67: return authorizationProviderReviewReason;
+			case 68: return authorizationReviewReason;
+			case 69: return authorizationProviderCvvResult;
+			case 70: return authorizationCvvResult;
+			case 71: return authorizationProviderAvsResult;
+			case 72: return authorizationAvsResult;
+			case 73: return authorizationApprovalCode;
+			case 74: return getCaptureTime();
+			case 75: return captureUsername;
+			case 76: return capturePrincipalName;
+			case 77: return captureCommunicationResult;
+			case 78: return captureProviderErrorCode;
+			case 79: return captureErrorCode;
+			case 80: return captureProviderErrorMessage;
+			case 81: return captureProviderUniqueId;
+			case 82: return getVoidTime();
+			case 83: return voidUsername;
+			case 84: return voidPrincipalName;
+			case 85: return voidCommunicationResult;
+			case 86: return voidProviderErrorCode;
+			case 87: return voidErrorCode;
+			case 88: return voidProviderErrorMessage;
+			case 89: return voidProviderUniqueId;
+			case 90: return status;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -778,6 +784,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardEmail = Email.valueOf(result.getString(pos++));
 			creditCardPhone = result.getString(pos++);
 			creditCardFax = result.getString(pos++);
+			creditCardCustomerId = result.getString(pos++);
 			creditCardCustomerTaxId = result.getString(pos++);
 			creditCardStreetAddress1 = result.getString(pos++);
 			creditCardStreetAddress2 = result.getString(pos++);
@@ -883,6 +890,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardEmail = Email.valueOf(in.readNullUTF());
 			creditCardPhone = in.readNullUTF();
 			creditCardFax = in.readNullUTF();
+			creditCardCustomerId = in.readNullUTF();
 			creditCardCustomerTaxId = in.readNullUTF();
 			creditCardStreetAddress1 = in.readUTF();
 			creditCardStreetAddress2 = in.readNullUTF();
@@ -982,6 +990,9 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(Objects.toString(creditCardEmail, null));
 		out.writeNullUTF(creditCardPhone);
 		out.writeNullUTF(creditCardFax);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_82_1) >= 0) {
+			out.writeNullUTF(creditCardCustomerId);
+		}
 		out.writeNullUTF(creditCardCustomerTaxId);
 		out.writeUTF(creditCardStreetAddress1);
 		out.writeNullUTF(creditCardStreetAddress2);
