@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2004-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2004-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -104,7 +104,8 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
 
 	@Override
 	public void remove() throws SQLException, IOException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.EMAIL_ATTACHMENT_BLOCKS,
 			pkey

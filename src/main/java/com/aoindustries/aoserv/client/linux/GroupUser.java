@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2014, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -172,7 +172,8 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.LINUX_GROUP_ACCOUNTS,
 			pkey
@@ -180,7 +181,8 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 	}
 
 	void setAsPrimary() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.SET_PRIMARY_LINUX_GROUP_ACCOUNT,
 			pkey
 		);

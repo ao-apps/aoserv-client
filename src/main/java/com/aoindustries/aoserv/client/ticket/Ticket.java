@@ -408,7 +408,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}
 
 	public void addAnnotation(final String summary, final String details) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.ADD_TICKET_ANNOTATION,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -511,7 +512,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 * @return <code>true</code> if successfully updated or <code>false</code> if oldBusiness doesn't match the current business.
 	 */
 	public boolean setBusiness(Account oldBusiness, Account newBusiness) throws IOException, SQLException {
-		return table.getConnector().requestBooleanQueryIL(true,
+		return table.getConnector().requestBooleanQueryIL(
+			true,
 			AoservProtocol.CommandID.SET_TICKET_BUSINESS,
 			pkey,
 			oldBusiness==null ? "" : oldBusiness.getName().toString(),
@@ -544,7 +546,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	 * @return <code>true</code> if successfully updated or <code>false</code> if oldInternalNotes doesn't match the current internal notes.
 	 */
 	public boolean setInternalNotes(final String oldInternalNotes, final String newInternalNotes) throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.SET_TICKET_INTERNAL_NOTES,
 			new AOServConnector.ResultRequest<Boolean>() {
 				boolean result;

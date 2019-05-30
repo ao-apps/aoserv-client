@@ -73,7 +73,8 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 		final Set<Email> contactEmails,
 		final String contactPhoneNumbers
 	) throws IOException, SQLException {
-		return connector.requestResult(true,
+		return connector.requestResult(
+			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;

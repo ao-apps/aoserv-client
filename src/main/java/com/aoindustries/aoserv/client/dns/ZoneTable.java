@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -72,7 +72,8 @@ final public class ZoneTable extends CachedTableStringKey<Zone> {
 	}
 
 	public void addDNSZone(Package packageObj, String zone, InetAddress ip, int ttl) throws IOException, SQLException {
-		connector.requestUpdateIL(true,
+		connector.requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.DNS_ZONES,
 			packageObj.getName(),

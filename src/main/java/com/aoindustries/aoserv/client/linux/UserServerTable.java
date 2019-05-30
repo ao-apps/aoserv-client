@@ -67,7 +67,8 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	}
 
 	int addLinuxServerAccount(User linuxAccount, Server aoServer, PosixPath home) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(true,
+		int pkey=connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.LINUX_SERVER_ACCOUNTS,
 			linuxAccount.getUsername_id(),
@@ -89,7 +90,8 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		PosixPath home,
 		PosixPath shell
 	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true,
+		return connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD_SYSTEM_USER,
 			aoServer.getPkey(),
 			username,

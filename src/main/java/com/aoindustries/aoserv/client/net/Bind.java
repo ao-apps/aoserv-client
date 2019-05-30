@@ -764,7 +764,8 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.NET_BINDS,
 			pkey
@@ -772,7 +773,8 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	public void setMonitoringEnabled(boolean monitoring_enabled) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.SET_NET_BIND_MONITORING,
 			pkey,
 			monitoring_enabled
@@ -780,7 +782,8 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	public void setFirewalldZones(final Set<FirewallZone.Name> firewalldZones) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_NET_BIND_FIREWALLD_ZONES,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

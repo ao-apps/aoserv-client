@@ -110,7 +110,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	 * @param  paymentInfo  (Optional) The card info may have been updated during the transaction.
 	 */
 	public void approved(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.TRANSACTION_APPROVED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -154,7 +155,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	 * @param  paymentInfo  (Optional) The card info may have been updated during the transaction.
 	 */
 	public void declined(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.TRANSACTION_DECLINED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -198,7 +200,8 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	 * @param  paymentInfo  (Optional) The card info may have been updated during the transaction.
 	 */
 	public void held(final int creditCardTransaction, final String paymentInfo) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.TRANSACTION_HELD,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

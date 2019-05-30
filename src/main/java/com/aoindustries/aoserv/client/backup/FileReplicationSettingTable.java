@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -64,7 +64,8 @@ final public class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
 	}
 
 	int addFileBackupSetting(FileReplication replication, String path, boolean backupEnabled, boolean required) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true,
+		return connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.FILE_BACKUP_SETTINGS,
 			replication.getPkey(),
@@ -141,7 +142,8 @@ final public class FileReplicationSettingTable extends CachedTableIntegerKey<Fil
 		if(paths.size()!=backupEnableds.size()) throw new IllegalArgumentException("paths.size()!=backupEnableds.size(): "+paths.size()+"!="+backupEnableds.size());
 		if(paths.size()!=requireds.size()) throw new IllegalArgumentException("paths.size()!=requireds.size(): "+paths.size()+"!="+requireds.size());
 
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_FILE_BACKUP_SETTINGS_ALL_AT_ONCE,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

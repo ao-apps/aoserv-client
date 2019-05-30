@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2012-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,7 +60,8 @@ final public class UserTable extends CachedTableUserNameKey<User> {
 	}
 
 	public void addMySQLUser(User.Name username) throws IOException, SQLException {
-		connector.requestUpdateIL(true,
+		connector.requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.MYSQL_USERS,
 			username
@@ -178,7 +179,8 @@ final public class UserTable extends CachedTableUserNameKey<User> {
 	}
 
 	public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.WAIT_FOR_REBUILD,
 			Table.TableID.MYSQL_USERS,
 			aoServer.getPkey()

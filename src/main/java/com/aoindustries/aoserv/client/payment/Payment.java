@@ -1082,7 +1082,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	) throws IOException, SQLException {
 		if(!table.getConnector().isSecure()) throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+table.getConnector().getProtocol()+" protocol, which is not secure.");
 
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_SALE_COMPLETED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;
@@ -1169,7 +1170,8 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	) throws IOException, SQLException {
 		if(!table.getConnector().isSecure()) throw new IOException("Credit card transactions may only be updated when using secure protocols.  Currently using the "+table.getConnector().getProtocol()+" protocol, which is not secure.");
 
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.CREDIT_CARD_TRANSACTION_AUTHORIZE_COMPLETED,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

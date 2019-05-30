@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -770,7 +770,8 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	 * IOException or SQLException.
 	 */
 	public MasterStatus getMasterStatus() throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.GET_MYSQL_MASTER_STATUS,
 			new AOServConnector.ResultRequest<MasterStatus>() {
 				MasterStatus result;

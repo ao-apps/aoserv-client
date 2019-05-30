@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -76,7 +76,8 @@ final public class BindTable extends CachedTableIntegerKey<Bind> {
 		final boolean monitoringEnabled,
 		final Set<FirewallZone.Name> firewalldZones
 	) throws IOException, SQLException {
-		return connector.requestResult(true,
+		return connector.requestResult(
+			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;

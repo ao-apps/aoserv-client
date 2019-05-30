@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -171,7 +171,8 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.EMAIL_PIPES,
 			pkey

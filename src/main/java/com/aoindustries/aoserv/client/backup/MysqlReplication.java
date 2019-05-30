@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -288,7 +288,8 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 	 * IOException or SQLException.
 	 */
 	public SlaveStatus getSlaveStatus() throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.GET_MYSQL_SLAVE_STATUS,
 			new AOServConnector.ResultRequest<SlaveStatus>() {
 				SlaveStatus result;

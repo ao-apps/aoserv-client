@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -65,7 +65,8 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		Server mysqlServer,
 		Package packageObj
 	) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(true,
+		int pkey=connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.MYSQL_DATABASES,
 			name,
@@ -222,7 +223,8 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 	}
 
 	public void waitForRebuild(com.aoindustries.aoserv.client.linux.Server aoServer) throws IOException, SQLException {
-		connector.requestUpdate(true,
+		connector.requestUpdate(
+			true,
 			AoservProtocol.CommandID.WAIT_FOR_REBUILD,
 			Table.TableID.MYSQL_DATABASES,
 			aoServer.getPkey()

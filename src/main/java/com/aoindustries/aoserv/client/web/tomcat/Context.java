@@ -323,7 +323,8 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 		final PosixPath workDir,
 		final boolean serverXmlConfigured
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdate(true,
+		table.getConnector().requestUpdate(
+			true,
 			AoservProtocol.CommandID.SET_HTTPD_TOMCAT_CONTEXT_ATTRIBUTES,
 			new AOServConnector.UpdateRequest() {
 				IntList invalidateList;

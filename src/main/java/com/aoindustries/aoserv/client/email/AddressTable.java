@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -62,7 +62,8 @@ final public class AddressTable extends CachedTableIntegerKey<Address> {
 	public int addEmailAddress(String address, Domain domainObject) throws SQLException, IOException {
 		ValidationResult result = Email.validate(address, domainObject.getDomain());
 		if (!result.isValid()) throw new SQLException("Invalid email address: " + result.toString());
-		return connector.requestIntQueryIL(true,
+		return connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.EMAIL_ADDRESSES,
 			address,

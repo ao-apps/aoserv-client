@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -64,7 +64,8 @@ public final class SmtpRelayTable extends CachedTableIntegerKey<SmtpRelay> {
 	}
 
 	public int addEmailSmtpRelay(final Package pack, final Server aoServer, final HostAddress host, final SmtpRelayType type, final long duration) throws IOException, SQLException {
-		return connector.requestResult(true,
+		return connector.requestResult(
+			true,
 			AoservProtocol.CommandID.ADD,
 			new AOServConnector.ResultRequest<Integer>() {
 				int pkey;

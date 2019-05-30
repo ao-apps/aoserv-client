@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -66,7 +66,8 @@ final public class FileReplicationLogTable extends AOServTable<Integer,FileRepli
 		long bytes,
 		boolean isSuccessful
 	) throws IOException, SQLException {
-		return connector.requestIntQueryIL(true,
+		return connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.FAILOVER_FILE_LOG,
 			replication.getPkey(),

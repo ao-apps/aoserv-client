@@ -365,7 +365,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 * Dumps the database into textual representation, not gzipped.
 	 */
 	public void dump(final Writer out) throws IOException, SQLException {
-		table.getConnector().requestUpdate(false,
+		table.getConnector().requestUpdate(
+			false,
 			AoservProtocol.CommandID.DUMP_MYSQL_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
@@ -404,7 +405,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		final boolean gzip,
 		final StreamHandler streamHandler
 	) throws IOException, SQLException {
-		table.getConnector().requestUpdate(false,
+		table.getConnector().requestUpdate(
+			false,
 			AoservProtocol.CommandID.DUMP_MYSQL_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
@@ -613,7 +615,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true,
+		table.getConnector().requestUpdateIL(
+			true,
 			AoservProtocol.CommandID.REMOVE,
 			Table.TableID.MYSQL_DATABASES,
 			pkey
@@ -869,7 +872,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 * Gets the table status on the master server or provided slave server.
 	 */
 	public List<TableStatus> getTableStatus(final MysqlReplication mysqlSlave) throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.GET_MYSQL_TABLE_STATUS,
 			new AOServConnector.ResultRequest<List<TableStatus>>() {
 				private List<TableStatus> result;
@@ -999,7 +1003,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 */
 	public List<CheckTableResult> checkTables(final MysqlReplication mysqlSlave, final Collection<Table_Name> tableNames) throws IOException, SQLException {
 		if(tableNames.isEmpty()) return Collections.emptyList();
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.CHECK_MYSQL_TABLES,
 			new AOServConnector.ResultRequest<List<CheckTableResult>>() {
 				private List<CheckTableResult> result;

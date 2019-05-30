@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2013, 2014, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2008-2013, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -309,7 +309,8 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	public Server.DaemonAccess requestVncConsoleAccess() throws IOException, SQLException {
-		return table.getConnector().requestResult(true,
+		return table.getConnector().requestResult(
+			true,
 			AoservProtocol.CommandID.REQUEST_VNC_CONSOLE_DAEMON_ACCESS,
 			new AOServConnector.ResultRequest<Server.DaemonAccess>() {
 				private Server.DaemonAccess daemonAccess;
@@ -494,7 +495,9 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 * Gets the physical server that is currently the primary node for this virtual server.
 	 */
 	public PhysicalServer getPrimaryPhysicalServer() throws IOException, SQLException {
-		return table.getConnector().getInfrastructure().getPhysicalServer().get(table.getConnector().requestIntQuery(true,
+		return table.getConnector().getInfrastructure().getPhysicalServer().get(
+			table.getConnector().requestIntQuery(
+				true,
 				AoservProtocol.CommandID.GET_PRIMARY_PHYSICAL_SERVER,
 				pkey
 			)
@@ -505,7 +508,9 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 * Gets the physical server that is currently the secondary node for this virtual server.
 	 */
 	public PhysicalServer getSecondaryPhysicalServer() throws IOException, SQLException {
-		return table.getConnector().getInfrastructure().getPhysicalServer().get(table.getConnector().requestIntQuery(true,
+		return table.getConnector().getInfrastructure().getPhysicalServer().get(
+			table.getConnector().requestIntQuery(
+				true,
 				AoservProtocol.CommandID.GET_SECONDARY_PHYSICAL_SERVER,
 				pkey
 			)

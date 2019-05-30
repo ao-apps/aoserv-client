@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -56,7 +56,8 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	}
 
 	int addPostgresServerUser(User.Name username, Server postgresServer) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(true,
+		int pkey=connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.POSTGRES_SERVER_USERS,
 			username,

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -57,7 +57,8 @@ final public class PipeTable extends CachedTableIntegerKey<Pipe> {
 	}
 
 	public int addEmailPipe(Server ao, String command, Package packageObject) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(true,
+		int pkey=connector.requestIntQueryIL(
+			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.EMAIL_PIPES,
 			ao.getPkey(),

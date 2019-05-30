@@ -813,7 +813,8 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @param server the pkey of the server or <code>-1</code> for all servers
 	 */
 	public void invalidateTable(final int tableID, final int server) throws IOException, SQLException {
-		requestUpdate(true,
+		requestUpdate(
+			true,
 			AoservProtocol.CommandID.INVALIDATE_TABLE,
 			new UpdateRequest() {
 				IntList tableList;
@@ -1615,7 +1616,8 @@ abstract public class AOServConnector implements SchemaParent {
 	 */
 	final public void testConnect() throws IOException, SQLException {
 		synchronized(testConnectLock) {
-			requestUpdate(true,
+			requestUpdate(
+				true,
 				AoservProtocol.CommandID.TEST_CONNECTION,
 				new UpdateRequest() {
 					@Override
@@ -1652,7 +1654,8 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Gets some entropy from the master server, returns the number of bytes actually obtained.
 	 */
 	public int getMasterEntropy(final byte[] buff, final int numBytes) throws IOException, SQLException {
-		return requestResult(true,
+		return requestResult(
+			true,
 			AoservProtocol.CommandID.GET_MASTER_ENTROPY,
 			new ResultRequest<Integer>() {
 				int numObtained;
@@ -1693,7 +1696,8 @@ abstract public class AOServConnector implements SchemaParent {
 	 * Adds some entropy to the master server.
 	 */
 	public void addMasterEntropy(final byte[] buff, final int numBytes) throws IOException, SQLException {
-		requestUpdate(true,
+		requestUpdate(
+			true,
 			AoservProtocol.CommandID.ADD_MASTER_ENTROPY,
 			new UpdateRequest() {
 				@Override
