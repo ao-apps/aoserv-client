@@ -90,6 +90,20 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>payment.Payment.creditCard.customerId</code> column</li>
 						</ol>
 					</li>
+					<!-- TODO:
+					<li>
+						Added additional transaction statuses beyond just 'Y', 'N', and 'W':
+						<ol>
+							<li>'R' for Refunded (does not apply to balance) - might still chose to show where 'N' is filtered</li>
+							<li>'V' for Voided (does not apply to balance) - might still chose to show where 'N' is filtered</li>
+							<li>'H' for Held (does not apply to confirmed balance like 'W')</li>
+							<li>'D' for Declined (does not apply to balance) - might still chose to show where 'N' is filtered</li>
+						</ol>
+						<p>
+							Converts to the most appropriate of 'Y', 'N', or 'W' for older clients.
+						</p>
+					</li>
+					-->
 				</ul>
 			</changelog:release>
 		</c:if>
