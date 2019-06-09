@@ -37,6 +37,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 / <a target="_top" href="${project.url}">${shortTitle}</a>]]></javadoc.breadcrumbs>
 		<shortTitle>Client</shortTitle>
 		<description.html><![CDATA[Java client for the <a target="_top" href="https://aoindustries.com/aoserv/">AOServ Platform</a>.]]></description.html>
+		<!-- AOSH default to interactive mode, but allow overriding on command line -->
+		<exec.args>-i</exec.args>
 	</properties>
 
 	<name>AOServ Client</name>
@@ -51,6 +53,39 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		<url>https://github.com/aoindustries/${project.artifactId}</url>
 		<tag>HEAD</tag>
 	</scm>
+
+	<build>
+		<plugins>
+			<!--
+				Allows running AOSH directly from Maven.
+
+				Defaults to command line argument "-i" for interactive mode.
+				
+				See https://stackoverflow.com/questions/9846046/run-main-class-of-maven-project
+				See https://www.mojohaus.org/exec-maven-plugin/java-mojo.html#additionalClasspathElements
+			-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>1.6.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>com.aoindustries.aoserv.client.aosh.AOSH</mainClass>
+					<additionalClasspathElements>
+			            <additionalClasspathElement>${user.home}/.config/aoserv-client</additionalClasspathElement>
+					</additionalClasspathElements>
+					<cleanupDaemonThreads>false</cleanupDaemonThreads>
+					<!-- Moved to exec.args property above to allow overridden on command line:
+					<commandlineArgs>-i</commandlineArgs>
+					-->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>
