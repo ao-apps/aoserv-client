@@ -76,7 +76,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<configuration>
 					<mainClass>com.aoindustries.aoserv.client.aosh.AOSH</mainClass>
 					<additionalClasspathElements>
-			            <additionalClasspathElement>${user.home}/.config/aoserv-client</additionalClasspathElement>
+						<additionalClasspathElement>${user.home}/.config/aoserv-client</additionalClasspathElement>
 					</additionalClasspathElements>
 					<cleanupDaemonThreads>false</cleanupDaemonThreads>
 					<!-- Moved to exec.args property above to allow overridden on command line:
