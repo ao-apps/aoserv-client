@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2008-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -57,7 +57,8 @@ public class CreditCardTest extends TestCase {
 	}
 
 	/**
-	 * Runs the full MySQL test.
+	 * @see CreditCard#randomize(java.lang.String)
+	 * @see CreditCard#derandomize(java.lang.String)
 	 */
 	public void testRandomizeDerandomize() {
 		StringBuilder SB = new StringBuilder();
@@ -77,7 +78,7 @@ public class CreditCardTest extends TestCase {
 			String original = SB.toString();
 			//System.out.println(original);
 			String randomized = CreditCard.randomize(original);
-			System.out.println(randomized);
+			//System.out.println(randomized);
 			String derandomized = CreditCard.derandomize(randomized);
 			//System.out.println(derandomized);
 			assertEquals("original and derandomized do not match", original, derandomized);
