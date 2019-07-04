@@ -52,8 +52,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
 			>
-				<!-- TODO:
 				<ul>
+					<li>Added new system roles for <ao:a href="https://www.postgresql.org/docs/11/index.html">PostgreSQL 11</ao:a>.</li>
+					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':
 						<ol type="a">
@@ -66,8 +67,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							Converts to the most appropriate of 'Y', 'N', or 'W' for older clients.
 						</p>
 					</li>
+					-->
 				</ul>
-				-->
 			</changelog:release>
 		</c:if>
 
