@@ -186,6 +186,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 		Server ps = getPostgresServer();
 		if(
+			// Note: This list matches PostgresHandler.removePostgresServerUser
 			username.equals(User.POSTGRES)
 			|| username.equals(User.POSTGRESMON)
 			|| username.equals(User.AOADMIN)
