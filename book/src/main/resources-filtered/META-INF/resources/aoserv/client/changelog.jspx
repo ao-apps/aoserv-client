@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-07T17:24:20-0500"
+		dateModified="2019-07-07T18:09:45-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -63,6 +63,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li><code>replication</code></li>
 						</ul>
 					</li>
+					<li>New <code>isSpecial()</code> methods instead of several places using the same list.</li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':

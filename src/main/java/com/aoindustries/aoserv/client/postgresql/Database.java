@@ -285,9 +285,25 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		}
 	}
 
-	Name name;
-	int postgres_server;
-	int datdba;
+	/**
+	 * Special databases may not be added or removed.
+	 */
+	public static boolean isSpecial(Name name) {
+		return
+			// Templates
+			name.equals(TEMPLATE0)
+			|| name.equals(TEMPLATE1)
+			// Monitoring
+			|| name.equals(POSTGRESMON)
+			// AO Platform Components
+			|| name.equals(AOINDUSTRIES)
+			|| name.equals(AOSERV)
+			|| name.equals(AOWEB);
+	}
+
+	private Name name;
+	private int postgres_server;
+	private int datdba;
 	private int encoding;
 	private boolean is_template;
 	private boolean allow_conn;
@@ -408,6 +424,10 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		}
 	}
 
+	public int getDatdba_id() {
+		return datdba;
+	}
+
 	public UserServer getDatDBA() throws SQLException, IOException {
 		UserServer obj=table.getConnector().getPostgresql().getUserServer().get(datdba);
 		if(obj==null) throw new SQLException("Unable to find PostgresServerUser: "+datdba);
@@ -459,11 +479,16 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
 		String version = getPostgresServer().getVersion().getTechnologyVersion(table.getConnector()).getVersion();
+		// TODO: Update documentation URL
 		return "https://aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
 	}
 
 	public Name getName() {
 		return name;
+	}
+
+	public boolean isSpecial() {
+		return isSpecial(name);
 	}
 
 	public Encoding getPostgresEncoding() throws SQLException, IOException {
@@ -478,6 +503,10 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		}
 
 		return obj;
+	}
+
+	public int getPostgresServer_bind_id() {
+		return postgres_server;
 	}
 
 	public Server getPostgresServer() throws SQLException, IOException {
@@ -534,18 +563,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		Server ps=getPostgresServer();
 		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
 		if(is_template) reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
-		if(
-			// Note: This list matches PostgresHandler.removePostgresDatabase
-			// Templates
-			name.equals(TEMPLATE0)
-			|| name.equals(TEMPLATE1)
-			// Monitoring
-			|| name.equals(POSTGRESMON)
-			// AO Platform Components
-			|| name.equals(AOINDUSTRIES)
-			|| name.equals(AOSERV)
-			|| name.equals(AOWEB)
-		) {
+		if(isSpecial()) {
 			reasons.add(
 				new CannotRemoveReason<>(
 					"Not allowed to drop a special PostgreSQL database: "
