@@ -184,11 +184,29 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
-
-		if(username.equals(User.POSTGRES)) reasons.add(new CannotRemoveReason<>("Not allowed to remove the "+User.POSTGRES+" PostgreSQL user", this));
+		Server ps = getPostgresServer();
+		if(
+			username.equals(User.POSTGRES)
+			|| username.equals(User.POSTGRESMON)
+			|| username.equals(User.AOADMIN)
+			|| username.equals(User.AOSERV_APP)
+			|| username.equals(User.AOWEB_APP)
+		) {
+			reasons.add(
+				new CannotRemoveReason<>(
+					"Not allowed to remove a special PostgreSQL user: "
+						+ username
+						+ " on "
+						+ ps.getName()
+						+ " on "
+						+ ps.getAoServer().getHostname(),
+					this
+				)
+			);
+		}
 
 		for(Database pd : getPostgresDatabases()) {
-			Server ps=pd.getPostgresServer();
+			assert ps.equals(pd.getPostgresServer());
 			reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), pd));
 		}
 

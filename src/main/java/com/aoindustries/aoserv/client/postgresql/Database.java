@@ -254,19 +254,24 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 * Special databases.
 	 */
 	public static final Name
+		/** Templates */
+		TEMPLATE0,
+		TEMPLATE1,
+		/** Monitoring */
+		POSTGRESMON,
+		/** AO Platform Components */
 		AOINDUSTRIES,
 		AOSERV,
-		AOWEB,
-		TEMPLATE0,
-		TEMPLATE1
-	;
+		AOWEB;
+
 	static {
 		try {
+			TEMPLATE0 = Name.valueOf("template0");
+			TEMPLATE1 = Name.valueOf("template1");
+			POSTGRESMON = Name.valueOf("postgresmon");
 			AOINDUSTRIES = Name.valueOf("aoindustries");
 			AOSERV = Name.valueOf("aoserv");
 			AOWEB = Name.valueOf("aoweb");
-			TEMPLATE0 = Name.valueOf("template0");
-			TEMPLATE1 = Name.valueOf("template1");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
@@ -522,10 +527,28 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
 		if(is_template) reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
 		if(
-			name.equals(AOINDUSTRIES)
+			// Templates
+			name.equals(TEMPLATE0)
+			|| name.equals(TEMPLATE1)
+			// Monitoring
+			|| name.equals(POSTGRESMON)
+			// AO Platform Components
+			|| name.equals(AOINDUSTRIES)
 			|| name.equals(AOSERV)
 			|| name.equals(AOWEB)
-		) reasons.add(new CannotRemoveReason<>("Not allowed to drop a special PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
+		) {
+			reasons.add(
+				new CannotRemoveReason<>(
+					"Not allowed to drop a special PostgreSQL database: "
+						+ name
+						+ " on "
+						+ ps.getName()
+						+ " on "
+						+ ps.getAoServer().getHostname(),
+					this
+				)
+			);
+		}
 
 		return reasons;
 	}
