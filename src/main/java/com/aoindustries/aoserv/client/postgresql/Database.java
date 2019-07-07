@@ -535,6 +535,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
 		if(is_template) reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
 		if(
+			// Note: This list matches PostgresHandler.removePostgresDatabase
 			// Templates
 			name.equals(TEMPLATE0)
 			|| name.equals(TEMPLATE1)
