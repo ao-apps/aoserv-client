@@ -64,6 +64,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	 *   <li>Be between 1 and 31 characters</li>
 	 *   <li>Must start with <code>[a-z]</code></li>
 	 *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
+	 *   <li>Must not be any of the special keywords used in <a href="https://www.postgresql.org/docs/current/auth-pg-hba-conf.html">pg_hba.conf</a></li>
 	 *   <li>Must not be a PostgreSQL reserved word</li>
 	 *   <li>Must be a valid <code>UserId</code> - this is implied by the above rules</li>
 	 * </ul>
@@ -106,9 +107,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 				) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.illegalCharacter");
 			}
 			if(
-				id.equals("sameuser")
-				|| id.equals("samegroup")
-				|| id.equals("all")
+				id.equals("all")
 				|| Server.ReservedWord.isReservedWord(id)
 			) return new InvalidResult(ApplicationResources.accessor, "User.Name.validate.reservedWord");
 			assert com.aoindustries.aoserv.client.linux.User.Name.validate(id).isValid() : "A PostgreSQL User.Name is always a valid Linux User.Name.";
