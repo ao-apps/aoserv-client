@@ -204,12 +204,14 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 		PG_EXECUTE_SERVER_PROGRAM,
 		PG_READ_SERVER_FILES,
 		PG_WRITE_SERVER_FILES,
+		/** Monitoring */
+		POSTGRESMON,
 		/** AO Admin */
 		AOADMIN,
 		/** AO Platform Components */
 		AOSERV_APP,
-		AOWEB_APP
-	;
+		AOWEB_APP;
+
 	static {
 		try {
 			POSTGRES = Name.valueOf("postgres");
@@ -221,6 +223,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 			PG_EXECUTE_SERVER_PROGRAM = Name.valueOf("pg_execute_server_program");
 			PG_READ_SERVER_FILES = Name.valueOf("pg_read_server_files");
 			PG_WRITE_SERVER_FILES = Name.valueOf("pg_write_server_files");
+			POSTGRESMON = Name.valueOf("postgresmon");
 			AOADMIN = Name.valueOf("aoadmin");
 			AOSERV_APP = Name.valueOf("aoserv_app");
 			AOWEB_APP = Name.valueOf("aoweb_app");
