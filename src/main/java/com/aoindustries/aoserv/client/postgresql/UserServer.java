@@ -61,9 +61,9 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	static final String COLUMN_USERNAME_name = "username";
 	static final String COLUMN_POSTGRES_SERVER_name = "postgres_server";
 
-	User.Name username;
-	int postgres_server;
-	int disable_log;
+	private User.Name username;
+	private int postgres_server;
+	private int disable_log;
 	private String predisable_password;
 
 	@Override
@@ -111,7 +111,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_USERNAME: return username;
 			case COLUMN_POSTGRES_SERVER: return postgres_server;
-			case 3: return disable_log==-1?null:disable_log;
+			case 3: return getDisableLog_id();
 			case 4: return predisable_password;
 			default: throw new IllegalArgumentException("Invalid index: "+i);
 		}
@@ -120,6 +120,10 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	@Override
 	public boolean isDisabled() {
 		return disable_log!=-1;
+	}
+
+	public Integer getDisableLog_id() {
+		return disable_log == -1 ? null : disable_log;
 	}
 
 	@Override
@@ -134,14 +138,26 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return table.getConnector().getPostgresql().getDatabase().getPostgresDatabases(this);
 	}
 
+	public User.Name getPostresUser_username_username_id() {
+		return username;
+	}
+
 	public User getPostgresUser() throws SQLException, IOException {
 		User obj=table.getConnector().getPostgresql().getUser().get(username);
 		if(obj==null) throw new SQLException("Unable to find PostgresUser: "+username);
 		return obj;
 	}
 
+	public boolean isSpecial() {
+		return User.isSpecial(username);
+	}
+
 	public String getPredisablePassword() {
 		return predisable_password;
+	}
+
+	public int getPostgresServer_bind_id() {
+		return postgres_server;
 	}
 
 	public Server getPostgresServer() throws IOException, SQLException{
@@ -185,14 +201,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 		Server ps = getPostgresServer();
-		if(
-			// Note: This list matches PostgresHandler.removePostgresServerUser
-			username.equals(User.POSTGRES)
-			|| username.equals(User.POSTGRESMON)
-			|| username.equals(User.AOADMIN)
-			|| username.equals(User.AOSERV_APP)
-			|| username.equals(User.AOWEB_APP)
-		) {
+		if(isSpecial()) {
 			reasons.add(
 				new CannotRemoveReason<>(
 					"Not allowed to remove a special PostgreSQL user: "

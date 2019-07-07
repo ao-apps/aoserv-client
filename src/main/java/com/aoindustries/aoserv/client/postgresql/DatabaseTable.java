@@ -97,7 +97,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 
 	Database getPostgresDatabase(Database.Name name, Server postgresServer) throws IOException, SQLException {
 		// Use the index first
-		for(Database pd : getPostgresDatabases(postgresServer)) if(pd.name.equals(name)) return pd;
+		for(Database pd : getPostgresDatabases(postgresServer)) if(pd.getName().equals(name)) return pd;
 		return null;
 	}
 

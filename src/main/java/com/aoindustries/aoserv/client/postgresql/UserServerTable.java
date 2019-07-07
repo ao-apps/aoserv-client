@@ -81,8 +81,8 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		for(int c=0;c<size;c++) {
 			UserServer psu=table.get(c);
 			if(
-				psu.username.equals(username)
-				&& psu.postgres_server==postgresServer
+				psu.getPostresUser_username_username_id().equals(username)
+				&& psu.getPostgresServer_bind_id() == postgresServer
 			) return psu;
 		}
 		return null;

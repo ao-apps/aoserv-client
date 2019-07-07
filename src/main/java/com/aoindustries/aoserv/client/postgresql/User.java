@@ -232,6 +232,32 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	}
 
 	/**
+	 * Special users may not be added or removed.
+	 */
+	public static boolean isSpecial(Name username) {
+		return
+			// Super user
+			username.equals(POSTGRES)
+			// System roles, PostgreSQL 10+
+			|| username.equals(PG_MONITOR)
+			|| username.equals(PG_READ_ALL_SETTINGS)
+			|| username.equals(PG_READ_ALL_STATS)
+			|| username.equals(PG_SIGNAL_BACKEND)
+			|| username.equals(PG_STAT_SCAN_TABLES)
+			// System roles, PostgreSQL 11+
+			|| username.equals(PG_EXECUTE_SERVER_PROGRAM)
+			|| username.equals(PG_READ_SERVER_FILES)
+			|| username.equals(PG_WRITE_SERVER_FILES)
+			// Monitoring
+			|| username.equals(POSTGRESMON)
+			// AO Admin
+			|| username.equals(AOADMIN)
+			// AO Platform Components
+			|| username.equals(AOSERV_APP)
+			|| username.equals(AOWEB_APP);
+	}
+
+	/**
 	 * A password may be set to null, which means that the account will
 	 * be disabled.
 	 */
@@ -245,7 +271,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 		superPriv,
 		catupd
 	;
-	int disable_log;
+	private int disable_log;
 
 	public int addPostgresServerUser(Server postgresServer) throws IOException, SQLException {
 		return table.getConnector().getPostgresql().getUserServer().addPostgresServerUser(pkey, postgresServer);
@@ -316,13 +342,17 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 		if(i==2) return trace;
 		if(i==3) return superPriv;
 		if(i==4) return catupd;
-		if(i==5) return disable_log == -1 ? null : disable_log;
+		if(i==5) return getDisableLog_id();
 		throw new IllegalArgumentException("Invalid index: "+i);
 	}
 
 	@Override
 	public boolean isDisabled() {
 		return disable_log!=-1;
+	}
+
+	public Integer getDisableLog_id() {
+		return disable_log == -1 ? null : disable_log;
 	}
 
 	@Override
@@ -354,6 +384,10 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 		com.aoindustries.aoserv.client.account.User username=table.getConnector().getAccount().getUser().get(this.pkey);
 		if(username==null) throw new SQLException("Unable to find Username: "+this.pkey);
 		return username;
+	}
+
+	public boolean isSpecial() {
+		return isSpecial(pkey);
 	}
 
 	@Override
@@ -392,6 +426,14 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
+		if(isSpecial()) {
+			reasons.add(
+				new CannotRemoveReason<>(
+					"Not allowed to remove a special PostgreSQL user: " + pkey,
+					this
+				)
+			);
+		}
 		for(UserServer psu : getPostgresServerUsers()) reasons.addAll(psu.getCannotRemoveReasons());
 		return reasons;
 	}
