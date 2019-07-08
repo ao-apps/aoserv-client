@@ -96,15 +96,15 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		ANY_LOCAL_HOST=null
 	;
 
-	User.Name username;
-	int mysql_server;
-	String host;
-	int disable_log;
+	private User.Name username;
+	private int mysql_server;
+	private String host;
+	private int disable_log;
 	private String predisable_password;
-	int max_questions;
-	int max_updates;
-	int max_connections;
-	int max_user_connections;
+	private int max_questions;
+	private int max_updates;
+	private int max_connections;
+	private int max_user_connections;
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
@@ -113,7 +113,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public boolean canDisable() {
-		return disable_log==-1;
+		return disable_log == -1;
 	}
 
 	@Override
@@ -149,7 +149,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			case COLUMN_USERNAME: return username;
 			case COLUMN_MYSQL_SERVER: return mysql_server;
 			case 3: return host;
-			case 4: return disable_log==-1?null:disable_log;
+			case 4: return getDisableLog_id();
 			case 5: return predisable_password;
 			case 6: return max_questions;
 			case 7: return max_updates;
@@ -164,11 +164,15 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return disable_log!=-1;
 	}
 
+	public Integer getDisableLog_id() {
+		return disable_log == -1 ? null : disable_log;
+	}
+
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
-		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
-		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+		if(disable_log == -1) return null;
+		DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+		if(obj == null) throw new SQLException("Unable to find DisableLog: " + disable_log);
 		return obj;
 	}
 
@@ -180,10 +184,18 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return table.getConnector().getMysql().getDatabaseUser().getMySQLDBUsers(this);
 	}
 
+	public User.Name getMySQLUser_username() {
+		return username;
+	}
+
 	public User getMySQLUser() throws SQLException, IOException {
 		User obj=table.getConnector().getMysql().getUser().get(username);
 		if(obj==null) throw new SQLException("Unable to find MySQLUser: "+username);
 		return obj;
+	}
+
+	public boolean isSpecial() {
+		return User.isSpecial(username);
 	}
 
 	public String getPredisablePassword() {
@@ -204,6 +216,10 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	public int getMaxUserConnections() {
 		return max_user_connections;
+	}
+
+	public int getMySQLServer_id() {
+		return mysql_server;
 	}
 
 	public Server getMySQLServer() throws IOException, SQLException{
@@ -254,14 +270,21 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	@Override
-	public List<CannotRemoveReason<UserServer>> getCannotRemoveReasons() {
+	public List<CannotRemoveReason<UserServer>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<UserServer>> reasons=new ArrayList<>();
-		if(
-			username.equals(User.ROOT)
-			|| username.equals(User.MYSQL_SESSION)
-			|| username.equals(User.MYSQL_SYS)
-		) {
-			reasons.add(new CannotRemoveReason<>("Not allowed to remove the " + username + " MySQL user", this));
+		if(isSpecial()) {
+			Server ms = getMySQLServer();
+			reasons.add(
+				new CannotRemoveReason<>(
+					"Not allowed to remove a special MySQL user: "
+						+ username
+						+ " on "
+						+ ms.getName()
+						+ " on "
+						+ ms.getAoServer().getHostname(),
+					this
+				)
+			);
 		}
 		return reasons;
 	}
@@ -362,6 +385,6 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public boolean canSetPassword() throws SQLException, IOException {
-		return disable_log==-1 && getMySQLUser().canSetPassword();
+		return !isDisabled() && !isSpecial();
 	}
 }

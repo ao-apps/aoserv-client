@@ -246,9 +246,9 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_MYSQL_SERVER=2,
-		COLUMN_PACKAGE=3
+		COLUMN_PKEY = 0,
+		COLUMN_MYSQL_SERVER = 2,
+		COLUMN_PACKAGE = 3
 	;
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_MYSQL_SERVER_name = "mysql_server";
@@ -274,33 +274,52 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	;
 
 	/**
-	 * The root database for a mysql installation.
-	 */
-	public static final Name MYSQL;
-
-	/**
 	 * Special databases that are never removed.
 	 */
 	public static final Name
+		/** The root database for a MySQL installation. */
+		MYSQL,
+		/** MySQL */
 		INFORMATION_SCHEMA,
 		PERFORMANCE_SCHEMA,
-		SYS
+		SYS,
+		/** Monitoring */
+		MYSQLMON
 	;
 
 	static {
 		try {
+			// The root database for a MySQL installation.
 			MYSQL = Name.valueOf("mysql");
+			// MySQL
 			INFORMATION_SCHEMA = Name.valueOf("information_schema");
 			PERFORMANCE_SCHEMA = Name.valueOf("performance_schema");
 			SYS = Name.valueOf("sys");
+			// Monitoring
+			MYSQLMON = Name.valueOf("mysqlmon");
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
 	}
 
-	Name name;
-	int mysql_server;
-	Account.Name packageName;
+	/**
+	 * Special databases may not be added or removed.
+	 */
+	public static boolean isSpecial(Name name) {
+		return
+			// The root database for a MySQL installation.
+			name.equals(MYSQL)
+			// MySQL
+			|| name.equals(INFORMATION_SCHEMA)
+			|| name.equals(PERFORMANCE_SCHEMA)
+			|| name.equals(SYS)
+			// Monitoring
+			|| name.equals(MYSQLMON);
+	}
+
+	private Name name;
+	private int mysql_server;
+	private Account.Name packageName;
 	private AlertLevel maxCheckTableAlertLevel;
 
 	public int addMySQLServerUser(
@@ -534,15 +553,27 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		return name;
 	}
 
+	public boolean isSpecial() {
+		return isSpecial(name);
+	}
+
+	public Account.Name getPackage_name() {
+		return packageName;
+	}
+
 	public Package getPackage() throws SQLException, IOException {
 		Package obj=table.getConnector().getBilling().getPackage().get(packageName);
 		if(obj==null) throw new SQLException("Unable to find Package: "+packageName);
 		return obj;
 	}
 
+	public int getMySQLServer_id() {
+		return mysql_server;
+	}
+
 	public Server getMySQLServer() throws SQLException, IOException {
-		Server obj=table.getConnector().getMysql().getServer().get(mysql_server);
-		if(obj==null) throw new SQLException("Unable to find MySQLServer: "+mysql_server);
+		Server obj = table.getConnector().getMysql().getServer().get(mysql_server);
+		if(obj == null) throw new SQLException("Unable to find MySQLServer: " + mysql_server);
 		return obj;
 	}
 
@@ -560,7 +591,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		try {
 			pkey=result.getInt(1);
 			name = Name.valueOf(result.getString(2));
-			mysql_server=result.getInt(3);
+			mysql_server = result.getInt(3);
 			packageName = Account.Name.valueOf(result.getString(4));
 			maxCheckTableAlertLevel = AlertLevel.valueOf(result.getString(5));
 		} catch(ValidationException e) {
@@ -573,7 +604,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		try {
 			pkey=in.readCompressedInt();
 			name = Name.valueOf(in.readUTF());
-			mysql_server=in.readCompressedInt();
+			mysql_server = in.readCompressedInt();
 			packageName = Account.Name.valueOf(in.readUTF()).intern();
 			maxCheckTableAlertLevel = AlertLevel.valueOf(in.readCompressedUTF());
 		} catch(ValidationException e) {
@@ -584,31 +615,19 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	@Override
 	public List<CannotRemoveReason<Database>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<Database>> reasons=new ArrayList<>();
-		if(name.equals(MYSQL)) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+MYSQL, this));
-		if(name.equals(INFORMATION_SCHEMA)) {
-			String version = getMySQLServer().getVersion().getVersion();
-			if(
-				version.startsWith(Server.VERSION_5_0_PREFIX)
-				|| version.startsWith(Server.VERSION_5_1_PREFIX)
-				|| version.startsWith(Server.VERSION_5_6_PREFIX)
-				|| version.startsWith(Server.VERSION_5_7_PREFIX)
-				|| version.startsWith(Server.VERSION_8_0_PREFIX)
-			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+INFORMATION_SCHEMA, this));
-		}
-		if(name.equals(PERFORMANCE_SCHEMA)) {
-			String version = getMySQLServer().getVersion().getVersion();
-			if(
-				version.startsWith(Server.VERSION_5_6_PREFIX)
-				|| version.startsWith(Server.VERSION_5_7_PREFIX)
-				|| version.startsWith(Server.VERSION_8_0_PREFIX)
-			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+PERFORMANCE_SCHEMA, this));
-		}
-		if(name.equals(SYS)) {
-			String version = getMySQLServer().getVersion().getVersion();
-			if(
-				version.startsWith(Server.VERSION_5_7_PREFIX)
-				|| version.startsWith(Server.VERSION_8_0_PREFIX)
-			) reasons.add(new CannotRemoveReason<>("Not allowed to remove the MySQL database named "+SYS, this));
+		if(isSpecial()) {
+			Server ms = getMySQLServer();
+			reasons.add(
+				new CannotRemoveReason<>(
+					"Not allowed to drop a special MySQL database: "
+						+ name
+						+ " on "
+						+ ms.getName()
+						+ " on "
+						+ ms.getAoServer().getHostname(),
+					this
+				)
+			);
 		}
 		return reasons;
 	}

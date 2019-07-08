@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -75,10 +75,10 @@ import java.util.List;
 final public class Package extends CachedObjectIntegerKey<Package> implements Disablable, Comparable<Package> {
 
 	static final int
-		COLUMN_PKEY=0,
-		COLUMN_NAME=1,
-		COLUMN_ACCOUNTING=2,
-		COLUMN_PACKAGE_DEFINITION=3
+		COLUMN_PKEY = 0,
+		COLUMN_NAME = 1,
+		COLUMN_ACCOUNTING = 2,
+		COLUMN_PACKAGE_DEFINITION = 3
 	;
 	public static final String COLUMN_NAME_name = "name";
 
@@ -112,12 +112,12 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	 */
 	public static final float DEFAULT_EMAIL_RELAY_RATE = .1f;
 
-	Account.Name name;
-	Account.Name account;
-	int package_definition;
+	private Account.Name name;
+	private Account.Name account;
+	private int package_definition;
 	private long created;
 	private com.aoindustries.aoserv.client.account.User.Name created_by;
-	int disable_log;
+	private int disable_log;
 	private int email_in_burst;
 	private float email_in_rate;
 	private int email_out_burst;
@@ -202,7 +202,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			case COLUMN_PACKAGE_DEFINITION: return package_definition;
 			case 4: return getCreated();
 			case 5: return created_by;
-			case 6: return disable_log==-1?null:disable_log;
+			case 6: return getDisableLog_id();
 			case 7: return email_in_burst==-1 ? null : email_in_burst;
 			case 8: return Float.isNaN(email_in_rate) ? null : email_in_rate;
 			case 9: return email_out_burst==-1 ? null : email_out_burst;
@@ -232,11 +232,15 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return disable_log!=-1;
 	}
 
+	public Integer getDisableLog_id() {
+		return disable_log == -1 ? null : disable_log;
+	}
+
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
-		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
-		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+		if(disable_log == -1) return null;
+		DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+		if(obj == null) throw new SQLException("Unable to find DisableLog: " + disable_log);
 		return obj;
 	}
 
@@ -344,6 +348,10 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.getConnector().getNet().getBind().getNetBinds(this, ip);
 	}
 
+	public int getPackageDefinition_id() {
+		return package_definition;
+	}
+
 	public PackageDefinition getPackageDefinition() throws SQLException, IOException {
 		PackageDefinition pd = table.getConnector().getBilling().getPackageDefinition().get(package_definition);
 		if(pd == null) throw new SQLException("Unable to find PackageDefinition: "+package_definition);
@@ -425,17 +433,17 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		try {
 			pkey=in.readCompressedInt();
 			name = Account.Name.valueOf(in.readUTF()).intern();
-			account=Account.Name.valueOf(in.readUTF()).intern();
-			package_definition=in.readCompressedInt();
-			created=in.readLong();
+			account = Account.Name.valueOf(in.readUTF()).intern();
+			package_definition = in.readCompressedInt();
+			created = in.readLong();
 			created_by = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
-			disable_log=in.readCompressedInt();
-			email_in_burst=in.readCompressedInt();
-			email_in_rate=in.readFloat();
-			email_out_burst=in.readCompressedInt();
-			email_out_rate=in.readFloat();
-			email_relay_burst=in.readCompressedInt();
-			email_relay_rate=in.readFloat();
+			disable_log = in.readCompressedInt();
+			email_in_burst = in.readCompressedInt();
+			email_in_rate = in.readFloat();
+			email_out_burst = in.readCompressedInt();
+			email_out_rate = in.readFloat();
+			email_relay_burst = in.readCompressedInt();
+			email_relay_rate = in.readFloat();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}

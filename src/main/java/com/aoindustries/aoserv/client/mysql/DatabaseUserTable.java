@@ -163,7 +163,7 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 			DatabaseUser mdu=cached.get(c);
 			Database md=mdu.getMySQLDatabase();
 			// The database might be null if filtered or recently removed
-			if(md!=null && md.mysql_server==msPKey) matches.add(mdu);
+			if(md!=null && md.getMySQLServer_id() == msPKey) matches.add(mdu);
 		}
 		return matches;
 	}

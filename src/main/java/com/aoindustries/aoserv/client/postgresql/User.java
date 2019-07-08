@@ -213,17 +213,23 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 
 	static {
 		try {
+			// Super user
 			POSTGRES = Name.valueOf("postgres");
+			// System roles, PostgreSQL 10+
 			PG_MONITOR = Name.valueOf("pg_monitor");
 			PG_READ_ALL_SETTINGS = Name.valueOf("pg_read_all_settings");
 			PG_READ_ALL_STATS = Name.valueOf("pg_read_all_stats");
 			PG_SIGNAL_BACKEND = Name.valueOf("pg_signal_backend");
 			PG_STAT_SCAN_TABLES = Name.valueOf("pg_stat_scan_tables");
+			// System roles, PostgreSQL 11+
 			PG_EXECUTE_SERVER_PROGRAM = Name.valueOf("pg_execute_server_program");
 			PG_READ_SERVER_FILES = Name.valueOf("pg_read_server_files");
 			PG_WRITE_SERVER_FILES = Name.valueOf("pg_write_server_files");
+			// Monitoring
 			POSTGRESMON = Name.valueOf("postgresmon");
+			// AO Admin
 			AOADMIN = Name.valueOf("aoadmin");
+			// AO Platform Components
 			AOSERV_APP = Name.valueOf("aoserv_app");
 			AOWEB_APP = Name.valueOf("aoweb_app");
 		} catch(ValidationException e) {
@@ -465,6 +471,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 
 	@Override
 	public boolean canSetPassword() {
-		return disable_log==-1 && !POSTGRES.equals(pkey);
+		return !isDisabled() && !isSpecial();
 	}
 }

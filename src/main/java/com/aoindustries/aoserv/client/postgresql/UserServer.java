@@ -138,7 +138,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return table.getConnector().getPostgresql().getDatabase().getPostgresDatabases(this);
 	}
 
-	public User.Name getPostresUser_username_username_id() {
+	public User.Name getPostresUser_username() {
 		return username;
 	}
 
@@ -309,6 +309,6 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public boolean canSetPassword() throws SQLException, IOException {
-		return disable_log==-1 && getPostgresUser().canSetPassword();
+		return !isDisabled() && !isSpecial();
 	}
 }

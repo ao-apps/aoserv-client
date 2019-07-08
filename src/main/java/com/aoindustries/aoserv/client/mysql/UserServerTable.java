@@ -107,7 +107,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		int size=table.size();
 		for(int c=0;c<size;c++) {
 			UserServer msu=table.get(c);
-			if(msu.mysql_server==msPKey && msu.username.equals(username)) return msu;
+			if(msu.getMySQLServer_id() == msPKey && msu.getMySQLUser_username().equals(username)) return msu;
 		}
 		return null;
 	}
