@@ -357,7 +357,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public boolean canDisable() throws IOException, SQLException {
-		if(disable_log != -1) return false;
+		if(isDisabled() || isSpecial()) return false;
 		for(UserServer msu : getMySQLServerUsers()) if(!msu.isDisabled()) return false;
 		return true;
 	}
@@ -368,8 +368,9 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public boolean canEnable() throws SQLException, IOException {
-		DisableLog dl=getDisableLog();
-		if(dl==null) return false;
+		if(isSpecial()) return false;
+		DisableLog dl = getDisableLog();
+		if(dl == null) return false;
 		else return dl.canEnable() && !getUsername().isDisabled();
 	}
 

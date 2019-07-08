@@ -298,15 +298,16 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 
 	@Override
 	public boolean canDisable() throws IOException, SQLException {
-		if(disable_log!=-1) return false;
+		if(isDisabled() || isSpecial()) return false;
 		for(UserServer psu : getPostgresServerUsers()) if(!psu.isDisabled()) return false;
 		return true;
 	}
 
 	@Override
 	public boolean canEnable() throws SQLException, IOException {
-		DisableLog dl=getDisableLog();
-		if(dl==null) return false;
+		if(isSpecial()) return false;
+		DisableLog dl = getDisableLog();
+		if(dl == null) return false;
 		else return dl.canEnable() && !getUsername().isDisabled();
 	}
 

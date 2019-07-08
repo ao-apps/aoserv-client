@@ -76,13 +76,14 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public boolean canDisable() {
-		return disable_log==-1;
+		return !isDisabled() && !isSpecial();
 	}
 
 	@Override
 	public boolean canEnable() throws SQLException, IOException {
-		DisableLog dl=getDisableLog();
-		if(dl==null) return false;
+		if(isSpecial()) return false;
+		DisableLog dl = getDisableLog();
+		if(dl == null) return false;
 		else return dl.canEnable() && !getPostgresUser().isDisabled();
 	}
 
@@ -263,6 +264,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	public void setPredisablePassword(final String password) throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("May not disable special PostgreSQL user: " + username);
 		table.getConnector().requestUpdate(
 			true,
 			AoservProtocol.CommandID.SET_POSTGRES_SERVER_USER_PREDISABLE_PASSWORD,
