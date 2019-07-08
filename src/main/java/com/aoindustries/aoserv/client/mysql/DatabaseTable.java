@@ -91,7 +91,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 
 	Database getMySQLDatabase(Database.Name name, Server ms) throws IOException, SQLException {
 		// Use index first
-		for(Database md : getMySQLDatabases(ms)) if(md.name.equals(name)) return md;
+		for(Database md : getMySQLDatabases(ms)) if(md.getName().equals(name)) return md;
 		return null;
 	}
 

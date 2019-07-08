@@ -195,28 +195,46 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	public static final int MAX_USERNAME_LENGTH = Name.MAX_LENGTH;
 
 	/**
-	 * The username of the MySQL super user.
+	 * The username of the MySQL special users.
 	 */
-	public static final Name ROOT;
-
-	/**
-	 * The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7.
-	 */
-	public static final Name MYSQL_SESSION;
-
-	/**
-	 * The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
-	 */
-	public static final Name MYSQL_SYS;
+	public static final Name
+		/** The username of the MySQL super user. */
+		ROOT,
+		/** The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7. */
+		MYSQL_SESSION,
+		/** The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7. */
+		MYSQL_SYS,
+		/** Monitoring */
+		MYSQLMON;
 
 	static {
 		try {
+			// The username of the MySQL super user.
 			ROOT = Name.valueOf("root").intern();
+			// The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7.
 			MYSQL_SESSION = Name.valueOf("mysql.session").intern();
+			// The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
 			MYSQL_SYS = Name.valueOf("mysql.sys").intern();
+			// Monitoring
+			MYSQLMON = Name.valueOf("mysqlmon").intern();
 		} catch(ValidationException e) {
 			throw new AssertionError("These hard-coded values are valid", e);
 		}
+	}
+
+	/**
+	 * Special users may not be added or removed.
+	 */
+	public static boolean isSpecial(Name username) {
+		return
+			// The username of the MySQL super user.
+			username.equals(ROOT)
+			// The username of the MySQL <code>mysql.session</code> user added in MySQL 5.7.
+			|| username.equals(MYSQL_SESSION)
+			// The username of the MySQL <code>mysql.sys</code> user added in MySQL 5.7.
+			|| username.equals(MYSQL_SYS)
+			// Monitoring
+			|| username.equals(MYSQLMON);
 	}
 
 	/**
@@ -258,7 +276,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		trigger_priv
 	;
 
-	int disable_log;
+	private int disable_log;
 
 	public int addMySQLServerUser(Server mysqlServer, String host) throws IOException, SQLException {
 		return table.getConnector().getMysql().getUserServer().addMySQLServerUser(pkey, mysqlServer, host);
@@ -339,7 +357,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public boolean canDisable() throws IOException, SQLException {
-		if(disable_log!=-1) return false;
+		if(disable_log != -1) return false;
 		for(UserServer msu : getMySQLServerUsers()) if(!msu.isDisabled()) return false;
 		return true;
 	}
@@ -454,8 +472,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			case 26: return create_user_priv;
 			case 27: return event_priv;
 			case 28: return trigger_priv;
-			case 29: return disable_log==-1?null:disable_log;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 29: return getDisableLog_id();
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -464,11 +482,15 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		return disable_log!=-1;
 	}
 
+	public Integer getDisableLog_id() {
+		return disable_log == -1 ? null : disable_log;
+	}
+
 	@Override
 	public DisableLog getDisableLog() throws SQLException, IOException {
-		if(disable_log==-1) return null;
-		DisableLog obj=table.getConnector().getAccount().getDisableLog().get(disable_log);
-		if(obj==null) throw new SQLException("Unable to find DisableLog: "+disable_log);
+		if(disable_log == -1) return null;
+		DisableLog obj = table.getConnector().getAccount().getDisableLog().get(disable_log);
+		if(obj == null) throw new SQLException("Unable to find DisableLog: " + disable_log);
 		return obj;
 	}
 
@@ -492,6 +514,10 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		com.aoindustries.aoserv.client.account.User obj=table.getConnector().getAccount().getUser().get(pkey);
 		if(obj==null) throw new SQLException("Unable to find Username: "+pkey);
 		return obj;
+	}
+
+	public boolean isSpecial() {
+		return isSpecial(pkey);
 	}
 
 	@Override
@@ -526,8 +552,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			create_user_priv=result.getBoolean(27);
 			event_priv=result.getBoolean(28);
 			trigger_priv=result.getBoolean(29);
-			disable_log=result.getInt(30);
-			if(result.wasNull()) disable_log=-1;
+			disable_log = result.getInt(30);
+			if(result.wasNull()) disable_log = -1;
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -565,7 +591,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			create_user_priv=in.readBoolean();
 			event_priv=in.readBoolean();
 			trigger_priv=in.readBoolean();
-			disable_log=in.readCompressedInt();
+			disable_log = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -574,12 +600,13 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	@Override
 	public List<CannotRemoveReason<User>> getCannotRemoveReasons() {
 		List<CannotRemoveReason<User>> reasons=new ArrayList<>();
-		if(
-			pkey.equals(ROOT)
-			|| pkey.equals(MYSQL_SESSION)
-			|| pkey.equals(MYSQL_SYS)
-		) {
-			reasons.add(new CannotRemoveReason<>("Not allowed to remove the " + pkey + " MySQL user", this));
+		if(isSpecial()) {
+			reasons.add(
+				new CannotRemoveReason<>(
+					"Not allowed to remove a special MySQL user: " + pkey,
+					this
+				)
+			);
 		}
 		return reasons;
 	}
@@ -641,11 +668,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public boolean canSetPassword() {
-		return
-			disable_log == -1
-			&& !pkey.equals(ROOT)
-			&& !pkey.equals(MYSQL_SESSION)
-			&& !pkey.equals(MYSQL_SYS)
-		;
+		return !isDisabled() && !isSpecial();
 	}
 }
