@@ -322,6 +322,10 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	private Account.Name packageName;
 	private AlertLevel maxCheckTableAlertLevel;
 
+	/**
+	 * @deprecated  Please call {@link DatabaseUserTable#addMySQLDBUser(com.aoindustries.aoserv.client.mysql.Database, com.aoindustries.aoserv.client.mysql.UserServer, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean)} directly
+	 */
+	@Deprecated
 	public int addMySQLServerUser(
 		UserServer msu,
 		boolean canSelect,

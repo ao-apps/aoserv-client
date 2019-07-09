@@ -60,7 +60,7 @@ final public class UserTable extends CachedTableUserNameKey<User> {
 	}
 
 	public void addPostgresUser(User.Name username) throws IOException, SQLException {
-		if(User.isSpecial(username)) throw new SQLException("Refusing to add special user: " + username);
+		if(User.isSpecial(username)) throw new SQLException("Refusing to add special PostgreSQL user: " + username);
 		connector.requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.ADD,

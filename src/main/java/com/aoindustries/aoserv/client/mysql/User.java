@@ -223,7 +223,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	}
 
 	/**
-	 * Special users may not be added or removed.
+	 * Special MySQL users may not be added or removed.
 	 */
 	public static boolean isSpecial(Name username) {
 		return
@@ -284,7 +284,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special MySQL user: " + this);
 		return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getMySQLServerUsers());
 	}
 
@@ -434,13 +434,13 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to disable special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to disable special MySQL user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.MYSQL_USERS, dl.getPkey(), pkey);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to enable special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to enable special MySQL user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.MYSQL_USERS, pkey);
 	}
 
@@ -617,7 +617,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to remove special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to remove special MySQL user: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,

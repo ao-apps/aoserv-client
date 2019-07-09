@@ -108,7 +108,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special MySQL user: " + this);
 		return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_MYSQL_SERVER_USER_PASSWORD_SET, pkey)
 			? PasswordProtected.ALL
 			: PasswordProtected.NONE;
@@ -138,13 +138,13 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	*/
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to disable special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to disable special MySQL user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.MYSQL_SERVER_USERS, dl.getPkey(), pkey);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to enable special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to enable special MySQL user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.MYSQL_SERVER_USERS, pkey);
 	}
 
@@ -297,7 +297,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to remove special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to remove special MySQL user: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,
@@ -308,7 +308,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void setPassword(final String password) throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to set the password for a special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to set the password for a special MySQL user: " + this);
 
 		AOServConnector connector=table.getConnector();
 		if(!connector.isSecure()) throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");

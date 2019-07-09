@@ -68,6 +68,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>May not enable/disable special users and databases.</li>
 					<li>May not set the passwords of special users.</li>
 					<li>May not check if passwords set on special users.</li>
+					<li>May not grant/revoke access to/from special users and databases.</li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':

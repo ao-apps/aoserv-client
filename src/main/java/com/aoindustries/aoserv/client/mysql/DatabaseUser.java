@@ -254,14 +254,66 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
-		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
-		reasons.addAll(getMySQLServerUser().getCannotRemoveReasons());
-		reasons.addAll(getMySQLDatabase().getCannotRemoveReasons());
+		List<CannotRemoveReason<?>> reasons = new ArrayList<>();
+		UserServer msu = getMySQLServerUser();
+		if(msu.isSpecial()) {
+			Server ms = msu.getMySQLServer();
+			reasons.add(
+				new CannotRemoveReason<>(
+					"Not allowed to revoke access from a special MySQL user: "
+						+ msu.getMySQLUser_username()
+						+ " on "
+						+ ms.getName()
+						+ " on "
+						+ ms.getAoServer().getHostname(),
+					this
+				)
+			);
+		}
+		Database md = getMySQLDatabase();
+		if(md.isSpecial()) {
+			Server ms = md.getMySQLServer();
+			reasons.add(
+				new CannotRemoveReason<>(
+					"Not allowed to revoke access to a special MySQL database: "
+						+ md.getName()
+						+ " on "
+						+ ms.getName()
+						+ " on "
+						+ ms.getAoServer().getHostname(),
+					this
+				)
+			);
+		}
 		return reasons;
 	}
 
 	@Override
 	public void remove() throws IOException, SQLException {
+		UserServer msu = getMySQLServerUser();
+		if(msu.isSpecial()) {
+			Server ms = msu.getMySQLServer();
+			throw new SQLException(
+				"Refusing to revoke access from a special MySQL user: "
+				+ msu.getMySQLUser_username()
+				+ " on "
+				+ ms.getName()
+				+ " on "
+				+ ms.getAoServer().getHostname()
+			);
+		}
+		Database md = getMySQLDatabase();
+		if(md.isSpecial()) {
+			Server ms = md.getMySQLServer();
+			throw new SQLException(
+				"Refusing to revoke access to a special database: "
+				+ md.getName()
+				+ " on "
+				+ ms.getName()
+				+ " on "
+				+ ms.getAoServer().getHostname()
+			);
+		}
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,

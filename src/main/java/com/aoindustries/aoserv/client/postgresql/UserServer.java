@@ -68,7 +68,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special PostgreSQL user: " + this);
 		return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_POSTGRES_SERVER_USER_PASSWORD_SET, pkey)
 			? PasswordProtected.ALL
 			: PasswordProtected.NONE;
@@ -98,13 +98,13 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to disable special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to disable special PostgreSQL user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.POSTGRES_SERVER_USERS, dl.getPkey(), pkey);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to enable special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to enable special PostgreSQL user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.POSTGRES_SERVER_USERS, pkey);
 	}
 
@@ -228,7 +228,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to remove special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to remove special PostgreSQL user: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,
@@ -239,7 +239,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void setPassword(final String password) throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to set the password for a special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to set the password for a special PostgreSQL user: " + this);
 
 		AOServConnector connector=table.getConnector();
 		if(!connector.isSecure()) throw new IOException("Passwords for PostgreSQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
