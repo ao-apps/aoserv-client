@@ -634,6 +634,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 	@Override
 	public void remove() throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to remove special database: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,

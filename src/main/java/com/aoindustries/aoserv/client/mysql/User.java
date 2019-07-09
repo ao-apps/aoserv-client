@@ -433,11 +433,13 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to disable special user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.MYSQL_USERS, dl.getPkey(), pkey);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to enable special user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.MYSQL_USERS, pkey);
 	}
 
@@ -614,6 +616,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public void remove() throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to remove special user: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,
