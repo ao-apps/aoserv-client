@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-08T12:48:31-0500"
+		dateModified="2019-07-09T15:32:23-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -65,7 +65,9 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>New <code>isSpecial()</code> methods instead of several places using the same list.</li>
 					<li>New <code>canPostgresIdent()</code> methods to control which Linux accounts can authentication to PostgreSQL via "peer" and "ident".</li>
-					<li>May not set the passwords of or enable/disable special resources.</li>
+					<li>May not enable/disable special users and databases.</li>
+					<li>May not set the passwords of special users.</li>
+					<li>May not check if passwords set on special users.</li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':

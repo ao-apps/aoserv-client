@@ -285,6 +285,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special user: " + this);
 		return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getPostgresServerUsers());
 	}
 
