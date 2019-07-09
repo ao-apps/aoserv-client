@@ -238,7 +238,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 	}
 
 	/**
-	 * Special users may not be added or removed.
+	 * Special PostgreSQL users may not be added or removed.
 	 */
 	public static boolean isSpecial(Name username) {
 		return
@@ -285,7 +285,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special PostgreSQL user: " + this);
 		return com.aoindustries.aoserv.client.account.User.groupPasswordsSet(getPostgresServerUsers());
 	}
 
@@ -335,13 +335,13 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to disable special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to disable special PostgreSQL user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.POSTGRES_USERS, dl.getPkey(), pkey);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to enable special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to enable special PostgreSQL user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.POSTGRES_USERS, pkey);
 	}
 
@@ -450,7 +450,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to remove special user: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to remove special PostgreSQL user: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,

@@ -60,7 +60,7 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 		return defaultOrderBy;
 	}
 
-	int addMySQLDBUser(
+	public int addMySQLDBUser(
 		final Database md,
 		final UserServer msu,
 		final boolean canSelect,
@@ -82,6 +82,8 @@ final public class DatabaseUserTable extends CachedTableIntegerKey<DatabaseUser>
 		final boolean canEvent,
 		final boolean canTrigger
 	) throws IOException, SQLException {
+		if(md.isSpecial()) throw new SQLException("Refusing to grant access to a special database: " + md);
+		if(msu.isSpecial()) throw new SQLException("Refusing to grant access to a special MySQL user: " + msu);
 		return connector.requestResult(
 			true,
 			AoservProtocol.CommandID.ADD,
