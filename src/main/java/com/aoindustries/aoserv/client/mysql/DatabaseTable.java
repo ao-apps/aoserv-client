@@ -65,7 +65,8 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		Server mysqlServer,
 		Package packageObj
 	) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(
+		if(Database.isSpecial(name)) throw new SQLException("Refusing to add special database: " + name + " on " + mysqlServer);
+		return connector.requestIntQueryIL(
 			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.MYSQL_DATABASES,
@@ -73,7 +74,6 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 			mysqlServer.getBind_id(),
 			packageObj.getName()
 		);
-		return pkey;
 	}
 
 	public Database.Name generateMySQLDatabaseName(String template_base, String template_added) throws IOException, SQLException {

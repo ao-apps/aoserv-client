@@ -69,7 +69,8 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		Encoding encoding,
 		boolean enablePostgis
 	) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(
+		if(Database.isSpecial(name)) throw new SQLException("Refusing to add special database: " + name + " on " + postgresServer);
+		return connector.requestIntQueryIL(
 			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.POSTGRES_DATABASES,
@@ -79,7 +80,6 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 			encoding.getPkey(),
 			enablePostgis
 		);
-		return pkey;
 	}
 
 	public Database.Name generatePostgresDatabaseName(String template_base, String template_added) throws IOException, SQLException {

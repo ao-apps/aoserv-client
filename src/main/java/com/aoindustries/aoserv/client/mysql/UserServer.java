@@ -135,11 +135,13 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	*/
 	@Override
 	public void disable(DisableLog dl) throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to disable special user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.DISABLE, Table.TableID.MYSQL_SERVER_USERS, dl.getPkey(), pkey);
 	}
 
 	@Override
 	public void enable() throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to enable special user: " + this);
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.MYSQL_SERVER_USERS, pkey);
 	}
 
@@ -292,6 +294,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void remove() throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to remove special user: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,
@@ -302,6 +305,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public void setPassword(final String password) throws IOException, SQLException {
+		if(isSpecial()) throw new SQLException("Refusing to set the password for a special user: " + this);
+
 		AOServConnector connector=table.getConnector();
 		if(!connector.isSecure()) throw new IOException("Passwords for MySQL users may only be set when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 

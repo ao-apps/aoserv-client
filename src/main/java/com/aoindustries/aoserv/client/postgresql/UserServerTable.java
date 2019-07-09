@@ -56,14 +56,14 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	}
 
 	int addPostgresServerUser(User.Name username, Server postgresServer) throws IOException, SQLException {
-		int pkey=connector.requestIntQueryIL(
+		if(User.isSpecial(username)) throw new SQLException("Refusing to add special user: " + username + " on " + postgresServer);
+		return connector.requestIntQueryIL(
 			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.POSTGRES_SERVER_USERS,
 			username,
 			postgresServer.getBind_id()
 		);
-		return pkey;
 	}
 
 	@Override

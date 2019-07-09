@@ -59,6 +59,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	}
 
 	int addMySQLServerUser(final User.Name username, final Server mysqlServer, final String host) throws IOException, SQLException {
+		if(User.isSpecial(username)) throw new SQLException("Refusing to add special user: " + username + " on " + mysqlServer);
 		return connector.requestResult(
 			true,
 			AoservProtocol.CommandID.ADD,
