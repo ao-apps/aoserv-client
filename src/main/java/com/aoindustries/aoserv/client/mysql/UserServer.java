@@ -108,7 +108,10 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public int arePasswordsSet() throws IOException, SQLException {
-		return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_MYSQL_SERVER_USER_PASSWORD_SET, pkey)?PasswordProtected.ALL:PasswordProtected.NONE;
+		if(isSpecial()) throw new SQLException("Refusing to check if passwords set on special user: " + this);
+		return table.getConnector().requestBooleanQuery(true, AoservProtocol.CommandID.IS_MYSQL_SERVER_USER_PASSWORD_SET, pkey)
+			? PasswordProtected.ALL
+			: PasswordProtected.NONE;
 	}
 
 	@Override
