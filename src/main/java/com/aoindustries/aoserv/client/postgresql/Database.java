@@ -258,9 +258,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 */
 	public static final String JDBC_DRIVER="org.postgresql.Driver";
 
-	/**
-	 * Special databases.
-	 */
 	public static final Name
 		/** Templates */
 		TEMPLATE0,
@@ -286,7 +283,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	/**
-	 * Special databases may not be added or removed.
+	 * Special PostgreSQL databases may not be added or removed.
 	 */
 	public static boolean isSpecial(Name name) {
 		return
@@ -582,7 +579,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to remove special database: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to remove special PostgreSQL database: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,
