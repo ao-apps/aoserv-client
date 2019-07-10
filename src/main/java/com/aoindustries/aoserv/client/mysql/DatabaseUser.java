@@ -306,7 +306,7 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 		if(md.isSpecial()) {
 			Server ms = md.getMySQLServer();
 			throw new SQLException(
-				"Refusing to revoke access to a special database: "
+				"Refusing to revoke access to a special MySQL database: "
 				+ md.getName()
 				+ " on "
 				+ ms.getName()

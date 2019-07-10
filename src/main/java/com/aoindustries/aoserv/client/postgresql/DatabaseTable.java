@@ -69,7 +69,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		Encoding encoding,
 		boolean enablePostgis
 	) throws IOException, SQLException {
-		if(Database.isSpecial(name)) throw new SQLException("Refusing to add special database: " + name + " on " + postgresServer);
+		if(Database.isSpecial(name)) throw new SQLException("Refusing to add special PostgreSQL database: " + name + " on " + postgresServer);
 		return connector.requestIntQueryIL(
 			true,
 			AoservProtocol.CommandID.ADD,

@@ -65,7 +65,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 		Server mysqlServer,
 		Package packageObj
 	) throws IOException, SQLException {
-		if(Database.isSpecial(name)) throw new SQLException("Refusing to add special database: " + name + " on " + mysqlServer);
+		if(Database.isSpecial(name)) throw new SQLException("Refusing to add special MySQL database: " + name + " on " + mysqlServer);
 		return connector.requestIntQueryIL(
 			true,
 			AoservProtocol.CommandID.ADD,

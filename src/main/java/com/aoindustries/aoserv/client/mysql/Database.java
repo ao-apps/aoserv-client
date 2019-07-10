@@ -273,9 +273,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		CENTOS_7_JDBC_DOCUMENTATION_URL="https://dev.mysql.com/doc/connector-j/8.0/en/"
 	;
 
-	/**
-	 * Special databases that are never removed.
-	 */
 	public static final Name
 		/** The root database for a MySQL installation. */
 		MYSQL,
@@ -303,7 +300,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	/**
-	 * Special databases may not be added or removed.
+	 * Special MySQL databases may not be added or removed.
 	 */
 	public static boolean isSpecial(Name name) {
 		return
@@ -638,7 +635,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 	@Override
 	public void remove() throws IOException, SQLException {
-		if(isSpecial()) throw new SQLException("Refusing to remove special database: " + this);
+		if(isSpecial()) throw new SQLException("Refusing to remove special MySQL database: " + this);
 		table.getConnector().requestUpdateIL(
 			true,
 			AoservProtocol.CommandID.REMOVE,
