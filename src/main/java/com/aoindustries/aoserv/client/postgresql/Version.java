@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -94,6 +94,18 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 		};
 	}
 
+	/**
+	 * Checks if a version of PostgreSQL supports <a href="https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PASSWORD">scram-sha-256 authentication</a>.
+	 * This is added as of PostgreSQL 10.
+	 */
+	public boolean isScramSha256(String version) {
+		return
+			version.startsWith(VERSION_10 + '.')
+			|| version.startsWith(VERSION_10 + 'R')
+			|| version.startsWith(VERSION_11 + '.')
+			|| version.startsWith(VERSION_11 + 'R');
+	}
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {
@@ -141,6 +153,13 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 		SoftwareVersion obj = connector.getDistribution().getSoftwareVersion().get(pkey);
 		if(obj == null) throw new SQLException("Unable to find TechnologyVersion: "+pkey);
 		return obj;
+	}
+
+	/**
+	 * @see  #isScramSha256(java.lang.String)
+	 */
+	public boolean isScramSha256(AOServConnector connector) throws SQLException, IOException {
+		return isScramSha256(getTechnologyVersion(connector).getVersion());
 	}
 
 	@Override
