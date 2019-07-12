@@ -98,7 +98,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	 * Checks if a version of PostgreSQL supports <a href="https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PASSWORD">scram-sha-256 authentication</a>.
 	 * This is added as of PostgreSQL 10.
 	 */
-	public boolean isScramSha256(String version) {
+	public static boolean isScramSha256(String version) {
 		return
 			version.startsWith(VERSION_10 + '.')
 			|| version.startsWith(VERSION_10 + 'R')
