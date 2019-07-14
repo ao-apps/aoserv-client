@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-11T21:01:29-0500"
+		dateModified="2019-07-14T16:21:24-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -55,14 +55,6 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				<ul>
 					<li>Added new system roles for <ao:a href="https://www.postgresql.org/docs/11/index.html">PostgreSQL 11</ao:a>.</li>
 					<li>Reserved PostgreSQL username and database "postgresmon".</li>
-					<li>
-						Added PostgreSQL database name restrictions to not conflict with newer keywords used in
-						<ao:a href="https://www.postgresql.org/docs/current/auth-pg-hba-conf.html">pg_hba.conf</ao:a>:
-						<ul>
-							<li><code>samerole</code></li>
-							<li><code>replication</code></li>
-						</ul>
-					</li>
 					<li>New <code>isSpecial()</code> methods instead of several places using the same list.</li>
 					<li>New <code>canPostgresIdent()</code> methods to control which Linux accounts can authentication to PostgreSQL via "peer" and "ident".</li>
 					<li>May not enable/disable special users and databases.</li>
@@ -72,6 +64,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						New <code>isScramSha256()</code> methods to determine if a version of PostgreSQL supports
 						<ao:a href="https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PASSWORD">scram-sha-256 authentication</ao:a>.
+					</li>
+					<li>
+						Now allowing MySQL and PostgreSQL reserved words in user names and database names.
+						All uses are <code>`…`</code> or <code>"…"</code> quoted to avoid any ambiguity.
 					</li>
 					<!-- TODO:
 					<li>

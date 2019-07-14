@@ -87,8 +87,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be between 1 and 31 characters</li>
 	 *   <li>Must start with <code>[a-z]</code></li>
 	 *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
-	 *   <li>Must not be any of the special keywords used in <a href="https://www.postgresql.org/docs/current/auth-pg-hba-conf.html">pg_hba.conf</a></li>
-	 *   <li>Must not be a {@link Server.ReservedWord PostgreSQL reserved word}</li>
 	 * </ul>
 	 *
 	 * @author  AO Industries, Inc.
@@ -135,14 +133,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 					&& ch!='_'
 				) return new InvalidResult(accessor, "Database.Name.validate.illegalCharacter");
 			}
-			if(
-				name.equals("all")
-				|| name.equals("sameuser")
-				|| name.equals("samerole")
-				|| name.equals("samegroup")
-				|| name.equals("replication")
-				|| Server.ReservedWord.isReservedWord(name)
-			) return new InvalidResult(accessor, "Database.Name.validate.reservedWord");
 			return ValidResult.getInstance();
 		}
 

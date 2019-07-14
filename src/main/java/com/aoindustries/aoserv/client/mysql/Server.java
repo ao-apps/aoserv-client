@@ -280,6 +280,10 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		)
 	);
 
+	/**
+	 * @deprecated 2019-07-14: Is this still used?
+	 */
+	@Deprecated
 	// TODO: Move to top-level class in schema, add to SQL implementation
 	public enum ReservedWord {
 		ACTION,

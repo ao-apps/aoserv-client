@@ -67,7 +67,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 *   <li>Must start with <code>[a-z]</code></li>
 	 *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
 	 *   <li>A special exemption is made for the <code>mysql.session</code> and <code>mysql.sys</code> reserved users added in MySQL 5.7.</li>
-	 *   <li>Must not be a MySQL reserved word</li>
 	 *   <li>Must be a valid {@link com.aoindustries.aoserv.client.linux.User.Name} - this is implied by the above rules</li>
 	 * </ul>
 	 *
@@ -115,7 +114,6 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 						&& ch!='_'
 					) return new InvalidResult(accessor, "User.Name.validate.illegalCharacter");
 				}
-				if(Server.ReservedWord.isReservedWord(name)) return new InvalidResult(accessor, "User.Name.validate.reservedWord");
 			}
 			assert com.aoindustries.aoserv.client.linux.User.Name.validate(name).isValid() : "A MySQL User.Name is always a valid Linux User.Name.";
 			return ValidResult.getInstance();
