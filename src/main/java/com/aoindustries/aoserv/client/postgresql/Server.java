@@ -72,7 +72,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 	 *   <li>Be non-null</li>
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 1 and 31 characters</li>
-	 *   <li>Must start with <code>[a-z]</code> or <code>[0-9]</code></li>
+	 *   <li>Must start with <code>[a-z,0-9]</code></li>
 	 *   <li>The rest of the characters may contain [a-z], [0-9], period (.), hyphen (-), and underscore (_)</li>
 	 * </ul>
 	 *

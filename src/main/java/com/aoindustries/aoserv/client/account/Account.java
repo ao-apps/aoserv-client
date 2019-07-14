@@ -108,9 +108,9 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	 *   <li>Be non-null</li>
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 2 and 32 characters</li>
-	 *   <li>Must start with <code>[A-Z,a-z]</code></li>
-	 *   <li>Must end with <code>[A-Z,a-z,0-9]</code></li>
-	 *   <li>Must contain only <code>[A-Z,a-z,0-9] and underscore(_)</code></li>
+	 *   <li>Must start with <code>[a-z,A-Z]</code></li>
+	 *   <li>Must end with <code>[a-z,A-Z,0-9]</code></li>
+	 *   <li>Must contain only <code>[a-z,A-Z,0-9,_]</code></li>
 	 *   <li>May not have consecutive underscores</li>
 	 * </ul>
 	 *

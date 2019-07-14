@@ -85,8 +85,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be non-null</li>
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 1 and 31 characters</li>
-	 *   <li>Must start with <code>[a-z]</code></li>
-	 *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
+	 *   <li>Must start with <code>[a-z,A-Z]</code></li>
+	 *   <li>The rest of the characters may contain <code>[a-z,A-Z,0-9,_]</code></li>
 	 * </ul>
 	 *
 	 * @author  AO Industries, Inc.
@@ -121,16 +121,18 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			char ch = name.charAt(0);
 			if(
 				(ch < 'a' || ch > 'z')
-				&& (ch<'0' || ch>'9')
+				&& (ch < 'A' || ch > 'Z')
+				&& (ch < '0' || ch > '9')
 			) return new InvalidResult(accessor, "Database.Name.validate.startAtoZor0to9");
 
 			// The rest may have additional characters
 			for (int c = 1; c < len; c++) {
 				ch = name.charAt(c);
 				if (
-					(ch<'a' || ch>'z')
-					&& (ch<'0' || ch>'9')
-					&& ch!='_'
+					(ch < 'a' || ch > 'z')
+					&& (ch < 'A' || ch > 'Z')
+					&& (ch < '0' || ch > '9')
+					&& ch != '_'
 				) return new InvalidResult(accessor, "Database.Name.validate.illegalCharacter");
 			}
 			return ValidResult.getInstance();
