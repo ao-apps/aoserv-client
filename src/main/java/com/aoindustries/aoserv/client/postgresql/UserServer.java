@@ -141,7 +141,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return table.getConnector().getPostgresql().getDatabase().getPostgresDatabases(this);
 	}
 
-	public User.Name getPostresUser_username() {
+	public User.Name getPostgresUser_username() {
 		return username;
 	}
 
