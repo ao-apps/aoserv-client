@@ -65,7 +65,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 1 and 32 characters</li>
 	 *   <li>Must start with <code>[a-z]</code></li>
-	 *   <li>The rest of the characters may contain [a-z], [0-9], and underscore (_)</li>
+	 *   <li>The rest of the characters may contain <code>[a-z,0-9,_]</code></li>
 	 *   <li>A special exemption is made for the <code>mysql.session</code> and <code>mysql.sys</code> reserved users added in MySQL 5.7.</li>
 	 *   <li>Must be a valid {@link com.aoindustries.aoserv.client.linux.User.Name} - this is implied by the above rules</li>
 	 * </ul>

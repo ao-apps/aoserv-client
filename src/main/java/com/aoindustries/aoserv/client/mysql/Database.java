@@ -93,8 +93,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be non-null</li>
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 1 and 64 characters</li>
-	 *   <li>Must start with <code>[a-z], [A-Z], or [0-9]</code></li>
-	 *   <li>The rest of the characters may contain [a-z], [A-Z], [0-9], and underscore (_)</li>
+	 *   <li>Must start with <code>[a-z,A-Z,0-9]</code></li>
+	 *   <li>The rest of the characters may contain <code>[a-z,A-Z,0-9,_]</code></li>
 	 * </ul>
 	 *
 	 * @author  AO Industries, Inc.

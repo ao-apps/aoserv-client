@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,7 +40,7 @@ import java.io.Serializable;
  *   <li>Be non-null</li>
  *   <li>Be non-empty</li>
  *   <li>Be between 1 and 64 characters</li>
- *   <li>Must start with <code>[a-z], [A-Z], or _</code></li>
+ *   <li>Must start with <code>[a-z,A-Z,_]</code></li>
  *   <li>The rest of the characters may contain [a-z], [A-Z], [0-9], underscore (_), hyphen (-), or dollar ($)</li>
  * </ul>
  *
