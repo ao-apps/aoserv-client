@@ -95,7 +95,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be between 1 and 64 characters</li>
 	 *   <li>Must start with <code>[a-z], [A-Z], or [0-9]</code></li>
 	 *   <li>The rest of the characters may contain [a-z], [A-Z], [0-9], and underscore (_)</li>
-	 *   <li>Must not be a {@link Server.ReservedWord MySQL reserved word}</li>
 	 * </ul>
 	 *
 	 * @author  AO Industries, Inc.
@@ -142,7 +141,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 					&& ch != '_'
 				) return new InvalidResult(accessor, "Database.Name.validate.illegalCharacter");
 			}
-			if(Server.ReservedWord.isReservedWord(name)) return new InvalidResult(accessor, "Database.Name.validate.reservedWord");
 			return ValidResult.getInstance();
 		}
 
