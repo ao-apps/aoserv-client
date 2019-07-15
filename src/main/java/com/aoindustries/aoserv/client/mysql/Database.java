@@ -1085,23 +1085,26 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 * TODO: Is this more restrictive than {@link Name} and {@link Table_Name}?
 	 */
 	public static boolean isSafeName(String name) {
-		// Must be a-z first, then a-z or 0-9 or _ or -
 		int len = name.length();
 		if (len == 0) return false;
 		// The first character must be [a-z] or [A-Z] or _
 		char ch = name.charAt(0);
-		if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && ch != '_') return false;
+		if (
+			(ch < 'a' || ch > 'z')
+			&& (ch < 'A' || ch > 'Z')
+			&& ch != '_'
+		) return false;
 		// The rest may have additional characters
 		for (int c = 1; c < len; c++) {
 			ch = name.charAt(c);
-			if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && (ch < '0' || ch > '9') && ch != '_' && ch != '-') return false;
+			if (
+				(ch < 'a' || ch > 'z')
+				&& (ch < 'A' || ch > 'Z')
+				&& (ch < '0' || ch > '9')
+				&& ch != '_'
+				&& ch != '-'
+			) return false;
 		}
-
-		// Also must not be a reserved word
-		/*int size=reservedWords.size();
-		for(int c=0;c<size;c++) {
-			if(name.equalsIgnoreCase(reservedWords.get(c).toString())) return false;
-		}*/
 		return true;
 	}
 }
