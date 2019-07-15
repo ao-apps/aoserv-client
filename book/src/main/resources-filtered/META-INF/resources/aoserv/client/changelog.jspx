@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-14T18:41:08-0500"
+		dateModified="2019-07-14T20:38:49-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -69,7 +69,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Now allowing MySQL and PostgreSQL reserved words in user names and database names.
 						All uses are <code>`…`</code> or <code>"…"</code> quoted to avoid any ambiguity.
 					</li>
-					<li>PostgreSQL database names may now contain capital letters, too.</li>
+					<li>PostgreSQL database names may now contain capital letters, hyphen (-), period (.), and space ( ), too.</li>
+					<li>MySQL database names may now contain hyphen (-), period (.), and space ( ), too.</li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':

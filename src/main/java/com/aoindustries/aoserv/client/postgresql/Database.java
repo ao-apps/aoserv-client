@@ -57,6 +57,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -85,9 +86,9 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be non-null</li>
 	 *   <li>Be non-empty</li>
 	 *   <li>Be between 1 and 31 characters</li>
-	 *   <li>Must start with <code>[a-z,A-Z]</code></li>
-	 *   <li>The rest of the characters may contain <code>[a-z,A-Z,0-9,_]</code></li>
+	 *   <li>Characters may contain <code>[a-z,A-Z,0-9,_,-,.,(space)]</code></li>
 	 * </ul>
+	 * TODO: What to do for JDBC URLs with space?
 	 *
 	 * @author  AO Industries, Inc.
 	 */
@@ -117,22 +118,17 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			if(len==0) return new InvalidResult(accessor, "Database.Name.validate.isEmpty");
 			if(len > MAX_LENGTH) return new InvalidResult(accessor, "Database.Name.validate.tooLong", MAX_LENGTH, len);
 
-			// The first character must be [a-z] or [0-9]
-			char ch = name.charAt(0);
-			if(
-				(ch < 'a' || ch > 'z')
-				&& (ch < 'A' || ch > 'Z')
-				&& (ch < '0' || ch > '9')
-			) return new InvalidResult(accessor, "Database.Name.validate.startAtoZor0to9");
-
-			// The rest may have additional characters
-			for (int c = 1; c < len; c++) {
-				ch = name.charAt(c);
+			// Characters may contain [a-z,A-Z,0-9,_,-,.]
+			for (int c = 0; c < len; c++) {
+				char ch = name.charAt(c);
 				if (
 					(ch < 'a' || ch > 'z')
 					&& (ch < 'A' || ch > 'Z')
 					&& (ch < '0' || ch > '9')
 					&& ch != '_'
+					&& ch != '-'
+					&& ch != '.'
+					&& ch != ' '
 				) return new InvalidResult(accessor, "Database.Name.validate.illegalCharacter");
 			}
 			return ValidResult.getInstance();
@@ -461,7 +457,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		}
 		jdbcUrl
 			.append('/')
-			.append(getName());
+			.append(URLEncoder.encode(getName().toString(), "UTF-8"));
 		return jdbcUrl.toString();
 	}
 
