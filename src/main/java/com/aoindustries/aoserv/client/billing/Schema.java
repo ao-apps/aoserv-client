@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018  AO Industries, Inc.
+ * Copyright (C) 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,6 +33,9 @@ import java.util.List;
  * @author  AO Industries, Inc.
  */
 public class Schema extends com.aoindustries.aoserv.client.Schema {
+
+	private final CurrencyTable Currency;
+	public CurrencyTable getCurrency() {return Currency;}
 
 	private final MonthlyChargeTable MonthlyCharge;
 	public MonthlyChargeTable getMonthlyCharge() {return MonthlyCharge;}
@@ -76,6 +79,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		super(connector);
 
 		ArrayList<AOServTable<?,?>> newTables = new ArrayList<>();
+		newTables.add(Currency = new CurrencyTable(connector));
 		newTables.add(MonthlyCharge = new MonthlyChargeTable(connector));
 		newTables.add(NoticeLog = new NoticeLogTable(connector));
 		newTables.add(NoticeType = new NoticeTypeTable(connector));
