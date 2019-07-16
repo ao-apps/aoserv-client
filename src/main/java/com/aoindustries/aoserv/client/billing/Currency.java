@@ -42,6 +42,9 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
 	static final int COLUMN_currencyCode = 0;
 	static final String COLUMN_currencyCode_name = "currencyCode";
 
+	/** Looked-up when pkey is set, effectively final so no synchronization */
+	private java.util.Currency currency;
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {
@@ -55,7 +58,9 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
 	}
 
 	public java.util.Currency getCurrency() {
-		return java.util.Currency.getInstance(pkey);
+		java.util.Currency c = currency;
+		if(c == null) throw new IllegalStateException("currency not set");
+		return c;
 	}
 
 	@Override
@@ -66,11 +71,13 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
 	@Override
 	public void init(ResultSet results) throws SQLException {
 		pkey = results.getString(1);
+		currency = java.util.Currency.getInstance(pkey);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey = in.readUTF().intern();
+		currency = java.util.Currency.getInstance(pkey);
 	}
 
 	@Override
