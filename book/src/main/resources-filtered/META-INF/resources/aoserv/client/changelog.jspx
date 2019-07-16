@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-14T20:38:49-0500"
+		dateModified="2019-07-16T01:18:26-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -71,6 +71,11 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>PostgreSQL database names may now contain capital letters, hyphen (-), period (.), and space ( ), too.</li>
 					<li>MySQL database names may now contain hyphen (-), period (.), and space ( ), too.</li>
+					<li>Added multi-currency support to the billing system:
+						<ol>
+							<li>New table <code>billing.Currency</code></li>
+						</ol>
+					</li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':

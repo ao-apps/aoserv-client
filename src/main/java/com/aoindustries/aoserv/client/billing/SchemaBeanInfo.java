@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018  AO Industries, Inc.
+ * Copyright (C) 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -38,6 +38,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 			PropertyDescriptor[] props = properties;
 			if(props == null) {
 				props = new PropertyDescriptor[] {
+					new PropertyDescriptor("Currency", Schema.class, "getCurrency", null),
 					new PropertyDescriptor("MonthlyCharge", Schema.class, "getMonthlyCharge", null),
 					new PropertyDescriptor("NoticeLog", Schema.class, "getNoticeLog", null),
 					new PropertyDescriptor("NoticeType", Schema.class, "getNoticeType", null),
