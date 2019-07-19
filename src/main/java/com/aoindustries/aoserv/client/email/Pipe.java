@@ -99,7 +99,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 			case 2: return command;
 			case COLUMN_PACKAGE: return packageName;
 			case 4: return disable_log==-1?null:disable_log;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -126,9 +126,9 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 		return command;
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return ao;
 	}
 

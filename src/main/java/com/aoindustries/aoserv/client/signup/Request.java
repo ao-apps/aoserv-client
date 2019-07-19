@@ -148,7 +148,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 			case 34: return encryption_recipient;
 			case 35: return completed_by;
 			case 36: return getCompletedTime();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

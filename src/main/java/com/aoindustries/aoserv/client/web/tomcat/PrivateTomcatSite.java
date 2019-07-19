@@ -74,7 +74,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 			case 3: return maxPostSize==-1 ? null: maxPostSize;
 			case 4: return unpackWARs;
 			case 5: return autoDeploy;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

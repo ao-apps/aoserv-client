@@ -204,7 +204,7 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		if(tv==null) throw new SQLException("Unable to find TechnologyVersion: "+mod_php_version);
 		if(
 			tv.getOperatingSystemVersion(table.getConnector()).getPkey()
-			!= getAOServer().getServer().getOperatingSystemVersion_id()
+			!= getLinuxServer().getHost().getOperatingSystemVersion_id()
 		) {
 			throw new SQLException("mod_php/operating system version mismatch on HttpdServer: #"+pkey);
 		}
@@ -299,9 +299,9 @@ final public class HttpdServer extends CachedObjectIntegerKey<HttpdServer> {
 		return SystemdUtil.encode(name);
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server obj=table.getConnector().getLinux().getServer().get(ao_server);
-		if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(obj==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return obj;
 	}
 

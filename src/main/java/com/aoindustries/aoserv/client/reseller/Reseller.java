@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -56,7 +56,7 @@ final public class Reseller extends CachedObjectAccountNameKey<Reseller> {
 		switch(i) {
 			case COLUMN_ACCOUNTING : return pkey;
 			case 1: return ticket_auto_escalate;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -111,12 +111,12 @@ final public class Reseller extends CachedObjectAccountNameKey<Reseller> {
 	}
 
 	/**
-	 * Gets the immediate parent of this reseller or <code>null</code> if none available.
+	 * Gets the immediate parent of this reseller or {@code null} if none available.
 	 */
-	public Reseller getParentReseller() throws IOException, SQLException {
-		Account bu = getBrand().getBusiness();
+	public Reseller getParent() throws IOException, SQLException {
+		Account bu = getBrand().getAccount();
 		if(bu==null) return null;
-		Account parent = bu.getParentBusiness();
+		Account parent = bu.getParent();
 		while(parent!=null) {
 			Brand parentBrand = parent.getBrand();
 			if(parentBrand!=null) {
@@ -134,7 +134,7 @@ final public class Reseller extends CachedObjectAccountNameKey<Reseller> {
 	public List<Reseller> getChildResellers() throws IOException, SQLException {
 		List<Reseller> children = new ArrayList<>();
 		for(Reseller reseller : table.getConnector().getReseller().getReseller().getRows()) {
-			if(!reseller.equals(this) && this.equals(reseller.getParentReseller())) children.add(reseller);
+			if(!reseller.equals(this) && this.equals(reseller.getParent())) children.add(reseller);
 		}
 		return children;
 	}

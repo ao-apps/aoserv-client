@@ -45,7 +45,7 @@ import java.util.List;
 
 /**
  * A <code>LinuxServerGroup</code> adds a <code>LinuxGroup</code>
- * to an <code>AOServer</code>, so that <code>LinuxServerAccount</code> with
+ * to a {@link Server}, so that <code>LinuxServerAccount</code> with
  * access to the group may use the group on the server.
  *
  * @see  Group
@@ -81,7 +81,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 			case COLUMN_AO_SERVER: return ao_server;
 			case 3: return gid;
 			case 4: return getCreated();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -103,13 +103,13 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		return group;
 	}
 
-	public int getAoServer_server_id() {
+	public int getServer_host_id() {
 		return ao_server;
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getServer() throws SQLException, IOException {
 		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return ao;
 	}
 
@@ -148,24 +148,24 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
-		Server ao=getAOServer();
+		Server ao = getServer();
 
 		for(CvsRepository cr : ao.getCvsRepositories()) {
-			if(cr.getLinuxServerGroup_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getAOServer().getHostname(), cr));
+			if(cr.getLinuxServerGroup_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerGroup().getServer().getHostname(), cr));
 		}
 
 		for(com.aoindustries.aoserv.client.email.List el : table.getConnector().getEmail().getList().getRows()) {
-			if(el.getLinuxServerGroup_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getAOServer().getHostname(), el));
+			if(el.getLinuxServerGroup_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by email list "+el.getPath()+" on "+el.getLinuxServerGroup().getServer().getHostname(), el));
 		}
 
 		for(HttpdServer hs : ao.getHttpdServers()) {
 			if(hs.getLinuxServerGroup_pkey()==pkey) {
-				String name = hs.getName();
+				String hs_name = hs.getName();
 				reasons.add(
 					new CannotRemoveReason<>(
-						name==null
-							? "Used by Apache HTTP Server on " + hs.getAOServer().getHostname()
-							: "Used by Apache HTTP Server (" + name + ") on " + hs.getAOServer().getHostname(),
+						hs_name==null
+							? "Used by Apache HTTP Server on " + hs.getLinuxServer().getHostname()
+							: "Used by Apache HTTP Server (" + hs_name + ") on " + hs.getLinuxServer().getHostname(),
 						hs
 					)
 				);
@@ -173,23 +173,23 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		}
 
 		for(SharedTomcat hst : ao.getHttpdSharedTomcats()) {
-			if(hst.getLinuxServerGroup_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+			if(hst.getLinuxServerGroup_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getLinuxServer().getHostname(), hst));
 		}
 
 		// httpd_sites
 		for(Site site : ao.getHttpdSites()) {
-			if(site.getLinuxGroup_name().equals(name)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getAoServer().getHostname(), site));
+			if(site.getLinuxGroup_name().equals(name)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getLinuxServer().getHostname(), site));
 		}
 
 		for(MajordomoServer ms : ao.getMajordomoServers()) {
 			if(ms.getLinuxServerGroup_pkey()==pkey) {
 				Domain ed=ms.getDomain();
-				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
 			}
 		}
 
 		/*for(PrivateFTPServer pfs : ao.getPrivateFTPServers()) {
-			if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getAOServer().getHostname(), pfs));
+			if(pfs.pub_linux_server_group==pkey) reasons.add(new CannotRemoveReason<PrivateFTPServer>("Used by private FTP server "+pfs.getRoot()+" on "+pfs.getLinuxServerGroup().getServer().getHostname(), pfs));
 		}*/
 
 		return reasons;

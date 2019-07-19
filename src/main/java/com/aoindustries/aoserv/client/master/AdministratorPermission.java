@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -57,14 +57,14 @@ final public class AdministratorPermission extends CachedObjectIntegerKey<Admini
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_USERNAME: return username;
 			case 2: return permission;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public Administrator getBusinessAdministrator() throws SQLException, IOException {
-		Administrator ba = table.getConnector().getAccount().getAdministrator().get(username);
-		if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+username);
-		return ba;
+	public Administrator getAdministrator() throws SQLException, IOException {
+		Administrator obj = table.getConnector().getAccount().getAdministrator().get(username);
+		if(obj == null) throw new SQLException("Unable to find Administrator: " + username);
+		return obj;
 	}
 
 	public Permission getAOServPermission() throws SQLException, IOException {

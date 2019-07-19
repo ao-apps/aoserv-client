@@ -114,12 +114,12 @@ import com.aoindustries.net.Port;
 import com.aoindustries.util.SortedArrayList;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.WrappedException;
+import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -170,10 +170,10 @@ final public class SimpleAOClient {
 		return ar;
 	}
 
-	private Server getAOServer(String hostname) throws IllegalArgumentException, IOException, SQLException {
+	private Server getLinuxServer(String hostname) throws IllegalArgumentException, IOException, SQLException {
 		try {
-			Server ao=DomainName.validate(hostname).isValid() ? connector.getLinux().getServer().get(DomainName.valueOf(hostname)) : null;
-			if(ao==null) throw new IllegalArgumentException("Server is not an AOServer: "+hostname);
+			Server ao = DomainName.validate(hostname).isValid() ? connector.getLinux().getServer().get(DomainName.valueOf(hostname)) : null;
+			if(ao==null) throw new IllegalArgumentException("net.Host is not a linux.Server: " + hostname);
 			return ao;
 		} catch(ValidationException e) {
 			// Should not happen since isValid checked first
@@ -181,10 +181,10 @@ final public class SimpleAOClient {
 		}
 	}
 
-	private Account getBusiness(Account.Name accounting) throws IllegalArgumentException, IOException, SQLException {
-		Account bu=connector.getAccount().getAccount().get(accounting);
-		if(bu==null) throw new IllegalArgumentException("Unable to find Business: "+accounting);
-		return bu;
+	private Account getAccount(Account.Name name) throws IllegalArgumentException, IOException, SQLException {
+		Account account = connector.getAccount().getAccount().get(name);
+		if(account == null) throw new IllegalArgumentException("Unable to find Account: " + name);
+		return account;
 	}
 
 	private Zone getDNSZone(String zone) throws IllegalArgumentException, IOException, SQLException {
@@ -200,13 +200,13 @@ final public class SimpleAOClient {
 	}
 
 	private Domain getEmailDomain(String aoServer, DomainName domain) throws IllegalArgumentException, IOException, SQLException {
-		Domain ed=getAOServer(aoServer).getEmailDomain(domain);
+		Domain ed = getLinuxServer(aoServer).getEmailDomain(domain);
 		if(ed==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+aoServer);
 		return ed;
 	}
 
 	private com.aoindustries.aoserv.client.email.List getEmailList(String aoServer, PosixPath path) throws IllegalArgumentException, IOException, SQLException {
-		com.aoindustries.aoserv.client.email.List el=getAOServer(aoServer).getEmailList(path);
+		com.aoindustries.aoserv.client.email.List el = getLinuxServer(aoServer).getEmailList(path);
 		if(el==null) throw new IllegalArgumentException("Unable to find EmailList: "+path+" on "+aoServer);
 		return el;
 	}
@@ -218,8 +218,8 @@ final public class SimpleAOClient {
 	}
 
 	private FileReplication getFailoverFileReplication(String fromServer, String toServer, String path) throws IllegalArgumentException, IOException, SQLException {
-		Host fromSe = getServer(fromServer);
-		BackupPartition bp=getAOServer(toServer).getBackupPartitionForPath(path);
+		Host fromSe = getHost(fromServer);
+		BackupPartition bp = getLinuxServer(toServer).getBackupPartitionForPath(path);
 		if(bp==null) throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+toServer);
 		FileReplication replication = null;
 		for(FileReplication ffr : fromSe.getFailoverFileReplications()) {
@@ -233,7 +233,7 @@ final public class SimpleAOClient {
 	}
 
 	private HttpdServer getHttpdServer(String aoServer, String name) throws IllegalArgumentException, IOException, SQLException {
-		for(HttpdServer hs : getAOServer(aoServer).getHttpdServers()) {
+		for(HttpdServer hs : getLinuxServer(aoServer).getHttpdServers()) {
 			if(Objects.equals(name, hs.getName())) {
 				return hs;
 			}
@@ -242,13 +242,13 @@ final public class SimpleAOClient {
 	}
 
 	private SharedTomcat getHttpdSharedTomcat(String aoServer, String name) throws IllegalArgumentException, IOException, SQLException {
-		SharedTomcat hst=getAOServer(aoServer).getHttpdSharedTomcat(name);
+		SharedTomcat hst = getLinuxServer(aoServer).getHttpdSharedTomcat(name);
 		if(hst==null) throw new IllegalArgumentException("Unable to find HttpdSharedTomcat: "+name+" on "+aoServer);
 		return hst;
 	}
 
 	private Site getHttpdSite(String aoServer, String siteName) throws IllegalArgumentException, IOException, SQLException {
-		Site hs=getAOServer(aoServer).getHttpdSite(siteName);
+		Site hs = getLinuxServer(aoServer).getHttpdSite(siteName);
 		if(hs==null) throw new IllegalArgumentException("Unable to find HttpdSite: "+siteName+" on "+aoServer);
 		return hs;
 	}
@@ -278,19 +278,19 @@ final public class SimpleAOClient {
 	}
 
 	private UserServer getLinuxServerAccount(String aoServer, com.aoindustries.aoserv.client.linux.User.Name username) throws IllegalArgumentException, IOException, SQLException {
-		UserServer lsa=getAOServer(aoServer).getLinuxServerAccount(username);
+		UserServer lsa = getLinuxServer(aoServer).getLinuxServerAccount(username);
 		if(lsa==null) throw new IllegalArgumentException("Unable to find LinuxServerAccount: "+username+" on "+aoServer);
 		return lsa;
 	}
 
 	private GroupServer getLinuxServerGroup(String server, Group.Name name) throws IllegalArgumentException, IOException, SQLException {
-		GroupServer lsg=getAOServer(server).getLinuxServerGroup(name);
+		GroupServer lsg = getLinuxServer(server).getLinuxServerGroup(name);
 		if(lsg==null) throw new IllegalArgumentException("Unable to find LinuxServerGroup: "+name+" on "+server);
 		return lsg;
 	}
 
 	private com.aoindustries.aoserv.client.mysql.Server getMySQLServer(String aoServer, com.aoindustries.aoserv.client.mysql.Server.Name name) throws IllegalArgumentException, IOException, SQLException {
-		com.aoindustries.aoserv.client.mysql.Server ms=getAOServer(aoServer).getMySQLServer(name);
+		com.aoindustries.aoserv.client.mysql.Server ms = getLinuxServer(aoServer).getMySQLServer(name);
 		if(ms==null) throw new IllegalArgumentException("Unable to find MySQLServer: "+name+" on "+aoServer);
 		return ms;
 	}
@@ -321,7 +321,7 @@ final public class SimpleAOClient {
 	}
 
 	private Device getNetDevice(String server, String netDevice) throws IllegalArgumentException, SQLException, IOException {
-		Device nd=getServer(server).getNetDevice(netDevice);
+		Device nd = getHost(server).getNetDevice(netDevice);
 		if(nd==null) throw new IllegalArgumentException("Unable to find NetDevice: "+netDevice+" on "+server);
 		return nd;
 	}
@@ -358,7 +358,7 @@ final public class SimpleAOClient {
 	}
 
 	private com.aoindustries.aoserv.client.postgresql.Server getPostgresServer(String aoServer, com.aoindustries.aoserv.client.postgresql.Server.Name name) throws IllegalArgumentException, IOException, SQLException {
-		com.aoindustries.aoserv.client.postgresql.Server ps=getAOServer(aoServer).getPostgresServer(name);
+		com.aoindustries.aoserv.client.postgresql.Server ps = getLinuxServer(aoServer).getPostgresServer(name);
 		if(ps==null) throw new IllegalArgumentException("Unable to find PostgresServer: "+name+" on "+aoServer);
 		return ps;
 	}
@@ -375,9 +375,9 @@ final public class SimpleAOClient {
 		return pu;
 	}
 
-	private Host getServer(String server) throws IllegalArgumentException, SQLException, IOException {
+	private Host getHost(String server) throws IllegalArgumentException, SQLException, IOException {
 		Host se=connector.getNet().getHost().get(server);
-		if(se==null) throw new IllegalArgumentException("Unable to find Server: "+server);
+		if(se==null) throw new IllegalArgumentException("Unable to find Host: " + server);
 		return se;
 	}
 
@@ -388,7 +388,7 @@ final public class SimpleAOClient {
 	}
 
 	private Certificate getSslCertificate(String aoServer, String keyFileOrCertbotName) throws IllegalArgumentException, SQLException, IOException {
-		for(Certificate cert : getAOServer(aoServer).getSslCertificates()) {
+		for(Certificate cert : getLinuxServer(aoServer).getSslCertificates()) {
 			if(
 				cert.getKeyFile().toString().equals(keyFileOrCertbotName)
 				|| keyFileOrCertbotName.equals(cert.getCertbotName())
@@ -435,7 +435,7 @@ final public class SimpleAOClient {
 	}
 
 	private VirtualServer getVirtualServer(String virtualServer) throws IllegalArgumentException, SQLException, IOException {
-		Host se = getServer(virtualServer);
+		Host se = getHost(virtualServer);
 		VirtualServer vs = se.getVirtualServer();
 		if(vs==null) throw new IllegalArgumentException("Unable to find VirtualServer: "+virtualServer);
 		return vs;
@@ -455,7 +455,7 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Adds a new backup <code>Server</code>.
+	 * Adds a new backup {@link Host}.
 	 *
 	 * @param  hostname  the desired hostname for the server
 	 * @param  farm  the farm the server is part of
@@ -474,13 +474,13 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to communicate with the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>ServerFarm</code>, <code>Business</code>, <code>Architecture</code>,
+	 * @exception  IllegalArgumentException  if unable to find the <code>ServerFarm</code>, {@link Account}, <code>Architecture</code>,
 	 *                                       <code>OperatingSystem</code>, or <code>OperatingSystemVersion<code>
 	 *
 	 * @see  Host
-	 * @see  ServerTable#addBackupServer
+	 * @see  HostTable#addBackupHost
 	 */
-	public int addBackupServer(
+	public int addBackupHost(
 		String hostname,
 		String farm,
 		Account.Name owner,
@@ -494,7 +494,7 @@ final public class SimpleAOClient {
 		String contact_phone,
 		String contact_email
 	) throws IllegalArgumentException, IOException, SQLException {
-		return connector.getNet().getHost().addBackupServer(
+		return connector.getNet().getHost().addBackupHost(
 			hostname,
 			getServerFarm(farm),
 			getPackage(owner),
@@ -509,7 +509,7 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Adds a new <code>Business</code> to the system.
+	 * Adds a new {@link Account} to the system.
 	 *
 	 * @param  accounting  the accounting code of the new business
 	 * @param  contractVersion  the version number of the digitally signed contract
@@ -528,9 +528,9 @@ final public class SimpleAOClient {
 	 *
 	 * @see  Account
 	 * @see  #checkAccounting
-	 * @see  Server#addBusiness
+	 * @see  Server#addAccount
 	 */
-	public void addBusiness(
+	public void addAccount(
 		Account.Name accounting,
 		String contractVersion,
 		String defaultServer,
@@ -541,10 +541,10 @@ final public class SimpleAOClient {
 		boolean billParent
 	) throws IllegalArgumentException, SQLException, IOException {
 		if(contractVersion!=null && contractVersion.length()==0) contractVersion=null;
-		getServer(defaultServer).addBusiness(
+		getHost(defaultServer).addAccount(
 			accounting,
 			contractVersion,
-			getBusiness(parent),
+			getAccount(parent),
 			can_add_backup_servers,
 			can_add_businesses,
 			can_see_prices,
@@ -553,8 +553,7 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Adds a new <code>BusinessAdministrator</code> to a
-	 * <code>Business</code>.
+	 * Adds a new {@link Administrator} to an {@link Account}.
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
@@ -562,9 +561,9 @@ final public class SimpleAOClient {
 	 *
 	 * @see  Administrator
 	 * @see  Account
-	 * @see  Username#addBusinessAdministrator
+	 * @see  Username#addAdministrator
 	 */
-	public void addBusinessAdministrator(
+	public void addAdministrator(
 		com.aoindustries.aoserv.client.account.User.Name username,
 		String name,
 		String title,
@@ -583,7 +582,7 @@ final public class SimpleAOClient {
 		String zip,
 		boolean enableEmailSupport
 	) throws IllegalArgumentException, IOException, SQLException {
-		getUsername(username).addBusinessAdministrator(
+		getUsername(username).addAdministrator(
 			name,
 			title,
 			birthday,
@@ -604,18 +603,18 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Adds a new <code>BusinessProfile</code> to a <code>Business</code>.  The
+	 * Adds a new {@link Profile} to an {@link Account}.  The
 	 * profile is a complete set of contact information about a business.  New
 	 * profiles can be added, and they are used as the contact information, but
 	 * old profiles are still available.
 	 *
-	 * @exception  IllegalArgumentException  if unable to find the <code>Business</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Account}
 	 *
-	 * @see  BusinessProfile
+	 * @see  Profile
 	 * @see  Account
-	 * @see  Business#addBusinessProfile
+	 * @see  Account#addProfile
 	 */
-	public int addBusinessProfile(
+	public int addProfile(
 		Account.Name business,
 		String name,
 		boolean isPrivate,
@@ -635,7 +634,7 @@ final public class SimpleAOClient {
 		Set<Email> technicalEmail,
 		String technicalEmailFormat
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getBusiness(business).addBusinessProfile(
+		return getAccount(business).addProfile(
 			name,
 			isPrivate,
 			phone,
@@ -657,12 +656,12 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Grants a <code>Business</code> access to a <code>Server</code>.
+	 * Grants an {@link Account} access to a {@link Host}.
 	 *
 	 * @param  accounting  the accounting code of the business
 	 * @param  server  the hostname of the server
 	 *
-	 * @return  the pkey of the new <code>BusinessServer</code>
+	 * @return  the pkey of the new {@link AccountHost}
 	 *
 	 * @exception  IOException  if unable to communicate with the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
@@ -671,17 +670,17 @@ final public class SimpleAOClient {
 	 *
 	 * @see  AccountHost
 	 * @see  #checkAccounting
-	 * @see  Business#addBusinessServer
+	 * @see  Account#addAccountHost
 	 */
-	public int addBusinessServer(
+	public int addAccountHost(
 		Account.Name accounting,
-		String server
+		String host
 	) throws IllegalArgumentException, SQLException, IOException {
-		return getBusiness(accounting).addBusinessServer(getServer(server));
+		return getAccount(accounting).addAccountHost(getHost(host));
 	}
 
 	/**
-	 * Adds a new <code>CvsRepository</code> to a <code>Server</code>.
+	 * Adds a new <code>CvsRepository</code> to a {@link Server}.
 	 *
 	 * @param  aoServer  the hostname of the server
 	 * @param  path    the full path of the repository
@@ -694,10 +693,10 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>LinuxServerAccount</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>LinuxServerAccount</code>,
 	 *					or <code>LinuxServerGroup</code>
 	 *
-	 * @see  AOServer#addCvsRepository
+	 * @see  Server#addCvsRepository
 	 */
 	public int addCvsRepository(
 		String aoServer,
@@ -706,7 +705,7 @@ final public class SimpleAOClient {
 		Group.Name group,
 		long mode
 	) throws IllegalArgumentException, IOException, SQLException {
-		Server ao=getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		return ao.addCvsRepository(
 			path,
 			getLinuxServerAccount(aoServer, username),
@@ -884,13 +883,13 @@ final public class SimpleAOClient {
 	 * <p>
 	 * Even though the <code>EmailList</code> may receive email on any number of
 	 * addresses, each address must be part of a <code>EmailDomain</code> that
-	 * is hosted on the same <code>Server</code> as the <code>EmailList</code>.
-	 * If email in a domain on another <code>Server</code> is required to be sent
-	 * to this list, it must be forwarded from the other <code>Server</code> via
+	 * is hosted on the same {@link Server} as the <code>EmailList</code>.
+	 * If email in a domain on another {@link Server} is required to be sent
+	 * to this list, it must be forwarded from the other {@link Server} via
 	 * a <code>EmailForwarding</code>.
 	 * <p>
 	 * The list of destinations for the <code>EmailList</code> is stored on the
-	 * <code>Server</code> in a flat file of one address per line.  This file
+	 * {@link Server} in a flat file of one address per line.  This file
 	 * may be either manipulated through the API or used directly on the
 	 * filesystem.
 	 *
@@ -900,7 +899,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find find the <code>AOServer</code>,
+	 * @exception  IllegalArgumentException  if unable to find find the {@link Server},
 	 *					<code>LinuxServerAccount</code>, or <code>LinuxServerGroup</code>
 	 *
 	 * @see  #checkEmailListPath
@@ -981,11 +980,11 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find find the {@link Server} or
 	 *					<code>Package</code>
 	 *
 	 * @see  #addEmailPipeAddress
-	 * @see  AOServer#addEmailPipe
+	 * @see  Server#addEmailPipe
 	 */
 	public int addEmailPipe(
 		String aoServer,
@@ -993,7 +992,7 @@ final public class SimpleAOClient {
 		Account.Name packageName
 	) throws IllegalArgumentException, IOException, SQLException {
 		return connector.getEmail().getPipe().addEmailPipe(
-			getAOServer(aoServer),
+			getLinuxServer(aoServer),
 			command,
 			getPackage(packageName)
 		);
@@ -1025,7 +1024,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, IOException, SQLException {
 		Pipe ep=connector.getEmail().getPipe().get(pkey);
 		if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+ep);
-		Server ao=ep.getAOServer();
+		Server ao = ep.getLinuxServer();
 		Domain sd=ao.getEmailDomain(domain);
 		if(sd==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getHostname());
 		Address ea=sd.getEmailAddress(address);
@@ -1102,7 +1101,7 @@ final public class SimpleAOClient {
 		if(phpVersion == null || phpVersion.isEmpty()) return null;
 		String prefix = phpVersion;
 		if(!prefix.endsWith(".")) prefix += '.';
-		int osvId = aoServer.getServer().getOperatingSystemVersion_id();
+		int osvId = aoServer.getHost().getOperatingSystemVersion_id();
 		List<SoftwareVersion> matches = new ArrayList<>();
 		for(SoftwareVersion tv : connector.getDistribution().getSoftwareVersion()) {
 			if(
@@ -1139,7 +1138,7 @@ final public class SimpleAOClient {
 	private com.aoindustries.aoserv.client.web.tomcat.Version findTomcatVersion(Server aoServer, String version) throws IllegalArgumentException, IOException, SQLException {
 		String prefix = version;
 		if(!prefix.endsWith(".")) prefix += '.';
-		int osvId = aoServer.getServer().getOperatingSystemVersion_id();
+		int osvId = aoServer.getHost().getOperatingSystemVersion_id();
 		List<com.aoindustries.aoserv.client.web.tomcat.Version> matches = new ArrayList<>();
 		for(com.aoindustries.aoserv.client.web.tomcat.Version htv : connector.getWeb_tomcat().getVersion()) {
 			SoftwareVersion tv = htv.getTechnologyVersion(connector);
@@ -1174,7 +1173,7 @@ final public class SimpleAOClient {
 	 * Adds a new <code>HttpdJBossSite</code> to the system.  An <code>HttpdJBossSite</code> is
 	 * an <code>HttpdSite</code> that uses the Tomcat servlet engine and JBoss as an EJB container.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  siteName  the name of the <code>HttpdTomcatStdSite</code>
 	 * @param  packageName  the name of the <code>Package</code>
 	 * @param  jvmUsername  the username of the <code>LinuxAccount</code> that the Java VM
@@ -1188,12 +1187,12 @@ final public class SimpleAOClient {
 	 * @param  ipAddress  the <code>IPAddress</code> that the web site will bind to.  In
 	 *					order for HTTP requests to succeed, <code>DNSRecord</code> entries
 	 *					must point the hostnames of this <code>HttpdTomcatStdSite</code> to this
-	 *					<code>IPAddress</code>.  If <code>null</code>, the system will assign a
+	 *					<code>IPAddress</code>.  If {@code null}, the system will assign a
 	 *                                      shared IP address.
 	 * @param  primaryHttpHostname  the primary hostname of the <code>HttpdTomcatStdSite</code> for the
 	 *					HTTP protocol
 	 * @param  altHttpHostnames  any number of alternate hostnames for the HTTP protocol or
-	 *					<code>null</code> for none
+	 *					{@code null} for none
 	 * @param  jBossVersion  the version number of <code>JBoss</code> to install in the site
 	 *
 	 * @return  the <code>pkey</code> of the new <code>HttpdTomcatStdSite</code>
@@ -1220,7 +1219,7 @@ final public class SimpleAOClient {
 		DomainName[] altHttpHostnames,
 		String jBossVersion
 	) throws IllegalArgumentException, SQLException, IOException {
-		Server ao=getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		checkSiteName(siteName);
 
 		IpAddress ip;
@@ -1232,7 +1231,7 @@ final public class SimpleAOClient {
 		} else {
 			throw new IllegalArgumentException("ip_address and net_device must both be null or both be not null");
 		}
-		com.aoindustries.aoserv.client.web.jboss.Version hjv=connector.getWeb_jboss().getVersion().getHttpdJBossVersion(jBossVersion, ao.getServer().getOperatingSystemVersion());
+		com.aoindustries.aoserv.client.web.jboss.Version hjv=connector.getWeb_jboss().getVersion().getHttpdJBossVersion(jBossVersion, ao.getHost().getOperatingSystemVersion());
 		if(hjv==null) throw new IllegalArgumentException("Unable to find HttpdJBossVersion: "+jBossVersion);
 		return ao.addHttpdJBossSite(
 			siteName,
@@ -1254,7 +1253,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if unable to find the <code>LinuxServerAccount</code>,
-	 *					the <code>LinuxServerGroup</code>, or the <code>Server</code>
+	 *					the <code>LinuxServerGroup</code>, or the {@link Server}
 	 *
 	 * @see  SharedTomcat
 	 * @see  UserServer
@@ -1268,7 +1267,7 @@ final public class SimpleAOClient {
 		com.aoindustries.aoserv.client.linux.User.Name linuxServerAccount,
 		Group.Name linuxServerGroup
 	) throws IllegalArgumentException, SQLException, IOException {
-		Server ao=getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		return ao.addHttpdSharedTomcat(
 			name,
 			findTomcatVersion(ao, version),
@@ -1311,7 +1310,7 @@ final public class SimpleAOClient {
 		String require,
 		String handler
 	) throws IllegalArgumentException, IOException, SQLException {
-		Site hs = getAOServer(aoServer).getHttpdSite(siteName);
+		Site hs = getLinuxServer(aoServer).getHttpdSite(siteName);
 		if(hs == null) throw new IllegalArgumentException("Unable to find HttpdSite: " + siteName + " on " + aoServer);
 		return hs.addHttpdSiteAuthenticatedLocation(path, isRegularExpression, authName, authGroupFile, authUserFile, require, handler);
 	}
@@ -1334,7 +1333,7 @@ final public class SimpleAOClient {
 		String require,
 		String handler
 	) throws IllegalArgumentException, IOException, SQLException {
-		Site hs = getAOServer(aoServer).getHttpdSite(siteName);
+		Site hs = getLinuxServer(aoServer).getHttpdSite(siteName);
 		if(hs == null) throw new IllegalArgumentException("Unable to find HttpdSite: " + siteName + " on " + aoServer);
 		Location hsal = null;
 		for(Location location : hs.getHttpdSiteAuthenticatedLocations()) {
@@ -1352,7 +1351,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>,
 	 *                                  or <code>HttpdTomcatSite</code>
 	 */
 	public int addHttpdTomcatContext(
@@ -1397,7 +1396,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>,
 	 *                                  <code>HttpdTomcatSite</code> or <code>HttpdTomcatContext</code>.
 	 */
 	public int addHttpdTomcatDataSource(
@@ -1437,7 +1436,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>,
 	 *                                  <code>HttpdTomcatSite</code> or <code>HttpdTomcatContext</code>.
 	 */
 	public int addHttpdTomcatParameter(
@@ -1467,7 +1466,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>,
 	 *                                  or <code>HttpdTomcatSite</code>
 	 *
 	 * @see  HttpdTomcatSite#addHttpdTomcatSiteJkMount(java.lang.String, boolean)
@@ -1489,7 +1488,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>,
 	 *                                  or <code>HttpdTomcatSite</code>
 	 *
 	 * @see  HttpdTomcatSiteJkMount#remove()
@@ -1518,7 +1517,7 @@ final public class SimpleAOClient {
 	 * an <code>HttpdSite</code> that uses a shared Tomcat servlet engine in a virtual-hosting configuration.  It
 	 * hosts multiple sites per Java VM.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  siteName  the name of the <code>HttpdTomcatSharedSite</code>
 	 * @param  packageName  the name of the <code>Package</code>
 	 * @param  jvmUsername  the username of the <code>LinuxAccount</code> that the Java VM
@@ -1532,12 +1531,12 @@ final public class SimpleAOClient {
 	 * @param  ipAddress  the <code>IPAddress</code> that the web site will bind to.  In
 	 *					order for HTTP requests to succeed, <code>DNSRecord</code> entries
 	 *					must point the hostnames of this <code>HttpdTomcatSharedSite</code> to this
-	 *					<code>IPAddress</code>.  If <code>null</code>, the system will assign a
+	 *					<code>IPAddress</code>.  If {@code null}, the system will assign a
 	 *                                      shared IP address.
 	 * @param  primaryHttpHostname  the primary hostname of the <code>HttpdTomcatSharedSite</code> for the
 	 *					HTTP protocol
 	 * @param  altHttpHostnames  any number of alternate hostnames for the HTTP protocol or
-	 *					<code>null</code> for none
+	 *					{@code null} for none
 	 * @param  sharedTomcatName   the shared Tomcat JVM under which this site runs
 	 *
 	 * @return  the <code>pkey</code> of the new <code>HttpdTomcatSharedSite</code>
@@ -1548,7 +1547,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find a referenced object or a
 	 *					parameter is not in the right format
 	 *
-	 * @see  AOServer#addHttpdTomcatSharedSite
+	 * @see  Server#addHttpdTomcatSharedSite
 	 * @see  HttpdTomcatSharedSite
 	 * @see  Site
 	 * @see  com.aoindustries.aoserv.client.web.tomcat.Site
@@ -1567,7 +1566,7 @@ final public class SimpleAOClient {
 		DomainName[] altHttpHostnames,
 		String sharedTomcatName
 	) throws IllegalArgumentException, SQLException, IOException {
-		Server ao=getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		checkSiteName(siteName);
 
 		IpAddress ip;
@@ -1602,7 +1601,7 @@ final public class SimpleAOClient {
 	 * only hosts one site per Java VM, but is arranged in the stock Tomcat structure and uses no
 	 * special code.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  siteName  the name of the <code>HttpdTomcatStdSite</code>
 	 * @param  packageName  the name of the <code>Package</code>
 	 * @param  jvmUsername  the username of the <code>LinuxAccount</code> that the Java VM
@@ -1616,12 +1615,12 @@ final public class SimpleAOClient {
 	 * @param  ipAddress  the <code>IPAddress</code> that the web site will bind to.  In
 	 *					order for HTTP requests to succeed, <code>DNSRecord</code> entries
 	 *					must point the hostnames of this <code>HttpdTomcatStdSite</code> to this
-	 *					<code>IPAddress</code>.  If <code>null</code>, the system will assign a
+	 *					<code>IPAddress</code>.  If {@code null}, the system will assign a
 	 *                                      shared IP address.
 	 * @param  primaryHttpHostname  the primary hostname of the <code>HttpdTomcatStdSite</code> for the
 	 *					HTTP protocol
 	 * @param  altHttpHostnames  any number of alternate hostnames for the HTTP protocol or
-	 *					<code>null</code> for none
+	 *					{@code null} for none
 	 * @param  tomcatVersion  the version number of <code>Tomcat</code> to install in the site
 	 *
 	 * @return  the <code>pkey</code> of the new <code>HttpdTomcatStdSite</code>
@@ -1632,7 +1631,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find a referenced object or a
 	 *					parameter is not in the right format
 	 *
-	 * @see  AOServer#addHttpdTomcatStdSite
+	 * @see  Server#addHttpdTomcatStdSite
 	 * @see  PrivateTomcatSite
 	 * @see  Site
 	 * @see  Site
@@ -1651,7 +1650,7 @@ final public class SimpleAOClient {
 		DomainName[] altHttpHostnames,
 		String tomcatVersion
 	) throws IllegalArgumentException, SQLException, IOException {
-		Server ao=getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		checkSiteName(siteName);
 
 		IpAddress ip;
@@ -1726,7 +1725,7 @@ final public class SimpleAOClient {
 
 	/**
 	 * Adds a new <code>LinuxAccount</code> the system.  A <code>LinuxAccount</code> does not
-	 * grant access to any <code>Server</code>s, <code>addLinuxServerAccount</code> must be used
+	 * grant access to any {@link Server servers}, <code>addLinuxServerAccount</code> must be used
 	 * after the <code>LinuxAccount</code> has been created.
 	 *
 	 * @param  username  the username of the new <code>LinuxAccount</code>
@@ -1783,7 +1782,7 @@ final public class SimpleAOClient {
 
 	/**
 	 * Adds a <code>LinuxGroup</code> to the system.  After adding the <code>LinuxGroup</code>, the group
-	 * may be added to a <code>Server</code> via a <code>LinuxServerGroup</code>.  Also, <code>LinuxAccount</code>s
+	 * may be added to a {@link Server} via a <code>LinuxServerGroup</code>.  Also, <code>LinuxAccount</code>s
 	 * may be granted access to the group using <code>LinuxGroupAccount</code>.
 	 *
 	 * @param  name  the name of the new <code>LinuxGroup</code>
@@ -1846,12 +1845,12 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Grants a <code>LinuxAccount</code> access to a <code>Server</code>.  The primary
+	 * Grants a <code>LinuxAccount</code> access to a {@link Server}.  The primary
 	 * <code>LinuxGroup</code> for this account must already have a <code>LinuxServerGroup</code>
-	 * for the <code>Server</code>.
+	 * for the {@link Server}.
 	 *
 	 * @param  username  the username of the <code>LinuxAccount</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  home  the home directory of the user, typically <code>/home/<i>username</i></code>.
 	 *                  If {@code null}, the {@link LinuxServerAccount#getDefaultHomeDirectory(com.aoindustries.aoserv.client.validator.UserId) default home directory} for <code>username</code>
 	 *                  is used.
@@ -1859,8 +1858,8 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>LinuxAccount</code>, <code>Server</code>
-	 *					or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the <code>LinuxAccount</code>, {@link Host}
+	 *					or {@link Server}
 	 *
 	 * @see  LinuxAccount#addLinuxServerAccount
 	 * @see  #addLinuxAccount
@@ -1874,25 +1873,25 @@ final public class SimpleAOClient {
 		PosixPath home
 	) throws IllegalArgumentException, IOException, SQLException {
 		com.aoindustries.aoserv.client.linux.User la=getLinuxAccount(username);
-		Server ao=getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		if(home == null) home = UserServer.getDefaultHomeDirectory(username);
 		return la.addLinuxServerAccount(ao, home);
 	}
 
 	/**
-	 * Grants a <code>LinuxGroup</code> access to a <code>Server</code>.  If the group is
+	 * Grants a <code>LinuxGroup</code> access to a {@link Server}.  If the group is
 	 * the primary <code>LinuxGroup</code> for any <code>LinuxAccount</code> that will be
-	 * added to the <code>Server</code>, the <code>LinuxGroup</code> must be added to the
-	 * <code>Server</code> first via a <code>LinuxServerGroup</code>.
+	 * added to the {@link Server}, the <code>LinuxGroup</code> must be added to the
+	 * {@link Server} first via a <code>LinuxServerGroup</code>.
 	 *
 	 * @param  group  the name of the <code>LinuxGroup</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>LinuxGroup</code> or
-	 *					<code>Server</code>
+	 *					{@link Server}
 	 *
 	 * @see  LinuxGroup#addLinuxServerGroup
 	 * @see  #addLinuxGroup
@@ -1903,14 +1902,14 @@ final public class SimpleAOClient {
 		Group.Name group,
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getLinuxGroup(group).addLinuxServerGroup(getAOServer(aoServer));
+		return getLinuxGroup(group).addLinuxServerGroup(getLinuxServer(aoServer));
 	}
 
 	/**
 	 * Adds a new <code>MajordomoList</code> to a <code>MajordomoServer</code>.
 	 *
 	 * @param  domain  the domain of the <code>MajordomoServer</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  listName  the name of the new list
 	 *
 	 * @return  the pkey of the new <code>EmailList</code>
@@ -1919,7 +1918,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if the name is not valid or unable to find the
-	 *                                  <code>Server</code>, code>EmailDomain</code>, or
+	 *                                  {@link Server}, code>EmailDomain</code>, or
 	 *                                  <code>MajordomoServer</code>
 	 *
 	 * @see  MajordomoServer#addMajordomoList
@@ -1941,12 +1940,12 @@ final public class SimpleAOClient {
 	 * Adds a new <code>MajordomoServer</code> to an <code>EmailDomain</code>.
 	 *
 	 * @param  domain  the domain of the <code>EmailDomain</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  linux_account  the username of the <code>LinuxAccount</code>
 	 * @param  linux_group  the naem of the <code>LinuxGroup</code>
 	 * @param  version  the version of the <code>MajordomoVersion</code>
 	 *
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server},
 	 *                                  <code>EmailDomain</code>, <code>LinuxServerAccount</code>,
 	 *                                  <code>LinuxServerGroup</code>, or <code>MajordomoVersion</code>
 	 *
@@ -1978,14 +1977,14 @@ final public class SimpleAOClient {
 	 * created in the MySQL system.  To ensure the database is ready for use, call <code>waitForMySQLDatabaseRebuild</code>.
 	 *
 	 * @param  name  the name of the new database
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  packageName  the name of the <code>Package</code> that owns the database
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if the database name is not valid or unable to
-	 *					find the <code>Server</code> or <code>Package</code>
+	 *					find the {@link Server} or <code>Package</code>
 	 *
 	 * @see  MySQLServer#addMySQLDatabase
 	 * @see  #checkMySQLDatabaseName
@@ -2012,7 +2011,7 @@ final public class SimpleAOClient {
 	 * Grants a <code>MySQLServerUser</code> permission to access a <code>MySQLDatabase</code>.
 	 *
 	 * @param  name  the name of the <code>MySQLDatabase</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  username  the username of the <code>MySQLUser</code>
 	 * @param  canSelect  grants the user <code>SELECT</code> privileges
 	 * @param  canInsert  grants the user <code>INSERT</code> privileges
@@ -2028,7 +2027,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server},
 	 *					<code>MySQLDatabase</code>, or <code>MySQLServerUser</code>
 	 *
 	 * @see  MySQLDatabase#addMySQLServerUser
@@ -2061,7 +2060,8 @@ final public class SimpleAOClient {
 		boolean canTrigger
 	) throws IllegalArgumentException, IOException, SQLException {
 		com.aoindustries.aoserv.client.mysql.Database md=getMySQLDatabase(aoServer, mysqlServer, name);
-		return md.addMySQLServerUser(
+		return connector.getMysql().getDatabaseUser().addMySQLDBUser(
+			md,
 			getMySQLServerUser(aoServer, mysqlServer, username),
 			canSelect,
 			canInsert,
@@ -2085,11 +2085,11 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Grants a <code>MySQLUser</code> access to a <code>Server</code> by adding a
+	 * Grants a <code>MySQLUser</code> access to a {@link Server} by adding a
 	 * <code>MySQLServerUser</code>.
 	 *
 	 * @param  username  the username of the <code>MySQLUser</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  host  the host the user is allowed to connect from, almost always
 	 *					<code>MySQLHost.ANY_LOCAL_HOST</code> because the host limitation
 	 *					is provided on a per-database level by <code>MySQLDBUser</code>
@@ -2098,7 +2098,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>MySQLUser</code> or
-	 *					<code>Server</code>
+	 *					{@link Server}
 	 *
 	 * @see  MySQLUser#addMySQLServerUser
 	 * @see  MySQLServerUser#ANY_LOCAL_HOST
@@ -2116,10 +2116,10 @@ final public class SimpleAOClient {
 
 	/**
 	 * Adds a <code>MySQLUser</code> to the system.  A <code>MySQLUser</code> does not
-	 * exist on any <code>Server</code>, it merely indicates that a <code>Username</code>
+	 * exist on any {@link Server}, it merely indicates that a <code>Username</code>
 	 * will be used for accessing a <code>MySQLDatabase</code>.  In order to grant
 	 * the new <code>MySQLUser</code> access to a <code>MySQLDatabase</code>, first
-	 * add a <code>MySQLServerUser</code> on the same <code>Server</code> as the
+	 * add a <code>MySQLServerUser</code> on the same {@link Server} as the
 	 * <code>MySQLDatabase</code>, then add a <code>MySQLDBUser</code> granting
 	 * permission to the <code>MySQLDatabase</code>.
 	 *
@@ -2165,7 +2165,7 @@ final public class SimpleAOClient {
 		IpAddress ia=getIPAddress(server, net_device, ipAddress);
 		AppProtocol appProt=connector.getNet().getAppProtocol().get(appProtocol);
 		if(appProt==null) throw new IllegalArgumentException("Unable to find Protocol: "+appProtocol);
-		return getServer(server).addNetBind(
+		return getHost(server).addNetBind(
 			getPackage(packageName),
 			ia,
 			port,
@@ -2177,54 +2177,51 @@ final public class SimpleAOClient {
 
 	/**
 	 * Whenever a credit card transaction fails, or when an account has not been paid for
-	 * over month, the billing contact for the <code>Business</code> is notified.  The details
+	 * over month, the billing contact for the {@link Account} is notified.  The details
 	 * of this notification are logged as a <code>NoticeLog</code>.
 	 *
-	 * @param  accounting  the accounting code of the <code>Business</code>
+	 * @param  accounting  the accounting code of the {@link Account}
 	 * @param  billingContact  the name of the person who was contacted
 	 * @param  emailAddress  the email address that the email was sent to
-	 * @param  balance  their account balance at the time the notification was sent
 	 * @param  type  the <code>NoticeType</code>
 	 * @param  transid  the transaction ID associated with this notification or
 	 *					<code>NoticeLog.NO_TRANSACTION</code> for none
 	 *
 	 * @exception  IOException  if unable to access the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Business</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Account},
 	 *					<code>NoticeType</code>, or <code>Transaction</code>.
 	 *
-	 * @see  Business#addNoticeLog
+	 * @see  Account#addNoticeLog
 	 * @see  NoticeType
 	 * @see  Account
 	 * @see  Transaction
 	 */
-	public void addNoticeLog(
+	public int addNoticeLog(
 		Account.Name accounting,
 		String billingContact,
 		Email emailAddress,
-		BigDecimal balance,
 		String type,
 		int transid
 	) throws IllegalArgumentException, IOException, SQLException {
-		Account bu=getBusiness(accounting);
+		Account bu=getAccount(accounting);
 		NoticeType nt=connector.getBilling().getNoticeType().get(type);
 		if(nt==null) throw new IllegalArgumentException("Unable to find NoticeType: "+type);
 		if(transid!=NoticeLog.NO_TRANSACTION) {
 			Transaction trans=connector.getBilling().getTransaction().get(transid);
 			if(trans==null) throw new IllegalArgumentException("Unable to find Transaction: "+transid);
 		}
-		connector.getBilling().getNoticeLog().addNoticeLog(
+		return connector.getBilling().getNoticeLog().addNoticeLog(
 			accounting,
 			billingContact,
 			emailAddress,
-			balance,
 			type,
 			transid
 		);
 	}
 
 	/**
-	 * Each <code>Business</code> can have multiple <code>Package</code>s associated with it.
+	 * Each {@link Account} can have multiple <code>Package</code>s associated with it.
 	 * Each <code>Package</code> is an allotment of resources with a monthly charge.
 	 * <p>
 	 * To determine if this connection can set prices:
@@ -2233,15 +2230,15 @@ final public class SimpleAOClient {
 	 *
 	 * boolean canSetPrices=client
 	 *     .getConnector()
-	 *     .getThisBusinessAdministrator()
+	 *     .getCurrentAdministrator()
 	 *     .getUsername()
 	 *     .getPackage()
-	 *     .getBusiness()
+	 *     .getAccount()
 	 *     .canSetPrices();
 	 * </pre>
 	 *
 	 * @param  packageName  the name for the new package
-	 * @param  accounting  the accounting code of the <code>Business</code>
+	 * @param  accounting  the accounting code of the {@link Account}
 	 * @param  packageDefinition  the unique identifier of the <code>PackageDefinition</code>
 	 *
 	 * @exception  IOException  if unable to contact the server
@@ -2249,7 +2246,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find 
 	 *
 	 * @see  #checkPackageName
-	 * @see  #addBusiness
+	 * @see  #addAccount
 	 * @see  PackageDefinition
 	 */
 	public int addPackage(
@@ -2257,7 +2254,7 @@ final public class SimpleAOClient {
 		Account.Name accounting,
 		int packageDefinition
 	) throws IllegalArgumentException, IOException, SQLException {
-		Account business=getBusiness(accounting);
+		Account business=getAccount(accounting);
 		PackageDefinition pd=getPackageDefinition(packageDefinition);
 
 		return business.addPackage(packageName, pd);
@@ -2271,7 +2268,7 @@ final public class SimpleAOClient {
 	 * <code>waitForPostgresDatabaseRebuild</code>.
 	 *
 	 * @param  name  the name of the new database
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  datdba  the username of the <code>PostgresServerUser</code> who owns the database
 	 * @param  encoding  the encoding of the database
 	 *
@@ -2279,7 +2276,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if the database name is not valid or unable to
-	 *					find the <code>Server</code>, <code>PostgresUser</code>,
+	 *					find the {@link Server}, <code>PostgresUser</code>,
 	 *					<code>PostgresServerUser</code>, or <code>PostgresEncoding</code>
 	 *
 	 * @see  PostgresServer#addPostgresDatabase
@@ -2313,18 +2310,18 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Grants a <code>PostgresUser</code> access to a <code>Server</code> by adding a
+	 * Grants a <code>PostgresUser</code> access to a {@link Server} by adding a
 	 * <code>PostgresServerUser</code>.
 	 *
 	 * @param  username  the username of the <code>PostgresUser</code>
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>PostgresUser</code> or
-	 *					<code>Server</code>
+	 *					{@link Server}
 	 *
 	 * @see  PostgresUser#addPostgresServerUser
 	 * @see  #addPostgresUser
@@ -2339,10 +2336,10 @@ final public class SimpleAOClient {
 
 	/**
 	 * Adds a <code>PostgresUser</code> to the system.  A <code>PostgresUser</code> does not
-	 * exist on any <code>Server</code>, it merely indicates that a <code>Username</code>
+	 * exist on any {@link Server}, it merely indicates that a <code>Username</code>
 	 * will be used for accessing a <code>PostgresDatabase</code>.  In order to grant
 	 * the new <code>PostgresUser</code> access to a <code>PostgresDatabase</code>, first
-	 * add a <code>PostgresServerUser</code> on the same <code>Server</code> as the
+	 * add a <code>PostgresServerUser</code> on the same {@link Server} as the
 	 * <code>PostgresDatabase</code>, then use the PostgreSQL <code>grant</code> and
 	 * <code>revoke</code> commands.
 	 *
@@ -2366,13 +2363,13 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Adds a new <code>EmailDomain</code> to a <code>Server</code>.  Once added, the <code>Server</code>
+	 * Adds a new <code>EmailDomain</code> to a {@link Server}.  Once added, the {@link Server}
 	 * will accept email for the provided domain.  In order for the email to function, however, a DNS
 	 * <code>MX</code> entry for the domain must point to a hostname that resolves to an
-	 * <code>IPAddress</code> on the <code>Server</code>.
+	 * <code>IPAddress</code> on the {@link Server}.
 	 *
 	 * @param  domain  the email domain that will be hosted
-	 * @param  aoServer  the hostname of the <code>Server</code> that is being added
+	 * @param  aoServer  the hostname of the {@link Server} that is being added
 	 * @param  packageName  the name of the <code>Package</code> that owns the email domain
 	 *
 	 * @exception  IOException  if unable to access the server
@@ -2381,7 +2378,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if the domain is not in the correct format or
 	 *					unable to find the <code>Package</code>
 	 *
-	 * @see  AOServer#addEmailDomain
+	 * @see  Server#addEmailDomain
 	 * @see  #addDNSRecord
 	 * @see  #addEmailForwarding
 	 * @see  #addEmailListAddress
@@ -2393,7 +2390,7 @@ final public class SimpleAOClient {
 		String aoServer,
 		Account.Name packageName
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getAOServer(aoServer).addEmailDomain(domain, getPackage(packageName));
+		return getLinuxServer(aoServer).addEmailDomain(domain, getPackage(packageName));
 	}
 
 	/**
@@ -2403,14 +2400,14 @@ final public class SimpleAOClient {
 	 * the SMTP access will be revoked after 24 hours unless refresh.
 	 *
 	 * @param  packageName  the name of the <code>Package</code> that is granted access
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  host  the hostname or IP address that is being configured
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if the IP address is for valid or unable to
-	 *					find the <code>Package</code> or <code>Server</code>
+	 *					find the <code>Package</code> or {@link Server}
 	 *
 	 * @see  Package#addEmailSmtpRelay
 	 */
@@ -2424,7 +2421,7 @@ final public class SimpleAOClient {
 		Server ao;
 		if(aoServer!=null && (aoServer=aoServer.trim()).length()==0) aoServer=null;
 		if(aoServer==null) ao=null;
-		else ao=getAOServer(aoServer);
+		else ao = getLinuxServer(aoServer);
 		SmtpRelayType esrt=connector.getEmail().getSmtpRelayType().get(type);
 		if(esrt==null) throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
 
@@ -2455,7 +2452,7 @@ final public class SimpleAOClient {
 	/**
 	 * Adds a new support request <code>Ticket</code> to the system.
 	 *
-	 * @param  accounting  the name of the <code>Business</code> that the support
+	 * @param  accounting  the name of the {@link Account} that the support
 	 *                      request relates to
 	 * @param  business_administrator  the person to contact regarding the ticket
 	 * @param  ticket_type  the <code>TicketType</code>
@@ -2465,18 +2462,18 @@ final public class SimpleAOClient {
 	 * @param  client_priority  the priority assigned by the client
 	 * @param  admin_priority  the priority assigned by the ticket administrator
 	 * @param  technology  the <code>TechnologyName</code> that this <code>Ticket</code>
-	 *					relates to or <code>null</code> for none
+	 *					relates to or {@code null} for none
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Package</code>,
-	 *					<code>BusinessAdministrator</code>, <code>TicketType</code>,
+	 *					{@link Administrator}, <code>TicketType</code>,
 	 *					client <code>TicketPriority</code>, admin <code>TicketPriority</code>,
 	 *					or <code>TechnologyName</code>
 	 *
-	 * @see  BusinessAdministrator#addTicket(Business,TicketType,String,long,TicketPriority,TicketPriority,TechnologyName,BusinessAdministrator,String,String)
-	 * @see  BusinessAdministrator#isActiveTicketAdmin
+	 * @see  Administrator#addTicket(Account,TicketType,String,long,TicketPriority,TicketPriority,TechnologyName,Administrator,String,String)
+	 * @see  Administrator#isActiveTicketAdmin
 	 * @see  Action
 	 * @see  Package
 	 * @see  TechnologyName
@@ -2497,7 +2494,7 @@ final public class SimpleAOClient {
 		String contactPhoneNumbers
 	) throws IllegalArgumentException, IOException, SQLException {
 		return connector.getTickets().addTicket(
-			(accounting==null || accounting.length()==0) ? null : getBusiness(accounting),
+			(accounting==null || accounting.length()==0) ? null : getAccount(accounting),
 			getLanguage(language),
 			(category==null || category.length()==0) ? null : getTicketCategory(category),
 			getTicketType(ticketType),
@@ -2514,7 +2511,7 @@ final public class SimpleAOClient {
 	 * but not completed.
 	 *
 	 * @param  ticket_id  the pkey of the <code>Ticket</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
+	 * @param  administrator  the username of the {@link Administrator}
 	 *					making the change
 	 * @param  comments  the details of their work
 	 *
@@ -2522,7 +2519,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code> or
-	 *					<code>BusinessAdministrator</code>
+	 *					{@link Administrator}
 	 *
 	 * @see  Ticket#actWorkEntry
 	 * @see  #addTicket
@@ -2531,22 +2528,22 @@ final public class SimpleAOClient {
 	/*
 	public void addTicketWork(
 		int ticket_id,
-		String business_administrator,
+		String administrator,
 		String comments
 	) throws IllegalArgumentException, IOException, SQLException {
 		Ticket ti=connector.getTickets().get(ticket_id);
 		if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-		BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Administrator pe=connector.getAdministrators().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		ti.actWorkEntry(pe, comments);
 	}*/
 
 	/**
-	 * Adds a new <code>Transaction</code> to a <code>Business</code>.
+	 * Adds a new <code>Transaction</code> to a {@link Account}.
 	 *
-	 * @param  business  the accounting code of the <code>Business</code>
-	 * @param  source_business  the accounting code of the originating <code>Business</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code> making
+	 * @param  business  the accounting code of the {@link Account}
+	 * @param  source_business  the accounting code of the originating {@link Account}
+	 * @param  administrator  the username of the {@link Administrator} making
 	 *					this <code>Transaction</code>
 	 * @param  type  the type as found in <code>Rate</code>
 	 * @param  description  the description
@@ -2562,35 +2559,35 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
-	 *					<code>Business</code>, <code>BusinessAdministrator</code>, <code>Rate</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server},
+	 *					{@link Account}, {@link Administrator}, <code>Rate</code>,
 	 *					<code>PaymentType</code>, or <code>payment_confirmed</code>
 	 *
-	 * @see  Business#addTransaction
+	 * @see  Account#addTransaction
 	 * @see  Transaction
-	 * @see  #addBusiness
+	 * @see  #addAccount
 	 * @see  Account
-	 * @see  #addBusinessAdministrator
+	 * @see  #addAdministrator
 	 * @see  Administrator
 	 * @see  TransactionType
 	 */
 	public int addTransaction(
 		Account.Name business,
 		Account.Name source_business,
-		com.aoindustries.aoserv.client.account.User.Name business_administrator,
+		com.aoindustries.aoserv.client.account.User.Name administrator,
 		String type,
 		String description,
 		int quantity,
-		int rate,
+		Money rate,
 		String paymentType,
 		String paymentInfo,
 		String processor,
 		byte payment_confirmed
 	) throws IllegalArgumentException, IOException, SQLException {
-		Account bu=getBusiness(business);
-		Account sourceBU=getBusiness(source_business);
-		Administrator pe=connector.getAccount().getAdministrator().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Account bu=getAccount(business);
+		Account sourceBU=getAccount(source_business);
+		Administrator pe = connector.getAccount().getAdministrator().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		TransactionType tt=connector.getBilling().getTransactionType().get(type);
 		if(tt==null) throw new IllegalArgumentException("Unable to find TransactionType: "+type);
 		PaymentType pt;
@@ -2606,7 +2603,8 @@ final public class SimpleAOClient {
 			ccProcessor = connector.getPayment().getProcessor().get(processor);
 			if(ccProcessor==null) throw new IllegalArgumentException("Unable to find CreditCardProcessor: "+processor);
 		}
-		return bu.addTransaction(
+		return connector.getBilling().getTransaction().addTransaction(
+			bu,
 			sourceBU,
 			pe,
 			tt,
@@ -2743,7 +2741,7 @@ final public class SimpleAOClient {
 	 * Bounces a <code>Ticket</code>.
 	 *
 	 * @param  ticket_id  the pkey of the <code>Ticket</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
+	 * @param  administrator  the username of the {@link Administrator}
 	 *					making the change
 	 * @param  comments  the details of the bounce
 	 *
@@ -2751,7 +2749,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code> or
-	 *					<code>BusinessAdministrator</code>
+	 *					{@link Administrator}
 	 *
 	 * @see  Ticket#actBounceTicket
 	 * @see  #addTicket
@@ -2760,33 +2758,33 @@ final public class SimpleAOClient {
 	/*
 	public void bounceTicket(
 		int ticket_id,
-		String business_administrator,
+		String administrator,
 		String comments
 	) throws IllegalArgumentException, IOException, SQLException {
 		Ticket ti=connector.getTickets().get(ticket_id);
 		if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-		BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Administrator pe = connector.getAdministrators().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		ti.actBounceTicket(pe, comments);
 	}*/
 
 	/**
-	 * Cancels a <code>Business</code>.  The <code>Business</code> must already be disabled.
+	 * Cancels an {@link Account}.  The {@link Account} must already be disabled.
 	 *
 	 * @param  accounting  the accounting code of the business
 	 * @param  reason  the reason the account is being canceled
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Business</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Account}
 	 *
-	 * @see  Business#cancel
+	 * @see  Account#cancel
 	 */
-	public void cancelBusiness(
+	public void cancelAccount(
 		Account.Name accounting,
 		String reason
 	) throws IllegalArgumentException, IOException, SQLException {
-		getBusiness(accounting).cancel(reason);
+		getAccount(accounting).cancel(reason);
 	}
 
 	/**
@@ -2794,7 +2792,7 @@ final public class SimpleAOClient {
 	 *
 	 * @param  ticket_id  the pkey of the <code>Ticket</code>
 	 * @param  priority  the new <code>TicketPriority</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
+	 * @param  administrator  the username of the {@link Administrator}
 	 *					making the change
 	 * @param  comments  the details of the change
 	 *
@@ -2802,7 +2800,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code>,
-	 *					<code>BusinessAdministrator</code>, or <code>TicketPriority</code>
+	 *					{@link Administrator}, or <code>TicketPriority</code>
 	 *
 	 * @see  Ticket#actChangeAdminPriority
 	 * @see  #addTicket
@@ -2813,7 +2811,7 @@ final public class SimpleAOClient {
 	public void changeTicketAdminPriority(
 		int ticket_id,
 		String priority,
-		String business_administrator,
+		String administrator,
 		String comments
 	) throws IllegalArgumentException, IOException, SQLException {
 		Ticket ti=connector.getTickets().get(ticket_id);
@@ -2825,8 +2823,8 @@ final public class SimpleAOClient {
 			pr=connector.getTicketPriorities().get(priority);
 			if(pr==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
 		}
-		BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Administrator pe = connector.getAdministrators().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		ti.actChangeAdminPriority(pr, pe, comments);
 	}*/
 
@@ -2835,7 +2833,7 @@ final public class SimpleAOClient {
 	 *
 	 * @param  ticket_id  the pkey of the <code>Ticket</code>
 	 * @param  priority  the new <code>TicketPriority</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
+	 * @param  administrator  the username of the {@link Administrator}
 	 *					making the change
 	 * @param  comments  the details of the change
 	 *
@@ -2843,7 +2841,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code>,
-	 *					<code>BusinessAdministrator</code>, or <code>TicketPriority</code>
+	 *					{@link Administrator}, or <code>TicketPriority</code>
 	 *
 	 * @see  Ticket#actChangeClientPriority
 	 * @see  #addTicket
@@ -2854,15 +2852,15 @@ final public class SimpleAOClient {
 	public void changeTicketClientPriority(
 		int ticket_id,
 		String priority,
-		String business_administrator,
+		String administrator,
 		String comments
 	) throws IllegalArgumentException, IOException, SQLException {
 		Ticket ti=connector.getTickets().get(ticket_id);
 		if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
 		TicketPriority pr=connector.getTicketPriorities().get(priority);
 		if(pr==null) throw new IllegalArgumentException("Unable to find TicketPriority: "+priority);
-		BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Administrator pe = connector.getAdministrators().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		ti.actChangeClientPriority(pr, pe, comments);
 	}*/
 
@@ -2871,7 +2869,7 @@ final public class SimpleAOClient {
 	 *
 	 * @param  ticket_id  the pkey of the <code>Ticket</code>
 	 * @param  type  the name of the new <code>TicketType</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
+	 * @param  administrator  the username of the {@link Administrator}
 	 *					making the change
 	 * @param  comments  the details of the change
 	 *
@@ -2879,7 +2877,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code>,
-	 *					<code>TicketType</code>, or <code>BusinessAdministrator</code>
+	 *					<code>TicketType</code>, or {@link Administrator}
 	 *
 	 * @see  Ticket#actChangeTicketType
 	 * @see  TicketType
@@ -2891,33 +2889,33 @@ final public class SimpleAOClient {
 	public void changeTicketType(
 		int ticket_id,
 		String type,
-		String business_administrator,
+		String administrator,
 		String comments
 	) throws IllegalArgumentException, IOException, SQLException {
 		Ticket ti=connector.getTickets().get(ticket_id);
 		if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
 		TicketType tt=connector.getTicketTypes().get(type);
 		if(tt==null) throw new IllegalArgumentException("Unable to find TicketType: "+type);
-		BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Administrator pe=connector.getAdministrators().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		ti.actChangeTicketType(tt, pe, comments);
 	}*/
 
 	/**
 	 * Checks the strength of a password that will be used for
-	 * a <code>BusinessAdministrator</code>.
+	 * a {@link Administrator}.
 	 *
-	 * @param  username  the username of the <code>BusinessAdministrator</code> whos
+	 * @param  username  the username of the {@link Administrator} whose
 	 *					password will be set
 	 * @param  password  the new password
 	 *
-	 * @return  a description of why the password is weak or <code>null</code>
+	 * @return  a description of why the password is weak or {@code null}
 	 *          if all checks succeed
 	 *
-	 * @see  #setBusinessAdministratorPassword
-	 * @see  BusinessAdministrator#checkPassword
+	 * @see  #setAdministratorPassword(com.aoindustries.aoserv.client.account.User.Name, java.lang.String)
+	 * @see  Administrator#checkPassword
 	 */
-	public static List<PasswordChecker.Result> checkBusinessAdministratorPassword(
+	public static List<PasswordChecker.Result> checkAdministratorPassword(
 		com.aoindustries.aoserv.client.account.User.Name username,
 		String password
 	) throws IOException, SQLException {
@@ -2958,11 +2956,11 @@ final public class SimpleAOClient {
 		String aoServer,
 		PosixPath path
 	) throws IllegalArgumentException, IOException, SQLException {
-		Server ao = getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		if(
 			!com.aoindustries.aoserv.client.email.List.isValidRegularPath(
 				path,
-				ao.getServer().getOperatingSystemVersion_id()
+				ao.getHost().getOperatingSystemVersion_id()
 			)
 		) throw new IllegalArgumentException("Invalid EmailList path: " + path + " on " + ao);
 	}
@@ -2974,7 +2972,7 @@ final public class SimpleAOClient {
 	 * @param  username  the username of the account that will have its password set
 	 * @param  password  the new password for the account
 	 *
-	 * @return  a <code>String</code> describing why the password is not secure or <code>null</code>
+	 * @return  a <code>String</code> describing why the password is not secure or {@code null}
 	 *					if the password is strong
 	 *
 	 * @exception  IOException  if unable to contact the server
@@ -3002,7 +3000,7 @@ final public class SimpleAOClient {
 	 *					password will be set
 	 * @param  password  the new password
 	 *
-	 * @return  a description of why the password is weak or <code>null</code>
+	 * @return  a description of why the password is weak or {@code null}
 	 *          if all checks succeed
 	 *
 	 * @exception  IOException  if unable to load the dictionary resource
@@ -3026,7 +3024,7 @@ final public class SimpleAOClient {
 	 *					password will be set
 	 * @param  password  the new password
 	 *
-	 * @return  a description of why the password is weak or <code>null</code>
+	 * @return  a description of why the password is weak or {@code null}
 	 *          if all checks succeed
 	 *
 	 * @exception  IOException  if unable to load the dictionary resource
@@ -3097,7 +3095,7 @@ final public class SimpleAOClient {
 	 * @param  username  the username whos password will be set
 	 * @param  password  the new password
 	 *
-	 * @return  a description of why the password is weak or <code>null</code>
+	 * @return  a description of why the password is weak or {@code null}
 	 *          if all checks succeed
 	 *
 	 * @exception  IOException  if unable to load the dictionary resource or unable to access the server
@@ -3124,8 +3122,8 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if the <code>LinuxAccount</code>, <code>Server</code>,
-	 *                                  <code>AOServer</code>, or <code>LinuxServerAccount</code> is not found
+	 * @exception  IllegalArgumentException  if the <code>LinuxAccount</code>, {@link Host},
+	 *                                  {@link Server}, or <code>LinuxServerAccount</code> is not found
 	 *
 	 * @see  LinuxServerAccount#passwordMatches
 	 * @see  #addLinuxServerAccount
@@ -3143,7 +3141,7 @@ final public class SimpleAOClient {
 	 * modifications or actions may be applied to the <code>Ticket</code>.
 	 *
 	 * @param  ticket_id  the pkey of the <code>Ticket</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
+	 * @param  administrator  the username of the {@link Administrator}
 	 *					making the change
 	 * @param  comments  the details of the change
 	 *
@@ -3151,7 +3149,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code>,
-	 *					<code>TicketType</code>, or <code>BusinessAdministrator</code>
+	 *					<code>TicketType</code>, or {@link Administrator}
 	 *
 	 * @see  Ticket#actCompleteTicket
 	 * @see  #addTicket
@@ -3160,13 +3158,13 @@ final public class SimpleAOClient {
 	/*
 	public void completeTicket(
 		int ticket_id,
-		String business_administrator,
+		String administrator,
 		String comments
 	) throws IllegalArgumentException, IOException, SQLException {
 		Ticket ti=connector.getTickets().get(ticket_id);
 		if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-		BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Administrator pe = connector.getAdministrators().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		ti.actCompleteTicket(pe, comments);
 	}*/
 
@@ -3182,7 +3180,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if unable to find the source <code>LinuxServerAccount</code>
-	 *					or destination <code>AOServer</code>
+	 *					or destination {@link Server}
 	 *
 	 * @see  LinuxServerAccount#copyHomeDirectory
 	 * @see  #addLinuxServerAccount
@@ -3193,7 +3191,7 @@ final public class SimpleAOClient {
 		String from_ao_server,
 		String to_ao_server
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getLinuxServerAccount(from_ao_server, username).copyHomeDirectory(getAOServer(to_ao_server));
+		return getLinuxServerAccount(from_ao_server, username).copyHomeDirectory(getLinuxServer(to_ao_server));
 	}
 
 	/**
@@ -3226,7 +3224,7 @@ final public class SimpleAOClient {
 	 * function.
 	 *
 	 * @param  password  the password that is to be encrypted
-	 * @param  salt  the two character salt for the encryption process, if <code>null</code>,
+	 * @param  salt  the two character salt for the encryption process, if {@code null},
 	 *					a random salt will be used
 	 * 
 	 * @deprecated  Please use hash instead.
@@ -3283,8 +3281,8 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the necessary <code>AOServObject</code>s
 	 */
-	public int disableBusiness(Account.Name accounting, String disableReason) throws IllegalArgumentException, IOException, SQLException {
-		Account bu=getBusiness(accounting);
+	public int disableAccount(Account.Name accounting, String disableReason) throws IllegalArgumentException, IOException, SQLException {
+		Account bu=getAccount(accounting);
 		DisableLog dl=connector.getAccount().getDisableLog().get(bu.addDisableLog(disableReason));
 		for(Package pk : bu.getPackages()) if(!pk.isDisabled()) disablePackage(dl, pk);
 		bu.disable(dl);
@@ -3306,7 +3304,7 @@ final public class SimpleAOClient {
 	 */
 	public int disablePackage(Account.Name name, String disableReason) throws IllegalArgumentException, SQLException, IOException {
 		Package pk=getPackage(name);
-		DisableLog dl=connector.getAccount().getDisableLog().get(pk.getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(pk.getAccount().addDisableLog(disableReason));
 		disablePackage(dl, pk);
 		return dl.getPkey();
 	}
@@ -3325,14 +3323,14 @@ final public class SimpleAOClient {
 		for(SharedTomcat hst : pk.getHttpdSharedTomcats()) {
 			if(!hst.isDisabled()) {
 				hst.disable(dl);
-				Server ao=hst.getAOServer();
+				Server ao=hst.getLinuxServer();
 				if(!httpdServers.contains(ao)) httpdServers.add(ao);
 			}
 		}
 		for(Site hs : pk.getHttpdSites()) {
 			if(!hs.isDisabled()) {
 				disableHttpdSite(dl, hs);
-				Server ao=hs.getAoServer();
+				Server ao=hs.getLinuxServer();
 				if(!httpdServers.contains(ao)) httpdServers.add(ao);
 			}
 		}
@@ -3358,7 +3356,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, or <code>HttpdSharedTomcat</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, or <code>HttpdSharedTomcat</code>
 	 */
 	public int disableHttpdSharedTomcat(
 		String name,
@@ -3366,7 +3364,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, IOException, SQLException {
 		SharedTomcat hst=getHttpdSharedTomcat(aoServer, name);
-		DisableLog dl=connector.getAccount().getDisableLog().get(hst.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(hst.getLinuxServerGroup().getLinuxGroup().getPackage().getAccount().addDisableLog(disableReason));
 		hst.disable(dl);
 		return dl.getPkey();
 	}
@@ -3390,7 +3388,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, SQLException, IOException {
 		Pipe ep=connector.getEmail().getPipe().get(pkey);
 		if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pkey);
-		DisableLog dl=connector.getAccount().getDisableLog().get(ep.getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(ep.getPackage().getAccount().addDisableLog(disableReason));
 		ep.disable(dl);
 		return dl.getPkey();
 	}
@@ -3407,7 +3405,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, or <code>HttpdSite</code>
 	 */
 	public int disableHttpdSite(
 		String name,
@@ -3415,7 +3413,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		Site hs=getHttpdSite(aoServer, name);
-		DisableLog dl=connector.getAccount().getDisableLog().get(hs.getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(hs.getPackage().getAccount().addDisableLog(disableReason));
 		disableHttpdSite(dl, hs);
 		return dl.getPkey();
 	}
@@ -3443,7 +3441,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, SQLException, IOException {
 		VirtualHost hsb=connector.getWeb().getVirtualHost().get(pkey);
 		if(hsb==null) throw new IllegalArgumentException("Unable to find HttpdSiteBind: "+pkey);
-		DisableLog dl=connector.getAccount().getDisableLog().get(hsb.getHttpdSite().getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(hsb.getHttpdSite().getPackage().getAccount().addDisableLog(disableReason));
 		hsb.disable(dl);
 		return dl.getPkey();
 	}
@@ -3468,7 +3466,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		com.aoindustries.aoserv.client.email.List el=getEmailList(aoServer, path);
-		DisableLog dl=connector.getAccount().getDisableLog().get(el.getLinuxServerGroup().getLinuxGroup().getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(el.getLinuxServerGroup().getLinuxGroup().getPackage().getAccount().addDisableLog(disableReason));
 		el.disable(dl);
 		return dl.getPkey();
 	}
@@ -3492,7 +3490,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, SQLException, IOException {
 		SmtpRelay ssr=connector.getEmail().getSmtpRelay().get(pkey);
 		if(ssr==null) throw new IllegalArgumentException("Unable to find EmailSmtpRelay: "+pkey);
-		DisableLog dl=connector.getAccount().getDisableLog().get(ssr.getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(ssr.getPackage().getAccount().addDisableLog(disableReason));
 		ssr.disable(dl);
 		return dl.getPkey();
 	}
@@ -3515,7 +3513,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		com.aoindustries.aoserv.client.account.User un = getUsername(username);
-		DisableLog dl=connector.getAccount().getDisableLog().get(un.getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(un.getPackage().getAccount().addDisableLog(disableReason));
 		disableUsername(dl, un);
 		return dl.getPkey();
 	}
@@ -3550,7 +3548,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		com.aoindustries.aoserv.client.linux.User la=getLinuxAccount(username);
-		DisableLog dl=connector.getAccount().getDisableLog().get(la.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(la.getUsername().getPackage().getAccount().addDisableLog(disableReason));
 		disableLinuxAccount(dl, la);
 		return dl.getPkey();
 	}
@@ -3583,7 +3581,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		UserServer lsa=getLinuxServerAccount(aoServer, username);
-		DisableLog dl=connector.getAccount().getDisableLog().get(lsa.getLinuxAccount().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(lsa.getLinuxAccount().getUsername().getPackage().getAccount().addDisableLog(disableReason));
 		disableLinuxServerAccount(dl, lsa);
 		return dl.getPkey();
 	}
@@ -3618,7 +3616,7 @@ final public class SimpleAOClient {
 				.getLinuxAccount()
 				.getUsername()
 				.getPackage()
-				.getBusiness()
+				.getAccount()
 				.addDisableLog(disableReason)
 			)
 		;
@@ -3644,7 +3642,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser(username);
-		DisableLog dl=connector.getAccount().getDisableLog().get(mu.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(mu.getUsername().getPackage().getAccount().addDisableLog(disableReason));
 		disableMySQLUser(dl, mu);
 		return dl.getPkey();
 	}
@@ -3665,7 +3663,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>MySQLUser</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>MySQLUser</code>
 	 */
 	public int disableMySQLServerUser(
 		com.aoindustries.aoserv.client.mysql.User.Name username,
@@ -3674,7 +3672,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		com.aoindustries.aoserv.client.mysql.UserServer msu=getMySQLServerUser(aoServer, mysqlServer, username);
-		DisableLog dl=connector.getAccount().getDisableLog().get(msu.getMySQLUser().getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(msu.getMySQLUser().getUsername().getPackage().getAccount().addDisableLog(disableReason));
 		msu.disable(dl);
 		return dl.getPkey();
 	}
@@ -3697,7 +3695,7 @@ final public class SimpleAOClient {
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		com.aoindustries.aoserv.client.postgresql.User pu = getPostgresUser(username);
-		DisableLog dl=connector.getAccount().getDisableLog().get(pu.getUsername().getPackage().getBusiness().addDisableLog(disableReason));
+		DisableLog dl=connector.getAccount().getDisableLog().get(pu.getUsername().getPackage().getAccount().addDisableLog(disableReason));
 		disablePostgresUser(dl, pu);
 		return dl.getPkey();
 	}
@@ -3719,7 +3717,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>PostgresUser</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>PostgresUser</code>
 	 */
 	public int disablePostgresServerUser(
 		com.aoindustries.aoserv.client.postgresql.User.Name username,
@@ -3734,7 +3732,7 @@ final public class SimpleAOClient {
 				.getPostgresUser()
 				.getUsername()
 				.getPackage()
-				.getBusiness()
+				.getAccount()
 				.addDisableLog(disableReason)
 			)
 		;
@@ -3743,7 +3741,7 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Disables a <code>BusinessAdministrator</code>.
+	 * Disables a {@link Administrator}.
 	 *
 	 * @param  username  the username to disable
 	 * @param  disableReason  the reason the account is being disabled
@@ -3753,17 +3751,17 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or <code>BusinessAdministrator</code>
+	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or {@link Administrator}
 	 */
-	public int disableBusinessAdministrator(
+	public int disableAdministrator(
 		com.aoindustries.aoserv.client.account.User.Name username,
 		String disableReason
 	) throws IllegalArgumentException, SQLException, IOException {
 		com.aoindustries.aoserv.client.account.User un=getUsername(username);
-		Administrator ba=un.getBusinessAdministrator();
-		if(ba==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
-		DisableLog dl=connector.getAccount().getDisableLog().get(un.getPackage().getBusiness().addDisableLog(disableReason));
-		ba.disable(dl);
+		Administrator administrator=un.getAdministrator();
+		if(administrator == null) throw new IllegalArgumentException("Unable to find Administrator: " + username);
+		DisableLog dl=connector.getAccount().getDisableLog().get(un.getPackage().getAccount().addDisableLog(disableReason));
+		administrator.disable(dl);
 		return dl.getPkey();
 	}
 
@@ -3775,12 +3773,12 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the necessary <code>Business</code>s
+	 * @exception  IllegalArgumentException  if unable to find the necessary {@link Account accounts}
 	 */
-	public void enableBusiness(Account.Name accounting) throws IllegalArgumentException, IOException, SQLException {
-		Account bu=getBusiness(accounting);
+	public void enableAccount(Account.Name accounting) throws IllegalArgumentException, IOException, SQLException {
+		Account bu=getAccount(accounting);
 		DisableLog dl=bu.getDisableLog();
-		if(dl==null) throw new IllegalArgumentException("Business not disabled: "+accounting);
+		if(dl==null) throw new IllegalArgumentException("Account not disabled: "+accounting);
 		bu.enable();
 		for(Package pk : bu.getPackages()) if(dl.equals(pk.getDisableLog())) enablePackage(dl, pk);
 	}
@@ -3851,7 +3849,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, or <code>HttpdSharedTomcat</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, or <code>HttpdSharedTomcat</code>
 	 */
 	public void enableHttpdSharedTomcat(
 		String name,
@@ -3892,7 +3890,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, or <code>HttpdSite</code>
 	 */
 	public void enableHttpdSite(
 		String name,
@@ -3996,7 +3994,7 @@ final public class SimpleAOClient {
 	) throws IOException, SQLException {
 		un.enable();
 
-		Administrator ba=un.getBusinessAdministrator();
+		Administrator ba=un.getAdministrator();
 		if(ba!=null && dl.equals(ba.getDisableLog())) ba.enable();
 
 		com.aoindustries.aoserv.client.linux.User la=un.getLinuxAccount();
@@ -4034,7 +4032,7 @@ final public class SimpleAOClient {
 			if(dl.equals(lsa.getDisableLog())) {
 				enableLinuxServerAccount(dl, lsa);
 				if(linuxAccountServers!=null) {
-					Server ao=lsa.getAOServer();
+					Server ao=lsa.getServer();
 					if(!linuxAccountServers.contains(ao)) linuxAccountServers.add(ao);
 				}
 			}
@@ -4111,7 +4109,7 @@ final public class SimpleAOClient {
 			if(dl.equals(msu.getDisableLog())) {
 				msu.enable();
 				if(mysqlServers!=null) {
-					Server ao=msu.getMySQLServer().getAoServer();
+					Server ao=msu.getMySQLServer().getLinuxServer();
 					if(!mysqlServers.contains(ao)) mysqlServers.add(ao);
 				}
 			}
@@ -4127,7 +4125,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>MySQLUser</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>MySQLUser</code>
 	 */
 	public void enableMySQLServerUser(
 		com.aoindustries.aoserv.client.mysql.User.Name username,
@@ -4165,7 +4163,7 @@ final public class SimpleAOClient {
 			if(dl.equals(psu.getDisableLog())) {
 				psu.enable();
 				if(postgresServers!=null) {
-					Server ao=psu.getPostgresServer().getAoServer();
+					Server ao=psu.getPostgresServer().getLinuxServer();
 					if(!postgresServers.contains(ao)) postgresServers.add(ao);
 				}
 			}
@@ -4182,7 +4180,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>PostgresUser</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>PostgresUser</code>
 	 */
 	public void enablePostgresServerUser(
 		com.aoindustries.aoserv.client.postgresql.User.Name username,
@@ -4196,23 +4194,23 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Enables a <code>BusinessAdministrator</code>.
+	 * Enables an {@link Administrator}.
 	 *
 	 * @param  username  the username to enable
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or <code>BusinessAdministrator</code>
+	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or {@link Administrator}
 	 */
-	public void enableBusinessAdministrator(
+	public void enableAdministrator(
 		com.aoindustries.aoserv.client.account.User.Name username
 	) throws IllegalArgumentException, SQLException, IOException {
 		com.aoindustries.aoserv.client.account.User un=getUsername(username);
-		Administrator ba=un.getBusinessAdministrator();
-		if(ba==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
+		Administrator ba=un.getAdministrator();
+		if(ba==null) throw new IllegalArgumentException("Unable to find Administrator: " + username);
 		DisableLog dl=ba.getDisableLog();
-		if(dl==null) throw new IllegalArgumentException("BusinessAdministrator not disabled: "+username);
+		if(dl==null) throw new IllegalArgumentException("Administrator not disabled: "+username);
 		ba.enable();
 	}
 
@@ -4220,13 +4218,13 @@ final public class SimpleAOClient {
 	 * Dumps the contents of a <code>MySQLDatabase</code> to a <code>Writer</code>.
 	 *
 	 * @param  name  the name of the <code>MySQLDatabase</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  out  the <code>Writer</code> to dump to
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>MySQLDatabase</code>
 	 *
 	 * @see  MySQLDatabase#dump
@@ -4245,14 +4243,14 @@ final public class SimpleAOClient {
 	 * Dumps the contents of a <code>MySQLDatabase</code> to an {@link OutputStream}, optionally gzipped.
 	 *
 	 * @param  name  the name of the <code>MySQLDatabase</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  gzip  the gzip flag
 	 * @param  out  the <code>OutputStream</code> to dump to
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>MySQLDatabase</code>
 	 *
 	 * @see  MySQLDatabase#dump
@@ -4273,13 +4271,13 @@ final public class SimpleAOClient {
 	 *
 	 * @param  name  the name of the <code>PostgresDatabase</code>
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  out  the <code>Writer</code> to dump to
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>PostgresDatabase</code>
 	 *
 	 * @see  PostgresDatabase#dump
@@ -4299,14 +4297,14 @@ final public class SimpleAOClient {
 	 *
 	 * @param  name  the name of the <code>PostgresDatabase</code>
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  gzip  the gzip flag
 	 * @param  out  the <code>OutputStream</code> to dump to
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>PostgresDatabase</code>
 	 *
 	 * @see  PostgresDatabase#dump
@@ -4323,7 +4321,7 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Generates a unique accounting code that may be used to create a new <code>Business</code>.
+	 * Generates a unique accounting code that may be used to create a new {@link Account}.
 	 *
 	 * @param  accountingTemplate  the beginning part of the accounting code, such as <code>"AO_"</code>
 	 *
@@ -4332,8 +4330,8 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 *
-	 * @see  BusinessTable#generateAccountingCode
-	 * @see  #addBusiness
+	 * @see  AccountTable#generateAccountingCode
+	 * @see  #addAccount
 	 * @see  Account
 	 */
 	public Account.Name generateAccountingCode(
@@ -4547,7 +4545,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <cdoe>BackupPartition</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <cdoe>BackupPartition</code>
 	 *
 	 * @see  BackupPartition#getDiskTotalSize
 	 */
@@ -4555,7 +4553,7 @@ final public class SimpleAOClient {
 		String aoServer,
 		String path
 	) throws IllegalArgumentException, IOException, SQLException {
-		BackupPartition bp=getAOServer(aoServer).getBackupPartitionForPath(path);
+		BackupPartition bp = getLinuxServer(aoServer).getBackupPartitionForPath(path);
 		if(bp==null) throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+aoServer);
 		return bp.getDiskTotalSize();
 	}
@@ -4568,7 +4566,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <cdoe>BackupPartition</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <cdoe>BackupPartition</code>
 	 *
 	 * @see  BackupPartition#getDiskUsedSize
 	 */
@@ -4576,7 +4574,7 @@ final public class SimpleAOClient {
 		String aoServer,
 		String path
 	) throws IllegalArgumentException, IOException, SQLException {
-		BackupPartition bp=getAOServer(aoServer).getBackupPartitionForPath(path);
+		BackupPartition bp = getLinuxServer(aoServer).getBackupPartitionForPath(path);
 		if(bp==null) throw new IllegalArgumentException("Unable to find BackupPartition: "+path+" on "+aoServer);
 		return bp.getDiskUsedSize();
 	}
@@ -4590,7 +4588,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>AOServer</code>, <cdoe>BackupPartition</code>, or <code>FailoverFileReplication</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host}, {@link Server}, <cdoe>BackupPartition</code>, or <code>FailoverFileReplication</code>
 	 *
 	 * @see  FailoverFileReplication#getActivity()
 	 */
@@ -4663,14 +4661,14 @@ final public class SimpleAOClient {
 	 * Gets the info file for a <code>MajordomoList</code>.
 	 *
 	 * @param  domain  the domain of the <code>MajordomoServer</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  listName  the name of the new list
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if the name is not valid or unable to find the
-	 *                                  <code>Server</code>, code>EmailDomain</code>,
+	 *                                  {@link Server}, code>EmailDomain</code>,
 	 *                                  <code>MajordomoServer</code>, or <code>MajordomoList</code>
 	 *
 	 * @see  MajordomoList#getInfoFile
@@ -4694,14 +4692,14 @@ final public class SimpleAOClient {
 	 * Gets the intro file for a <code>MajordomoList</code>.
 	 *
 	 * @param  domain  the domain of the <code>MajordomoServer</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  listName  the name of the new list
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if the name is not valid or unable to find the
-	 *                                  <code>Server</code>, code>EmailDomain</code>,
+	 *                                  {@link Server}, code>EmailDomain</code>,
 	 *                                  <code>MajordomoServer</code>, or <code>MajordomoList</code>
 	 *
 	 * @see  MajordomoList#getIntroFile
@@ -4730,16 +4728,16 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or {@link Server}
 	 *
-	 * @see  AOServer#getMrtgFile
+	 * @see  Server#getMrtgFile
 	 */
 	public void getMrtgFile(
 		String aoServer,
 		String filename,
 		OutputStream out
 	) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).getMrtgFile(filename, out);
+		getLinuxServer(aoServer).getMrtgFile(filename, out);
 	}
 
 	/**
@@ -4749,14 +4747,14 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code> or {@link Server}
 	 *
-	 * @see  AOServer#getMrtgFile
+	 * @see  Server#getMrtgFile
 	 */
 	public String getUpsStatus(
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getAOServer(aoServer).getUpsStatus();
+		return getLinuxServer(aoServer).getUpsStatus();
 	}
 
 	/**
@@ -4770,7 +4768,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code>, <code>AOServer</code>, or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the <cdoe>Server</code>, {@link Server}, or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#getAWStatsFile
 	 */
@@ -4785,16 +4783,16 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Gets the name of the root <code>Business</code> in the tree of <code>Business</code>es.
+	 * Gets the name of the root {@link Account} in the tree of {@link Account accounts}.
 	 *
-	 * @return  the accounting code of the root <code>Business</code>
+	 * @return  the accounting code of the root {@link Account}
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 *
-	 * @see  BusinessTable#getRootAccounting
+	 * @see  AccountTable#getRootAccounting
 	 */
-	public Account.Name getRootBusiness() throws IOException, SQLException {
+	public Account.Name getRootAccount() throws IOException, SQLException {
 		return connector.getAccount().getAccount().getRootAccount_name();
 	}
 
@@ -4810,7 +4808,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code>,
-	 *					<code>TicketType</code>, or <code>BusinessAdministrator</code>
+	 *					<code>TicketType</code>, or {@link Administrator}
 	 *
 	 * @see  Ticket#actHoldTicket
 	 * @see  #addTicket
@@ -4832,14 +4830,14 @@ final public class SimpleAOClient {
 	 * <code>/www/<i>sitename</i>/conf/group</code>.
 	 *
 	 * @param  siteName  the name of the site to initialize
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  username  the username granted access to the site
 	 * @param  password  the password for that username
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#initializePasswdFile
@@ -4871,7 +4869,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if the table ID is invalid
 	 *
 	 * @see  AOServConnector#invalidateTable
-	 * @see  BusinessAdministrator#isActiveTableInvalidator
+	 * @see  Administrator#isActiveTableInvalidator
 	 */
 	public void invalidate(
 		int tableID,
@@ -4883,7 +4881,7 @@ final public class SimpleAOClient {
 		if(server==null) se=null;
 		else {
 			se = connector.getNet().getHost().get(server);
-			if(se==null) throw new IllegalArgumentException("Unable to find Server: "+server);
+			if(se==null) throw new IllegalArgumentException("Unable to find Host: "+server);
 		}
 		connector.invalidateTable(tableID, se==null ? -1 : se.pkey);
 	}
@@ -4898,9 +4896,9 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 *
-	 * @see  BusinessTable#isAccountingAvailable
+	 * @see  AccountTable#isAccountingAvailable
 	 * @see  #checkAccounting
-	 * @see  #addBusiness
+	 * @see  #addAccount
 	 * @see  #generateAccountingCode
 	 * @see  Account
 	 */
@@ -4911,25 +4909,25 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Determines if a <code>BusinessAdministrator</code> currently has a password set.
+	 * Determines if a {@link Administrator} currently has a password set.
 	 *
 	 * @param  username  the username of the administrator
 	 *
-	 * @return  if the <code>BusinessAdministrator</code> has a password set
+	 * @return  if the {@link Administrator} has a password set
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if the <code>BusinessAdministrator</code> is not found
+	 * @exception  IllegalArgumentException  if the {@link Administrator} is not found
 	 *
-	 * @see  BusinessAdministrator#arePasswordsSet
-	 * @see  #setBusinessAdministratorPassword
+	 * @see  Administrator#arePasswordsSet
+	 * @see  #setAdministratorPassword
 	 * @see  Administrator
 	 */
-	public boolean isBusinessAdministratorPasswordSet(
+	public boolean isAdministratorPasswordSet(
 		com.aoindustries.aoserv.client.account.User.Name username
 	) throws IllegalArgumentException, IOException, SQLException {
 		Administrator ba=connector.getAccount().getAdministrator().get(username);
-		if(ba==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
+		if(ba==null) throw new IllegalArgumentException("Unable to find Administrator: " + username);
 		return ba.arePasswordsSet()==PasswordProtected.ALL;
 	}
 
@@ -5043,17 +5041,17 @@ final public class SimpleAOClient {
 
 	/**
 	 * Determines if a <code>MySQLDatabase</code> name is available on the specified
-	 * <code>Server</code>.
+	 * {@link Server}.
 	 *
 	 * @param  name  the name of the database
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @return  <code>true</code> if the <code>MySQLDatabase</code> is available
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if the database name is invalid or unable
-	 *					to find the <code>Server</code>
+	 *					to find the {@link Server}
 	 *
 	 * @see  MySQLServer#isMySQLDatabaseNameAvailable
 	 * @see  #checkMySQLDatabaseName
@@ -5068,26 +5066,26 @@ final public class SimpleAOClient {
 
 	/**
 	 * Determines if a <code>MySQLServer</code> name is available on the specified
-	 * <code>Server</code>.
+	 * {@link Server}.
 	 *
 	 * @param  name  the name of the MySQL server
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @return  <code>true</code> if the <code>MySQLServer</code> is available
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if the server name is invalid or unable
-	 *					to find the <code>Server</code>
+	 *					to find the {@link Server}
 	 *
-	 * @see  AOServer#isMySQLServerNameAvailable
+	 * @see  Server#isMySQLServerNameAvailable
 	 * @see  #checkMySQLServerName
 	 */
 	public boolean isMySQLServerNameAvailable(
 		com.aoindustries.aoserv.client.mysql.Server.Name name,
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getAOServer(aoServer).isMySQLServerNameAvailable(name);
+		return getLinuxServer(aoServer).isMySQLServerNameAvailable(name);
 	}
 
 	/**
@@ -5137,18 +5135,18 @@ final public class SimpleAOClient {
 
 	/**
 	 * Determines if a <code>PostgresDatabase</code> name is available on the specified
-	 * <code>Server</code>.
+	 * {@link Server}.
 	 *
 	 * @param  name  the name of the database
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @return  <code>true</code> if the <code>PostgresDatabase</code> is available
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if the database name is invalid or unable
-	 *					to find the <code>Server</code>
+	 *					to find the {@link Server}
 	 *
 	 * @see  PostgresServer#isPostgresDatabaseNameAvailable
 	 * @see  #checkPostgresDatabaseName
@@ -5163,26 +5161,26 @@ final public class SimpleAOClient {
 
 	/**
 	 * Determines if a <code>PostgresServer</code> name is available on the specified
-	 * <code>Server</code>.
+	 * {@link Server}.
 	 *
 	 * @param  name  the name of the PostgreSQL server
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @return  <code>true</code> if the <code>PostgresServer</code> is available
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if the server name is invalid or unable
-	 *					to find the <code>Server</code>
+	 *					to find the {@link Server}
 	 *
-	 * @see  AOServer#isPostgresServerNameAvailable
+	 * @see  Server#isPostgresServerNameAvailable
 	 * @see  #checkPostgresServerName
 	 */
 	public boolean isPostgresServerNameAvailable(
 		com.aoindustries.aoserv.client.postgresql.Server.Name name,
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getAOServer(aoServer).isPostgresServerNameAvailable(name);
+		return getLinuxServer(aoServer).isPostgresServerNameAvailable(name);
 	}
 
 	/**
@@ -5222,7 +5220,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if the <code>EmailDomain</code> is invalid
 	 *
-	 * @see  AOServer#isEmailDomainAvailable
+	 * @see  Server#isEmailDomainAvailable
 	 * @see  #addEmailDomain
 	 * @see  Domain
 	 */
@@ -5230,7 +5228,7 @@ final public class SimpleAOClient {
 		DomainName domain,
 		String aoServer
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getAOServer(aoServer).isEmailDomainAvailable(domain);
+		return getLinuxServer(aoServer).isEmailDomainAvailable(domain);
 	}
 
 	/**
@@ -5298,7 +5296,7 @@ final public class SimpleAOClient {
 	 * any way.
 	 *
 	 * @param  ticket_id  the pkey of the <code>Ticket</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
+	 * @param  administrator  the username of the {@link Administrator}
 	 *					making the change
 	 * @param  comments  the details of the change
 	 *
@@ -5306,7 +5304,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code>,
-	 *					<code>TicketType</code>, or <code>BusinessAdministrator</code>
+	 *					<code>TicketType</code>, or {@link Administrator}
 	 *
 	 * @see  Ticket#actKillTicket
 	 * @see  #addTicket
@@ -5315,43 +5313,43 @@ final public class SimpleAOClient {
 	/*
 	public void killTicket(
 		int ticket_id,
-		String business_administrator,
+		String administrator,
 		String comments
 	) throws IllegalArgumentException, IOException, SQLException {
 		Ticket ti=connector.getTickets().get(ticket_id);
 		if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-		BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Administrator pe = connector.getAdministrators().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		ti.actKillTicket(pe, comments);
 	}*/
 
 	/**
-	 * Moves all resources for one <code>Business</code> from one <code>Server</code>
-	 * to another <code>Server</code>.
+	 * Moves all resources for one {@link Account} from one {@link Server}
+	 * to another {@link Server}.
 	 *
-	 * @param  business  the accounting code of the <code>Business</code>
-	 * @param  from  the hostname of the <code>Server</code> to get all the resources from
-	 * @param  to  the hostname of the <code>Server</code> to place all the resources on
+	 * @param  business  the accounting code of the {@link Account}
+	 * @param  from  the hostname of the {@link Server} to get all the resources from
+	 * @param  to  the hostname of the {@link Server} to place all the resources on
 	 * @param  out  an optional <code>PrintWriter</code> to send diagnostic output to
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Business</code> or either
-	 *					of the <code>Server</code>s
+	 * @exception  IllegalArgumentException  if unable to find the {@link Account} or either
+	 *					of the {@link Server servers}
 	 *
-	 * @see  Business#move
+	 * @see  Account#move
 	 */
-	public void moveBusiness(
+	public void moveAccount(
 		Account.Name business,
 		String from,
 		String to,
 		TerminalWriter out
 	) throws IllegalArgumentException, IOException, SQLException {
-		getBusiness(business).move(getAOServer(from), getAOServer(to), out);
+		getAccount(business).move(getLinuxServer(from), getLinuxServer(to), out);
 	}
 
 	/**
-	 * Moves an <code>IPAddress</code> from one <code>Server</code> to another.
+	 * Moves an <code>IPAddress</code> from one {@link Host} to another.
 	 *
 	 * @param  ip_address  the IP address to move
 	 * @param  to_server  the destination server
@@ -5359,7 +5357,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if unable to find the <code>IPAddress</code> or
-	 *					the <code>Server</code>
+	 *					the {@link Host}
 	 *
 	 * @see  IPAddress#moveTo
 	 */
@@ -5369,7 +5367,7 @@ final public class SimpleAOClient {
 		String from_net_device,
 		String to_server
 	) throws IllegalArgumentException, IOException, SQLException {
-		getIPAddress(from_server, from_net_device, ip_address).moveTo(getServer(to_server));
+		getIPAddress(from_server, from_net_device, ip_address).moveTo(getHost(to_server));
 	}
 
 	/**
@@ -5408,7 +5406,7 @@ final public class SimpleAOClient {
 	 * Reactivates a <code>Ticket</code> that is in the hold state.
 	 *
 	 * @param  ticket_id  the pkey of the <code>Ticket</code>
-	 * @param  business_administrator  the username of the <code>BusinessAdministrator</code>
+	 * @param  administrator  the username of the {@link Administrator}
 	 *					making the change
 	 * @param  comments  the details of the change
 	 *
@@ -5416,7 +5414,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Ticket</code>,
-	 *					<code>TicketType</code>, or <code>BusinessAdministrator</code>
+	 *					<code>TicketType</code>, or {@link Administrator}
 	 *
 	 * @see  Ticket#actReactivateTicket
 	 * @see  #addTicket
@@ -5425,13 +5423,13 @@ final public class SimpleAOClient {
 	/*
 	public void reactivateTicket(
 		int ticket_id,
-		String business_administrator,
+		String administrator,
 		String comments
 	) throws IllegalArgumentException, IOException, SQLException {
 		Ticket ti=connector.getTickets().get(ticket_id);
 		if(ti==null) throw new IllegalArgumentException("Unable to find Ticket: "+ticket_id);
-		BusinessAdministrator pe=connector.getBusinessAdministrators().get(business_administrator);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+business_administrator);
+		Administrator pe = connector.getAdministrators().get(administrator);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		ti.actReactivateTicket(pe, comments);
 	}*/
 
@@ -5485,30 +5483,30 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Removes a <code>BusinessAdministrator</code> from the system.
+	 * Removes an {@link Administrator} from the system.
 	 *
-	 * @param  username  the <code>username</code> of the <code>BusinessAdministrator</code>
+	 * @param  username  the <code>username</code> of the {@link Administrator}
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code> or
-	 *                                  <code>BusinessAdministrator</code>
+	 *                                  {@link Administrator}
 	 *
-	 * @see  BusinessAdministrator#remove
-	 * @see  #addBusinessAdministrator
+	 * @see  Administrator#remove()
+	 * @see  #addAdministrator
 	 */
-	public void removeBusinessAdministrator(
+	public void removeAdministrator(
 		com.aoindustries.aoserv.client.account.User.Name username
 	) throws IllegalArgumentException, IOException, SQLException {
 		com.aoindustries.aoserv.client.account.User un=getUsername(username);
-		Administrator ba=un.getBusinessAdministrator();
-		if(ba==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
+		Administrator ba=un.getAdministrator();
+		if(ba==null) throw new IllegalArgumentException("Unable to find Administrator: " + username);
 		ba.remove();
 	}
 
 	/**
-	 * Revokes a <code>Business</code>es access to a <code>Server</code>.  The server
+	 * Revokes an {@link Account account's} access to a {@link Host}.  The server
 	 * must not have any resources allocated for the business, and the server must not
 	 * be the default server for the business.
 	 *
@@ -5521,18 +5519,18 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the business or server
 	 *
 	 * @see  AccountHost
-	 * @see  BusinessServer#remove
-	 * @see  #addBusinessServer
-	 * @see  #setDefaultBusinessServer
+	 * @see  AccountHost#remove()
+	 * @see  #addAccountHost(com.aoindustries.aoserv.client.account.Account.Name, java.lang.String)
+	 * @see  #setDefaultAccountHost
 	 */
-	public void removeBusinessServer(
+	public void removeAccountHost(
 		Account.Name accounting,
 		String server
 	) throws IllegalArgumentException, IOException, SQLException {
-		Account bu=getBusiness(accounting);
-		Host se=getServer(server);
-		AccountHost bs=bu.getBusinessServer(se);
-		if(bs==null) throw new IllegalArgumentException("Unable to find BusinessServer: accounting="+accounting+" and server="+server);
+		Account bu=getAccount(accounting);
+		Host se = getHost(server);
+		AccountHost bs = bu.getAccountHost(se);
+		if(bs==null) throw new IllegalArgumentException("Unable to find AccountHost: accounting="+accounting+" and server="+server);
 		bs.remove();
 	}
 
@@ -5559,13 +5557,13 @@ final public class SimpleAOClient {
 	/**
 	 * Removes a <code>CvsRepository</code>.
 	 *
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  path  the path of the repository
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *                                  <code>CvsRepository</code>
 	 *
 	 * @see  CvsRepository#remove
@@ -5576,7 +5574,7 @@ final public class SimpleAOClient {
 		String aoServer,
 		PosixPath path
 	) throws IllegalArgumentException, IOException, SQLException {
-		Server ao=getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		CvsRepository cr=ao.getCvsRepository(path);
 		if(cr==null) throw new IllegalArgumentException("Unable to find CvsRepository: "+path+" on "+aoServer);
 		cr.remove();
@@ -5828,7 +5826,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, IOException, SQLException {
 		Pipe ep=connector.getEmail().getPipe().get(pipe);
 		if(ep==null) throw new IllegalArgumentException("Unable to find EmailPipe: "+pipe);
-		Server ao=ep.getAOServer();
+		Server ao=ep.getLinuxServer();
 		Domain sd=ao.getEmailDomain(domain);
 		if(sd==null) throw new IllegalArgumentException("Unable to find EmailDomain: "+domain+" on "+ao.getHostname());
 		Address addr=connector.getEmail().getAddress().getEmailAddress(address, sd);
@@ -6081,16 +6079,16 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Removes a <code>LinuxServerAccount</code> from a <code>Server</code>.
+	 * Removes a <code>LinuxServerAccount</code> from a {@link Server}.
 	 *
 	 * @param  username  the username of the <code>LinuxServerAccount</code> to remove
-	 * @param  aoServer  the hostname of the <code>Server</code> to remove the account from
+	 * @param  aoServer  the hostname of the {@link Server} to remove the account from
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>LinuxAccount</code>,
-	 *					<code>Server</code>, or <code>LinuxServerAccount</code>
+	 *					{@link Server}, or <code>LinuxServerAccount</code>
 	 *
 	 * @see  LinuxServerAccount#remove
 	 * @see  #addLinuxServerAccount
@@ -6103,16 +6101,16 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Removes a <code>LinuxServerGroup</code> from a <code>Server</code>.
+	 * Removes a <code>LinuxServerGroup</code> from a {@link Server}.
 	 *
 	 * @param  group  the name of the <code>LinuxServerGroup</code> to remove
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>LinuxGroup</code>,
-	 *					<code>Server</code>, or <code>LinuxServerGroup</code>
+	 *					{@link Server}, or <code>LinuxServerGroup</code>
 	 *
 	 * @see  LinuxServerGroup#remove
 	 * @see  #addLinuxServerGroup
@@ -6136,7 +6134,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>MySQLDatabase</code>
 	 *
 	 * @see  MySQLDatabase#remove
@@ -6156,13 +6154,13 @@ final public class SimpleAOClient {
 	 * no longer allowed to access the <code>MySQLDatabase</code>.
 	 *
 	 * @param  name  the name of the <code>MySQLDatabase</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  username  the username of the <code>MySQLUser</code>
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server},
 	 *					<code>MySQLDatabase</code>, <code>MySQLServerUser</code>, or
 	 *					<code>MySQLDBUser</code>
 	 *
@@ -6178,21 +6176,21 @@ final public class SimpleAOClient {
 		com.aoindustries.aoserv.client.mysql.Database md=getMySQLDatabase(aoServer, mysqlServer, name);
 		com.aoindustries.aoserv.client.mysql.UserServer msu=getMySQLServerUser(aoServer, mysqlServer, username);
 		com.aoindustries.aoserv.client.mysql.DatabaseUser mdu=md.getMySQLDBUser(msu);
-		if(mdu==null) throw new IllegalArgumentException("Unable to find MySQLDBUser on MySQLServer "+mysqlServer+" on AOServer "+aoServer+" for MySQLDatabase named "+name+" and MySQLServerUser named "+username);
+		if(mdu==null) throw new IllegalArgumentException("Unable to find MySQLDBUser on MySQLServer "+mysqlServer+" on Server "+aoServer+" for MySQLDatabase named "+name+" and MySQLServerUser named "+username);
 		mdu.remove();
 	}
 
 	/**
 	 * Removes a <code>MySQLServerUser</code> from a the system..  The <code>MySQLUser</code> is
-	 * no longer allowed to access the <code>Server</code>.
+	 * no longer allowed to access the {@link Server}.
 	 *
 	 * @param  username  the username of the <code>MySQLServerUser</code>
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>MySQLServerUser</code>
 	 *
 	 * @see  MySQLServerUser#remove
@@ -6257,7 +6255,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>PostgresDatabase</code>
 	 *
 	 * @see  PostgresDatabase#remove
@@ -6274,16 +6272,16 @@ final public class SimpleAOClient {
 
 	/**
 	 * Removes a <code>PostgresServerUser</code> from a the system..  The <code>PostgresUser</code> is
-	 * no longer allowed to access the <code>Server</code>.
+	 * no longer allowed to access the {@link Server}.
 	 *
 	 * @param  username  the username of the <code>PostgresServerUser</code>
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>PostgresServerUser</code>
 	 *
 	 * @see  PostgresServerUser#remove
@@ -6396,7 +6394,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server},
 	 *                                  <code>EmailDomain</code> or <code>MajordomoServer</code>
 	 *
 	 * @see  MajordomoServer#remove
@@ -6434,41 +6432,41 @@ final public class SimpleAOClient {
 	/**
 	 * Restarts the Apache web server.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#restartApache
+	 * @see  Server#restartApache
 	 */
 	public void restartApache(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).restartApache();
+		getLinuxServer(aoServer).restartApache();
 	}
 
 	/**
 	 * Restarts the cron doggie.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#restartCron
+	 * @see  Server#restartCron
 	 */
 	public void restartCron(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).restartCron();
+		getLinuxServer(aoServer).restartCron();
 	}
 
 	/**
 	 * Restarts the MySQL database server.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
 	 * @see  MySQLServer#restartMySQL
 	 */
@@ -6480,11 +6478,11 @@ final public class SimpleAOClient {
 	 * Restarts the PostgreSQL database server.
 	 *
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the public hostname of the <code>AOServer</code>
+	 * @param  aoServer  the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
 	 * @see  PostgresServer#restartPostgreSQL
 	 */
@@ -6495,31 +6493,31 @@ final public class SimpleAOClient {
 	/**
 	 * Restarts the X Font Server.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#restartXfs
+	 * @see  Server#restartXfs
 	 */
 	public void restartXfs(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).restartXfs();
+		getLinuxServer(aoServer).restartXfs();
 	}
 
 	/**
 	 * Restarts the X Virtual Frame Buffer.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#restartXvfb
+	 * @see  Server#restartXvfb
 	 */
 	public void restartXvfb(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).restartXvfb();
+		getLinuxServer(aoServer).restartXvfb();
 	}
 
 	/**
@@ -6578,55 +6576,55 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Business</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Account} or
 	 *                                  the requested accounting code is not valid
 	 *
-	 * @see  Business#setAccounting
+	 * @see  Account#setAccounting
 	 */
-	public void setBusinessAccounting(
+	public void setAccountAccounting(
 		Account.Name oldAccounting,
 		Account.Name newAccounting
 	) throws IllegalArgumentException, IOException, SQLException {
-		getBusiness(oldAccounting).setName(newAccounting);
+		getAccount(oldAccounting).setName(newAccounting);
 	}
 
 	/**
-	 * Sets the password for a <code>BusinessAdministrator</code>.  This password must pass the security
-	 * checks provided by <code>checkBusinessAdministratorPassword</code>.
+	 * Sets the password for an {@link Administrator}.  This password must pass the security
+	 * checks provided by <code>checkAdministratorPassword</code>.
 	 *
-	 * @param  username  the username of the <code>BusinessAdministrator</code>
+	 * @param  username  the username of the {@link Administrator}
 	 * @param  password  the new password
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>BusinessAdministrator</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Administrator}
 	 *
-	 * @see  BusinessAdministrator#setPassword
-	 * @see  #addBusinessAdministrator
+	 * @see  Administrator#setPassword(java.lang.String)
+	 * @see  #addAdministrator
 	 */
-	public void setBusinessAdministratorPassword(
+	public void setAdministratorPassword(
 		com.aoindustries.aoserv.client.account.User.Name username,
 		String password
 	) throws IllegalArgumentException, IOException, SQLException {
 		Administrator pe=connector.getAccount().getAdministrator().get(username);
-		if(pe==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
+		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + username);
 		pe.setPassword(password);
 	}
 
 	/**
-	 * Sets the profile of a <code>BusinessAdministrator</code>, which is all of their contact
+	 * Sets the profile of an {@link Administrator}, which is all of their contact
 	 * information and other details.
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>BusinessAdministrator</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Administrator}
 	 *
-	 * @see  BusinessAdministrator#setProfile
-	 * @see  #addBusinessAdministrator
+	 * @see  Administrator#setProfile(java.lang.String, java.lang.String, java.sql.Date, boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, com.aoindustries.net.Email, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 * @see  #addAdministrator
 	 */
-	public void setBusinessAdministratorProfile(
+	public void setAdministratorProfile(
 		com.aoindustries.aoserv.client.account.User.Name username,
 		String name,
 		String title,
@@ -6644,9 +6642,9 @@ final public class SimpleAOClient {
 		String country,
 		String zip
 	) throws IllegalArgumentException, IOException, SQLException {
-		Administrator business_administrator=connector.getAccount().getAdministrator().get(username);
-		if(business_administrator==null) throw new IllegalArgumentException("Unable to find BusinessAdministrator: "+username);
-		business_administrator.setProfile(
+		Administrator administrator = connector.getAccount().getAdministrator().get(username);
+		if(administrator == null) throw new IllegalArgumentException("Unable to find Administrator: " + username);
+		administrator.setProfile(
 			name,
 			title,
 			birthday,
@@ -6709,14 +6707,14 @@ final public class SimpleAOClient {
 		PosixPath path,
 		long mode
 	) throws IllegalArgumentException, IOException, SQLException {
-		Server ao=getAOServer(aoServer);
+		Server ao = getLinuxServer(aoServer);
 		CvsRepository cr=ao.getCvsRepository(path);
 		if(cr==null) throw new IllegalArgumentException("Unable to find CvsRepository: "+path+" on "+aoServer);
 		cr.setMode(mode);
 	}
 
 	/**
-	 * Sets the default <code>Server</code> for a <code>Business</code>.
+	 * Sets the default {@link Host} for an {@link Account}.
 	 *
 	 * @param  accounting  the accounting code of the business
 	 * @param  server  the hostname of the server
@@ -6727,18 +6725,18 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the business or server
 	 *
 	 * @see  AccountHost
-	 * @see  BusinessServer#setAsDefault
-	 * @see  #addBusinessServer
-	 * @see  #removeBusinessServer
+	 * @see  AccountHost#setAsDefault
+	 * @see  #addAccountHost
+	 * @see  #removeAccountHost
 	 */
-	public void setDefaultBusinessServer(
+	public void setDefaultAccountHost(
 		Account.Name accounting,
 		String server
 	) throws IllegalArgumentException, SQLException, IOException {
-		Account bu=getBusiness(accounting);
-		Host se=getServer(server);
-		AccountHost bs=bu.getBusinessServer(se);
-		if(bs==null) throw new IllegalArgumentException("Unable to find BusinessServer: accounting="+accounting+" and server="+server);
+		Account bu=getAccount(accounting);
+		Host se = getHost(server);
+		AccountHost bs=bu.getAccountHost(se);
+		if(bs==null) throw new IllegalArgumentException("Unable to find AccountHost: accounting="+accounting+" and server="+server);
 		bs.setAsDefault();
 	}
 
@@ -6802,12 +6800,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>is_manual</code> flag for a <code>HttpdSharedTomcat</code>
 	 *
 	 * @param  name  the name of the JVM
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  isManual  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSharedTomcat</code>
 	 *
 	 * @see  HttpdSharedTomcat#setIsManual
 	 */
@@ -6823,12 +6821,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>maxPostSize</code> for a <code>HttpdSharedTomcat</code>
 	 *
 	 * @param  name  the name of the JVM
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  maxPostSize  the new maximum POST size, in bytes, {@code -1} for none.
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSharedTomcat</code>
 	 *
 	 * @see  HttpdSharedTomcat#setMaxPostSize(int)
 	 */
@@ -6844,12 +6842,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>unpackWARs</code> setting for a <code>HttpdSharedTomcat</code>
 	 *
 	 * @param  name  the name of the JVM
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  unpackWARs  the new setting
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSharedTomcat</code>
 	 *
 	 * @see  HttpdSharedTomcat#setUnpackWARs(boolean)
 	 */
@@ -6865,12 +6863,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>autoDeploy</code> setting for a <code>HttpdSharedTomcat</code>
 	 *
 	 * @param  name  the name of the JVM
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  autoDeploy  the new setting
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSharedTomcat</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSharedTomcat</code>
 	 *
 	 * @see  HttpdSharedTomcat#setAutoDeploy(boolean)
 	 */
@@ -6902,7 +6900,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, IOException, SQLException {
 		SharedTomcat hst = getHttpdSharedTomcat(aoServer, name);
 		hst.setHttpdTomcatVersion(
-			findTomcatVersion(hst.getAOServer(), version)
+			findTomcatVersion(hst.getLinuxServer(), version)
 		);
 	}
 
@@ -6952,12 +6950,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>is_manual</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  isManual  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setIsManual
 	 */
@@ -6979,7 +6977,7 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>,
 	 *                                  or the email address is not in a valid format
 	 *
 	 * @see  HttpdSite#setServerAdmin
@@ -6996,12 +6994,12 @@ final public class SimpleAOClient {
 	 * Sets the PHP version for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  phpVersion  the new version
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or PHP version.
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>, or PHP version.
 	 *
 	 * @see  HttpdSite#setPhpVersion(com.aoindustries.aoserv.client.TechnologyVersion)
 	 */
@@ -7012,7 +7010,7 @@ final public class SimpleAOClient {
 	) throws IllegalArgumentException, IOException, SQLException {
 		Site hs = getHttpdSite(aoServer, siteName);
 		hs.setPhpVersion(
-			findPhpVersion(hs.getAoServer(), phpVersion)
+			findPhpVersion(hs.getLinuxServer(), phpVersion)
 		);
 	}
 
@@ -7020,12 +7018,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>enable_cgi</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  enableCgi  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setEnableCgi(boolean)
 	 */
@@ -7041,12 +7039,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>enable_ssi</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  enableSsi  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setEnableSsi(boolean)
 	 */
@@ -7062,12 +7060,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>enable_htaccess</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  enableHtaccess  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setEnableHtaccess(boolean)
 	 */
@@ -7083,12 +7081,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>enable_indexes</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  enableIndexes  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setEnableIndexes(boolean)
 	 */
@@ -7104,12 +7102,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>enable_follow_symlinks</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  enableFollowSymlinks  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setEnableFollowSymlinks(boolean)
 	 */
@@ -7125,12 +7123,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>enable_anonymous_ftp</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  enableAnonymousFtp  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setEnableAnonymousFtp(boolean)
 	 */
@@ -7146,12 +7144,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>block_trace_track</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  blockTraceTrack  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setBlockTraceTrack(boolean)
 	 */
@@ -7167,12 +7165,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>block_scm</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  blockScm  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setBlockScm(boolean)
 	 */
@@ -7188,12 +7186,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>block_core_dumps</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  blockCoreDumps  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setBlockCoreDumps(boolean)
 	 */
@@ -7209,12 +7207,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>block_editor_backups</code> flag for a <code>HttpdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  blockEditorBackups  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code> or <code>HttpdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSite</code>
 	 *
 	 * @see  HttpdSite#setBlockEditorBackups(boolean)
 	 */
@@ -7231,7 +7229,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>,
 	 *                                  or <code>HttpdTomcatSite</code>
 	 */
 	public void setHttpdTomcatContextAttributes(
@@ -7278,12 +7276,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>block_webinf</code> flag for a <code>HttpdTomcatSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  blockWebinf  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatSite</code>.
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>, or <code>HttpdTomcatSite</code>.
 	 *
 	 * @see  HttpdTomcatSite#setBlockWebinf(boolean)
 	 */
@@ -7302,12 +7300,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>maxPostSize</code> for a <code>HttpdTomcatStdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  maxPostSize  the new maximum POST size, in bytes, {@code -1} for none.
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
 	 *
 	 * @see  HttpdTomcatStdSite#setMaxPostSize(int)
 	 */
@@ -7328,12 +7326,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>unpackWARs</code> setting for a <code>HttpdTomcatStdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  unpackWARs  the new setting
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
 	 *
 	 * @see  HttpdTomcatStdSite#setUnpackWARs(boolean)
 	 */
@@ -7354,12 +7352,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>autoDeploy</code> setting for a <code>HttpdTomcatStdSite</code>
 	 *
 	 * @param  siteName  the name of the site
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  autoDeploy  the new setting
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
 	 *
 	 * @see  HttpdTomcatStdSite#setAutoDeploy(boolean)
 	 */
@@ -7400,7 +7398,7 @@ final public class SimpleAOClient {
 		PrivateTomcatSite htss = hts.getHttpdTomcatStdSite();
 		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
 		htss.setHttpdTomcatVersion(
-			findTomcatVersion(hs.getAoServer(), version)
+			findTomcatVersion(hs.getLinuxServer(), version)
 		);
 	}
 
@@ -7635,13 +7633,13 @@ final public class SimpleAOClient {
 	 * Sets the password for a <code>LinuxServerAccount</code>.
 	 *
 	 * @param  username  the username of the <code>LinuxServerAccount</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  password  the new password
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>AOServer</code> or
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host}, {@link Server} or
 	 *					<code>LinuxServerAccount</code>
 	 *
 	 * @see  LinuxServerAccount#setPassword
@@ -7659,12 +7657,12 @@ final public class SimpleAOClient {
 	 * Sets the number of days junk email is kept.
 	 *
 	 * @param  username  the username of the <code>LinuxServerAccount</code>
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  days  the new number of days, <code>-1</code> causes the junk to not be automatically removed
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>LinuxServerAccount</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>LinuxServerAccount</code>
 	 *
 	 * @see  LinuxServerAccount#setJunkEmailRetention
 	 * @see  #addLinuxServerAccount
@@ -7681,12 +7679,12 @@ final public class SimpleAOClient {
 	 * Sets the SpamAssassin integration mode for an email account.
 	 *
 	 * @param  username  the username of the <code>LinuxServerAccount</code>
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  mode      the new mode
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>LinuxServerAccount</code>, or <code>EmailSpamAssassinIntegrationMode</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>LinuxServerAccount</code>, or <code>EmailSpamAssassinIntegrationMode</code>
 	 *
 	 * @see  LinuxServerAccount#setEmailSpamAssassinIntegrationMode
 	 * @see  #addLinuxServerAccount
@@ -7704,12 +7702,12 @@ final public class SimpleAOClient {
 	 * Sets the SpamAssassin required score for an email account.
 	 *
 	 * @param  username        the username of the <code>LinuxServerAccount</code>
-	 * @param  aoServer        the hostname of the <code>Server</code>
+	 * @param  aoServer        the hostname of the {@link Server}
 	 * @param  required_score  the new required score
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>LinuxServerAccount</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>LinuxServerAccount</code>
 	 *
 	 * @see  LinuxServerAccount#setSpamAssassinRequiredScore
 	 * @see  #addLinuxServerAccount
@@ -7726,12 +7724,12 @@ final public class SimpleAOClient {
 	 * Sets the number of days trash email is kept.
 	 *
 	 * @param  username  the username of the <code>LinuxServerAccount</code>
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  days  the new number of days, <code>-1</code> causes the trash to not be automatically removed
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>LinuxServerAccount</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>LinuxServerAccount</code>
 	 *
 	 * @see  LinuxServerAccount#setTrashEmailRetention
 	 * @see  #addLinuxServerAccount
@@ -7748,12 +7746,12 @@ final public class SimpleAOClient {
 	 * Sets the <code>use_inbox</code> flag on a <code>LinuxServerAccount</code>.
 	 *
 	 * @param  username  the username of the <code>LinuxServerAccount</code>
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  useInbox  the new flag
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>LinuxServerAccount</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>LinuxServerAccount</code>
 	 *
 	 * @see  LinuxServerAccount#setUseInbox
 	 * @see  LinuxServerAccount#useInbox
@@ -7771,7 +7769,7 @@ final public class SimpleAOClient {
 	 * Sets the info file for a <code>MajordomoList</code>.
 	 *
 	 * @param  domain  the domain of the <code>MajordomoServer</code>
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  listName  the name of the new list
 	 * @param  file  the new file contents
 	 *
@@ -7779,7 +7777,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if the name is not valid or unable to find the
-	 *                                  <code>Server</code>, code>EmailDomain</code>,
+	 *                                  {@link Server}, code>EmailDomain</code>,
 	 *                                  <code>MajordomoServer</code>, or <code>MajordomoList</code>
 	 *
 	 * @see  MajordomoList#setInfoFile
@@ -7804,7 +7802,7 @@ final public class SimpleAOClient {
 	 * Sets the intro file for a <code>MajordomoList</code>.
 	 *
 	 * @param  domain  the domain of the <code>MajordomoServer</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  listName  the name of the new list
 	 * @param  file  the new file contents
 	 *
@@ -7812,7 +7810,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database or a data
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if the name is not valid or unable to find the
-	 *                                  <code>Server</code>, code>EmailDomain</code>,
+	 *                                  {@link Server}, code>EmailDomain</code>,
 	 *                                  <code>MajordomoServer</code>, or <code>MajordomoList</code>
 	 *
 	 * @see  MajordomoList#setIntroFile
@@ -7837,14 +7835,14 @@ final public class SimpleAOClient {
 	 * Sets the password for a <code>MySQLServerUser</code>.
 	 *
 	 * @param  username  the username of the <code>MySQLServerUser</code>
-	 * @param  aoServer  the hostname of the <code>AOServer</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  password  the new password
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>MySQLUser</code>,
-	 *					<code>Server</code>, or <code>MySQLServerUser</code>
+	 *					{@link Server}, or <code>MySQLServerUser</code>
 	 *
 	 * @see  MySQLServerUser#setPassword
 	 */
@@ -7921,14 +7919,14 @@ final public class SimpleAOClient {
 	 *
 	 * @param  username  the username of the <code>PostgresServerUser</code>
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the hostname of the <code>Server</code>
+	 * @param  aoServer  the hostname of the {@link Server}
 	 * @param  password  the new password
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>PostgresUser</code>,
-	 *					<code>Server</code>, or <code>PostgresServerUser</code>
+	 *					{@link Server}, or <code>PostgresServerUser</code>
 	 *
 	 * @see  PostgresServerUser#setPassword
 	 */
@@ -8029,61 +8027,61 @@ final public class SimpleAOClient {
 	/**
 	 * Starts the Apache web server if it is not already running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#startApache
+	 * @see  Server#startApache
 	 */
 	public void startApache(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).startApache();
+		getLinuxServer(aoServer).startApache();
 	}
 
 	/**
 	 * Starts the cron process if it is not already running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#startCron
+	 * @see  Server#startCron
 	 */
 	public void startCron(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).startCron();
+		getLinuxServer(aoServer).startCron();
 	}
 
 	/**
 	 * Starts the distribution on a server and/or changes the setting of the user file scanning.
 	 *
-	 * @param  aoServer     the public hostname of the <code>AOServer</code> to start the scan on
+	 * @param  aoServer     the public hostname of the {@link Server} to start the scan on
 	 * @param  includeUser  the flag indicating whether to include user files
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}
 	 *
-	 * @see  AOServer#startDistro
+	 * @see  Server#startDistro
 	 */
 	public void startDistro(String aoServer, boolean includeUser) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).startDistro(includeUser);
+		getLinuxServer(aoServer).startDistro(includeUser);
 	}
 
 	/**
 	 * Starts and/or restarts the Tomcat or JBoss Java VM for the provided site.
 	 *
 	 * @param  siteName  the name of the site, which is the directory name under <code>/www/</code>
-	 * @param  aoServer    the public hostname of the <code>AOServer</code> the site is hosted on
+	 * @param  aoServer    the public hostname of the {@link Server} the site is hosted on
 	 *
 	 * @return  an error message if the Java VM cannot currently be restarted or
-	 *          <code>null</code> on success
+	 *          {@code null} on success
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server},
 	 *					<code>HttpdSite</code>, or <code>HttpdTomcatSite</code>
 	 *
 	 * @see  HttpdTomcatSite#startJVM
@@ -8099,11 +8097,11 @@ final public class SimpleAOClient {
 	/**
 	 * Starts the MySQL database server if it is not already running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
 	 * @see  MySQLServer#startMySQL
 	 */
@@ -8115,11 +8113,11 @@ final public class SimpleAOClient {
 	 * Starts the PostgreSQL database server if it is not already running.
 	 *
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the public hostname of the <code>AOServer</code>
+	 * @param  aoServer  the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
 	 * @see  PostgresServer#startPostgreSQL
 	 */
@@ -8130,75 +8128,75 @@ final public class SimpleAOClient {
 	/**
 	 * Starts the X Font Server if it is not already running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#startXfs
+	 * @see  Server#startXfs
 	 */
 	public void startXfs(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).startXfs();
+		getLinuxServer(aoServer).startXfs();
 	}
 
 	/**
 	 * Starts the X Virtual Frame Buffer if it is not already running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#startXvfb
+	 * @see  Server#startXvfb
 	 */
 	public void startXvfb(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).startXvfb();
+		getLinuxServer(aoServer).startXvfb();
 	}
 
 	/**
 	 * Stops the Apache web server if it is running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#stopApache
+	 * @see  Server#stopApache
 	 */
 	public void stopApache(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).stopApache();
+		getLinuxServer(aoServer).stopApache();
 	}
 
 	/**
 	 * Stops the cron daemon if it is running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#stopCron
+	 * @see  Server#stopCron
 	 */
 	public void stopCron(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).stopCron();
+		getLinuxServer(aoServer).stopCron();
 	}
 
 	/**
 	 * Stops the Tomcat or JBoss Java VM for the provided site.
 	 *
 	 * @param  siteName  the name of the site, which is the directory name under <code>/www/</code>
-	 * @param  aoServer    the public hostname of the <code>AOServer</code> the site is hosted on
+	 * @param  aoServer    the public hostname of the {@link Server} the site is hosted on
 	 *
 	 * @return  an error message if the Java VM cannot currently be stopped
-	 *          <code>null</code> on success
+	 *          {@code null} on success
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>AOServer</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server},
 	 *					<code>HttpdSite</code>, or <code>HttpdTomcatSite</code>
 	 *
 	 * @see  HttpdTomcatSite#stopJVM
@@ -8214,11 +8212,11 @@ final public class SimpleAOClient {
 	/**
 	 * Stops the MySQL database server if it is running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
 	 * @see  MySQLServer#stopMySQL
 	 */
@@ -8230,11 +8228,11 @@ final public class SimpleAOClient {
 	 * Stops the PostgreSQL database server if it is running.
 	 *
 	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  aoServer  the public hostname of the <code>AOServer</code>
+	 * @param  aoServer  the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
 	 * @see  PostgresServer#stopPostgreSQL
 	 */
@@ -8245,31 +8243,31 @@ final public class SimpleAOClient {
 	/**
 	 * Stops the X Font Server if it is running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#stopXfs
+	 * @see  Server#stopXfs
 	 */
 	public void stopXfs(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).stopXfs();
+		getLinuxServer(aoServer).stopXfs();
 	}
 
 	/**
 	 * Stops the X Virtual Frame Buffer if it is running.
 	 *
-	 * @param  aoServer       the public hostname of the <code>AOServer</code>
+	 * @param  aoServer       the public hostname of the {@link Server}
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#stopXvfb
+	 * @see  Server#stopXvfb
 	 */
 	public void stopXvfb(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).stopXvfb();
+		getLinuxServer(aoServer).stopXvfb();
 	}
 
 	/**
@@ -8277,7 +8275,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>,
 	 *                                  <code>HttpdTomcatSite</code> or <code>HttpdTomcatContext</code>.
 	 */
 	public void updateHttpdTomcatDataSource(
@@ -8320,7 +8318,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code>, <code>HttpdSite</code>,
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>,
 	 *                                  <code>HttpdTomcatSite</code> or <code>HttpdTomcatContext</code>.
 	 */
 	public void updateHttpdTomcatParameter(
@@ -8351,137 +8349,137 @@ final public class SimpleAOClient {
 	/**
 	 * Waits for any processing or pending updates of the Apache configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForHttpdSiteRebuild
+	 * @see  Server#waitForHttpdSiteRebuild
 	 * @see  #addHttpdTomcatStdSite
 	 */
 	public void waitForHttpdSiteRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForHttpdSiteRebuild();
+		getLinuxServer(aoServer).waitForHttpdSiteRebuild();
 	}
 
 	/**
 	 * Waits for any processing or pending updates of the Linux account configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForLinuxAccountRebuild
+	 * @see  Server#waitForLinuxAccountRebuild
 	 */
 	public void waitForLinuxAccountRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForLinuxAccountRebuild();
+		getLinuxServer(aoServer).waitForLinuxAccountRebuild();
 	}
 
 	/**
 	 * Waits for any processing or pending updates of the MySQL configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForMySQLDatabaseRebuild
+	 * @see  Server#waitForMySQLDatabaseRebuild
 	 */
 	public void waitForMySQLDatabaseRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForMySQLDatabaseRebuild();
+		getLinuxServer(aoServer).waitForMySQLDatabaseRebuild();
 	}
 
 	/**
 	 * Waits for any processing or pending updates of the MySQL configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForMySQLDBUserRebuild
+	 * @see  Server#waitForMySQLDBUserRebuild
 	 */
 	public void waitForMySQLDBUserRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForMySQLDBUserRebuild();
+		getLinuxServer(aoServer).waitForMySQLDBUserRebuild();
 	}
 
 	/**
 	 * Waits for any processing or pending updates of the MySQL server configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForMySQLServerRebuild
+	 * @see  Server#waitForMySQLServerRebuild
 	 */
 	public void waitForMySQLServerRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForMySQLServerRebuild();
+		getLinuxServer(aoServer).waitForMySQLServerRebuild();
 	}
 
 	/**
 	 * Waits for any processing or pending updates of the MySQL configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForMySQLUserRebuild
+	 * @see  Server#waitForMySQLUserRebuild
 	 */
 	public void waitForMySQLUserRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForMySQLUserRebuild();
+		getLinuxServer(aoServer).waitForMySQLUserRebuild();
 	}
 
 	/**
 	 * Waits for any processing or pending updates of the PostgreSQL configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForPostgresDatabaseRebuild
+	 * @see  Server#waitForPostgresDatabaseRebuild
 	 */
 	public void waitForPostgresDatabaseRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForPostgresDatabaseRebuild();
+		getLinuxServer(aoServer).waitForPostgresDatabaseRebuild();
 	}
 
 	/**
 	 * Waits for any processing or pending updates of the PostgreSQL server configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForPostgresServerRebuild
+	 * @see  Server#waitForPostgresServerRebuild
 	 */
 	public void waitForPostgresServerRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForPostgresServerRebuild();
+		getLinuxServer(aoServer).waitForPostgresServerRebuild();
 	}
 
 	/**
 	 * Waits for any processing or pending updates of the PostgreSQL configurations to complete.
 	 *
-	 * @param  aoServer  the hostname of the <code>AOServer</code> to wait for
+	 * @param  aoServer  the hostname of the {@link Server} to wait for
 	 *
 	 * @exception  IOException  if not able to communicate with the server
 	 * @exception  SQLException  if not able to access the database
-	 * @exception  IllegalArgumentException  if unable to find the <code>Server</code> or <code>AOServer</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  AOServer#waitForPostgresUserRebuild
+	 * @see  Server#waitForPostgresUserRebuild
 	 */
 	public void waitForPostgresUserRebuild(String aoServer) throws IllegalArgumentException, IOException, SQLException {
-		getAOServer(aoServer).waitForPostgresUserRebuild();
+		getLinuxServer(aoServer).waitForPostgresUserRebuild();
 	}
 
 	/**

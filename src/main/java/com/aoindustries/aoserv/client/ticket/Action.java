@@ -115,7 +115,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 			case 20: return summary;
 			case 21: return getDetails();
 			case 22: return getRawEmail();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -143,7 +143,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	/**
 	 * May be null due to filtering
 	 */
-	public Account getOldBusiness() throws IOException, SQLException {
+	public Account getOldAccount() throws IOException, SQLException {
 		if(old_accounting==null) return null;
 		return table.getConnector().getAccount().getAccount().get(old_accounting);
 	}
@@ -151,7 +151,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 	/**
 	 * May be null due to filtering
 	 */
-	public Account getNewBusiness() throws IOException, SQLException {
+	public Account getNewAccount() throws IOException, SQLException {
 		if(new_accounting==null) return null;
 		return table.getConnector().getAccount().getAccount().get(new_accounting);
 	}

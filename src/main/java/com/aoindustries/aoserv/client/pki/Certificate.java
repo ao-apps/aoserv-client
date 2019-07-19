@@ -136,9 +136,9 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 		out.writeNullUTF(certbotName);
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server obj = table.getConnector().getLinux().getServer().get(pkey);
-		if(obj == null) throw new SQLException("Unable to find AOServer: " + pkey);
+		if(obj == null) throw new SQLException("Unable to find linux.Server: " + pkey);
 		return obj;
 	}
 

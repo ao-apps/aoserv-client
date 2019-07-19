@@ -30,6 +30,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 	private static final OrderBy[] defaultOrderBy = {
 		new OrderBy(PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
 		new OrderBy(PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
-		new OrderBy(PackageDefinition.COLUMN_MONTHLY_RATE_name, ASCENDING),
+		new OrderBy(PackageDefinition.COLUMN_monthlyRate_name, ASCENDING),
 		new OrderBy(PackageDefinition.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(PackageDefinition.COLUMN_VERSION_name, ASCENDING)
 	};
@@ -65,9 +66,9 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 		final String version,
 		final String display,
 		final String description,
-		final int setupFee,
+		final Money setupFee,
 		final TransactionType setupFeeTransactionType,
-		final int monthlyRate,
+		final Money monthlyRate,
 		final TransactionType monthlyRateTransactionType
 	) throws IOException, SQLException {
 		return connector.requestResult(
@@ -86,10 +87,10 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 					out.writeUTF(version);
 					out.writeUTF(display);
 					out.writeUTF(description);
-					out.writeCompressedInt(setupFee);
+					MoneyUtil.writeNullMoney(setupFee, out);
 					out.writeBoolean(setupFeeTransactionType!=null);
 					if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.getName());
-					out.writeCompressedInt(monthlyRate);
+					MoneyUtil.writeMoney(monthlyRate, out);
 					out.writeUTF(monthlyRateTransactionType.getName());
 				}
 

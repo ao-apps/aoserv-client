@@ -116,7 +116,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			case COLUMN_POSTGRES_SERVER: return postgres_server;
 			case 3: return getDisableLog_id();
 			case 4: return predisable_password;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -212,7 +212,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 						+ " on "
 						+ ps.getName()
 						+ " on "
-						+ ps.getAoServer().getHostname(),
+						+ ps.getLinuxServer().getHostname(),
 					this
 				)
 			);
@@ -220,7 +220,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 		for(Database pd : getPostgresDatabases()) {
 			assert ps.equals(pd.getPostgresServer());
-			reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), pd));
+			reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ps.getLinuxServer().getHostname(), pd));
 		}
 
 		return reasons;

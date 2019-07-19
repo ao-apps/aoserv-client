@@ -86,7 +86,7 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 			case 12: return monitoring_bit_rate_high==-1 ? null : monitoring_bit_rate_high;
 			case 13: return monitoring_bit_rate_critical==-1 ? null : monitoring_bit_rate_critical;
 			case 14: return monitoring_enabled;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -98,9 +98,9 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 		return server;
 	}
 
-	public Host getServer() throws SQLException, IOException {
+	public Host getHost() throws SQLException, IOException {
 		Host se = table.getConnector().getNet().getHost().get(server);
-		if(se == null) throw new SQLException("Unable to find Server: " + server);
+		if(se == null) throw new SQLException("Unable to find Host: " + server);
 		return se;
 	}
 
@@ -275,7 +275,7 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return getServer().toStringImpl()+'|'+deviceId;
+		return getHost().toStringImpl()+'|'+deviceId;
 	}
 
 	public IpAddress getIPAddress(InetAddress inetAddress) throws IOException, SQLException {
@@ -299,7 +299,7 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 
 	/**
 	 * Gets the bonding report from <code>/proc/net/bonding/[p]bond#</code>
-	 * or <code>null</code> if not a bonded device.
+	 * or {@code null} if not a bonded device.
 	 */
 	public String getBondingReport() throws IOException, SQLException {
 		if(!deviceId.startsWith("bond")) return null;
@@ -308,7 +308,7 @@ final public class Device extends CachedObjectIntegerKey<Device> {
 
 	/**
 	 * Gets the report from <code>/sys/class/net/<i>device</i>/statistics/...</code>
-	 * or <code>null</code> if not an AOServer.
+	 * or {@code null} if not a {@link Server}.
 	 */
 	public String getStatisticsReport() throws IOException, SQLException {
 		return table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_NET_DEVICE_STATISTICS_REPORT, pkey);

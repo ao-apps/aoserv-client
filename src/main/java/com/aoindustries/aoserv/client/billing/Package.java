@@ -61,11 +61,11 @@ import java.util.List;
 
 /**
  * A <code>Package</code> is a set of resources and its associated price.
- * A <code>Business</code> may multiple <code>Package</code>s, each with
+ * An {@link Account} may multiple <code>Package</code>s, each with
  * their own monthly fee and sets of resources such as web sites, databases
  * and users.  Security is not maintained between <code>Package</code>s,
- * only between <code>Business</code>es.  If intra-account security is
- * required, please use child <code>Business</code>es.
+ * only between {@link Account accounts}.  If intra-account security is
+ * required, please use child {@link Account accounts}.
  *
  * @see  Account
  * @see  PackageDefinition
@@ -166,7 +166,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	public boolean canEnable() throws SQLException, IOException {
 		DisableLog dl=getDisableLog();
 		if(dl==null) return false;
-		else return dl.canEnable() && !getBusiness().isDisabled();
+		else return dl.canEnable() && !getAccount().isDisabled();
 	}
 
 	@Override
@@ -187,9 +187,9 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return account;
 	}
 
-	public Account getBusiness() throws SQLException, IOException {
+	public Account getAccount() throws SQLException, IOException {
 		Account accountingObject = table.getConnector().getAccount().getAccount().get(account);
-		if (accountingObject == null) throw new SQLException("Unable to find Business: " + account);
+		if (accountingObject == null) throw new SQLException("Unable to find Account: " + account);
 		return accountingObject;
 	}
 
@@ -209,18 +209,18 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			case 10: return Float.isNaN(email_out_rate) ? null : email_out_rate;
 			case 11: return email_relay_burst==-1 ? null : email_relay_burst;
 			case 12: return Float.isNaN(email_relay_rate) ? null : email_relay_rate;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
 	public Timestamp getCreated() {
-	return new Timestamp(created);
+		return new Timestamp(created);
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator createdByObject = table.getConnector().getAccount().getUser().get(created_by).getBusinessAdministrator();
-		if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
-		return createdByObject;
+		Administrator obj = table.getConnector().getAccount().getUser().get(created_by).getAdministrator();
+		if (obj == null) throw new SQLException("Unable to find Administrator: " + created_by);
+		return obj;
 	}
 
 	public List<CvsRepository> getCvsRepositories() throws IOException, SQLException {
@@ -370,8 +370,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		return table.getConnector().getEmail().getSendmailServer().getSendmailServers(this);
 	}
 
-	public Host getServer(String name) throws IOException, SQLException {
-		return table.getConnector().getNet().getHost().getServer(this, name);
+	public Host getHost(String name) throws IOException, SQLException {
+		return table.getConnector().getNet().getHost().getHost(this, name);
 	}
 
 	public List<Host> getServers() throws IOException, SQLException {

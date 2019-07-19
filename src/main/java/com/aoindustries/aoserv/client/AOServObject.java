@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -45,7 +45,6 @@ import com.aoindustries.net.MacAddress;
 import com.aoindustries.table.Row;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.WrappedException;
-import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -54,7 +53,6 @@ import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -190,13 +188,6 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	 */
 	protected static <B> B getDto(DtoFactory<B> dtoFactory) {
 		return dtoFactory==null ? null : dtoFactory.getDto();
-	}
-
-	/**
-	 * null-safe getDto for Money.
-	 */
-	protected static com.aoindustries.aoserv.client.dto.Money getDto(Money money) {
-		return money==null ? null : new com.aoindustries.aoserv.client.dto.Money(money.getCurrency().getCurrencyCode(), money.getValue());
 	}
 
 	/**
@@ -404,14 +395,6 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	protected static User.Name getUserId(com.aoindustries.aoserv.client.dto.UserName userId) throws ValidationException {
 		if(userId==null) return null;
 		return User.Name.valueOf(userId.getName());
-	}
-
-	/**
-	 * null-safe money conversion.
-	 */
-	protected static Money getMoney(com.aoindustries.aoserv.client.dto.Money money) {
-		if(money==null) return null;
-		return new Money(Currency.getInstance(money.getCurrency()), money.getValue());
 	}
 	// </editor-fold>
 

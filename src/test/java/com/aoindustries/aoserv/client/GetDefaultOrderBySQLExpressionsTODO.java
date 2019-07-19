@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -66,7 +66,7 @@ public class GetDefaultOrderBySQLExpressionsTODO extends TestCase {
 	public void testTableSizes() throws Exception {
 		System.out.println("Testing getTable(tableID).getDefaultOrderBySQLExpressions()");
 		for(AOServConnector conn : conns) {
-			User.Name username = conn.getThisBusinessAdministrator().getKey();
+			User.Name username = conn.getCurrentAdministrator().getKey();
 			System.out.print("    "+username+": ");
 			int numTables = Table.TableID.values().length;
 			for(int c=0;c<numTables;c++) {

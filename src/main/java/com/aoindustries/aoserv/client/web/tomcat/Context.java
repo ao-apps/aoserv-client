@@ -146,7 +146,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 			case 12: return debug;
 			case 13: return work_dir;
 			case 14: return server_xml_configured;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

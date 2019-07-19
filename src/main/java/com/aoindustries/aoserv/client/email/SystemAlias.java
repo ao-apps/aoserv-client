@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,7 +33,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Each <code>AOServer</code> has several entries in <code>/etc/aliases</code>
+ * Each {@link Server} has several entries in <code>/etc/aliases</code>
  * that do not belong to any particular <code>EmailDomain</code> or
  * <code>Package</code>.  These are a standard part of the email
  * configuration and are contained in <code>SystemEmailAlias</code>es.
@@ -64,7 +64,7 @@ final public class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
 			case COLUMN_AO_SERVER: return ao_server;
 			case 2: return address;
 			case 3: return destination;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -72,9 +72,9 @@ final public class SystemAlias extends CachedObjectIntegerKey<SystemAlias> {
 		return destination;
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return ao;
 	}
 

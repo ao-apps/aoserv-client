@@ -70,7 +70,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 			case 4: return getCreated();
 			case 5: return pub_linux_server_account;
 			case 6: return allow_anonymous;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

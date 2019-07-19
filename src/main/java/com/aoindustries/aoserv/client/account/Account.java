@@ -28,10 +28,13 @@ import com.aoindustries.aoserv.client.SimpleAOClient;
 import static com.aoindustries.aoserv.client.account.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.billing.MonthlyCharge;
 import com.aoindustries.aoserv.client.billing.NoticeLog;
+import com.aoindustries.aoserv.client.billing.NoticeLogTable;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.billing.PackageCategory;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
+import com.aoindustries.aoserv.client.billing.PackageDefinitionTable;
 import com.aoindustries.aoserv.client.billing.Transaction;
+import com.aoindustries.aoserv.client.billing.TransactionTable;
 import com.aoindustries.aoserv.client.billing.TransactionType;
 import com.aoindustries.aoserv.client.billing.WhoisHistoryAccount;
 import com.aoindustries.aoserv.client.billing.WhoisHistoryAccountTable;
@@ -45,6 +48,7 @@ import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.payment.CountryCode;
 import com.aoindustries.aoserv.client.payment.CreditCard;
 import com.aoindustries.aoserv.client.payment.Payment;
+import com.aoindustries.aoserv.client.payment.PaymentTable;
 import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.payment.Processor;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
@@ -61,12 +65,14 @@ import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
-import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.SortedArrayList;
+import com.aoindustries.util.i18n.CurrencyComparator;
+import com.aoindustries.util.i18n.Money;
+import com.aoindustries.util.i18n.Monies;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
@@ -83,18 +89,21 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A <code>Business</code> is one distinct set of packages, resources, and permissions.
-* Some businesses may have child businesses associated with them.  When that is the
+ * An {@link Account} is one distinct set of packages, resources, and permissions.
+ * Some businesses may have child businesses associated with them.  When that is the
  * case, the top level business is ultimately responsible for all actions taken and
  * resources used by itself and all child businesses.
  *
@@ -316,12 +325,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	/**
 	 * The maximum depth of the business tree.
 	 */
-	public static final int MAXIMUM_BUSINESS_TREE_DEPTH=7;
-
-	/**
-	 * The minimum payment for auto-enabling accounts, in pennies.
-	 */
-	public static final BigDecimal MINIMUM_PAYMENT = BigDecimal.valueOf(3000, 2);
+	public static final int MAXIMUM_BUSINESS_TREE_DEPTH = 7;
 
 	String contractVersion;
 	private long created;
@@ -341,7 +345,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	private boolean auto_enable;
 	private boolean bill_parent;
 
-	public int addBusinessProfile(
+	public int addProfile(
 		String name,
 		boolean isPrivate,
 		String phone,
@@ -360,7 +364,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		Set<Email> technicalEmail,
 		Profile.EmailFormat technicalEmailFormat
 	) throws IOException, SQLException {
-		return table.getConnector().getAccount().getProfile().addBusinessProfile(
+		return table.getConnector().getAccount().getProfile().addProfile(
 			this,
 			name,
 			isPrivate,
@@ -382,10 +386,10 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		);
 	}
 
-	public int addBusinessServer(
+	public int addAccountHost(
 		Host server
 	) throws IOException, SQLException {
-		return table.getConnector().getAccount().getAccountHost().addBusinessServer(this, server);
+		return table.getConnector().getAccount().getAccountHost().addAccountHost(this, server);
 	}
 
 	public int addCreditCard(
@@ -443,19 +447,21 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 
 	/**
 	 * Adds a transaction in the pending state.
+	 *
+	 * @deprecated  Please use {@link PaymentTable#addPayment(com.aoindustries.aoserv.client.payment.Processor, com.aoindustries.aoserv.client.account.Account, java.lang.String, boolean, int, java.lang.String, com.aoindustries.util.i18n.Money, com.aoindustries.util.i18n.Money, boolean, com.aoindustries.util.i18n.Money, com.aoindustries.util.i18n.Money, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, com.aoindustries.net.Email, java.lang.String, java.lang.String, java.lang.String, com.aoindustries.aoserv.client.account.Administrator, java.lang.String, com.aoindustries.aoserv.client.account.Account, java.lang.String, java.lang.String, java.lang.String, java.lang.Byte, java.lang.Short, java.lang.String, java.lang.String, java.lang.String, com.aoindustries.net.Email, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, long, java.lang.String)} directly
 	 */
-	public int addCreditCardTransaction(
+	@Deprecated
+	public int addPayment(
 		Processor processor,
 		String groupName,
 		boolean testMode,
 		int duplicateWindow,
 		String orderNumber,
-		String currencyCode,
-		BigDecimal amount,
-		BigDecimal taxAmount,
+		Money amount,
+		Money taxAmount,
 		boolean taxExempt,
-		BigDecimal shippingAmount,
-		BigDecimal dutyAmount,
+		Money shippingAmount,
+		Money dutyAmount,
 		String shippingFirstName,
 		String shippingLastName,
 		String shippingCompanyName,
@@ -496,14 +502,13 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		long authorizationTime,
 		String authorizationPrincipalName
 	) throws IOException, SQLException {
-		return table.getConnector().getPayment().getPayment().addCreditCardTransaction(
+		return table.getConnector().getPayment().getPayment().addPayment(
 			processor,
 			this,
 			groupName,
 			testMode,
 			duplicateWindow,
 			orderNumber,
-			currencyCode,
 			amount,
 			taxAmount,
 			taxExempt,
@@ -557,10 +562,13 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return table.getConnector().getAccount().getDisableLog().addDisableLog(this, disableReason);
 	}
 
+	/**
+	 * @deprecated  Please use {@link NoticeLogTable#addNoticeLog(com.aoindustries.aoserv.client.account.Account.Name, java.lang.String, com.aoindustries.net.Email, java.lang.String, int)} directly.
+	 */
+	@Deprecated
 	public void addNoticeLog(
 		String billingContact,
 		Email emailAddress,
-		BigDecimal balance,
 		String type,
 		int transid
 	) throws IOException, SQLException {
@@ -568,7 +576,6 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			pkey,
 			billingContact,
 			emailAddress,
-			balance,
 			type,
 			transid
 		);
@@ -585,13 +592,17 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		);
 	}
 
+	/**
+	 * @deprecated  Please use {@link TransactionTable#addTransaction(com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Administrator, java.lang.String, java.lang.String, int, com.aoindustries.util.i18n.Money, com.aoindustries.aoserv.client.payment.PaymentType, java.lang.String, com.aoindustries.aoserv.client.payment.Processor, byte)} directly.
+	 */
+	@Deprecated
 	public int addTransaction(
-		Account sourceBusiness,
+		Account sourceAccount,
 		Administrator business_administrator,
 		TransactionType type,
 		String description,
 		int quantity,
-		int rate,
+		Money rate,
 		PaymentType paymentType,
 		String paymentInfo,
 		Processor processor,
@@ -599,9 +610,9 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	) throws IOException, SQLException {
 		return table.getConnector().getBilling().getTransaction().addTransaction(
 			this,
-			sourceBusiness,
+			sourceAccount,
 			business_administrator,
-			type.getName(),
+			type,
 			description,
 			quantity,
 			rate,
@@ -616,14 +627,14 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return can_add_backup_server;
 	}
 
-	public boolean canAddBusinesses() {
+	public boolean canAddAccounts() {
 		return can_add_businesses;
 	}
 
 	public void cancel(String cancelReason) throws IllegalArgumentException, IOException, SQLException {
 		// Automatically disable if not already disabled
 		if(disable_log==-1) {
-			new SimpleAOClient(table.getConnector()).disableBusiness(pkey, "Account canceled");
+			new SimpleAOClient(table.getConnector()).disableAccount(pkey, "Account canceled");
 		}
 
 		// Now cancel the account
@@ -660,10 +671,10 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	public boolean canCancel() throws IOException, SQLException {
-		return canceled==-1 && !isRootBusiness();
+		return canceled==-1 && !isRootAccount();
 	}
 
-	public boolean isRootBusiness() throws IOException, SQLException {
+	public boolean isRootAccount() throws IOException, SQLException {
 		return pkey.equals(table.getConnector().getAccount().getAccount().getRootAccount_name());
 	}
 
@@ -672,7 +683,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		// already disabled
 		if(disable_log!=-1) return false;
 
-		if(isRootBusiness()) return false;
+		if(isRootAccount()) return false;
 
 		// packages
 		for(Package pk : getPackages()) if(!pk.isDisabled()) return false;
@@ -705,26 +716,36 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.BUSINESSES, pkey.toString());
 	}
 
-	public BigDecimal getAccountBalance() throws IOException, SQLException {
+	public Monies getAccountBalance() throws IOException, SQLException {
 		return table.getConnector().getBilling().getTransaction().getAccountBalance(pkey);
 	}
 
-	public BigDecimal getAccountBalance(long before) throws IOException, SQLException {
+	public Monies getAccountBalance(long before) throws IOException, SQLException {
 		return table.getConnector().getBilling().getTransaction().getAccountBalance(pkey, before);
 	}
 
 	/**
+	 * Gets a comma-separated list of account balances.
+	 *
 	 * @see  #getAccountBalance()
+	 *
+	 * @deprecated  Please use {@link #getAccountBalance()} and {@link Monies#toString()} instead
 	 */
+	@Deprecated
 	public String getAccountBalanceString() throws IOException, SQLException {
-		return "$"+getAccountBalance();
+		return getAccountBalance().toString();
 	}
 
 	/**
+	 * Gets a comma-separated list of account balances before a given time.
+	 *
 	 * @see  #getAccountBalance(long)
+	 *
+	 * @deprecated  Please use {@link #getAccountBalance(long)} and {@link Monies#toString()} instead
 	 */
+	@Deprecated
 	public String getAccountBalanceString(long before) throws IOException, SQLException {
-		return "$"+getAccountBalance(before);
+		return getAccountBalance(before).toString();
 	}
 
 	public Name getName() {
@@ -739,13 +760,25 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return bill_parent;
 	}
 
-	public BigDecimal getAutoEnableMinimumPayment() throws IOException, SQLException {
-		BigDecimal balance=getAccountBalance();
-		if(balance.signum()<0) return BigDecimal.valueOf(0, 2);
-		BigDecimal minimum = balance.divide(BigDecimal.valueOf(2), RoundingMode.DOWN);
-		if(minimum.compareTo(MINIMUM_PAYMENT)<0) minimum=MINIMUM_PAYMENT;
-		if(minimum.compareTo(balance)>0) minimum=balance;
-		return minimum;
+	// TODO: 1.83.0: Re-implement auto-enabled on payment forms, and preferrably on the master itself during add_transaction
+	public Monies getAutoEnableMinimumPayment() throws IOException, SQLException {
+		List<Money> minimums = new ArrayList<>();
+		for(Money accountBalance : getAccountBalance()) {
+			if(accountBalance.getUnscaledValue() >= 0) {
+				Currency currency = accountBalance.getCurrency();
+				BigDecimal balance = accountBalance.getValue();
+				BigDecimal minimum = balance.divide(BigDecimal.valueOf(2), RoundingMode.UP);
+				com.aoindustries.aoserv.client.billing.Currency billingCurrency = getTable().getConnector().getBilling().getCurrency().get(currency);
+				if(billingCurrency == null) throw new SQLException("billing.Currency not found: " + currency);
+				BigDecimal minimumPayment = billingCurrency.getAutoEnableMinimumPayment().getValue();
+				if(minimum.compareTo(minimumPayment) < 0) minimum = minimumPayment;
+				if(minimum.compareTo(balance) > 0) minimum = balance;
+				minimums.add(
+					new Money(currency, minimum)
+				);
+			}
+		}
+		return Monies.of(minimums);
 	}
 
 	public String getDoNotDisableReason() {
@@ -753,14 +786,14 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * Gets the <code>Business</code> in the business tree that is one level down
-	 * from the top level business.
+	 * Gets the {@link Account} in the account tree that is one level down
+	 * from the top level account.
 	 */
-	public Account getTopLevelBusiness() throws IOException, SQLException {
+	public Account getTopLevelAccount() throws IOException, SQLException {
 		Name rootAccount_name = table.getConnector().getAccount().getAccount().getRootAccount_name();
 		Account bu=this;
 		Account tempParent;
-		while((tempParent=bu.getParentBusiness())!=null && !tempParent.getName().equals(rootAccount_name)) bu=tempParent;
+		while((tempParent=bu.getParent())!=null && !tempParent.getName().equals(rootAccount_name)) bu=tempParent;
 		return bu;
 	}
 
@@ -770,35 +803,33 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	public Account getBillingAccount() throws SQLException, IOException {
 		Account bu=this;
 		while(bu.bill_parent) {
-			bu=bu.getParentBusiness();
+			bu=bu.getParent();
 			if(bu==null) throw new SQLException("Unable to find the billing account for '"+pkey+'\'');
 		}
 		return bu;
 	}
 
 	/**
-	 * Gets the <code>BusinessProfile</code> with the highest priority.
+	 * Gets the {@link Profile} with the highest priority.
 	 */
-	public Profile getBusinessProfile() throws IOException, SQLException {
-		return table.getConnector().getAccount().getProfile().getBusinessProfile(this);
+	public Profile getProfile() throws IOException, SQLException {
+		return table.getConnector().getAccount().getProfile().getProfile(this);
 	}
 
 	/**
-	 * Gets a list of all <code>BusinessProfiles</code> for this <code>Business</code>
+	 * Gets a list of all {@link Profile profiles} for this {@link Account}
 	 * sorted with the highest priority profile at the zero index.
 	 */
-	public List<Profile> getBusinessProfiles() throws IOException, SQLException {
-		return table.getConnector().getAccount().getProfile().getBusinessProfiles(this);
+	public List<Profile> getProfiles() throws IOException, SQLException {
+		return table.getConnector().getAccount().getProfile().getProfiles(this);
 	}
 
-	public AccountHost getBusinessServer(
-		Host server
-	) throws IOException, SQLException {
-		return table.getConnector().getAccount().getAccountHost().getBusinessServer(this, server);
+	public AccountHost getAccountHost(Host host) throws IOException, SQLException {
+		return table.getConnector().getAccount().getAccountHost().getAccountHost(this, host);
 	}
 
-	public List<AccountHost> getBusinessServers() throws IOException, SQLException {
-		return table.getConnector().getAccount().getAccountHost().getBusinessServers(this);
+	public List<AccountHost> getAccountHosts() throws IOException, SQLException {
+		return table.getConnector().getAccount().getAccountHost().getAccountHosts(this);
 	}
 
 	public Timestamp getCanceled() {
@@ -809,8 +840,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return cancelReason;
 	}
 
-	public List<Account> getChildBusinesses() throws IOException, SQLException {
-		return table.getConnector().getAccount().getAccount().getChildBusinesses(this);
+	public List<Account> getChildAccounts() throws IOException, SQLException {
+		return table.getConnector().getAccount().getAccount().getChildAccounts(this);
 	}
 
 	@Override
@@ -829,15 +860,15 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			case 10: return do_not_disable_reason;
 			case 11: return auto_enable;
 			case 12: return bill_parent;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public BigDecimal getConfirmedAccountBalance() throws IOException, SQLException {
+	public Monies getConfirmedAccountBalance() throws IOException, SQLException {
 		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(pkey);
 	}
 
-	public BigDecimal getConfirmedAccountBalance(long before) throws IOException, SQLException {
+	public Monies getConfirmedAccountBalance(long before) throws IOException, SQLException {
 		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(pkey, before);
 	}
 
@@ -903,17 +934,22 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	 * Gets an approximation of the monthly rate paid by this account.  This is not guaranteed to
 	 * be exactly the same as the underlying billing database processes.
 	 */
-	public BigDecimal getMonthlyRate() throws SQLException, IOException {
-		BigDecimal total = BigDecimal.valueOf(0, 2);
-		for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total = total.add(new BigDecimal(SQLUtility.getDecimal(mc.getPennies())));
+	public Monies getMonthlyRate() throws SQLException, IOException {
+		Monies total = Monies.of();
+		for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total = total.add(mc.getAmount());
 		return total;
 	}
 
 	/**
+	 * Gets a comma-separated list of monthly rates.
+	 *
 	 * @see  #getMonthlyRate()
+	 *
+	 * @deprecated  Please use {@link #getMonthlyRate()} and {@link Monies#toString()} instead
 	 */
+	@Deprecated
 	public String getMonthlyRateString() throws SQLException, IOException {
-		return "$"+getMonthlyRate();
+		return getMonthlyRate().toString();
 	}
 
 	public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
@@ -924,7 +960,11 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return table.getConnector().getBilling().getPackage().getPackages(this);
 	}
 
-	public Account getParentBusiness() throws IOException, SQLException {
+	public Account.Name getParent_name() {
+		return parent;
+	}
+
+	public Account getParent() throws IOException, SQLException {
 		if(parent==null) return null;
 		// The parent business might not be found, even when the value is set.  This is normal due
 		// to filtering.
@@ -941,16 +981,23 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * Gets the total monthly rate or <code>null</code> if unavailable.
+	 * Gets the total monthly rate of all {@link PackageDefinition} for this account or {@code null} if unavailable.
 	 */
-	public BigDecimal getTotalMonthlyRate() throws SQLException, IOException {
-		BigDecimal sum = BigDecimal.valueOf(0, 2);
-		for (Package pack : getPackages()) {
-			BigDecimal monthlyRate = pack.getPackageDefinition().getMonthlyRate();
-			if(monthlyRate==null) return null;
-			sum = sum.add(monthlyRate);
+	public Monies getTotalMonthlyRate() throws SQLException, IOException {
+		SortedMap<Currency,BigDecimal> map = new TreeMap<>(CurrencyComparator.getInstance());
+		for(Package pack : getPackages()) {
+			Money monthlyRate = pack.getPackageDefinition().getMonthlyRate();
+			if(monthlyRate == null) return null;
+			Currency currency = monthlyRate.getCurrency();
+			BigDecimal total = map.get(currency);
+			total = total == null ? monthlyRate.getValue() : total.add(monthlyRate.getValue());
+			map.put(currency, total);
 		}
-		return sum;
+		List<Money> list = new ArrayList<>(map.size());
+		for(Map.Entry<Currency,BigDecimal> entry : map.entrySet()) {
+			list.add(new Money(entry.getKey(), entry.getValue()));
+		}
+		return Monies.of(list);
 	}
 
 	public List<Transaction> getTransactions() throws IOException, SQLException {
@@ -965,62 +1012,62 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * @deprecated  Please use <code>isBusinessOrParentOf</code> instead.
+	 * @deprecated  Please use {@link #isAccountOrParentOf(com.aoindustries.aoserv.client.account.Account)} instead.
 	 */
 	@Deprecated
-	public boolean isBusinessOrParent(Account other) throws IOException, SQLException {
-		return isBusinessOrParentOf(other);
+	public boolean isAccountOrParent(Account other) throws IOException, SQLException {
+		return isAccountOrParentOf(other);
 	}
 
 	/**
-	 * Determines if this <code>Business</code> is the other business
+	 * Determines if this {@link Account} is the other account
 	 * or a parent of it.  This is often used for access control between
 	 * accounts.
 	 */
-	public boolean isBusinessOrParentOf(Account other) throws IOException, SQLException {
+	public boolean isAccountOrParentOf(Account other) throws IOException, SQLException {
 		while(other!=null) {
 			if(equals(other)) return true;
-			other=other.getParentBusiness();
+			other = other.getParent();
 		}
 		return false;
 	}
 
 	/**
-	 * Determines if this <code>Business</code> is a parent of the other business.
+	 * Determines if this {@link Account} is a parent of the other business.
 	 * This is often used for access control between accounts.
 	 */
 	public boolean isParentOf(Account other) throws IOException, SQLException {
 		if(other!=null) {
-			other=other.getParentBusiness();
+			other = other.getParent();
 			while(other!=null) {
 				if(equals(other)) return true;
-				other=other.getParentBusiness();
+				other = other.getParent();
 			}
 		}
 		return false;
 	}
 
 	public void move(Server from, Server to, TerminalWriter out) throws IOException, SQLException {
-		if(from.equals(to)) throw new SQLException("Cannot move from AOServer "+from.getHostname()+" to AOServer "+to.getHostname()+": same AOServer");
+		if(from.equals(to)) throw new SQLException("Cannot move from Server "+from.getHostname()+" to Server "+to.getHostname()+": same Server");
 
-		AccountHost fromBusinessServer=getBusinessServer(from.getServer());
-		if(fromBusinessServer==null) throw new SQLException("Unable to find BusinessServer for Business="+pkey+" and Server="+from.getHostname());
+		AccountHost fromAccountHost = getAccountHost(from.getHost());
+		if(fromAccountHost == null) throw new SQLException("Unable to find AccountHost for Account="+pkey+" and Server="+from.getHostname());
 
-		// Grant the Business access to the other server if it does not already have access
+		// Grant the account access to the other server if it does not already have access
 		if(out!=null) {
 			out.boldOn();
-			out.println("Adding Business Privileges");
+			out.println("Adding Account Privileges");
 			out.attributesOff();
 			out.flush();
 		}
-		AccountHost toBusinessServer=getBusinessServer(to.getServer());
-		if(toBusinessServer==null) {
+		AccountHost toAccountHost = getAccountHost(to.getHost());
+		if(toAccountHost == null) {
 			if(out!=null) {
 				out.print("    ");
 				out.println(to.getHostname());
 				out.flush();
 			}
-			addBusinessServer(to.getServer());
+			addAccountHost(to.getHost());
 		}
 
 		// Add the LinuxServerGroups
@@ -1035,8 +1082,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		{
 			for(GroupServer lsg : table.getConnector().getLinux().getGroupServer().getRows()) {
 				Package pk=lsg.getLinuxGroup().getPackage();
-				if(pk!=null && pk.getBusiness().equals(this)) {
-					Server ao=lsg.getAOServer();
+				if(pk!=null && pk.getAccount_name().equals(pkey)) {
+					Server ao=lsg.getServer();
 					if(ao.equals(from)) fromLinuxServerGroups.add(lsg);
 					else if(ao.equals(to)) toLinuxServerGroups.add(lsg);
 				}
@@ -1068,8 +1115,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			List<UserServer> lsas=table.getConnector().getLinux().getUserServer().getRows();
 			for (UserServer lsa : lsas) {
 				Package pk=lsa.getLinuxAccount().getUsername().getPackage();
-				if(pk!=null && pk.getBusiness().equals(this)) {
-					Server ao=lsa.getAOServer();
+				if(pk!=null && pk.getAccount_name().equals(pkey)) {
+					Server ao=lsa.getServer();
 					if(ao.equals(from)) fromLinuxServerAccounts.add(lsa);
 					else if(ao.equals(to)) toLinuxServerAccounts.add(lsa);
 				}
@@ -1193,7 +1240,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 					out.print("    ");
 					out.println(ip);
 				}
-				ip.moveTo(to.getServer());
+				ip.moveTo(to.getHost());
 			}
 		} // TODO: Continue development here
 
@@ -1238,13 +1285,13 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		// Remove access to the old server
 		if(out!=null) {
 			out.boldOn();
-			out.println("Removing Business Privileges");
+			out.println("Removing Account Privileges");
 			out.attributesOff();
 			out.print("    ");
 			out.println(from.getHostname());
 			out.flush();
 		}
-		fromBusinessServer.remove();
+		fromAccountHost.remove();
 	}
 
 	@Override
@@ -1345,21 +1392,25 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * Gets the Brand for this business or <code>null</code> if not a brand.
+	 * Gets the Brand for this business or {@code null} if not a brand.
 	 */
 	public Brand getBrand() throws IOException, SQLException {
 		return table.getConnector().getReseller().getBrand().getBrand(this);
 	}
 
+	/**
+	 * @deprecated  Please use {@link PackageDefinitionTable#addPackageDefinition(com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.billing.PackageCategory, java.lang.String, java.lang.String, java.lang.String, java.lang.String, com.aoindustries.util.i18n.Money, com.aoindustries.aoserv.client.billing.TransactionType, com.aoindustries.util.i18n.Money, com.aoindustries.aoserv.client.billing.TransactionType)} directly.
+	 */
+	@Deprecated
 	public int addPackageDefinition(
 		PackageCategory category,
 		String name,
 		String version,
 		String display,
 		String description,
-		int setupFee,
+		Money setupFee,
 		TransactionType setupFeeTransactionType,
-		int monthlyRate,
+		Money monthlyRate,
 		TransactionType monthlyRateTransactionType
 	) throws IOException, SQLException {
 		return table.getConnector().getBilling().getPackageDefinition().addPackageDefinition(

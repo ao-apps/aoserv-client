@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -84,7 +84,7 @@ final public class CategoryTable extends CachedTableIntegerKey<Category> {
 
 	/**
 	 * Gets the category with the provided parent and name.
-	 * Parent may be <code>null</code> for top-level categories.
+	 * Parent may be {@code null} for top-level categories.
 	 */
 	public Category getTicketCategory(Category parent, String name) throws IOException, SQLException {
 		if(parent==null) {
@@ -102,7 +102,7 @@ final public class CategoryTable extends CachedTableIntegerKey<Category> {
 	}
 
 	/**
-	 * Gets a ticket category given its dot-separated path or <code>null</code> if not found.
+	 * Gets a ticket category given its dot-separated path or {@code null} if not found.
 	 */
 	public Category getTicketCategoryByDotPath(String dotPath) throws IOException, SQLException {
 		for(Category category : getRows()) {

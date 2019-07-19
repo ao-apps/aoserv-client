@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -61,10 +61,14 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	private int encryption_from;
 	private int encryption_recipient;
 
-	public Account getBusiness() throws SQLException, IOException {
-		Account business = table.getConnector().getAccount().getAccount().get(accounting);
-		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
-		return business;
+	public Account.Name getAccount_name() {
+		return accounting;
+	}
+
+	public Account getAccount() throws SQLException, IOException {
+		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+		if (obj == null) throw new SQLException("Unable to find Account: " + accounting);
+		return obj;
 	}
 
 	@Override
@@ -82,7 +86,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 			case 9: return description;
 			case 10: return encryption_from==-1 ? null : encryption_from;
 			case 11: return encryption_recipient==-1 ? null : encryption_recipient;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -123,7 +127,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	}
 
 	/**
-	 * Gets the key used for encrypting the card in storage or <code>null</code>
+	 * Gets the key used for encrypting the card in storage or {@code null}
 	 * if the card is not stored in the database.
 	 */
 	public EncryptionKey getEncryptionFrom() throws SQLException, IOException {
@@ -134,7 +138,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	}
 
 	/**
-	 * Gets the key used for encrypting the card in storage or <code>null</code>
+	 * Gets the key used for encrypting the card in storage or {@code null}
 	 * if the card is not stored in the database.
 	 */
 	public EncryptionKey getEncryptionRecipient() throws SQLException, IOException {

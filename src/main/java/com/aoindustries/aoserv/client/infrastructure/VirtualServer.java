@@ -89,13 +89,13 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 			case 14 : return secondaryPhysicalServerLocked;
 			case 15 : return requires_hvm;
 			case 16 : return vnc_password;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public Host getServer() throws SQLException, IOException {
+	public Host getHost() throws SQLException, IOException {
 		Host se=table.getConnector().getNet().getHost().get(pkey);
-		if(se==null) throw new SQLException("Unable to find Server: "+pkey);
+		if(se==null) throw new SQLException("Unable to find Host: "+pkey);
 		return se;
 	}
 
@@ -123,7 +123,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	/**
-	 * Gets the minimum processor type or <code>null</code> if none.
+	 * Gets the minimum processor type or {@code null} if none.
 	 */
 	public ProcessorType getMinimumProcessorType() throws IOException, SQLException {
 		if(minimumProcessorType==null) return null;
@@ -199,7 +199,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	/**
-	 * Gets the VNC password for this virtual server or <code>null</code> if VNC is disabled.
+	 * Gets the VNC password for this virtual server or {@code null} if VNC is disabled.
 	 * The password must be unique between virtual servers because the password is used
 	 * behind the scenes to resolve the actual IP and port for VNC proxying.
 	 */
@@ -261,7 +261,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return getServer().toStringImpl();
+		return getHost().toStringImpl();
 	}
 
 	@Override
@@ -299,7 +299,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	 * Gets the virtual disk for this virtual server and the provided device
 	 * name.
 	 * @param device should be <code>xvd[a-z]</code>
-	 * @return the disk or <code>null</code> if not found
+	 * @return the disk or {@code null} if not found
 	 */
 	public VirtualDisk getVirtualDisk(String device) throws IOException, SQLException {
 		for(VirtualDisk vd : getVirtualDisks()) {

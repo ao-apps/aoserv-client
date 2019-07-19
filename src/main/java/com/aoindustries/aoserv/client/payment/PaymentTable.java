@@ -32,9 +32,10 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
 
@@ -59,19 +60,18 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 		return defaultOrderBy;
 	}
 
-	public int addCreditCardTransaction(
+	public int addPayment(
 		final Processor processor,
-		final Account business,
+		final Account account,
 		final String groupName,
 		final boolean testMode,
 		final int duplicateWindow,
 		final String orderNumber,
-		final String currencyCode,
-		final BigDecimal amount,
-		final BigDecimal taxAmount,
+		final Money amount,
+		final Money taxAmount,
 		final boolean taxExempt,
-		final BigDecimal shippingAmount,
-		final BigDecimal dutyAmount,
+		final Money shippingAmount,
+		final Money dutyAmount,
 		final String shippingFirstName,
 		final String shippingLastName,
 		final String shippingCompanyName,
@@ -114,6 +114,16 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 	) throws IOException, SQLException {
 		if(!connector.isSecure()) throw new IOException("Credit card transactions may only be added when using secure protocols.  Currently using the "+connector.getProtocol()+" protocol, which is not secure.");
 
+		final Currency currency = amount.getCurrency();
+		if(taxAmount != null && taxAmount.getCurrency() != currency) {
+			throw new SQLException("Currency mismatch: amount.currency = " + currency + ", taxAmount.currency = " + taxAmount.getCurrency());
+		}
+		if(shippingAmount != null && shippingAmount.getCurrency() != currency) {
+			throw new SQLException("Currency mismatch: amount.currency = " + currency + ", shippingAmount.currency = " + shippingAmount.getCurrency());
+		}
+		if(dutyAmount != null && dutyAmount.getCurrency() != currency) {
+			throw new SQLException("Currency mismatch: amount.currency = " + currency + ", dutyAmount.currency = " + dutyAmount.getCurrency());
+		}
 		return connector.requestResult(
 			true,
 			AoservProtocol.CommandID.ADD,
@@ -125,17 +135,36 @@ final public class PaymentTable extends CachedTableIntegerKey<Payment> {
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.CREDIT_CARD_TRANSACTIONS.ordinal());
 					out.writeUTF(processor.getProviderId());
-					out.writeUTF(business.getName().toString());
+					out.writeUTF(account.getName().toString());
 					out.writeNullUTF(groupName);
 					out.writeBoolean(testMode);
 					out.writeCompressedInt(duplicateWindow);
 					out.writeNullUTF(orderNumber);
-					out.writeUTF(currencyCode);
-					out.writeUTF(amount.toString());
-					out.writeNullUTF(Objects.toString(taxAmount, null));
+					out.writeUTF(currency.getCurrencyCode());
+					out.writeLong(amount.getUnscaledValue());
+					out.writeCompressedInt(amount.getScale());
+					if(taxAmount != null) {
+						out.writeBoolean(true);
+						out.writeLong(taxAmount.getUnscaledValue());
+						out.writeCompressedInt(taxAmount.getScale());
+					} else {
+						out.writeBoolean(false);
+					}
 					out.writeBoolean(taxExempt);
-					out.writeNullUTF(Objects.toString(shippingAmount, null));
-					out.writeNullUTF(Objects.toString(dutyAmount, null));
+					if(shippingAmount != null) {
+						out.writeBoolean(true);
+						out.writeLong(shippingAmount.getUnscaledValue());
+						out.writeCompressedInt(shippingAmount.getScale());
+					} else {
+						out.writeBoolean(false);
+					}
+					if(dutyAmount != null) {
+						out.writeBoolean(true);
+						out.writeLong(dutyAmount.getUnscaledValue());
+						out.writeCompressedInt(dutyAmount.getScale());
+					} else {
+						out.writeBoolean(false);
+					}
 					out.writeNullUTF(shippingFirstName);
 					out.writeNullUTF(shippingLastName);
 					out.writeNullUTF(shippingCompanyName);

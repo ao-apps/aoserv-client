@@ -273,9 +273,9 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		return ao_server;
 	}
 
-	public Server getAoServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server obj = table.getConnector().getLinux().getServer().get(ao_server);
-		if(obj == null) throw new SQLException("Unable to find AOServer: " + ao_server);
+		if(obj == null) throw new SQLException("Unable to find linux.Server: " + ao_server);
 		return obj;
 	}
 
@@ -315,7 +315,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 	/**
 	 * The fully qualified hostname for <code>Dw</code>, <code>Dm</code>, and <code>Dj</code>.
 	 *
-	 * When {@code null}, defaults to {@link AOServer#getHostname()}.
+	 * When {@code null}, defaults to {@link Server#getHostname()}.
 	 */
 	public DomainName getHostname() {
 		return hostname;
@@ -443,7 +443,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		com.aoindustries.net.AddressFamily family = address.getAddressFamily();
 		if(family != com.aoindustries.net.AddressFamily.INET) throw new SQLException("Unexpected address family for clientAddrInet #" + clientAddrInet + ": " + family);
 		if(address.isUnspecified()) throw new SQLException("May not use unspecified address for clientAddrInet #" + clientAddrInet);
-		if(!getAoServer().getServer().equals(obj.getDevice().getServer())) throw new SQLException("IPAddress is not on this server for clientAddrInet #" + clientAddrInet);
+		if(!getLinuxServer().getHost().equals(obj.getDevice().getHost())) throw new SQLException("IPAddress is not on this server for clientAddrInet #" + clientAddrInet);
 		return obj;
 	}
 
@@ -463,7 +463,7 @@ final public class SendmailServer extends CachedObjectIntegerKey<SendmailServer>
 		com.aoindustries.net.AddressFamily family = address.getAddressFamily();
 		if(family != com.aoindustries.net.AddressFamily.INET6) throw new SQLException("Unexpected address family for clientAddrInet6 #" + clientAddrInet6 + ": " + family);
 		if(address.isUnspecified()) throw new SQLException("May not use unspecified address for clientAddrInet6 #" + clientAddrInet6);
-		if(!getAoServer().getServer().equals(obj.getDevice().getServer())) throw new SQLException("IPAddress is not on this server for clientAddrInet6 #" + clientAddrInet6);
+		if(!getLinuxServer().getHost().equals(obj.getDevice().getHost())) throw new SQLException("IPAddress is not on this server for clientAddrInet6 #" + clientAddrInet6);
 		return obj;
 	}
 

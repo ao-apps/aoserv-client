@@ -59,7 +59,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 		return defaultOrderBy;
 	}
 
-	void addBusinessAdministrator(
+	void addAdministrator(
 		final User username,
 		final String name,
 		String title,
@@ -144,7 +144,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 	}
 
 	/**
-	 * Gets one BusinessAdministrator from the database.
+	 * Gets one {@link Administrator} from the database.
 	 */
 	@Override
 	public Administrator get(User.Name username) throws IOException, SQLException {
@@ -162,7 +162,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 		String command=args[0];
 		if(command.equalsIgnoreCase(Command.ADD_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(Command.ADD_BUSINESS_ADMINISTRATOR, args, 17, err)) {
-				connector.getSimpleAOClient().addBusinessAdministrator(
+				connector.getSimpleAOClient().addAdministrator(
 					AOSH.parseUserName(args[1], "username"),
 					args[2],
 					args[3],
@@ -185,7 +185,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 			return true;
 		} else if(command.equalsIgnoreCase(Command.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.CHECK_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
-				List<PasswordChecker.Result> results = SimpleAOClient.checkBusinessAdministratorPassword(
+				List<PasswordChecker.Result> results = SimpleAOClient.checkAdministratorPassword(
 					AOSH.parseUserName(args[1], "username"),
 					args[2]
 				);
@@ -198,7 +198,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 		} else if(command.equalsIgnoreCase(Command.DISABLE_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(Command.DISABLE_BUSINESS_ADMINISTRATOR, args, 2, err)) {
 				out.println(
-					connector.getSimpleAOClient().disableBusinessAdministrator(
+					connector.getSimpleAOClient().disableAdministrator(
 						AOSH.parseUserName(args[1], "username"),
 						args[2]
 					)
@@ -208,7 +208,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 			return true;
 		} else if(command.equalsIgnoreCase(Command.ENABLE_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(Command.ENABLE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
-				connector.getSimpleAOClient().enableBusinessAdministrator(
+				connector.getSimpleAOClient().enableAdministrator(
 					AOSH.parseUserName(args[1], "username")
 				);
 			}
@@ -216,7 +216,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 		} else if(command.equalsIgnoreCase(Command.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET)) {
 			if(AOSH.checkParamCount(Command.IS_BUSINESS_ADMINISTRATOR_PASSWORD_SET, args, 1, err)) {
 				out.println(
-					connector.getSimpleAOClient().isBusinessAdministratorPasswordSet(
+					connector.getSimpleAOClient().isAdministratorPasswordSet(
 						AOSH.parseUserName(args[1], "username")
 					)
 				);
@@ -225,14 +225,14 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 			return true;
 		} else if(command.equalsIgnoreCase(Command.REMOVE_BUSINESS_ADMINISTRATOR)) {
 			if(AOSH.checkParamCount(Command.REMOVE_BUSINESS_ADMINISTRATOR, args, 1, err)) {
-				connector.getSimpleAOClient().removeBusinessAdministrator(
+				connector.getSimpleAOClient().removeAdministrator(
 					AOSH.parseUserName(args[1], "username")
 				);
 			}
 			return true;
 		} else if(command.equalsIgnoreCase(Command.SET_BUSINESS_ADMINISTRATOR_PASSWORD)) {
 			if(AOSH.checkParamCount(Command.SET_BUSINESS_ADMINISTRATOR_PASSWORD, args, 2, err)) {
-				connector.getSimpleAOClient().setBusinessAdministratorPassword(
+				connector.getSimpleAOClient().setAdministratorPassword(
 					AOSH.parseUserName(args[1], "username"),
 					args[2]
 				);
@@ -240,7 +240,7 @@ final public class AdministratorTable extends CachedTableUserNameKey<Administrat
 			return true;
 		} else if(command.equalsIgnoreCase(Command.SET_BUSINESS_ADMINISTRATOR_PROFILE)) {
 			if(AOSH.checkParamCount(Command.SET_BUSINESS_ADMINISTRATOR_PROFILE, args, 16, err)) {
-				connector.getSimpleAOClient().setBusinessAdministratorProfile(
+				connector.getSimpleAOClient().setAdministratorProfile(
 					AOSH.parseUserName(args[1], "username"),
 					args[2],
 					args[3],

@@ -167,7 +167,7 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.SIGNUP_REQUESTS.ordinal());
-					out.writeUTF(brand.getBusiness_accounting().toString());
+					out.writeUTF(brand.getAccount_name().toString());
 					out.writeUTF(ip_address.toString());
 					out.writeCompressedInt(package_definition.getPkey());
 					out.writeUTF(business_name);

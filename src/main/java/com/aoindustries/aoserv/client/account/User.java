@@ -310,7 +310,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	Account.Name packageName;
 	int disable_log;
 
-	public void addBusinessAdministrator(
+	public void addAdministrator(
 		String name,
 		String title,
 		Date birthday,
@@ -328,7 +328,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		String zip,
 		boolean enableEmailSupport
 	) throws IOException, SQLException {
-		table.getConnector().getAccount().getAdministrator().addBusinessAdministrator(
+		table.getConnector().getAccount().getAdministrator().addAdministrator(
 			this,
 			name,
 			title,
@@ -410,7 +410,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	public int arePasswordsSet() throws IOException, SQLException {
 		// Build the array of objects
 		List<PasswordProtected> pps=new ArrayList<>();
-		Administrator ba=getBusinessAdministrator();
+		Administrator ba=getAdministrator();
 		if(ba!=null) pps.add(ba);
 		com.aoindustries.aoserv.client.linux.User la=getLinuxAccount();
 		if(la!=null) pps.add(la);
@@ -445,7 +445,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	 */
 	@Override
 	public List<PasswordChecker.Result> checkPassword(String password) throws IOException, SQLException {
-		Administrator ba=getBusinessAdministrator();
+		Administrator ba=getAdministrator();
 		if(ba!=null) {
 			List<PasswordChecker.Result> results=ba.checkPassword(password);
 			if(PasswordChecker.hasResults(results)) return results;
@@ -482,8 +482,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.USERNAMES, pkey);
 	}
 
-	// TODO: See where used, and favor direct lookup in other tables:
-	public Administrator getBusinessAdministrator() throws IOException, SQLException {
+	// TODO: 1.83.0: See where used, and favor direct lookup in other tables:
+	public Administrator getAdministrator() throws IOException, SQLException {
 		return table.getConnector().getAccount().getAdministrator().get(pkey);
 	}
 
@@ -493,7 +493,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			case COLUMN_USERNAME: return pkey;
 			case COLUMN_PACKAGE: return packageName;
 			case 2: return disable_log==-1?null:disable_log;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -510,7 +510,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		return obj;
 	}
 
-	// TODO: See where used, and favor direct lookup in other tables:
+	// TODO: 1.83.0: See where used, and favor direct lookup in other tables:
 	public com.aoindustries.aoserv.client.linux.User getLinuxAccount() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(com.aoindustries.aoserv.client.linux.User.Name.validate(username).isValid()) {
@@ -524,7 +524,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		}
 	}
 
-	// TODO: See where used, and favor direct lookup in other tables:
+	// TODO: 1.83.0: See where used, and favor direct lookup in other tables:
 	public com.aoindustries.aoserv.client.mysql.User getMySQLUser() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(com.aoindustries.aoserv.client.mysql.User.Name.validate(username).isValid()) {
@@ -548,7 +548,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		return packageObject;
 	}
 
-	// TODO: See where used, and favor direct lookup in other tables:
+	// TODO: 1.83.0: See where used, and favor direct lookup in other tables:
 	public com.aoindustries.aoserv.client.postgresql.User getPostgresUser() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(com.aoindustries.aoserv.client.postgresql.User.Name.validate(username).isValid()) {
@@ -596,7 +596,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	public boolean isUsed() throws IOException, SQLException {
 		return
 			getLinuxAccount()!=null
-			|| getBusinessAdministrator()!=null
+			|| getAdministrator()!=null
 			|| getMySQLUser()!=null
 			|| getPostgresUser()!=null
 		;
@@ -619,8 +619,8 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 		com.aoindustries.aoserv.client.linux.User la=getLinuxAccount();
 		if(la!=null) reasons.add(new CannotRemoveReason<>("Used by Linux account: "+la.getUsername().getUsername(), la));
-		Administrator ba=getBusinessAdministrator();
-		if(ba!=null) reasons.add(new CannotRemoveReason<>("Used by Business Administrator: "+ba.getUsername().getUsername(), ba));
+		Administrator ba=getAdministrator();
+		if(ba!=null) reasons.add(new CannotRemoveReason<>("Used by Administrator: "+ba.getUsername().getUsername(), ba));
 		com.aoindustries.aoserv.client.mysql.User mu=getMySQLUser();
 		if(mu!=null) reasons.add(new CannotRemoveReason<>("Used by MySQL user: "+mu.getUsername().getUsername(), mu));
 		com.aoindustries.aoserv.client.postgresql.User pu=getPostgresUser();
@@ -641,7 +641,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 	@Override
 	public void setPassword(String password) throws SQLException, IOException {
-		Administrator ba=getBusinessAdministrator();
+		Administrator ba=getAdministrator();
 		if(ba!=null) ba.setPassword(password);
 
 		com.aoindustries.aoserv.client.linux.User la=getLinuxAccount();
@@ -658,7 +658,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	public boolean canSetPassword() throws IOException, SQLException {
 		if(disable_log!=-1) return false;
 
-		Administrator ba=getBusinessAdministrator();
+		Administrator ba=getAdministrator();
 		if(ba!=null && !ba.canSetPassword()) return false;
 
 		com.aoindustries.aoserv.client.linux.User la=getLinuxAccount();

@@ -402,7 +402,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 			case COLUMN_NAME: return pkey;
 			case COLUMN_PACKAGE: return packageName;
 			case 2: return type;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

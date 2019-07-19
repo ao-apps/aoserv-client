@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -75,7 +75,7 @@ final public class AOServClientConfiguration {
 	}
 
 	/**
-	 * Gets the non-SSL local IP to connect from or <code>null</code> if not configured.
+	 * Gets the non-SSL local IP to connect from or {@code null} if not configured.
 	 */
 	static InetAddress getTcpLocalIp() throws IOException {
 		String S = getProperty("aoserv.client.tcp.local_ip");
@@ -131,7 +131,7 @@ final public class AOServClientConfiguration {
 	}
 
 	/**
-	 * Gets the SSL local IP to connect from or <code>null</code> if not configured.
+	 * Gets the SSL local IP to connect from or {@code null} if not configured.
 	 */
 	static InetAddress getSslLocalIp() throws IOException {
 		String S = getProperty("aoserv.client.ssl.local_ip");

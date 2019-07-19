@@ -138,18 +138,18 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 			case 36: return aoweb_struts_vnc_bind;
 			case 37: return aoweb_struts_keystore_type;
 			case 38: return aoweb_struts_keystore_password;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public Account.Name getBusiness_accounting() {
+	public Account.Name getAccount_name() {
 		return pkey;
 	}
 
-	public Account getBusiness() throws IOException, SQLException {
-		Account bu = table.getConnector().getAccount().getAccount().get(pkey);
-		if(bu==null) throw new SQLException("Unable to find Business: "+pkey);
-		return bu;
+	public Account getAccount() throws IOException, SQLException {
+		Account obj = table.getConnector().getAccount().getAccount().get(pkey);
+		if(obj == null) throw new SQLException("Unable to find Account: " + pkey);
+		return obj;
 	}
 
 	public DomainName getNameserver1() {
@@ -176,10 +176,10 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 
 	/**
 	 * Gets the host that should be used for SMTP.  Will use the hostname
-	 * of the SmtpLinuxServerAccount's AOServer if smtp_host is null.
+	 * of the SmtpLinuxServerAccount's {@link Server} if smtp_host is null.
 	 */
 	public HostAddress getSmtpHost() throws IOException, SQLException {
-		return smtp_host!=null ? smtp_host : HostAddress.valueOf(getSmtpLinuxServerAccount().getAOServer().getHostname());
+		return smtp_host!=null ? smtp_host : HostAddress.valueOf(getSmtpLinuxServerAccount().getServer().getHostname());
 	}
 
 	public String getSmtpPassword() {
@@ -194,10 +194,10 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 
 	/**
 	 * Gets the host that should be used for IMAP.  Will use the hostname
-	 * of the ImapLinuxServerAccount's AOServer if imap_host is null.
+	 * of the ImapLinuxServerAccount's {@link Server} if imap_host is null.
 	 */
 	public HostAddress getImapHost() throws IOException, SQLException {
-		return imap_host!=null ? imap_host : HostAddress.valueOf(getImapLinuxServerAccount().getAOServer().getHostname());
+		return imap_host!=null ? imap_host : HostAddress.valueOf(getImapLinuxServerAccount().getServer().getHostname());
 	}
 
 	public String getImapPassword() {
@@ -484,7 +484,7 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 	}
 
 	/**
-	 * Gets the Reseller for this Brand or <code>null</code> if not a reseller.
+	 * Gets the Reseller for this Brand or {@code null} if not a reseller.
 	 */
 	public Reseller getReseller() throws IOException, SQLException {
 		return table.getConnector().getReseller().getReseller().getReseller(this);
@@ -495,12 +495,12 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 	}
 
 	/**
-	 * Gets the immediate parent of this brand or <code>null</code> if none available.
+	 * Gets the immediate parent of this brand or {@code null} if none available.
 	 */
 	public Brand getParentBrand() throws IOException, SQLException {
-		Account bu = getBusiness();
+		Account bu = getAccount();
 		if(bu==null) return null;
-		Account parent = bu.getParentBusiness();
+		Account parent = bu.getParent();
 		while(parent!=null) {
 			Brand parentBrand = parent.getBrand();
 			if(parentBrand!=null) return parentBrand;

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -65,7 +65,7 @@ final public class Assignment extends CachedObjectIntegerKey<Assignment> {
 			case COLUMN_TICKET: return ticket;
 			case COLUMN_RESELLER: return reseller;
 			case COLUMN_ADMINISTRATOR: return administrator;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -81,13 +81,13 @@ final public class Assignment extends CachedObjectIntegerKey<Assignment> {
 		return r;
 	}
 
-	public Administrator getBusinessAdministrator() throws IOException, SQLException {
-		Administrator ba = table.getConnector().getAccount().getAdministrator().get(administrator);
-		if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+administrator);
-		return ba;
+	public Administrator getAdministrator() throws IOException, SQLException {
+		Administrator obj = table.getConnector().getAccount().getAdministrator().get(administrator);
+		if(obj == null) throw new SQLException("Unable to find Administrator: " + administrator);
+		return obj;
 		//Username un=table.getConnector().getUsernames().get(administrator);
 		//if(un==null) return null;
-		//return un.getBusinessAdministrator();
+		//return un.getAdministrator();
 	}
 
 	@Override

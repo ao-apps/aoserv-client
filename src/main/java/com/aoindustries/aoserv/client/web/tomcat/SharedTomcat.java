@@ -116,7 +116,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
 		for(SharedTomcatSite htss : getHttpdTomcatSharedSites()) {
 			com.aoindustries.aoserv.client.web.Site hs=htss.getHttpdTomcatSite().getHttpdSite();
-			reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), htss));
+			reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat website "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), htss));
 		}
 
 		return reasons;
@@ -135,7 +135,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	public PosixPath getInstallDirectory() throws SQLException, IOException {
 		try {
 			return PosixPath.valueOf(
-				getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
+				getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
 				+ '/' + name
 			);
 		} catch(ValidationException e) {
@@ -160,7 +160,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 			case 11: return maxPostSize==-1 ? null : maxPostSize;
 			case 12: return unpackWARs;
 			case 13: return autoDeploy;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -186,7 +186,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
 		if(
 			obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
-			!= getAOServer().getServer().getOperatingSystemVersion_id()
+			!= getLinuxServer().getHost().getOperatingSystemVersion_id()
 		) {
 			throw new SQLException("resource/operating system version mismatch on HttpdSharedTomcat: #"+pkey);
 		}
@@ -221,9 +221,9 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 		return name;
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server obj=table.getConnector().getLinux().getServer().get(ao_server);
-		if(obj==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(obj==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return obj;
 	}
 
@@ -406,7 +406,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return name+" on "+getAOServer().getHostname();
+		return name+" on "+getLinuxServer().getHostname();
 	}
 
 	@Override

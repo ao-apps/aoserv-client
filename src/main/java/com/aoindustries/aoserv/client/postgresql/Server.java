@@ -430,9 +430,9 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		return ao_server;
 	}
 
-	public com.aoindustries.aoserv.client.linux.Server getAoServer() throws SQLException, IOException {
+	public com.aoindustries.aoserv.client.linux.Server getLinuxServer() throws SQLException, IOException {
 		com.aoindustries.aoserv.client.linux.Server ao = table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao == null) throw new SQLException("Unable to find AOServer: " + ao_server);
+		if(ao == null) throw new SQLException("Unable to find linux.Server: " + ao_server);
 		return ao;
 	}
 
@@ -445,7 +445,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		if(obj==null) throw new SQLException("Unable to find PostgresVersion: "+version);
 		if(
 			obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
-			!= getAoServer().getServer().getOperatingSystemVersion_id()
+			!= getLinuxServer().getHost().getOperatingSystemVersion_id()
 		) {
 			throw new SQLException("resource/operating system version mismatch on PostgresServer: #"+pkey);
 		}
@@ -526,7 +526,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return name+" on "+getAoServer().getHostname();
+		return name+" on "+getLinuxServer().getHostname();
 	}
 
 	public int addPostgresDatabase(
@@ -548,9 +548,7 @@ final public class Server extends CachedObjectIntegerKey<Server> {
 		try {
 			return PosixPath.valueOf(DATA_BASE_DIR.toString() + '/' + name.toString());
 		} catch(ValidationException e) {
-			AssertionError ae = new AssertionError();
-			ae.initCause(e);
-			throw ae;
+			throw new AssertionError("Generated data directory should always be valid", e);
 		}
 	}
 

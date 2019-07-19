@@ -65,13 +65,13 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		return defaultOrderBy;
 	}
 
-	public void addBusiness(
+	public void addAccount(
 		final Account.Name accounting,
 		final String contractNumber,
 		final Host defaultServer,
 		final Account.Name parent,
 		final boolean canAddBackupServers,
-		final boolean canAddBusinesses,
+		final boolean canAddAccounts,
 		final boolean canSeePrices,
 		final boolean billParent
 	) throws IOException, SQLException {
@@ -90,7 +90,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 					out.writeCompressedInt(defaultServer.getPkey());
 					out.writeUTF(parent.toString());
 					out.writeBoolean(canAddBackupServers);
-					out.writeBoolean(canAddBusinesses);
+					out.writeBoolean(canAddAccounts);
 					out.writeBoolean(canSeePrices);
 					out.writeBoolean(billParent);
 				}
@@ -136,14 +136,14 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 	}
 
 	/**
-	 * Gets one <code>Business</code> from the database.
+	 * Gets one {@link Account} from the database.
 	 */
 	@Override
 	public Account get(Account.Name accounting) throws IOException, SQLException {
 		return getUniqueRow(Account.COLUMN_ACCOUNTING, accounting);
 	}
 
-	List<Account> getChildBusinesses(Account business) throws IOException, SQLException {
+	List<Account> getChildAccounts(Account business) throws IOException, SQLException {
 		Account.Name accounting=business.getName();
 
 		List<Account> cached=getRows();
@@ -167,10 +167,10 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		return rootAccounting;
 	}
 
-	public Account getRootBusiness() throws IOException, SQLException {
-		Account.Name accounting=getRootAccount_name();
-		Account bu=get(accounting);
-		if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
+	public Account getRootAccount() throws IOException, SQLException {
+		Account.Name accounting = getRootAccount_name();
+		Account bu = get(accounting);
+		if(bu == null) throw new SQLException("Unable to find Account: " + accounting);
 		return bu;
 	}
 
@@ -180,10 +180,10 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 	}
 
 	/**
-	 * Gets the list of all businesses that either have a null parent (the
-	 * actual root of the business tree) or where the parent is inaccessible.
+	 * Gets the list of all accounts that either have a null parent (the
+	 * actual root of the account tree) or where the parent is inaccessible.
 	 */
-	public List<Account> getTopLevelBusinesses() throws IOException, SQLException {
+	public List<Account> getTopLevelAccounts() throws IOException, SQLException {
 		List<Account> cached=getRows();
 		List<Account> matches=new ArrayList<>();
 		int size=cached.size();
@@ -200,7 +200,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		if(command.equalsIgnoreCase(Command.ADD_BUSINESS)) {
 			if(AOSH.checkParamCount(Command.ADD_BUSINESS, args, 8, err)) {
 				try {
-					connector.getSimpleAOClient().addBusiness(
+					connector.getSimpleAOClient().addAccount(
 						AOSH.parseAccountingCode(args[1], "accounting_code"),
 						args[2],
 						args[3],
@@ -219,7 +219,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.CANCEL_BUSINESS)) {
 			if(AOSH.checkParamCount(Command.CANCEL_BUSINESS, args, 2, err)) {
-				connector.getSimpleAOClient().cancelBusiness(
+				connector.getSimpleAOClient().cancelAccount(
 					AOSH.parseAccountingCode(args[1], "accounting_code"),
 					args[2]
 				);
@@ -240,7 +240,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 		} else if(command.equalsIgnoreCase(Command.DISABLE_BUSINESS)) {
 			if(AOSH.checkParamCount(Command.DISABLE_BUSINESS, args, 2, err)) {
 				out.println(
-					connector.getSimpleAOClient().disableBusiness(
+					connector.getSimpleAOClient().disableAccount(
 						AOSH.parseAccountingCode(args[1], "accounting"),
 						args[2]
 					)
@@ -250,7 +250,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.ENABLE_BUSINESS)) {
 			if(AOSH.checkParamCount(Command.ENABLE_BUSINESS, args, 1, err)) {
-				connector.getSimpleAOClient().enableBusiness(
+				connector.getSimpleAOClient().enableAccount(
 					AOSH.parseAccountingCode(args[1], "accounting")
 				);
 			}
@@ -267,7 +267,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.GET_ROOT_BUSINESS)) {
 			if(AOSH.checkParamCount(Command.GET_ROOT_BUSINESS, args, 0, err)) {
-				out.println(connector.getSimpleAOClient().getRootBusiness());
+				out.println(connector.getSimpleAOClient().getRootAccount());
 				out.flush();
 			}
 			return true;
@@ -289,7 +289,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.MOVE_BUSINESS)) {
 			if(AOSH.checkParamCount(Command.MOVE_BUSINESS, args, 3, err)) {
-				connector.getSimpleAOClient().moveBusiness(
+				connector.getSimpleAOClient().moveAccount(
 					AOSH.parseAccountingCode(args[1], "business"),
 					args[2],
 					args[3],
@@ -300,7 +300,7 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.SET_BUSINESS_ACCOUNTING)) {
 			if(AOSH.checkParamCount(Command.SET_BUSINESS_ACCOUNTING, args, 2, err)) {
-				connector.getSimpleAOClient().setBusinessAccounting(
+				connector.getSimpleAOClient().setAccountAccounting(
 					AOSH.parseAccountingCode(args[1], "old_accounting"),
 					AOSH.parseAccountingCode(args[2], "new_accounting")
 				);
@@ -321,36 +321,36 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 	private final Tree<Account> tree = new Tree<Account>() {
 		@Override
 		public List<Node<Account>> getRootNodes() throws IOException, SQLException {
-			List<Account> topLevelBusinesses = getTopLevelBusinesses();
-			int size = topLevelBusinesses.size();
+			List<Account> topLevelAccounts = getTopLevelAccounts();
+			int size = topLevelAccounts.size();
 			if(size==0) {
 				return Collections.emptyList();
 			} else if(size==1) {
-				Node<Account> singleNode = new BusinessTreeNode(topLevelBusinesses.get(0));
+				Node<Account> singleNode = new AccountTreeNode(topLevelAccounts.get(0));
 				return Collections.singletonList(singleNode);
 			} else {
 				List<Node<Account>> rootNodes = new ArrayList<>(size);
-				for(Account topLevelBusiness : topLevelBusinesses) rootNodes.add(new BusinessTreeNode(topLevelBusiness));
+				for(Account topLevelAccount : topLevelAccounts) rootNodes.add(new AccountTreeNode(topLevelAccount));
 				return Collections.unmodifiableList(rootNodes);
 			}
 		}
 	};
 
-	static class BusinessTreeNode implements Node<Account> {
+	static class AccountTreeNode implements Node<Account> {
 
 		private final Account business;
 
-		BusinessTreeNode(Account business) {
+		AccountTreeNode(Account business) {
 			this.business = business;
 		}
 
 		@Override
 		public List<Node<Account>> getChildren() throws IOException, SQLException {
 			// Look for any existing children
-			List<Account> children = business.getChildBusinesses();
+			List<Account> children = business.getChildAccounts();
 			int size = children.size();
 			if(size==0) {
-				if(business.canAddBusinesses()) {
+				if(business.canAddAccounts()) {
 					// Can have children but empty
 					return Collections.emptyList();
 				} else {
@@ -358,11 +358,11 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 					return null;
 				}
 			} else if(size==1) {
-				Node<Account> singleNode = new BusinessTreeNode(children.get(0));
+				Node<Account> singleNode = new AccountTreeNode(children.get(0));
 				return Collections.singletonList(singleNode);
 			} else {
 				List<Node<Account>> childNodes = new ArrayList<>(size);
-				for(Account child : children) childNodes.add(new BusinessTreeNode(child));
+				for(Account child : children) childNodes.add(new AccountTreeNode(child));
 				return Collections.unmodifiableList(childNodes);
 			}
 		}

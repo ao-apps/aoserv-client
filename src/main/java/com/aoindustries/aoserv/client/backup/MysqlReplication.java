@@ -35,7 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Represents MySQL replication for one a <code>FailoverFileReplication</code> or <code>AOServer</code>.
+ * Represents MySQL replication for one a <code>FailoverFileReplication</code> or {@link Server}.
  *
  * @author  AO Industries, Inc.
  */
@@ -72,14 +72,14 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 			case 6 : return monitoring_seconds_behind_high==-1 ? null : monitoring_seconds_behind_high;
 			case 7 : return monitoring_seconds_behind_critical==-1 ? null : monitoring_seconds_behind_critical;
 			case 8 : return maxAlertLevel.name();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public com.aoindustries.aoserv.client.linux.Server getAOServer() throws SQLException, IOException {
+	public com.aoindustries.aoserv.client.linux.Server getLinuxServer() throws SQLException, IOException {
 		if(ao_server==-1) return null;
 		com.aoindustries.aoserv.client.linux.Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return ao;
 	}
 
@@ -156,7 +156,7 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 
 	@Override
 	public String toStringImpl() throws IOException, SQLException {
-		if(ao_server!=-1) return getMySQLServer().toStringImpl()+"->"+getAOServer().toStringImpl();
+		if(ao_server!=-1) return getMySQLServer().toStringImpl()+"->"+getLinuxServer().toStringImpl();
 		else return getMySQLServer().toStringImpl()+"->"+getFailoverFileReplication().toStringImpl();
 	}
 
@@ -284,7 +284,7 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 	}
 
 	/**
-	 * Gets the slave status or <code>null</code> if no slave status provided by MySQL.  If any error occurs, throws either
+	 * Gets the slave status or {@code null} if no slave status provided by MySQL.  If any error occurs, throws either
 	 * IOException or SQLException.
 	 */
 	public SlaveStatus getSlaveStatus() throws IOException, SQLException {

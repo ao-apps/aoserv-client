@@ -136,7 +136,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 		if(i == COLUMN_HTTPD_SITE) return pkey;
 		if(i == 1) return version;
 		if(i == 2) return blockWebinf;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public com.aoindustries.aoserv.client.web.jboss.Site getHttpdJBossSite() throws SQLException, IOException {
@@ -170,7 +170,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 		if(obj==null) throw new SQLException("Unable to find HttpdTomcatVersion: "+version);
 		if(
 			obj.getTechnologyVersion(table.getConnector()).getOperatingSystemVersion(table.getConnector()).getPkey()
-			!= getHttpdSite().getAoServer().getServer().getOperatingSystemVersion_id()
+			!= getHttpdSite().getLinuxServer().getHost().getOperatingSystemVersion_id()
 		) {
 			throw new SQLException("resource/operating system version mismatch on HttpdTomcatSite: #"+pkey);
 		}

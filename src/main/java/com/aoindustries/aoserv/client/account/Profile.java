@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Contact information associated with a <code>Business</code>.
+ * Contact information associated with an {@link Account}.
  *
  * @author  AO Industries, Inc.
  */
@@ -119,14 +119,14 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return billingEmailFormat;
 	}
 
-	public Account.Name getBusiness_accounting() {
+	public Account.Name getAccount_name() {
 		return accounting;
 	}
 
-	public Account getBusiness() throws SQLException, IOException {
-		Account business=table.getConnector().getAccount().getAccount().get(accounting);
-		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
-		return business;
+	public Account getAccount() throws SQLException, IOException {
+		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+		if (obj == null) throw new SQLException("Unable to find Account: " + accounting);
+		return obj;
 	}
 
 	public String getCity() {

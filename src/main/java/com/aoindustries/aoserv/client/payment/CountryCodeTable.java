@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -65,11 +65,11 @@ final public class CountryCodeTable extends GlobalTableStringKey<CountryCode> {
 		Map<String,int[]> counts = new HashMap<>();
 
 		// Add the business_profiles
-		Set<Account.Name> finishedBusinesses=new HashSet<>();
+		Set<Account.Name> finishedAccounts=new HashSet<>();
 		for(Profile profile : connector.getAccount().getProfile().getRows()) {
-			Account.Name accounting = profile.getBusiness_accounting();
-			if(!finishedBusinesses.contains(accounting)) {
-				finishedBusinesses.add(accounting);
+			Account.Name accounting = profile.getAccount_name();
+			if(!finishedAccounts.contains(accounting)) {
+				finishedAccounts.add(accounting);
 				String code = profile.getCountry_code();
 				int[] counter = counts.get(code);
 				if(counter == null) counts.put(code, counter = new int[1]);

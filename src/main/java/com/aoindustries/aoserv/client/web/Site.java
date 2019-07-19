@@ -139,7 +139,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 			case 19: return blockScm;
 			case 20: return blockCoreDumps;
 			case 21: return blockEditorBackups;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -151,9 +151,9 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		return ao_server;
 	}
 
-	public Server getAoServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server obj = table.getConnector().getLinux().getServer().get(ao_server);
-		if(obj == null) throw new SQLException("Unable to find AOServer: " + ao_server);
+		if(obj == null) throw new SQLException("Unable to find linux.Server: " + ao_server);
 		return obj;
 	}
 
@@ -184,7 +184,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		User obj = table.getConnector().getLinux().getUser().get(linuxAccount);
 		if(obj == null) return null;
 
-		UserServer lsa = obj.getLinuxServerAccount(getAoServer());
+		UserServer lsa = obj.getLinuxServerAccount(getLinuxServer());
 		if(lsa == null) throw new SQLException("Unable to find LinuxServerAccount: "+linuxAccount+" on "+ao_server);
 		return lsa;
 	}
@@ -196,7 +196,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	public GroupServer getLinuxServerGroup() throws SQLException, IOException {
 		Group obj = table.getConnector().getLinux().getGroup().get(linuxGroup);
 		if(obj == null) throw new SQLException("Unable to find LinuxGroup: "+linuxGroup);
-		GroupServer lsg = obj.getLinuxServerGroup(getAoServer());
+		GroupServer lsg = obj.getLinuxServerGroup(getLinuxServer());
 		if(lsg == null) throw new SQLException("Unable to find LinuxServerGroup: "+linuxGroup+" on "+ao_server);
 		return lsg;
 	}
@@ -236,7 +236,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 		if(!tv.getTechnologyName_name().equals(Software.PHP)) throw new SQLException("Not a PHP version: " + tv.getTechnologyName_name() + " #" + tv.getPkey());
 		if(
 			tv.getOperatingSystemVersion(table.getConnector()).getPkey()
-			!= getAoServer().getServer().getOperatingSystemVersion_id()
+			!= getLinuxServer().getHost().getOperatingSystemVersion_id()
 		) {
 			throw new SQLException("php/operating system version mismatch on HttpdSite: #" + pkey);
 		}
@@ -479,7 +479,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	public PosixPath getInstallDirectory() throws SQLException, IOException {
 		try {
 			return PosixPath.valueOf(
-				getAoServer().getServer().getOperatingSystemVersion().getHttpdSitesDirectory()
+				getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSitesDirectory()
 				+ "/" + name
 			);
 		} catch(ValidationException e) {
@@ -720,7 +720,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return name+" on "+getAoServer().getHostname();
+		return name+" on "+getLinuxServer().getHostname();
 	}
 
 	public void getAWStatsFile(final String path, final String queryString, final OutputStream out) throws IOException, SQLException {

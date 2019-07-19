@@ -143,7 +143,7 @@ final public class UserType extends GlobalObjectStringKey<UserType> {
 		if(i==COLUMN_NAME) return pkey;
 		if(i==1) return description;
 		if(i==2) return is_email;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public String getDescription() {

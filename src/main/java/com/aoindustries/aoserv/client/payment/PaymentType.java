@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,7 +34,7 @@ import java.sql.SQLException;
 /**
  * The system can process several different <code>PaymentType</code>s.
  * Once processed, the amount paid is subtracted from the
- * <code>Business</code>' account as a new <code>Transaction</code>.
+ * {@link Account account's} balance as a new <code>Transaction</code>.
  *
  * @author  AO Industries, Inc.
  */
@@ -75,7 +75,7 @@ final public class PaymentType extends GlobalObjectStringKey<PaymentType> {
 		if(i==1) return description;
 		if(i==2) return isActive;
 		if(i==3) return allowWeb;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public String getDescription() {

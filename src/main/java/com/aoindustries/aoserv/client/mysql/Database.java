@@ -96,7 +96,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be between 1 and 64 characters</li>
 	 *   <li>Characters may contain <code>[a-z,A-Z,0-9,_,-,.,(space)]</code></li>
 	 * </ul>
-	 * TODO: What to do for JDBC URLs with space?
+	 * TODO: 1.83.0: What to do for JDBC URLs with space?
 	 *
 	 * @author  AO Industries, Inc.
 	 */
@@ -459,13 +459,13 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			case COLUMN_MYSQL_SERVER: return mysql_server;
 			case COLUMN_PACKAGE: return packageName;
 			case 4 : return maxCheckTableAlertLevel.name();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
 	@Override
 	public String getJdbcDriver() throws SQLException, IOException {
-		int osv = getMySQLServer().getAoServer().getServer().getOperatingSystemVersion_id();
+		int osv = getMySQLServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
 		switch(osv) {
 			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
 				return MANDRAKE_JDBC_DRIVER;
@@ -482,7 +482,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	@Override
 	public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
 		Server ms = getMySQLServer();
-		com.aoindustries.aoserv.client.linux.Server ao = ms.getAoServer();
+		com.aoindustries.aoserv.client.linux.Server ao = ms.getLinuxServer();
 		StringBuilder jdbcUrl = new StringBuilder();
 		jdbcUrl.append("jdbc:mysql://");
 		Bind nb = ms.getBind();
@@ -490,7 +490,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		InetAddress ia = ip.getInetAddress();
 		if(ipOnly) {
 			if(ia.isUnspecified()) {
-				jdbcUrl.append(ao.getServer().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
+				jdbcUrl.append(ao.getHost().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
 			} else {
 				jdbcUrl.append(ia.toBracketedString());
 			}
@@ -518,7 +518,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
-		int osv = getMySQLServer().getAoServer().getServer().getOperatingSystemVersion_id();
+		int osv = getMySQLServer().getLinuxServer().getHost().getOperatingSystemVersion_id();
 		switch(osv) {
 			case OperatingSystemVersion.MANDRIVA_2006_0_I586 :
 				return MANDRAKE_JDBC_DOCUMENTATION_URL;
@@ -619,7 +619,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 						+ " on "
 						+ ms.getName()
 						+ " on "
-						+ ms.getAoServer().getHostname(),
+						+ ms.getLinuxServer().getHostname(),
 					this
 				)
 			);

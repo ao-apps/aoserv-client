@@ -151,7 +151,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 			case 13: return state;
 			case 14: return getCommand();
 			case 15: return getStateStartTime();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -171,23 +171,23 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		return connector_id;
 	}
 
-	public User.Name getAuthenticatedUser() {
+	public User.Name getAuthenticatedAdministrator_username() {
 		return authenticated_user;
 	}
 
-	public Administrator getAuthenticatedBusinessAdministrator() throws IOException, SQLException {
+	public Administrator getAuthenticatedAdministrator() throws IOException, SQLException {
 		// Null OK when filtered
 		return table.getConnector().getAccount().getAdministrator().get(authenticated_user);
 	}
 
-	public User.Name getEffectiveUser() {
+	public User.Name getEffectiveAdministrator_username() {
 		return effective_user;
 	}
 
-	public Administrator getEffectiveBusinessAdministrator() throws SQLException, IOException {
-		Administrator ba=table.getConnector().getAccount().getAdministrator().get(effective_user);
-		if(ba==null) throw new SQLException("Unable to find BusinessAdministrator: "+effective_user);
-		return ba;
+	public Administrator getEffectiveAdministrator() throws SQLException, IOException {
+		Administrator obj = table.getConnector().getAccount().getAdministrator().get(effective_user);
+		if(obj == null) throw new SQLException("Unable to find Administrator: " + effective_user);
+		return obj;
 	}
 
 	public InetAddress getHost() {
@@ -241,7 +241,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	 * @return  the <code>AOServTable</code>.
 	 */
 	@Override
-	final public AOServTable<Long,Process> getTable() {
+	public AOServTable<Long,Process> getTable() {
 		return table;
 	}
 

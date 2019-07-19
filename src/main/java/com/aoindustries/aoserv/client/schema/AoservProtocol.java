@@ -299,8 +299,10 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 		GENERATE_POSTGRES_DATABASE_NAME,
 		GENERATE_SHARED_TOMCAT_NAME,
 		GENERATE_SITE_NAME,
-		GET_ACCOUNT_BALANCE_BEFORE,
-		GET_ACCOUNT_BALANCE,
+		@Deprecated
+		GET_ACCOUNT_BALANCE_BEFORE, // Protocol compatibility
+		@Deprecated
+		GET_ACCOUNT_BALANCE, // Protocol compatibility
 		@Deprecated
 		UNUSED_GET_ACTIONS_TICKET, // No longer used
 		GET_AUTORESPONDER_CONTENT,
@@ -314,8 +316,10 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 		GET_BACKUP_PARTITION_DISK_USED_SIZE,
 		GET_BANK_TRANSACTIONS_ACCOUNT,
 		GET_CACHED_ROW_COUNT,
-		GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE,
-		GET_CONFIRMED_ACCOUNT_BALANCE,
+		@Deprecated
+		GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, // Protocol compatibility
+		@Deprecated
+		GET_CONFIRMED_ACCOUNT_BALANCE, // Protocol compatibility
 		GET_CRON_TABLE,
 		GET_EMAIL_LIST_ADDRESS_LIST,
 		@Deprecated
@@ -335,15 +339,18 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 		GET_MAJORDOMO_INFO_FILE,
 		GET_MAJORDOMO_INTRO_FILE,
 		GET_MRTG_FILE,
-		GET_PENDING_PAYMENTS,
+		@Deprecated
+		UNUSED_GET_PENDING_PAYMENTS, // No longer used
 		GET_ROOT_BUSINESS,
 		GET_SPAM_EMAIL_MESSAGES_FOR_EMAIL_SMTP_RELAY,
 		@Deprecated
 		UNUSED_GET_TICKETS_BUSINESS_ADMINISTRATOR, // No longer used
 		@Deprecated
 		UNUSED_GET_TICKETS_BUSINESS, // No longer used
-		GET_TRANSACTIONS_BUSINESS,
-		GET_TRANSACTIONS_SEARCH,
+		@Deprecated
+		GET_TRANSACTIONS_BUSINESS, // Protocol compatibility
+		@Deprecated
+		GET_TRANSACTIONS_SEARCH, // Protocol compatibility
 		@Deprecated
 		UNUSED_HOLD_TICKET, // No longer used
 		@Deprecated
@@ -469,7 +476,8 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 		UNUSED_REMOVE_EXPIRED_INTERBASE_BACKUPS, // No longer used
 		@Deprecated
 		UNUSED_SET_INTERBASE_SERVER_USER_PREDISABLE_PASSWORD, // No longer used
-		GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR,
+		@Deprecated
+		GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, // Protocol compatibility
 		@Deprecated
 		UNUSED_GET_ACTIONS_BUSINESS_ADMINISTRATOR, // No longer used
 		@Deprecated
@@ -616,7 +624,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 			case 1: return getCreated();
 			case 2: return comments;
 			case 3: return getLastUsed();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

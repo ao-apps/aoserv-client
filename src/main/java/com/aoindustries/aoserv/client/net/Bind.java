@@ -134,9 +134,9 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		return server;
 	}
 
-	public Host getServer() throws SQLException, IOException {
+	public Host getHost() throws SQLException, IOException {
 		Host obj=table.getConnector().getNet().getHost().get(server);
-		if(obj==null) throw new SQLException("Unable to find Server: "+server);
+		if(obj==null) throw new SQLException("Unable to find Host: "+server);
 		return obj;
 	}
 
@@ -259,7 +259,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 
 	@Override
 	public String toStringImpl() throws IOException, SQLException {
-		return getServer().toStringImpl() + "|" + getIpAddress().toStringImpl() + "|" + getPort();
+		return getHost().toStringImpl() + "|" + getIpAddress().toStringImpl() + "|" + getPort();
 	}
 
 	public String getDetails() throws SQLException, IOException {
@@ -277,7 +277,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 			CyrusImapdServer ciServer = cib.getCyrusImapdServer();
 			DomainName servername = cib.getServername();
 			if(servername == null) servername = ciServer.getServername();
-			if(servername == null || servername.equals(ciServer.getAOServer().getHostname())) {
+			if(servername == null || servername.equals(ciServer.getLinuxServer().getHostname())) {
 				return "Cyrus IMAPD";
 			} else {
 				return "Cyrus IMAPD @ " + servername;
@@ -287,7 +287,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		CyrusImapdServer cis = getCyrusImapdServerBySieveNetBind();
 		if(cis != null) {
 			DomainName servername = cis.getServername();
-			if(servername == null || servername.equals(cis.getAOServer().getHostname())) {
+			if(servername == null || servername.equals(cis.getLinuxServer().getHostname())) {
 				return "Cyrus IMAPD";
 			} else {
 				return "Cyrus IMAPD @ " + servername;
@@ -342,7 +342,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		if(hb!=null) {
 			HttpdServer hs=hb.getHttpdServer();
 			String name = hs.getName();
-			OperatingSystemVersion osv = hs.getAOServer().getServer().getOperatingSystemVersion();
+			OperatingSystemVersion osv = hs.getLinuxServer().getHost().getOperatingSystemVersion();
 			int osvId = osv.getPkey();
 			if(osvId == OperatingSystemVersion.CENTOS_5_I686_AND_X86_64) {
 				int number = (name == null) ? 1 : Integer.parseInt(name);
@@ -424,7 +424,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		if(sb != null) {
 			SendmailServer ss = sb.getSendmailServer();
 			DomainName hostname = ss.getHostname();
-			if(hostname == null || hostname.equals(ss.getAoServer().getHostname())) {
+			if(hostname == null || hostname.equals(ss.getLinuxServer().getHostname())) {
 				String name = ss.getName();
 				if(name == null) {
 					return "Sendmail";
@@ -708,8 +708,8 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 				reasons.add(
 					new CannotRemoveReason<>(
 						name==null
-							? "Used by Apache HTTP Server on " + hs.getAOServer().getHostname()
-							: "Used by Apache HTTP Server (" + name + ") on " + hs.getAOServer().getHostname(),
+							? "Used by Apache HTTP Server on " + hs.getLinuxServer().getHostname()
+							: "Used by Apache HTTP Server (" + name + ") on " + hs.getLinuxServer().getHostname(),
 						hb
 					)
 				);
@@ -719,45 +719,45 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		// httpd_jboss_sites
 		for(com.aoindustries.aoserv.client.web.jboss.Site hjb : conn.getWeb_jboss().getSite().getRows()) {
 			Site hs=hjb.getHttpdTomcatSite().getHttpdSite();
-			if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
-			if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
-			if(equals(hjb.getRmiBind())) reasons.add(new CannotRemoveReason<>("Used as RMI port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
-			if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
-			if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hjb));
+			if(equals(hjb.getJnpBind())) reasons.add(new CannotRemoveReason<>("Used as JNP port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), hjb));
+			if(equals(hjb.getWebserverBind())) reasons.add(new CannotRemoveReason<>("Used as Webserver port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), hjb));
+			if(equals(hjb.getRmiBind())) reasons.add(new CannotRemoveReason<>("Used as RMI port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), hjb));
+			if(equals(hjb.getHypersonicBind())) reasons.add(new CannotRemoveReason<>("Used as Hypersonic port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), hjb));
+			if(equals(hjb.getJmxBind())) reasons.add(new CannotRemoveReason<>("Used as JMX port for JBoss site "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), hjb));
 		}
 
 		// httpd_shared_tomcats
 		for(SharedTomcat hst : conn.getWeb_tomcat().getSharedTomcat().getRows()) {
-			if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+			if(equals(hst.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getLinuxServer().getHostname(), hst));
 		}
 
 		// httpd_tomcat_std_sites
 		for(PrivateTomcatSite hts : conn.getWeb_tomcat().getPrivateTomcatSite().getRows()) {
 			Site hs=hts.getHttpdTomcatSite().getHttpdSite();
-			if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hts));
+			if(equals(hts.getTomcat4ShutdownPort())) reasons.add(new CannotRemoveReason<>("Used as shutdown port for Single-Site Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), hts));
 		}
 
 		// httpd_workers
 		for(Worker hw : conn.getWeb_tomcat().getWorker().getRows()) {
 			if(equals(hw.getBind())) {
 				SharedTomcat hst=hw.getHttpdSharedTomcat();
-				if(hst!=null) reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+				if(hst!=null) reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getLinuxServer().getHostname(), hst));
 
 				com.aoindustries.aoserv.client.web.tomcat.Site hts=hw.getTomcatSite();
 				if(hts!=null) {
 					Site hs=hts.getHttpdSite();
-					reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getAoServer().getHostname(), hts));
+					reasons.add(new CannotRemoveReason<>("Used as mod_jk worker for Tomcat JVM "+hs.getInstallDirectory()+" on "+hs.getLinuxServer().getHostname(), hts));
 				}
 			}
 		}
 
 		// mysql_servers
 		com.aoindustries.aoserv.client.mysql.Server ms = getMySQLServer();
-		if(ms != null) reasons.add(new CannotRemoveReason<>("Used for MySQL server "+ms.getName()+" on "+ms.getAoServer().getHostname(), ms));
+		if(ms != null) reasons.add(new CannotRemoveReason<>("Used for MySQL server "+ms.getName()+" on "+ms.getLinuxServer().getHostname(), ms));
 
 		// postgres_servers
 		com.aoindustries.aoserv.client.postgresql.Server ps = getPostgresServer();
-		if(ps != null) reasons.add(new CannotRemoveReason<>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getAoServer().getHostname(), ps));
+		if(ps != null) reasons.add(new CannotRemoveReason<>("Used for PostgreSQL server "+ps.getName()+" on "+ps.getLinuxServer().getHostname(), ps));
 
 		return reasons;
 	}

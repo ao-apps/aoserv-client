@@ -62,7 +62,7 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 		if(i==COLUMN_PKEY) return pkey;
 		if(i==COLUMN_EMAIL_ADDRESS) return email_address;
 		if(i==2) return email_pipe;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public Address getEmailAddress() throws SQLException, IOException {
@@ -97,8 +97,8 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 	}
 
 	@Override
-	public List<CannotRemoveReason<MajordomoList>> getCannotRemoveReasons() throws SQLException, IOException {
-		List<CannotRemoveReason<MajordomoList>> reasons=new ArrayList<>();
+	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
+		List<CannotRemoveReason<?>> reasons = new ArrayList<>();
 
 		// Cannot be used as any part of a majordomo list
 		for(MajordomoList ml : table.getConnector().getEmail().getMajordomoList().getRows()) {
@@ -107,15 +107,15 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 				|| ml.getListRequestPipeAddress().getPkey()==pkey
 			) {
 				Domain ed=ml.getMajordomoServer().getDomain();
-				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ml));
 			}
 		}
 
 		// Cannot be used as any part of a majordomo server
 		for(MajordomoServer ms : table.getConnector().getEmail().getMajordomoServer().getRows()) {
 			if(ms.getMajordomoPipeAddress().getPkey()==pkey) {
-				Domain ed=ms.getDomain();
-				reasons.add(new CannotRemoveReason("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname()));
+				Domain ed = ms.getDomain();
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
 			}
 		}
 

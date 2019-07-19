@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -77,7 +77,7 @@ final public class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
 		return getUniqueRow(Forwarding.COLUMN_PKEY, pkey);
 	}
 
-	public List<Forwarding> getEmailForwarding(Account business) throws SQLException, IOException {
+	public List<Forwarding> getEmailForwarding(Account account) throws SQLException, IOException {
 		List<Forwarding> cached = getRows();
 		int len = cached.size();
 		List<Forwarding> matches=new ArrayList<>(len);
@@ -87,8 +87,8 @@ final public class ForwardingTable extends CachedTableIntegerKey<Forwarding> {
 				.getEmailAddress()
 				.getDomain()
 				.getPackage()
-				.getBusiness()
-				.equals(business)
+				.getAccount_name()
+				.equals(account.getName())
 			) matches.add(forward);
 		}
 		return matches;

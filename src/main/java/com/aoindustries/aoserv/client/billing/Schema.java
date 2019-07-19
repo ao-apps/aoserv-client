@@ -43,6 +43,9 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 	private final NoticeLogTable NoticeLog;
 	public NoticeLogTable getNoticeLog() {return NoticeLog;}
 
+	private final NoticeLogBalanceTable NoticeLogBalance;
+	public NoticeLogBalanceTable getNoticeLogBalance() {return NoticeLogBalance;}
+
 	private final NoticeTypeTable NoticeType;
 	public NoticeTypeTable getNoticeType() {return NoticeType;}
 
@@ -82,6 +85,7 @@ public class Schema extends com.aoindustries.aoserv.client.Schema {
 		newTables.add(Currency = new CurrencyTable(connector));
 		newTables.add(MonthlyCharge = new MonthlyChargeTable(connector));
 		newTables.add(NoticeLog = new NoticeLogTable(connector));
+		newTables.add(NoticeLogBalance = new NoticeLogBalanceTable(connector));
 		newTables.add(NoticeType = new NoticeTypeTable(connector));
 		newTables.add(Package = new PackageTable(connector));
 		newTables.add(PackageCategory = new PackageCategoryTable(connector));

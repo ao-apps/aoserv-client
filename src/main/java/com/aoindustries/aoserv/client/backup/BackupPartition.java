@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -61,7 +61,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 			case 2: return path;
 			case 3: return enabled;
 			case 4: return quota_enabled;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -73,9 +73,9 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 		return table.getConnector().requestLongQuery(true, AoservProtocol.CommandID.GET_BACKUP_PARTITION_DISK_USED_SIZE, pkey);
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return ao;
 	}
 
@@ -90,7 +90,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return getAOServer().getHostname()+":"+path;
+		return getLinuxServer().getHostname()+":"+path;
 	}
 
 	@Override

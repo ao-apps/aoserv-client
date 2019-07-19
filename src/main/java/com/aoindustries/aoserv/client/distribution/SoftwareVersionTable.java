@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -119,11 +119,11 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 	/**
 	 * Searches the list of all technologies (names, versions, and classes) in the database.
 	 *
-	 * @param  name     if not <code>null</code> only the technologies that have every word in their name are selected
+	 * @param  name     if not {@code null} only the technologies that have every word in their name are selected
 	 * @param  classes  a <code>ArrayList</code> of <code>TechnologyClass</code>es.
 	 *                  Only the technologies that have any class are selected.
 	 *                  If empty, all are selected.
-	 * @param  version  if not <code>null</code> only the technologies that have every word in their version are selected
+	 * @param  version  if not {@code null} only the technologies that have every word in their version are selected
 	 * @param  orderBy  the column that the results will be ordered by
 	 *
 	 * @return  a <code>TechnologyVersion[]</code> of all the matches

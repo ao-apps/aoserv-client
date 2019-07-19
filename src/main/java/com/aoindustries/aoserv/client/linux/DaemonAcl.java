@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * A limited number of hosts may connect to a <code>AOServer</code>'s daemon,
+ * A limited number of hosts may connect to a {@link Server server's} daemon,
  * each is configured as an <code>AOServerDaemonHost</code>.
  *
  * @see  Server
@@ -61,7 +61,7 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_AO_SERVER: return aoServer;
 			case 2: return host;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -69,9 +69,9 @@ public final class DaemonAcl extends CachedObjectIntegerKey<DaemonAcl>
 		return host;
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getServer() throws SQLException, IOException {
 		Server ao=table.getConnector().getLinux().getServer().get(aoServer);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+aoServer);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: "+aoServer);
 		return ao;
 	}
 

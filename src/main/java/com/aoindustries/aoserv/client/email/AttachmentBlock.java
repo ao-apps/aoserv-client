@@ -62,7 +62,7 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
 			case 2: return extension;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

@@ -580,7 +580,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			case 6: return shell;
 			case 7: return getCreated();
 			case 8: return disable_log==-1?null:disable_log;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -692,7 +692,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 				SharedTomcat hst=hsts.get(c);
 				dirs.add(
 					PosixPath.valueOf(
-						hst.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
+						hst.getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
 						+ '/' + hst.getName()
 					)
 				);

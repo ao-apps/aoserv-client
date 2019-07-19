@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008, 2009, 2014, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2008, 2009, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -71,7 +71,7 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 			case 7 : return weightTarget;
 			case 8 : return verifyDayOfWeek;
 			case 9 : return verifyHourOfDay;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -218,7 +218,7 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	 *
 	 * User must have control_virtual_server permissions on this server.
 	 * 
-	 * @see  BusinessServer#canControlVirtualServer()
+	 * @see  AccountHost#canControlVirtualServer()
 	 * 
 	 * @return  The time the verification began, which may be in the past if a verification was already in progress
 	 */

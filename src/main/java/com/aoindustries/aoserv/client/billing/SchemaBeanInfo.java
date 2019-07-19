@@ -41,6 +41,7 @@ public class SchemaBeanInfo extends SimpleBeanInfo {
 					new PropertyDescriptor("Currency", Schema.class, "getCurrency", null),
 					new PropertyDescriptor("MonthlyCharge", Schema.class, "getMonthlyCharge", null),
 					new PropertyDescriptor("NoticeLog", Schema.class, "getNoticeLog", null),
+					new PropertyDescriptor("NoticeLog.balance", Schema.class, "getNoticeLogBalance", null),
 					new PropertyDescriptor("NoticeType", Schema.class, "getNoticeType", null),
 					new PropertyDescriptor("Package", Schema.class, "getPackage", null),
 					new PropertyDescriptor("PackageCategory", Schema.class, "getPackageCategory", null),

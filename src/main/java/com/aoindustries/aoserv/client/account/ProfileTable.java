@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,7 +60,7 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 		return defaultOrderBy;
 	}
 
-	int addBusinessProfile(
+	int addProfile(
 		final Account business,
 		final String name,
 		final boolean isPrivate,
@@ -152,22 +152,22 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 	}
 
 	/**
-	 * Gets the highest priority  <code>BusinessProfile</code> for
-	 * the provided <code>Business</code>.
+	 * Gets the highest priority {@link Profile} for
+	 * the provided {@link Account}.
 	 */
-	Profile getBusinessProfile(Account business) throws IOException, SQLException {
-		Account.Name accounting=business.getName();
+	Profile getProfile(Account account) throws IOException, SQLException {
+		Account.Name account_name = account.getName();
 		List<Profile> cached=getRows();
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			Profile profile=cached.get(c);
 			// Return first found because sorted highest priority first
-			if(profile.accounting.equals(accounting)) return profile;
+			if(profile.accounting.equals(account_name)) return profile;
 		}
 		return null;
 	}
 
-	List<Profile> getBusinessProfiles(Account business) throws IOException, SQLException {
+	List<Profile> getProfiles(Account business) throws IOException, SQLException {
 		return getIndexedRows(Profile.COLUMN_ACCOUNTING, business.getName());
 	}
 
@@ -183,7 +183,7 @@ final public class ProfileTable extends CachedTableIntegerKey<Profile> {
 			if(AOSH.checkParamCount(Command.ADD_BUSINESS_PROFILE, args, 18, err)) {
 				try {
 					out.println(
-						connector.getSimpleAOClient().addBusinessProfile(
+						connector.getSimpleAOClient().addProfile(
 							AOSH.parseAccountingCode(args[1], "business"),
 							args[2],
 							AOSH.parseBoolean(args[3], "is_secure"),

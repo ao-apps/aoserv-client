@@ -180,9 +180,9 @@ final public class CreditCardTable extends CachedTableIntegerKey<CreditCard> {
 	/**
 	 * Gets the active credit card with the highest priority for a business.
 	 *
-	 * @param  business  the <code>Business</code>
+	 * @param  business  the {@link Account}
 	 *
-	 * @return  the <code>CreditCard</code> or <code>null</code> if none found
+	 * @return  the <code>CreditCard</code> or {@code null} if none found
 	 */
 	public CreditCard getMonthlyCreditCard(Account business) throws IOException, SQLException {
 		Account.Name accounting = business.getName();

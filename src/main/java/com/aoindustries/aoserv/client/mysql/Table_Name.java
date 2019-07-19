@@ -64,6 +64,7 @@ final public class Table_Name implements
 	/**
 	 * Validates a MySQL table name.
 	 */
+	// TODO: Add other characters allowed in Database.Name, such as space
 	public static ValidationResult validate(String name) {
 		if(name==null) return new InvalidResult(accessor, "Table.Name.validate.isNull");
 		int len = name.length();

@@ -71,7 +71,7 @@ final public class ContextParameter extends CachedObjectIntegerKey<ContextParame
 			case 3: return value;
 			case 4: return override;
 			case 5: return description;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -61,7 +61,7 @@ final public class SetTable extends CachedTableIntegerKey<Set> {
 	}
 
 	/*
-	List<IpReputationSet> getIpReputationSets(Business bu) throws IOException, SQLException {
+	List<IpReputationSet> getIpReputationSets(Account bu) throws IOException, SQLException {
 		return getIndexedRows(IpReputationSet.COLUMN_ACCOUNTING, bu.getAccounting());
 	}
 	 */

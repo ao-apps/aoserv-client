@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -46,9 +46,9 @@ final public class Permission extends GlobalObjectStringKey<Permission> {
 	 * The possible permissions.
 	 */
 	public enum Name {
-		// business_administrators
+		// administrators
 		set_business_administrator_password,
-		// businesses
+		// accounts
 		cancel_business,
 		// credit_card_processors
 		get_credit_card_processors,
@@ -100,7 +100,7 @@ final public class Permission extends GlobalObjectStringKey<Permission> {
 		switch(i) {
 			case COLUMN_NAME: return pkey;
 			case 1: return sort_order;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

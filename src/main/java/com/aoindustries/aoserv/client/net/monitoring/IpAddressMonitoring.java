@@ -80,7 +80,7 @@ final public class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
 	}
 
 	/**
-	 * When the IP address is assigned to an AOServer, blacklist status
+	 * When the IP address is assigned to a {@link Server}, blacklist status
 	 * may be further determined by making SMTP connections out from the
 	 * server point of view.  This allows the detection of blocks by some
 	 * providers that give no other way to query, such as Comcast and the

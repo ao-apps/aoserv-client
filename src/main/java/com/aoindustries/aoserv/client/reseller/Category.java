@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -63,12 +63,12 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_PARENT: return parent==-1 ? null : parent;
 			case COLUMN_NAME: return name;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
 	/**
-	 * Gets the parent category or <code>null</code> if this is a top-level category.
+	 * Gets the parent category or {@code null} if this is a top-level category.
 	 */
 	public Category getParent() throws IOException, SQLException {
 		if(parent==-1) return null;

@@ -23,9 +23,7 @@
 package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
-import com.aoindustries.aoserv.client.SingleTableObject;
+import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.User;
@@ -36,17 +34,21 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.math.SafeMath;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
+import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
 /**
- * Each <code>Business</code> has an account of all the
+ * Each {@link Account} has an account of all the
  * charges and payments processed.  Each entry in this
  * account is a <code>Transaction</code>.
  *
@@ -54,17 +56,16 @@ import java.sql.Timestamp;
  *
  * @author  AO Industries, Inc.
  */
-final public class Transaction extends AOServObject<Integer,Transaction> implements SingleTableObject<Integer,Transaction> {
+final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 
 	static final int
-		COLUMN_TRANSID=1,
-		COLUMN_ACCOUNTING=2
+		COLUMN_TRANSID = 1,
+		COLUMN_ACCOUNTING = 2,
+		COLUMN_ADMINISTRATOR = 4
 	;
 	static final String COLUMN_TIME_name = "time";
 	static final String COLUMN_TRANSID_name = "transid";
 	static final String COLUMN_SOURCE_ACCOUNTING_name = "source_accounting";
-
-	protected AOServTable<Integer,Transaction> table;
 
 	/**
 	 * Represents not being assigned for a field of the <code>int</code> type.
@@ -72,7 +73,6 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	public static final int UNASSIGNED = -1;
 
 	private long time;
-	private int transid;
 	private Account.Name accounting;
 	private Account.Name source_accounting;
 	private User.Name username;
@@ -84,10 +84,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	 */
 	private int quantity;
 
-	/**
-	 * The rate in pennies.
-	 */
-	private int rate;
+	private Money rate;
 
 	private String payment_type, payment_info, processor;
 	private int creditCardTransaction;
@@ -100,9 +97,12 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	/**
 	 * The text to display for different confirmation statuses.
 	 */
-	private static final String[] paymentConfirmationLabels = { "Waiting", "Confirmed", "Failed" };
+	private static final String[] paymentConfirmedLabels = { "Waiting", "Confirmed", "Failed" };
 
-	public static final int NUM_PAYMENT_CONFIRMATION_STATES=3;
+	public static final int NUM_PAYMENT_CONFIRMATION_STATES = 3;
+	static {
+		assert paymentConfirmedLabels.length == NUM_PAYMENT_CONFIRMATION_STATES;
+	}
 
 	private byte payment_confirmed;
 
@@ -118,7 +118,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(transid);
+					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(creditCardTransaction);
 					out.writeNullUTF(paymentInfo);
 				}
@@ -163,7 +163,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(transid);
+					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(creditCardTransaction);
 					out.writeNullUTF(paymentInfo);
 				}
@@ -208,7 +208,7 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
-					out.writeCompressedInt(transid);
+					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(creditCardTransaction);
 					out.writeNullUTF(paymentInfo);
 				}
@@ -241,56 +241,60 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		held(creditCardTransaction, null);
 	}
 
-	@Override
-	public boolean equals(Object O) {
-		return
-			O instanceof Transaction
-			&& ((Transaction)O).transid==transid
-		;
-	}
-
 	/**
-	 * @deprecated  Please directly access via <code>getCreditCardTransaction()</code>.
-	 *              Beware that <code>getCreditCardTransaction()</code> might return <code>null</code>.
+	 * @deprecated  Please directly access via {@link #getPayment()}.
+	 *              Beware that {@link #getPayment()} might return {@code null}.
 	 *
-	 * @see  #getCreditCardTransaction()
-	 * @see  CreditCardTransaction#getAuthorizationApprovalCode()
+	 * @see  #getPayment()
+	 * @see  Payment#getAuthorizationApprovalCode()
 	 */
 	@Deprecated
 	public String getAprNum() throws SQLException, IOException {
-		Payment cct = getCreditCardTransaction();
+		Payment cct = getPayment();
 		return cct==null ? null : cct.getAuthorizationApprovalCode();
 	}
 
-	public Account getBusiness() throws SQLException, IOException {
+	public Account.Name getAccount_name() {
+		return accounting;
+	}
+
+	public Account getAccount() throws SQLException, IOException {
 		Account business = table.getConnector().getAccount().getAccount().get(accounting);
-		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
+		if (business == null) throw new SQLException("Unable to find Account: " + accounting);
 		return business;
 	}
 
-	public Account getSourceBusiness() throws SQLException, IOException {
+	public Account.Name getSourceAccount_name() {
+		return source_accounting;
+	}
+
+	public Account getSourceAccount() throws SQLException, IOException {
 		Account business = table.getConnector().getAccount().getAccount().get(source_accounting);
-		if (business == null) throw new SQLException("Unable to find Business: " + source_accounting);
+		if (business == null) throw new SQLException("Unable to find Account: " + source_accounting);
 		return business;
 	}
 
-	public Administrator getBusinessAdministrator() throws SQLException, IOException {
-		User un=table.getConnector().getAccount().getUser().get(username);
+	public User.Name getAdministrator_username() {
+		return username;
+	}
+
+	public Administrator getAdministrator() throws SQLException, IOException {
+		User un = table.getConnector().getAccount().getUser().get(username);
 		// May be filtered
-		if(un==null) return null;
-		Administrator business_administrator = un.getBusinessAdministrator();
-		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + username);
-		return business_administrator;
+		if(un == null) return null;
+		Administrator administrator = un.getAdministrator();
+		if (administrator == null) throw new SQLException("Unable to find Administrator: " + username);
+		return administrator;
 	}
 
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case 0: return getTime();
-			case COLUMN_TRANSID: return transid;
+			case COLUMN_TRANSID: return pkey;
 			case COLUMN_ACCOUNTING: return accounting;
 			case 3: return source_accounting;
-			case 4: return username;
+			case COLUMN_ADMINISTRATOR: return username;
 			case 5: return type;
 			case 6: return description;
 			case 7: return quantity;
@@ -298,9 +302,9 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 			case 9: return payment_type;
 			case 10: return payment_info;
 			case 11: return processor;
-			case 12: return creditCardTransaction==-1 ? null : creditCardTransaction;
-			case 13: return payment_confirmed==CONFIRMED?"Y":payment_confirmed==NOT_CONFIRMED?"N":"W";
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			case 12: return getPayment_id();
+			case 13: return payment_confirmed == CONFIRMED ? "Y" : payment_confirmed == NOT_CONFIRMED ? "N" : "W";
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -308,69 +312,64 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		return description;
 	}
 
-	public Processor getCreditCardProcessor() throws SQLException, IOException {
-		if (processor == null) return null;
+	public String getProcessor_providerId() {
+		return processor;
+	}
+
+	public Processor getProcessor() throws SQLException, IOException {
+		if(processor == null) return null;
 		Processor creditCardProcessor = table.getConnector().getPayment().getProcessor().get(processor);
-		if (creditCardProcessor == null) throw new SQLException("Unable to find CreditCardProcessor: " + processor);
+		if(creditCardProcessor == null) throw new SQLException("Unable to find CreditCardProcessor: " + processor);
 		return creditCardProcessor;
 	}
 
-	public Payment getCreditCardTransaction() throws SQLException, IOException {
+	public Integer getPayment_id() {
+		return creditCardTransaction == -1 ? null : creditCardTransaction;
+	}
+
+	public Payment getPayment() throws SQLException, IOException {
 		if (creditCardTransaction == -1) return null;
 		Payment cct = table.getConnector().getPayment().getPayment().get(creditCardTransaction);
 		if (cct == null) throw new SQLException("Unable to find CreditCardTransaction: " + creditCardTransaction);
 		return cct;
 	}
 
-	public byte getPaymentConfirmation() {
+	public byte getPaymentConfirmed() {
 		return payment_confirmed;
 	}
 
-	public static String getPaymentConfirmationLabel(int index) {
-		return paymentConfirmationLabels[index];
+	public static String getPaymentConfirmedLabel(int index) {
+		return paymentConfirmedLabels[index];
 	}
 
 	public String getPaymentInfo() {
 		return payment_info;
 	}
 
+	public String getPaymentType_name() {
+		return payment_type;
+	}
+
 	public PaymentType getPaymentType() throws SQLException, IOException {
-		if (payment_type == null) return null;
+		if(payment_type == null) return null;
 		PaymentType paymentType = table.getConnector().getPayment().getPaymentType().get(payment_type);
-		if (paymentType == null) throw new SQLException("Unable to find PaymentType: " + payment_type);
+		if(paymentType == null) throw new SQLException("Unable to find PaymentType: " + payment_type);
 		return paymentType;
 	}
 
-	@Override
-	public Integer getKey() {
-		return transid;
-	}
-
-	public long getPennies() {
-		long pennies=(long)quantity*(long)rate/(long)100;
-		int fraction=(int)(pennies%10);
-		pennies/=10;
-		if(fraction>=5) pennies++;
-		else if(fraction<=-5) pennies--;
-		return pennies;
+	/**
+	 * Gets the effective amount of quantity * rate.
+	 */
+	public Money getAmount() {
+		return rate.multiply(BigDecimal.valueOf(quantity, 3), RoundingMode.HALF_UP);
 	}
 
 	public int getQuantity() {
 		return quantity;
 	}
 
-	public int getRate() {
+	public Money getRate() {
 		return rate;
-	}
-
-	/**
-	 * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
-	 *
-	 * @return  the <code>AOServTable</code>.
-	 */
-	@Override
-	public AOServTable<Integer,Transaction> getTable() {
-		return table;
 	}
 
 	@Override
@@ -378,12 +377,20 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 		return Table.TableID.TRANSACTIONS;
 	}
 
+	public long getTime_millis() {
+		return time;
+	}
+
 	public Timestamp getTime() {
 		return new Timestamp(time);
 	}
 
-	public int getTransID() {
-		return transid;
+	public int getTransid() {
+		return pkey;
+	}
+
+	public String getType_name() {
+		return type;
 	}
 
 	public TransactionType getType() throws SQLException, IOException {
@@ -393,33 +400,27 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	}
 
 	@Override
-	public int hashCode() {
-		return transid;
-	}
-
-	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			int pos = 1;
-			time = result.getTimestamp(pos++).getTime();
-			transid = result.getInt(pos++);
-			accounting = Account.Name.valueOf(result.getString(pos++));
-			source_accounting = Account.Name.valueOf(result.getString(pos++));
-			username = User.Name.valueOf(result.getString(pos++));
-			type = result.getString(pos++);
-			description = result.getString(pos++);
-			quantity = SQLUtility.getMillis(result.getString(pos++));
-			rate = SQLUtility.getPennies(result.getString(pos++));
-			payment_type = result.getString(pos++);
-			payment_info = result.getString(pos++);
-			processor = result.getString(pos++);
-			creditCardTransaction = result.getInt(pos++);
+			time = result.getTimestamp("time").getTime();
+			pkey = result.getInt("transid");
+			accounting = Account.Name.valueOf(result.getString("accounting"));
+			source_accounting = Account.Name.valueOf(result.getString("source_accounting"));
+			username = User.Name.valueOf(result.getString("username"));
+			type = result.getString("type");
+			description = result.getString("description");
+			quantity = SQLUtility.getMillis(result.getString("quantity"));
+			rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
+			payment_type = result.getString("payment_type");
+			payment_info = result.getString("payment_info");
+			processor = result.getString("processor");
+			creditCardTransaction = result.getInt("credit_card_transaction");
 			if(result.wasNull()) creditCardTransaction = -1;
-			String typeString = result.getString(pos++);
+			String typeString = result.getString("payment_confirmed");
 			if("Y".equals(typeString)) payment_confirmed=CONFIRMED;
 			else if("N".equals(typeString)) payment_confirmed=NOT_CONFIRMED;
 			else if("W".equals(typeString)) payment_confirmed=WAITING_CONFIRMATION;
-			else throw new SQLException("Unknown payment_confirmed '" + typeString + "' for transid=" + transid);
+			else throw new SQLException("Unknown payment_confirmed '" + typeString + "' for transid=" + pkey);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -428,50 +429,44 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			time=in.readLong();
-			transid=in.readCompressedInt();
-			accounting=Account.Name.valueOf(in.readCompressedUTF()).intern();
-			source_accounting=Account.Name.valueOf(in.readCompressedUTF()).intern();
+			time = in.readLong();
+			pkey = in.readCompressedInt();
+			accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
+			source_accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
 			username = User.Name.valueOf(in.readCompressedUTF()).intern();
-			type=in.readCompressedUTF().intern();
-			description=in.readCompressedUTF();
-			quantity=in.readCompressedInt();
-			rate=in.readCompressedInt();
-			payment_type=InternUtils.intern(in.readNullUTF());
-			payment_info=in.readNullUTF();
+			type = in.readCompressedUTF().intern();
+			description = in.readCompressedUTF();
+			quantity = in.readCompressedInt();
+			rate = MoneyUtil.readMoney(in);
+			payment_type = InternUtils.intern(in.readNullUTF());
+			payment_info = in.readNullUTF();
 			processor = InternUtils.intern(in.readNullUTF());
 			creditCardTransaction = in.readCompressedInt();
-			payment_confirmed=in.readByte();
+			payment_confirmed = in.readByte();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
 	}
 
 	@Override
-	public void setTable(AOServTable<Integer,Transaction> table) {
-		if(this.table!=null) throw new IllegalStateException("table already set");
-		this.table=table;
-	}
-
-	@Override
 	public String toStringImpl() {
 		return
-			transid
-			+"|"
-			+accounting
-			+'|'
-			+source_accounting
-			+'|'
-			+type
-			+'|'
-			+SQLUtility.getMilliDecimal(quantity)
-			+'x'
-			+SQLUtility.getDecimal(rate)
-			+'|'
-			+(
-				payment_confirmed==CONFIRMED?'Y'
-				:payment_confirmed==NOT_CONFIRMED?'N'
-				:'W'
+			pkey
+			+ "|"
+			+ accounting
+			+ '|'
+			+ source_accounting
+			+ '|'
+			+ type
+			+ '|'
+			+ SQLUtility.getMilliDecimal(quantity)
+			+ '×'
+			+ rate
+			+ '|'
+			+ (
+				payment_confirmed == CONFIRMED ? 'Y'
+				: payment_confirmed == NOT_CONFIRMED ? 'N'
+				: 'W'
 			)
 		;
 	}
@@ -479,14 +474,22 @@ final public class Transaction extends AOServObject<Integer,Transaction> impleme
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(time);
-		out.writeCompressedInt(transid);
+		out.writeCompressedInt(pkey);
 		out.writeCompressedUTF(accounting.toString(), 0);
 		out.writeCompressedUTF(source_accounting.toString(), 1);
 		out.writeCompressedUTF(username.toString(), 2);
 		out.writeCompressedUTF(type, 3);
 		out.writeCompressedUTF(description, 4);
 		out.writeCompressedInt(quantity);
-		out.writeCompressedInt(rate);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			if(rate != null && rate.getCurrency() == Currency.USD && rate.getScale() == 2) {
+				out.writeCompressedInt(SafeMath.castInt(rate.getUnscaledValue()));
+			} else {
+				out.writeCompressedInt(-1);
+			}
+		} else {
+			MoneyUtil.writeNullMoney(rate, out);
+		}
 		out.writeNullUTF(payment_type);
 		out.writeNullUTF(payment_info);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)<0) {

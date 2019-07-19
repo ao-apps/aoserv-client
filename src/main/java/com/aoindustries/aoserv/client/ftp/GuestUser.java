@@ -55,7 +55,7 @@ final public class GuestUser extends CachedObjectUserNameKey<GuestUser> implemen
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_USERNAME) return pkey;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public User getLinuxAccount() throws SQLException, IOException {

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2014, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,7 +34,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * A <code>MasterUser</code> is a <code>BusinessAdministrator</code> who
+ * A <code>MasterUser</code> is an {@link Administrator} who
  * has greater permissions.  Their access is secure on a per-<code>Server</code>
  * basis, and may also include full access to DNS, backups, and other
  * systems.
@@ -127,13 +127,13 @@ final public class User extends CachedObjectUserNameKey<User> {
 			case 6: return is_dns_admin;
 			case 7: return is_router;
 			case 8: return is_cluster_admin;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public Administrator getBusinessAdministrator() throws SQLException, IOException {
-		Administrator obj=table.getConnector().getAccount().getAdministrator().get(pkey);
-		if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+pkey);
+	public Administrator getAdministrator() throws SQLException, IOException {
+		Administrator obj = table.getConnector().getAccount().getAdministrator().get(pkey);
+		if(obj == null) throw new SQLException("Unable to find Administrator: " + pkey);
 		return obj;
 	}
 

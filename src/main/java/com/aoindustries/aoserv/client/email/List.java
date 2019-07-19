@@ -134,7 +134,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 			case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
 			case 3: return linux_server_group;
 			case 4: return disable_log==-1?null:disable_log;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
