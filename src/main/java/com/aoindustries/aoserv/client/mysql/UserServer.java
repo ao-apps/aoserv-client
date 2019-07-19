@@ -45,7 +45,7 @@ import java.util.List;
 
 /**
  * A <code>MySQLServerUser</code> grants a <code>MySQLUser</code> access
- * to an <code>AOServer</code>.  Once access is granted to the <code>Server</code>,
+ * to a {@link Server}.  Once access is granted to the <code>Server</code>,
  * access may then be granted to individual <code>MySQLDatabase</code>s via
  * <code>MySQLDBUser</code>s.
  *
@@ -161,7 +161,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			case 7: return max_updates;
 			case 8: return max_connections;
 			case 9: return max_user_connections;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -287,7 +287,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 						+ " on "
 						+ ms.getName()
 						+ " on "
-						+ ms.getAoServer().getHostname(),
+						+ ms.getLinuxServer().getHostname(),
 					this
 				)
 			);

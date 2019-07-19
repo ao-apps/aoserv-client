@@ -97,7 +97,7 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 			case 7: return connect_from;
 			case 8: return enabled;
 			case 9: return quota_gid;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -105,9 +105,9 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 		return table.getConnector().getBackup().getFileReplicationSchedule().getFailoverFileSchedules(this);
 	}
 
-	public Host getServer() throws SQLException, IOException {
+	public Host getHost() throws SQLException, IOException {
 		Host se=table.getConnector().getNet().getHost().get(server);
-		if(se==null) throw new SQLException("Unable to find Server: "+server);
+		if(se==null) throw new SQLException("Unable to find Host: "+server);
 		return se;
 	}
 
@@ -228,7 +228,7 @@ final public class FileReplication extends CachedObjectIntegerKey<FileReplicatio
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return getServer().toStringImpl()+"->"+getBackupPartition().toStringImpl();
+		return getHost().toStringImpl()+"->"+getBackupPartition().toStringImpl();
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -58,7 +58,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 		return defaultOrderBy;
 	}
 
-	int addBusinessServer(Account business, Host server) throws IOException, SQLException {
+	int addAccountHost(Account business, Host server) throws IOException, SQLException {
 		return connector.requestIntQueryIL(true, AoservProtocol.CommandID.ADD, Table.TableID.BUSINESS_SERVERS, business.getName().toString(), server.getPkey());
 	}
 
@@ -67,28 +67,28 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 		return getUniqueRow(AccountHost.COLUMN_PKEY, pkey);
 	}
 
-	List<AccountHost> getBusinessServers(Account bu) throws IOException, SQLException {
+	List<AccountHost> getAccountHosts(Account bu) throws IOException, SQLException {
 		return getIndexedRows(AccountHost.COLUMN_ACCOUNTING, bu.getName());
 	}
 
-	List<AccountHost> getBusinessServers(Host server) throws IOException, SQLException {
+	List<AccountHost> getAccountHosts(Host server) throws IOException, SQLException {
 		return getIndexedRows(AccountHost.COLUMN_SERVER, server.getPkey());
 	}
 
-	public List<Account> getBusinesses(Host server) throws IOException, SQLException {
+	public List<Account> getAccounts(Host server) throws IOException, SQLException {
 		// Use the cache and convert
-		List<AccountHost> cached=getBusinessServers(server);
+		List<AccountHost> cached = getAccountHosts(server);
 		int size=cached.size();
 		List<Account> businesses=new ArrayList<>(size);
-		for(int c=0;c<size;c++) businesses.add(cached.get(c).getBusiness());
+		for(int c=0;c<size;c++) businesses.add(cached.get(c).getAccount());
 		return businesses;
 	}
 
-	AccountHost getBusinessServer(Account bu, Host se) throws IOException, SQLException {
+	AccountHost getAccountHost(Account bu, Host se) throws IOException, SQLException {
 		int pkey=se.getPkey();
 
 		// Use the index first
-		List<AccountHost> cached=getBusinessServers(bu);
+		List<AccountHost> cached = getAccountHosts(bu);
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			AccountHost bs=cached.get(c);
@@ -99,11 +99,11 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 
 	Host getDefaultServer(Account business) throws IOException, SQLException {
 		// Use index first
-		List<AccountHost> cached=getBusinessServers(business);
+		List<AccountHost> cached = getAccountHosts(business);
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			AccountHost bs=cached.get(c);
-			if(bs.is_default) return bs.getServer();
+			if(bs.is_default) return bs.getHost();
 		}
 		return null;
 	}
@@ -119,7 +119,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 		if(command.equalsIgnoreCase(Command.ADD_BUSINESS_SERVER)) {
 			if(AOSH.checkParamCount(Command.ADD_BUSINESS_SERVER, args, 2, err)) {
 				out.println(
-					connector.getSimpleAOClient().addBusinessServer(
+					connector.getSimpleAOClient().addAccountHost(
 						AOSH.parseAccountingCode(args[1], "business"),
 						args[2]
 					)
@@ -129,7 +129,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.REMOVE_BUSINESS_SERVER)) {
 			if(AOSH.checkParamCount(Command.REMOVE_BUSINESS_SERVER, args, 2, err)) {
-				connector.getSimpleAOClient().removeBusinessServer(
+				connector.getSimpleAOClient().removeAccountHost(
 					AOSH.parseAccountingCode(args[1], "business"),
 					args[2]
 				);
@@ -137,7 +137,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 			return true;
 		} else if(command.equalsIgnoreCase(Command.SET_DEFAULT_BUSINESS_SERVER)) {
 			if(AOSH.checkParamCount(Command.SET_DEFAULT_BUSINESS_SERVER, args, 2, err)) {
-				connector.getSimpleAOClient().setDefaultBusinessServer(
+				connector.getSimpleAOClient().setDefaultAccountHost(
 					AOSH.parseAccountingCode(args[1], "business"),
 					args[2]
 				);

@@ -132,7 +132,7 @@ final public class Location extends CachedObjectIntegerKey<Location> implements 
 			case 6: return auth_user_file;
 			case 7: return require;
 			case 8: return handler;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

@@ -161,7 +161,7 @@ final public class CvsRepositoryTable extends CachedTableIntegerKey<CvsRepositor
 			for(SharedTomcat tomcat : connector.getWeb_tomcat().getSharedTomcat().getRows()) {
 				if(!tomcat.isDisabled()) {
 					prefixes.add(PosixPath.valueOf(
-							tomcat.getAOServer().getServer().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
+							tomcat.getLinuxServer().getHost().getOperatingSystemVersion().getHttpdSharedTomcatsDirectory().toString()
 							+ '/' + tomcat.getName()
 						)
 					);

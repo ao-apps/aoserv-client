@@ -67,7 +67,7 @@ final public class FileReplicationSetting extends CachedObjectIntegerKey<FileRep
 			case 2: return path;
 			case 3: return backup_enabled;
 			case 4: return required;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

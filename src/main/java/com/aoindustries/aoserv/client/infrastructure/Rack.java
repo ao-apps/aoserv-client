@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2008-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -59,7 +59,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
 			case COLUMN_NAME: return name;
 			case 3: return Float.isNaN(maxPower) ? null : maxPower;
 			case 4: return totalRackUnits==-1 ? null : totalRackUnits;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

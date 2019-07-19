@@ -164,7 +164,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 
 	@Override
 	public String toStringImpl() throws IOException, SQLException {
-		return "Cyrus IMAPD @ " + (servername != null ? servername : getAOServer().getHostname());
+		return "Cyrus IMAPD @ " + (servername != null ? servername : getLinuxServer().getHostname());
 	}
 
 	@Override
@@ -247,9 +247,9 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 		out.writeNullEnum(expungeDurationUnit);
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server obj = table.getConnector().getLinux().getServer().get(pkey);
-		if(obj == null) throw new SQLException("Unable to find AOServer: " + pkey);
+		if(obj == null) throw new SQLException("Unable to find linux.Server: " + pkey);
 		return obj;
 	}
 
@@ -260,15 +260,15 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 		if(nb == null) return null;
 		String protocol = nb.getAppProtocol().getProtocol();
 		if(!AppProtocol.SIEVE.equals(protocol)) throw new SQLException("Sieve NetBind is incorrect app_protocol for NetBind #" + nb.getPkey() + ": " + protocol);
-		Host server = nb.getServer();
-		if(!server.equals(getAOServer().getServer())) throw new SQLException("Sieve NetBind is not on this server for NetBind #" + nb.getPkey());
+		Host server = nb.getHost();
+		if(!server.equals(getLinuxServer().getHost())) throw new SQLException("Sieve NetBind is not on this server for NetBind #" + nb.getPkey());
 		return nb;
 	}
 
 	/**
 	 * The fully qualified hostname for <code>servername</code>.
 	 *
-	 * When {@code null}, defaults to {@link AOServer#getHostname()}.
+	 * When {@code null}, defaults to {@link Server#getHostname()}.
 	 */
 	public DomainName getServername() {
 		return servername;

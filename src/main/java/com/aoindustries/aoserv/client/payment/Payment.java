@@ -171,15 +171,19 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return ccp;
 	}
 
+	public Account.Name getAccount_name() {
+		return accounting;
+	}
+
 	/**
-	 * For AOServ sub-account support, this is the business that is making the payment.
-	 * For application-only use (not a sub-account to parent-account payment), use the same business
+	 * For AOServ sub-account support, this is the account that is making the payment.
+	 * For application-only use (not a sub-account to parent-account payment), use the same account
 	 * as the owner of the credit card processor.
 	 */
-	public Account getBusiness() throws SQLException, IOException {
-		Account business = table.getConnector().getAccount().getAccount().get(accounting);
-		if(business==null) throw new SQLException("Unable to find Business: "+accounting);
-		return business;
+	public Account getAccount() throws SQLException, IOException {
+		Account account = table.getConnector().getAccount().getAccount().get(accounting);
+		if(account == null) throw new SQLException("Unable to find Account: " + accounting);
+		return account;
 	}
 
 	/**
@@ -318,9 +322,9 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	public Administrator getCreditCardCreatedBy() throws SQLException, IOException {
-		Administrator business_administrator = table.getConnector().getAccount().getAdministrator().get(creditCardCreatedBy);
-		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + creditCardCreatedBy);
-		return business_administrator;
+		Administrator administrator = table.getConnector().getAccount().getAdministrator().get(creditCardCreatedBy);
+		if (administrator == null) throw new SQLException("Unable to find Administrator: " + creditCardCreatedBy);
+		return administrator;
 	}
 
 	/**
@@ -330,9 +334,9 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return creditCardPrincipalName;
 	}
 
-	public Account getCreditCardBusiness() throws SQLException, IOException {
+	public Account getCreditCardAccount() throws SQLException, IOException {
 		Account business = table.getConnector().getAccount().getAccount().get(creditCardAccounting);
-		if (business == null) throw new SQLException("Unable to find Business: " + creditCardAccounting);
+		if (business == null) throw new SQLException("Unable to find Account: " + creditCardAccounting);
 		return business;
 	}
 
@@ -432,19 +436,19 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	/**
-	 * Gets the <code>BusinessAdministrator</code> who authorized this transactions.  This is the
+	 * Gets the {@link Administrator} who authorized this transactions.  This is the
 	 * username of the account that has access to control credit card transactions.
 	 */
 	public Administrator getAuthorizationAdministrator() throws SQLException, IOException {
 		if(authorizationUsername==null) return null;
-		Administrator business_administrator = table.getConnector().getAccount().getAdministrator().get(authorizationUsername);
-		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + authorizationUsername);
-		return business_administrator;
+		Administrator administrator = table.getConnector().getAccount().getAdministrator().get(authorizationUsername);
+		if (administrator == null) throw new SQLException("Unable to find Administrator: " + authorizationUsername);
+		return administrator;
 	}
 
 	/**
 	 * Gets the application-specific username who authorized this transaction.  For pure-AOServ data, this
-	 * will contain the username of the <code>BusinessAdministrator</code> who was logged in and made the payment.
+	 * will contain the username of the {@link Administrator} who was logged in and made the payment.
 	 */
 	public String getAuthorizationPrincipalName() {
 		return authorizationPrincipalName;
@@ -542,19 +546,19 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	/**
-	 * Gets the <code>BusinessAdministrator</code> who captured this transactions.  This is the
+	 * Gets the {@link Administrator} who captured this transactions.  This is the
 	 * username of the account that has access to control credit card transactions.
 	 */
 	public Administrator getCaptureAdministrator() throws SQLException, IOException {
 		if(captureUsername==null) return null;
-		Administrator business_administrator = table.getConnector().getAccount().getAdministrator().get(captureUsername);
-		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + captureUsername);
-		return business_administrator;
+		Administrator administrator = table.getConnector().getAccount().getAdministrator().get(captureUsername);
+		if (administrator == null) throw new SQLException("Unable to find Administrator: " + captureUsername);
+		return administrator;
 	}
 
 	/**
 	 * Gets the application-specific username who captured this transaction.  For pure-AOServ data, this
-	 * will contain the username of the <code>BusinessAdministrator</code> who was logged in and initiated the capture.
+	 * will contain the username of the {@link Administrator} who was logged in and initiated the capture.
 	 */
 	public String getCapturePrincipalName() {
 		return capturePrincipalName;
@@ -588,19 +592,19 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	/**
-	 * Gets the <code>BusinessAdministrator</code> who voided this transactions.  This is the
+	 * Gets the {@link Administrator} who voided this transactions.  This is the
 	 * username of the account that has access to control credit card transactions.
 	 */
 	public Administrator getVoidAdministrator() throws SQLException, IOException {
 		if(voidUsername==null) return null;
-		Administrator business_administrator = table.getConnector().getAccount().getAdministrator().get(voidUsername);
-		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + voidUsername);
-		return business_administrator;
+		Administrator administrator = table.getConnector().getAccount().getAdministrator().get(voidUsername);
+		if (administrator == null) throw new SQLException("Unable to find Administrator: " + voidUsername);
+		return administrator;
 	}
 
 	/**
 	 * Gets the application-specific username who voided this transaction.  For pure-AOServ data, this
-	 * will contain the username of the <code>BusinessAdministrator</code> who was logged in and caused the void.
+	 * will contain the username of the {@link Administrator} who was logged in and caused the void.
 	 */
 	public String getVoidPrincipalName() {
 		return voidPrincipalName;

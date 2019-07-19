@@ -23,7 +23,7 @@
 package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServTable;
+import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.aosh.AOSH;
@@ -37,6 +37,11 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.MinimalList;
+import com.aoindustries.util.StringUtility;
+import com.aoindustries.util.i18n.CurrencyComparator;
+import com.aoindustries.util.i18n.Money;
+import com.aoindustries.util.i18n.Monies;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -45,19 +50,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @see  Transaction
  *
  * @author  AO Industries, Inc.
  */
-final public class TransactionTable extends AOServTable<Integer,Transaction> {
+final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
-	private long accountBalancesClearCounter = 0;
-	final private Map<Account.Name,BigDecimal> accountBalances=new HashMap<>();
-	private long confirmedAccountBalancesClearCounter = 0;
-	final private Map<Account.Name,BigDecimal> confirmedAccountBalances=new HashMap<>();
+	final private Map<Account.Name,Monies> accountBalances = new HashMap<>();
+	final private Map<Account.Name,Monies> confirmedAccountBalances = new HashMap<>();
 
 	TransactionTable(AOServConnector connector) {
 		super(connector, Transaction.class);
@@ -75,17 +81,17 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
 
 	public int addTransaction(
-		final Account business,
-		final Account sourceBusiness,
-		final Administrator business_administrator,
-		final String type,
+		final Account account,
+		final Account sourceAccount,
+		final Administrator administrator,
+		final TransactionType type,
 		final String description,
 		final int quantity,
-		final int rate,
+		final Money rate,
 		final PaymentType paymentType,
 		final String paymentInfo,
 		final Processor processor,
-		final byte payment_confirmed
+		final byte paymentConfirmed
 	) throws IOException, SQLException {
 		return connector.requestResult(
 			false,
@@ -97,17 +103,17 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.TRANSACTIONS.ordinal());
-					out.writeUTF(business.getName().toString());
-					out.writeUTF(sourceBusiness.getName().toString());
-					out.writeUTF(business_administrator.getUsername_userId().toString());
-					out.writeUTF(type);
+					out.writeUTF(account.getName().toString());
+					out.writeUTF(sourceAccount.getName().toString());
+					out.writeUTF(administrator.getUsername_userId().toString());
+					out.writeUTF(type.getName());
 					out.writeUTF(description);
 					out.writeCompressedInt(quantity);
-					out.writeCompressedInt(rate);
+					MoneyUtil.writeMoney(rate, out);
 					out.writeBoolean(paymentType!=null); if(paymentType!=null) out.writeUTF(paymentType.getName());
 					out.writeNullUTF(paymentInfo);
 					out.writeNullUTF(processor==null ? null : processor.getProviderId());
-					out.writeByte(payment_confirmed);
+					out.writeByte(paymentConfirmed);
 				}
 
 				@Override
@@ -132,66 +138,113 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 	}
 
 	@Override
+	public Transaction get(int transid) throws IOException, SQLException {
+		return getUniqueRow(Transaction.COLUMN_TRANSID, transid);
+	}
+
+	@Override
 	public void clearCache() {
 		// System.err.println("DEBUG: TransactionTable: clearCache() called");
 		super.clearCache();
 		synchronized(accountBalances) {
-			accountBalancesClearCounter++;
 			accountBalances.clear();
 		}
 		synchronized(confirmedAccountBalances) {
-			confirmedAccountBalancesClearCounter++;
 			confirmedAccountBalances.clear();
 		}
 	}
 
-	public BigDecimal getAccountBalance(Account.Name accounting) throws IOException, SQLException {
-		long clearCounter;
+	private static void addBalance(SortedMap<java.util.Currency,BigDecimal> accountBalances, Money amount) {
+		java.util.Currency currency = amount.getCurrency();
+		BigDecimal total = accountBalances.get(currency);
+		total = (total == null) ? amount.getValue() : total.add(amount.getValue());
+		accountBalances.put(currency, total);
+	}
+
+	private static void addAccountBalance(Map<Account.Name,SortedMap<java.util.Currency,BigDecimal>> balances, Account.Name account, Money amount) {
+		SortedMap<java.util.Currency,BigDecimal> accountBalances = balances.get(account);
+		if(accountBalances == null) {
+			accountBalances = new TreeMap<>(CurrencyComparator.getInstance());
+			balances.put(account, accountBalances);
+		}
+		addBalance(accountBalances, amount);
+	}
+
+	private static Monies toMonies(SortedMap<java.util.Currency,BigDecimal> balances) {
+		List<Money> monies = MinimalList.emptyList();
+		for(Map.Entry<java.util.Currency,BigDecimal> moneyEntry : balances.entrySet()) {
+			monies = MinimalList.add(
+				monies,
+				new Money(moneyEntry.getKey(), moneyEntry.getValue())
+			);
+		}
+		return Monies.of(monies);
+	}
+
+	public Monies getAccountBalance(Account.Name accounting) throws IOException, SQLException {
 		synchronized(accountBalances) {
-			BigDecimal balance=accountBalances.get(accounting);
-			if(balance!=null) return balance;
-			clearCounter = accountBalancesClearCounter;
+			if(accountBalances.isEmpty()) {
+				// Compute all balances now
+				Map<Account.Name,SortedMap<java.util.Currency,BigDecimal>> balances = new HashMap<>();
+				for(Transaction transaction : getRows()) {
+					if(transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED) {
+						addAccountBalance(balances, transaction.getAccount_name(), transaction.getAmount());
+					}
+				}
+				// Wrap totals into unmodified lists
+				for(Map.Entry<Account.Name,SortedMap<java.util.Currency,BigDecimal>> entry : balances.entrySet()) {
+					accountBalances.put(entry.getKey(), toMonies(entry.getValue()));
+				}
+			}
+			Monies balance = accountBalances.get(accounting);
+			return balance == null ? Monies.of() : balance;
 		}
-		BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AoservProtocol.CommandID.GET_ACCOUNT_BALANCE, accounting.toString()), 2);
-		synchronized(accountBalances) {
-			// Only put in cache when not cleared while performing query
-			if(clearCounter==accountBalancesClearCounter) accountBalances.put(accounting, balance);
-		}
-		return balance;
 	}
 
-	public BigDecimal getAccountBalance(Account.Name accounting, long before) throws IOException, SQLException {
-		return BigDecimal.valueOf(connector.requestIntQuery(true, AoservProtocol.CommandID.GET_ACCOUNT_BALANCE_BEFORE, accounting.toString(), before), 2);
+	public Monies getAccountBalance(Account.Name accounting, long before) throws IOException, SQLException {
+		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
+		for(Transaction transaction : getTransactions(accounting)) {
+			if(
+				transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
+				&& transaction.getTime_millis() < before
+			) {
+				addBalance(balances, transaction.getAmount());
+			}
+		}
+		return toMonies(balances);
 	}
 
-	public BigDecimal getConfirmedAccountBalance(Account.Name accounting) throws IOException, SQLException {
-		long clearCounter;
+	public Monies getConfirmedAccountBalance(Account.Name accounting) throws IOException, SQLException {
 		synchronized(confirmedAccountBalances) {
-			BigDecimal balance=confirmedAccountBalances.get(accounting);
-			if(balance!=null) return balance;
-			clearCounter = confirmedAccountBalancesClearCounter;
+			if(confirmedAccountBalances.isEmpty()) {
+				// Compute all balances now
+				Map<Account.Name,SortedMap<java.util.Currency,BigDecimal>> balances = new HashMap<>();
+				for(Transaction transaction : getRows()) {
+					if(transaction.getPaymentConfirmed() == Transaction.CONFIRMED) {
+						addAccountBalance(balances, transaction.getAccount_name(), transaction.getAmount());
+					}
+				}
+				// Wrap totals into unmodified lists
+				for(Map.Entry<Account.Name,SortedMap<java.util.Currency,BigDecimal>> entry : balances.entrySet()) {
+					confirmedAccountBalances.put(entry.getKey(), toMonies(entry.getValue()));
+				}
+			}
+			Monies balance = confirmedAccountBalances.get(accounting);
+			return balance == null ? Monies.of() : balance;
 		}
-		BigDecimal balance=BigDecimal.valueOf(connector.requestIntQuery(true, AoservProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE, accounting.toString()), 2);
-		synchronized(confirmedAccountBalances) {
-			// Only put in cache when not cleared while performing query
-			if(clearCounter==confirmedAccountBalancesClearCounter) confirmedAccountBalances.put(accounting, balance);
+	}
+
+	public Monies getConfirmedAccountBalance(Account.Name accounting, long before) throws IOException, SQLException {
+		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
+		for(Transaction transaction : getTransactions(accounting)) {
+			if(
+				transaction.getPaymentConfirmed() == Transaction.CONFIRMED
+				&& transaction.getTime_millis() < before
+			) {
+				addBalance(balances, transaction.getAmount());
+			}
 		}
-		return balance;
-	}
-
-	public BigDecimal getConfirmedAccountBalance(Account.Name accounting, long before) throws IOException, SQLException {
-		return BigDecimal.valueOf(connector.requestIntQuery(true, AoservProtocol.CommandID.GET_CONFIRMED_ACCOUNT_BALANCE_BEFORE, accounting.toString(), before), 2);
-	}
-
-	public List<Transaction> getPendingPayments() throws IOException, SQLException {
-		return getObjects(true, AoservProtocol.CommandID.GET_PENDING_PAYMENTS);
-	}
-
-	@Override
-	public List<Transaction> getRows() throws IOException, SQLException {
-		List<Transaction> list=new ArrayList<>();
-		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.TRANSACTIONS);
-		return list;
+		return toMonies(balances);
 	}
 
 	@Override
@@ -199,62 +252,84 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 		return Table.TableID.TRANSACTIONS;
 	}
 
-	/**
-	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
-	 */
-	@Deprecated
-	@Override
-	public Transaction get(Object transid) throws IOException, SQLException {
-		if(transid == null) return null;
-		return get(((Integer)transid).intValue());
+	private static boolean matchesWords(String value, String words) {
+		String lower = value == null ? null : value.toLowerCase(Locale.ROOT);
+		for(String word : StringUtility.splitString(words)) {
+			if(lower == null || !lower.contains(word.toLowerCase(Locale.ROOT))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
-	/**
-	 * @see  #get(java.lang.Object)
-	 */
-	public Transaction get(int transid) throws IOException, SQLException {
-		return getObject(true, AoservProtocol.CommandID.GET_OBJECT, Table.TableID.TRANSACTIONS, transid);
-	}
-
-	List<Transaction> getTransactions(TransactionSearchCriteria search) throws IOException, SQLException {
-		return getObjects(true, AoservProtocol.CommandID.GET_TRANSACTIONS_SEARCH, search);
+	public List<Transaction> get(TransactionSearchCriteria criteria) throws IOException, SQLException {
+		List<Transaction> matches = new ArrayList<>();
+		List<Transaction> rows;
+		if(criteria.getTransid() == TransactionSearchCriteria.ANY) {
+			rows = getRows();
+		} else {
+			Transaction row = get(criteria.getTransid());
+			if(row == null) return Collections.emptyList();
+			rows = Collections.singletonList(row);
+		}
+		for(Transaction tr : rows) {
+			if(
+				(
+					criteria.getAfter() == TransactionSearchCriteria.ANY
+					|| criteria.getAfter() <= tr.getTime_millis()
+				) && (
+					criteria.getBefore() == TransactionSearchCriteria.ANY
+					|| criteria.getBefore() > tr.getTime_millis()
+				) && (
+					criteria.getPaymentConfirmed() == TransactionSearchCriteria.ANY
+					|| criteria.getPaymentConfirmed() == tr.getPaymentConfirmed()
+				) && (
+					criteria.getAccount() == null
+					|| criteria.getAccount().equals(tr.getAccount_name())
+				) && (
+					criteria.getSourceAccount() == null
+					|| criteria.getSourceAccount().equals(tr.getSourceAccount_name())
+				) && (
+					criteria.getAdministrator() == null
+					|| criteria.getAdministrator().equals(tr.getAdministrator_username())
+				) && (
+					criteria.getType() == null
+					|| criteria.getType().equals(tr.getType_name())
+				) && (
+					criteria.getDescription() == null || criteria.getDescription().isEmpty()
+					|| matchesWords(tr.getDescription(), criteria.getDescription())
+				) && (
+					criteria.getPaymentType() == null
+					|| criteria.getPaymentType().equals(tr.getPaymentType_name())
+				) && (
+					criteria.getPaymentInfo() == null || criteria.getPaymentInfo().isEmpty()
+					|| matchesWords(tr.getPaymentInfo(), criteria.getPaymentInfo())
+				)
+			) {
+				matches.add(tr);
+			}
+		}
+		return Collections.unmodifiableList(matches);
 	}
 
 	public List<Transaction> getTransactions(Account.Name accounting) throws IOException, SQLException {
-		return getObjects(true, AoservProtocol.CommandID.GET_TRANSACTIONS_BUSINESS, accounting.toString());
+		return getIndexedRows(Transaction.COLUMN_ACCOUNTING, accounting);
 	}
 
 	public List<Transaction> getTransactions(Administrator ba) throws IOException, SQLException {
-		return getObjects(true, AoservProtocol.CommandID.GET_TRANSACTIONS_BUSINESS_ADMINISTRATOR, ba.getUsername_userId());
-	}
-
-	@Override
-	public List<Transaction> getIndexedRows(int col, Object value) throws IOException, SQLException {
-		if(col==Transaction.COLUMN_TRANSID) {
-			Transaction tr=get(value);
-			if(tr==null) return Collections.emptyList();
-			else return Collections.singletonList(tr);
-		}
-		if(col==Transaction.COLUMN_ACCOUNTING) return getTransactions((Account.Name)value);
-		throw new UnsupportedOperationException("Not an indexed column: "+col);
-	}
-
-	@Override
-	protected Transaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col!=Transaction.COLUMN_TRANSID) throw new IllegalArgumentException("Not a unique column: "+col);
-		return get(value);
+		return getIndexedRows(Transaction.COLUMN_ADMINISTRATOR, ba.getUsername_userId());
 	}
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
+		String command = args[0];
 		if(command.equalsIgnoreCase(Command.ADD_TRANSACTION)) {
-			if(AOSH.checkParamCount(Command.ADD_TRANSACTION, args, 11, err)) {
+			if(AOSH.checkParamCount(Command.ADD_TRANSACTION, args, 12, err)) {
 				byte pc;
-				if(args[11].equals("Y")) pc=Transaction.CONFIRMED;
-				else if(args[11].equals("W")) pc=Transaction.WAITING_CONFIRMATION;
-				else if(args[11].equals("N")) pc=Transaction.NOT_CONFIRMED;
-				else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: "+args[11]);
+				if(args[12].equals("Y")) pc=Transaction.CONFIRMED;
+				else if(args[12].equals("W")) pc=Transaction.WAITING_CONFIRMATION;
+				else if(args[12].equals("N")) pc=Transaction.NOT_CONFIRMED;
+				else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: "+args[12]);
 				out.println(
 					connector.getSimpleAOClient().addTransaction(
 						AOSH.parseAccountingCode(args[1], "business"),
@@ -263,10 +338,13 @@ final public class TransactionTable extends AOServTable<Integer,Transaction> {
 						args[4],
 						args[5],
 						AOSH.parseMillis(args[6], "quantity"),
-						AOSH.parsePennies(args[7], "rate"),
-						args[8],
+						new Money(
+							java.util.Currency.getInstance(args[7]),
+							AOSH.parseBigDecimal(args[8], "rate")
+						),
 						args[9],
 						args[10],
+						args[11],
 						pc
 					)
 				);

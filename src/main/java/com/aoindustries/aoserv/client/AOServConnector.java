@@ -121,7 +121,7 @@ abstract public class AOServConnector implements SchemaParent {
 					message.equals("Connection attempted with invalid password")
 					|| message.equals("Connection attempted with empty password")
 					|| message.equals("Connection attempted with empty connect username")
-					|| message.startsWith("Unable to find BusinessAdministrator: ")
+					|| message.startsWith("Unable to find Administrator: ")
 					|| message.startsWith("Not allowed to switch users from ")
 				)
 			)
@@ -787,22 +787,22 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	/**
-	 * Gets the <code>BusinessAdministrator</code> who is logged in using
+	 * Gets the {@link Administrator} who is logged in using
 	 * this <code>AOServConnector</code>.  Each username and password pair
-	 * resolves to an always-accessible <code>BusinessAdministrator</code>.
+	 * resolves to an always-accessible {@link Administrator}.
 	 * Details about permissions and capabilities may be obtained from the
-	 * <code>BusinessAdministrator</code>.
+	 * {@link Administrator}.
 	 *
-	 * @return  the <code>BusinessAdministrator</code> who is logged in
+	 * @return  the {@link Administrator} who is logged in
 	 *
 	 * @exception  IOException  if unable to communicate with the server
 	 * @exception  SQLException  if unable to access the database or the
-	 *                           <code>BusinessAdministrator</code> was not
+	 *                           {@link Administrator} was not
 	 *                           found
 	 */
-	final public Administrator getThisBusinessAdministrator() throws SQLException, IOException {
+	final public Administrator getCurrentAdministrator() throws SQLException, IOException {
 		Administrator obj = account.getAdministrator().get(connectAs);
-		if(obj==null) throw new SQLException("Unable to find BusinessAdministrator: "+connectAs);
+		if(obj == null) throw new SQLException("Unable to find Administrator: " + connectAs);
 		return obj;
 	}
 
@@ -1396,7 +1396,7 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	/**
-	 * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery) or <code>null</code>.
+	 * Performs a query returning a String of any length (not limited to size &lt;= 64k like requestStringQuery) or {@code null}.
 	 * Supports nulls.
 	 */
 	final public String requestNullLongStringQuery(boolean allowRetry, AoservProtocol.CommandID commID, Object ... params) throws IOException, SQLException {

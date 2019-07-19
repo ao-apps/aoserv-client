@@ -112,7 +112,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 			case COLUMN_VERSION: return pkey;
 			case 1: return minorVersion;
 			case 2: return postgisVersion == -1 ? null : postgisVersion;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -121,7 +121,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	}
 
 	/**
-	 * Gets the PostGIS version of <code>null</code> if not supported by this PostgreSQL version....
+	 * Gets the PostGIS version of {@code null} if not supported by this PostgreSQL version....
 	 */
 	public SoftwareVersion getPostgisVersion(AOServConnector connector) throws SQLException, IOException {
 		if(postgisVersion == -1) return null;

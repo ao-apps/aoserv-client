@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,16 +30,20 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.math.SafeMath;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
 /**
- * Miscellaneous monthly charges may be applied to a
- * <code>Business</code>.  These currently include
+ * Miscellaneous monthly charges may be applied to an
+ * {@link Account}.  These currently include
  * the recurring charges that are not fully automated.
  * Once all of the accounting data is available in other
  * places of the system, the use of this table will
@@ -63,7 +67,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	private String type;
 	private String description;
 	private int quantity;
-	private int rate;
+	private Money rate;
 	private long created;
 	private User.Name created_by;
 	private boolean active;
@@ -78,7 +82,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		TransactionType typeObject,
 		String description,
 		int quantity,
-		int rate,
+		Money rate,
 		Administrator createdByObject
 	) {
 		setTable(table);
@@ -107,7 +111,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			case 7: return getCreated();
 			case 8: return created_by;
 			case 9: return active;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -116,15 +120,19 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator createdByObject = table.getConnector().getAccount().getAdministrator().get(created_by);
-		if (createdByObject == null) throw new SQLException("Unable to find BusinessAdministrator: " + created_by);
-		return createdByObject;
+		Administrator obj = table.getConnector().getAccount().getAdministrator().get(created_by);
+		if (obj == null) throw new SQLException("Unable to find Administrator: " + created_by);
+		return obj;
 	}
 
-	public Account getBusiness() throws SQLException, IOException {
-		Account bu=table.getConnector().getAccount().getAccount().get(accounting);
-		if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
-		return bu;
+	public Account.Name getAccount_name() {
+		return accounting;
+	}
+
+	public Account getAccount() throws SQLException, IOException {
+		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+		if(obj == null) throw new SQLException("Unable to find Account: " + accounting);
+		return obj;
 	}
 
 	public String getDescription() throws SQLException, IOException {
@@ -137,20 +145,18 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		return packageObject;
 	}
 
-	public int getPennies() {
-		int pennies=quantity*rate/100;
-		int fraction=pennies%10;
-		pennies/=10;
-		if(fraction>=5) pennies++;
-		else if(fraction<=-5) pennies--;
-		return pennies;
+	/**
+	 * Gets the effective amount of quantity * rate.
+	 */
+	public Money getAmount() {
+		return rate.multiply(BigDecimal.valueOf(quantity, 3), RoundingMode.HALF_UP);
 	}
 
 	public int getQuantity() {
 		return quantity;
 	}
 
-	public int getRate() {
+	public Money getRate() {
 		return rate;
 	}
 
@@ -168,16 +174,16 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey = result.getInt(1);
-			accounting = Account.Name.valueOf(result.getString(2));
-			packageName = Account.Name.valueOf(result.getString(3));
-			type = result.getString(4);
-			description = result.getString(5);
-			quantity = SQLUtility.getMillis(result.getString(6));
-			rate = SQLUtility.getPennies(result.getString(7));
-			created = result.getTimestamp(8).getTime();
-			created_by = User.Name.valueOf(result.getString(9));
-			active = result.getBoolean(10);
+			pkey = result.getInt("id");
+			accounting = Account.Name.valueOf(result.getString("accounting"));
+			packageName = Account.Name.valueOf(result.getString("package"));
+			type = result.getString("type");
+			description = result.getString("description");
+			quantity = SQLUtility.getMillis(result.getString("quantity"));
+			rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
+			created = result.getTimestamp("created").getTime();
+			created_by = User.Name.valueOf(result.getString("created_by"));
+			active = result.getBoolean("active");
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -190,16 +196,16 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
-			accounting=Account.Name.valueOf(in.readUTF()).intern();
+			pkey = in.readCompressedInt();
+			accounting = Account.Name.valueOf(in.readUTF()).intern();
 			packageName = Account.Name.valueOf(in.readUTF()).intern();
-			type=in.readUTF().intern();
-			description=in.readNullUTF();
-			quantity=in.readCompressedInt();
-			rate=in.readCompressedInt();
-			created=in.readLong();
+			type = in.readUTF().intern();
+			description = in.readNullUTF();
+			quantity = in.readCompressedInt();
+			rate = MoneyUtil.readMoney(in);
+			created = in.readLong();
 			created_by = User.Name.valueOf(in.readUTF()).intern();
-			active=in.readBoolean();
+			active = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -207,7 +213,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
 	@Override
 	public String toStringImpl() {
-		return packageName.toString()+'|'+type+'|'+SQLUtility.getMilliDecimal(quantity)+"x$"+SQLUtility.getDecimal(rate);
+		return packageName.toString() + '|' + type + '|' + SQLUtility.getMilliDecimal(quantity) + "×" + rate;
 	}
 
 	@Override
@@ -218,7 +224,15 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		out.writeUTF(type);
 		out.writeNullUTF(description);
 		out.writeCompressedInt(quantity);
-		out.writeCompressedInt(rate);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			if(rate != null && rate.getCurrency() == Currency.USD && rate.getScale() == 2) {
+				out.writeCompressedInt(SafeMath.castInt(rate.getUnscaledValue()));
+			} else {
+				out.writeCompressedInt(-1);
+			}
+		} else {
+			MoneyUtil.writeNullMoney(rate, out);
+		}
 		out.writeLong(created);
 		out.writeUTF(created_by.toString());
 		out.writeBoolean(active);

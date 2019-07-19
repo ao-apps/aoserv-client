@@ -114,7 +114,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 			case 7: return refresh_count;
 			case 8: return getExpiration();
 			case 9: return disable_log==-1?null:disable_log;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -162,10 +162,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		return refresh_count;
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		if(ao_server==-1) return null;
 		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return ao;
 	}
 
@@ -243,7 +243,7 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return packageName+" "+getType().getVerb()+" from "+host+" to "+getAOServer().getHostname();
+		return packageName+" "+getType().getVerb()+" from "+host+" to "+getLinuxServer().getHostname();
 	}
 
 	@Override

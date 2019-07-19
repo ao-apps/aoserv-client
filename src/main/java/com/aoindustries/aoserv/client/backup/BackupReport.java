@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -91,7 +91,7 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 			case 3: return getDate();
 			case 4: return file_count;
 			case 5: return disk_size;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -99,9 +99,9 @@ final public class BackupReport extends AOServObject<Integer,BackupReport> imple
 		return pkey;
 	}
 
-	public Host getServer() throws SQLException, IOException {
+	public Host getHost() throws SQLException, IOException {
 		Host se=table.getConnector().getNet().getHost().get(server);
-		if(se==null) throw new SQLException("Unable to find Server: "+server);
+		if(se==null) throw new SQLException("Unable to find Host: "+server);
 		return se;
 	}
 

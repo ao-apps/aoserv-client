@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -157,7 +157,7 @@ public class MySQLTODO extends TestCase {
 			UserServer msu=conn.getMysql().getUserServer().get(pkey);
 			assertNotNull("MySQLServerUser", msu);
 			mysqlServerUsers.add(msu);
-			mysqlServer.getAoServer().waitForMySQLUserRebuild();
+			mysqlServer.getLinuxServer().waitForMySQLUserRebuild();
 			System.out.println("Done");
 		}
 	}
@@ -228,7 +228,7 @@ public class MySQLTODO extends TestCase {
 			int pkey=mysqlServer.addMySQLDatabase(randomName, pack);
 			Database mysqlDatabase=conn.getMysql().getDatabase().get(pkey);
 			assertNotNull("MySQLDatabase", mysqlDatabase);
-			mysqlServer.getAoServer().waitForMySQLDatabaseRebuild();
+			mysqlServer.getLinuxServer().waitForMySQLDatabaseRebuild();
 			System.out.println("Done");
 			mysqlDatabases.add(mysqlDatabase);
 		}
@@ -320,7 +320,7 @@ public class MySQLTODO extends TestCase {
 			System.out.print('.');
 			UserServer msu = getMySQLServerUser(md.getMySQLServer());
 			md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
-			md.getMySQLServer().getAoServer().waitForMySQLDBUserRebuild();
+			md.getMySQLServer().getLinuxServer().waitForMySQLDBUserRebuild();
 		}
 		System.out.println(" Done");
 	}
@@ -367,11 +367,11 @@ public class MySQLTODO extends TestCase {
 	 */
 	private void disableMySQLServerUsers() throws Exception {
 		System.out.print("Disabling MySQLServerUsers: ");
-		DisableLog dl=conn.getAccount().getDisableLog().get(pack.getBusiness().addDisableLog("Test disabling"));
+		DisableLog dl=conn.getAccount().getDisableLog().get(pack.getAccount().addDisableLog("Test disabling"));
 		for(UserServer msu : mysqlServerUsers) {
 			System.out.print('.');
 			msu.disable(dl);
-			msu.getMySQLServer().getAoServer().waitForMySQLUserRebuild();
+			msu.getMySQLServer().getLinuxServer().waitForMySQLUserRebuild();
 		}
 		System.out.println(" Done");
 	}
@@ -384,7 +384,7 @@ public class MySQLTODO extends TestCase {
 		for(UserServer msu : mysqlServerUsers) {
 			System.out.print('.');
 			msu.enable();
-			msu.getMySQLServer().getAoServer().waitForMySQLUserRebuild();
+			msu.getMySQLServer().getLinuxServer().waitForMySQLUserRebuild();
 		}
 		System.out.println(" Done");
 	}

@@ -80,7 +80,7 @@ final public class Address extends CachedObjectIntegerKey<Address> implements Re
 			case COLUMN_PKEY: return pkey;
 			case 1: return address;
 			case COLUMN_DOMAIN: return domain;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -200,7 +200,7 @@ final public class Address extends CachedObjectIntegerKey<Address> implements Re
 				|| ml.listname_approval_add==pkey
 			) {
 				Domain ed=ml.getMajordomoServer().getDomain();
-				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ml));
 			}
 		}
 
@@ -211,7 +211,7 @@ final public class Address extends CachedObjectIntegerKey<Address> implements Re
 				|| ms.majordomo_owner_add==pkey
 			) {
 				Domain ed=ms.getDomain();
-				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
 			}
 		}
 

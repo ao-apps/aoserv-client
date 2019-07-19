@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -175,10 +175,14 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	private Account.Name accounting;
 	private String id;
 
-	public Account getBusiness() throws SQLException, IOException {
-		Account accountingObject = table.getConnector().getAccount().getAccount().get(accounting);
-		if (accountingObject == null) throw new SQLException("Unable to find Business: " + accounting);
-		return accountingObject;
+	public Account.Name getAccount_name() {
+		return accounting;
+	}
+
+	public Account getAccount() throws SQLException, IOException {
+		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+		if (obj == null) throw new SQLException("Unable to find Account: " + accounting);
+		return obj;
 	}
 
 	@Override
@@ -187,7 +191,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_ACCOUNTING: return accounting;
 			case 2: return id;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

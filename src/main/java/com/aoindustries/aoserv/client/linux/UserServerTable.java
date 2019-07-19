@@ -123,8 +123,8 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	}
 
 	List<UserServer> getAlternateLinuxServerAccounts(GroupServer group) throws SQLException, IOException {
-		Server aoServer = group.getAOServer();
-		int osv = aoServer.getServer().getOperatingSystemVersion_id();
+		Server aoServer = group.getServer();
+		int osv = aoServer.getHost().getOperatingSystemVersion_id();
 		Group.Name groupName = group.getLinuxGroup().getName();
 
 		List<UserServer> rows = getRows();
@@ -165,7 +165,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				int len=list.size();
 				for(int c=0; c<len; c++) {
 					UserServer lsa=list.get(c);
-					Integer I=lsa.getAOServer().getPkey();
+					Integer I=lsa.getServer().getPkey();
 					Map<User.Name,UserServer> serverHash=nameHash.get(I);
 					if(serverHash==null) nameHash.put(I, serverHash=new HashMap<>());
 					if(serverHash.put(lsa.username, lsa)!=null) throw new SQLException("LinuxServerAccount username exists more than once on server: "+lsa.username+" on "+I);
@@ -182,7 +182,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	 * Finds a LinuxServerAccount by a username and password combination.  It tries to return an account that is not disabled and
 	 * matches both username and password.
 	 *
-	 * @return   the <code>LinuxServerAccount</code> found if a non-disabled username and password are found, or <code>null</code> if no match found
+	 * @return   the <code>LinuxServerAccount</code> found if a non-disabled username and password are found, or {@code null} if no match found
 	 *
 	 * @exception  LoginException  if a possible account match is found but the account is disabled or has a different password
 	 */
@@ -207,12 +207,12 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				}
 			}
 		}
-		if(badPasswordLSA!=null) throw new BadPasswordException("The password does not match the password for the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getAOServer().getHostname()+"\" server.");
+		if(badPasswordLSA!=null) throw new BadPasswordException("The password does not match the password for the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getServer().getHostname()+"\" server.");
 		if(disabledLSA!=null) {
 			DisableLog dl=disabledLSA.getDisableLog();
 			String reason=dl==null?null:dl.getDisableReason();
-			if(reason==null) throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getHostname()+"\" server has been disabled for an unspecified reason.");
-			else throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getHostname()+"\" server has been disabled for the following reason: "+reason);
+			if(reason==null) throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server has been disabled for an unspecified reason.");
+			else throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server has been disabled for the following reason: "+reason);
 		}
 		return null;
 	}
@@ -221,7 +221,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 	 * Finds a LinuxServerAccount by an email address and password combination.  It tries to return an account that is not disabled and
 	 * matches both email address and password.
 	 *
-	 * @return   the <code>LinuxServerAccount</code> found if a non-disabled email address and password are found, or <code>null</code> if no match found
+	 * @return   the <code>LinuxServerAccount</code> found if a non-disabled email address and password are found, or {@code null} if no match found
 	 *
 	 * @exception  LoginException  if a possible account match is found but the account is disabled or has a different password
 	 */
@@ -234,7 +234,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 		for(int c=0;c<domainsLen;c++) {
 			Domain ed=domains.get(c);
 			if(ed.getDomain().equals(domain)) {
-				Server ao=ed.getAOServer();
+				Server ao = ed.getLinuxServer();
 				Address ea=ed.getEmailAddress(address);
 				if(ea!=null) {
 					List<UserServer> lsas=ea.getLinuxServerAccounts();
@@ -254,12 +254,12 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			}
 		}
 
-		if(badPasswordLSA!=null) throw new BadPasswordException("The \""+address+"@"+domain+"\" address resolves to the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getAOServer().getHostname()+"\" server, but the password does not match.");
+		if(badPasswordLSA!=null) throw new BadPasswordException("The \""+address+"@"+domain+"\" address resolves to the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getServer().getHostname()+"\" server, but the password does not match.");
 		if(disabledLSA!=null) {
 			DisableLog dl=disabledLSA.getDisableLog();
 			String reason=dl==null?null:dl.getDisableReason();
-			if(reason==null) throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getHostname()+"\" server, but the account has been disabled for an unspecified reason.");
-			else throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getAOServer().getHostname()+"\" server, but the account has been disabled for the following reason: "+reason);
+			if(reason==null) throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server, but the account has been disabled for an unspecified reason.");
+			else throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server, but the account has been disabled for the following reason: "+reason);
 		}
 		return null;
 	}
@@ -279,7 +279,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 					LinuxId lsaUID = lsa.getUid();
 					// Only hash the root user for uid of 0
 					if(lsaUID.getId() != UserServer.ROOT_UID || lsa.username.equals(User.ROOT)) {
-						Integer aoI=lsa.getAOServer().getPkey();
+						Integer aoI=lsa.getServer().getPkey();
 						Map<LinuxId,UserServer> serverHash=uidHash.get(aoI);
 						if(serverHash==null) uidHash.put(aoI, serverHash=new HashMap<>());
 						LinuxId I=lsaUID;

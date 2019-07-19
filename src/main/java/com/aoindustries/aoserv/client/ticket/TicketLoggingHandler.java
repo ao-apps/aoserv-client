@@ -49,7 +49,7 @@ import java.util.logging.LogRecord;
  * </p>
  * <p>
  * Will first look for any open/hold/bounced ticket that is for the same
- * brand, business, language, type, level, prefix, classname, method, and category.
+ * brand, account, language, type, level, prefix, classname, method, and category.
  * If found, it will annotate that ticket.  If not found, it will create a new
  * ticket.
  * </p>
@@ -82,7 +82,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
 	private final String summaryPrefix;
 	private final AOServConnector connector;
 	private final Category category;
-	private final Account business;
+	private final Account account;
 	private final Brand brand;
 	private final Language language;
 	private final TicketType ticketType;
@@ -96,8 +96,8 @@ final public class TicketLoggingHandler extends QueuedHandler {
 		this.connector = connector;
 		this.category = category;
 		// Look-up things in advance to reduce possible round-trips during logging
-		business = connector.getThisBusinessAdministrator().getUsername().getPackage().getBusiness();
-		brand = business.getBrand();
+		account = connector.getCurrentAdministrator().getUsername().getPackage().getAccount();
+		brand = account.getBrand();
 		if(brand==null) throw new SQLException("Unable to find Brand for connector: "+connector);
 		language = connector.getTicket().getLanguage().get(Language.EN);
 		if(language==null) throw new SQLException("Unable to find Language: "+Language.EN);
@@ -130,7 +130,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
 						|| Status.HOLD.equals(status)
 						|| Status.BOUNCED.equals(status)
 					) && brand.equals(ticket.getBrand())
-					&& business.equals(ticket.getBusiness())
+					&& account.equals(ticket.getAccount())
 					&& language.equals(ticket.getLanguage())
 					&& ticketType.equals(ticket.getTicketType())
 					&& ticket.getSummary().equals(summary) // level, prefix, classname, and method
@@ -158,7 +158,7 @@ final public class TicketLoggingHandler extends QueuedHandler {
 				Set<Email> noContacts = Collections.emptySet();
 				connector.getTicket().getTicket().addTicket(
 					brand,
-					business,
+					account,
 					language,
 					category,
 					ticketType,

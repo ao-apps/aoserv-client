@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2004-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2004-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -57,7 +57,7 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 			case 2: return cps_overload_sleep_time;
 			case 3: return destination_host;
 			case 4: return destination_port;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

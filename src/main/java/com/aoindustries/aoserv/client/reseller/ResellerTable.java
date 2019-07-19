@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -65,7 +65,7 @@ final public class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 	 * Gets a <code>Reseller</code> given its brand.
 	 */
 	Reseller getReseller(Brand brand) throws IOException, SQLException {
-		return getUniqueRow(Reseller.COLUMN_ACCOUNTING, brand.getBusiness_accounting());
+		return getUniqueRow(Reseller.COLUMN_ACCOUNTING, brand.getAccount_name());
 	}
 
 	@Override
@@ -79,7 +79,7 @@ final public class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 	public List<Reseller> getTopLevelResellers() throws IOException, SQLException {
 		List<Reseller> matches=new ArrayList<>();
 		for(Reseller reseller : getRows()) {
-			if(reseller.getParentReseller()==null) matches.add(reseller);
+			if(reseller.getParent() == null) matches.add(reseller);
 		}
 		return matches;
 	}

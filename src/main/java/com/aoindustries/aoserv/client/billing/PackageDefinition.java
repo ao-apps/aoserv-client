@@ -31,12 +31,12 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.math.SafeMath;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
+import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	static final int COLUMN_PKEY=0;
 	static final String COLUMN_ACCOUNTING_name = "accounting";
 	static final String COLUMN_CATEGORY_name = "category";
-	static final String COLUMN_MONTHLY_RATE_name = "monthly_rate";
+	static final String COLUMN_monthlyRate_name = "monthlyRate";
 	static final String COLUMN_NAME_name = "name";
 	static final String COLUMN_VERSION_name = "version";
 
@@ -62,9 +62,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	String version;
 	private String display;
 	private String description;
-	private int setup_fee;
+	private Money setupFee;
 	private String setup_fee_transaction_type;
-	private int monthly_rate;
+	private Money monthlyRate;
 	private String monthly_rate_transaction_type;
 	private boolean active;
 	private boolean approved;
@@ -79,20 +79,24 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 			case 4: return version;
 			case 5: return display;
 			case 6: return description;
-			case 7: return setup_fee==-1 ? null : setup_fee;
+			case 7: return setupFee;
 			case 8: return setup_fee_transaction_type;
-			case 9: return monthly_rate==-1 ? null : monthly_rate;
+			case 9: return monthlyRate;
 			case 10: return monthly_rate_transaction_type;
 			case 11: return active;
 			case 12: return approved;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
+	}
+
+	public Account.Name getAccount_name() {
+		return accounting;
 	}
 
 	/**
 	 * May be null if filtered.
 	 */
-	public Account getBusiness() throws IOException, SQLException {
+	public Account getAccount() throws IOException, SQLException {
 		return table.getConnector().getAccount().getAccount().get(accounting);
 	}
 
@@ -130,10 +134,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(limits.length);
 					for(PackageDefinitionLimit limit : limits) {
-						out.writeUTF(limit.resource);
-						out.writeCompressedInt(limit.soft_limit);
-						out.writeCompressedInt(limit.hard_limit);
-						out.writeCompressedInt(limit.additional_rate);
+						out.writeUTF(limit.getResource_name());
+						out.writeCompressedInt(limit.getSoftLimit());
+						out.writeCompressedInt(limit.getHardLimit());
+						MoneyUtil.writeNullMoney(limit.getAdditionalRate(), out);
 						out.writeBoolean(limit.additional_transaction_type!=null);
 						if(limit.additional_transaction_type!=null) out.writeUTF(limit.additional_transaction_type);
 					}
@@ -175,11 +179,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	}
 
 	/**
-	 * Gets the setup fee or <code>null</code> for none.
+	 * Gets the setup fee or {@code null} for none.
 	 */
-	public BigDecimal getSetupFee() {
-		if(setup_fee==-1) return null;
-		return BigDecimal.valueOf(setup_fee, 2);
+	public Money getSetupFee() {
+		return setupFee;
 	}
 
 	public TransactionType getSetupFeeTransactionType() throws SQLException, IOException {
@@ -189,8 +192,8 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 		return tt;
 	}
 
-	public BigDecimal getMonthlyRate() {
-		return BigDecimal.valueOf(monthly_rate, 2);
+	public Money getMonthlyRate() {
+		return monthlyRate;
 	}
 
 	public TransactionType getMonthlyRateTransactionType() throws SQLException, IOException {
@@ -224,20 +227,19 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			pkey=result.getInt(1);
-			accounting=Account.Name.valueOf(result.getString(2));
-			category=result.getString(3);
-			name=result.getString(4);
-			version=result.getString(5);
-			display=result.getString(6);
-			description=result.getString(7);
-			String S=result.getString(8);
-			setup_fee=S==null ? -1 : SQLUtility.getPennies(S);
-			setup_fee_transaction_type=result.getString(9);
-			monthly_rate=SQLUtility.getPennies(result.getString(10));
-			monthly_rate_transaction_type=result.getString(11);
-			active=result.getBoolean(12);
-			approved=result.getBoolean(13);
+			pkey = result.getInt("id");
+			accounting = Account.Name.valueOf(result.getString("accounting"));
+			category = result.getString("category");
+			name = result.getString("name");
+			version=result.getString("version");
+			display=result.getString("display");
+			description=result.getString("description");
+			setupFee = MoneyUtil.getMoney(result, "setupFee.currency", "setupFee.value");
+			setup_fee_transaction_type = result.getString("setup_fee_transaction_type");
+			monthlyRate = MoneyUtil.getMoney(result, "monthlyRate.currency", "monthlyRate.value");
+			monthly_rate_transaction_type = result.getString("monthly_rate_transaction_type");
+			active = result.getBoolean("active");
+			approved = result.getBoolean("approved");
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -246,19 +248,19 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		try {
-			pkey=in.readCompressedInt();
-			accounting=Account.Name.valueOf(in.readUTF()).intern();
-			category=in.readUTF().intern();
-			name=in.readUTF();
-			version=in.readUTF();
-			display=in.readUTF();
-			description=in.readUTF();
-			setup_fee=in.readCompressedInt();
-			setup_fee_transaction_type=InternUtils.intern(in.readNullUTF());
-			monthly_rate=in.readCompressedInt();
-			monthly_rate_transaction_type=InternUtils.intern(in.readNullUTF());
-			active=in.readBoolean();
-			approved=in.readBoolean();
+			pkey = in.readCompressedInt();
+			accounting = Account.Name.valueOf(in.readUTF()).intern();
+			category = in.readUTF().intern();
+			name = in.readUTF();
+			version = in.readUTF();
+			display = in.readUTF();
+			description = in.readUTF();
+			setupFee = MoneyUtil.readNullMoney(in);
+			setup_fee_transaction_type = InternUtils.intern(in.readNullUTF());
+			monthlyRate = MoneyUtil.readNullMoney(in);
+			monthly_rate_transaction_type = InternUtils.intern(in.readNullUTF());
+			active = in.readBoolean();
+			approved = in.readBoolean();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -270,7 +272,7 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version aoservVersion) throws IOException {
+	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(category);
@@ -278,9 +280,25 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 		out.writeUTF(version);
 		out.writeUTF(display);
 		out.writeUTF(description);
-		out.writeCompressedInt(setup_fee);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			if(setupFee != null && setupFee.getCurrency() == Currency.USD && setupFee.getScale() == 2) {
+				out.writeCompressedInt(SafeMath.castInt(setupFee.getUnscaledValue()));
+			} else {
+				out.writeCompressedInt(-1);
+			}
+		} else {
+			MoneyUtil.writeNullMoney(setupFee, out);
+		}
 		out.writeNullUTF(setup_fee_transaction_type);
-		out.writeCompressedInt(monthly_rate);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			if(monthlyRate != null && monthlyRate.getCurrency() == Currency.USD && monthlyRate.getScale() == 2) {
+				out.writeCompressedInt(SafeMath.castInt(monthlyRate.getUnscaledValue()));
+			} else {
+				out.writeCompressedInt(-1);
+			}
+		} else {
+			MoneyUtil.writeNullMoney(monthlyRate, out);
+		}
 		out.writeNullUTF(monthly_rate_transaction_type);
 		out.writeBoolean(active);
 		out.writeBoolean(approved);
@@ -311,9 +329,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 		final String version,
 		final String display,
 		final String description,
-		final int setupFee,
+		final Money setupFee,
 		final TransactionType setupFeeTransactionType,
-		final int monthlyRate,
+		final Money monthlyRate,
 		final TransactionType monthlyRateTransactionType
 	) throws IOException, SQLException {
 		table.getConnector().requestUpdate(
@@ -331,10 +349,10 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 					out.writeUTF(version);
 					out.writeUTF(display);
 					out.writeUTF(description);
-					out.writeCompressedInt(setupFee);
+					MoneyUtil.writeNullMoney(setupFee, out);
 					out.writeBoolean(setupFeeTransactionType!=null);
 					if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.getName());
-					out.writeCompressedInt(monthlyRate);
+					MoneyUtil.writeMoney(monthlyRate, out);
 					out.writeUTF(monthlyRateTransactionType.getName());
 				}
 

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -251,7 +251,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	/**
 	 * Gets the default sorting for this table.
 	 *
-	 * @return  <code>null</code> if the sorting is performed by the server or the array of column names
+	 * @return  {@code null} if the sorting is performed by the server or the array of column names
 	 */
 	abstract protected OrderBy[] getDefaultOrderBy();
 

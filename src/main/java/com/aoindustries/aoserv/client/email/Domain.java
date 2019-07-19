@@ -95,7 +95,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 			case 1: return domain;
 			case COLUMN_AO_SERVER: return ao_server;
 			case COLUMN_PACKAGE: return packageName;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -121,9 +121,9 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 		return packageObject;
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getLinuxServer() throws SQLException, IOException {
 		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: "+ao_server);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: "+ao_server);
 		return ao;
 	}
 
@@ -163,7 +163,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 		MajordomoServer ms=getMajordomoServer();
 		if(ms!=null) {
 			Domain ed=ms.getDomain();
-			reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
+			reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
 		}
 
 		for(Address ea : getEmailAddresses()) reasons.addAll(ea.getCannotRemoveReasons());

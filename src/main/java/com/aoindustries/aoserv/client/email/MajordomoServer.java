@@ -108,7 +108,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 			case 4: return majordomo_pipe_address;
 			case 5: return owner_majordomo_add;
 			case 6: return majordomo_owner_add;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

@@ -81,7 +81,7 @@ final public class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
 			case 8: return maxIdle;
 			case 9: return maxWait;
 			case 10: return validationQuery;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

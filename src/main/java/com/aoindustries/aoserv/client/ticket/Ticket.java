@@ -130,7 +130,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			case 17: return StringUtility.join(contact_emails, ", ");
 			case 18: return contact_phone_numbers;
 			case 19: return getInternalNotes();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -278,11 +278,15 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return table.getConnector().getReseller().getReseller().get(reseller);
 	}
 
+	public Account.Name getAccount_name() {
+		return accounting;
+	}
+
 	/**
 	 * May be null if not set or filtered.
 	 */
-	public Account getBusiness() throws SQLException, IOException {
-		if(accounting==null) return null;
+	public Account getAccount() throws SQLException, IOException {
+		if(accounting == null) return null;
 		return table.getConnector().getAccount().getAccount().get(accounting);
 	}
 
@@ -391,8 +395,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 
 	// <editor-fold desc="Ticket Actions">
 	/*
-	public void actBounceTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.BOUNCE_TICKET, pkey, business_administrator.getUsername_id(), comments);
+	public void actBounceTicket(Administrator administrator, String comments) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.BOUNCE_TICKET, pkey, administrator.getUsername_id(), comments);
 	}*/
 
 	public void actChangeAdminPriority(Priority priority, Administrator business_administrator, String comments) throws IOException, SQLException {
@@ -483,8 +487,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}
 
 	/*
-	public void actCompleteTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.COMPLETE_TICKET, pkey, business_administrator.getUsername_userId(), comments);
+	public void actCompleteTicket(Administrator administrator, String comments) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.COMPLETE_TICKET, pkey, administrator.getUsername_userId(), comments);
 	}*/
 
 	/*
@@ -493,31 +497,31 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	}*/
 
 	/*
-	public void actKillTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.KILL_TICKET, pkey, business_administrator.getUsername_userId(), comments);
+	public void actKillTicket(Administrator administrator, String comments) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.KILL_TICKET, pkey, administrator.getUsername_userId(), comments);
 	}*/
 
 	/*
-	public void actReactivateTicket(BusinessAdministrator business_administrator, String comments) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, business_administrator.getUsername_userId(), comments);
+	public void actReactivateTicket(Administrator administrator, String comments) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AOServProtocol.CommandID.REACTIVATE_TICKET, pkey, administrator.getUsername_userId(), comments);
 	}*/
 
-	public void actWorkEntry(Administrator business_administrator, String comments) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.TICKET_WORK, pkey, business_administrator.getUsername_userId(), comments);
+	public void actWorkEntry(Administrator administrator, String comments) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.TICKET_WORK, pkey, administrator.getUsername_userId(), comments);
 	}
 
 	/**
 	 * Updates the ticket business if the old business matches the current value.
 	 *
-	 * @return <code>true</code> if successfully updated or <code>false</code> if oldBusiness doesn't match the current business.
+	 * @return <code>true</code> if successfully updated or <code>false</code> if oldAccount doesn't match the current business.
 	 */
-	public boolean setBusiness(Account oldBusiness, Account newBusiness) throws IOException, SQLException {
+	public boolean setAccount(Account oldAccount, Account newAccount) throws IOException, SQLException {
 		return table.getConnector().requestBooleanQueryIL(
 			true,
 			AoservProtocol.CommandID.SET_TICKET_BUSINESS,
 			pkey,
-			oldBusiness==null ? "" : oldBusiness.getName().toString(),
-			newBusiness==null ? "" : newBusiness.getName().toString()
+			oldAccount==null ? "" : oldAccount.getName().toString(),
+			newAccount==null ? "" : newAccount.getName().toString()
 		);
 	}
 

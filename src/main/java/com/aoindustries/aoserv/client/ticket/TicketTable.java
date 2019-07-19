@@ -83,7 +83,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.TICKETS.ordinal());
-					out.writeUTF(brand.getBusiness_accounting().toString());
+					out.writeUTF(brand.getAccount_name().toString());
 					out.writeNullUTF(business==null ? null : business.getName().toString());
 					out.writeUTF(language.getCode());
 					out.writeCompressedInt(category==null ? -1 : category.getPkey());

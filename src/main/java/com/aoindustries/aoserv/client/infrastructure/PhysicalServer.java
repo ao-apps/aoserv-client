@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2008-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -87,18 +87,18 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 			case 7: return Float.isNaN(maxPower) ? null : maxPower;
 			case 8: return supports_hvm;
 			case 9: return upsType.name();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public Host getServer() throws SQLException, IOException {
+	public Host getHost() throws SQLException, IOException {
 		Host se=table.getConnector().getNet().getHost().get(pkey);
-		if(se==null) throw new SQLException("Unable to find Server: "+pkey);
+		if(se==null) throw new SQLException("Unable to find Host: "+pkey);
 		return se;
 	}
 
 	/**
-	 * Gets the rack this server is part of or <code>null</code> if not in a rack.
+	 * Gets the rack this server is part of or {@code null} if not in a rack.
 	 */
 	public Rack getRack() throws SQLException, IOException {
 		if(rack==-1) return null;
@@ -123,7 +123,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	}
 
 	/**
-	 * Gets the processor type or <code>null</code> if not applicable.
+	 * Gets the processor type or {@code null} if not applicable.
 	 */
 	public ProcessorType getProcessorType() throws SQLException, IOException {
 		if(processorType==null) return null;
@@ -155,7 +155,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 	}
 
 	/**
-	 * Gets if this supports HVM or <code>null</code> if not applicable.
+	 * Gets if this supports HVM or {@code null} if not applicable.
 	 */
 	public Boolean getSupportsHvm() {
 		return supports_hvm;
@@ -211,7 +211,7 @@ final public class PhysicalServer extends CachedObjectIntegerKey<PhysicalServer>
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return getServer().toStringImpl();
+		return getHost().toStringImpl();
 	}
 
 	@Override

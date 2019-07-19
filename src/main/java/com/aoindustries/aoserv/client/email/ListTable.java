@@ -65,13 +65,13 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 		UserServer lsa,
 		GroupServer lsg
 	) throws IllegalArgumentException, IOException, SQLException {
-		Server lsaAO = lsa.getAOServer();
-		Server lsgAO = lsg.getAOServer();
+		Server lsaAO = lsa.getServer();
+		Server lsgAO = lsg.getServer();
 		if(!lsaAO.equals(lsgAO)) throw new IllegalArgumentException("Mismatched servers: " + lsaAO + " and " + lsgAO);
 		if(
 			!List.isValidRegularPath(
 				path,
-				lsaAO.getServer().getOperatingSystemVersion_id()
+				lsaAO.getHost().getOperatingSystemVersion_id()
 			)
 		) throw new IllegalArgumentException("Invalid list path: " + path);
 
@@ -127,12 +127,12 @@ final public class ListTable extends CachedTableIntegerKey<List> {
 	}
 
 	public List getEmailList(Server ao, PosixPath path) throws IOException, SQLException {
-		int aoPKey=ao.getPkey();
+		int aoPKey = ao.getServer_pkey();
 		java.util.List<List> cached=getRows();
 		int size=cached.size();
 		for(int c=0;c<size;c++) {
 			List list=cached.get(c);
-			if(list.getLinuxServerGroup().getAoServer_server_id()==aoPKey && list.path.equals(path)) return list;
+			if(list.getLinuxServerGroup().getServer_host_id() == aoPKey && list.path.equals(path)) return list;
 		}
 		return null;
 	}

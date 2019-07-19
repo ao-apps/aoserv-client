@@ -55,9 +55,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A <code>BusinessAdministrator</code> is a username and password pair, usually
+ * An {@link Administrator} is a username and password pair, usually
  * representing an individual or an application, that has administrative control
- * over all resources in a <code>Business</code> or any any of its child businesses.
+ * over all resources in an {@link Account} or any any of its child businesses.
  *
  *
  * @see  Account
@@ -107,7 +107,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	@Override
 	public boolean canDisable() throws SQLException, IOException {
-		return disable_log==-1 && !equals(table.getConnector().getThisBusinessAdministrator());
+		return disable_log==-1 && !equals(table.getConnector().getCurrentAdministrator());
 	}
 
 	public boolean canSwitchUsers() {
@@ -120,9 +120,9 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	public boolean canSwitchUser(Administrator other) throws SQLException, IOException {
 		if(isDisabled() || other.isDisabled()) return false;
-		Account business=getUsername().getPackage().getBusiness();
-		Account otherBusiness=other.getUsername().getPackage().getBusiness();
-		return !business.equals(otherBusiness) && business.isBusinessOrParentOf(otherBusiness);
+		Account account = getUsername().getPackage().getAccount();
+		Account otherAccount = other.getUsername().getPackage().getAccount();
+		return !account.equals(otherAccount) && account.isAccountOrParentOf(otherAccount);
 	}
 
 	@Override
@@ -139,7 +139,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	/**
 	 * Validates a password and returns a description of the problem.  If the
-	 * password is valid, then <code>null</code> is returned.
+	 * password is valid, then {@code null} is returned.
 	 */
 	public static List<PasswordChecker.Result> checkPassword(User.Name username, String password) throws IOException {
 		return PasswordChecker.checkPassword(username, password, PasswordChecker.PasswordStrength.STRICT);
@@ -147,7 +147,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	/**
 	 * Validates a password and returns a description of the problem.  If the
-	 * password is valid, then <code>null</code> is returned.
+	 * password is valid, then {@code null} is returned.
 	 */
 	/*public String checkPasswordDescribe(String password) {
 	return checkPasswordDescribe(pkey, password);
@@ -155,7 +155,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	/**
 	 * Validates a password and returns a description of the problem.  If the
-	 * password is valid, then <code>null</code> is returned.
+	 * password is valid, then {@code null} is returned.
 	 */
 	/*public static String checkPasswordDescribe(String username, String password) {
 	return PasswordChecker.checkPasswordDescribe(username, password, true, false);
@@ -224,7 +224,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 			case 19: return disable_log == -1 ? null : disable_log;
 			case 20: return can_switch_users;
 			case 21: return support_code;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -447,7 +447,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 		AOServConnector conn=table.getConnector();
 
-		if(equals(conn.getThisBusinessAdministrator())) reasons.add(new CannotRemoveReason<>("Not allowed to remove self", this));
+		if(equals(conn.getCurrentAdministrator())) reasons.add(new CannotRemoveReason<>("Not allowed to remove self", this));
 
 		List<Action> actions=getTicketActions();
 		if(!actions.isEmpty()) reasons.add(new CannotRemoveReason<>("Author of "+actions.size()+" ticket "+(actions.size()==1?"action":"actions"), actions));
@@ -472,7 +472,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	}
 
 	/**
-	 * Sets the password for this <code>BusinessAdministrator</code>.  All connections must
+	 * Sets the password for this {@link Administrator}.  All connections must
 	 * be over secure protocols for this method to work.  If the connections
 	 * are not secure, an <code>IOException</code> is thrown.
 	 */

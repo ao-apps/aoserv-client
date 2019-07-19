@@ -57,7 +57,7 @@ import java.util.List;
 
 /**
  * A <code>LinuxServerAccount</code> grants a <code>LinuxAccount</code>
- * access to an <code>AOServer</code>.
+ * access to a {@link Server}.
  *
  * @see  User
  * @see  Server
@@ -126,7 +126,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		if(disable_log!=-1) return false;
 
 		// is a system user
-		if(uid.compareTo(getAOServer().getUidMin()) < 0) return false;
+		if(uid.compareTo(getServer().getUidMin()) < 0) return false;
 
 		// cvs_repositories
 		for(CvsRepository cr : getCvsRepositories()) if(!cr.isDisabled()) return false;
@@ -226,7 +226,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			case 16: return sa_required_score;
 			case 17: return sa_discard_score==-1 ? null : sa_discard_score;
 			case 18: return sudo;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -471,9 +471,9 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return ao_server;
 	}
 
-	public Server getAOServer() throws SQLException, IOException {
+	public Server getServer() throws SQLException, IOException {
 		Server ao=table.getConnector().getLinux().getServer().get(ao_server);
-		if(ao==null) throw new SQLException("Unable to find AOServer: " + ao_server);
+		if(ao==null) throw new SQLException("Unable to find linux.Server: " + ao_server);
 		return ao;
 	}
 
@@ -563,19 +563,19 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
-		LinuxId uidMin = getAOServer().getUidMin();
+		LinuxId uidMin = getServer().getUidMin();
 		if(uid.compareTo(uidMin) < 0) reasons.add(new CannotRemoveReason<>("Not allowed to remove accounts with UID less than " + uidMin, this));
 
-		Server ao=getAOServer();
+		Server ao = getServer();
 
 		// No CVS repositories
 		for(CvsRepository cr : ao.getCvsRepositories()) {
-			if(cr.getLinuxServerAccount_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerAccount().getAOServer().getHostname(), cr));
+			if(cr.getLinuxServerAccount_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by CVS repository "+cr.getPath()+" on "+cr.getLinuxServerAccount().getServer().getHostname(), cr));
 		}
 
 		// No email lists
 		for(com.aoindustries.aoserv.client.email.List el : getEmailLists()) {
-			reasons.add(new CannotRemoveReason<>("Used by email list "+el.getPath()+" on "+el.getLinuxServerAccount().getAOServer().getHostname(), el));
+			reasons.add(new CannotRemoveReason<>("Used by email list "+el.getPath()+" on "+el.getLinuxServerAccount().getServer().getHostname(), el));
 		}
 
 		// No httpd_servers
@@ -585,8 +585,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 				reasons.add(
 					new CannotRemoveReason<>(
 						name==null
-							? "Used by Apache HTTP Server on " + hs.getAOServer().getHostname()
-							: "Used by Apache HTTP Server (" + name + ") on " + hs.getAOServer().getHostname(),
+							? "Used by Apache HTTP Server on " + hs.getLinuxServer().getHostname()
+							: "Used by Apache HTTP Server (" + name + ") on " + hs.getLinuxServer().getHostname(),
 						hs
 					)
 				);
@@ -595,14 +595,14 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 		// No httpd shared tomcats
 		for(SharedTomcat hst : ao.getHttpdSharedTomcats()) {
-			if(hst.getLinuxServerAccount_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getAOServer().getHostname(), hst));
+			if(hst.getLinuxServerAccount_pkey()==pkey) reasons.add(new CannotRemoveReason<>("Used by Multi-Site Tomcat JVM "+hst.getInstallDirectory()+" on "+hst.getLinuxServer().getHostname(), hst));
 		}
 
 		// No majordomo_servers
 		for(MajordomoServer ms : ao.getMajordomoServers()) {
 			if(ms.getLinuxServerAccount_pkey()==pkey) {
 				Domain ed=ms.getDomain();
-				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ms));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo server "+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ms));
 			}
 		}
 
@@ -610,13 +610,13 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		for(PrivateServer pfs : ao.getPrivateFTPServers()) {
 			if(pfs.getLinuxServerAccount_pkey()==pkey) {
 				UserServer lsa = pfs.getLinuxServerAccount();
-				reasons.add(new CannotRemoveReason<>("Used by private FTP server "+lsa.getHome()+" on "+lsa.getAOServer().getHostname(), pfs));
+				reasons.add(new CannotRemoveReason<>("Used by private FTP server "+lsa.getHome()+" on "+lsa.getServer().getHostname(), pfs));
 			}
 		}
 
 		// No httpd_sites
 		for(Site site : ao.getHttpdSites()) {
-			if(site.getLinuxAccount_username().equals(username)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getAoServer().getHostname(), site));
+			if(site.getLinuxAccount_username().equals(username)) reasons.add(new CannotRemoveReason<>("Used by website "+site.getInstallDirectory()+" on "+site.getLinuxServer().getHostname(), site));
 		}
 
 		return reasons;
@@ -741,7 +741,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 
 	@Override
 	public String toStringImpl() throws SQLException, IOException {
-		return username+" on "+getAOServer().getHostname();
+		return username+" on "+getServer().getHostname();
 	}
 
 	@Override

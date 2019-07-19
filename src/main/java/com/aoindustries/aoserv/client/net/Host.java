@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -71,7 +71,8 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	private String name;
 	private boolean monitoring_enabled;
 
-	public void addBusiness(
+	// TODO: 1.83.0: No longer add to a server by default, move this method to correct place
+	public void addAccount(
 		Account.Name accounting,
 		String contractVersion,
 		Account parent,
@@ -80,7 +81,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 		boolean can_see_prices,
 		boolean billParent
 	) throws IOException, SQLException {
-		table.getConnector().getAccount().getAccount().addBusiness(
+		table.getConnector().getAccount().getAccount().addAccount(
 			accounting,
 			contractVersion,
 			this,
@@ -111,7 +112,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 		);
 	}
 
-	public Server getAOServer() throws IOException, SQLException {
+	public Server getLinuxServer() throws IOException, SQLException {
 		return table.getConnector().getLinux().getServer().get(pkey);
 	}
 
@@ -123,8 +124,8 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 		return table.getConnector().getInfrastructure().getVirtualServer().get(pkey);
 	}
 
-	public List<Account> getBusinesses() throws IOException, SQLException {
-		return table.getConnector().getAccount().getAccountHost().getBusinesses(this);
+	public List<Account> getAccounts() throws IOException, SQLException {
+		return table.getConnector().getAccount().getAccountHost().getAccounts(this);
 	}
 
 	@Override
@@ -137,7 +138,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 			case COLUMN_PACKAGE: return packageId;
 			case 5: return name;
 			case 6: return monitoring_enabled;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -218,7 +219,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 
 	@Override
 	public String toStringImpl() throws IOException, SQLException {
-		Server aoServer = getAOServer();
+		Server aoServer = getLinuxServer();
 		if(aoServer!=null) return aoServer.toStringImpl();
 		Package pk = getPackage();
 		if(pk!=null) return pk.getName().toString()+'/'+name;

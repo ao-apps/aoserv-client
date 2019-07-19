@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -55,7 +55,7 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
 			case 2: return Float.isNaN(total_out_rate) ? null : total_out_rate;
 			case 3: return default_domain_out_burst==-1 ? null : default_domain_out_burst;
 			case 4: return Float.isNaN(default_domain_out_rate) ? null : default_domain_out_rate;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

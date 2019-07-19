@@ -65,7 +65,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		return defaultOrderBy;
 	}
 
-	public int addBackupServer(
+	public int addBackupHost(
 		final String hostname,
 		final ServerFarm farm,
 		final Package owner,
@@ -140,7 +140,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 	 * This is compatible with the output of <code>Server.toString()</code>.
 	 * Accepts either a hostname (for ao_servers), package/name, or pkey.
 	 *
-	 * @return  the <code>Server</code> or <code>null</code> if not found
+	 * @return  the <code>Server</code> or {@code null} if not found
 	 *
 	 * @see  Server#toString
 	 * @see  #get(java.lang.Object)
@@ -151,7 +151,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 			Server aoServer = DomainName.validate(server).isValid()
 				? connector.getLinux().getServer().get(DomainName.valueOf(server))
 				: null;
-			if(aoServer != null) return aoServer.getServer();
+			if(aoServer != null) return aoServer.getHost();
 		} catch(ValidationException e) {
 			throw new AssertionError("Already validated", e);
 		}
@@ -176,7 +176,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 					String name = server.substring(slashPos+1);
 					Package pk = connector.getBilling().getPackage().get(Account.Name.valueOf(packageName));
 					if(pk==null) return null;
-					return pk.getServer(name);
+					return pk.getHost(name);
 				} catch(ValidationException e) {
 					throw new AssertionError("Already validated", e);
 				}
@@ -205,7 +205,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		return Table.TableID.SERVERS;
 	}
 
-	public Host getServer(Package pk, String name) throws IOException, SQLException {
+	public Host getHost(Package pk, String name) throws IOException, SQLException {
 		// Use index first
 		for(Host se : getServers(pk)) if(se.getName().equals(name)) return se;
 		return null;
@@ -221,7 +221,7 @@ final public class HostTable extends CachedTableIntegerKey<Host> {
 		if(command.equalsIgnoreCase(Command.ADD_BACKUP_SERVER)) {
 			if(AOSH.checkParamCount(Command.ADD_BACKUP_SERVER, args, 12, err)) {
 				out.println(
-					connector.getSimpleAOClient().addBackupServer(
+					connector.getSimpleAOClient().addBackupHost(
 						args[1],
 						args[2],
 						AOSH.parseAccountingCode(args[3], "owner"),

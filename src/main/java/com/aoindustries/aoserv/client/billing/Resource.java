@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,7 @@ import java.sql.SQLException;
 /**
  * A <code>Resource</code> is a measurable hardware resource.  A <code>Package</code>
  * comes with a set of resources, and when those <code>PackageDefinitionLimit</code>s are exceeded,
- * an additional amount is charged to the <code>Business</code>.
+ * an additional amount is charged to the {@link Account}.
  *
  * @see  Package
  *
@@ -77,7 +77,7 @@ final public class Resource extends GlobalObjectStringKey<Resource> {
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_NAME: return pkey;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

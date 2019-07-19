@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2005-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2005-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,7 +43,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
 	private static final OrderBy[] defaultOrderBy = {
 		new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_ACCOUNTING_name, ASCENDING),
 		new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_CATEGORY_name, ASCENDING),
-		new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_MONTHLY_RATE_name, ASCENDING),
+		new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_monthlyRate_name, ASCENDING),
 		new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_NAME_name, ASCENDING),
 		new OrderBy(PackageDefinitionLimit.COLUMN_PACKAGE_DEFINITION_name+'.'+PackageDefinition.COLUMN_VERSION_name, ASCENDING),
 		new OrderBy(PackageDefinitionLimit.COLUMN_RESOURCE_name+'.'+Resource.COLUMN_NAME_name, ASCENDING)
@@ -67,7 +67,7 @@ public final class PackageDefinitionLimitTable extends CachedTableIntegerKey<Pac
 		if(resource==null) throw new AssertionError("resource is null");
 		String resourceName=resource.getName();
 		// Use the index first
-		for(PackageDefinitionLimit limit : getPackageDefinitionLimits(packageDefinition)) if(limit.resource.equals(resourceName)) return limit;
+		for(PackageDefinitionLimit limit : getPackageDefinitionLimits(packageDefinition)) if(limit.getResource_name().equals(resourceName)) return limit;
 		return null;
 	}
 

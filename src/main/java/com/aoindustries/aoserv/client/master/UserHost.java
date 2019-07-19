@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -61,7 +61,7 @@ final public class UserHost extends CachedObjectIntegerKey<UserHost> {
 			case COLUMN_PKEY: return pkey;
 			case 1: return username;
 			case 2: return server;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -71,9 +71,9 @@ final public class UserHost extends CachedObjectIntegerKey<UserHost> {
 		return obj;
 	}
 
-	public Host getServer() throws SQLException, IOException {
+	public Host getHost() throws SQLException, IOException {
 		Host obj=table.getConnector().getNet().getHost().get(server);
-		if(obj==null) throw new SQLException("Unable to find Server: "+server);
+		if(obj==null) throw new SQLException("Unable to find Host: "+server);
 		return obj;
 	}
 

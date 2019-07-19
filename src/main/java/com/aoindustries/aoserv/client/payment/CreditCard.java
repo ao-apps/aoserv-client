@@ -177,10 +177,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return accounting;
 	}
 
-	public Account getBusiness() throws SQLException, IOException {
-		Account business = table.getConnector().getAccount().getAccount().get(accounting);
-		if (business == null) throw new SQLException("Unable to find Business: " + accounting);
-		return business;
+	public Account getAccount() throws SQLException, IOException {
+		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+		if (obj == null) throw new SQLException("Unable to find Account: " + accounting);
+		return obj;
 	}
 
 	/**
@@ -332,9 +332,9 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
-		Administrator business_administrator = table.getConnector().getAccount().getAdministrator().get(createdBy);
-		if (business_administrator == null) throw new SQLException("Unable to find BusinessAdministrator: " + createdBy);
-		return business_administrator;
+		Administrator administrator = table.getConnector().getAccount().getAdministrator().get(createdBy);
+		if (administrator == null) throw new SQLException("Unable to find Administrator: " + createdBy);
+		return administrator;
 	}
 
 	/**
@@ -678,7 +678,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	/**
-	 * Gets the card number or <code>null</code> if not stored.
+	 * Gets the card number or {@code null} if not stored.
 	 */
 	synchronized public String getCardNumber(String passphrase) throws IOException, SQLException {
 		// If a different passphrase is provided, don't use the cached values, clear, and re-decrypt

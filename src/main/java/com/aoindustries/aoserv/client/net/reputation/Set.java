@@ -154,14 +154,18 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 			case 11: return networkDecayInterval;
 			case 12: return getLastNetworkDecay();
 			case 13: return getLastReputationAdded();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
+	}
+
+	public Account.Name getAccount_name() {
+		return accounting;
 	}
 
 	/**
 	 * May be filtered.
 	 */
-	public Account getBusiness() throws SQLException, IOException {
+	public Account getAccount() throws SQLException, IOException {
 		return table.getConnector().getAccount().getAccount().get(accounting);
 	}
 

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -109,7 +109,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 			case 5: return display;
 			case 6: return is_aoserv_daemon_supported;
 			case 7: return sort_order;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -190,7 +190,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	/**
-	 * Gets the directory that stores websites for this operating system or <code>null</code>
+	 * Gets the directory that stores websites for this operating system or {@code null}
 	 * if this OS doesn't support web sites.
 	 */
 	public PosixPath getHttpdSitesDirectory() {
@@ -208,7 +208,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	/**
-	 * Gets the directory that stores websites for this operating system or <code>null</code>
+	 * Gets the directory that stores websites for this operating system or {@code null}
 	 * if this OS doesn't support web sites.
 	 */
 	public static PosixPath getHttpdSitesDirectory(int osv) {
@@ -229,7 +229,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	/**
-	 * Gets the directory that contains the shared tomcat directories or <code>null</code>
+	 * Gets the directory that contains the shared tomcat directories or {@code null}
 	 * if this OS doesn't support shared tomcats.
 	 */
 	public PosixPath getHttpdSharedTomcatsDirectory() {
@@ -247,7 +247,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	/**
-	 * Gets the directory that contains the shared tomcat directories or <code>null</code>
+	 * Gets the directory that contains the shared tomcat directories or {@code null}
 	 * if this OS doesn't support shared tomcats.
 	 */
 	public static PosixPath getHttpdSharedTomcatsDirectory(int osv) {
@@ -268,7 +268,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	/**
-	 * Gets the directory that contains the per-virtual-host HTTP logs or <code>null</code>
+	 * Gets the directory that contains the per-virtual-host HTTP logs or {@code null}
 	 * if this OS doesn't support web sites.
 	 */
 	public PosixPath getHttpdSiteLogsDirectory() {
@@ -286,7 +286,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	/**
-	 * Gets the directory that contains the per-virtual-host HTTP logs or <code>null</code>
+	 * Gets the directory that contains the per-virtual-host HTTP logs or {@code null}
 	 * if this OS doesn't support web sites.
 	 */
 	public static PosixPath getHttpdSiteLogsDirectory(int osv) {

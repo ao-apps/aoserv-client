@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -64,7 +64,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 		if(i==COLUMN_VERSION) return pkey;
 		if(i==1) return tomcatVersion;
 		if(i==2) return templateDir;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public com.aoindustries.aoserv.client.web.tomcat.Version getHttpdTomcatVersion(AOServConnector connector) throws SQLException, IOException {

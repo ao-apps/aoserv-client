@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2006-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -75,7 +75,7 @@ public class ObjectTypesTODO extends TestCase {
 		System.out.println("U = Unsupported Operation");
 		int numTables = Table.TableID.values().length;
 		for(AOServConnector conn : conns) {
-			User.Name connUsername = conn.getThisBusinessAdministrator().getKey();
+			User.Name connUsername = conn.getCurrentAdministrator().getKey();
 			System.out.println("    "+connUsername);
 			for(int c=0;c<numTables;c++) {
 				// Excluded for testing speed

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -89,7 +89,7 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 	String name;
 	private String value;
 	private String description;
-	protected AOServTable<String,ServerStat> table;
+	private AOServTable<String,ServerStat> table;
 
 	public ServerStat() {
 	}
@@ -105,7 +105,7 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 		if(i==0) return name;
 		if(i==1) return value;
 		if(i==2) return description;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public String getDescription() {

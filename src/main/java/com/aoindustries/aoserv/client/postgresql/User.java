@@ -347,7 +347,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Removab
 		if(i==3) return superPriv;
 		if(i==4) return catupd;
 		if(i==5) return getDisableLog_id();
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	@Override

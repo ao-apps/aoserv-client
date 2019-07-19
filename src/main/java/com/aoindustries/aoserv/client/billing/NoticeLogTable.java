@@ -33,7 +33,6 @@ import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.Email;
 import java.io.IOException;
 import java.io.Reader;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -57,22 +56,20 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 		return defaultOrderBy;
 	}
 
-	public void addNoticeLog(
-		Account.Name accounting,
-		String billingContact,
-		Email emailAddress,
-		BigDecimal balance,
-		String type,
-		int transid
+	public int addNoticeLog(
+		final Account.Name accounting,
+		final String billingContact,
+		final Email emailAddress,
+		final String type,
+		final int transid
 	) throws IOException, SQLException {
-		connector.requestUpdateIL(
+		return connector.requestIntQueryIL(
 			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.NOTICE_LOG,
 			accounting.toString(),
 			billingContact,
 			emailAddress,
-			balance.scaleByPowerOfTen(2).intValueExact(),
 			type,
 			transid
 		);
@@ -94,17 +91,19 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
-		String command=args[0];
+		String command = args[0];
 		if(command.equalsIgnoreCase(Command.ADD_NOTICE_LOG)) {
-			if(AOSH.checkParamCount(Command.ADD_NOTICE_LOG, args, 6, err)) {
-				connector.getSimpleAOClient().addNoticeLog(
-					AOSH.parseAccountingCode(args[1], "business"),
-					args[2],
-					AOSH.parseEmail(args[3], "email_address"),
-					BigDecimal.valueOf(AOSH.parsePennies(args[4], "balance"), 2),
-					args[5],
-					AOSH.parseInt(args[6], "transid")
+			if(AOSH.checkParamCount(Command.ADD_NOTICE_LOG, args, 5, err)) {
+				out.println(
+					connector.getSimpleAOClient().addNoticeLog(
+						AOSH.parseAccountingCode(args[1], "business"),
+						args[2],
+						AOSH.parseEmail(args[3], "email_address"),
+						args[4],
+						AOSH.parseInt(args[5], "transid")
+					)
 				);
+				out.flush();
 			}
 			return true;
 		}

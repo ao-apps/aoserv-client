@@ -170,7 +170,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 			case 3: return hostmaster;
 			case 4: return serial;
 			case 5: return ttl;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

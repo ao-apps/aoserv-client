@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -59,12 +59,10 @@ final public class BindFirewallZoneTable extends CachedTableIntegerKey<BindFirew
 		return getUniqueRow(BindFirewallZone.COLUMN_PKEY, pkey);
 	}
 
-	// TODO: Call from NetBind
 	List<BindFirewallZone> getNetBindFirewalldZones(Bind nb) throws IOException, SQLException {
 		return getIndexedRows(BindFirewallZone.COLUMN_NET_BIND, nb.getId());
 	}
 
-	// TODO: Call from FirewalldZone
 	List<BindFirewallZone> getNetBindFirewalldZones(FirewallZone fz) throws IOException, SQLException {
 		return getIndexedRows(BindFirewallZone.COLUMN_FIREWALLD_ZONE, fz.getPkey());
 	}

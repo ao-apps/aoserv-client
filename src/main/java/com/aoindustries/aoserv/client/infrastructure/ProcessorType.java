@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2008-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -50,7 +50,7 @@ final public class ProcessorType extends GlobalObjectStringKey<ProcessorType> {
 		switch(i) {
 			case COLUMN_TYPE: return pkey;
 			case COLUMN_SORT_ORDER : return sortOrder;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

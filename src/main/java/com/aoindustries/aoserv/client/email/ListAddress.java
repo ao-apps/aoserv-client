@@ -63,7 +63,7 @@ final public class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_EMAIL_ADDRESS: return email_address;
 			case COLUMN_EMAIL_LIST: return email_list;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -114,7 +114,7 @@ final public class ListAddress extends CachedObjectIntegerKey<ListAddress> imple
 		for(MajordomoList ml : table.getConnector().getEmail().getMajordomoList().getRows()) {
 			if(ml.getListListAddress().getPkey()==pkey) {
 				Domain ed=ml.getMajordomoServer().getDomain();
-				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getAOServer().getHostname(), ml));
+				reasons.add(new CannotRemoveReason<>("Used by Majordomo list "+ml.getName()+'@'+ed.getDomain()+" on "+ed.getLinuxServer().getHostname(), ml));
 			}
 		}
 

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A <code>BusinessServer</code> grants a <code>Business</code> permission to
+ * An {@link AccountHost} grants an {@link Account} permission to
  * access resources on a <code>Server</code>.
  *
  * @see  Account
@@ -115,9 +115,13 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 		return can_control_virtual_server;
 	}
 
-	public Account getBusiness() throws IOException, SQLException {
-		Account obj=table.getConnector().getAccount().getAccount().get(accounting);
-		if(obj==null) throw new SQLException("Unable to find Business: "+accounting);
+	public Account.Name getAccount_name() {
+		return accounting;
+	}
+
+	public Account getAccount() throws IOException, SQLException {
+		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+		if(obj == null) throw new SQLException("Unable to find Account: " + accounting);
 		return obj;
 	}
 
@@ -136,13 +140,13 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 			case 9: return can_control_xvfb;
 			case 10: return can_vnc_console;
 			case 11: return can_control_virtual_server;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public Host getServer() throws IOException, SQLException {
+	public Host getHost() throws IOException, SQLException {
 		Host obj=table.getConnector().getNet().getHost().get(server);
-		if(obj==null) throw new SQLException("Unable to find Server: "+server);
+		if(obj==null) throw new SQLException("Unable to find Host: "+server);
 		return obj;
 	}
 
@@ -199,30 +203,30 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws SQLException, IOException {
 		List<CannotRemoveReason<?>> reasons=new ArrayList<>();
 
-		Account bu=getBusiness();
+		Account bu=getAccount();
 
 		// Do not remove the default unless it is the only one left
 		if(
 			is_default
-			&& bu.getBusinessServers().size()>1
-		) reasons.add(new CannotRemoveReason<>("Not allowed to remove access to the default server while access to other servers remains", bu));
+			&& bu.getAccountHosts().size()>1
+		) reasons.add(new CannotRemoveReason<>("Not allowed to remove access to the default host while access to other hosts remains", bu));
 
-		Host se=getServer();
-		Server ao=se.getAOServer();
+		Host se = getHost();
+		Server ao = se.getLinuxServer();
 
 		// No children should be able to access the server
 		List<Account> bus=table.getConnector().getAccount().getAccount().getRows();
 		for(int c=0;c<bus.size();c++) {
-			if(bu.isBusinessOrParentOf(bus.get(c))) {
+			if(bu.isAccountOrParentOf(bus.get(c))) {
 				Account bu2=bus.get(c);
-				if(!bu.equals(bu2) && bu2.getBusinessServer(se)!=null) reasons.add(new CannotRemoveReason<>("Child business "+bu2.getName()+" still has access to "+se, bu2));
+				if(!bu.equals(bu2) && bu2.getAccountHost(se)!=null) reasons.add(new CannotRemoveReason<>("Child business "+bu2.getName()+" still has access to "+se, bu2));
 				List<Package> pks=bu2.getPackages();
 				for(int d=0;d<pks.size();d++) {
 					Package pk=pks.get(d);
 
 					// net_binds
 					for(Bind nb : pk.getNetBinds()) {
-						if(nb.getServer().equals(se)) {
+						if(nb.getHost().equals(se)) {
 							String details=nb.getDetails();
 							if(details!=null) reasons.add(new CannotRemoveReason<>("Used for "+details+" on "+se.toStringImpl(), nb));
 							else {
@@ -239,19 +243,19 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 						Device nd = ia.getDevice();
 						if(
 							nd!=null
-							&& se.equals(nd.getServer())
+							&& se.equals(nd.getHost())
 						) reasons.add(new CannotRemoveReason<>("Used by IP address "+ia.getInetAddress()+" on "+nd.getDeviceId().getName()+" on "+se.toStringImpl(), ia));
 					}
 
 					if(ao!=null) {
 						// email_pipes
 						for(Pipe ep : pk.getEmailPipes()) {
-							if(ep.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by email pipe '"+ep.getCommand()+"' on "+ao.getHostname(), ep));
+							if(ep.getLinuxServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by email pipe '"+ep.getCommand()+"' on "+ao.getHostname(), ep));
 						}
 
 						// httpd_sites
 						for(Site hs : pk.getHttpdSites()) {
-							if(hs.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
+							if(hs.getLinuxServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by website "+hs.getInstallDirectory()+" on "+ao.getHostname(), hs));
 						}
 
 						for(User un : pk.getUsernames()) {
@@ -290,23 +294,23 @@ final public class AccountHost extends CachedObjectIntegerKey<AccountHost> imple
 						// mysql_databases
 						for(Database md : pk.getMySQLDatabases()) {
 							com.aoindustries.aoserv.client.mysql.Server ms=md.getMySQLServer();
-							if(ms.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
+							if(ms.getLinuxServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by MySQL database "+md.getName()+" on "+ms.getName()+" on "+ao.getHostname(), md));
 						}
 
 						// postgres_databases
 						for(com.aoindustries.aoserv.client.postgresql.Database pd : pk.getPostgresDatabases()) {
 							com.aoindustries.aoserv.client.postgresql.Server ps=pd.getPostgresServer();
-							if(ps.getAoServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
+							if(ps.getLinuxServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by PostgreSQL database "+pd.getName()+" on "+ps.getName()+" on "+ao.getHostname(), pd));
 						}
 
 						// email_domains
 						for(Domain ed : pk.getEmailDomains()) {
-							if(ed.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by email domain "+ed.getDomain()+" on "+ao.getHostname(), ed));
+							if(ed.getLinuxServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by email domain "+ed.getDomain()+" on "+ao.getHostname(), ed));
 						}
 
 						// email_smtp_relays
 						for(SmtpRelay esr : pk.getEmailSmtpRelays()) {
-							if(esr.getAOServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by email SMTP rule "+esr, esr));
+							if(esr.getLinuxServer().equals(ao)) reasons.add(new CannotRemoveReason<>("Used by email SMTP rule "+esr, esr));
 						}
 					}
 				}

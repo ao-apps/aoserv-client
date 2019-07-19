@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2012, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -164,7 +164,7 @@ final public class LimiterClass extends CachedObjectIntegerKey<LimiterClass> {
 			case 14              : return packetBurst;
 			case 15              : return packetRate;
 			case 16              : return packetUnit.name();
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,6 +54,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Locale;
@@ -144,7 +145,7 @@ final public class AOSH extends ShellInterpreter {
 
 	@Override
 	protected String getPrompt() throws SQLException, IOException {
-		return '['+connector.getThisBusinessAdministrator().toString()+'@'+connector.getHostname()+"]$ ";
+		return '['+connector.getCurrentAdministrator().toString()+'@'+connector.getHostname()+"]$ ";
 	}
 
 	/** Avoid repeated array copies. */
@@ -299,7 +300,15 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Account.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for accounting ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for accounting (" + field + "): " + S, err);
+		}
+	}
+
+	public static BigDecimal parseBigDecimal(String S, String field) {
+		try {
+			return new BigDecimal(S);
+		} catch(NumberFormatException err) {
+			throw new IllegalArgumentException("Invalid argument for big_decimal (" + field + "): " + S, err);
 		}
 	}
 
@@ -327,14 +336,14 @@ final public class AOSH extends ShellInterpreter {
 			|| S.equalsIgnoreCase("nien")
 			|| S.equalsIgnoreCase("la")
 		) return false;
-		else throw new IllegalArgumentException("Invalid argument for boolean ("+field+"): "+S);
+		else throw new IllegalArgumentException("Invalid argument for boolean (" + field + "): " + S);
 	}
 
 	public static Date parseDate(String S, String field) {
 		try {
 			return SQLUtility.getDate(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for date ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for date (" + field + "): " + S, err);
 		}
 	}
 
@@ -342,7 +351,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return FirewallZone.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for firewalld zone ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for firewalld zone (" + field + "): " + S, err);
 		}
 	}
 
@@ -350,7 +359,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return HostAddress.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for host address ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for host address (" + field + "): " + S, err);
 		}
 	}
 
@@ -358,7 +367,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Integer.parseInt(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for int ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for int (" + field + "): " + S, err);
 		}
 	}
 
@@ -366,7 +375,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Float.parseFloat(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for float ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for float (" + field + "): " + S, err);
 		}
 	}
 
@@ -374,7 +383,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Long.parseLong(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for long ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for long (" + field + "): " + S, err);
 		}
 	}
 
@@ -382,7 +391,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return SQLUtility.getMillis(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for decimal ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for decimal (" + field + "): " + S, err);
 		}
 	}
 
@@ -390,7 +399,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Integer.parseInt(S, 8);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for octal int ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for octal int (" + field + "): " + S, err);
 		}
 	}
 
@@ -398,7 +407,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Long.parseLong(S, 8);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for octal long ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for octal long (" + field + "): " + S, err);
 		}
 	}
 
@@ -406,7 +415,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return SQLUtility.getPennies(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for decimal ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for decimal (" + field + "): " + S, err);
 		}
 	}
 
@@ -414,7 +423,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Short.parseShort(S);
 		} catch(NumberFormatException err) {
-			throw new IllegalArgumentException("Invalid argument for short ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for short (" + field + "): " + S, err);
 		}
 	}
 
@@ -422,7 +431,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return DomainName.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for domain_name ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for domain_name (" + field + "): " + S, err);
 		}
 	}
 
@@ -430,7 +439,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Email.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for email address ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for email address (" + field + "): " + S, err);
 		}
 	}
 
@@ -438,7 +447,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Gecos.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for gecos ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for gecos (" + field + "): " + S, err);
 		}
 	}
 
@@ -446,7 +455,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return Group.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for group ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for group (" + field + "): " + S, err);
 		}
 	}
 
@@ -454,7 +463,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return InetAddress.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for ip_address ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for ip_address (" + field + "): " + S, err);
 		}
 	}
 
@@ -462,7 +471,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return com.aoindustries.aoserv.client.linux.User.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for Linux username ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for Linux username (" + field + "): " + S, err);
 		}
 	}
 
@@ -470,7 +479,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return com.aoindustries.aoserv.client.mysql.Database.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for MySQL database name ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for MySQL database name (" + field + "): " + S, err);
 		}
 	}
 
@@ -478,7 +487,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return com.aoindustries.aoserv.client.mysql.Server.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for MySQL server name ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for MySQL server name (" + field + "): " + S, err);
 		}
 	}
 
@@ -486,7 +495,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return com.aoindustries.aoserv.client.mysql.User.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for MySQL username ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for MySQL username (" + field + "): " + S, err);
 		}
 	}
 
@@ -517,7 +526,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return com.aoindustries.aoserv.client.postgresql.Database.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for PostgreSQL database name ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for PostgreSQL database name (" + field + "): " + S, err);
 		}
 	}
 
@@ -525,7 +534,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return com.aoindustries.aoserv.client.postgresql.Server.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for PostgreSQL server name ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for PostgreSQL server name (" + field + "): " + S, err);
 		}
 	}
 
@@ -533,7 +542,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for PostgreSQL username ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for PostgreSQL username (" + field + "): " + S, err);
 		}
 	}
 
@@ -541,7 +550,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return PosixPath.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for POSIX path ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for POSIX path (" + field + "): " + S, err);
 		}
 	}
 
@@ -549,7 +558,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			return User.Name.valueOf(S);
 		} catch(ValidationException err) {
-			throw new IllegalArgumentException("Invalid argument for username ("+field+"): "+S, err);
+			throw new IllegalArgumentException("Invalid argument for username (" + field + "): " + S, err);
 		}
 	}
 
@@ -682,7 +691,7 @@ final public class AOSH extends ShellInterpreter {
 
 	private void whoami(String[] args) throws SQLException, IOException {
 		if(args.length==1) {
-			out.println(connector.getThisBusinessAdministrator().getUsername().getUsername());
+			out.println(connector.getCurrentAdministrator().getUsername().getUsername());
 			out.flush();
 		} else {
 			err.println("aosh: "+Command.WHOAMI+": too many parameters");

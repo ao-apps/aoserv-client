@@ -27,6 +27,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.util.i18n.Money;
 import com.aoindustries.util.i18n.ThreadLocale;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -42,13 +43,20 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
 	static final int COLUMN_currencyCode = 0;
 	static final String COLUMN_currencyCode_name = "currencyCode";
 
-	/** Looked-up when pkey is set, effectively final so no synchronization */
-	private java.util.Currency currency;
+	/**
+	 * The currency assumed by the system before multiple currencies were supported.
+	 */
+	public static final java.util.Currency USD = java.util.Currency.getInstance("USD");
+
+	private short fractionDigits;
+	private Money autoEnableMinimumPayment;
 
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {
-			case COLUMN_currencyCode: return pkey;
+			case COLUMN_currencyCode : return pkey;
+			case 1 : return fractionDigits;
+			case 2 : return autoEnableMinimumPayment;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -58,9 +66,16 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
 	}
 
 	public java.util.Currency getCurrency() {
-		java.util.Currency c = currency;
-		if(c == null) throw new IllegalStateException("currency not set");
-		return c;
+		return autoEnableMinimumPayment.getCurrency();
+	}
+
+	public short getFractionDigits() {
+		assert getCurrency().getDefaultFractionDigits() == fractionDigits;
+		return fractionDigits;
+	}
+
+	public Money getAutoEnableMinimumPayment() {
+		return autoEnableMinimumPayment;
 	}
 
 	@Override
@@ -70,14 +85,23 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
 
 	@Override
 	public void init(ResultSet results) throws SQLException {
-		pkey = results.getString(1);
-		currency = java.util.Currency.getInstance(pkey);
+		pkey = results.getString("currencyCode");
+		fractionDigits = results.getShort("fractionDigits");
+		autoEnableMinimumPayment = new Money(
+			java.util.Currency.getInstance(pkey),
+			results.getBigDecimal("autoEnableMinimumPayment")
+		);
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
 		pkey = in.readUTF().intern();
-		currency = java.util.Currency.getInstance(pkey);
+		fractionDigits = in.readShort();
+		autoEnableMinimumPayment = new Money(
+			java.util.Currency.getInstance(pkey),
+			in.readLong(),
+			in.readCompressedInt()
+		);
 	}
 
 	@Override
@@ -88,5 +112,8 @@ public final class Currency extends GlobalObjectStringKey<Currency> {
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
+		out.writeShort(fractionDigits);
+		out.writeLong(autoEnableMinimumPayment.getUnscaledValue());
+		out.writeCompressedInt(autoEnableMinimumPayment.getScale());
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -60,7 +60,7 @@ final public class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 			case COLUMN_BRAND: return brand;
 			case COLUMN_CATEGORY: return category;
 			case 3: return enabled;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

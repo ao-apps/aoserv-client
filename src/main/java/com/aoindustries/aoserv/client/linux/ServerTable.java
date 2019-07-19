@@ -109,9 +109,9 @@ final public class ServerTable extends CachedTableIntegerKey<Server> {
 	}
 
 	/**
-	 * @see  AOServer#getNestedAOServers()
+	 * @see  Server#getNestedServers()
 	 */
-	List<Server> getNestedAOServers(Server server) throws IOException, SQLException {
+	List<Server> getNestedServers(Server server) throws IOException, SQLException {
 		int pkey=server.getPkey();
 		List<Server> servers=getRows();
 		int size=servers.size();

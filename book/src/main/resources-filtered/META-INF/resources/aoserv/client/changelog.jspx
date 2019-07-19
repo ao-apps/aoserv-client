@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-16T01:18:26-0500"
+		dateModified="2019-07-17T01:24:37-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -74,8 +74,26 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Added multi-currency support to the billing system:
 						<ol>
 							<li>New table <code>billing.Currency</code></li>
+							<li>Changed <code>billing.MonthlyCharge.rate</code> to <code>money</code> type</li>
+							<li>New table <code>billing.NoticeLog.balance</code></li>
+							<li>Removed column <code>billing.NoticeLog.balance</code></li>
+							<li>Renamed column <code>billing.PackageDefinition.setup_fee</code> to <code>setupFee</code> and changed to <code>money</code> type</li>
+							<li>Renamed column <code>billing.PackageDefinition.monthly_rate</code> to <code>monthlyRate</code> and changed to <code>money</code> type</li>
+							<li>Renamed column <code>billing.PackageDefinitionLimit.additional_rate</code> to <code>additionalRate</code> and changed to <code>money</code> type</li>
+							<li>Changed <code>billing.Transaction.rate</code> to <code>money</code> type</li>
+							<li>Removed column <code>payment.Payment.currency_code</code></li>
+							<li>Changed <code>payment.Payment.amount</code> to <code>money</code> type</li>
+							<li>Renamed column <code>payment.Payment.tax_amount</code> to <code>taxAmount</code> and changed to <code>money</code> type</li>
+							<li>Renamed column <code>payment.Payment.shipping_amount</code> to <code>shippingAmount</code> and changed to <code>money</code> type</li>
+							<li>Renamed column <code>payment.Payment.duty_amount</code> to <code>dutyAmount</code> and changed to <code>money</code> type</li>
 						</ol>
 					</li>
+					<li>No longer billing for disabled Java VMs.</li>
+					<li>Renamed remaining uses of <code>Business</code> to <code>Account</code>.</li>
+					<li>Renamed remaining uses of <code>BusinessAdministrator</code> to <code>Administrator</code>.</li>
+					<li>Renamed remaining uses of <code>BusinessServer</code> to <code>AccountHost</code>.</li>
+					<li>Renamed remaining uses of <code>BusinessProfile</code> to <code>Profile</code>.</li>
+					<li>Renamed remaining uses of <code>Server</code> to <code>Host</code>.</li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':

@@ -68,7 +68,7 @@ final public class CountryCode extends GlobalObjectStringKey<CountryCode> {
 		if(i==1) return name;
 		if(i==2) return charge_com_supported;
 		if(i==3) return charge_com_name;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public String getName() {

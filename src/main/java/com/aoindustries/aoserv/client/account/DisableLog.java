@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -58,17 +58,16 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		Administrator disabledBy=getDisabledBy();
 		return disabledBy!=null && table
 			.getConnector()
-			.getThisBusinessAdministrator()
+			.getCurrentAdministrator()
 			.getUsername()
 			.getPackage()
-			.getBusiness()
-			.isBusinessOrParentOf(
+			.getAccount()
+			.isAccountOrParentOf(
 				disabledBy
 				.getUsername()
 				.getPackage()
-				.getBusiness()
-			)
-		;
+				.getAccount()
+			);
 	}
 
 	@Override
@@ -78,13 +77,17 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		if(i==2) return accounting;
 		if(i==3) return disabled_by;
 		if(i==4) return disable_reason;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
-	public Account getBusiness() throws SQLException, IOException {
-		Account bu=table.getConnector().getAccount().getAccount().get(accounting);
-		if(bu==null) throw new SQLException("Unable to find Business: "+accounting);
-		return bu;
+	public Account.Name getAccount_name() {
+		return accounting;
+	}
+
+	public Account getAccount() throws SQLException, IOException {
+		Account obj = table.getConnector().getAccount().getAccount().get(accounting);
+		if(obj == null) throw new SQLException("Unable to find Account: " + accounting);
+		return obj;
 	}
 
 	public Timestamp getTime() {

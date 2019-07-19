@@ -88,7 +88,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be between 1 and 31 characters</li>
 	 *   <li>Characters may contain <code>[a-z,A-Z,0-9,_,-,.,(space)]</code></li>
 	 * </ul>
-	 * TODO: What to do for JDBC URLs with space?
+	 * TODO: 1.83.0: What to do for JDBC URLs with space?
 	 *
 	 * @author  AO Industries, Inc.
 	 */
@@ -405,7 +405,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			case 5: return is_template;
 			case 6: return allow_conn;
 			case 7: return enable_postgis;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -427,7 +427,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	@Override
 	public String getJdbcUrl(boolean ipOnly) throws SQLException, IOException {
 		Server ps = getPostgresServer();
-		com.aoindustries.aoserv.client.linux.Server ao = ps.getAoServer();
+		com.aoindustries.aoserv.client.linux.Server ao = ps.getLinuxServer();
 		StringBuilder jdbcUrl = new StringBuilder();
 		jdbcUrl.append("jdbc:postgresql://");
 		Bind nb = ps.getBind();
@@ -435,7 +435,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		InetAddress ia = ip.getInetAddress();
 		if(ipOnly) {
 			if(ia.isUnspecified()) {
-				jdbcUrl.append(ao.getServer().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
+				jdbcUrl.append(ao.getHost().getNetDevice(ao.getDaemonDeviceId().getName()).getPrimaryIPAddress().getInetAddress().toBracketedString());
 			} else {
 				jdbcUrl.append(ia.toBracketedString());
 			}
@@ -464,7 +464,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
 		String version = getPostgresServer().getVersion().getTechnologyVersion(table.getConnector()).getVersion();
-		// TODO: Update documentation URL
+		// TODO: 1.83.0: Update documentation URL
 		return "https://aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
 	}
 
@@ -546,8 +546,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		List<CannotRemoveReason<Database>> reasons=new ArrayList<>();
 
 		Server ps=getPostgresServer();
-		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
-		if(is_template) reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getAoServer().getHostname(), this));
+		if(!allow_conn) reasons.add(new CannotRemoveReason<>("Not allowed to drop a PostgreSQL database that does not allow connections: "+name+" on "+ps.getName()+" on "+ps.getLinuxServer().getHostname(), this));
+		if(is_template) reasons.add(new CannotRemoveReason<>("Not allowed to drop a template PostgreSQL database: "+name+" on "+ps.getName()+" on "+ps.getLinuxServer().getHostname(), this));
 		if(isSpecial()) {
 			reasons.add(
 				new CannotRemoveReason<>(
@@ -556,7 +556,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 						+ " on "
 						+ ps.getName()
 						+ " on "
-						+ ps.getAoServer().getHostname(),
+						+ ps.getLinuxServer().getHostname(),
 					this
 				)
 			);

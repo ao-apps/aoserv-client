@@ -115,7 +115,7 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 			case 3 : return has_weight;
 			case 4 : return has_port;
 			case 5 : return param_ip;
-			default : throw new IllegalArgumentException("Invalid index: "+i);
+			default : throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

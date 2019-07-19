@@ -52,6 +52,29 @@ public final class CurrencyTable extends GlobalTableStringKey<Currency> {
 		return getUniqueRow(Currency.COLUMN_currencyCode, currencyCode);
 	}
 
+	/**
+	 * @see  #get(java.lang.String)
+	 */
+	public Currency get(java.util.Currency currency) throws IOException, SQLException {
+		if(currency == null) return null;
+		return get(currency.getCurrencyCode());		
+	}
+
+	/**
+	 * @see  #get(java.lang.String)
+	 * @see  #get(java.util.Currency)
+	 *
+	 * @deprecated  Always try to lookup by specific keys; the compiler will help you more when types change.
+	 */
+	@Deprecated
+	@Override
+	public Currency get(Object pkey) throws IOException, SQLException {
+		if(pkey == null) return null;
+		if(pkey instanceof String) return get((String)pkey);
+		else if(pkey instanceof java.util.Currency) return get((java.util.Currency)pkey);
+		else throw new IllegalArgumentException("pkey is neither a String nor a Currency: " + pkey);
+	}
+
 	@Override
 	public Table.TableID getTableID() {
 		return Table.TableID.Currency;

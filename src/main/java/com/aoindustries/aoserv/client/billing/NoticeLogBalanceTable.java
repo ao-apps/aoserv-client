@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with aoserv-client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.aoserv.client.reseller;
+package com.aoindustries.aoserv.client.billing;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
@@ -30,20 +30,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * @see BrandCategory
- * @see Ticket
+ * @see  NoticeLogBalance
  *
  * @author  AO Industries, Inc.
  */
-final public class BrandCategoryTable extends CachedTableIntegerKey<BrandCategory> {
+final public class NoticeLogBalanceTable extends CachedTableIntegerKey<NoticeLogBalance> {
 
-	BrandCategoryTable(AOServConnector connector) {
-		super(connector, BrandCategory.class);
+	NoticeLogBalanceTable(AOServConnector connector) {
+		super(connector, NoticeLogBalance.class);
 	}
 
 	private static final OrderBy[] defaultOrderBy = {
-		new OrderBy(BrandCategory.COLUMN_BRAND_name, ASCENDING),
-		new OrderBy(BrandCategory.COLUMN_CATEGORY_name, ASCENDING)
+		new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_CREATE_TIME_name, ASCENDING),
+		new OrderBy(NoticeLogBalance.COLUMN_noticeLog_name + '.' + NoticeLog.COLUMN_PKEY_name, ASCENDING),
+		new OrderBy(NoticeLogBalance.COLUMN_balance_name, ASCENDING),
 	};
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
@@ -51,20 +51,16 @@ final public class BrandCategoryTable extends CachedTableIntegerKey<BrandCategor
 	}
 
 	@Override
-	public BrandCategory get(int pkey) throws IOException, SQLException {
-		return getUniqueRow(BrandCategory.COLUMN_PKEY, pkey);
-	}
-
-	List<BrandCategory> getTicketBrandCategories(Brand brand) throws IOException, SQLException {
-		return getIndexedRows(BrandCategory.COLUMN_BRAND, brand.getAccount_name());
-	}
-
-	List<BrandCategory> getTicketBrandCategories(Category category) throws IOException, SQLException {
-		return getIndexedRows(BrandCategory.COLUMN_CATEGORY, category.getPkey());
+	public NoticeLogBalance get(int id) throws IOException, SQLException {
+		return getUniqueRow(NoticeLogBalance.COLUMN_id, id);
 	}
 
 	@Override
 	public Table.TableID getTableID() {
-		return Table.TableID.TICKET_BRAND_CATEGORIES;
+		return Table.TableID.NoticeLogBalance;
+	}
+
+	List<NoticeLogBalance> getNoticeLogBalances(NoticeLog noticeLog) throws IOException, SQLException {
+		return getIndexedRows(NoticeLogBalance.COLUMN_noticeLog, noticeLog.getPkey());
 	}
 }

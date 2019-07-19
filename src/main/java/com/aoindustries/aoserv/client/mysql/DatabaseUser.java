@@ -181,7 +181,7 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 			case 19: return execute_priv;
 			case 20: return event_priv;
 			case 21: return trigger_priv;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
@@ -265,7 +265,7 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 						+ " on "
 						+ ms.getName()
 						+ " on "
-						+ ms.getAoServer().getHostname(),
+						+ ms.getLinuxServer().getHostname(),
 					this
 				)
 			);
@@ -280,7 +280,7 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 						+ " on "
 						+ ms.getName()
 						+ " on "
-						+ ms.getAoServer().getHostname(),
+						+ ms.getLinuxServer().getHostname(),
 					this
 				)
 			);
@@ -299,7 +299,7 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 				+ " on "
 				+ ms.getName()
 				+ " on "
-				+ ms.getAoServer().getHostname()
+				+ ms.getLinuxServer().getHostname()
 			);
 		}
 		Database md = getMySQLDatabase();
@@ -311,7 +311,7 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 				+ " on "
 				+ ms.getName()
 				+ " on "
-				+ ms.getAoServer().getHostname()
+				+ ms.getLinuxServer().getHostname()
 			);
 		}
 		table.getConnector().requestUpdateIL(

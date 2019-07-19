@@ -52,7 +52,7 @@ final public class BlackholeAddress extends CachedObjectIntegerKey<BlackholeAddr
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_EMAIL_ADDRESS) return pkey;
-		throw new IllegalArgumentException("Invalid index: "+i);
+		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
 	public Address getEmailAddress() throws SQLException, IOException {

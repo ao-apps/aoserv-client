@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2005-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2005-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,10 +27,10 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.math.SafeMath;
 import com.aoindustries.util.InternUtils;
+import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -55,11 +55,11 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	 */
 	public static final int UNLIMITED=-1;
 
-	int package_definition;
-	String resource;
-	int soft_limit;
-	int hard_limit;
-	int additional_rate;
+	private int package_definition;
+	private String resource;
+	private int soft_limit;
+	private int hard_limit;
+	private Money additionalRate;
 	String additional_transaction_type;
 
 	public PackageDefinitionLimit() {
@@ -70,16 +70,16 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 		Resource resource,
 		int soft_limit,
 		int hard_limit,
-		int additional_rate,
+		Money additionalRate,
 		TransactionType additional_transaction_type
 	) {
-		this.pkey=-1;
-		this.package_definition=package_definition.getPkey();
-		this.resource=resource.getName();
-		this.soft_limit=soft_limit;
-		this.hard_limit=hard_limit;
-		this.additional_rate=additional_rate;
-		this.additional_transaction_type=additional_transaction_type==null ? null : additional_transaction_type.getName();
+		this.pkey = -1;
+		this.package_definition = package_definition.getPkey();
+		this.resource = resource.getName();
+		this.soft_limit = soft_limit;
+		this.hard_limit = hard_limit;
+		this.additionalRate = additionalRate;
+		this.additional_transaction_type = additional_transaction_type == null ? null : additional_transaction_type.getName();
 
 		// The table is set from the connector of the package definition
 		setTable(package_definition.getTable().getConnector().getBilling().getPackageDefinitionLimit());
@@ -93,10 +93,14 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 			case 2: return resource;
 			case 3: return soft_limit==UNLIMITED ? null : soft_limit;
 			case 4: return hard_limit==UNLIMITED ? null : hard_limit;
-			case 5: return additional_rate==-1 ? null : additional_rate;
+			case 5: return additionalRate;
 			case 6: return additional_transaction_type;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
+	}
+
+	public int getPackageDefinition_id() {
+		return package_definition;
 	}
 
 	public PackageDefinition getPackageDefinition() throws IOException, SQLException {
@@ -105,46 +109,56 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 		return pd;
 	}
 
+	public String getResource_name() {
+		return resource;
+	}
+
 	public Resource getResource() throws SQLException, IOException {
 		Resource r=table.getConnector().getBilling().getResource().get(resource);
 		if(r==null) throw new SQLException("Unable to find Resource: "+resource);
 		return r;
 	}
 
+	/**
+	 * Gets the soft limit or {@code null} of there is none.
+	 */
 	public int getSoftLimit() {
 		return soft_limit;
 	}
 
 	/**
-	 * Gets the soft limit and unit or <code>null</code> if there is none.
+	 * Gets the soft limit and unit or {@code null} if there is none.
 	 */
 	public String getSoftLimitDisplayUnit() throws IOException, SQLException {
 		return soft_limit==-1 ? null : getResource().getDisplayUnit(soft_limit);
 	}
 
+	/**
+	 * Gets the hard limit or {@code null} of there is none.
+	 */
 	public int getHardLimit() {
 		return hard_limit;
 	}
 
 	/**
-	 * Gets the hard limit and unit or <code>null</code> if there is none.
+	 * Gets the hard limit and unit or {@code null} if there is none.
 	 */
 	public String getHardLimitDisplayUnit() throws IOException, SQLException {
 		return hard_limit==-1 ? null : getResource().getDisplayUnit(hard_limit);
 	}
 
 	/**
-	 * Gets the additional rate or <code>null</code> if there is none.
+	 * Gets the additional rate or {@code null} if there is none.
 	 */
-	public BigDecimal getAdditionalRate() {
-		return additional_rate==-1 ? null : BigDecimal.valueOf(additional_rate, 2);
+	public Money getAdditionalRate() {
+		return additionalRate;
 	}
 
 	/**
-	 * Gets the additional rate per unit or <code>null</code> if there is none.
+	 * Gets the additional rate per unit or {@code null} if there is none.
 	 */
 	public String getAdditionalRatePerUnit() throws IOException, SQLException {
-		return additional_rate==-1 ? null : '$'+getResource().getPerUnit(BigDecimal.valueOf(additional_rate, 2));
+		return additionalRate == null ? null : getResource().getPerUnit(additionalRate);
 	}
 
 	public TransactionType getAdditionalTransactionType() throws SQLException, IOException {
@@ -161,27 +175,26 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		package_definition=result.getInt(2);
-		resource=result.getString(3);
-		soft_limit=result.getInt(4);
-		if(result.wasNull()) soft_limit=UNLIMITED;
-		hard_limit=result.getInt(5);
-		if(result.wasNull()) hard_limit=UNLIMITED;
-		String S=result.getString(6);
-		additional_rate=S==null ? -1 : SQLUtility.getPennies(S);
-		additional_transaction_type=result.getString(7);
+		pkey = result.getInt("id");
+		package_definition = result.getInt("package_definition");
+		resource = result.getString("resource");
+		soft_limit = result.getInt("soft_limit");
+		if(result.wasNull()) soft_limit = UNLIMITED;
+		hard_limit = result.getInt("hard_limit");
+		if(result.wasNull()) hard_limit = UNLIMITED;
+		additionalRate = MoneyUtil.getMoney(result, "additionalRate.currency", "additionalRate.value");
+		additional_transaction_type = result.getString("additional_transaction_type");
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in) throws IOException {
-		pkey=in.readCompressedInt();
-		package_definition=in.readCompressedInt();
-		resource=in.readUTF().intern();
-		soft_limit=in.readCompressedInt();
-		hard_limit=in.readCompressedInt();
-		additional_rate=in.readCompressedInt();
-		additional_transaction_type=InternUtils.intern(in.readNullUTF());
+		pkey = in.readCompressedInt();
+		package_definition = in.readCompressedInt();
+		resource = in.readUTF().intern();
+		soft_limit = in.readCompressedInt();
+		hard_limit = in.readCompressedInt();
+		additionalRate = MoneyUtil.readNullMoney(in);
+		additional_transaction_type = InternUtils.intern(in.readNullUTF());
 	}
 
 	@Override
@@ -191,7 +204,15 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 		out.writeUTF(resource);
 		out.writeCompressedInt(soft_limit);
 		out.writeCompressedInt(hard_limit);
-		out.writeCompressedInt(additional_rate);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			if(additionalRate != null && additionalRate.getCurrency() == Currency.USD && additionalRate.getScale() == 2) {
+				out.writeCompressedInt(SafeMath.castInt(additionalRate.getUnscaledValue()));
+			} else {
+				out.writeCompressedInt(-1);
+			}
+		} else {
+			MoneyUtil.writeNullMoney(additionalRate, out);
+		}
 		out.writeNullUTF(additional_transaction_type);
 	}
 }

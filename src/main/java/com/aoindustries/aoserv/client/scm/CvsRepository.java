@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -149,7 +149,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 			case 4: return mode;
 			case 5: return getCreated();
 			case 6: return disable_log==-1?null:disable_log;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

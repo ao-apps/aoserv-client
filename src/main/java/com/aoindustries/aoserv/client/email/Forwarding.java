@@ -64,7 +64,7 @@ final public class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_EMAIL_ADDRESS: return email_address;
 			case 2: return destination;
-			default: throw new IllegalArgumentException("Invalid index: "+i);
+			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 

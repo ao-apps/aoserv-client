@@ -168,6 +168,7 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 		NET_DEVICES,
 		NET_TCP_REDIRECTS,
 		NOTICE_LOG,
+		NoticeLogBalance,
 		NOTICE_TYPES,
 		OPERATING_SYSTEM_VERSIONS,
 		OPERATING_SYSTEMS,
