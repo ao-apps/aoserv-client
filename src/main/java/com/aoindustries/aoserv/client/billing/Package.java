@@ -213,6 +213,10 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		}
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

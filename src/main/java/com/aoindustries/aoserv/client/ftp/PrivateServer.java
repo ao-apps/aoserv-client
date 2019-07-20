@@ -74,6 +74,10 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 		}
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

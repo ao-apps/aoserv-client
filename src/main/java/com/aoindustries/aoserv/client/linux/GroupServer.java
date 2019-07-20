@@ -89,6 +89,10 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		return gid;
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

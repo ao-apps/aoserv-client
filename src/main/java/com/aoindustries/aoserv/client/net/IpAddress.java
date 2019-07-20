@@ -220,8 +220,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		return table.getConnector().getBilling().getPackage().get(package_id);
 	}
 
-	// TODO: Add this type of shortcut in other places where Timestamp is wrapped and returned
-	public long getCreated_time() {
+	public long getCreated_millis() {
 		return created;
 	}
 

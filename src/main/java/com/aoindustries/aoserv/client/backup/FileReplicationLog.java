@@ -84,8 +84,16 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 		}
 	}
 
+	public long getStartTime_millis() {
+		return startTime;
+	}
+
 	public Timestamp getStartTime() {
 		return new Timestamp(startTime);
+	}
+
+	public long getEndTime_millis() {
+		return endTime;
 	}
 
 	public Timestamp getEndTime() {

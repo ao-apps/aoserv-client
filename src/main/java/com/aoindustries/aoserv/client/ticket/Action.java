@@ -130,6 +130,10 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		return table.getConnector().getAccount().getAdministrator().get(administrator);
 	}
 
+	public long getTime_millis() {
+		return time;
+	}
+
 	public Timestamp getTime() {
 		return new Timestamp(time);
 	}

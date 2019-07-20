@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-17T01:24:37-0500"
+		dateModified="2019-07-20T06:02:28-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -94,6 +94,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Renamed remaining uses of <code>BusinessServer</code> to <code>AccountHost</code>.</li>
 					<li>Renamed remaining uses of <code>BusinessProfile</code> to <code>Profile</code>.</li>
 					<li>Renamed remaining uses of <code>Server</code> to <code>Host</code>.</li>
+					<li>
+						Added methods to get timestamps in <code>long</code> or <code>Long</code> in addition to <code>java.sql.Timestamp</code>.
+						These methods may offer higher performance when a <code>Timestamp</code> is not needed.
+					</li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':

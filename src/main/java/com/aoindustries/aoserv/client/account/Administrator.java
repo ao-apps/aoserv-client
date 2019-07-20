@@ -235,6 +235,10 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 		return countryCode;
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

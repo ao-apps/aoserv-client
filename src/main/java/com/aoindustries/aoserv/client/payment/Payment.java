@@ -428,6 +428,10 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return creditCardComments;
 	}
 
+	public long getAuthorizationTime_millis() {
+		return authorizationTime;
+	}
+
 	/**
 	 * Gets the time of the authorization if not available.
 	 */
@@ -538,11 +542,15 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return authorizationApprovalCode;
 	}
 
+	public Long getCaptureTime_millis() {
+		return captureTime == -1 ? null : captureTime;
+	}
+
 	/**
 	 * Gets the time of the capture.
 	 */
 	public Timestamp getCaptureTime() {
-		return captureTime==-1 ? null : new Timestamp(captureTime);
+		return captureTime == -1 ? null : new Timestamp(captureTime);
 	}
 
 	/**
@@ -584,11 +592,15 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return captureProviderUniqueId;
 	}
 
+	public Long getVoidTime_millis() {
+		return voidTime == -1 ? null : voidTime;
+	}
+
 	/**
 	 * Gets the time of the void.
 	 */
 	public Timestamp getVoidTime() {
-		return voidTime==-1 ? null : new Timestamp(voidTime);
+		return voidTime == -1 ? null : new Timestamp(voidTime);
 	}
 
 	/**

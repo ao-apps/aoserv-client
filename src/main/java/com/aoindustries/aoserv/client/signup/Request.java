@@ -296,6 +296,10 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return br;
 	}
 
+	public long getTime_millis() {
+		return time;
+	}
+
 	public Timestamp getTime() {
 		return new Timestamp(time);
 	}
@@ -436,8 +440,12 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return table.getConnector().getAccount().getAdministrator().get(completed_by);
 	}
 
+	public Long getCompletedTime_millis() {
+		return completed_time == -1 ? null : completed_time;
+	}
+
 	public Timestamp getCompletedTime() {
-		return completed_time==-1 ? null : new Timestamp(completed_time);
+		return completed_time == -1 ? null : new Timestamp(completed_time);
 	}
 
 	synchronized public String getBaPassword(String passphrase) throws IOException, SQLException {

@@ -76,6 +76,10 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 		return er;
 	}
 
+	public long getTime_millis() {
+		return time;
+	}
+
 	public Timestamp getTime() {
 		return new Timestamp(time);
 	}

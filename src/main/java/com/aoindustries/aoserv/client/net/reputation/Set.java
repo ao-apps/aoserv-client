@@ -225,6 +225,10 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 		return hostDecayInterval;
 	}
 
+	public long getLastHostDecay_millis() {
+		return lastHostDecay;
+	}
+
 	/**
 	 * Gets the last time the hosts were decayed.
 	 */
@@ -239,11 +243,19 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 		return networkDecayInterval;
 	}
 
+	public long getLastNetworkDecay_millis() {
+		return lastNetworkDecay;
+	}
+
 	/**
 	 * Gets the last time the networks were decayed.
 	 */
 	public Timestamp getLastNetworkDecay() {
 		return new Timestamp(lastNetworkDecay);
+	}
+
+	public long getLastReputationAdded_millis() {
+		return lastReputationAdded;
 	}
 
 	/**

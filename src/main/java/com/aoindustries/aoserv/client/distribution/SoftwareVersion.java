@@ -101,6 +101,10 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 		return disable_time == -1 || disable_time > time;
 	}
 
+	public Long getDisableTime_millis() {
+		return disable_time == -1 ? null : disable_time;
+	}
+
 	public Timestamp getDisableTime() {
 		return disable_time == -1 ? null : new Timestamp(disable_time);
 	}
@@ -122,6 +126,10 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 		Software technologyName = connector.getDistribution().getSoftware().get(name);
 		if (technologyName == null) throw new SQLException("Unable to find TechnologyName: " + name);
 		return technologyName;
+	}
+
+	public long getUpdated_millis() {
+		return updated;
 	}
 
 	public Timestamp getUpdated() {

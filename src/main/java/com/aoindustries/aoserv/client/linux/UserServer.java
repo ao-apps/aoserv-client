@@ -406,6 +406,10 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return predisable_password;
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

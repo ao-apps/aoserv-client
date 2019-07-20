@@ -194,6 +194,10 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return mode;
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

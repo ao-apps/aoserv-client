@@ -339,6 +339,10 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return raw_email;
 	}
 
+	public long getOpenDate_millis() {
+		return open_date;
+	}
+
 	public Timestamp getOpenDate() {
 		return new Timestamp(open_date);
 	}
@@ -362,8 +366,12 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return statusObject;
 	}
 
+	public Long getStatusTimeout_millis() {
+		return status_timeout == -1 ? null : status_timeout;
+	}
+
 	public Timestamp getStatusTimeout() {
-		return status_timeout==-1 ? null : new Timestamp(status_timeout);
+		return status_timeout == -1 ? null : new Timestamp(status_timeout);
 	}
 
 	public Set<Email> getContactEmails() {

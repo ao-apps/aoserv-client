@@ -90,6 +90,10 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 		return obj;
 	}
 
+	public long getTime_millis() {
+		return time;
+	}
+
 	public Timestamp getTime() {
 		return new Timestamp(time);
 	}
