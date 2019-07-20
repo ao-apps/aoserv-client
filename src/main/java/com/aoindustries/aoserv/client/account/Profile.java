@@ -173,6 +173,10 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return countryCode;
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

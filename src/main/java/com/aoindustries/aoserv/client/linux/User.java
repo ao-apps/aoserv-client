@@ -584,6 +584,10 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		}
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

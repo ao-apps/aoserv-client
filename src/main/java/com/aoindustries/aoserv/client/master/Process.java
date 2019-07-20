@@ -210,6 +210,10 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		return is_secure;
 	}
 
+	public long getConnectTime_millis() {
+		return connect_time;
+	}
+
 	public Timestamp getConnectTime() {
 		return new Timestamp(connect_time);
 	}
@@ -224,6 +228,10 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 
 	public String getState() {
 		return state;
+	}
+
+	public long getStateStartTime_millis() {
+		return state_start_time;
 	}
 
 	public Timestamp getStateStartTime() {

@@ -115,6 +115,10 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		}
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

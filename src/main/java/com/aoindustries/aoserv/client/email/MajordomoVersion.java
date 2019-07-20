@@ -61,6 +61,10 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}

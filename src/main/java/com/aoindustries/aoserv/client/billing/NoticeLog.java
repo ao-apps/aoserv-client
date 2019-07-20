@@ -71,6 +71,10 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 		return pkey;
 	}
 
+	public long getCreateTime_millis() {
+		return create_time;
+	}
+
 	public Timestamp getCreateTime() {
 		return new Timestamp(create_time);
 	}

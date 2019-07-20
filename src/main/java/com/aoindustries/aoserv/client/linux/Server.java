@@ -201,12 +201,12 @@ final public class Server
 		return distro_hour;
 	}
 
-	public long getLastDistroTime_time() {
-		return last_distro_time;
+	public Long getLastDistroTime_time() {
+		return last_distro_time == -1 ? null : last_distro_time;
 	}
 
 	public Timestamp getLastDistroTime() {
-		return last_distro_time==-1 ? null : new Timestamp(last_distro_time);
+		return last_distro_time == -1 ? null : new Timestamp(last_distro_time);
 	}
 
 	public Integer getFailoverServer_server_pkey() {

@@ -327,6 +327,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return countryCodeObj;
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}
@@ -344,12 +348,16 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return principalName;
 	}
 
+	public Long getDeactivatedOn_millis() {
+		return deactivatedOn == -1 ? null : deactivatedOn;
+	}
+
 	public Timestamp getDeactivatedOn() {
-		return deactivatedOn==-1 ? null : new Timestamp(deactivatedOn);
+		return deactivatedOn == -1 ? null : new Timestamp(deactivatedOn);
 	}
 
 	public String getDeactivatedOnString() {
-		return deactivatedOn==-1 ? null : SQLUtility.getDate(deactivatedOn);
+		return deactivatedOn == -1 ? null : SQLUtility.getDate(deactivatedOn);
 	}
 
 	public String getDeactivateReason() {

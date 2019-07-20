@@ -118,6 +118,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		}
 	}
 
+	public long getCreated_millis() {
+		return created;
+	}
+
 	public Timestamp getCreated() {
 		return new Timestamp(created);
 	}
@@ -135,8 +139,12 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		return obj;
 	}
 
+	public Long getExpiration_millis() {
+		return expiration == -1 ? null : expiration;
+	}
+
 	public Timestamp getExpiration() {
-		return expiration==-1 ? null : new Timestamp(expiration);
+		return expiration == -1 ? null : new Timestamp(expiration);
 	}
 
 	public HostAddress getHost() {
@@ -147,6 +155,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		SmtpRelayType esrt=table.getConnector().getEmail().getSmtpRelayType().get(type);
 		if(esrt==null) throw new SQLException("Unable to find EmailSmtpRelayType: "+type);
 		return esrt;
+	}
+
+	public long getLastRefreshed_millis() {
+		return last_refreshed;
 	}
 
 	public Timestamp getLastRefreshed() {

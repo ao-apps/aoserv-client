@@ -671,7 +671,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	public boolean canCancel() throws IOException, SQLException {
-		return canceled==-1 && !isRootAccount();
+		return canceled == -1 && !isRootAccount();
 	}
 
 	public boolean isRootAccount() throws IOException, SQLException {
@@ -694,7 +694,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	@Override
 	public boolean canEnable() throws SQLException, IOException {
 		// Cannot enable a canceled business
-		if(canceled!=-1) return false;
+		if(canceled != -1) return false;
 
 		// Can only enable if it is disabled
 		DisableLog dl=getDisableLog();
@@ -832,8 +832,12 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return table.getConnector().getAccount().getAccountHost().getAccountHosts(this);
 	}
 
+	public Long getCanceled_millis() {
+		return canceled == -1 ? null : canceled;
+	}
+
 	public Timestamp getCanceled() {
-		return canceled==-1 ? null : new Timestamp(canceled);
+		return canceled == -1 ? null : new Timestamp(canceled);
 	}
 
 	public String getCancelReason() {
@@ -874,6 +878,10 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 
 	public String getContractVersion() {
 		return contractVersion;
+	}
+
+	public long getCreated_millis() {
+		return created;
 	}
 
 	public Timestamp getCreated() {
@@ -1323,7 +1331,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 			pkey=Name.valueOf(in.readUTF()).intern();
 			contractVersion=InternUtils.intern(in.readNullUTF());
 			created=in.readLong();
-			canceled=in.readLong();
+			canceled = in.readLong();
 			cancelReason=in.readNullUTF();
 			parent=InternUtils.intern(Name.valueOf(in.readNullUTF()));
 			can_add_backup_server=in.readBoolean();
