@@ -31,6 +31,7 @@ import com.aoindustries.aoserv.client.backup.BackupPartition;
 import com.aoindustries.aoserv.client.backup.FileReplication;
 import com.aoindustries.aoserv.client.backup.FileReplicationSetting;
 import com.aoindustries.aoserv.client.billing.NoticeLog;
+import com.aoindustries.aoserv.client.billing.NoticeLogTable;
 import com.aoindustries.aoserv.client.billing.NoticeType;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
@@ -2192,7 +2193,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Account},
 	 *					<code>NoticeType</code>, or <code>Transaction</code>.
 	 *
-	 * @see  Account#addNoticeLog
+	 * @see  NoticeLogTable#addNoticeLog(com.aoindustries.aoserv.client.account.Account, java.lang.String, com.aoindustries.net.Email, com.aoindustries.aoserv.client.billing.NoticeType, com.aoindustries.aoserv.client.billing.Transaction)
 	 * @see  NoticeType
 	 * @see  Account
 	 * @see  Transaction
@@ -2204,19 +2205,22 @@ final public class SimpleAOClient {
 		String type,
 		int transid
 	) throws IllegalArgumentException, IOException, SQLException {
-		Account bu=getAccount(accounting);
-		NoticeType nt=connector.getBilling().getNoticeType().get(type);
-		if(nt==null) throw new IllegalArgumentException("Unable to find NoticeType: "+type);
-		if(transid!=NoticeLog.NO_TRANSACTION) {
-			Transaction trans=connector.getBilling().getTransaction().get(transid);
-			if(trans==null) throw new IllegalArgumentException("Unable to find Transaction: "+transid);
+		Account account = getAccount(accounting);
+		NoticeType nt = connector.getBilling().getNoticeType().get(type);
+		if(nt == null) throw new IllegalArgumentException("Unable to find NoticeType: " + type);
+		Transaction trans;
+		if(transid != NoticeLog.NO_TRANSACTION) {
+			trans = connector.getBilling().getTransaction().get(transid);
+			if(trans == null) throw new IllegalArgumentException("Unable to find Transaction: " + transid);
+		} else {
+			trans = null;
 		}
 		return connector.getBilling().getNoticeLog().addNoticeLog(
-			accounting,
+			account,
 			billingContact,
 			emailAddress,
-			type,
-			transid
+			nt,
+			trans
 		);
 	}
 

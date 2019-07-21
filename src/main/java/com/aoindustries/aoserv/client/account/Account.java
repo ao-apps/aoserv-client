@@ -29,6 +29,7 @@ import static com.aoindustries.aoserv.client.account.ApplicationResources.access
 import com.aoindustries.aoserv.client.billing.MonthlyCharge;
 import com.aoindustries.aoserv.client.billing.NoticeLog;
 import com.aoindustries.aoserv.client.billing.NoticeLogTable;
+import com.aoindustries.aoserv.client.billing.NoticeType;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.billing.PackageCategory;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
@@ -563,7 +564,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * @deprecated  Please use {@link NoticeLogTable#addNoticeLog(com.aoindustries.aoserv.client.account.Account.Name, java.lang.String, com.aoindustries.net.Email, java.lang.String, int)} directly.
+	 * @deprecated  Please use {@link NoticeLogTable#addNoticeLog(com.aoindustries.aoserv.client.account.Account, java.lang.String, com.aoindustries.net.Email, com.aoindustries.aoserv.client.billing.NoticeType, com.aoindustries.aoserv.client.billing.Transaction)
 	 */
 	@Deprecated
 	public void addNoticeLog(
@@ -572,12 +573,22 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		String type,
 		int transid
 	) throws IOException, SQLException {
-		table.getConnector().getBilling().getNoticeLog().addNoticeLog(
-			pkey,
+		AOServConnector connector = table.getConnector();
+		NoticeType nt = connector.getBilling().getNoticeType().get(type);
+		if(nt == null) throw new IllegalArgumentException("Unable to find NoticeType: " + type);
+		Transaction trans;
+		if(transid != NoticeLog.NO_TRANSACTION) {
+			trans = connector.getBilling().getTransaction().get(transid);
+			if(trans == null) throw new IllegalArgumentException("Unable to find Transaction: " + transid);
+		} else {
+			trans = null;
+		}
+		connector.getBilling().getNoticeLog().addNoticeLog(
+			this,
 			billingContact,
 			emailAddress,
-			type,
-			transid
+			nt,
+			trans
 		);
 	}
 

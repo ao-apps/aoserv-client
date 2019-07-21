@@ -57,21 +57,21 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 	}
 
 	public int addNoticeLog(
-		final Account.Name accounting,
+		final Account account,
 		final String billingContact,
 		final Email emailAddress,
-		final String type,
-		final int transid
+		final NoticeType type,
+		final Transaction trans
 	) throws IOException, SQLException {
 		return connector.requestIntQueryIL(
 			true,
 			AoservProtocol.CommandID.ADD,
 			Table.TableID.NOTICE_LOG,
-			accounting.toString(),
+			account.getName().toString(),
 			billingContact,
 			emailAddress,
-			type,
-			transid
+			type.getType(),
+			trans == null ? NoticeLog.NO_TRANSACTION : trans.getTransid()
 		);
 	}
 
@@ -100,7 +100,7 @@ final public class NoticeLogTable extends CachedTableIntegerKey<NoticeLog> {
 						args[2],
 						AOSH.parseEmail(args[3], "email_address"),
 						args[4],
-						AOSH.parseInt(args[5], "transid")
+						args[5].isEmpty() ? NoticeLog.NO_TRANSACTION : AOSH.parseInt(args[5], "transid")
 					)
 				);
 				out.flush();
