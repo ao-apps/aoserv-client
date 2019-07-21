@@ -456,7 +456,9 @@ abstract public class AOServConnector implements SchemaParent {
 		newTables.add(net.getDeviceId());
 		newTables.add(net.getDevice());
 		newTables.add(net.getTcpRedirect());
+		newTables.add(billing.getCurrency());
 		newTables.add(billing.getNoticeLog());
+		newTables.add(billing.getNoticeLogBalance());
 		newTables.add(billing.getNoticeType());
 		newTables.add(distribution.getOperatingSystemVersion());
 		newTables.add(distribution.getOperatingSystem());
