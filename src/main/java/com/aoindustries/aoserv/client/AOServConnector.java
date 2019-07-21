@@ -362,6 +362,7 @@ abstract public class AOServConnector implements SchemaParent {
 		newTables.add(payment.getProcessor());
 		newTables.add(payment.getPayment());
 		newTables.add(payment.getCreditCard());
+		newTables.add(billing.getCurrency());
 		newTables.add(scm.getCvsRepository());
 		newTables.add(email.getCyrusImapdBind());
 		newTables.add(email.getCyrusImapdServer());
@@ -456,7 +457,6 @@ abstract public class AOServConnector implements SchemaParent {
 		newTables.add(net.getDeviceId());
 		newTables.add(net.getDevice());
 		newTables.add(net.getTcpRedirect());
-		newTables.add(billing.getCurrency());
 		newTables.add(billing.getNoticeLog());
 		newTables.add(billing.getNoticeLogBalance());
 		newTables.add(billing.getNoticeType());
