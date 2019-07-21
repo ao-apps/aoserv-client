@@ -488,7 +488,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 				out.writeCompressedInt(-1);
 			}
 		} else {
-			MoneyUtil.writeNullMoney(rate, out);
+			MoneyUtil.writeMoney(rate, out);
 		}
 		out.writeNullUTF(payment_type);
 		out.writeNullUTF(payment_info);
