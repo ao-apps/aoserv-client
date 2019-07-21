@@ -88,8 +88,7 @@ public final class PackageDefinitionTable extends CachedTableIntegerKey<PackageD
 					out.writeUTF(display);
 					out.writeUTF(description);
 					MoneyUtil.writeNullMoney(setupFee, out);
-					out.writeBoolean(setupFeeTransactionType!=null);
-					if(setupFeeTransactionType!=null) out.writeUTF(setupFeeTransactionType.getName());
+					out.writeNullUTF(setupFeeTransactionType == null ? null : setupFeeTransactionType.getName());
 					MoneyUtil.writeMoney(monthlyRate, out);
 					out.writeUTF(monthlyRateTransactionType.getName());
 				}
