@@ -907,9 +907,9 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return table.getConnector().getPayment().getCreditCard().getCreditCards(this);
 	}
 
-	public Host getDefaultServer() throws IOException, SQLException {
+	public Host getDefaultHost() throws IOException, SQLException {
 		// May be null when the account is canceled or not using servers
-		return table.getConnector().getAccount().getAccountHost().getDefaultServer(this);
+		return table.getConnector().getAccount().getAccountHost().getDefaultHost(this);
 	}
 
 	@Override

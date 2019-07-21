@@ -97,7 +97,7 @@ final public class AccountHostTable extends CachedTableIntegerKey<AccountHost> {
 		return null;
 	}
 
-	Host getDefaultServer(Account business) throws IOException, SQLException {
+	Host getDefaultHost(Account business) throws IOException, SQLException {
 		// Use index first
 		List<AccountHost> cached = getAccountHosts(business);
 		int size=cached.size();
