@@ -64,6 +64,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
 	final private Map<Account.Name,Monies> accountBalances = new HashMap<>();
 	final private Map<Account.Name,Monies> confirmedAccountBalances = new HashMap<>();
+	final private Map<Transaction,Monies> transactionBalances = new HashMap<>();
 
 	TransactionTable(AOServConnector connector) {
 		super(connector, Transaction.class);
@@ -151,6 +152,9 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		}
 		synchronized(confirmedAccountBalances) {
 			confirmedAccountBalances.clear();
+		}
+		synchronized(transactionBalances) {
+			transactionBalances.clear();
 		}
 	}
 
@@ -245,6 +249,30 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 			}
 		}
 		return toMonies(balances);
+	}
+
+	public Monies getTransactionBalance(Transaction transaction) throws IOException, SQLException {
+		synchronized(transactionBalances) {
+			if(transactionBalances.isEmpty()) {
+				// Compute all balances now
+				Map<Account,Monies> accountBalance = new HashMap<>();
+				for(Transaction trans : getRows()) {
+					Account account = trans.getAccount();
+					Monies balance = accountBalance.get(account);
+					if(balance == null) balance = Monies.of();
+					if(trans.getPaymentConfirmed() != Transaction.NOT_CONFIRMED) {
+						balance.add(trans.getAmount());
+					}
+					accountBalance.put(account, balance);
+					transactionBalances.put(trans, balance);
+				}
+			}
+			Monies balance = transactionBalances.get(transaction);
+			if(balance == null) {
+				throw new SQLException("Unable to find transaction in transactionBalances: " + transaction);
+			}
+			return balance;
+		}
 	}
 
 	@Override
