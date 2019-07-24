@@ -32,6 +32,7 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.math.SafeMath;
@@ -357,7 +358,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	public String getDeactivatedOnString() {
-		return deactivatedOn == -1 ? null : SQLUtility.formatDate(deactivatedOn);
+		return deactivatedOn == -1 ? null : SQLUtility.formatDate(deactivatedOn, Type.DATE_TIME_ZONE);
 	}
 
 	public String getDeactivateReason() {
