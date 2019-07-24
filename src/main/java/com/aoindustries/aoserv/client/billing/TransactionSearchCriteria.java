@@ -75,6 +75,32 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		long after,
 		long before,
 		int transid,
+		Account.Name account,
+		Account.Name sourceAccount,
+		User.Name administrator,
+		String type,
+		String description,
+		String paymentType,
+		String paymentInfo,
+		byte paymentConfirmed
+	) {
+		this.after = after;
+		this.before = before;
+		this.transid = transid;
+		this.account = account;
+		this.sourceAccount = sourceAccount;
+		this.administrator = administrator;
+		this.type = type;
+		this.description = description;
+		this.paymentType = paymentType;
+		this.paymentInfo = paymentInfo;
+		this.paymentConfirmed = paymentConfirmed;
+	}
+
+	public TransactionSearchCriteria(
+		long after,
+		long before,
+		int transid,
 		Account account,
 		Account sourceAccount,
 		Administrator administrator,
@@ -84,17 +110,19 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		String paymentInfo,
 		byte paymentConfirmed
 	) {
-		this.after = after;
-		this.before = before;
-		this.transid = transid;
-		this.account = account == null ? null : account.getName();
-		this.sourceAccount = sourceAccount == null ? null : sourceAccount.getName();
-		this.administrator = administrator == null ? null : administrator.getUsername_userId();
-		this.type = type == null ? null : type.getName();
-		this.description = description;
-		this.paymentType = paymentType == null ? null : paymentType.getName();
-		this.paymentInfo = paymentInfo;
-		this.paymentConfirmed = paymentConfirmed;
+		this(
+			after,
+			before,
+			transid,
+			account == null ? null : account.getName(),
+			sourceAccount == null ? null : sourceAccount.getName(),
+			administrator == null ? null : administrator.getUsername_userId(),
+			type == null ? null : type.getName(),
+			description,
+			paymentType == null ? null : paymentType.getName(),
+			paymentInfo,
+			paymentConfirmed
+		);
 	}
 
 	public static long getDefaultAfter(long time) {
