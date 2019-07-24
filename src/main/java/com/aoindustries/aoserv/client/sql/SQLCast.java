@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,6 +24,7 @@ package com.aoindustries.aoserv.client.sql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
+import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
@@ -43,6 +44,11 @@ final public class SQLCast extends SQLExpression {
 	public SQLCast(SQLExpression expression, Type castToType) {
 		this.expression=expression;
 		this.castToType=castToType;
+	}
+
+	@Override
+	public String toString() {
+		return expression.toString() + "::" + AOServTable.quote(castToType.getName());
 	}
 
 	@Override

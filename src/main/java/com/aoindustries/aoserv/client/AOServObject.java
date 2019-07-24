@@ -136,15 +136,58 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
 	// TODO: Remove in AOServ 2
 	final public int compareTo(AOServConnector conn, AOServObject other, SQLExpression[] sortExpressions, boolean[] sortOrders) throws IllegalArgumentException, SQLException, UnknownHostException, IOException {
-		int len=sortExpressions.length;
-		for(int c=0;c<len;c++) {
-			SQLExpression expr=sortExpressions[c];
-			Type type=expr.getType();
-			int diff=type.compareTo(
-				expr.getValue(conn, this),
-				expr.getValue(conn, other)
-			);
-			if(diff!=0) return sortOrders[c]?diff:-diff;
+		int len = sortExpressions.length;
+		for(int c = 0; c < len; c++) {
+			SQLExpression expr = sortExpressions[c];
+			Type type = expr.getType();
+			Object value1 = null;
+			boolean value1Set = false;
+			Object value2 = null;
+			boolean value2Set = false;
+			try {
+				value1 = expr.getValue(conn, this);
+				value1Set = true;
+				value2 = expr.getValue(conn, other);
+				value2Set = true;
+				int diff = type.compareTo(value1, value2);
+				if(diff != 0) return sortOrders[c] ? diff : -diff;
+			} catch(RuntimeException e) {
+				String getString1;
+				if(!value1Set) {
+					getString1 = "<unset>";
+				} else if(value1 == null) {
+					getString1 = "[NULL]";
+				} else {
+					try {
+						getString1 = type.getString(value1);
+					} catch(RuntimeException e2) {
+						getString1 = value1.toString();
+					}
+				}
+				String getString2;
+				if(!value2Set) {
+					getString2 = "<unset>";
+				} else if(value2 == null) {
+					getString2 = "[NULL]";
+				} else {
+					try {
+						getString2 = type.getString(value2);
+					} catch(RuntimeException e2) {
+						getString2 = value2.toString();
+					}
+				}
+				throw new SQLException(
+					"expr......: " + expr + "\n"
+					+ "type......: " + type + "\n"
+					+ "this......: " + this + "\n"
+					+ "other.....: " + other + "\n"
+					+ "thisKey...: " + this.getKey() + "\n"
+					+ "otherKey..: " + other.getKey() + "\n"
+					+ "thisValue.: " + getString1 + "\n"
+					+ "otherValue: " + getString2,
+					e
+				);
+			}
 		}
 		return 0;
 	}
