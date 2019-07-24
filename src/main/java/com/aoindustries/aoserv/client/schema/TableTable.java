@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,7 +31,6 @@ import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
-import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.sort.JavaSort;
 import java.io.IOException;
 import java.io.Reader;
@@ -102,14 +101,14 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 		String command = args[0];
 		if (command.equalsIgnoreCase(Command.DESC) || command.equalsIgnoreCase(Command.DESCRIBE)) {
 			if(AOSH.checkParamCount(Command.DESCRIBE, args, 1, err)) {
-				String tableName=args[1];
-				Table table=connector.getSchema().getTable().get(tableName);
-				if(table!=null) {
+				String tableName = AOServTable.unquote(args[1]);
+				Table table = connector.getSchema().getTable().get(tableName);
+				if(table != null) {
 					table.printDescription(connector, out, isInteractive);
 					out.flush();
 				} else {
 					err.print("aosh: "+Command.DESCRIBE+": table not found: ");
-					err.println(tableName);
+					err.println(AOServTable.quote(tableName));
 					err.flush();
 				}
 			}
@@ -120,7 +119,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 				if (argCount == 4 && args[1].equalsIgnoreCase("count(*)")) {
 					// Is a select count(*)
 					if ("from".equalsIgnoreCase(args[2])) {
-						String tableName = args[3];
+						String tableName = AOServTable.unquote(args[3]);
 						Table table = connector.getSchema().getTable().get(tableName);
 						if (table != null) {
 							Object[] titles = { "count" };
@@ -128,7 +127,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 							SQLUtility.printTable(titles, values, out, isInteractive, new boolean[] {true});
 							out.flush();
 						} else {
-							err.println("aosh: " + Command.SELECT + ": table not found: " + tableName);
+							err.println("aosh: " + Command.SELECT + ": table not found: " + AOServTable.quote(tableName));
 							err.flush();
 						}
 					} else {
@@ -136,18 +135,14 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 						err.flush();
 					}
 				} else {
-					List<String> columnNames=new ArrayList<>();
-					List<SQLExpression> orderExpressions=new ArrayList<>();
-					List<Boolean> sortOrders=new ArrayList<>();
-					String arg1 = args[1];
-					String tableName;
+					List<String> expressionArgs = new ArrayList<>();
 
-					// Parse the list of columns until "from" is found
+					// Parse the list of expressions until "from" is found
 					int c = 1;
 					for (; c < argCount; c++) {
 						String arg = args[c];
 						if ("from".equalsIgnoreCase(arg)) break;
-						columnNames.add(arg);
+						expressionArgs.add(arg);
 					}
 					if (c >= argCount - 1) {
 						// The from was not found
@@ -157,122 +152,127 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 					}
 
 					// Get the table name
-					tableName = args[++c];
+					String tableName = AOServTable.unquote(args[++c]);
 					c++;
 
-					Table schemaTable=connector.getSchema().getTable().get(tableName);
-					if(schemaTable!=null) {
+					Table schemaTable = connector.getSchema().getTable().get(tableName);
+					if(schemaTable != null) {
+						List<String> expressions = new ArrayList<>(expressionArgs.size());
 						// Substitute any * columnName and ,
-						for(int d=0;d<columnNames.size();d++) {
-							String columnName=columnNames.get(d);
-							if(columnName.equals("*")) {
-								List<Column> tcolumns = schemaTable.getSchemaColumns(connector);
-								for (int e = 0; e < tcolumns.size(); e++) {
-									columnName = tcolumns.get(e).getName();
-									if(e==0) columnNames.set(d, columnName);
-									else columnNames.add(++d, columnName);
+						for(String expressionArg : expressionArgs) {
+							if(expressionArg.equals("*")) {
+								for(Column column : schemaTable.getSchemaColumns(connector)) {
+									expressions.add(AOServTable.quote(column.getName()));
+									expressions.add(AOServTable.quote(column.getName()));
 								}
 							} else {
-								if(columnName.indexOf(',')!=-1) {
-									List<String> tcolumns=StringUtility.splitString(columnName, ',');
-									int addPos=d--;
-									int numAdded=0;
-									for (int e = 0; e < tcolumns.size(); e++) {
-										columnName=tcolumns.get(e).trim();
-										if(columnName.length()>0) {
-											if(numAdded==0) columnNames.set(addPos++, columnName);
-											else columnNames.add(addPos++, columnName);
-											numAdded++;
-										}
+								do {
+									String current;
+									int commaPos = AOServTable.indexOfNotQuoted(expressionArg, ',');
+									if(commaPos == -1) {
+										current = expressionArg;
+										expressionArg = "";
+									} else {
+										current = expressionArg.substring(0, commaPos);
+										expressionArg = expressionArg.substring(commaPos + 1);
 									}
-									if(numAdded==0) columnNames.remove(addPos);
-								}
+									expressions.add(current);
+								} while(!expressionArg.isEmpty());
 							}
 						}
 
-						AOServTable<?,?> aoServTable=schemaTable.getAOServTable(connector);
+						AOServTable<?,?> aoServTable = schemaTable.getAOServTable(connector);
 
 						// Parse any order by clause
-						if(c<argCount) {
-							String arg=args[c++];
+						List<SQLExpression> orderExpressions = new ArrayList<>();
+						List<Boolean> sortOrders = new ArrayList<>();
+						if(c < argCount) {
+							String arg = args[c++];
 							if(arg.equalsIgnoreCase("order")) {
-								if(c<argCount) {
+								if(c < argCount) {
 									if(args[c++].equalsIgnoreCase("by")) {
-										while(c<argCount) {
-											String columnName=args[c++];
-											List<String> exprs=StringUtility.splitString(columnName, ',');
-											for(int d=0;d<exprs.size();d++) {
-												String expr=exprs.get(d).trim();
+										while(c < argCount) {
+											String orderBy = args[c++];
+											do {
+												String expr;
+												int commaPos = AOServTable.indexOfNotQuoted(orderBy, ',');
+												if(commaPos == -1) {
+													expr = orderBy;
+													orderBy = "";
+												} else {
+													expr = orderBy.substring(0, commaPos);
+													orderBy = orderBy.substring(commaPos + 1);
+												}
 												if(
-													orderExpressions.size()>0
+													orderExpressions.size() > 0
 													&& (
 														expr.equalsIgnoreCase("asc")
 														|| expr.equalsIgnoreCase("ascending")
 													)
-												) sortOrders.set(sortOrders.size()-1, AOServTable.ASCENDING);
-												else if(
-													orderExpressions.size()>0
+												) {
+													sortOrders.set(sortOrders.size() - 1, AOServTable.ASCENDING);
+												} else if(
+													orderExpressions.size() > 0
 													&& (
 														expr.equalsIgnoreCase("desc")
 														|| expr.equalsIgnoreCase("descending")
 													)
-												) sortOrders.set(sortOrders.size()-1, AOServTable.DESCENDING);
-												else if(expr.length()>0) {
+												) {
+													sortOrders.set(sortOrders.size() - 1, AOServTable.DESCENDING);
+												} else { // if(!expr.isEmpty()) {
 													orderExpressions.add(aoServTable.getSQLExpression(expr));
 													sortOrders.add(AOServTable.ASCENDING);
 												}
-											}
+											} while(!orderBy.isEmpty());
 										}
-										if(orderExpressions.isEmpty()) throw new SQLException("Parse error: no columns listed after 'order by'");
+										if(orderExpressions.isEmpty()) throw new SQLException("Parse error: no expressions listed after 'order by'");
 									} else throw new SQLException("Parse error: 'by' expected");
 								} else throw new SQLException("Parse error: 'by' expected");
-							} else throw new SQLException("Parse error: 'order' expected, found '"+arg+'\'');
+							} else throw new SQLException("Parse error: 'order' expected, found '" + arg + '\'');
 						}
 
 						// Figure out the expressions for each columns
-						SQLExpression[] valueExpressions=new SQLExpression[columnNames.size()];
-						Type[] valueTypes=new Type[columnNames.size()];
-						boolean[] rightAligns=new boolean[columnNames.size()];
-						for(int d=0;d<columnNames.size();d++) {
-							SQLExpression sql=valueExpressions[d]=aoServTable.getSQLExpression(columnNames.get(d));
-							Type type=valueTypes[d]=sql.getType();
-							rightAligns[d]=type.alignRight();
+						SQLExpression[] valueExpressions = new SQLExpression[expressions.size()];
+						Type[] valueTypes = new Type[expressions.size()];
+						boolean[] rightAligns = new boolean[expressions.size()];
+						for(int d = 0; d < expressions.size(); d++) {
+							SQLExpression sql = aoServTable.getSQLExpression(expressions.get(d));
+							Type type = sql.getType();
+							valueExpressions[d] = sql;
+							valueTypes[d] = type;
+							rightAligns[d] = type.alignRight();
 						}
 
 						// Get the data
-						Object[] values;
-						boolean copy=orderExpressions.size()>0;
-						List<? extends AOServObject> rows=aoServTable.getRows();
+						List<? extends AOServObject> rows = aoServTable.getRows();
 						// Sort if needed
-						if(orderExpressions.size()>0) {
-							SQLExpression[] exprs=orderExpressions.toArray(new SQLExpression[orderExpressions.size()]);
-							boolean[] orders=new boolean[exprs.length];
-							for(int d=0;d<orders.length;d++) orders[d]=sortOrders.get(d);
+						if(orderExpressions.size() > 0) {
+							SQLExpression[] exprs = orderExpressions.toArray(new SQLExpression[orderExpressions.size()]);
+							boolean[] orders = new boolean[exprs.length];
+							for(int d = 0; d < orders.length;d++) orders[d] = sortOrders.get(d);
 							rows = new ArrayList<>(rows);
 							connector.getSchema().getType().sort(JavaSort.getInstance(), rows, exprs, orders);
 						}
 
 						// Convert the results
-						int numRows=rows.size();
-						values=new Object[columnNames.size()*numRows];
-						int valuePos=0;
-						for(int d=0;d<numRows;d++) {
-							AOServObject<?,?> row=rows.get(d);
-							for(int e=0;e<valueExpressions.length;e++) {
-								SQLExpression sql=valueExpressions[e];
-								Type type=valueTypes[e];
-								Object val=sql.getValue(connector, row);
-								values[valuePos++]=type.getString(val);
+						Object[] values = new Object[expressions.size() * rows.size()];
+						int valuePos = 0;
+						for(AOServObject<?,?> row : rows) {
+							for(int e = 0; e < valueExpressions.length; e++) {
+								SQLExpression sql = valueExpressions[e];
+								Type type = valueTypes[e];
+								Object val = sql.getValue(connector, row);
+								values[valuePos++] = type.getString(val);
 							}
 						}
 
 						// Print the results
-						String[] cnames=new String[valueExpressions.length];
-						for(int d=0;d<cnames.length;d++) cnames[d]=valueExpressions[d].getColumnName();
+						String[] cnames = new String[valueExpressions.length];
+						for(int d = 0; d < cnames.length; d++) cnames[d] = valueExpressions[d].getColumnName();
 						SQLUtility.printTable(cnames, values, out, isInteractive, rightAligns);
 						out.flush();
 					} else {
-						err.println("aosh: " + Command.SELECT + ": table not found: " + tableName);
+						err.println("aosh: " + Command.SELECT + ": table not found: " + AOServTable.quote(tableName));
 						err.flush();
 					}
 				}
