@@ -255,15 +255,20 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		synchronized(transactionBalances) {
 			if(transactionBalances.isEmpty()) {
 				// Compute all balances now
-				Map<Account,Monies> accountBalance = new HashMap<>();
+				Map<Account.Name,Monies> accountBalance = new HashMap<>();
 				for(Transaction trans : getRows()) {
-					Account account = trans.getAccount();
+					Account.Name account = trans.getAccount_name();
 					Monies balance = accountBalance.get(account);
-					if(balance == null) balance = Monies.of();
-					if(trans.getPaymentConfirmed() != Transaction.NOT_CONFIRMED) {
-						balance.add(trans.getAmount());
+					boolean updated = false;
+					if(balance == null) {
+						balance = Monies.of();
+						updated = true;
 					}
-					accountBalance.put(account, balance);
+					if(trans.getPaymentConfirmed() != Transaction.NOT_CONFIRMED) {
+						balance = balance.add(trans.getAmount());
+						updated = true;
+					}
+					if(updated) accountBalance.put(account, balance);
 					transactionBalances.put(trans, balance);
 				}
 			}
