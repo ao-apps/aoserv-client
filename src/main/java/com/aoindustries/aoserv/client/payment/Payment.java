@@ -27,6 +27,7 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.User;
+import com.aoindustries.aoserv.client.billing.MoneyUtil;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
@@ -35,12 +36,13 @@ import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
+import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Currency;
 import java.util.Objects;
 
 /**
@@ -64,12 +66,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private boolean testMode;
 	private int duplicateWindow;
 	private String orderNumber;
-	private String currencyCode;
-	private BigDecimal amount;
-	private BigDecimal taxAmount;
+	private Money amount;
+	private Money taxAmount;
 	private boolean taxExempt;
-	private BigDecimal shippingAmount;
-	private BigDecimal dutyAmount;
+	private Money shippingAmount;
+	private Money dutyAmount;
 	private String shippingFirstName;
 	private String shippingLastName;
 	private String shippingCompanyName;
@@ -215,27 +216,17 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	/**
-	 * Gets the 3-character ISO 4217 country code for the currency used in this transaction.
-	 * <p>
-	 * These are obtained from <a href="https://wikipedia.org/wiki/ISO_4217">https://wikipedia.org/wiki/ISO_4217</a>
-	 * </p>
-	 */
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
-
-	/**
 	 * Gets the amount of the transaction.  This amount should not include any tax, shipping charges, or duty.
 	 * Thus the total amount of the transaction is the amount + taxAmount + shippingAmount + dutyAmount.
 	 */
-	public BigDecimal getAmount() {
+	public Money getAmount() {
 		return amount;
 	}
 
 	/**
-	 * Gets the tax amount of the transaction.
+	 * Gets the optional tax amount of the transaction.
 	 */
-	public BigDecimal getTaxAmount() {
+	public Money getTaxAmount() {
 		return taxAmount;
 	}
 
@@ -247,16 +238,16 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	/**
-	 * Gets the shipping amount for this transaction.
+	 * Gets the optional shipping amount for this transaction.
 	 */
-	public BigDecimal getShippingAmount() {
+	public Money getShippingAmount() {
 		return shippingAmount;
 	}
 
 	/**
-	 * Gets the duty amount for this transaction.
+	 * Gets the optional duty amount for this transaction.
 	 */
-	public BigDecimal getDutyAmount() {
+	public Money getDutyAmount() {
 		return dutyAmount;
 	}
 
@@ -660,90 +651,89 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			case 4: return testMode;
 			case 5: return duplicateWindow;
 			case 6: return orderNumber;
-			case 7: return currencyCode;
-			case 8: return amount;
-			case 9: return taxAmount;
-			case 10: return taxExempt;
-			case 11: return shippingAmount;
-			case 12: return dutyAmount;
-			case 13: return shippingFirstName;
-			case 14: return shippingLastName;
-			case 15: return shippingCompanyName;
-			case 16: return shippingStreetAddress1;
-			case 17: return shippingStreetAddress2;
-			case 18: return shippingCity;
-			case 19: return shippingState;
-			case 20: return shippingPostalCode;
-			case 21: return shippingCountryCode;
-			case 22: return emailCustomer;
-			case 23: return merchantEmail;
-			case 24: return invoiceNumber;
-			case 25: return purchaseOrderNumber;
-			case 26: return description;
-			case 27: return creditCardCreatedBy;
-			case 28: return creditCardPrincipalName;
-			case 29: return creditCardAccounting;
-			case 30: return creditCardGroupName;
-			case 31: return creditCardProviderUniqueId;
-			case 32: return creditCardMaskedCardNumber;
-			case 33: return creditCard_expirationMonth == null ? null : creditCard_expirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
-			case 34: return creditCard_expirationYear;
-			case 35: return creditCardFirstName;
-			case 36: return creditCardLastName;
-			case 37: return creditCardCompanyName;
-			case 38: return creditCardEmail;
-			case 39: return creditCardPhone;
-			case 40: return creditCardFax;
-			case 41: return creditCardCustomerId;
-			case 42: return creditCardCustomerTaxId;
-			case 43: return creditCardStreetAddress1;
-			case 44: return creditCardStreetAddress2;
-			case 45: return creditCardCity;
-			case 46: return creditCardState;
-			case 47: return creditCardPostalCode;
-			case 48: return creditCardCountryCode;
-			case 49: return creditCardComments;
-			case 50: return getAuthorizationTime();
-			case 51: return authorizationUsername;
-			case 52: return authorizationPrincipalName;
-			case 53: return authorizationCommunicationResult;
-			case 54: return authorizationProviderErrorCode;
-			case 55: return authorizationErrorCode;
-			case 56: return authorizationProviderErrorMessage;
-			case 57: return authorizationProviderUniqueId;
-			case 58: return authorizationResult_providerReplacementMaskedCardNumber;
-			case 59: return authorizationResult_replacementMaskedCardNumber;
-			case 60: return authorizationResult_providerReplacementExpiration;
-			case 61: return authorizationResult_replacementExpirationMonth == null ? null : authorizationResult_replacementExpirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
-			case 62: return authorizationResult_replacementExpirationYear;
-			case 63: return authorizationProviderApprovalResult;
-			case 64: return authorizationApprovalResult;
-			case 65: return authorizationProviderDeclineReason;
-			case 66: return authorizationDeclineReason;
-			case 67: return authorizationProviderReviewReason;
-			case 68: return authorizationReviewReason;
-			case 69: return authorizationProviderCvvResult;
-			case 70: return authorizationCvvResult;
-			case 71: return authorizationProviderAvsResult;
-			case 72: return authorizationAvsResult;
-			case 73: return authorizationApprovalCode;
-			case 74: return getCaptureTime();
-			case 75: return captureUsername;
-			case 76: return capturePrincipalName;
-			case 77: return captureCommunicationResult;
-			case 78: return captureProviderErrorCode;
-			case 79: return captureErrorCode;
-			case 80: return captureProviderErrorMessage;
-			case 81: return captureProviderUniqueId;
-			case 82: return getVoidTime();
-			case 83: return voidUsername;
-			case 84: return voidPrincipalName;
-			case 85: return voidCommunicationResult;
-			case 86: return voidProviderErrorCode;
-			case 87: return voidErrorCode;
-			case 88: return voidProviderErrorMessage;
-			case 89: return voidProviderUniqueId;
-			case 90: return status;
+			case 7: return amount;
+			case 8: return taxAmount;
+			case 9: return taxExempt;
+			case 10: return shippingAmount;
+			case 11: return dutyAmount;
+			case 12: return shippingFirstName;
+			case 13: return shippingLastName;
+			case 14: return shippingCompanyName;
+			case 15: return shippingStreetAddress1;
+			case 16: return shippingStreetAddress2;
+			case 17: return shippingCity;
+			case 18: return shippingState;
+			case 19: return shippingPostalCode;
+			case 20: return shippingCountryCode;
+			case 21: return emailCustomer;
+			case 22: return merchantEmail;
+			case 23: return invoiceNumber;
+			case 24: return purchaseOrderNumber;
+			case 25: return description;
+			case 26: return creditCardCreatedBy;
+			case 27: return creditCardPrincipalName;
+			case 28: return creditCardAccounting;
+			case 29: return creditCardGroupName;
+			case 30: return creditCardProviderUniqueId;
+			case 31: return creditCardMaskedCardNumber;
+			case 32: return creditCard_expirationMonth == null ? null : creditCard_expirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
+			case 33: return creditCard_expirationYear;
+			case 34: return creditCardFirstName;
+			case 35: return creditCardLastName;
+			case 36: return creditCardCompanyName;
+			case 37: return creditCardEmail;
+			case 38: return creditCardPhone;
+			case 39: return creditCardFax;
+			case 40: return creditCardCustomerId;
+			case 41: return creditCardCustomerTaxId;
+			case 42: return creditCardStreetAddress1;
+			case 43: return creditCardStreetAddress2;
+			case 44: return creditCardCity;
+			case 45: return creditCardState;
+			case 46: return creditCardPostalCode;
+			case 47: return creditCardCountryCode;
+			case 48: return creditCardComments;
+			case 49: return getAuthorizationTime();
+			case 50: return authorizationUsername;
+			case 51: return authorizationPrincipalName;
+			case 52: return authorizationCommunicationResult;
+			case 53: return authorizationProviderErrorCode;
+			case 54: return authorizationErrorCode;
+			case 55: return authorizationProviderErrorMessage;
+			case 56: return authorizationProviderUniqueId;
+			case 57: return authorizationResult_providerReplacementMaskedCardNumber;
+			case 58: return authorizationResult_replacementMaskedCardNumber;
+			case 59: return authorizationResult_providerReplacementExpiration;
+			case 60: return authorizationResult_replacementExpirationMonth == null ? null : authorizationResult_replacementExpirationMonth.shortValue(); // TODO: Add "byte" type back to AOServ?
+			case 61: return authorizationResult_replacementExpirationYear;
+			case 62: return authorizationProviderApprovalResult;
+			case 63: return authorizationApprovalResult;
+			case 64: return authorizationProviderDeclineReason;
+			case 65: return authorizationDeclineReason;
+			case 66: return authorizationProviderReviewReason;
+			case 67: return authorizationReviewReason;
+			case 68: return authorizationProviderCvvResult;
+			case 69: return authorizationCvvResult;
+			case 70: return authorizationProviderAvsResult;
+			case 71: return authorizationAvsResult;
+			case 72: return authorizationApprovalCode;
+			case 73: return getCaptureTime();
+			case 74: return captureUsername;
+			case 75: return capturePrincipalName;
+			case 76: return captureCommunicationResult;
+			case 77: return captureProviderErrorCode;
+			case 78: return captureErrorCode;
+			case 79: return captureProviderErrorMessage;
+			case 80: return captureProviderUniqueId;
+			case 81: return getVoidTime();
+			case 82: return voidUsername;
+			case 83: return voidPrincipalName;
+			case 84: return voidCommunicationResult;
+			case 85: return voidProviderErrorCode;
+			case 86: return voidErrorCode;
+			case 87: return voidProviderErrorMessage;
+			case 88: return voidProviderUniqueId;
+			case 89: return status;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -764,12 +754,12 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			testMode = result.getBoolean(pos++);
 			duplicateWindow = result.getInt(pos++);
 			orderNumber = result.getString(pos++);
-			currencyCode = result.getString(pos++);
-			amount = result.getBigDecimal(pos++);
-			taxAmount = result.getBigDecimal(pos++);
+			Currency currency = Currency.getInstance(result.getString(pos++));
+			amount = new Money(currency, result.getBigDecimal(pos++));
+			taxAmount = MoneyUtil.getMoney(currency, result.getBigDecimal(pos++));
 			taxExempt = result.getBoolean(pos++);
-			shippingAmount = result.getBigDecimal(pos++);
-			dutyAmount = result.getBigDecimal(pos++);
+			shippingAmount = MoneyUtil.getMoney(currency, result.getBigDecimal(pos++));
+			dutyAmount = MoneyUtil.getMoney(currency, result.getBigDecimal(pos++));
 			shippingFirstName = result.getString(pos++);
 			shippingLastName = result.getString(pos++);
 			shippingCompanyName = result.getString(pos++);
@@ -869,15 +859,24 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			testMode = in.readBoolean();
 			duplicateWindow = in.readCompressedInt();
 			orderNumber = in.readNullUTF();
-			currencyCode = in.readUTF().intern();
-			amount = new BigDecimal(in.readUTF());
-			String S = in.readNullUTF();
-			taxAmount = S==null ? null : new BigDecimal(S);
+			Currency currency = Currency.getInstance(in.readUTF());
+			amount = new Money(currency, in.readLong(), in.readCompressedInt());
+			if(in.readBoolean()) {
+				taxAmount = new Money(currency, in.readLong(), in.readCompressedInt());
+			} else {
+				taxAmount = null;
+			}
 			taxExempt = in.readBoolean();
-			S = in.readNullUTF();
-			shippingAmount = S==null ? null : new BigDecimal(S);
-			S = in.readNullUTF();
-			dutyAmount = S==null ? null : new BigDecimal(S);
+			if(in.readBoolean()) {
+				shippingAmount = new Money(currency, in.readLong(), in.readCompressedInt());
+			} else {
+				shippingAmount = null;
+			}
+			if(in.readBoolean()) {
+				dutyAmount = new Money(currency, in.readLong(), in.readCompressedInt());
+			} else {
+				dutyAmount = null;
+			}
 			shippingFirstName = in.readNullUTF();
 			shippingLastName = in.readNullUTF();
 			shippingCompanyName = in.readNullUTF();
@@ -970,12 +969,47 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeBoolean(testMode);
 		out.writeCompressedInt(duplicateWindow);
 		out.writeNullUTF(orderNumber);
-		out.writeUTF(currencyCode);
-		out.writeUTF(amount.toString());
-		out.writeNullUTF(Objects.toString(taxAmount, null));
+		out.writeUTF(amount.getCurrency().getCurrencyCode());
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeUTF(amount.getValue().toString());
+		} else {
+			out.writeLong(amount.getUnscaledValue());
+			out.writeCompressedInt(amount.getScale());
+		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeNullUTF(taxAmount == null ? null : taxAmount.getValue().toString());
+		} else {
+			if(taxAmount != null) {
+				out.writeBoolean(true);
+				out.writeLong(taxAmount.getUnscaledValue());
+				out.writeCompressedInt(taxAmount.getScale());
+			} else {
+				out.writeBoolean(false);
+			}
+		}
 		out.writeBoolean(taxExempt);
-		out.writeNullUTF(Objects.toString(shippingAmount, null));
-		out.writeNullUTF(Objects.toString(dutyAmount, null));
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeNullUTF(shippingAmount == null ? null : shippingAmount.getValue().toString());
+		} else {
+			if(shippingAmount != null) {
+				out.writeBoolean(true);
+				out.writeLong(shippingAmount.getUnscaledValue());
+				out.writeCompressedInt(shippingAmount.getScale());
+			} else {
+				out.writeBoolean(false);
+			}
+		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeNullUTF(dutyAmount == null ? null : dutyAmount.getValue().toString());
+		} else {
+			if(dutyAmount != null) {
+				out.writeBoolean(true);
+				out.writeLong(dutyAmount.getUnscaledValue());
+				out.writeCompressedInt(dutyAmount.getScale());
+			} else {
+				out.writeBoolean(false);
+			}
+		}
 		out.writeNullUTF(shippingFirstName);
 		out.writeNullUTF(shippingLastName);
 		out.writeNullUTF(shippingCompanyName);

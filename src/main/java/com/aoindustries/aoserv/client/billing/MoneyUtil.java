@@ -45,15 +45,23 @@ public class MoneyUtil {
 	 * null-safe getDto for Money.
 	 */
 	public static com.aoindustries.aoserv.client.dto.Money getDto(Money money) {
-		return money==null ? null : new com.aoindustries.aoserv.client.dto.Money(money.getCurrency().getCurrencyCode(), money.getValue());
+		return money == null ? null : new com.aoindustries.aoserv.client.dto.Money(money.getCurrency().getCurrencyCode(), money.getValue());
 	}
 
 	/**
 	 * null-safe money conversion.
 	 */
 	public static Money getMoney(com.aoindustries.aoserv.client.dto.Money money) {
-		if(money==null) return null;
+		if(money == null) return null;
 		return new Money(Currency.getInstance(money.getCurrency()), money.getValue());
+	}
+
+	/**
+	 * null-safe money conversion.
+	 */
+	public static Money getMoney(Currency currency, BigDecimal value) {
+		if(value == null) return null;
+		return new Money(currency, value);
 	}
 
     /**
