@@ -30,6 +30,7 @@ import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.InetAddress;
@@ -41,6 +42,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -175,13 +177,12 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	}
 
 	public static long getCurrentSerial() {
-		Calendar cal=Calendar.getInstance();
+		GregorianCalendar gcal = new GregorianCalendar(Type.DATE_TIME_ZONE);
 		return
-			cal.get(Calendar.YEAR)*1000000L
-			+ (cal.get(Calendar.MONTH)+1)*10000
-			+ cal.get(Calendar.DATE)*100
-			+ 01
-		;
+			gcal.get(Calendar.YEAR) * 1000000L
+			+ (gcal.get(Calendar.MONTH) + 1) * 10000
+			+ gcal.get(Calendar.DATE) * 100
+			+ 01;
 	}
 
 	public List<Record> getDNSRecords() throws IOException, SQLException {

@@ -33,6 +33,7 @@ import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.net.FirewallZone;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.TableTable;
+import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
@@ -339,9 +340,13 @@ final public class AOSH extends ShellInterpreter {
 		else throw new IllegalArgumentException("Invalid argument for boolean (" + field + "): " + S);
 	}
 
+	/**
+	 * @see  SQLUtility#parseDate(java.lang.String, java.util.TimeZone)
+	 * @see  Type#DATE_TIME_ZONE
+	 */
 	public static Date parseDate(String S, String field) {
 		try {
-			return SQLUtility.getDate(S);
+			return SQLUtility.parseDate(S, Type.DATE_TIME_ZONE);
 		} catch(NumberFormatException err) {
 			throw new IllegalArgumentException("Invalid argument for date (" + field + "): " + S, err);
 		}
@@ -387,9 +392,12 @@ final public class AOSH extends ShellInterpreter {
 		}
 	}
 
-	public static int parseMillis(String S, String field) {
+	/**
+	 * @see  SQLUtility#parseDecimal3(java.lang.String)
+	 */
+	public static int parseDecimal3(String S, String field) {
 		try {
-			return SQLUtility.getMillis(S);
+			return SQLUtility.parseDecimal3(S);
 		} catch(NumberFormatException err) {
 			throw new IllegalArgumentException("Invalid argument for decimal (" + field + "): " + S, err);
 		}
@@ -411,9 +419,12 @@ final public class AOSH extends ShellInterpreter {
 		}
 	}
 
-	public static int parsePennies(String S, String field) {
+	/**
+	 * @see  SQLUtility#parseDecimal2(java.lang.String)
+	 */
+	public static int parseDecimal2(String S, String field) {
 		try {
-			return SQLUtility.getPennies(S);
+			return SQLUtility.parseDecimal2(S);
 		} catch(NumberFormatException err) {
 			throw new IllegalArgumentException("Invalid argument for decimal (" + field + "): " + S, err);
 		}
@@ -679,7 +690,7 @@ final public class AOSH extends ShellInterpreter {
 				out.print("real    ");
 				out.print(mins);
 				out.print('m');
-				out.print(SQLUtility.getMilliDecimal(secs));
+				out.print(SQLUtility.formatDecimal3(secs));
 				out.println('s');
 				out.flush();
 			}
