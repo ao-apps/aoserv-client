@@ -185,7 +185,8 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		return Monies.of(monies);
 	}
 
-	public Monies getAccountBalance(Account.Name accounting) throws IOException, SQLException {
+	public Monies getAccountBalance(Account account) throws IOException, SQLException {
+		if(account == null) return Monies.of();
 		synchronized(accountBalances) {
 			if(accountBalances.isEmpty()) {
 				// Compute all balances now
@@ -200,14 +201,15 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 					accountBalances.put(entry.getKey(), toMonies(entry.getValue()));
 				}
 			}
-			Monies balance = accountBalances.get(accounting);
+			Monies balance = accountBalances.get(account.getName());
 			return balance == null ? Monies.of() : balance;
 		}
 	}
 
-	public Monies getAccountBalance(Account.Name accounting, long before) throws IOException, SQLException {
+	public Monies getAccountBalance(Account account, long before) throws IOException, SQLException {
+		if(account == null) return Monies.of();
 		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
-		for(Transaction transaction : getTransactions(accounting)) {
+		for(Transaction transaction : getTransactions(account)) {
 			if(
 				transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
 				&& transaction.getTime_millis() < before
@@ -218,7 +220,8 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		return toMonies(balances);
 	}
 
-	public Monies getConfirmedAccountBalance(Account.Name accounting) throws IOException, SQLException {
+	public Monies getConfirmedAccountBalance(Account account) throws IOException, SQLException {
+		if(account == null) return Monies.of();
 		synchronized(confirmedAccountBalances) {
 			if(confirmedAccountBalances.isEmpty()) {
 				// Compute all balances now
@@ -233,14 +236,15 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 					confirmedAccountBalances.put(entry.getKey(), toMonies(entry.getValue()));
 				}
 			}
-			Monies balance = confirmedAccountBalances.get(accounting);
+			Monies balance = confirmedAccountBalances.get(account.getName());
 			return balance == null ? Monies.of() : balance;
 		}
 	}
 
-	public Monies getConfirmedAccountBalance(Account.Name accounting, long before) throws IOException, SQLException {
+	public Monies getConfirmedAccountBalance(Account account, long before) throws IOException, SQLException {
+		if(account == null) return Monies.of();
 		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
-		for(Transaction transaction : getTransactions(accounting)) {
+		for(Transaction transaction : getTransactions(account)) {
 			if(
 				transaction.getPaymentConfirmed() == Transaction.CONFIRMED
 				&& transaction.getTime_millis() < before
@@ -345,12 +349,22 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		return Collections.unmodifiableList(matches);
 	}
 
-	public List<Transaction> getTransactions(Account.Name accounting) throws IOException, SQLException {
-		return getIndexedRows(Transaction.COLUMN_ACCOUNTING, accounting);
+	/**
+	 * Gets transactions that have this account as their applied-to.
+	 */
+	public List<Transaction> getTransactions(Account account) throws IOException, SQLException {
+		return getIndexedRows(Transaction.COLUMN_ACCOUNTING, account == null ? null : account.getName());
+	}
+
+	/**
+	 * Gets transactions that have this account as their source.
+	 */
+	public List<Transaction> getTransactionsFrom(Account account) throws IOException, SQLException {
+		return getIndexedRows(Transaction.COLUMN_SOURCE_ACCOUNTING, account == null ? null : account.getName());
 	}
 
 	public List<Transaction> getTransactions(Administrator ba) throws IOException, SQLException {
-		return getIndexedRows(Transaction.COLUMN_ADMINISTRATOR, ba.getUsername_userId());
+		return getIndexedRows(Transaction.COLUMN_ADMINISTRATOR, ba == null ? null : ba.getUsername_userId());
 	}
 
 	@Override

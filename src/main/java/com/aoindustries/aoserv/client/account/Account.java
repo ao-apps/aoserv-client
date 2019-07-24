@@ -727,12 +727,20 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.BUSINESSES, pkey.toString());
 	}
 
+	/**
+	 * @deprecated  Please use {@link TransactionTable#getAccountBalance(com.aoindustries.aoserv.client.account.Account)} directly
+	 */
+	@Deprecated
 	public Monies getAccountBalance() throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransaction().getAccountBalance(pkey);
+		return table.getConnector().getBilling().getTransaction().getAccountBalance(this);
 	}
 
+	/**
+	 * @deprecated  Please use {@link TransactionTable#getAccountBalance(com.aoindustries.aoserv.client.account.Account, long)} directly
+	 */
+	@Deprecated
 	public Monies getAccountBalance(long before) throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransaction().getAccountBalance(pkey, before);
+		return table.getConnector().getBilling().getTransaction().getAccountBalance(this, before);
 	}
 
 	/**
@@ -879,12 +887,20 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		}
 	}
 
+	/**
+	 * @deprecated  Please use {@link TransactionTable#getConfirmedAccountBalance(com.aoindustries.aoserv.client.account.Account)} directly
+	 */
+	@Deprecated
 	public Monies getConfirmedAccountBalance() throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(pkey);
+		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(this);
 	}
 
+	/**
+	 * @deprecated  Please use {@link TransactionTable#getConfirmedAccountBalance(com.aoindustries.aoserv.client.account.Account, long)} directly
+	 */
+	@Deprecated
 	public Monies getConfirmedAccountBalance(long before) throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(pkey, before);
+		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(this, before);
 	}
 
 	public String getContractVersion() {
@@ -1019,8 +1035,24 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return Monies.of(list);
 	}
 
+	/**
+	 * Gets transactions that have this account as their applied-to.
+	 *
+	 * @deprecated  Please use {@link TransactionTable#getTransactions(com.aoindustries.aoserv.client.account.Account)} directly
+	 */
+	@Deprecated
 	public List<Transaction> getTransactions() throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransaction().getTransactions(pkey);
+		return table.getConnector().getBilling().getTransaction().getTransactions(this);
+	}
+
+	/**
+	 * Gets transactions that have this account as their source.
+	 *
+	 * @deprecated  Please use {@link TransactionTable#getTransactionsFrom(com.aoindustries.aoserv.client.account.Account)} directly
+	 */
+	@Deprecated
+	public List<Transaction> getTransactionsFrom() throws IOException, SQLException {
+		return table.getConnector().getBilling().getTransaction().getTransactionsFrom(this);
 	}
 
 	/**
@@ -1066,7 +1098,9 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void move(Server from, Server to, TerminalWriter out) throws IOException, SQLException {
+		if(true) throw new com.aoindustries.lang.NotImplementedException("TODO: Finish implementation");
 		if(from.equals(to)) throw new SQLException("Cannot move from Server "+from.getHostname()+" to Server "+to.getHostname()+": same Server");
 
 		AccountHost fromAccountHost = getAccountHost(from.getHost());

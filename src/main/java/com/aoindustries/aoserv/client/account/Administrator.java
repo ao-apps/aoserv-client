@@ -28,6 +28,7 @@ import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.billing.MonthlyCharge;
 import com.aoindustries.aoserv.client.billing.Transaction;
+import com.aoindustries.aoserv.client.billing.TransactionTable;
 import com.aoindustries.aoserv.client.master.AdministratorPermission;
 import com.aoindustries.aoserv.client.master.Permission;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
@@ -308,6 +309,10 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 		return title;
 	}
 
+	/**
+	 * @deprecated  Please use {@link TransactionTable#getTransactions(com.aoindustries.aoserv.client.account.Administrator)} directly
+	 */
+	@Deprecated
 	public List<Transaction> getTransactions() throws IOException, SQLException {
 		return table.getConnector().getBilling().getTransaction().getTransactions(this);
 	}
