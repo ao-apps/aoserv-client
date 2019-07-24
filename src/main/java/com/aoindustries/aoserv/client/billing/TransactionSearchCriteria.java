@@ -97,17 +97,10 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		this.paymentConfirmed = paymentConfirmed;
 	}
 
-	public TransactionSearchCriteria(Administrator administrator) throws IOException, SQLException {
-		// The current time
+	public static long getDefaultAfter(long time) {
 		GregorianCalendar gcal = new GregorianCalendar(Type.DATE_TIME_ZONE);
-		gcal.setTimeInMillis(System.currentTimeMillis());
-
-		// The current year
+		gcal.setTimeInMillis(time);
 		int year = gcal.get(Calendar.YEAR);
-
-		before = ANY;
-
-		// The beginning of last month starts the default search
 		int month = gcal.get(Calendar.MONTH);
 		if (month == Calendar.JANUARY) {
 			year--;
@@ -122,7 +115,14 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		gcal.set(Calendar.MINUTE, 0);
 		gcal.set(Calendar.SECOND, 0);
 		gcal.set(Calendar.MILLISECOND, 0);
-		after = gcal.getTime().getTime();
+		return gcal.getTime().getTime();
+	}
+
+	public TransactionSearchCriteria(Administrator administrator) throws IOException, SQLException {
+		before = ANY;
+
+		// The beginning of last month starts the default search
+		after = getDefaultAfter(System.currentTimeMillis());
 
 		transid = ANY;
 		account = administrator == null ? null : administrator.getUsername().getPackage().getAccount_name();

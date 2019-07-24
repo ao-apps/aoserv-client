@@ -61,6 +61,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	static final int
 		COLUMN_TRANSID = 1,
 		COLUMN_ACCOUNTING = 2,
+		COLUMN_SOURCE_ACCOUNTING = 3,
 		COLUMN_ADMINISTRATOR = 4
 	;
 	static final String COLUMN_TIME_name = "time";
@@ -293,7 +294,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 			case 0: return getTime();
 			case COLUMN_TRANSID: return pkey;
 			case COLUMN_ACCOUNTING: return accounting;
-			case 3: return source_accounting;
+			case COLUMN_SOURCE_ACCOUNTING: return source_accounting;
 			case COLUMN_ADMINISTRATOR: return username;
 			case 5: return type;
 			case 6: return description;
