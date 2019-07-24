@@ -365,7 +365,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 						AOSH.parseUserName(args[3], "business_administrator"),
 						args[4],
 						args[5],
-						AOSH.parseMillis(args[6], "quantity"),
+						AOSH.parseDecimal3(args[6], "quantity"),
 						new Money(
 							java.util.Currency.getInstance(args[7]),
 							AOSH.parseBigDecimal(args[8], "rate")

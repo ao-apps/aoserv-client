@@ -84,7 +84,8 @@ final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
 	 * Not synchronized because double initialization is acceptable.
 	 */
 	public java.util.TimeZone getTimeZone() {
-		if(timeZone==null) {
+		if(timeZone == null) {
+			// Sequential scan done here in order to detect not found versus automatic conversion to GMT
 			String[] ids = java.util.TimeZone.getAvailableIDs();
 			boolean found = false;
 			for(String id : ids) {
@@ -93,7 +94,7 @@ final public class TimeZone extends GlobalObjectStringKey<TimeZone> {
 					break;
 				}
 			}
-			if(!found) throw new IllegalArgumentException("TimeZone not found: "+pkey);
+			if(!found) throw new IllegalArgumentException("TimeZone not found: " + pkey);
 			timeZone = java.util.TimeZone.getTimeZone(pkey);
 		}
 		return timeZone;

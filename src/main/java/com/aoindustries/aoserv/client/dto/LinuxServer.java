@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client.dto;
 import com.aoindustries.net.dto.DomainName;
 import com.aoindustries.net.dto.HostAddress;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * @author  AO Industries, Inc.
@@ -166,7 +167,10 @@ public class LinuxServer extends AOServObject {
 	}
 
 	public Calendar getLastDistroTime() {
-		return DtoUtils.getCalendar(lastDistroTime);
+		return DtoUtils.getCalendar(
+			lastDistroTime,
+			timeZone == null ? null : TimeZone.getTimeZone(timeZone)
+		);
 	}
 
 	public void setLastDistroTime(Calendar lastDistroTime) {

@@ -29,6 +29,7 @@ import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.InternUtils;
@@ -36,6 +37,7 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,7 +48,6 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-// TODO: 1.83.0: Add Currency to the filters, support in AccountHistory.ao
 final public class TransactionSearchCriteria implements AOServStreamable {
 
 	/**
@@ -66,64 +67,6 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	private String paymentType;
 	private String paymentInfo;
 	private byte paymentConfirmed;
-
-	/**
-	 * The columns that can be sorted on.
-	 *
-	 * @deprecated  TODO: 1.83.0: Is sort used?
-	 */
-	// TODO: 1.83.0: This should probably be an enum
-	@Deprecated
-	public static final byte
-		SORT_TIME = 0,
-		SORT_TRANSID = 1,
-		SORT_ACCOUNT = 2,
-		SORT_SOURCE_ACCOUNT = 3,
-		SORT_ADMINISTRATOR = 4,
-		SORT_TYPE = 5,
-		SORT_DESCRIPTION = 6,
-		SORT_PAYMENT_TYPE = 7,
-		SORT_PAYMENT_INFO = 8,
-		SORT_PAYMENT_CONFIRMED = 9
-	;
-
-	/**
-	 * The labels for each sort column.
-	 *
-	 * @deprecated  Is sort used?
-	 */
-	// This should be part of the enum
-	@Deprecated
-	public static final String[] sortLabels = {
-		"Date/Time",
-		"Transaction #",
-		"Account",
-		"Source Account",
-		"Administrator",
-		"Transaction Type",
-		"Description",
-		"Payment Method",
-		"Payment Info",
-		"Payment Confirmation"
-	};
-
-	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	private byte sortFirst = 0;
-
-	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	private byte sortSecond = 0;
-
-	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	private boolean sortDescending = true;
 
 	public TransactionSearchCriteria() {
 	}
@@ -156,31 +99,30 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 
 	public TransactionSearchCriteria(Administrator administrator) throws IOException, SQLException {
 		// The current time
-		// TODO: 1.83.0: Should this always be UTC?  Always GregorianCalendar?
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis());
+		GregorianCalendar gcal = new GregorianCalendar(Type.DATE_TIME_ZONE);
+		gcal.setTimeInMillis(System.currentTimeMillis());
 
 		// The current year
-		int year = cal.get(Calendar.YEAR);
+		int year = gcal.get(Calendar.YEAR);
 
 		before = ANY;
 
 		// The beginning of last month starts the default search
-		int month = cal.get(Calendar.MONTH);
+		int month = gcal.get(Calendar.MONTH);
 		if (month == Calendar.JANUARY) {
 			year--;
 			month = Calendar.DECEMBER;
 		} else {
 			month--;
 		}
-		cal.set(Calendar.YEAR, year);
-		cal.set(Calendar.MONTH, month);
-		cal.set(Calendar.DAY_OF_MONTH, 1);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		after = cal.getTime().getTime();
+		gcal.set(Calendar.YEAR, year);
+		gcal.set(Calendar.MONTH, month);
+		gcal.set(Calendar.DAY_OF_MONTH, 1);
+		gcal.set(Calendar.HOUR_OF_DAY, 0);
+		gcal.set(Calendar.MINUTE, 0);
+		gcal.set(Calendar.SECOND, 0);
+		gcal.set(Calendar.MILLISECOND, 0);
+		after = gcal.getTime().getTime();
 
 		transid = ANY;
 		account = administrator == null ? null : administrator.getUsername().getPackage().getAccount_name();
@@ -234,22 +176,6 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	}
 
 	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	public byte getSortFirst() {
-		return sortFirst;
-	}
-
-	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	public byte getSortSecond() {
-		return sortSecond;
-	}
-
-	/**
 	 * @deprecated  Please use {@link TransactionTable#get(com.aoindustries.aoserv.client.billing.TransactionSearchCriteria)} directly.
 	 */
 	@Deprecated
@@ -276,9 +202,10 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 			paymentType = InternUtils.intern(in.readNullUTF());
 			paymentInfo = in.readNullUTF();
 			paymentConfirmed = in.readByte();
-			sortFirst = in.readByte();
-			sortSecond = in.readByte();
-			sortDescending = in.readBoolean();
+			// TODO: If protocol version is passed to read, these fields could be selectively read and ignored on the server-side
+			in.readByte(); // sortFirst
+			in.readByte(); // sortSecond
+			in.readBoolean(); // sortDescending
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -324,40 +251,8 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		this.type = type;
 	}
 
-	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	public void setSortDescending(boolean sortDescending) {
-		this.sortDescending = sortDescending;
-	}
-
-	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	public void setSortFirst(byte column) {
-		this.sortFirst = column;
-	}
-
-	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	public void setSortSecond(byte column) {
-		this.sortSecond = column;
-	}
-
 	public void setTransid(int transid) {
 		this.transid = transid;
-	}
-
-	/**
-	 * @deprecated  Is sort used?
-	 */
-	@Deprecated
-	public boolean sortDescending() {
-		return sortDescending;
 	}
 
 	/**
@@ -386,9 +281,9 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 			out.writeNullUTF(paymentType);
 			out.writeNullUTF(paymentInfo);
 			out.writeByte(paymentConfirmed);
-			out.writeByte(sortFirst);
-			out.writeByte(sortSecond);
-			out.writeBoolean(sortDescending);
+			out.writeByte(0); // sortFirst
+			out.writeByte(0); // sortSecond
+			out.writeBoolean(true); // sortDescending
 		} else {
 			throw new IOException("write only supported for protocol < " + AoservProtocol.Version.VERSION_1_83_0);
 		}

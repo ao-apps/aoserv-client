@@ -357,7 +357,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	public String getDeactivatedOnString() {
-		return deactivatedOn == -1 ? null : SQLUtility.getDate(deactivatedOn);
+		return deactivatedOn == -1 ? null : SQLUtility.formatDate(deactivatedOn);
 	}
 
 	public String getDeactivateReason() {

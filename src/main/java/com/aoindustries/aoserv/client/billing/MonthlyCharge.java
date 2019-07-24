@@ -183,7 +183,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			packageName = Account.Name.valueOf(result.getString("package"));
 			type = result.getString("type");
 			description = result.getString("description");
-			quantity = SQLUtility.getMillis(result.getString("quantity"));
+			quantity = SQLUtility.parseDecimal3(result.getString("quantity"));
 			rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
 			created = result.getTimestamp("created").getTime();
 			created_by = User.Name.valueOf(result.getString("created_by"));
@@ -217,7 +217,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 
 	@Override
 	public String toStringImpl() {
-		return packageName.toString() + '|' + type + '|' + SQLUtility.getMilliDecimal(quantity) + "×" + rate;
+		return packageName.toString() + '|' + type + '|' + SQLUtility.formatDecimal3(quantity) + "×" + rate;
 	}
 
 	@Override

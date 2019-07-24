@@ -79,7 +79,7 @@ final public class VirtualDiskTable extends CachedTableIntegerKey<VirtualDisk> {
 			if(AOSH.checkParamCount(Command.VERIFY_VIRTUAL_DISK, args, 2, err)) {
 				long lastVerified = connector.getSimpleAOClient().verifyVirtualDisk(args[1], args[2]);
 				if(isInteractive) {
-					out.println(SQLUtility.getDateTime(lastVerified));
+					out.println(SQLUtility.formatDateTime(lastVerified));
 				} else {
 					out.println(lastVerified);
 				}

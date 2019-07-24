@@ -149,7 +149,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 			transid = result.getInt("transid");
 			if(result.wasNull()) transid = NO_TRANSACTION;
 			// Protocol compatibility
-			balance = SQLUtility.getPennies(result.getString("balance"));
+			balance = SQLUtility.parseDecimal2(result.getString("balance"));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}

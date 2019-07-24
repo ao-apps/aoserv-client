@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,6 +53,7 @@ import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * A <code>SchemaType</code> is a unique data type used in
@@ -63,6 +64,11 @@ import java.util.Locale;
  * @author  AO Industries, Inc.
  */
 final public class Type extends GlobalObjectIntegerKey<Type> {
+
+	/**
+	 * The time zone used for all <code>{@link #DATE}</code> to/from String conversions.
+	 */
+	public static final TimeZone DATE_TIME_ZONE = TimeZone.getTimeZone("GMT");
 
 	static final int COLUMN_NAME = 1;
 	public static final String DATE_name = "date";
@@ -301,11 +307,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 */
 	public static final int LINUX_USERNAME = 50;
 
-	private static final BigDecimal
-		bigDecimalNegativeOne = BigDecimal.valueOf(-1),
-		bigDecimal100 = BigDecimal.valueOf(100),
-		bigDecimal1000 = BigDecimal.valueOf(1000)
-	;
+	private static final BigDecimal bigDecimalNegativeOne = BigDecimal.valueOf(-1);
 
 	private String name;
 	private String sinceVersion;
@@ -369,12 +371,12 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *             ACCOUNTING X                                     X
 	 *                BOOLEAN   X   X X X     X   X     X X       X X         X
 	 *                   DATE     X X X X     X   X     X X       X X X       X
-	 *              DECIMAL_2   X   X X X     X   X X   X X       X X         X
-	 *              DECIMAL_3   X   X X X     X   X X   X X       X X         X
-	 *                 DOUBLE   X   X X X     X   X X   X X       X X         X
+	 *              DECIMAL_2   X X X X X     X   X X   X X       X X         X
+	 *              DECIMAL_3   X X X X X     X   X X   X X       X X         X
+	 *                 DOUBLE   X X X X X     X   X X   X X       X X         X
 	 *                  EMAIL             X     X                   X   X X X       X                               X
 	 *                   FKEY               X     X         X       X
-	 *                  FLOAT   X   X X X     X   X X   X X       X X         X
+	 *                  FLOAT   X X X X X     X   X X   X X       X X         X
 	 *               HOSTNAME                   X     X             X       X       X
 	 *                    INT   X X X X X   X X   X X X X X X     X X         X             X
 	 *               INTERVAL       X X X     X   X X   X X       X X         X
@@ -390,7 +392,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *                    URL                   X             X     X   X   X       X
 	 *               USERNAME                                       X     X                             X       X   X
 	 *                   ZONE                   X                   X       X       X
-	 *            BIG_DECIMAL   X   X X X     X   X X   X X       X X         X
+	 *            BIG_DECIMAL   X X X X X     X   X X   X X       X X         X
 	 *           DOMAIN_LABEL                                       X           X X X
 	 *          DOMAIN_LABELS                                       X             X X
 	 *            DOMAIN_NAME                   X                   X       X     X X
@@ -428,7 +430,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					switch(castToType.getId()) {
 						case DECIMAL_2: return value==null?null:Integer.valueOf((Boolean)value?-100:0);
 						case DECIMAL_3: return value==null?null:Integer.valueOf((Boolean)value?-1000:0);
-						case DOUBLE: return value==null?null:new Double((Boolean)value?-1:0);
+						case DOUBLE: return value==null?null:Double.valueOf((Boolean)value?-1:0);
 						case FLOAT: return value==null?null:Float.valueOf((Boolean)value?-1:0);
 						case INT: return value==null?null:Integer.valueOf((Boolean)value?-1:0);
 						case LONG:
@@ -442,53 +444,56 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					{
 						long tvalue=value==null?0:((java.sql.Date)value).getTime();
 						switch(castToType.getId()) {
-							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(SQLUtility.getDaysFromMillis(tvalue)*100));
-							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(SQLUtility.getDaysFromMillis(tvalue)*1000));
-							case DOUBLE: return value==null?null:new Double(SQLUtility.getDaysFromMillis(tvalue));
-							case FLOAT: return value==null?null:Float.valueOf(SQLUtility.getDaysFromMillis(tvalue));
-							case INT: return value==null?null:Integer.valueOf((int)(SQLUtility.getDaysFromMillis(tvalue)));
+							case DECIMAL_2: return value==null?null:Integer.valueOf((int)(getDaysFromMillis(tvalue)*100));
+							case DECIMAL_3: return value==null?null:Integer.valueOf((int)(getDaysFromMillis(tvalue)*1000));
+							case DOUBLE: return value==null?null:Double.valueOf(getDaysFromMillis(tvalue));
+							case FLOAT: return value==null?null:Float.valueOf(getDaysFromMillis(tvalue));
+							case INT: return value==null?null:Integer.valueOf((int)(getDaysFromMillis(tvalue)));
 							case LONG:
 							case OCTAL_LONG:
-								return value==null?null:Long.valueOf(SQLUtility.getDaysFromMillis(tvalue));
-							case SHORT: return value==null?null:Short.valueOf((short)(SQLUtility.getDaysFromMillis(tvalue)));
-							case TIME: return value==null?null:new java.sql.Timestamp(SQLUtility.roundToDay(tvalue));
-							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(SQLUtility.getDaysFromMillis(tvalue));
+								return value==null?null:Long.valueOf(getDaysFromMillis(tvalue));
+							case SHORT: return value==null?null:Short.valueOf((short)(getDaysFromMillis(tvalue)));
+							case TIME: return value==null?null:new java.sql.Timestamp(roundToDay(tvalue));
+							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(getDaysFromMillis(tvalue));
 						}
 					}
 					break;
 				case DECIMAL_2:
 					switch(castToType.getId()) {
-						case BOOLEAN: return value==null?null:(Integer)value!=0;
-						case DECIMAL_3: return value==null?null:Integer.valueOf((Integer)value*10);
-						case DOUBLE: return value==null?null:new Double((double)(Integer)value/100);
-						case FLOAT: return value==null?null:Float.valueOf((float)(Integer)value/100);
-						case INT: return value==null?null:Integer.valueOf((Integer)value/100);
-						case INTERVAL: return value==null?null:Long.valueOf((Integer)value/100);
+						case BOOLEAN: return value==null?null:(Integer)value != 0;
+						case DATE: return value==null?null:new java.sql.Date(getMillisFromDays((Integer)value / 100));
+						case DECIMAL_3: return value==null?null:Integer.valueOf((Integer)value * 10);
+						case DOUBLE: return value==null?null:Double.valueOf((double)(Integer)value / 100);
+						case FLOAT: return value==null?null:Float.valueOf((float)(Integer)value / 100);
+						case INT: return value==null?null:Integer.valueOf((Integer)value / 100);
+						case INTERVAL: return value==null?null:Long.valueOf((Integer)value / 100);
 						case LONG:
 						case OCTAL_LONG:
-							return value==null?null:Long.valueOf((Integer)value/100);
-						case SHORT: return value==null?null:Short.valueOf((short)((Integer)value/100));
-						case BIG_DECIMAL: return value==null?null:new BigDecimal(SQLUtility.getDecimal((Integer)value));
+							return value==null?null:Long.valueOf((Integer)value / 100);
+						case SHORT: return value==null?null:Short.valueOf((short)((Integer)value / 100));
+						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf((Integer)value, 2);
 					}
 					break;
 				case DECIMAL_3:
 					switch(castToType.getId()) {
-						case BOOLEAN: return value==null?null:(Integer)value!=0;
-						case DECIMAL_2: return value==null?null:Integer.valueOf((Integer)value/10);
-						case DOUBLE: return value==null?null:new Double((double)(Integer)value/1000);
-						case FLOAT: return value==null?null:Float.valueOf((float)(Integer)value/1000);
-						case INT: return value==null?null:Integer.valueOf((Integer)value/1000);
-						case INTERVAL: return value==null?null:Long.valueOf((Integer)value/1000);
+						case BOOLEAN: return value==null?null:(Integer)value != 0;
+						case DATE: return value==null?null:new java.sql.Date(getMillisFromDays((Integer)value / 1000));
+						case DECIMAL_2: return value==null?null:Integer.valueOf((Integer)value / 10);
+						case DOUBLE: return value==null?null:Double.valueOf((double)(Integer)value / 1000);
+						case FLOAT: return value==null?null:Float.valueOf((float)(Integer)value / 1000);
+						case INT: return value==null?null:Integer.valueOf((Integer)value / 1000);
+						case INTERVAL: return value==null?null:Long.valueOf((Integer)value / 1000);
 						case LONG:
 						case OCTAL_LONG:
-							return value==null?null:Long.valueOf((Integer)value/1000);
-						case SHORT: return value==null?null:Short.valueOf((short)((Integer)value/1000));
-						case BIG_DECIMAL: return value==null?null:new BigDecimal(SQLUtility.getDecimal((Integer)value));
+							return value==null?null:Long.valueOf((Integer)value / 1000);
+						case SHORT: return value==null?null:Short.valueOf((short)((Integer)value / 1000));
+						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf((Integer)value, 3);
 					}
 					break;
 				case DOUBLE:
 					switch(castToType.getId()) {
 						case BOOLEAN: return value==null?null:(Double)value!=0;
+						case DATE: return value==null?null:new java.sql.Date(getMillisFromDays(((Double)value).longValue()));
 						case DECIMAL_2: return value==null?null:Integer.valueOf((int)((Double)value*100));
 						case DECIMAL_3: return value==null?null:Integer.valueOf((int)((Double)value*1000));
 						case FLOAT: return value==null?null:Float.valueOf(((Double)value).floatValue());
@@ -520,9 +525,10 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case FLOAT:
 					switch(castToType.getId()) {
 						case BOOLEAN: return value==null?null:(Float)value!=0;
+						case DATE: return value==null?null:new java.sql.Date(getMillisFromDays(((Float)value).longValue()));
 						case DECIMAL_2: return value==null?null:Integer.valueOf((int)((Float)value*100));
 						case DECIMAL_3: return value==null?null:Integer.valueOf((int)((Float)value*1000));
-						case DOUBLE: return value==null?null:new Double(((Float)value).doubleValue());
+						case DOUBLE: return value==null?null:Double.valueOf(((Float)value).doubleValue());
 						case INT: return value==null?null:Integer.valueOf(((Float)value).intValue());
 						case INTERVAL: return value==null?null:Long.valueOf(((Float)value).longValue());
 						case LONG:
@@ -542,10 +548,10 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case INT:
 					switch(castToType.getId()) {
 						case BOOLEAN: return value==null?null:(Integer)value!=0;
-						case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays((Integer)value));
+						case DATE: return value==null?null:new java.sql.Date(getMillisFromDays((Integer)value));
 						case DECIMAL_2: return value==null?null:Integer.valueOf((Integer)value*100);
 						case DECIMAL_3: return value==null?null:Integer.valueOf((Integer)value*1000);
-						case DOUBLE: return value==null?null:new Double(((Integer)value).doubleValue());
+						case DOUBLE: return value==null?null:Double.valueOf(((Integer)value).doubleValue());
 						case FKEY: return value;
 						case FLOAT: return value==null?null:Float.valueOf(((Integer)value).floatValue());
 						case INTERVAL: return value==null?null:Long.valueOf(((Integer)value).longValue());
@@ -563,7 +569,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					switch(castToType.getId()) {
 						case DECIMAL_2: return value==null?null:Integer.valueOf((int)((Long)value*100));
 						case DECIMAL_3: return value==null?null:Integer.valueOf((int)((Long)value*1000));
-						case DOUBLE: return value==null?null:new Double(((Long)value).doubleValue());
+						case DOUBLE: return value==null?null:Double.valueOf(((Long)value).doubleValue());
 						case FLOAT: return value==null?null:Float.valueOf(((Long)value).floatValue());
 						case INT: return value==null?null:Integer.valueOf(((Long)value).intValue());
 						case LONG:
@@ -582,10 +588,10 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case OCTAL_LONG:
 					switch(castToType.getId()) {
 						case BOOLEAN: return value==null?null:(Long)value!=0;
-						case DATE: return value==null?null:new java.sql.Date((Long)value);
+						case DATE: return value==null?null:new java.sql.Date(getMillisFromDays((Long)value));
 						case DECIMAL_2: return value==null?null:Integer.valueOf((int)((Long)value*100));
 						case DECIMAL_3: return value==null?null:Integer.valueOf((int)((Long)value*1000));
-						case DOUBLE: return value==null?null:new Double(((Long)value).doubleValue());
+						case DOUBLE: return value==null?null:Double.valueOf(((Long)value).doubleValue());
 						case FLOAT: return value==null?null:Float.valueOf(((Long)value).floatValue());
 						case INT: return value==null?null:Integer.valueOf(((Long)value).intValue());
 						case INTERVAL: return value;
@@ -611,10 +617,10 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case SHORT:
 					switch(castToType.getId()) {
 						case BOOLEAN: return value==null?null:(Short)value!=0;
-						case DATE: return value==null?null:new java.sql.Date(SQLUtility.getMillisFromDays((Short)value));
+						case DATE: return value==null?null:new java.sql.Date(getMillisFromDays((Short)value));
 						case DECIMAL_2: return value==null?null:Integer.valueOf((Short)value*100);
 						case DECIMAL_3: return value==null?null:Integer.valueOf((Short)value*1000);
-						case DOUBLE: return value==null?null:new Double(((Short)value).doubleValue());
+						case DOUBLE: return value==null?null:Double.valueOf(((Short)value).doubleValue());
 						case FLOAT: return value==null?null:Float.valueOf(((Short)value).floatValue());
 						case INT: return value==null?null:Integer.valueOf(((Short)value).intValue());
 						case INTERVAL: return value==null?null:Long.valueOf(((Short)value).longValue());
@@ -630,7 +636,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					{
 						long lvalue=value==null?0:((java.sql.Timestamp)value).getTime();
 						switch(castToType.getId()) {
-							case DATE: return value==null?null:new java.sql.Date(lvalue);
+							case DATE: return value==null?null:new java.sql.Date(roundToDay(lvalue));
 							case LONG:
 							case OCTAL_LONG:
 								return value==null?null:Long.valueOf(lvalue);
@@ -667,8 +673,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case BIG_DECIMAL:
 					switch(castToType.getId()) {
 						case BOOLEAN: return value==null?null:((BigDecimal)value).compareTo(BigDecimal.ZERO)!=0;
-						case DECIMAL_2: return value==null?null:((BigDecimal)value).multiply(bigDecimal100).intValue();
-						case DECIMAL_3: return value==null?null:((BigDecimal)value).multiply(bigDecimal1000).intValue();
+						case DATE: return value==null?null:new java.sql.Date(getMillisFromDays(((BigDecimal)value).longValue()));
+						case DECIMAL_2: return value==null?null:((BigDecimal)value).scaleByPowerOfTen(2).intValue();
+						case DECIMAL_3: return value==null?null:((BigDecimal)value).scaleByPowerOfTen(3).intValue();
 						case DOUBLE: return value==null?null:((BigDecimal)value).doubleValue();
 						case FLOAT: return value==null?null:((BigDecimal)value).floatValue();
 						case INT: return value==null?null:((BigDecimal)value).intValue();
@@ -763,11 +770,40 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					}
 					break;
 			}
-			throw new IllegalArgumentException("Unable to cast from "+name+" to "+castToType.getName());
+			throw new IllegalArgumentException("Unable to cast from " + name + " to " + castToType.getName());
 		} catch(ValidationException e) {
 			throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 		}
 	}
+
+	/**
+	 * The number of milliseconds in a day.
+	 */
+	private static final long MILLIS_PER_DAY = 24*60*60*1000;
+
+	/**
+	 * Gets the number of days from epoch in GMT.
+	 */
+	private static long getDaysFromMillis(long time) {
+		long days = time / MILLIS_PER_DAY;
+		long remainder = time % MILLIS_PER_DAY;
+		return (remainder < 0) ? (days - 1) : days;
+	}
+
+	/**
+	 * Gets the number of milliseconds from epoch in GMT.
+	 */
+	private static long getMillisFromDays(long days) {
+		return days * MILLIS_PER_DAY;
+	}
+
+	/**
+	 * Rounds the time to an exact day in GMT.
+	 */
+	private static long roundToDay(long time) {
+		return getMillisFromDays(getDaysFromMillis(time));
+	}
+
 	private static DomainName getDomainNameForZone(String zone) throws ValidationException {
 		while(zone.endsWith(".")) zone=zone.substring(0, zone.length()-1);
 		return DomainName.valueOf(zone);
@@ -824,30 +860,14 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case PATH:
 					return ((PosixPath)value1).compareTo((PosixPath)value2);
 				case BOOLEAN:
-					// Sorts false before true
-					return
-						((Boolean)value1)
-						?(((Boolean)value2)?0:1)
-						:(((Boolean)value2)?-1:0)
-					;
+					return ((Boolean)value1).compareTo((Boolean)value2);
 				case DATE:
-					{
-						long t1=SQLUtility.roundToDay(((java.sql.Date)value1).getTime());
-						long t2=SQLUtility.roundToDay(((java.sql.Date)value2).getTime());
-						return t1>t2?1:t1<t2?-1:0;
-					}
+					return Long.compare(
+						getDaysFromMillis(((java.sql.Date)value1).getTime()),
+						getDaysFromMillis(((java.sql.Date)value2).getTime())
+					);
 				case DECIMAL_2:
-					{
-						int i1=((Integer)value1);
-						int i2=((Integer)value2);
-						return i1>i2?1:i1<i2?-1:0;
-					}
 				case DECIMAL_3:
-					{
-						int i1=((Integer)value1);
-						int i2=((Integer)value2);
-						return i1>i2?1:i1<i2?-1:0;
-					}
 				case FKEY:
 				case INT:
 				case PKEY:
@@ -913,7 +933,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					return ((FirewallZone.Name)value1).compareTo((FirewallZone.Name)value2);
 				case LINUX_USERNAME:
 					return ((com.aoindustries.aoserv.client.linux.User.Name)value1).compareTo((com.aoindustries.aoserv.client.linux.User.Name)value2);
-				default: throw new IllegalArgumentException("Unknown type: "+id);
+				default: throw new IllegalArgumentException("Unknown type: " + id);
 			}
 		}
 	}
@@ -1009,9 +1029,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 		switch(id) {
 			case ACCOUNTING: return value.toString();
 			case BOOLEAN: return value.toString();
-			case DATE: return SQLUtility.getDate(((java.sql.Date)value).getTime());
-			case DECIMAL_2: return SQLUtility.getDecimal(((Integer)value));
-			case DECIMAL_3: return SQLUtility.getMilliDecimal(((Integer)value));
+			case DATE: return SQLUtility.formatDate((java.sql.Date)value, DATE_TIME_ZONE);
+			case DECIMAL_2: return SQLUtility.formatDecimal2(((Integer)value));
+			case DECIMAL_3: return SQLUtility.formatDecimal3(((Integer)value));
 			case DOUBLE: return value.toString();
 			case EMAIL: return value.toString();
 			case FKEY: return value.toString();
@@ -1027,7 +1047,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case PKEY: return value.toString();
 			case SHORT: return value.toString();
 			case STRING: return (String)value;
-			case TIME: return SQLUtility.getDateTime(((java.sql.Timestamp)value).getTime(), false);
+			case TIME: return SQLUtility.formatDateTime((java.sql.Timestamp)value);
 			case URL: return (String)value;
 			case USERNAME: return value.toString();
 			case ZONE: return (String)value; // TODO: com.aoindustries.net.DomainName (once no longer ends with ".")
@@ -1095,11 +1115,11 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					) return Boolean.FALSE;
 					throw new IllegalArgumentException("Unable to parse boolean: "+S);
 				case DATE:
-					return new java.sql.Date(SQLUtility.getDate(S).getTime());
+					return SQLUtility.parseDate(S, DATE_TIME_ZONE);
 				case DECIMAL_2:
-					return SQLUtility.getPennies(S);
+					return SQLUtility.parseDecimal2(S);
 				case DECIMAL_3:
-					return SQLUtility.getMillis(S);
+					return SQLUtility.parseDecimal3(S);
 				case DOUBLE:
 					return new Double(S);
 				case FKEY:
@@ -1117,7 +1137,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case SHORT:
 					return Short.valueOf(S);
 				case TIME:
-					return new java.sql.Timestamp(SQLUtility.getDateTime(S).getTime());
+					return SQLUtility.parseDateTime(S);
 				case BIG_DECIMAL:
 					return new BigDecimal(S);
 				case DOMAIN_LABEL:
@@ -1166,21 +1186,10 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case LINUX_USERNAME:
 					return com.aoindustries.aoserv.client.linux.User.Name.valueOf(S);
 				default:
-					throw new IllegalArgumentException("Unknown SchemaType: "+id);
+					throw new IllegalArgumentException("Unknown SchemaType: " + id);
 			}
 		} catch(ValidationException e) {
 			throw new IllegalArgumentException(e.getLocalizedMessage(), e);
 		}
 	}
-
-	/*
-	private static java.sql.Date getDate(java.sql.Date date) {
-		Calendar cal=Calendar.getInstance();
-		cal.setTime(date);
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		return new java.sql.Date(cal.getTimeInMillis());
-	}*/
 }

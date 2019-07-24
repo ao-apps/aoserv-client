@@ -186,7 +186,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 			expenseCategory = result.getString(pos++);
 			description = result.getString(pos++);
 			checkNo = result.getString(pos++);
-			amount = SQLUtility.getPennies(result.getString(pos++));
+			amount = SQLUtility.parseDecimal2(result.getString(pos++));
 			confirmed = result.getBoolean(pos++);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -224,7 +224,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 
 	@Override
 	public String toStringImpl() {
-		return id+"|"+administrator+'|'+type+'|'+SQLUtility.getDecimal(amount);
+		return id+"|"+administrator+'|'+type+'|'+SQLUtility.formatDecimal2(amount);
 	}
 
 	@Override

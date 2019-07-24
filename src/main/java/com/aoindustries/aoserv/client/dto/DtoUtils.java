@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2011, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2010-2011, 2016, 2017, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,8 @@
  */
 package com.aoindustries.aoserv.client.dto;
 
-import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * @author  AO Industries, Inc.
@@ -31,14 +32,20 @@ class DtoUtils {
 
 	private DtoUtils() { }
 
-	static Calendar getCalendar(long time) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(time);
-		return cal;
+	/**
+	 * @param timeZone  The time zone to use or {@code null} to use the default time zone
+	 */
+	static GregorianCalendar getCalendar(long time, TimeZone timeZone) {
+		GregorianCalendar gcal = timeZone == null ? new GregorianCalendar() : new GregorianCalendar(timeZone);
+		gcal.setTimeInMillis(time);
+		return gcal;
 	}
 
-	static Calendar getCalendar(Long time) {
-		if(time==null) return null;
-		return getCalendar(time.longValue());
+	/**
+	 * @param timeZone  The time zone to use or {@code null} to use the default time zone
+	 */
+	static GregorianCalendar getCalendar(Long time, TimeZone timeZone) {
+		if(time == null) return null;
+		return getCalendar(time.longValue(), timeZone);
 	}
 }

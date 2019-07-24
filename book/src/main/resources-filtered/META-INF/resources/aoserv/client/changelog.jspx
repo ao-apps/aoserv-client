@@ -98,6 +98,19 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						Added methods to get timestamps in <code>long</code> or <code>Long</code> in addition to <code>java.sql.Timestamp</code>.
 						These methods may offer higher performance when a <code>Timestamp</code> is not needed.
 					</li>
+					<li>
+						Changed from <code>Calendar.getInstance()</code> to <code>new GregorianCalendar()</code>
+						to work correctly independent of locale settings.
+					</li>
+					<li>Updated for compatibility with <core:link book="/aocode-public" page="/changelog.jspx" element="release-notes-3.0.0">aocode-public-3.0.0</core:link>.</li>
+					<li>Specific management of time zones:
+						<ol>
+							<li><code>DATE</code> type always managed in GMT time zone.</li>
+							<li><code>TIME</code> type parsed and displayed in JVM local time zone.</li>
+							<li>Billing and accounting time ranges are selected and processed in GMT time zone.</li>
+						</ol>
+					</li>
+					<li>Removed unused sort fields from <code>TransactionSearchCriteria</code></li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':

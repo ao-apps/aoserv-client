@@ -409,7 +409,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 			username = User.Name.valueOf(result.getString("username"));
 			type = result.getString("type");
 			description = result.getString("description");
-			quantity = SQLUtility.getMillis(result.getString("quantity"));
+			quantity = SQLUtility.parseDecimal3(result.getString("quantity"));
 			rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
 			payment_type = result.getString("payment_type");
 			payment_info = result.getString("payment_info");
@@ -459,7 +459,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 			+ '|'
 			+ type
 			+ '|'
-			+ SQLUtility.getMilliDecimal(quantity)
+			+ SQLUtility.formatDecimal3(quantity)
 			+ '×'
 			+ rate
 			+ '|'

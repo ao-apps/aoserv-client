@@ -425,7 +425,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 					args[2]
 				);
 				out.print("System Time..: ");
-				out.println(attr==null ? "Server Unavailable" : SQLUtility.getDateTime(attr.getSystemTime()));
+				out.println(attr==null ? "Server Unavailable" : SQLUtility.formatDateTime(attr.getSystemTime()));
 				out.print("File Size....: ");
 				out.println(attr==null ? "Server Unavailable" : attr.getFileSize());
 				out.print("Last Modified: ");
@@ -433,7 +433,7 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				else {
 					long lastModified = attr.getLastModified();
 					if(lastModified==0) out.println("Unknown");
-					else out.println(SQLUtility.getDateTime(lastModified));
+					else out.println(SQLUtility.formatDateTime(lastModified));
 				}
 				out.flush();
 			}
