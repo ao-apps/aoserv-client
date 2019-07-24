@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-20T06:02:28-0500"
+		dateModified="2019-07-24T06:22:00-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -111,6 +111,20 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>Removed unused sort fields from <code>TransactionSearchCriteria</code></li>
+					<li>
+						<p>
+							Table, column, and type names now support <code>"</code>-escaping, with <code>""</code> being
+							used to represent a quoted quote.  This is done because table and column
+							names now contain <code>.</code> dot characters.
+						</p>
+						<p>
+							In the current implementation, AOSH tokenizes on <code>"</code>, much like BASH.
+							Thus, these double quotes should be either escaped or contained within
+							single quotes <code>'</code>.  A future update may make AOSH parse with quote <code>"</code>
+							support compatible with the this new mechanism, with <code>'</code> single quotes
+							used for other quoting.
+						</p>
+					</li>
 					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':
