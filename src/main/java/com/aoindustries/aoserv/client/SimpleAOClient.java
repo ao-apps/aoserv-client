@@ -123,6 +123,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -2545,8 +2546,8 @@ final public class SimpleAOClient {
 	/**
 	 * Adds a new <code>Transaction</code> to a {@link Account}.
 	 *
-	 * @param  business  the accounting code of the {@link Account}
-	 * @param  source_business  the accounting code of the originating {@link Account}
+	 * @param  account  the accounting code of the {@link Account}
+	 * @param  sourceAccount  the accounting code of the originating {@link Account}
 	 * @param  administrator  the username of the {@link Administrator} making
 	 *					this <code>Transaction</code>
 	 * @param  type  the type as found in <code>Rate</code>
@@ -2576,8 +2577,10 @@ final public class SimpleAOClient {
 	 * @see  TransactionType
 	 */
 	public int addTransaction(
-		Account.Name business,
-		Account.Name source_business,
+		int timeType,
+		Timestamp time,
+		Account.Name account,
+		Account.Name sourceAccount,
 		com.aoindustries.aoserv.client.account.User.Name administrator,
 		String type,
 		String description,
@@ -2588,8 +2591,8 @@ final public class SimpleAOClient {
 		String processor,
 		byte payment_confirmed
 	) throws IllegalArgumentException, IOException, SQLException {
-		Account bu=getAccount(business);
-		Account sourceBU=getAccount(source_business);
+		Account bu=getAccount(account);
+		Account sourceBU=getAccount(sourceAccount);
 		Administrator pe = connector.getAccount().getAdministrator().get(administrator);
 		if(pe==null) throw new IllegalArgumentException("Unable to find Administrator: " + administrator);
 		TransactionType tt=connector.getBilling().getTransactionType().get(type);
@@ -2607,7 +2610,9 @@ final public class SimpleAOClient {
 			ccProcessor = connector.getPayment().getProcessor().get(processor);
 			if(ccProcessor==null) throw new IllegalArgumentException("Unable to find CreditCardProcessor: "+processor);
 		}
-		return connector.getBilling().getTransaction().addTransaction(
+		return connector.getBilling().getTransaction().add(
+			timeType,
+			time,
 			bu,
 			sourceBU,
 			pe,
