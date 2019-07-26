@@ -79,7 +79,7 @@ final public class GuestUser extends CachedObjectUserNameKey<GuestUser> implemen
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = User.Name.valueOf(in.readUTF()).intern();
 		} catch(ValidationException e) {

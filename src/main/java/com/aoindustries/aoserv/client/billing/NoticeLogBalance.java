@@ -92,7 +92,7 @@ final public class NoticeLogBalance extends CachedObjectIntegerKey<NoticeLogBala
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		noticeLog = in.readCompressedInt();
 		balance = MoneyUtil.readMoney(in);

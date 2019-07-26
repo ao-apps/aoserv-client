@@ -295,7 +295,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			inetAddress = InetAddress.valueOf(in.readUTF()).intern();

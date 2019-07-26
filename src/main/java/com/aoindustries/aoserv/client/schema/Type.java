@@ -995,7 +995,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey         = in.readCompressedInt();
 		name         = in.readUTF().intern();
 		sinceVersion = in.readUTF().intern();

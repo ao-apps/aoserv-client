@@ -239,7 +239,7 @@ final public class VirtualServer extends CachedObjectIntegerKey<VirtualServer> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		primaryRam = in.readCompressedInt();
 		primaryRamTarget = in.readCompressedInt();

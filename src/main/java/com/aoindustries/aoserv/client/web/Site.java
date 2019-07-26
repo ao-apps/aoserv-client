@@ -341,7 +341,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			ao_server = in.readCompressedInt();

@@ -99,7 +99,7 @@ final public class User extends CachedObjectUserNameKey<User> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey                    = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
 			is_active               = in.readBoolean();

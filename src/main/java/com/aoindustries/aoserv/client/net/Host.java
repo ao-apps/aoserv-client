@@ -207,7 +207,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		farm=in.readUTF().intern();
 		description = in.readUTF();

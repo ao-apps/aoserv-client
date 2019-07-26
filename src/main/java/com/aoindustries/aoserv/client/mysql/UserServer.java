@@ -258,7 +258,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			username = User.Name.valueOf(in.readUTF()).intern();

@@ -173,7 +173,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		tomcat4_shutdown_port=in.readCompressedInt();
 		tomcat4_shutdown_key=in.readNullUTF();

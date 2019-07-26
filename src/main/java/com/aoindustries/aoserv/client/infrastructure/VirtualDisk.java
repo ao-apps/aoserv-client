@@ -169,7 +169,7 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		virtualServer = in.readCompressedInt();
 		device = in.readUTF().intern();

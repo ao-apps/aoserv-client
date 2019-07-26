@@ -161,7 +161,7 @@ final public class OperatingSystemVersion extends GlobalObjectIntegerKey<Operati
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		operating_system = in.readUTF().intern();
 		version_number = in.readUTF();

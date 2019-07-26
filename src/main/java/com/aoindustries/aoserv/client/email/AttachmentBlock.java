@@ -91,7 +91,7 @@ public final class AttachmentBlock extends CachedObjectIntegerKey<AttachmentBloc
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		linux_server_account=in.readCompressedInt();
 		extension=in.readUTF().intern();

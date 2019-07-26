@@ -98,7 +98,7 @@ final public class OperatingSystem extends GlobalObjectStringKey<OperatingSystem
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readUTF().intern();
 		display=in.readUTF();
 		is_unix=in.readBoolean();

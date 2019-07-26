@@ -100,7 +100,7 @@ final public class SmtpRelayType extends GlobalObjectStringKey<SmtpRelayType> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readUTF().intern();
 		sendmail_config=in.readUTF();
 		qmail_config=in.readUTF();

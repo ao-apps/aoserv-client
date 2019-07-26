@@ -101,7 +101,7 @@ final public class Forwarding extends CachedObjectIntegerKey<Forwarding> impleme
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			email_address=in.readCompressedInt();

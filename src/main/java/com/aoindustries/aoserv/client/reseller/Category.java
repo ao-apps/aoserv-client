@@ -95,7 +95,7 @@ final public class Category extends CachedObjectIntegerKey<Category> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		parent = in.readCompressedInt();
 		name = in.readUTF().intern();

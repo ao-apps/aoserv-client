@@ -516,8 +516,19 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	 */
 	public abstract void init(ResultSet results) throws SQLException;
 
+	/**
+	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
+	 * 
+	 * @see  #read(CompressedDataInputStream,AOServProtocol.Version)
+	 */
+	@Deprecated
 	@Override
-	public abstract void read(CompressedDataInputStream in) throws IOException;
+	final public void read(CompressedDataInputStream in, String protocolVersion) throws IOException {
+		read(in, AoservProtocol.Version.getVersion(protocolVersion));
+	}
+
+	@Override
+	public abstract void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException;
 
 	/**
 	 * {@inheritDoc}
@@ -557,8 +568,8 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	 */
 	@Deprecated
 	@Override
-	final public void write(CompressedDataOutputStream out, String version) throws IOException {
-		write(out, AoservProtocol.Version.getVersion(version));
+	final public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+		write(out, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 
 	@Override

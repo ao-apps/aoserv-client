@@ -91,7 +91,7 @@ final public class Reseller extends CachedObjectAccountNameKey<Reseller> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=Account.Name.valueOf(in.readUTF()).intern();
 			ticket_auto_escalate = in.readBoolean();

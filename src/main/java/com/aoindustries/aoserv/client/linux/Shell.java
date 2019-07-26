@@ -118,7 +118,7 @@ final public class Shell extends GlobalObjectPosixPathKey<Shell> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = PosixPath.valueOf(in.readUTF()).intern();
 			is_login=in.readBoolean();

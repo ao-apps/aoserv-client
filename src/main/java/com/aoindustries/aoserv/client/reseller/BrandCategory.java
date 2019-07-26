@@ -98,7 +98,7 @@ final public class BrandCategory extends CachedObjectIntegerKey<BrandCategory> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			brand = Account.Name.valueOf(in.readUTF()).intern();

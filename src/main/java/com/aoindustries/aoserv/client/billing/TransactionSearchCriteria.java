@@ -215,9 +215,20 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		return transid;
 	}
 
+	/**
+	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
+	 * 
+	 * @see  #read(CompressedDataInputStream,AOServProtocol.Version)
+	 */
+	@Deprecated
+	@Override
+	public void read(CompressedDataInputStream in, String protocolVersion) throws IOException {
+		read(in, AoservProtocol.Version.getVersion(protocolVersion));
+	}
+
 	// This will not be required once all clients are >= protocol 1.83.0
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			after = in.readLong();
 			before = in.readLong();
@@ -230,10 +241,11 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 			paymentType = InternUtils.intern(in.readNullUTF());
 			paymentInfo = in.readNullUTF();
 			paymentConfirmed = in.readByte();
-			// TODO: If protocol version is passed to read, these fields could be selectively read and ignored on the server-side
-			in.readByte(); // sortFirst
-			in.readByte(); // sortSecond
-			in.readBoolean(); // sortDescending
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+				in.readByte(); // sortFirst
+				in.readByte(); // sortSecond
+				in.readBoolean(); // sortDescending
+			}
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -290,30 +302,28 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	 */
 	@Deprecated
 	@Override
-	public void write(CompressedDataOutputStream out, String version) throws IOException {
-		write(out, AoservProtocol.Version.getVersion(version));
+	public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+		write(out, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 
 	// This will not be required once all clients are >= protocol 1.83.0
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+		out.writeLong(after);
+		out.writeLong(before);
+		out.writeCompressedInt(transid);
+		out.writeNullUTF(Objects.toString(account, null));
+		out.writeNullUTF(Objects.toString(sourceAccount, null));
+		out.writeNullUTF(Objects.toString(administrator, null));
+		out.writeNullUTF(type);
+		out.writeNullUTF(description);
+		out.writeNullUTF(paymentType);
+		out.writeNullUTF(paymentInfo);
+		out.writeByte(paymentConfirmed);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
-			out.writeLong(after);
-			out.writeLong(before);
-			out.writeCompressedInt(transid);
-			out.writeNullUTF(Objects.toString(account, null));
-			out.writeNullUTF(Objects.toString(sourceAccount, null));
-			out.writeNullUTF(Objects.toString(administrator, null));
-			out.writeNullUTF(type);
-			out.writeNullUTF(description);
-			out.writeNullUTF(paymentType);
-			out.writeNullUTF(paymentInfo);
-			out.writeByte(paymentConfirmed);
 			out.writeByte(0); // sortFirst
 			out.writeByte(0); // sortSecond
 			out.writeBoolean(true); // sortDescending
-		} else {
-			throw new IOException("write only supported for protocol < " + AoservProtocol.Version.VERSION_1_83_0);
 		}
 	}
 }

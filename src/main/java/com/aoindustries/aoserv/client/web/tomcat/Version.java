@@ -190,7 +190,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			install_dir = PosixPath.valueOf(in.readUTF());

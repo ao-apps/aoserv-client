@@ -450,7 +450,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = Name.valueOf(in.readUTF()).intern();
 			packageName = Account.Name.valueOf(in.readUTF()).intern();

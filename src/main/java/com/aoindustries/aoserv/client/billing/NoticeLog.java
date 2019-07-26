@@ -156,7 +156,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			create_time = in.readLong();

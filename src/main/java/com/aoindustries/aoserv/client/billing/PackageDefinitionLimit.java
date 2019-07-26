@@ -187,7 +187,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		package_definition = in.readCompressedInt();
 		resource = in.readUTF().intern();

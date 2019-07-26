@@ -94,7 +94,7 @@ final public class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		email_address=in.readCompressedInt();
 		linux_server_account=in.readCompressedInt();

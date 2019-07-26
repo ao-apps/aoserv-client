@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -115,7 +115,7 @@ final public class WhoisHistoryAccount extends CachedObjectIntegerKey<WhoisHisto
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			whoisHistory = in.readCompressedInt();

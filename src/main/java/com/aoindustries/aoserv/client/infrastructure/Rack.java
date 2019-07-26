@@ -104,7 +104,7 @@ final public class Rack extends CachedObjectIntegerKey<Rack> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		farm = in.readUTF().intern();
 		name = in.readUTF();

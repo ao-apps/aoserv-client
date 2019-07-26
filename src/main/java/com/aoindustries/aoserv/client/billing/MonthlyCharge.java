@@ -198,7 +198,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			accounting = Account.Name.valueOf(in.readUTF()).intern();

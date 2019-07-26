@@ -392,7 +392,7 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=Account.Name.valueOf(in.readUTF()).intern();
 			nameserver1 = DomainName.valueOf(in.readUTF());

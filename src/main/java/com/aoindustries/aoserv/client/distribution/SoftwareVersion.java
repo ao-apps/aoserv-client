@@ -162,7 +162,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			name = in.readUTF().intern();

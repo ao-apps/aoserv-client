@@ -74,7 +74,7 @@ final public class LimiterSet extends CachedObjectIntegerKey<LimiterSet> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey      = in.readCompressedInt();
 		limiter   = in.readCompressedInt();
 		set       = in.readCompressedInt();

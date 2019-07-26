@@ -95,7 +95,7 @@ final public class DistroReportType extends GlobalObjectStringKey<DistroReportTy
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readUTF().intern();
 		display=in.readUTF();
 	}

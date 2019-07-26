@@ -170,7 +170,7 @@ final public class Address extends CachedObjectIntegerKey<Address> implements Re
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		address=in.readUTF();
 		domain=in.readCompressedInt();

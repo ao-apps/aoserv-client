@@ -227,7 +227,7 @@ final public class DatabaseUser extends CachedObjectIntegerKey<DatabaseUser> imp
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		mysql_database=in.readCompressedInt();
 		mysql_server_user=in.readCompressedInt();

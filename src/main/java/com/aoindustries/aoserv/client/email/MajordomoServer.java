@@ -187,7 +187,7 @@ final public class MajordomoServer extends CachedObjectIntegerKey<MajordomoServe
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		linux_server_account=in.readCompressedInt();
 		linux_server_group=in.readCompressedInt();

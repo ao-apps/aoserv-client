@@ -90,7 +90,7 @@ final public class AdministratorPermission extends CachedObjectIntegerKey<Admini
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			username = User.Name.valueOf(in.readUTF()).intern();

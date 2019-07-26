@@ -146,7 +146,7 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		name=in.readUTF().intern();
 		value=in.readNullUTF();
 		description=in.readUTF();

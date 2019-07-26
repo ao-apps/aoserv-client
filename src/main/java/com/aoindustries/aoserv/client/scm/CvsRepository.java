@@ -224,7 +224,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			path = PosixPath.valueOf(in.readUTF());

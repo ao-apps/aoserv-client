@@ -126,7 +126,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		version=in.readCompressedInt();
 		jnpBind=in.readCompressedInt();

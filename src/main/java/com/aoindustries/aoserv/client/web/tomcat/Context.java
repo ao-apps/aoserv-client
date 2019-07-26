@@ -286,7 +286,7 @@ final public class Context extends CachedObjectIntegerKey<Context> implements Re
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			tomcat_site=in.readCompressedInt();

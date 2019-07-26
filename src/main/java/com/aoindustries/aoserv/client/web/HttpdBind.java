@@ -89,7 +89,7 @@ final public class HttpdBind extends CachedObjectIntegerKey<HttpdBind> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		httpd_server=in.readCompressedInt();
 	}

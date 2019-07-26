@@ -421,7 +421,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = User.Name.valueOf(in.readUTF()).intern();
 			password=HashedPassword.valueOf(in.readNullUTF());

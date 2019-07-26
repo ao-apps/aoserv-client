@@ -124,7 +124,7 @@ final public class IpAddressMonitoring extends CachedObjectIntegerKey<IpAddressM
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		enabled = in.readBoolean();
 		pingMonitorEnabled = in.readBoolean();
