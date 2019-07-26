@@ -104,7 +104,7 @@ final public class Command extends GlobalObjectStringKey<Command> {
 		ADD_SPAM_EMAIL_MESSAGE = "add_spam_email_message",
 		//ADD_TICKET = "add_ticket",
 		//ADD_TICKET_WORK = "add_ticket_work",
-		ADD_TRANSACTION = "add_transaction",
+		BILLING_TRANSACTION_ADD = "billing.Transaction.add",
 		ADD_USERNAME = "add_username",
 		ARE_LINUX_ACCOUNT_PASSWORDS_SET = "are_linux_account_passwords_set",
 		ARE_MYSQL_USER_PASSWORDS_SET = "are_mysql_user_passwords_set",

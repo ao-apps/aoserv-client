@@ -36,6 +36,7 @@ import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.MinimalList;
 import com.aoindustries.util.StringUtility;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,7 +83,17 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		return defaultOrderBy;
 	}
 
-	public int addTransaction(
+	/**
+	 * @param timeType  Either {@link Type#DATE} (rounded to the date in {@link Type#DATE_TIME_ZONE} time zone)
+	 *                  or {@link Type#TIME}, which maintains up to microsecond accuracy and is time zone agnostic.
+	 *              
+	 * @param time  The time of the transaction or {@code null} to use the current date / time per the master database clock.
+	 *              The master database server is both NTP-synchronized and actively monitored, so it is best to let the master database
+	 *              choose the time when "now" or "today" is desired for the transaction.
+	 */
+	public int add(
+		final int timeType,
+		final Timestamp time,
 		final Account account,
 		final Account sourceAccount,
 		final Administrator administrator,
@@ -94,6 +106,12 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		final Processor processor,
 		final byte paymentConfirmed
 	) throws IOException, SQLException {
+		if(
+			timeType != Type.DATE
+			&& timeType != Type.TIME
+		) {
+			throw new IllegalArgumentException("timeType must be either Type.DATE or Type.TIME: " + timeType);
+		}
 		return connector.requestResult(
 			false,
 			AoservProtocol.CommandID.ADD,
@@ -104,6 +122,16 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(Table.TableID.TRANSACTIONS.ordinal());
+					if(timeType == Type.DATE) {
+						out.writeByte('D');
+						// No need to send full precision, since the server will round to the date anyway
+						out.writeNullLong(time == null ? null : time.getTime());
+					} else if(timeType == Type.TIME) {
+						out.writeByte('T');
+						out.writeNullTimestamp(time);
+					} else {
+						throw new AssertionError("Unexpected value for timeType: " + timeType);
+					}
 					out.writeUTF(account.getName().toString());
 					out.writeUTF(sourceAccount.getName().toString());
 					out.writeUTF(administrator.getUsername_userId().toString());
@@ -371,27 +399,50 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command = args[0];
 		if(command.equalsIgnoreCase(Command.ADD_TRANSACTION)) {
-			if(AOSH.checkParamCount(Command.ADD_TRANSACTION, args, 12, err)) {
+			if(AOSH.checkParamCount(Command.ADD_TRANSACTION, args, 13, err)) {
 				byte pc;
-				if(args[12].equals("Y")) pc=Transaction.CONFIRMED;
-				else if(args[12].equals("W")) pc=Transaction.WAITING_CONFIRMATION;
-				else if(args[12].equals("N")) pc=Transaction.NOT_CONFIRMED;
-				else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: "+args[12]);
+				{
+					String paymentConfirmed = args[13];
+					if(paymentConfirmed.equals("Y")) pc = Transaction.CONFIRMED;
+					else if(paymentConfirmed.equals("W")) pc = Transaction.WAITING_CONFIRMATION;
+					else if(paymentConfirmed.equals("N")) pc = Transaction.NOT_CONFIRMED;
+					else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: " + paymentConfirmed);
+				}
+				int timeType;
+				Timestamp time;
+				{
+					String timeStr = args[1];
+					if("now".equalsIgnoreCase(timeStr)) {
+						timeType = Type.TIME;
+						time = null;
+					} else if("today".equalsIgnoreCase(timeStr)) {
+						timeType = Type.DATE;
+						time = null;
+					} else if(timeStr.length() <= "YYYY-MM-DD".length()) {
+						timeType = Type.DATE;
+						time = SQLUtility.parseDateTime(timeStr, Type.DATE_TIME_ZONE);
+					} else {
+						timeType = Type.TIME;
+						time = SQLUtility.parseDateTime(timeStr);
+					}
+				}
 				out.println(
 					connector.getSimpleAOClient().addTransaction(
-						AOSH.parseAccountingCode(args[1], "business"),
-						AOSH.parseAccountingCode(args[2], "source_business"),
-						AOSH.parseUserName(args[3], "business_administrator"),
-						args[4],
+						timeType,
+						time,
+						AOSH.parseAccountingCode(args[2], "business"),
+						AOSH.parseAccountingCode(args[3], "source_business"),
+						AOSH.parseUserName(args[4], "business_administrator"),
 						args[5],
-						AOSH.parseDecimal3(args[6], "quantity"),
+						args[6],
+						AOSH.parseDecimal3(args[7], "quantity"),
 						new Money(
-							java.util.Currency.getInstance(args[7]),
-							AOSH.parseBigDecimal(args[8], "rate")
+							java.util.Currency.getInstance(args[8]),
+							AOSH.parseBigDecimal(args[9], "rate")
 						),
-						args[9],
 						args[10],
 						args[11],
+						args[12],
 						pc
 					)
 				);
