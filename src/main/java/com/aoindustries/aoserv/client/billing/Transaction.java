@@ -98,7 +98,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	/**
 	 * The text to display for different confirmation statuses.
 	 */
-	private static final String[] paymentConfirmedLabels = { "Waiting", "Confirmed", "Failed" };
+	private static final String[] paymentConfirmedLabels = { "Pending", "Confirmed", "Failed" };
 
 	public static final int NUM_PAYMENT_CONFIRMATION_STATES = 3;
 	static {
