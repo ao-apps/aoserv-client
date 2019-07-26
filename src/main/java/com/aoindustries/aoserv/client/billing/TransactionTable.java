@@ -403,10 +403,27 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 				byte pc;
 				{
 					String paymentConfirmed = args[13];
-					if(paymentConfirmed.equals("Y")) pc = Transaction.CONFIRMED;
-					else if(paymentConfirmed.equals("W")) pc = Transaction.WAITING_CONFIRMATION;
-					else if(paymentConfirmed.equals("N")) pc = Transaction.NOT_CONFIRMED;
-					else throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of Y, W, or N: " + paymentConfirmed);
+					if(
+						paymentConfirmed.equals("Confirmed")
+						// Backwards compatibility
+						|| paymentConfirmed.equals("Y")
+					) {
+						pc = Transaction.CONFIRMED;
+					} else if(
+						paymentConfirmed.equals("Pending")
+						// Backwards compatibility
+						|| paymentConfirmed.equals("W")
+					) {
+						pc = Transaction.WAITING_CONFIRMATION;
+					} else if(
+						paymentConfirmed.equals("Failed")
+						// Backwards compatibility
+						|| paymentConfirmed.equals("N")
+					) {
+						pc = Transaction.NOT_CONFIRMED;
+					} else {
+						throw new IllegalArgumentException("Unknown value for payment_confirmed, should be one of \"Pending\", \"Confirmed\", or \"Failed\": " + paymentConfirmed);
+					}
 				}
 				int timeType;
 				Timestamp time;
