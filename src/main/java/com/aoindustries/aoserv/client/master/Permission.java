@@ -132,7 +132,7 @@ final public class Permission extends GlobalObjectStringKey<Permission> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readUTF().intern();
 		sort_order = in.readShort();
 	}

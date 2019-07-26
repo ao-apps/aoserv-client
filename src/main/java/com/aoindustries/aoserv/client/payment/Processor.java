@@ -177,7 +177,7 @@ final public class Processor extends CachedObjectStringKey<Processor> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readUTF().intern();
 			accounting=Account.Name.valueOf(in.readUTF()).intern();

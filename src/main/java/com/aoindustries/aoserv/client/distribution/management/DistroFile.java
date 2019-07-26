@@ -223,7 +223,7 @@ final public class DistroFile extends FilesystemCachedObject<Integer,DistroFile>
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			operating_system_version = in.readCompressedInt();

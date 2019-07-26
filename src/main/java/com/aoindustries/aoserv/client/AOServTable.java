@@ -297,7 +297,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 					int code=in.readByte();
 					if(code==AoservProtocol.NEXT) {
 						V obj=getNewObject();
-						obj.read(in);
+						obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
 						if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
 						result = obj;
 					} else {
@@ -407,7 +407,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 								long objCount = 0;
 								while((code = in.readByte()) == AoservProtocol.NEXT) {
 									V obj = getNewObject();
-									obj.read(in);
+									obj.read(in, AoservProtocol.Version.CURRENT_VERSION);
 									if(obj instanceof SingleTableObject) ((SingleTableObject<K,V>)obj).setTable(AOServTable.this);
 
 									// Sort and add

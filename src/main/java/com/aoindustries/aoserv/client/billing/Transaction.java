@@ -428,7 +428,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			time = in.readLong();
 			pkey = in.readCompressedInt();

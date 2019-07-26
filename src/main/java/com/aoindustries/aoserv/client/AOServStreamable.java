@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,14 +29,26 @@ import com.aoindustries.io.Streamable;
 import java.io.IOException;
 
 /**
- * Streamable with a given version represented by {@link AOServProtocol.Version}.
+ * {@link Streamable} with a given version represented by {@link AOServProtocol.Version}.
  *
  * @author  AO Industries, Inc.
  */
-public interface AOServStreamable extends Streamable, AOServWritable {
+public interface AOServStreamable extends Streamable, AOServReadable, AOServWritable {
+
+	/**
+	 *
+	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
+	 * 
+	 * @see  #read(CompressedDataInputStream,AOServProtocol.Version)
+	 */
+	@Deprecated
+	@Override
+	void read(CompressedDataInputStream in, String protocolVersion) throws IOException;
+	// Java 1.8: default method (or inherit from AOServReadable)
+	// read(in, AOServProtocol.Version.getVersion(version));
 
 	@Override
-	void read(CompressedDataInputStream in) throws IOException;
+	void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException;
 
 	/**
 	 *
@@ -46,7 +58,7 @@ public interface AOServStreamable extends Streamable, AOServWritable {
 	 */
 	@Deprecated
 	@Override
-	void write(CompressedDataOutputStream out, String version) throws IOException;
+	void write(CompressedDataOutputStream out, String protocolVersion) throws IOException;
 	// Java 1.8: default method (or inherit from AOServWritable)
 	// write(out, AOServProtocol.Version.getVersion(version));
 

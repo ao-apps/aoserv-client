@@ -130,7 +130,7 @@ final public class DisableLog extends CachedObjectIntegerKey<DisableLog> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			time=in.readLong();

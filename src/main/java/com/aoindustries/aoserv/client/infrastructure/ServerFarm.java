@@ -92,7 +92,7 @@ final public class ServerFarm extends CachedObjectStringKey<ServerFarm> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readUTF().intern();
 		description=in.readUTF();
 		owner=in.readCompressedInt();

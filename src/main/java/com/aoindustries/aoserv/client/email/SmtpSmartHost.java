@@ -117,7 +117,7 @@ public final class SmtpSmartHost extends CachedObjectIntegerKey<SmtpSmartHost> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		total_out_burst=in.readCompressedInt();
 		total_out_rate=in.readFloat();

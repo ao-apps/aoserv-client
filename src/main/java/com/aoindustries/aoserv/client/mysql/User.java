@@ -562,7 +562,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = Name.valueOf(in.readUTF()).intern();
 			select_priv=in.readBoolean();

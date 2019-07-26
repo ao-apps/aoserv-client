@@ -171,7 +171,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		minorVersion = in.readUTF().intern();
 		postgisVersion = in.readCompressedInt();

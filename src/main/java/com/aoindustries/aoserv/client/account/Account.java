@@ -1375,7 +1375,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=Name.valueOf(in.readUTF()).intern();
 			contractVersion=InternUtils.intern(in.readNullUTF());

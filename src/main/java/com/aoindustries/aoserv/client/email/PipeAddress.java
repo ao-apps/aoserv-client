@@ -90,7 +90,7 @@ final public class PipeAddress extends CachedObjectIntegerKey<PipeAddress> imple
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		email_address=in.readCompressedInt();
 		email_pipe=in.readCompressedInt();

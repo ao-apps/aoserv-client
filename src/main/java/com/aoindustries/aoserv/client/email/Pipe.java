@@ -152,7 +152,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			ao_server=in.readCompressedInt();

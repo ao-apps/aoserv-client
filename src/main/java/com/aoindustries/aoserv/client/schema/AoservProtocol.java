@@ -663,7 +663,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readUTF().intern();
 		created = in.readLong();
 		comments = in.readUTF();

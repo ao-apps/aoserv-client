@@ -382,7 +382,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	 * readImpl method comment.
 	 */
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		name=in.readUTF();
 		ao_server=in.readCompressedInt();

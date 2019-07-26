@@ -85,7 +85,7 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readUTF().intern();
 		created=in.readLong();
 	}

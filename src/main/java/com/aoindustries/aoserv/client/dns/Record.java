@@ -169,7 +169,7 @@ final public class Record extends CachedObjectIntegerKey<Record> implements Remo
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey        = in.readCompressedInt();
 		zone        = in.readUTF().intern();
 		domain      = in.readUTF().intern();

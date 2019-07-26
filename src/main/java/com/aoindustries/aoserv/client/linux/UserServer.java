@@ -329,7 +329,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 						InboxAttributes attr;
 						if(in.readBoolean()) {
 							attr=new InboxAttributes(table.getConnector(), UserServer.this);
-							attr.read(in);
+							attr.read(in, AoservProtocol.Version.CURRENT_VERSION);
 						} else attr=null;
 						result = attr;
 					} else {
@@ -533,7 +533,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			username = User.Name.valueOf(in.readUTF()).intern();

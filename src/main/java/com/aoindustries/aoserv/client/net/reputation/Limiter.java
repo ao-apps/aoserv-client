@@ -75,7 +75,7 @@ final public class Limiter extends CachedObjectIntegerKey<Limiter> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey        = in.readCompressedInt();
 		netDevice   = in.readCompressedInt();
 		identifier  = in.readUTF();

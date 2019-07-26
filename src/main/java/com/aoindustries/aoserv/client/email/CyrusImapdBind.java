@@ -101,7 +101,7 @@ final public class CyrusImapdBind extends CachedObjectIntegerKey<CyrusImapdBind>
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			cyrus_imapd_server = in.readCompressedInt();

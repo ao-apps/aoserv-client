@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -83,8 +83,19 @@ final public class InboxAttributes implements AOServStreamable {
 		return lastModified;
 	}
 
+	/**
+	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
+	 * 
+	 * @see  #read(CompressedDataInputStream,AOServProtocol.Version)
+	 */
+	@Deprecated
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, String protocolVersion) throws IOException {
+		read(in, AoservProtocol.Version.getVersion(protocolVersion));
+	}
+
+	@Override
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		systemTime=in.readLong();
 		fileSize=in.readLong();
 		lastModified=in.readLong();

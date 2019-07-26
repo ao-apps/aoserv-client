@@ -105,7 +105,7 @@ public final class TcpRedirect extends CachedObjectIntegerKey<TcpRedirect> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			cps=in.readCompressedInt();

@@ -148,7 +148,7 @@ final public class ContextDataSource extends CachedObjectIntegerKey<ContextDataS
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		tomcat_context=in.readCompressedInt();
 		name=in.readUTF();

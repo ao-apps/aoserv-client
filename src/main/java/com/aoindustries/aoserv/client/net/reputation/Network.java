@@ -76,7 +76,7 @@ final public class Network extends CachedObjectLongKey<Network> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey     = in.readLong();
 		set      = in.readCompressedInt();
 		network  = in.readInt();

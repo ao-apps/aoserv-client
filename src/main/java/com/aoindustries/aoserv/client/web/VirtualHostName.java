@@ -166,7 +166,7 @@ final public class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			httpd_site_bind=in.readCompressedInt();

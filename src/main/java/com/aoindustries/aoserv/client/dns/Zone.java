@@ -409,7 +409,7 @@ final public class Zone extends CachedObjectStringKey<Zone> implements Removable
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readUTF().intern();
 			file=in.readUTF();

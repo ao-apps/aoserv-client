@@ -145,7 +145,7 @@ public final class Domain extends CachedObjectIntegerKey<Domain> implements Remo
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			domain = DomainName.valueOf(in.readUTF());

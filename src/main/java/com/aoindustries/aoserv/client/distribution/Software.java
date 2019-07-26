@@ -115,7 +115,7 @@ final public class Software extends GlobalObjectStringKey<Software> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readUTF().intern();
 		image_filename=in.readNullUTF();
 		image_width=in.readCompressedInt();

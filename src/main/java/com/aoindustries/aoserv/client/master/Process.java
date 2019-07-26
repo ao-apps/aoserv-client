@@ -264,7 +264,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			process_id=in.readLong();
 			connector_id=in.readLong();

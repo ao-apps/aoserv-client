@@ -159,7 +159,7 @@ final public class RecordType extends GlobalObjectStringKey<RecordType> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in) throws IOException {
+	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey         = in.readUTF().intern();
 		description  = in.readUTF();
 		has_priority = in.readBoolean();
