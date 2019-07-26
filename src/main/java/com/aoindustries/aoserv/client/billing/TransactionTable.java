@@ -398,8 +398,8 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command = args[0];
-		if(command.equalsIgnoreCase(Command.ADD_TRANSACTION)) {
-			if(AOSH.checkParamCount(Command.ADD_TRANSACTION, args, 13, err)) {
+		if(command.equalsIgnoreCase(Command.BILLING_TRANSACTION_ADD)) {
+			if(AOSH.checkParamCount(Command.BILLING_TRANSACTION_ADD, args, 13, err)) {
 				byte pc;
 				{
 					String paymentConfirmed = args[13];
