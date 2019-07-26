@@ -34,6 +34,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.i18n.Money;
@@ -108,7 +109,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String creditCardPostalCode;
 	private String creditCardCountryCode;
 	private String creditCardComments;
-	private long authorizationTime;
+	private UnmodifiableTimestamp authorizationTime;
 	private User.Name authorizationUsername;
 	private String authorizationPrincipalName;
 	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
@@ -139,7 +140,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	// TODO: enum com.aoindustries.creditcards.AuthorizationResult.AvsResult
 	private String authorizationAvsResult;
 	private String authorizationApprovalCode;
-	private long captureTime;
+	private UnmodifiableTimestamp captureTime;
 	private User.Name captureUsername;
 	private String capturePrincipalName;
 	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
@@ -149,7 +150,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	private String captureErrorCode;
 	private String captureProviderErrorMessage;
 	private String captureProviderUniqueId;
-	private long voidTime;
+	private UnmodifiableTimestamp voidTime;
 	private User.Name voidUsername;
 	private String voidPrincipalName;
 	// TODO: enum com.aoindustries.creditcards.TransactionResult.CommunicationResult
@@ -419,15 +420,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return creditCardComments;
 	}
 
-	public long getAuthorizationTime_millis() {
-		return authorizationTime;
-	}
-
 	/**
 	 * Gets the time of the authorization if not available.
 	 */
-	public Timestamp getAuthorizationTime() {
-		return new Timestamp(authorizationTime);
+	public UnmodifiableTimestamp getAuthorizationTime() {
+		return authorizationTime;
 	}
 
 	/**
@@ -533,15 +530,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return authorizationApprovalCode;
 	}
 
-	public Long getCaptureTime_millis() {
-		return captureTime == -1 ? null : captureTime;
-	}
-
 	/**
 	 * Gets the time of the capture.
 	 */
-	public Timestamp getCaptureTime() {
-		return captureTime == -1 ? null : new Timestamp(captureTime);
+	public UnmodifiableTimestamp getCaptureTime() {
+		return captureTime;
 	}
 
 	/**
@@ -583,15 +576,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		return captureProviderUniqueId;
 	}
 
-	public Long getVoidTime_millis() {
-		return voidTime == -1 ? null : voidTime;
-	}
-
 	/**
 	 * Gets the time of the void.
 	 */
-	public Timestamp getVoidTime() {
-		return voidTime == -1 ? null : new Timestamp(voidTime);
+	public UnmodifiableTimestamp getVoidTime() {
+		return voidTime;
 	}
 
 	/**
@@ -693,7 +682,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			case 46: return creditCardPostalCode;
 			case 47: return creditCardCountryCode;
 			case 48: return creditCardComments;
-			case 49: return getAuthorizationTime();
+			case 49: return authorizationTime;
 			case 50: return authorizationUsername;
 			case 51: return authorizationPrincipalName;
 			case 52: return authorizationCommunicationResult;
@@ -717,7 +706,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			case 70: return authorizationProviderAvsResult;
 			case 71: return authorizationAvsResult;
 			case 72: return authorizationApprovalCode;
-			case 73: return getCaptureTime();
+			case 73: return captureTime;
 			case 74: return captureUsername;
 			case 75: return capturePrincipalName;
 			case 76: return captureCommunicationResult;
@@ -725,7 +714,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			case 78: return captureErrorCode;
 			case 79: return captureProviderErrorMessage;
 			case 80: return captureProviderUniqueId;
-			case 81: return getVoidTime();
+			case 81: return voidTime;
 			case 82: return voidUsername;
 			case 83: return voidPrincipalName;
 			case 84: return voidCommunicationResult;
@@ -799,7 +788,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardPostalCode = result.getString(pos++);
 			creditCardCountryCode = result.getString(pos++);
 			creditCardComments = result.getString(pos++);
-			authorizationTime = result.getTimestamp(pos++).getTime();
+			authorizationTime = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			authorizationUsername = User.Name.valueOf(result.getString(pos++));
 			authorizationPrincipalName = result.getString(pos++);
 			authorizationCommunicationResult = result.getString(pos++);
@@ -825,8 +814,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationProviderAvsResult = result.getString(pos++);
 			authorizationAvsResult = result.getString(pos++);
 			authorizationApprovalCode = result.getString(pos++);
-			Timestamp T = result.getTimestamp(pos++);
-			captureTime = T==null ? -1 : T.getTime();
+			captureTime = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			captureUsername = User.Name.valueOf(result.getString(pos++));
 			capturePrincipalName = result.getString(pos++);
 			captureCommunicationResult = result.getString(pos++);
@@ -834,8 +822,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			captureErrorCode = result.getString(pos++);
 			captureProviderErrorMessage = result.getString(pos++);
 			captureProviderUniqueId = result.getString(pos++);
-			T = result.getTimestamp(pos++);
-			voidTime = T==null ? -1 : T.getTime();
+			voidTime = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			voidUsername = User.Name.valueOf(result.getString(pos++));
 			voidPrincipalName = result.getString(pos++);
 			voidCommunicationResult = result.getString(pos++);
@@ -914,7 +901,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			creditCardPostalCode = in.readNullUTF();
 			creditCardCountryCode = in.readUTF().intern();
 			creditCardComments = in.readNullUTF();
-			authorizationTime = in.readLong();
+			authorizationTime = in.readUnmodifiableTimestamp();
 			authorizationUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			authorizationPrincipalName = InternUtils.intern(in.readNullUTF());
 			authorizationCommunicationResult = InternUtils.intern(in.readNullUTF());
@@ -938,7 +925,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			authorizationProviderAvsResult = InternUtils.intern(in.readNullUTF());
 			authorizationAvsResult = InternUtils.intern(in.readNullUTF());
 			authorizationApprovalCode = in.readNullUTF();
-			captureTime = in.readLong();
+			captureTime = in.readNullUnmodifiableTimestamp();
 			captureUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			capturePrincipalName = InternUtils.intern(in.readNullUTF());
 			captureCommunicationResult = InternUtils.intern(in.readNullUTF());
@@ -946,7 +933,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 			captureErrorCode = InternUtils.intern(in.readNullUTF());
 			captureProviderErrorMessage = in.readNullUTF();
 			captureProviderUniqueId = in.readNullUTF();
-			voidTime = in.readLong();
+			voidTime = in.readNullUnmodifiableTimestamp();
 			voidUsername = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			voidPrincipalName = InternUtils.intern(in.readNullUTF());
 			voidCommunicationResult = InternUtils.intern(in.readNullUTF());
@@ -1051,7 +1038,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(creditCardPostalCode);
 		out.writeUTF(creditCardCountryCode);
 		out.writeNullUTF(creditCardComments);
-		out.writeLong(authorizationTime);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(authorizationTime.getTime());
+		} else {
+			out.writeTimestamp(authorizationTime);
+		}
 		out.writeNullUTF(Objects.toString(authorizationUsername, null));
 		out.writeNullUTF(authorizationPrincipalName);
 		out.writeNullUTF(authorizationCommunicationResult);
@@ -1077,7 +1068,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(authorizationProviderAvsResult);
 		out.writeNullUTF(authorizationAvsResult);
 		out.writeNullUTF(authorizationApprovalCode);
-		out.writeLong(captureTime);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(captureTime == null ? -1 : captureTime.getTime());
+		} else {
+			out.writeNullTimestamp(captureTime);
+		}
 		out.writeNullUTF(Objects.toString(captureUsername, null));
 		out.writeNullUTF(capturePrincipalName);
 		out.writeNullUTF(captureCommunicationResult);
@@ -1085,7 +1080,11 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 		out.writeNullUTF(captureErrorCode);
 		out.writeNullUTF(captureProviderErrorMessage);
 		out.writeNullUTF(captureProviderUniqueId);
-		out.writeLong(voidTime);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(voidTime == null ? -1 : voidTime.getTime());
+		} else {
+			out.writeNullTimestamp(voidTime);
+		}
 		out.writeNullUTF(Objects.toString(voidUsername, null));
 		out.writeNullUTF(voidPrincipalName);
 		out.writeNullUTF(voidCommunicationResult);
@@ -1162,7 +1161,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 					out.writeNullUTF(providerAvsResult);
 					out.writeNullUTF(avsResult);
 					out.writeNullUTF(approvalCode);
-					out.writeLong(captureTime==null ? -1 : captureTime.getTime());
+					out.writeNullTimestamp(captureTime);
 					out.writeNullUTF(capturePrincipalName);
 					out.writeNullUTF(captureCommunicationResult);
 					out.writeNullUTF(captureProviderErrorCode);

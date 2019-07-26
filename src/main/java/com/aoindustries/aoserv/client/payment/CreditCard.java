@@ -38,13 +38,13 @@ import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -132,12 +132,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	private String state;
 	private String postalCode;
 	private String countryCode;
-	private long created;
+	private UnmodifiableTimestamp created;
 	private User.Name createdBy;
 	private String principalName;
 	private boolean useMonthly;
 	private boolean isActive;
-	private long deactivatedOn;
+	private UnmodifiableTimestamp deactivatedOn;
 	private String deactivateReason;
 	private String description;
 	private String encrypted_card_number;
@@ -255,12 +255,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			case 19: return state;
 			case 20: return postalCode;
 			case 21: return countryCode;
-			case 22: return getCreated();
+			case 22: return created;
 			case 23: return createdBy;
 			case 24: return principalName;
 			case 25: return useMonthly;
 			case 26: return isActive;
-			case 27: return getDeactivatedOn();
+			case 27: return deactivatedOn;
 			case 28: return deactivateReason;
 			case 29: return description;
 			case 30: return encrypted_card_number;
@@ -328,12 +328,8 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return countryCodeObj;
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
@@ -349,16 +345,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 		return principalName;
 	}
 
-	public Long getDeactivatedOn_millis() {
-		return deactivatedOn == -1 ? null : deactivatedOn;
-	}
-
-	public Timestamp getDeactivatedOn() {
-		return deactivatedOn == -1 ? null : new Timestamp(deactivatedOn);
+	public UnmodifiableTimestamp getDeactivatedOn() {
+		return deactivatedOn;
 	}
 
 	public String getDeactivatedOnString() {
-		return deactivatedOn == -1 ? null : SQLUtility.formatDate(deactivatedOn, Type.DATE_TIME_ZONE);
+		return SQLUtility.formatDate(deactivatedOn, Type.DATE_TIME_ZONE);
 	}
 
 	public String getDeactivateReason() {
@@ -416,13 +408,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			state = result.getString(pos++);
 			postalCode = result.getString(pos++);
 			countryCode = result.getString(pos++);
-			created = result.getTimestamp(pos++).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			createdBy = User.Name.valueOf(result.getString(pos++));
 			principalName = result.getString(pos++);
 			useMonthly = result.getBoolean(pos++);
 			isActive = result.getBoolean(pos++);
-			Timestamp time = result.getTimestamp(pos++);
-			deactivatedOn = time == null ? -1 : time.getTime();
+			deactivatedOn = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			deactivateReason = result.getString(pos++);
 			description = result.getString(pos++);
 			encrypted_card_number = result.getString(pos++);
@@ -464,12 +455,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			state=InternUtils.intern(in.readNullUTF());
 			postalCode=in.readNullUTF();
 			countryCode=in.readUTF().intern();
-			created=in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			createdBy = User.Name.valueOf(in.readUTF()).intern();
 			principalName=in.readNullUTF();
 			useMonthly=in.readBoolean();
 			isActive=in.readBoolean();
-			deactivatedOn=in.readLong();
+			deactivatedOn = in.readNullUnmodifiableTimestamp();
 			deactivateReason=in.readNullUTF();
 			description=in.readNullUTF();
 			encrypted_card_number=in.readNullUTF();
@@ -535,12 +526,20 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			out.writeNullUTF(postalCode);
 			out.writeUTF(countryCode);
 		}
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeUTF(createdBy.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) out.writeNullUTF(principalName);
 		out.writeBoolean(useMonthly);
 		out.writeBoolean(isActive);
-		out.writeLong(deactivatedOn);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(deactivatedOn == null ? -1 : deactivatedOn.getTime());
+		} else {
+			out.writeNullTimestamp(deactivatedOn);
+		}
 		out.writeNullUTF(deactivateReason);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_28)<=0) out.writeCompressedInt(Integer.MAX_VALUE - pkey);
 		out.writeNullUTF(description);

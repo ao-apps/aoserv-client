@@ -35,11 +35,11 @@ import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +67,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	Group.Name name;
 	int ao_server;
 	LinuxId gid;
-	private long created;
+	private UnmodifiableTimestamp created;
 
 	public List<UserServer> getAlternateLinuxServerAccounts() throws SQLException, IOException {
 		return table.getConnector().getLinux().getUserServer().getAlternateLinuxServerAccounts(this);
@@ -80,7 +80,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 			case COLUMN_NAME: return name;
 			case COLUMN_AO_SERVER: return ao_server;
 			case 3: return gid;
-			case 4: return getCreated();
+			case 4: return created;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -89,12 +89,8 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		return gid;
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public Group.Name getLinuxGroup_name() {
@@ -129,7 +125,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 			name = Group.Name.valueOf(result.getString(2));
 			ao_server = result.getInt(3);
 			gid = LinuxId.valueOf(result.getInt(4));
-			created = result.getTimestamp(5).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(5));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -142,7 +138,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 			name = Group.Name.valueOf(in.readUTF()).intern();
 			ao_server=in.readCompressedInt();
 			gid = LinuxId.valueOf(in.readCompressedInt());
-			created=in.readLong();
+			created = in.readUnmodifiableTimestamp();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -220,6 +216,10 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 		out.writeUTF(name.toString());
 		out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(gid.getId());
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 	}
 }

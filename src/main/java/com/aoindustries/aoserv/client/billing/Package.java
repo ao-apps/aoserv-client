@@ -52,11 +52,11 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -115,7 +115,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 	private Account.Name name;
 	private Account.Name account;
 	private int package_definition;
-	private long created;
+	private UnmodifiableTimestamp created;
 	private com.aoindustries.aoserv.client.account.User.Name created_by;
 	private int disable_log;
 	private int email_in_burst;
@@ -200,7 +200,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			case COLUMN_NAME: return name;
 			case COLUMN_ACCOUNTING: return account;
 			case COLUMN_PACKAGE_DEFINITION: return package_definition;
-			case 4: return getCreated();
+			case 4: return created;
 			case 5: return created_by;
 			case 6: return getDisableLog_id();
 			case 7: return email_in_burst==-1 ? null : email_in_burst;
@@ -213,12 +213,8 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		}
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
@@ -411,7 +407,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			name = Account.Name.valueOf(result.getString(pos++));
 			account = Account.Name.valueOf(result.getString(pos++));
 			package_definition = result.getInt(pos++);
-			created = result.getTimestamp(pos++).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			created_by = com.aoindustries.aoserv.client.account.User.Name.valueOf(result.getString(pos++));
 			disable_log=result.getInt(pos++);
 			if(result.wasNull()) disable_log = -1;
@@ -439,7 +435,7 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 			name = Account.Name.valueOf(in.readUTF()).intern();
 			account = Account.Name.valueOf(in.readUTF()).intern();
 			package_definition = in.readCompressedInt();
-			created = in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			created_by = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
 			disable_log = in.readCompressedInt();
 			email_in_burst = in.readCompressedInt();
@@ -465,7 +461,11 @@ final public class Package extends CachedObjectIntegerKey<Package> implements Di
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_123)>=0) {
 			out.writeCompressedInt(package_definition);
 		}
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeUTF(created_by.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) {
 			out.writeCompressedInt(-1);

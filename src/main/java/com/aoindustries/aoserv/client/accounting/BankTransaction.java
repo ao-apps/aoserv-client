@@ -32,12 +32,12 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * For AO Industries use only.
@@ -52,7 +52,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 
 	private AOServTable<Integer,BankTransaction> table;
 	private int id;
-	private long time;
+	private UnmodifiableTimestamp time;
 	private String
 		account,
 		processor;
@@ -104,7 +104,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_ID: return id;
-			case 1: return getTime();
+			case 1: return time;
 			case 2: return account;
 			case 3: return processor;
 			case 4: return administrator;
@@ -160,12 +160,8 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		return id;
 	}
 
-	public long getTime_millis() {
+	public UnmodifiableTimestamp getTime() {
 		return time;
-	}
-
-	public Timestamp getTime() {
-		return new Timestamp(time);
 	}
 
 	@Override
@@ -178,7 +174,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		try {
 			int pos = 1;
 			id = result.getInt(pos++);
-			time = result.getTimestamp(pos++).getTime();
+			time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			account = result.getString(pos++);
 			processor = result.getString(pos++);
 			administrator = User.Name.valueOf(result.getString(pos++));
@@ -201,7 +197,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			id = in.readCompressedInt();
-			time = in.readLong();
+			time = in.readUnmodifiableTimestamp();
 			account = in.readUTF().intern();
 			processor = InternUtils.intern(in.readNullUTF());
 			administrator = User.Name.valueOf(in.readUTF()).intern();
@@ -230,11 +226,15 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
-			out.writeLong(time);
+			out.writeLong(time.getTime());
 			out.writeCompressedInt(id);
 		} else {
 			out.writeCompressedInt(id);
-			out.writeLong(time);
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+				out.writeLong(time.getTime());
+			} else {
+				out.writeTimestamp(time);
+			}
 		}
 		out.writeUTF(account);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)<0) {

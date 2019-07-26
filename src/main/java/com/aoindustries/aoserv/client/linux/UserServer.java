@@ -46,12 +46,12 @@ import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +111,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	private boolean is_autoresponder_enabled;
 	int disable_log;
 	private String predisable_password;
-	private long created;
+	private UnmodifiableTimestamp created;
 	private boolean use_inbox;
 	private int trash_email_retention;
 	private int junk_email_retention;
@@ -218,7 +218,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			case 8: return is_autoresponder_enabled;
 			case 9: return disable_log == -1 ? null : disable_log;
 			case 10: return predisable_password;
-			case 11: return getCreated();
+			case 11: return created;
 			case 12: return use_inbox;
 			case 13: return trash_email_retention==-1?null:trash_email_retention;
 			case 14: return junk_email_retention==-1?null:junk_email_retention;
@@ -406,12 +406,8 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		return predisable_password;
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public boolean useInbox() {
@@ -507,7 +503,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			disable_log=result.getInt(pos++);
 			if(result.wasNull()) disable_log=-1;
 			predisable_password=result.getString(pos++);
-			created=result.getTimestamp(pos++).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			use_inbox=result.getBoolean(pos++);
 			trash_email_retention=result.getInt(pos++);
 			if(result.wasNull()) trash_email_retention=-1;
@@ -546,7 +542,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			is_autoresponder_enabled=in.readBoolean();
 			disable_log=in.readCompressedInt();
 			predisable_password=in.readNullUTF();
-			created=in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			use_inbox=in.readBoolean();
 			trash_email_retention=in.readCompressedInt();
 			junk_email_retention=in.readCompressedInt();
@@ -769,7 +765,11 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 		out.writeBoolean(is_autoresponder_enabled);
 		out.writeCompressedInt(disable_log);
 		out.writeNullUTF(predisable_password);
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeBoolean(use_inbox);
 		out.writeCompressedInt(trash_email_retention);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_120)>=0) {

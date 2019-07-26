@@ -32,10 +32,12 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -55,9 +57,8 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	 */
 	public static final int ANY = -1;
 
-	private long after;
-
-	private long before;
+	private UnmodifiableTimestamp after;
+	private UnmodifiableTimestamp before;
 	private int transid;
 	private Account.Name account;
 	private Account.Name sourceAccount;
@@ -72,8 +73,8 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	}
 
 	public TransactionSearchCriteria(
-		long after,
-		long before,
+		Timestamp after,
+		Timestamp before,
 		int transid,
 		Account.Name account,
 		Account.Name sourceAccount,
@@ -84,8 +85,8 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		String paymentInfo,
 		byte paymentConfirmed
 	) {
-		this.after = after;
-		this.before = before;
+		this.after = UnmodifiableTimestamp.valueOf(after);
+		this.before = UnmodifiableTimestamp.valueOf(before);
 		this.transid = transid;
 		this.account = account;
 		this.sourceAccount = sourceAccount;
@@ -98,8 +99,8 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	}
 
 	public TransactionSearchCriteria(
-		long after,
-		long before,
+		Timestamp after,
+		Timestamp before,
 		int transid,
 		Account account,
 		Account sourceAccount,
@@ -147,10 +148,10 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	}
 
 	public TransactionSearchCriteria(Administrator administrator) throws IOException, SQLException {
-		before = ANY;
+		before = null;
 
 		// The beginning of last month starts the default search
-		after = getDefaultAfter(System.currentTimeMillis());
+		after = new UnmodifiableTimestamp(getDefaultAfter(System.currentTimeMillis()));
 
 		transid = ANY;
 		account = administrator == null ? null : administrator.getUsername().getPackage().getAccount_name();
@@ -163,11 +164,11 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		paymentConfirmed = ANY;
 	}
 
-	public long getAfter() {
+	public UnmodifiableTimestamp getAfter() {
 		return after;
 	}
 
-	public long getBefore() {
+	public UnmodifiableTimestamp getBefore() {
 		return before;
 	}
 
@@ -230,8 +231,15 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	@Override
 	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			after = in.readLong();
-			before = in.readLong();
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+				long l = in.readLong();
+				after = l == ANY ? null : new UnmodifiableTimestamp(l);
+				l = in.readLong();
+				before = l == ANY ? null : new UnmodifiableTimestamp(l);
+			} else {
+				after = in.readNullUnmodifiableTimestamp();
+				before = in.readNullUnmodifiableTimestamp();
+			}
 			transid = in.readCompressedInt();
 			account = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
 			sourceAccount = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
@@ -251,12 +259,12 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		}
 	}
 
-	public void setAfter(long after) {
-		this.after = after;
+	public void setAfter(Timestamp after) {
+		this.after = UnmodifiableTimestamp.valueOf(after);
 	}
 
-	public void setBefore(long before) {
-		this.before = before;
+	public void setBefore(Timestamp before) {
+		this.before = UnmodifiableTimestamp.valueOf(before);
 	}
 
 	public void setAccount(Account.Name account) {
@@ -309,8 +317,13 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	// This will not be required once all clients are >= protocol 1.83.0
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeLong(after);
-		out.writeLong(before);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(after == null ? ANY : after.getTime());
+			out.writeLong(before == null ? ANY : before.getTime());
+		} else {
+			out.writeNullTimestamp(after);
+			out.writeNullTimestamp(before);
+		}
 		out.writeCompressedInt(transid);
 		out.writeNullUTF(Objects.toString(account, null));
 		out.writeNullUTF(Objects.toString(sourceAccount, null));

@@ -32,12 +32,12 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
@@ -79,13 +79,13 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	private String protocol;
 	private String aoserv_protocol;
 	private boolean is_secure;
-	private long connect_time;
+	private UnmodifiableTimestamp connect_time;
 	private long use_count;
 	private long total_time;
 	private int priority;
 	private String state;
 	private Object[] command;
-	private long state_start_time;
+	private UnmodifiableTimestamp state_start_time;
 
 	private AOServTable<Long,Process> table;
 
@@ -97,7 +97,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		InetAddress host,
 		String protocol,
 		boolean is_secure,
-		long connect_time
+		UnmodifiableTimestamp connect_time
 	) {
 		this.process_id=process_id;
 		this.host=host;
@@ -106,29 +106,29 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		this.connect_time=connect_time;
 		this.priority=Thread.NORM_PRIORITY;
 		this.state=LOGIN;
-		this.state_start_time=connect_time;
+		this.state_start_time = connect_time;
 	}
 
 	synchronized public void commandCompleted() {
-		long time=System.currentTimeMillis();
-		total_time+=time-state_start_time;
+		long time = System.currentTimeMillis();
+		total_time += time - state_start_time.getTime();
 		state=SLEEP;
 		command=null;
-		state_start_time=time;
+		state_start_time = new UnmodifiableTimestamp(time);
 	}
 
 	synchronized public void commandRunning() {
 		use_count++;
 		state=RUN;
-		state_start_time=System.currentTimeMillis();
+		state_start_time = new UnmodifiableTimestamp(System.currentTimeMillis());
 	}
 
 	synchronized public void commandSleeping() {
 		if(!state.equals(SLEEP)) {
 			long time=System.currentTimeMillis();
 			state=SLEEP;
-			total_time+=time-state_start_time;
-			state_start_time=time;
+			total_time += time - state_start_time.getTime();
+			state_start_time = new UnmodifiableTimestamp(time);
 		}
 	}
 
@@ -144,13 +144,13 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 			case 6: return protocol;
 			case 7: return aoserv_protocol;
 			case 8: return is_secure;
-			case 9: return getConnectTime();
+			case 9: return connect_time;
 			case 10: return use_count;
 			case 11: return total_time;
 			case 12: return priority;
 			case 13: return state;
 			case 14: return getCommand();
-			case 15: return getStateStartTime();
+			case 15: return state_start_time;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -210,12 +210,8 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		return is_secure;
 	}
 
-	public long getConnectTime_millis() {
+	public UnmodifiableTimestamp getConnectTime() {
 		return connect_time;
-	}
-
-	public Timestamp getConnectTime() {
-		return new Timestamp(connect_time);
 	}
 
 	public long getUseCount() {
@@ -230,12 +226,8 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		return state;
 	}
 
-	public long getStateStartTime_millis() {
+	public UnmodifiableTimestamp getStateStartTime() {
 		return state_start_time;
-	}
-
-	public Timestamp getStateStartTime() {
-		return new Timestamp(state_start_time);
 	}
 
 	@Override
@@ -275,7 +267,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 			protocol=in.readUTF().intern();
 			aoserv_protocol=InternUtils.intern(in.readNullUTF());
 			is_secure=in.readBoolean();
-			connect_time=in.readLong();
+			connect_time = in.readUnmodifiableTimestamp();
 			use_count=in.readLong();
 			total_time=in.readLong();
 			priority=in.readCompressedInt();
@@ -285,7 +277,7 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 			} else {
 				command=null;
 			}
-			state_start_time=in.readLong();
+			state_start_time = in.readUnmodifiableTimestamp();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -362,7 +354,11 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		out.writeUTF(protocol);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_101)>=0) out.writeNullUTF(aoserv_protocol);
 		out.writeBoolean(is_secure);
-		out.writeLong(connect_time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(connect_time.getTime());
+		} else {
+			out.writeTimestamp(connect_time);
+		}
 		out.writeLong(use_count);
 		out.writeLong(total_time);
 		out.writeCompressedInt(priority);
@@ -370,6 +366,10 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		String myCommand=getCommand();
 		out.writeBoolean(myCommand!=null);
 		if(myCommand!=null) out.writeUTF(myCommand);
-		out.writeLong(state_start_time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(state_start_time.getTime());
+		} else {
+			out.writeTimestamp(state_start_time);
+		}
 	}
 }

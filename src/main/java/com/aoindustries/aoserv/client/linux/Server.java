@@ -65,6 +65,7 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.HttpParameters;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
@@ -105,7 +106,7 @@ final public class Server
 	private HashedPassword daemon_key;
 	private int pool_size;
 	private int distro_hour;
-	private long last_distro_time;
+	private UnmodifiableTimestamp last_distro_time;
 	private int failover_server;
 	private String daemonDeviceId;
 	private int daemon_connect_bind;
@@ -135,7 +136,7 @@ final public class Server
 			case 3: return daemon_key;
 			case 4: return pool_size;
 			case 5: return distro_hour;
-			case 6: return getLastDistroTime();
+			case 6: return last_distro_time;
 			case 7: return failover_server==-1?null:failover_server;
 			case 8: return daemonDeviceId;
 			case 9: return daemon_connect_bind==-1?null:daemon_connect_bind;
@@ -201,12 +202,8 @@ final public class Server
 		return distro_hour;
 	}
 
-	public Long getLastDistroTime_time() {
-		return last_distro_time == -1 ? null : last_distro_time;
-	}
-
-	public Timestamp getLastDistroTime() {
-		return last_distro_time == -1 ? null : new Timestamp(last_distro_time);
+	public UnmodifiableTimestamp getLastDistroTime() {
+		return last_distro_time;
 	}
 
 	public Integer getFailoverServer_server_pkey() {
@@ -378,8 +375,7 @@ final public class Server
 			daemon_key=HashedPassword.valueOf(result.getString(pos++));
 			pool_size=result.getInt(pos++);
 			distro_hour=result.getInt(pos++);
-			Timestamp T=result.getTimestamp(pos++);
-			last_distro_time=T==null?-1:T.getTime();
+			last_distro_time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			failover_server=result.getInt(pos++);
 			if(result.wasNull()) failover_server=-1;
 			daemonDeviceId = result.getString(pos++);
@@ -422,7 +418,7 @@ final public class Server
 			daemon_key=HashedPassword.valueOf(in.readUTF());
 			pool_size=in.readCompressedInt();
 			distro_hour=in.readCompressedInt();
-			last_distro_time=in.readLong();
+			last_distro_time = in.readNullUnmodifiableTimestamp();
 			failover_server=in.readCompressedInt();
 			daemonDeviceId = InternUtils.intern(in.readNullUTF());
 			daemon_connect_bind=in.readCompressedInt();
@@ -474,7 +470,11 @@ final public class Server
 		out.writeUTF(daemon_key.toString());
 		out.writeCompressedInt(pool_size);
 		out.writeCompressedInt(distro_hour);
-		out.writeLong(last_distro_time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(last_distro_time == null ? -1 : last_distro_time.getTime());
+		} else {
+			out.writeNullTimestamp(last_distro_time);
+		}
 		out.writeCompressedInt(failover_server);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(60*1000);
@@ -1061,7 +1061,7 @@ final public class Server
 	}
 
 	public void setLastDistroTime(Timestamp distroTime) throws IOException, SQLException {
-		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime.getTime());
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_LAST_DISTRO_TIME, pkey, distroTime);
 	}
 
 	public void startApache() throws IOException, SQLException {
@@ -2698,7 +2698,7 @@ final public class Server
 			getDto(daemon_key),
 			pool_size,
 			distro_hour,
-			last_distro_time==-1 ? null : last_distro_time,
+			last_distro_time == null ? null : last_distro_time.getTime(),
 			failover_server==-1 ? null : failover_server,
 			daemonDeviceId,
 			daemon_connect_bind==-1 ? null : daemon_connect_bind,

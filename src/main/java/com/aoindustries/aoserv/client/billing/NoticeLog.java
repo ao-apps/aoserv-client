@@ -30,11 +30,11 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Email;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -57,7 +57,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 
 	public static final int NO_TRANSACTION = -1;
 
-	private long create_time;
+	private UnmodifiableTimestamp create_time;
 	private Account.Name accounting;
 	private String billing_contact;
 	private Email billing_email;
@@ -71,12 +71,8 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 		return pkey;
 	}
 
-	public long getCreateTime_millis() {
+	public UnmodifiableTimestamp getCreateTime() {
 		return create_time;
-	}
-
-	public Timestamp getCreateTime() {
-		return new Timestamp(create_time);
 	}
 
 	public Account.Name getAccount_name() {
@@ -122,7 +118,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	protected Object getColumnImpl(int i) {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
-			case 1: return getCreateTime();
+			case 1: return create_time;
 			case COLUMN_ACCOUNTING: return accounting;
 			case 3: return billing_contact;
 			case 4: return billing_email;
@@ -141,7 +137,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	public void init(ResultSet result) throws SQLException {
 		try {
 			pkey = result.getInt("id");
-			create_time = result.getTimestamp("create_time").getTime();
+			create_time = UnmodifiableTimestamp.valueOf(result.getTimestamp("create_time"));
 			accounting = Account.Name.valueOf(result.getString("accounting"));
 			billing_contact = result.getString("billing_contact");
 			billing_email = Email.valueOf(result.getString("billing_email"));
@@ -159,7 +155,7 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
-			create_time = in.readLong();
+			create_time = in.readUnmodifiableTimestamp();
 			accounting = Account.Name.valueOf(in.readUTF()).intern();
 			billing_contact = in.readUTF();
 			billing_email = Email.valueOf(in.readUTF());
@@ -178,7 +174,11 @@ final public class NoticeLog extends CachedObjectIntegerKey<NoticeLog> {
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
-		out.writeLong(create_time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(create_time.getTime());
+		} else {
+			out.writeTimestamp(create_time);
+		}
 		out.writeUTF(accounting.toString());
 		out.writeUTF(billing_contact);
 		out.writeUTF(billing_email.toString());

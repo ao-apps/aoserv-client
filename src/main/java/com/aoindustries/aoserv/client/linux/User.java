@@ -39,6 +39,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
@@ -52,7 +53,6 @@ import java.io.ObjectInputValidation;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -503,7 +503,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	private Gecos home_phone;
 	private String type;
 	private PosixPath shell;
-	private long created;
+	private UnmodifiableTimestamp created;
 	int disable_log;
 
 	public void addFTPGuestUser() throws IOException, SQLException {
@@ -578,18 +578,14 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			case 4: return home_phone;
 			case 5: return type;
 			case 6: return shell;
-			case 7: return getCreated();
+			case 7: return created;
 			case 8: return disable_log==-1?null:disable_log;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	@Override
@@ -717,7 +713,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			home_phone = Gecos.valueOf(result.getString(5));
 			type = result.getString(6);
 			shell = PosixPath.valueOf(result.getString(7));
-			created = result.getTimestamp(8).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(8));
 			disable_log=result.getInt(9);
 			if(result.wasNull()) disable_log=-1;
 		} catch(ValidationException e) {
@@ -735,7 +731,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			home_phone = Gecos.valueOf(in.readNullUTF());
 			type = in.readUTF().intern();
 			shell = PosixPath.valueOf(in.readUTF()).intern();
-			created = in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			disable_log = in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -816,7 +812,11 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		out.writeNullUTF(Objects.toString(home_phone, null));
 		out.writeUTF(type);
 		out.writeUTF(shell.toString());
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeCompressedInt(disable_log);
 	}
 

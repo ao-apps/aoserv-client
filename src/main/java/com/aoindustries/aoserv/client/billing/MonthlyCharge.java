@@ -32,6 +32,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -39,7 +40,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * Miscellaneous monthly charges may be applied to an
@@ -68,7 +68,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	private String description;
 	private int quantity;
 	private Money rate;
-	private long created;
+	private UnmodifiableTimestamp created;
 	private User.Name created_by;
 	private boolean active;
 
@@ -93,7 +93,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		this.description=description;
 		this.quantity = quantity;
 		this.rate = rate;
-		this.created = System.currentTimeMillis();
+		this.created = new UnmodifiableTimestamp(System.currentTimeMillis());
 		this.created_by = createdByObject.getUsername_userId();
 		this.active=true;
 	}
@@ -108,19 +108,15 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			case 4: return description;
 			case 5: return quantity;
 			case 6: return rate;
-			case 7: return getCreated();
+			case 7: return created;
 			case 8: return created_by;
 			case 9: return active;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public Administrator getCreatedBy() throws SQLException, IOException {
@@ -185,7 +181,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			description = result.getString("description");
 			quantity = SQLUtility.parseDecimal3(result.getString("quantity"));
 			rate = MoneyUtil.getMoney(result, "rate.currency", "rate.value");
-			created = result.getTimestamp("created").getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp("created"));
 			created_by = User.Name.valueOf(result.getString("created_by"));
 			active = result.getBoolean("active");
 		} catch(ValidationException e) {
@@ -207,7 +203,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			description = in.readNullUTF();
 			quantity = in.readCompressedInt();
 			rate = MoneyUtil.readMoney(in);
-			created = in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			created_by = User.Name.valueOf(in.readUTF()).intern();
 			active = in.readBoolean();
 		} catch(ValidationException e) {
@@ -237,7 +233,11 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		} else {
 			MoneyUtil.writeNullMoney(rate, out);
 		}
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeUTF(created_by.toString());
 		out.writeBoolean(active);
 	}

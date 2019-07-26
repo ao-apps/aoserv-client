@@ -29,12 +29,12 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -64,10 +64,10 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 	private short networkPrefix;
 	private short maxNetworkReputation;
 	private int hostDecayInterval;
-	private long lastHostDecay;
+	private UnmodifiableTimestamp lastHostDecay;
 	private int networkDecayInterval;
-	private long lastNetworkDecay;
-	private long lastReputationAdded;
+	private UnmodifiableTimestamp lastNetworkDecay;
+	private UnmodifiableTimestamp lastReputationAdded;
 
 	@Override
 	public Table.TableID getTableID() {
@@ -88,10 +88,10 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 			networkPrefix = result.getShort(pos++);
 			maxNetworkReputation = result.getShort(pos++);
 			hostDecayInterval = result.getInt(pos++);
-			lastHostDecay = result.getTimestamp(pos++).getTime();
+			lastHostDecay = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			networkDecayInterval = result.getInt(pos++);
-			lastNetworkDecay = result.getTimestamp(pos++).getTime();
-			lastReputationAdded = result.getTimestamp(pos++).getTime();
+			lastNetworkDecay = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
+			lastReputationAdded = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -109,10 +109,24 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 		out.writeShort(networkPrefix);
 		out.writeShort(maxNetworkReputation);
 		out.writeCompressedInt(hostDecayInterval);
-		out.writeLong(lastHostDecay);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(lastHostDecay.getTime());
+		} else {
+			out.writeTimestamp(lastHostDecay);
+		}
 		out.writeCompressedInt(networkDecayInterval);
-		out.writeLong(lastNetworkDecay);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_67)>=0) out.writeLong(lastReputationAdded);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(lastNetworkDecay.getTime());
+		} else {
+			out.writeTimestamp(lastNetworkDecay);
+		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_67) >= 0) {
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+				out.writeLong(lastReputationAdded.getTime());
+			} else {
+				out.writeTimestamp(lastReputationAdded);
+			}
+		}
 	}
 
 	@Override
@@ -128,10 +142,10 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 			networkPrefix = in.readShort();
 			maxNetworkReputation = in.readShort();
 			hostDecayInterval = in.readCompressedInt();
-			lastHostDecay = in.readLong();
+			lastHostDecay = in.readUnmodifiableTimestamp();
 			networkDecayInterval = in.readCompressedInt();
-			lastNetworkDecay = in.readLong();
-			lastReputationAdded = in.readLong();
+			lastNetworkDecay = in.readUnmodifiableTimestamp();
+			lastReputationAdded = in.readUnmodifiableTimestamp();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -150,10 +164,10 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 			case 7: return networkPrefix;
 			case 8: return maxNetworkReputation;
 			case 9: return hostDecayInterval;
-			case 10: return getLastHostDecay();
+			case 10: return lastHostDecay;
 			case 11: return networkDecayInterval;
-			case 12: return getLastNetworkDecay();
-			case 13: return getLastReputationAdded();
+			case 12: return lastNetworkDecay;
+			case 13: return lastReputationAdded;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -225,15 +239,11 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 		return hostDecayInterval;
 	}
 
-	public long getLastHostDecay_millis() {
-		return lastHostDecay;
-	}
-
 	/**
 	 * Gets the last time the hosts were decayed.
 	 */
-	public Timestamp getLastHostDecay() {
-		return new Timestamp(lastHostDecay);
+	public UnmodifiableTimestamp getLastHostDecay() {
+		return lastHostDecay;
 	}
 
 	/**
@@ -243,26 +253,18 @@ final public class Set extends CachedObjectIntegerKey<Set> {
 		return networkDecayInterval;
 	}
 
-	public long getLastNetworkDecay_millis() {
-		return lastNetworkDecay;
-	}
-
 	/**
 	 * Gets the last time the networks were decayed.
 	 */
-	public Timestamp getLastNetworkDecay() {
-		return new Timestamp(lastNetworkDecay);
-	}
-
-	public long getLastReputationAdded_millis() {
-		return lastReputationAdded;
+	public UnmodifiableTimestamp getLastNetworkDecay() {
+		return lastNetworkDecay;
 	}
 
 	/**
 	 * Gets the last time reputation was added.
 	 */
-	public Timestamp getLastReputationAdded() {
-		return new Timestamp(lastReputationAdded);
+	public UnmodifiableTimestamp getLastReputationAdded() {
+		return lastReputationAdded;
 	}
 
 	public List<Host> getHosts() throws IOException, SQLException {

@@ -30,11 +30,11 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -53,7 +53,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	static final String COLUMN_time_name = "time";
 
 	private DomainName registrableDomain;
-	private long time;
+	private UnmodifiableTimestamp time;
 	private Integer exitStatus;
 
 	/**
@@ -72,7 +72,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		switch(i) {
 			case COLUMN_id: return pkey;
 			case 1: return registrableDomain;
-			case 2: return getTime();
+			case 2: return time;
 			case 3: return exitStatus;
 			case COLUMN_output: return getOutput();
 			case COLUMN_error: return getError();
@@ -91,12 +91,8 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		return registrableDomain;
 	}
 
-	public long getTime_millis() {
+	public UnmodifiableTimestamp getTime() {
 		return time;
-	}
-
-	public Timestamp getTime() {
-		return new Timestamp(time);
 	}
 
 	public Integer getExitStatus() {
@@ -180,7 +176,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 			int pos = 1;
 			pkey = result.getInt(pos++);
 			registrableDomain = DomainName.valueOf(result.getString(pos++));
-			time = result.getTimestamp(pos++).getTime();
+			time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			exitStatus = result.getInt(pos++);
 			if(result.wasNull()) exitStatus = null;
 
@@ -200,7 +196,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		try {
 			pkey = in.readCompressedInt();
 			registrableDomain = DomainName.valueOf(in.readUTF()).intern();
-			time = in.readLong();
+			time = in.readUnmodifiableTimestamp();
 			exitStatus = in.readNullInteger();
 			// Note: these are loaded in a separate call to the master as-needed to conserve heap space:
 			// output = in.readUTF();
@@ -216,7 +212,11 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_19) >= 0) {
 			out.writeUTF(registrableDomain.toString());
 		}
-		out.writeLong(time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(time.getTime());
+		} else {
+			out.writeTimestamp(time);
+		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_19) < 0) {
 			out.writeUTF(accounting.toString());
 			// Was "zone" type with trailing period

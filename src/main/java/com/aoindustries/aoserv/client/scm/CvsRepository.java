@@ -34,11 +34,11 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -114,7 +114,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	int linux_server_account;
 	int linux_server_group;
 	private long mode;
-	private long created;
+	private UnmodifiableTimestamp created;
 	int disable_log;
 
 	@Override
@@ -147,7 +147,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 			case COLUMN_LINUX_SERVER_ACCOUNT: return linux_server_account;
 			case 3: return linux_server_group;
 			case 4: return mode;
-			case 5: return getCreated();
+			case 5: return created;
 			case 6: return disable_log==-1?null:disable_log;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
@@ -194,12 +194,8 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		return mode;
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	@Override
@@ -215,7 +211,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 			linux_server_account=result.getInt(3);
 			linux_server_group=result.getInt(4);
 			mode=result.getLong(5);
-			created=result.getTimestamp(6).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(6));
 			disable_log=result.getInt(7);
 			if(result.wasNull()) disable_log=-1;
 		} catch(ValidationException e) {
@@ -231,7 +227,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 			linux_server_account=in.readCompressedInt();
 			linux_server_group=in.readCompressedInt();
 			mode=in.readLong();
-			created=in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			disable_log=in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -259,7 +255,11 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 		out.writeCompressedInt(linux_server_account);
 		out.writeCompressedInt(linux_server_group);
 		out.writeLong(mode);
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeShort(0);
 			out.writeShort(7);

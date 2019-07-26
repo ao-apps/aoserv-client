@@ -27,10 +27,10 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * Multiple versions of Majordomo are supported by the system.
@@ -52,21 +52,17 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 	 */
 	public static final String DEFAULT_VERSION="1.94.5";
 
-	private long created;
+	private UnmodifiableTimestamp created;
 
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_VERSION) return pkey;
-		if(i==1) return getCreated();
+		if(i==1) return created;
 		throw new IllegalArgumentException("Invalid index: " + i);
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	@Override
@@ -81,18 +77,22 @@ final public class MajordomoVersion extends GlobalObjectStringKey<MajordomoVersi
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getString(1);
-		created=result.getTimestamp(2).getTime();
+		created = UnmodifiableTimestamp.valueOf(result.getTimestamp(2));
 	}
 
 	@Override
 	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readUTF().intern();
-		created=in.readLong();
+		created = in.readUnmodifiableTimestamp();
 	}
 
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 	}
 }
