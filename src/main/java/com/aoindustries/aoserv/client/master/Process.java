@@ -38,6 +38,7 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
@@ -97,16 +98,16 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		InetAddress host,
 		String protocol,
 		boolean is_secure,
-		UnmodifiableTimestamp connect_time
+		Timestamp connect_time
 	) {
 		this.process_id=process_id;
 		this.host=host;
 		this.protocol=protocol;
 		this.is_secure=is_secure;
-		this.connect_time=connect_time;
+		this.connect_time = UnmodifiableTimestamp.valueOf(connect_time);
 		this.priority=Thread.NORM_PRIORITY;
 		this.state=LOGIN;
-		this.state_start_time = connect_time;
+		this.state_start_time = this.connect_time;
 	}
 
 	synchronized public void commandCompleted() {
