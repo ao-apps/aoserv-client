@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-24T06:22:00-0500"
+		dateModified="2019-07-24T13:54:41-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -124,6 +124,12 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							support compatible with the this new mechanism, with <code>'</code> single quotes
 							used for other quoting.
 						</p>
+					</li>
+					<li>
+						Renamed AOSH command <code>add_transaction</code> to <code>billing.Transaction.add</code>,
+						and it now accepts a time with a value of <code>now</code>, <code>today</code>,
+						<var>YYYY-MM-DD</var> (date in GMT) or <var>YYYY-MM-DD HH:MM[:SS[.mmm]]</var> (date-time in
+						local time zone).
 					</li>
 					<!-- TODO:
 					<li>

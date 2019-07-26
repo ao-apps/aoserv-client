@@ -67,6 +67,8 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 
 	/**
 	 * The time zone used for all <code>{@link #DATE}</code> to/from String conversions.
+	 * Is "GMT" and is not expected to change, but all date-based parsing, formatting, conversions,
+	 * comparisons, or filters should use this constant as the time zone.
 	 */
 	public static final TimeZone DATE_TIME_ZONE = TimeZone.getTimeZone("GMT");
 
@@ -453,7 +455,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 							case OCTAL_LONG:
 								return value==null?null:Long.valueOf(getDaysFromMillis(tvalue));
 							case SHORT: return value==null?null:Short.valueOf((short)(getDaysFromMillis(tvalue)));
-							case TIME: return value==null?null:new java.sql.Timestamp(roundToDay(tvalue));
+							case TIME: return value==null?null:new java.sql.Timestamp(roundToDate(tvalue));
 							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(getDaysFromMillis(tvalue));
 						}
 					}
@@ -636,7 +638,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					{
 						long lvalue=value==null?0:((java.sql.Timestamp)value).getTime();
 						switch(castToType.getId()) {
-							case DATE: return value==null?null:new java.sql.Date(roundToDay(lvalue));
+							case DATE: return value==null?null:new java.sql.Date(roundToDate(lvalue));
 							case LONG:
 							case OCTAL_LONG:
 								return value==null?null:Long.valueOf(lvalue);
@@ -779,12 +781,12 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	/**
 	 * The number of milliseconds in a day.
 	 */
-	private static final long MILLIS_PER_DAY = 24*60*60*1000;
+	public static final long MILLIS_PER_DAY = 24*60*60*1000;
 
 	/**
 	 * Gets the number of days from epoch in GMT.
 	 */
-	private static long getDaysFromMillis(long time) {
+	public static long getDaysFromMillis(long time) {
 		long days = time / MILLIS_PER_DAY;
 		long remainder = time % MILLIS_PER_DAY;
 		return (remainder < 0) ? (days - 1) : days;
@@ -793,14 +795,14 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	/**
 	 * Gets the number of milliseconds from epoch in GMT.
 	 */
-	private static long getMillisFromDays(long days) {
+	public static long getMillisFromDays(long days) {
 		return days * MILLIS_PER_DAY;
 	}
 
 	/**
 	 * Rounds the time to an exact day in GMT.
 	 */
-	private static long roundToDay(long time) {
+	public static long roundToDate(long time) {
 		return getMillisFromDays(getDaysFromMillis(time));
 	}
 

@@ -604,10 +604,12 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	/**
-	 * @deprecated  Please use {@link TransactionTable#addTransaction(com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Administrator, java.lang.String, java.lang.String, int, com.aoindustries.util.i18n.Money, com.aoindustries.aoserv.client.payment.PaymentType, java.lang.String, com.aoindustries.aoserv.client.payment.Processor, byte)} directly.
+	 * @deprecated  Please use {@link TransactionTable#add(int, java.sql.Timestamp, com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Account, com.aoindustries.aoserv.client.account.Administrator, com.aoindustries.aoserv.client.billing.TransactionType, java.lang.String, int, com.aoindustries.util.i18n.Money, com.aoindustries.aoserv.client.payment.PaymentType, java.lang.String, com.aoindustries.aoserv.client.payment.Processor, byte)
 	 */
 	@Deprecated
 	public int addTransaction(
+		int timeType,
+		Timestamp time,
 		Account sourceAccount,
 		Administrator business_administrator,
 		TransactionType type,
@@ -619,7 +621,9 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		Processor processor,
 		byte payment_confirmed
 	) throws IOException, SQLException {
-		return table.getConnector().getBilling().getTransaction().addTransaction(
+		return table.getConnector().getBilling().getTransaction().add(
+			timeType,
+			time,
 			this,
 			sourceAccount,
 			business_administrator,
