@@ -126,7 +126,7 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		);
 	}
 
-	public static long getDefaultAfter(long time) {
+	public static UnmodifiableTimestamp getDefaultAfter(long time) {
 		GregorianCalendar gcal = new GregorianCalendar(Type.DATE_TIME_ZONE);
 		gcal.setTimeInMillis(time);
 		int year = gcal.get(Calendar.YEAR);
@@ -144,14 +144,14 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 		gcal.set(Calendar.MINUTE, 0);
 		gcal.set(Calendar.SECOND, 0);
 		gcal.set(Calendar.MILLISECOND, 0);
-		return gcal.getTime().getTime();
+		return new UnmodifiableTimestamp(gcal.getTimeInMillis());
 	}
 
 	public TransactionSearchCriteria(Administrator administrator) throws IOException, SQLException {
 		before = null;
 
 		// The beginning of last month starts the default search
-		after = new UnmodifiableTimestamp(getDefaultAfter(System.currentTimeMillis()));
+		after = getDefaultAfter(System.currentTimeMillis());
 
 		transid = ANY;
 		account = administrator == null ? null : administrator.getUsername().getPackage().getAccount_name();
