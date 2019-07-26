@@ -33,11 +33,11 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * When a <code>PrivateFTPServer</code> is attached to a
@@ -56,7 +56,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	private PosixPath logfile;
 	private DomainName hostname;
 	private Email email;
-	private long created;
+	private UnmodifiableTimestamp created;
 	int pub_linux_server_account;
 	private boolean allow_anonymous;
 
@@ -67,19 +67,15 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 			case 1: return logfile;
 			case 2: return hostname;
 			case 3: return email;
-			case 4: return getCreated();
+			case 4: return created;
 			case 5: return pub_linux_server_account;
 			case 6: return allow_anonymous;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public Email getEmail() {
@@ -142,7 +138,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 			logfile = PosixPath.valueOf(result.getString(2));
 			hostname = DomainName.valueOf(result.getString(3));
 			email = Email.valueOf(result.getString(4));
-			created = result.getTimestamp(5).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(5));
 			pub_linux_server_account=result.getInt(6);
 			allow_anonymous=result.getBoolean(7);
 		} catch(ValidationException e) {
@@ -157,7 +153,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 			logfile = PosixPath.valueOf(in.readUTF());
 			hostname=DomainName.valueOf(in.readUTF());
 			email=Email.valueOf(in.readUTF());
-			created=in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			pub_linux_server_account=in.readCompressedInt();
 			allow_anonymous=in.readBoolean();
 		} catch(ValidationException e) {
@@ -179,7 +175,11 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 		out.writeUTF(hostname.toString());
 		out.writeUTF(email.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122)<=0) out.writeCompressedInt(-1);
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeCompressedInt(pub_linux_server_account);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_38)<=0) out.writeCompressedInt(-1);
 		out.writeBoolean(allow_anonymous);

@@ -29,10 +29,10 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * The entire contents of servers are periodically replicated to another server.  In the
@@ -50,8 +50,8 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 
 	private int pkey;
 	private int replication;
-	private long startTime;
-	private long endTime;
+	private UnmodifiableTimestamp startTime;
+	private UnmodifiableTimestamp endTime;
 	private int scanned;
 	private int updated;
 	private long bytes;
@@ -74,8 +74,8 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 		switch(i) {
 			case 0: return pkey;
 			case 1: return replication;
-			case 2: return getStartTime();
-			case 3: return getEndTime();
+			case 2: return startTime;
+			case 3: return endTime;
 			case 4: return scanned;
 			case 5: return updated;
 			case 6: return bytes;
@@ -84,20 +84,12 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 		}
 	}
 
-	public long getStartTime_millis() {
+	public UnmodifiableTimestamp getStartTime() {
 		return startTime;
 	}
 
-	public Timestamp getStartTime() {
-		return new Timestamp(startTime);
-	}
-
-	public long getEndTime_millis() {
+	public UnmodifiableTimestamp getEndTime() {
 		return endTime;
-	}
-
-	public Timestamp getEndTime() {
-		return new Timestamp(endTime);
 	}
 
 	public int getPkey() {
@@ -147,8 +139,8 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		replication=result.getInt(2);
-		startTime=result.getTimestamp(3).getTime();
-		endTime=result.getTimestamp(4).getTime();
+		startTime = UnmodifiableTimestamp.valueOf(result.getTimestamp(3));
+		endTime = UnmodifiableTimestamp.valueOf(result.getTimestamp(4));
 		scanned=result.getInt(5);
 		updated=result.getInt(6);
 		bytes=result.getLong(7);
@@ -163,8 +155,8 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		replication=in.readCompressedInt();
-		startTime=in.readLong();
-		endTime=in.readLong();
+		startTime = in.readUnmodifiableTimestamp();
+		endTime = in.readUnmodifiableTimestamp();
 		scanned=in.readCompressedInt();
 		updated=in.readCompressedInt();
 		bytes=in.readLong();
@@ -181,8 +173,13 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(replication);
-		out.writeLong(startTime);
-		out.writeLong(endTime);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(startTime.getTime());
+			out.writeLong(endTime.getTime());
+		} else {
+			out.writeTimestamp(startTime);
+			out.writeTimestamp(endTime);
+		}
 		out.writeCompressedInt(scanned);
 		out.writeCompressedInt(updated);
 		out.writeLong(bytes);

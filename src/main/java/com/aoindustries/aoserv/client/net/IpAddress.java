@@ -32,12 +32,12 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -153,7 +153,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 	private boolean isAlias;
 	private DomainName hostname;
 	private int package_id;
-	private long created;
+	private UnmodifiableTimestamp created;
 	private boolean isAvailable;
 	private boolean isOverflow;
 	private boolean isDhcp;
@@ -174,7 +174,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 			case 3: return isAlias;
 			case 4: return hostname;
 			case COLUMN_PACKAGE: return package_id;
-			case 6: return getCreated();
+			case 6: return created;
 			case 7: return isAvailable;
 			case 8: return isOverflow;
 			case 9: return isDhcp;
@@ -220,18 +220,14 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		return table.getConnector().getBilling().getPackage().get(package_id);
 	}
 
-	public long getCreated_millis() {
-		return created;
-	}
-
 	/**
 	 * Determines when this <code>IPAddress</code> was created.  The created time
 	 * is reset when the address is allocated to a different <code>Package</code>,
 	 * which allows the automated accounting to start the billing on the correct
 	 * day of the month.
 	 */
-	public Timestamp getCreated() {
-		return new Timestamp(created);
+	public UnmodifiableTimestamp getCreated() {
+		return created;
 	}
 
 
@@ -278,7 +274,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 			isAlias = result.getBoolean(pos++);
 			hostname = DomainName.valueOf(result.getString(pos++));
 			package_id = result.getInt(pos++);
-			created = result.getTimestamp(pos++).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			isAvailable = result.getBoolean(pos++);
 			isOverflow = result.getBoolean(pos++);
 			isDhcp = result.getBoolean(pos++);
@@ -303,7 +299,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 			isAlias = in.readBoolean();
 			hostname = DomainName.valueOf(in.readNullUTF());
 			package_id = in.readCompressedInt();
-			created = in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			isAvailable = in.readBoolean();
 			isOverflow = in.readBoolean();
 			isDhcp = in.readBoolean();
@@ -332,7 +328,11 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 			out.writeCompressedInt(package_id);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_122) <= 0) out.writeCompressedInt(0);
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeBoolean(isAvailable);
 		out.writeBoolean(isOverflow);
 		out.writeBoolean(isDhcp);

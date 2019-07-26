@@ -43,6 +43,7 @@ import com.aoindustries.aoserv.client.ticket.Ticket;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -50,7 +51,6 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -78,7 +78,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	private long birthday;
 	private boolean isPreferred;
 	private boolean isPrivate;
-	private long created;
+	private UnmodifiableTimestamp created;
 	private String
 		work_phone,
 		home_phone,
@@ -210,7 +210,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 			case 4: return getBirthday();
 			case 5: return isPreferred;
 			case 6: return isPrivate;
-			case 7: return getCreated();
+			case 7: return created;
 			case 8: return work_phone;
 			case 9: return home_phone;
 			case 10: return cell_phone;
@@ -236,12 +236,8 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 		return countryCode;
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public List<Ticket> getCreatedTickets() throws IOException, SQLException {
@@ -399,7 +395,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 			birthday = D==null?-1:D.getTime();
 			isPreferred = result.getBoolean(6);
 			isPrivate = result.getBoolean(7);
-			created = result.getTimestamp(8).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(8));
 			work_phone = result.getString(9);
 			home_phone = result.getString(10);
 			cell_phone = result.getString(11);
@@ -430,7 +426,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 			birthday=in.readLong();
 			isPreferred=in.readBoolean();
 			isPrivate=in.readBoolean();
-			created=in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			work_phone=in.readUTF();
 			home_phone=in.readNullUTF();
 			cell_phone=in.readNullUTF();
@@ -583,7 +579,11 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 		out.writeLong(birthday);
 		out.writeBoolean(isPreferred);
 		out.writeBoolean(isPrivate);
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeUTF(work_phone);
 		out.writeNullUTF(home_phone);
 		out.writeNullUTF(cell_phone);

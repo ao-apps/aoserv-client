@@ -234,13 +234,13 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		}
 	}
 
-	public Monies getAccountBalance(Account account, long before) throws IOException, SQLException {
+	public Monies getAccountBalance(Account account, Timestamp before) throws IOException, SQLException {
 		if(account == null) return Monies.of();
 		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
 		for(Transaction transaction : getTransactions(account)) {
 			if(
 				transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
-				&& transaction.getTime_millis() < before
+				&& transaction.getTime().compareTo(before) < 0
 			) {
 				addBalance(balances, transaction.getAmount());
 			}
@@ -269,13 +269,13 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		}
 	}
 
-	public Monies getConfirmedAccountBalance(Account account, long before) throws IOException, SQLException {
+	public Monies getConfirmedAccountBalance(Account account, Timestamp before) throws IOException, SQLException {
 		if(account == null) return Monies.of();
 		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
 		for(Transaction transaction : getTransactions(account)) {
 			if(
 				transaction.getPaymentConfirmed() == Transaction.CONFIRMED
-				&& transaction.getTime_millis() < before
+				&& transaction.getTime().compareTo(before) < 0
 			) {
 				addBalance(balances, transaction.getAmount());
 			}
@@ -340,11 +340,11 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		for(Transaction tr : rows) {
 			if(
 				(
-					criteria.getAfter() == TransactionSearchCriteria.ANY
-					|| criteria.getAfter() <= tr.getTime_millis()
+					criteria.getAfter() == null
+					|| criteria.getAfter().compareTo(tr.getTime()) <= 0
 				) && (
-					criteria.getBefore() == TransactionSearchCriteria.ANY
-					|| criteria.getBefore() > tr.getTime_millis()
+					criteria.getBefore() == null
+					|| criteria.getBefore().compareTo(tr.getTime()) > 0
 				) && (
 					criteria.getPaymentConfirmed() == TransactionSearchCriteria.ANY
 					|| criteria.getPaymentConfirmed() == tr.getPaymentConfirmed()

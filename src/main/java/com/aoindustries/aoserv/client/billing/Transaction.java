@@ -36,6 +36,7 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.i18n.Money;
@@ -45,7 +46,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * Each {@link Account} has an account of all the
@@ -73,7 +73,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	 */
 	public static final int UNASSIGNED = -1;
 
-	private long time;
+	private UnmodifiableTimestamp time;
 	private Account.Name accounting;
 	private Account.Name source_accounting;
 	private User.Name username;
@@ -291,7 +291,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {
-			case 0: return getTime();
+			case 0: return time;
 			case COLUMN_TRANSID: return pkey;
 			case COLUMN_ACCOUNTING: return accounting;
 			case COLUMN_SOURCE_ACCOUNTING: return source_accounting;
@@ -378,12 +378,8 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 		return Table.TableID.TRANSACTIONS;
 	}
 
-	public long getTime_millis() {
+	public UnmodifiableTimestamp getTime() {
 		return time;
-	}
-
-	public Timestamp getTime() {
-		return new Timestamp(time);
 	}
 
 	public int getTransid() {
@@ -403,7 +399,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	@Override
 	public void init(ResultSet result) throws SQLException {
 		try {
-			time = result.getTimestamp("time").getTime();
+			time = UnmodifiableTimestamp.valueOf(result.getTimestamp("time"));
 			pkey = result.getInt("transid");
 			accounting = Account.Name.valueOf(result.getString("accounting"));
 			source_accounting = Account.Name.valueOf(result.getString("source_accounting"));
@@ -430,7 +426,7 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 	@Override
 	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			time = in.readLong();
+			time = in.readUnmodifiableTimestamp();
 			pkey = in.readCompressedInt();
 			accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
 			source_accounting = Account.Name.valueOf(in.readCompressedUTF()).intern();
@@ -474,7 +470,11 @@ final public class Transaction extends CachedObjectIntegerKey<Transaction> {
 
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeLong(time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(time.getTime());
+		} else {
+			out.writeTimestamp(time);
+		}
 		out.writeCompressedInt(pkey);
 		out.writeCompressedUTF(accounting.toString(), 0);
 		out.writeCompressedUTF(source_accounting.toString(), 1);

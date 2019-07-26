@@ -36,6 +36,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
@@ -44,7 +45,6 @@ import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -76,11 +76,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 	private String details;
 	private boolean rawEmailLoaded;
 	private String raw_email;
-	private long open_date;
+	private UnmodifiableTimestamp open_date;
 	private String client_priority;
 	private String admin_priority;
 	private String status;
-	private long status_timeout;
+	private UnmodifiableTimestamp status_timeout;
 	private Set<Email> contact_emails;
 	private String contact_phone_numbers;
 	private boolean internalNotesLoaded;
@@ -121,11 +121,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			case 9: return summary;
 			case 10: return getDetails();
 			case 11: return getRawEmail();
-			case COLUMN_OPEN_DATE: return getOpenDate();
+			case COLUMN_OPEN_DATE: return open_date;
 			case 13: return client_priority;
 			case 14: return admin_priority;
 			case 15: return status;
-			case 16: return getStatusTimeout();
+			case 16: return status_timeout;
 			// TODO: Support array types
 			case 17: return StringUtility.join(contact_emails, ", ");
 			case 18: return contact_phone_numbers;
@@ -153,12 +153,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			ticket_type = result.getString(pos++);
 			from_address = Email.valueOf(result.getString(pos++));
 			summary = result.getString(pos++);
-			open_date = result.getTimestamp(pos++).getTime();
+			open_date = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			client_priority = result.getString(pos++);
 			admin_priority = result.getString(pos++);
 			status = result.getString(pos++);
-			Timestamp temp = result.getTimestamp(pos++);
-			status_timeout = temp == null ? -1 : temp.getTime();
+			status_timeout = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			// TODO: Array in PostgreSQL
 			String str = result.getString(pos++);
 			try {
@@ -190,11 +189,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			ticket_type = in.readUTF().intern();
 			from_address = Email.valueOf(in.readNullUTF());
 			summary = in.readUTF();
-			open_date = in.readLong();
+			open_date = in.readUnmodifiableTimestamp();
 			client_priority = in.readUTF().intern();
 			admin_priority = InternUtils.intern(in.readNullUTF());
 			status = in.readUTF().intern();
-			status_timeout = in.readLong();
+			status_timeout = in.readNullUnmodifiableTimestamp();
 			{
 				int size = in.readCompressedInt();
 				Set<Email> emails = new LinkedHashSet<>(size*4/3+1);
@@ -231,7 +230,11 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeUTF(summary);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_14)<=0) out.writeUTF("");
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_15)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeCompressedInt(0); // details
-		out.writeLong(open_date);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(open_date.getTime());
+		} else {
+			out.writeTimestamp(open_date);
+		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeLong(-1);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null);
@@ -243,7 +246,13 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // technology
 		out.writeUTF(status);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeLong(status_timeout);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44) >= 0) {
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+				out.writeLong(status_timeout == null ? -1 : status_timeout.getTime());
+			} else {
+				out.writeNullTimestamp(status_timeout);
+			}
+		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // assigned_to
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0) {
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_22) < 0) {
@@ -339,12 +348,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return raw_email;
 	}
 
-	public long getOpenDate_millis() {
+	public UnmodifiableTimestamp getOpenDate() {
 		return open_date;
-	}
-
-	public Timestamp getOpenDate() {
-		return new Timestamp(open_date);
 	}
 
 	public Priority getClientPriority() throws IOException, SQLException {
@@ -366,12 +371,8 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		return statusObject;
 	}
 
-	public Long getStatusTimeout_millis() {
-		return status_timeout == -1 ? null : status_timeout;
-	}
-
-	public Timestamp getStatusTimeout() {
-		return status_timeout == -1 ? null : new Timestamp(status_timeout);
+	public UnmodifiableTimestamp getStatusTimeout() {
+		return status_timeout;
 	}
 
 	public Set<Email> getContactEmails() {

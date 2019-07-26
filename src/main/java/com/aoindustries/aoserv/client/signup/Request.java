@@ -35,13 +35,13 @@ import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,7 +60,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	static final String COLUMN_TIME_name = "time";
 
 	private Account.Name brand;
-	private long time;
+	private UnmodifiableTimestamp time;
 	private InetAddress ip_address;
 	private int package_definition;
 	private String business_name;
@@ -94,7 +94,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	private int encryption_from;
 	private int encryption_recipient;
 	private User.Name completed_by;
-	private long completed_time;
+	private UnmodifiableTimestamp completed_time;
 
 	// These are not pulled from the database, but are decrypted from encrypted_data by GPG
 	transient private String decryptPassphrase;
@@ -113,7 +113,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_BRAND: return brand;
-			case 2: return getTime();
+			case 2: return time;
 			case 3: return ip_address;
 			case 4: return package_definition;
 			case 5: return business_name;
@@ -147,7 +147,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 			case 33: return encryption_from;
 			case 34: return encryption_recipient;
 			case 35: return completed_by;
-			case 36: return getCompletedTime();
+			case 36: return completed_time;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -163,7 +163,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 			int pos = 1;
 			pkey = result.getInt(pos++);
 			brand = Account.Name.valueOf(result.getString(pos++));
-			time = result.getTimestamp(pos++).getTime();
+			time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			ip_address=InetAddress.valueOf(result.getString(pos++));
 			package_definition=result.getInt(pos++);
 			business_name=result.getString(pos++);
@@ -197,8 +197,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 			encryption_from=result.getInt(pos++);
 			encryption_recipient=result.getInt(pos++);
 			completed_by = User.Name.valueOf(result.getString(pos++));
-			Timestamp T = result.getTimestamp(pos++);
-			completed_time = T==null ? -1 : T.getTime();
+			completed_time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 		} catch(ValidationException e) {
 			throw new SQLException(e);
 		}
@@ -209,7 +208,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		try {
 			pkey=in.readCompressedInt();
 			brand=Account.Name.valueOf(in.readUTF()).intern();
-			time=in.readLong();
+			time = in.readUnmodifiableTimestamp();
 			ip_address=InetAddress.valueOf(in.readUTF());
 			package_definition=in.readCompressedInt();
 			business_name=in.readUTF();
@@ -243,7 +242,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 			encryption_from=in.readCompressedInt();
 			encryption_recipient=in.readCompressedInt();
 			completed_by = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
-			completed_time=in.readLong();
+			completed_time = in.readNullUnmodifiableTimestamp();
 		} catch(ValidationException e) {
 			throw new IOException(e);
 		}
@@ -253,7 +252,11 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(brand.toString());
-		out.writeLong(time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(time.getTime());
+		} else {
+			out.writeTimestamp(time);
+		}
 		out.writeUTF(ip_address.toString());
 		out.writeCompressedInt(package_definition);
 		out.writeUTF(business_name);
@@ -287,7 +290,11 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_31)>=0) out.writeCompressedInt(encryption_from);
 		out.writeCompressedInt(encryption_recipient); // Used to be called encryption_key
 		out.writeNullUTF(Objects.toString(completed_by, null));
-		out.writeLong(completed_time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(completed_time == null ? -1 : completed_time.getTime());
+		} else {
+			out.writeNullTimestamp(completed_time);
+		}
 	}
 
 	public Brand getBrand() throws SQLException, IOException {
@@ -296,12 +303,8 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return br;
 	}
 
-	public long getTime_millis() {
+	public UnmodifiableTimestamp getTime() {
 		return time;
-	}
-
-	public Timestamp getTime() {
-		return new Timestamp(time);
 	}
 
 	public InetAddress getIpAddress() {
@@ -440,12 +443,8 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 		return table.getConnector().getAccount().getAdministrator().get(completed_by);
 	}
 
-	public Long getCompletedTime_millis() {
-		return completed_time == -1 ? null : completed_time;
-	}
-
-	public Timestamp getCompletedTime() {
-		return completed_time == -1 ? null : new Timestamp(completed_time);
+	public UnmodifiableTimestamp getCompletedTime() {
+		return completed_time;
 	}
 
 	synchronized public String getBaPassword(String passphrase) throws IOException, SQLException {

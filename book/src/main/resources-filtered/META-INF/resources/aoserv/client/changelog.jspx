@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-24T13:54:41-0500"
+		dateModified="2019-07-26T08:18:20-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -130,6 +130,14 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						and it now accepts a time with a value of <code>now</code>, <code>today</code>,
 						<var>YYYY-MM-DD</var> (date in GMT) or <var>YYYY-MM-DD HH:MM[:SS[.mmm]]</var> (date-time in
 						local time zone).
+					</li>
+					<li>
+						Changed wire protocol of <code>Timestamp</code> to send the full nanosecond precision.
+						Communication with older clients will still be millisecond precision.
+					</li>
+					<li>
+						Returning <code>UnmodifiableTimestamp</code> instead of <code>UnmodifiableTimestamp</code>,
+						and removed <code>*_millis()</code> variants of time accessors.
 					</li>
 					<!-- TODO:
 					<li>

@@ -33,12 +33,12 @@ import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accesso
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
@@ -64,7 +64,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 
 	private int ticket;
 	private User.Name administrator;
-	private long time;
+	private UnmodifiableTimestamp time;
 	private String action_type;
 	private Account.Name old_accounting;
 	private Account.Name new_accounting;
@@ -95,7 +95,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 			case COLUMN_PKEY: return pkey;
 			case COLUMN_TICKET: return ticket;
 			case COLUMN_ADMINISTRATOR: return administrator;
-			case COLUMN_TIME: return getTime();
+			case COLUMN_TIME: return time;
 			case 4: return action_type;
 			case 5: return old_accounting;
 			case 6: return new_accounting;
@@ -130,12 +130,8 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		return table.getConnector().getAccount().getAdministrator().get(administrator);
 	}
 
-	public long getTime_millis() {
+	public UnmodifiableTimestamp getTime() {
 		return time;
-	}
-
-	public Timestamp getTime() {
-		return new Timestamp(time);
 	}
 
 	public ActionType getTicketActionType() throws SQLException, IOException {
@@ -358,7 +354,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 			pkey = result.getInt(pos++);
 			ticket = result.getInt(pos++);
 			administrator = User.Name.valueOf(result.getString(pos++));
-			time = result.getTimestamp(pos++).getTime();
+			time = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			action_type = result.getString(pos++);
 			old_accounting = Account.Name.valueOf(result.getString(pos++));
 			new_accounting = Account.Name.valueOf(result.getString(pos++));
@@ -391,7 +387,7 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 			pkey = in.readCompressedInt();
 			ticket = in.readCompressedInt();
 			administrator = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
-			time = in.readLong();
+			time = in.readUnmodifiableTimestamp();
 			action_type = in.readUTF().intern();
 			old_accounting = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
 			new_accounting = InternUtils.intern(Account.Name.valueOf(in.readNullUTF()));
@@ -427,7 +423,11 @@ final public class Action extends CachedObjectIntegerKey<Action> {
 		out.writeCompressedInt(ticket);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_50)>=0) out.writeNullUTF(Objects.toString(administrator, null));
 		else out.writeUTF(administrator==null ? "aoadmin" : administrator.toString());
-		out.writeLong(time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(time.getTime());
+		} else {
+			out.writeTimestamp(time);
+		}
 		out.writeUTF(action_type);
 		out.writeNullUTF(Objects.toString(old_accounting, null));
 		out.writeNullUTF(Objects.toString(new_accounting, null));

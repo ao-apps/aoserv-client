@@ -42,6 +42,7 @@ import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.sql.SQLUtility;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.i18n.Money;
@@ -52,6 +53,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -92,6 +94,8 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	//public static final int COUNTRY =  4; // java.lang.String
 
 	/**
+	 * TODO: UnmodifiableDate
+	 *
 	 * @see java.sql.Date
 	 */
 	public static final int DATE =  5;
@@ -188,7 +192,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	public static final int STRING = 25;
 
 	/**
-	 * @see java.sql.Timestamp
+	 * @see UnmodifiableTimestamp
 	 */
 	public static final int TIME = 26;
 
@@ -455,7 +459,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 							case OCTAL_LONG:
 								return value==null?null:Long.valueOf(getDaysFromMillis(tvalue));
 							case SHORT: return value==null?null:Short.valueOf((short)(getDaysFromMillis(tvalue)));
-							case TIME: return value==null?null:new java.sql.Timestamp(roundToDate(tvalue));
+							case TIME: return value==null?null:new UnmodifiableTimestamp(roundToDate(tvalue));
 							case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf(getDaysFromMillis(tvalue));
 						}
 					}
@@ -600,7 +604,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						case LONG: return value;
 						case OCTAL_LONG: return value;
 						case SHORT: return value==null?null:Short.valueOf(((Long)value).shortValue());
-						case TIME: return value==null?null:new java.sql.Timestamp((Long)value);
+						case TIME: return value==null?null:new UnmodifiableTimestamp((Long)value);
 						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf((Long)value);
 					}
 					break;
@@ -636,7 +640,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					return castToType.parseString((String)value);
 				case TIME:
 					{
-						long lvalue=value==null?0:((java.sql.Timestamp)value).getTime();
+						long lvalue=value==null?0:((Timestamp)value).getTime();
 						switch(castToType.getId()) {
 							case DATE: return value==null?null:new java.sql.Date(roundToDate(lvalue));
 							case LONG:
@@ -894,7 +898,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case SHORT:
 					return ((Short)value1).compareTo((Short)value2);
 				case TIME:
-					return ((java.sql.Timestamp)value1).compareTo((java.sql.Timestamp)value2);
+					return ((Timestamp)value1).compareTo((Timestamp)value2);
 				case BIG_DECIMAL:
 					return ((BigDecimal)value1).compareTo((BigDecimal)value2);
 				case DOMAIN_LABEL:
@@ -1049,7 +1053,33 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case PKEY: return value.toString();
 			case SHORT: return value.toString();
 			case STRING: return (String)value;
-			case TIME: return SQLUtility.formatDateTime((java.sql.Timestamp)value);
+			case TIME: {
+				Timestamp ts = (Timestamp)value;
+				String seconds = SQLUtility.formatDateTime(ts); // TODO: Make a formatDateTimeNanos?
+				int nanos = ts.getNanos();
+				if(nanos == 0) return seconds;
+				String end;
+				int endDigits;
+				if((nanos % 1000000) == 0) {
+					end = Integer.toString(nanos / 1000000);
+					endDigits = 3;
+				} else if((nanos % 1000) == 0) {
+					end = Integer.toString(nanos / 1000);
+					endDigits = 6;
+				} else {
+					end = Integer.toString(nanos);
+					endDigits = 9;
+				}
+				int slen = seconds.length();
+				StringBuilder formatted = new StringBuilder(slen + 1 + endDigits);
+				formatted.append(seconds).append('.');
+				while(formatted.length() + end.length() < slen + 1 + endDigits) {
+					formatted.append('0');
+				}
+				formatted.append(end);
+				assert formatted.length() == slen + 1 + endDigits;
+				return formatted.toString();
+			}
 			case URL: return (String)value;
 			case USERNAME: return value.toString();
 			case ZONE: return (String)value; // TODO: com.aoindustries.net.DomainName (once no longer ends with ".")

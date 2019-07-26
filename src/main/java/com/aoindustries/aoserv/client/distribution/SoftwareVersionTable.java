@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client.distribution;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -50,7 +51,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 
 	public static final int NUM_ORDER_LABELS=4;
 
-	private static long maximumUpdatedTime=-1;
+	private static UnmodifiableTimestamp maximumUpdatedTime = null;
 
 	SoftwareVersionTable(AOServConnector connector) {
 		super(connector, SoftwareVersion.class);
@@ -69,7 +70,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 	public void clearCache() {
 		super.clearCache();
 		synchronized(SoftwareVersionTable.class) {
-			maximumUpdatedTime=-1;
+			maximumUpdatedTime = null;
 		}
 	}
 
@@ -78,18 +79,18 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		return getUniqueRow(SoftwareVersion.COLUMN_PKEY, pkey);
 	}
 
-	public long getMaximumUpdatedTime() throws IOException, SQLException {
+	public UnmodifiableTimestamp getMaximumUpdatedTime() throws IOException, SQLException {
 		synchronized(SoftwareVersionTable.class) {
-			if(maximumUpdatedTime==-1) {
+			if(maximumUpdatedTime == null) {
 				List<SoftwareVersion> versions=getRows();
 				int size=versions.size();
-				long max=-1;
+				UnmodifiableTimestamp max = null;
 				for(int c=0;c<size;c++) {
 					SoftwareVersion version=versions.get(c);
-					long mod=version.updated;
-					if(mod>max) max=mod;
+					UnmodifiableTimestamp mod = version.updated;
+					if(max == null || mod.compareTo(max) > 0) max = mod;
 				}
-				maximumUpdatedTime=max;
+				maximumUpdatedTime = max;
 			}
 			return maximumUpdatedTime;
 		}
@@ -203,7 +204,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 								} else if (orderBy == VERSION) {
 									if(TV.version.compareToIgnoreCase(compVersion.version)<0) addAt=d;
 								} else if (orderBy == UPDATED) {
-									if(TV.updated>compVersion.updated) addAt=d;
+									if(TV.updated.compareTo(compVersion.updated) > 0) addAt=d;
 								} else throw new IllegalArgumentException("Invalid value for orderBy: " + orderBy);
 							}
 							matches.add(addAt==-1?len:addAt, TV);

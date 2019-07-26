@@ -30,11 +30,11 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.web.tomcat.Version;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * Each <code>TechnologyName</code> may have multiple versions installed.
@@ -51,10 +51,10 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 	static final String COLUMN_NAME_name = "name";
 
 	String name, version;
-	long updated;
+	UnmodifiableTimestamp updated;
 	private User.Name owner;
 	private int operating_system_version;
-	private long disable_time;
+	private UnmodifiableTimestamp disable_time;
 	private String disable_reason;
 
 	@Override
@@ -63,10 +63,10 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 			case COLUMN_PKEY: return pkey;
 			case 1: return name;
 			case 2: return version;
-			case 3: return getUpdated();
+			case 3: return updated;
 			case 4: return owner;
 			case 5: return operating_system_version == -1 ? null : operating_system_version;
-			case 6: return getDisableTime();
+			case 6: return disable_time;
 			case 7: return disable_reason;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
@@ -98,15 +98,11 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 	 * Checks if enabled at the given time.
 	 */
 	public boolean isEnabled(long time) {
-		return disable_time == -1 || disable_time > time;
+		return disable_time == null || disable_time.getTime() > time;
 	}
 
-	public Long getDisableTime_millis() {
-		return disable_time == -1 ? null : disable_time;
-	}
-
-	public Timestamp getDisableTime() {
-		return disable_time == -1 ? null : new Timestamp(disable_time);
+	public UnmodifiableTimestamp getDisableTime() {
+		return disable_time;
 	}
 
 	public String getDisableReason() {
@@ -128,12 +124,8 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 		return technologyName;
 	}
 
-	public long getUpdated_millis() {
+	public UnmodifiableTimestamp getUpdated() {
 		return updated;
-	}
-
-	public Timestamp getUpdated() {
-		return new Timestamp(updated);
 	}
 
 	public String getVersion() {
@@ -146,15 +138,14 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 			pkey = result.getInt(1);
 			name = result.getString(2);
 			version = result.getString(3);
-			updated = result.getTimestamp(4).getTime();
+			updated = UnmodifiableTimestamp.valueOf(result.getTimestamp(4));
 			{
 				String s = result.getString(5);
 				owner = AoservProtocol.FILTERED.equals(s) ? null : User.Name.valueOf(s);
 			}
 			operating_system_version = result.getInt(6);
 			if(result.wasNull()) operating_system_version = -1;
-			Timestamp T = result.getTimestamp(7);
-			disable_time = T == null ? -1 : T.getTime();
+			disable_time = UnmodifiableTimestamp.valueOf(result.getTimestamp(7));
 			disable_reason = result.getString(8);
 		} catch(ValidationException e) {
 			throw new SQLException(e);
@@ -167,7 +158,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 			pkey = in.readCompressedInt();
 			name = in.readUTF().intern();
 			version = in.readUTF();
-			updated = in.readLong();
+			updated = in.readUnmodifiableTimestamp();
 			{
 				String s = in.readUTF();
 				if(AoservProtocol.FILTERED.equals(s)) {
@@ -177,7 +168,7 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 				}
 			}
 			operating_system_version = in.readCompressedInt();
-			disable_time = in.readLong();
+			disable_time = in.readNullUnmodifiableTimestamp();
 			disable_reason = in.readNullUTF();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -189,13 +180,21 @@ final public class SoftwareVersion extends GlobalObjectIntegerKey<SoftwareVersio
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name);
 		out.writeUTF(version);
-		out.writeLong(updated);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(updated.getTime());
+		} else {
+			out.writeTimestamp(updated);
+		}
 		out.writeUTF(owner==null ? AoservProtocol.FILTERED : owner.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_108) >= 0) {
 			out.writeCompressedInt(operating_system_version);
 		}
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_78) >= 0) {
-			out.writeLong(disable_time);
+			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+				out.writeLong(disable_time == null ? -1 : disable_time.getTime());
+			} else {
+				out.writeNullTimestamp(disable_time);
+			}
 			out.writeNullUTF(disable_reason);
 		}
 	}

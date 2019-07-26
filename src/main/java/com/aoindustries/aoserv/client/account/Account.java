@@ -66,6 +66,7 @@ import com.aoindustries.io.FastObjectOutput;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.ComparatorUtils;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
@@ -329,9 +330,9 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	public static final int MAXIMUM_BUSINESS_TREE_DEPTH = 7;
 
 	String contractVersion;
-	private long created;
+	private UnmodifiableTimestamp created;
 
-	private long canceled;
+	private UnmodifiableTimestamp canceled;
 
 	private String cancelReason;
 
@@ -686,7 +687,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	public boolean canCancel() throws IOException, SQLException {
-		return canceled == -1 && !isRootAccount();
+		return canceled == null && !isRootAccount();
 	}
 
 	public boolean isRootAccount() throws IOException, SQLException {
@@ -709,7 +710,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	@Override
 	public boolean canEnable() throws SQLException, IOException {
 		// Cannot enable a canceled business
-		if(canceled != -1) return false;
+		if(canceled != null) return false;
 
 		// Can only enable if it is disabled
 		DisableLog dl=getDisableLog();
@@ -743,7 +744,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	 * @deprecated  Please use {@link TransactionTable#getAccountBalance(com.aoindustries.aoserv.client.account.Account, long)} directly
 	 */
 	@Deprecated
-	public Monies getAccountBalance(long before) throws IOException, SQLException {
+	public Monies getAccountBalance(Timestamp before) throws IOException, SQLException {
 		return table.getConnector().getBilling().getTransaction().getAccountBalance(this, before);
 	}
 
@@ -767,7 +768,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	 * @deprecated  Please use {@link #getAccountBalance(long)} and {@link Monies#toString()} instead
 	 */
 	@Deprecated
-	public String getAccountBalanceString(long before) throws IOException, SQLException {
+	public String getAccountBalanceString(Timestamp before) throws IOException, SQLException {
 		return getAccountBalance(before).toString();
 	}
 
@@ -855,12 +856,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return table.getConnector().getAccount().getAccountHost().getAccountHosts(this);
 	}
 
-	public Long getCanceled_millis() {
-		return canceled == -1 ? null : canceled;
-	}
-
-	public Timestamp getCanceled() {
-		return canceled == -1 ? null : new Timestamp(canceled);
+	public UnmodifiableTimestamp getCanceled() {
+		return canceled;
 	}
 
 	public String getCancelReason() {
@@ -876,8 +873,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		switch(i) {
 			case COLUMN_ACCOUNTING: return pkey;
 			case 1: return contractVersion;
-			case 2: return getCreated();
-			case 3: return getCanceled();
+			case 2: return created;
+			case 3: return can_add_backup_server;
 			case 4: return cancelReason;
 			case 5: return parent;
 			case 6: return can_add_backup_server;
@@ -903,7 +900,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	 * @deprecated  Please use {@link TransactionTable#getConfirmedAccountBalance(com.aoindustries.aoserv.client.account.Account, long)} directly
 	 */
 	@Deprecated
-	public Monies getConfirmedAccountBalance(long before) throws IOException, SQLException {
+	public Monies getConfirmedAccountBalance(Timestamp before) throws IOException, SQLException {
 		return table.getConnector().getBilling().getTransaction().getConfirmedAccountBalance(this, before);
 	}
 
@@ -911,12 +908,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return contractVersion;
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public List<Processor> getCreditCardProcessors() throws IOException, SQLException {
@@ -1356,9 +1349,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		try {
 			pkey = Name.valueOf(result.getString(1));
 			contractVersion = result.getString(2);
-			created = result.getTimestamp(3).getTime();
-			Timestamp T = result.getTimestamp(4);
-			canceled = T==null ? -1 : T.getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(3));
+			canceled = UnmodifiableTimestamp.valueOf(result.getTimestamp(4));
 			cancelReason = result.getString(5);
 			parent = Name.valueOf(result.getString(6));
 			can_add_backup_server=result.getBoolean(7);
@@ -1379,8 +1371,8 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		try {
 			pkey=Name.valueOf(in.readUTF()).intern();
 			contractVersion=InternUtils.intern(in.readNullUTF());
-			created=in.readLong();
-			canceled = in.readLong();
+			created = in.readUnmodifiableTimestamp();
+			canceled = in.readNullUnmodifiableTimestamp();
 			cancelReason=in.readNullUTF();
 			parent=InternUtils.intern(Name.valueOf(in.readNullUTF()));
 			can_add_backup_server=in.readBoolean();
@@ -1403,8 +1395,16 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeBoolean(contractVersion!=null); if(contractVersion!=null) out.writeUTF(contractVersion);
-		out.writeLong(created);
-		out.writeLong(canceled);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(canceled == null ? -1 : canceled.getTime());
+		} else {
+			out.writeNullTimestamp(canceled);
+		}
 		out.writeNullUTF(cancelReason);
 		out.writeNullUTF(Objects.toString(parent, null));
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_102)>=0) out.writeBoolean(can_add_backup_server);

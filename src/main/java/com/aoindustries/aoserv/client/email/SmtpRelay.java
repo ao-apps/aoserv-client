@@ -35,11 +35,11 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.HostAddress;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,10 +69,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 	int ao_server;
 	private HostAddress host;
 	String type;
-	private long created;
-	private long last_refreshed;
+	private UnmodifiableTimestamp created;
+	private UnmodifiableTimestamp last_refreshed;
 	private int refresh_count;
-	private long expiration;
+	private UnmodifiableTimestamp expiration;
 	int disable_log;
 
 	public int addSpamEmailMessage(String message) throws IOException, SQLException {
@@ -109,21 +109,17 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 			case 2: return ao_server==-1?null:ao_server;
 			case 3: return host;
 			case 4: return type;
-			case 5: return getCreated();
-			case 6: return getLastRefreshed();
+			case 5: return created;
+			case 6: return last_refreshed;
 			case 7: return refresh_count;
-			case 8: return getExpiration();
+			case 8: return expiration;
 			case 9: return disable_log==-1?null:disable_log;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	@Override
@@ -139,12 +135,8 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		return obj;
 	}
 
-	public Long getExpiration_millis() {
-		return expiration == -1 ? null : expiration;
-	}
-
-	public Timestamp getExpiration() {
-		return expiration == -1 ? null : new Timestamp(expiration);
+	public UnmodifiableTimestamp getExpiration() {
+		return expiration;
 	}
 
 	public HostAddress getHost() {
@@ -157,12 +149,8 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		return esrt;
 	}
 
-	public long getLastRefreshed_millis() {
+	public UnmodifiableTimestamp getLastRefreshed() {
 		return last_refreshed;
-	}
-
-	public Timestamp getLastRefreshed() {
-		return new Timestamp(last_refreshed);
 	}
 
 	public Package getPackage() throws IOException, SQLException {
@@ -199,11 +187,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 			if(result.wasNull()) ao_server=-1;
 			host=HostAddress.valueOf(result.getString(4));
 			type=result.getString(5);
-			created=result.getTimestamp(6).getTime();
-			last_refreshed=result.getTimestamp(7).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(6));
+			last_refreshed = UnmodifiableTimestamp.valueOf(result.getTimestamp(7));
 			refresh_count=result.getInt(8);
-			Timestamp T=result.getTimestamp(9);
-			expiration=T==null?-1:T.getTime();
+			expiration = UnmodifiableTimestamp.valueOf(result.getTimestamp(9));
 			disable_log=result.getInt(10);
 			if(result.wasNull()) disable_log=-1;
 		} catch(ValidationException e) {
@@ -219,10 +206,10 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 			ao_server=in.readCompressedInt();
 			host=HostAddress.valueOf(in.readUTF());
 			type=in.readUTF().intern();
-			created=in.readLong();
-			last_refreshed=in.readLong();
+			created = in.readUnmodifiableTimestamp();
+			last_refreshed = in.readUnmodifiableTimestamp();
 			refresh_count=in.readCompressedInt();
-			expiration=in.readLong();
+			expiration = in.readNullUnmodifiableTimestamp();
 			disable_log=in.readCompressedInt();
 		} catch(ValidationException e) {
 			throw new IOException(e);
@@ -265,10 +252,22 @@ public final class SmtpRelay extends CachedObjectIntegerKey<SmtpRelay> implement
 		out.writeCompressedInt(ao_server);
 		out.writeUTF(host.toString());
 		out.writeUTF(type);
-		out.writeLong(created);
-		out.writeLong(last_refreshed);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(last_refreshed.getTime());
+		} else {
+			out.writeTimestamp(last_refreshed);
+		}
 		out.writeCompressedInt(refresh_count);
-		out.writeLong(expiration);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(expiration == null ? -1 : expiration.getTime());
+		} else {
+			out.writeNullTimestamp(expiration);
+		}
 		out.writeCompressedInt(disable_log);
 	}
 }

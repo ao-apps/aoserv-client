@@ -29,10 +29,10 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * Every <code>SpamEmailMessage</code> that causes an IP address
@@ -55,7 +55,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 
 	private int pkey;
 	private int email_relay;
-	private long time;
+	private UnmodifiableTimestamp time;
 	private String message;
 
 	@Override
@@ -76,12 +76,8 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 		return er;
 	}
 
-	public long getTime_millis() {
+	public UnmodifiableTimestamp getTime() {
 		return time;
-	}
-
-	public Timestamp getTime() {
-		return new Timestamp(time);
 	}
 
 	public String getMessage() {
@@ -93,7 +89,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 		switch(i) {
 			case COLUMN_PKEY: return pkey;
 			case 1: return email_relay;
-			case 2: return getTime();
+			case 2: return time;
 			case 3: return message;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
@@ -123,7 +119,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 	public void init(ResultSet result) throws SQLException {
 		pkey=result.getInt(1);
 		email_relay=result.getInt(2);
-		time=result.getTimestamp(3).getTime();
+		time = UnmodifiableTimestamp.valueOf(result.getTimestamp(3));
 		message=result.getString(4);
 	}
 
@@ -131,7 +127,7 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey=in.readCompressedInt();
 		email_relay=in.readCompressedInt();
-		time=in.readLong();
+		time = in.readUnmodifiableTimestamp();
 		message=in.readUTF();
 	}
 
@@ -145,7 +141,11 @@ final public class SpamMessage extends AOServObject<Integer,SpamMessage> impleme
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(email_relay);
-		out.writeLong(time);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(time.getTime());
+		} else {
+			out.writeTimestamp(time);
+		}
 		out.writeUTF(message);
 	}
 }

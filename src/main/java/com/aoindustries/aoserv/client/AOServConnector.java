@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -911,6 +912,7 @@ abstract public class AOServConnector implements SchemaParent {
 			else if(param instanceof Boolean) out.writeBoolean((Boolean)param);
 			else if(param instanceof Short) out.writeShort((Short)param);
 			else if(param instanceof Byte) out.writeByte((Byte)param);
+			else if(param instanceof Timestamp) out.writeTimestamp((Timestamp)param);
 			else if(param instanceof Enum) out.writeEnum((Enum)param);
 			else if(param instanceof byte[]) {
 				byte[] bytes=(byte[])param;

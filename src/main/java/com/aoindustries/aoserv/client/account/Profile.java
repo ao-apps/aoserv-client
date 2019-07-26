@@ -29,6 +29,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.Email;
+import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.StringUtility;
@@ -37,7 +38,6 @@ import java.io.IOException;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -69,7 +69,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 
 	private boolean sendInvoice;
 
-	private long created;
+	private UnmodifiableTimestamp created;
 
 	/**
 	 * The set of possible units
@@ -150,7 +150,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			case 11: return country;
 			case 12: return zip;
 			case 13: return sendInvoice;
-			case 14: return getCreated();
+			case 14: return created;
 			case 15: return billingContact;
 			// TODO: Support array types
 			case 16: return StringUtility.join(billingEmail, ", ");
@@ -173,12 +173,8 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		return countryCode;
 	}
 
-	public long getCreated_millis() {
+	public UnmodifiableTimestamp getCreated() {
 		return created;
-	}
-
-	public Timestamp getCreated() {
-		return new Timestamp(created);
 	}
 
 	public String getFax() {
@@ -266,7 +262,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			country = result.getString(pos++);
 			zip = result.getString(pos++);
 			sendInvoice = result.getBoolean(pos++);
-			created = result.getTimestamp(pos++).getTime();
+			created = UnmodifiableTimestamp.valueOf(result.getTimestamp(pos++));
 			billingContact = result.getString(pos++);
 			// TODO: Array in PostgreSQL
 			String billing_email = result.getString(pos++);
@@ -326,7 +322,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			country=in.readUTF().intern();
 			zip=in.readNullUTF();
 			sendInvoice=in.readBoolean();
-			created=in.readLong();
+			created = in.readUnmodifiableTimestamp();
 			billingContact=in.readUTF();
 			{
 				int size = in.readCompressedInt();
@@ -377,7 +373,11 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		out.writeUTF(country);
 		out.writeNullUTF(zip);
 		out.writeBoolean(sendInvoice);
-		out.writeLong(created);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			out.writeLong(created.getTime());
+		} else {
+			out.writeTimestamp(created);
+		}
 		out.writeUTF(billingContact);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_22) < 0) {
 			out.writeUTF(StringUtility.join(billingEmail, ", "));
