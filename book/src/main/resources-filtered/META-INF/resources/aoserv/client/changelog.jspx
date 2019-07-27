@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-27T05:21:23-0500"
+		dateModified="2019-07-27T17:56:16-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -142,6 +142,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Added types <code>Identifier</code> (128-bit) and <code>SmallIdentifier</code> (64-bit).</li>
 					<li>Renamed <code>master.Process.process_id</code> to <code>id</code> and changed to <code>SmallIdentifier</code> type.</li>
 					<li>Renamed <code>master.Process.connector_id</code> to <code>connectorId</code> and changed to <code>Identifier</code> type.</li>
+					<li>
+						New method <code>AOServTable.getRowsCopy()</code> that may be used when the returned list must be modifiable.
+						This gives the table implementation a way to create a defensive copy most efficient to its underlying storage mechanism.
+					</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>

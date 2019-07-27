@@ -98,8 +98,8 @@ final public class FileReplicationLogTable extends AOServTable<Integer,FileRepli
 	}
 
 	@Override
-	public List<FileReplicationLog> getRows() throws IOException, SQLException {
-		List<FileReplicationLog> list=new ArrayList<>();
+	public List<FileReplicationLog> getRowsCopy() throws IOException, SQLException {
+		List<FileReplicationLog> list = new ArrayList<>();
 		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.FAILOVER_FILE_LOG);
 		return list;
 	}

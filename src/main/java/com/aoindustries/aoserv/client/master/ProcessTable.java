@@ -72,7 +72,7 @@ final public class ProcessTable extends AOServTable<SmallIdentifier,Process> {
 	}
 
 	@Override
-	public List<Process> getRows() throws IOException, SQLException {
+	public List<Process> getRowsCopy() throws IOException, SQLException {
 		List<Process> list = new ArrayList<>();
 		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_PROCESSES);
 		return list;

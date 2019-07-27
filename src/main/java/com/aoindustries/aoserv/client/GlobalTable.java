@@ -215,6 +215,11 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 		}
 	}
 
+	@Override
+	public List<V> getRowsCopy() throws IOException, SQLException {
+		return new ArrayList<>(getRows());
+	}
+
 	/**
 	 * Determines if the contents are currently hashed in a hashmap.
 	 */

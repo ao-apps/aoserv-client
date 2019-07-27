@@ -43,6 +43,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -571,6 +572,8 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 *
 	 * @exception  IOException  if unable to access the server
 	 * @exception  SQLException  if unable to access the database
+	 *
+	 * @see  #getRowsCopy()
 	 */
 	// TODO: Make rows an autoclosable, and use this to free storage promptly where needed?
 	// TODO: This means that tables themselves would not be Iterable.
@@ -580,9 +583,29 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	//           and each user gets a smaller wrapper that handles close() once and decrements the use counter.
 	//           Once the use counter gets to zero the list is available for release.
 	//           Tables that are all on heap could just return a simpler wrapper that ensures no use-after-close.
-	// TODO: This would extend to get getIndexed, too, and copyRows.
+	// TODO: This would extend to get getIndexed, too, and getRowsCopy().
 	@Override
-	abstract public List<V> getRows() throws IOException, SQLException;
+	public List<V> getRows() throws IOException, SQLException {
+		return Collections.unmodifiableList(getRowsCopy());
+	}
+
+	/**
+	 * Gets a modifiable copy of the rows, which may then be manipulated, such as for sorting.
+	 * <p>
+	 * This gives the table implementation a way to create a defensive copy most
+	 * efficient to its underlying storage mechanism.
+	 * </p>
+	 * <p>
+	 * Note: It is best to use {@link #getSortAlgorithm()} when sorting rows, as
+	 * the choice of sorting can be very important when objects are pulled from
+	 * non-heap source like filesystem-based objects.  It is very easy for the
+	 * sort itself to end up pulling all objects into heap.
+	 * </p>
+	 *
+	 * @see  #getRows()
+	 * @see  #getSortAlgorithm()
+	 */
+	abstract public List<V> getRowsCopy() throws IOException, SQLException;
 
 	/**
 	 * Gets the unique identifier for this table.  Each

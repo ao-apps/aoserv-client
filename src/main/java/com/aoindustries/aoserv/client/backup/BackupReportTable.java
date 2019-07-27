@@ -97,8 +97,8 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 	}
 
 	@Override
-	public List<BackupReport> getRows() throws IOException, SQLException {
-		List<BackupReport> list=new ArrayList<>();
+	public List<BackupReport> getRowsCopy() throws IOException, SQLException {
+		List<BackupReport> list = new ArrayList<>();
 		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BACKUP_REPORTS);
 		return list;
 	}

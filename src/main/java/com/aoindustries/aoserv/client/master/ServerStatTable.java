@@ -64,8 +64,8 @@ final public class ServerStatTable extends AOServTable<String,ServerStat> {
 	}
 
 	@Override
-	public List<ServerStat> getRows() throws IOException, SQLException {
-		List<ServerStat> list=new ArrayList<>();
+	public List<ServerStat> getRowsCopy() throws IOException, SQLException {
+		List<ServerStat> list = new ArrayList<>();
 		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_SERVER_STATS);
 		return list;
 	}
