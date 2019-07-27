@@ -121,11 +121,6 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 		return name;
 	}
 
-	/**
-	 * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
-	 *
-	 * @return  the <code>AOServTable</code>.
-	 */
 	@Override
 	public AOServTable<String,ServerStat> getTable() {
 		return table;

@@ -141,11 +141,6 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 		return id;
 	}
 
-	/**
-	 * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
-	 *
-	 * @return  the <code>AOServTable</code>.
-	 */
 	@Override
 	public AOServTable<Integer,BankTransaction> getTable() {
 		return table;
