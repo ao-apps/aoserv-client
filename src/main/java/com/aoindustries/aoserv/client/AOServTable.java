@@ -574,6 +574,15 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 * @exception  IOException  if unable to access the server
 	 * @exception  SQLException  if unable to access the database
 	 */
+	// TODO: Make rows an autoclosable, and use this to free storage promptly where needed?
+	// TODO: This means that tables themselves would not be Iterable.
+	// TODO: This would also create a try-with-resources requirement in places where not expected, like <c:forEach> iterations
+	// TODO: This idea most relevant since we have FilesystemCachedTable.  Less important otherwise since garbage collector handles it all.
+	// TODO: Implementations could return a wrapper around the list, that counds the number of users,
+	//           and each user gets a smaller wrapper that handles close() once and decrements the use counter.
+	//           Once the use counter gets to zero the list is available for release.
+	//           Tables that are all on heap could just return a simpler wrapper that ensures no use-after-close.
+	// TODO: This would extend to get getIndexed, too, and copyRows.
 	@Override
 	abstract public List<V> getRows() throws IOException, SQLException;
 
