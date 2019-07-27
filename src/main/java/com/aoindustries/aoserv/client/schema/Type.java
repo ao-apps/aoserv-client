@@ -33,8 +33,6 @@ import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.IoUtils;
-import com.aoindustries.math.LongLong;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
@@ -340,6 +338,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 
 	public static boolean alignRight(int id) {
 		switch(id) {
+			case DATE:
 			case DECIMAL_2:
 			case DECIMAL_3:
 			case DOUBLE:
@@ -351,6 +350,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case OCTAL_LONG:
 			case PKEY:
 			case SHORT:
+			case TIME:
 			case BIG_DECIMAL:
 			case GROUP_ID:
 			case LINUX_ID:
