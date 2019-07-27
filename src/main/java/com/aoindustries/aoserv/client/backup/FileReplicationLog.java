@@ -111,11 +111,6 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 		return ffr;
 	}
 
-	/**
-	 * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
-	 *
-	 * @return  the <code>AOServTable</code>.
-	 */
 	@Override
 	public AOServTable<Integer,FileReplicationLog> getTable() {
 		return table;
