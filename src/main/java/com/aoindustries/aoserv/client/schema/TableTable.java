@@ -28,6 +28,7 @@ import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.sql.Parser;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
@@ -102,14 +103,14 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 		String command = args[0];
 		if (command.equalsIgnoreCase(Command.DESC) || command.equalsIgnoreCase(Command.DESCRIBE)) {
 			if(AOSH.checkParamCount(Command.DESCRIBE, args, 1, err)) {
-				String tableName = AOServTable.unquote(args[1]);
+				String tableName = Parser.unquote(args[1]);
 				Table table = connector.getSchema().getTable().get(tableName);
 				if(table != null) {
 					table.printDescription(connector, out, isInteractive);
 					out.flush();
 				} else {
 					err.print("aosh: "+Command.DESCRIBE+": table not found: ");
-					err.println(AOServTable.quote(tableName));
+					err.println(Parser.quote(tableName));
 					err.flush();
 				}
 			}
@@ -120,7 +121,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 				if (argCount == 4 && args[1].equalsIgnoreCase("count(*)")) {
 					// Is a select count(*)
 					if ("from".equalsIgnoreCase(args[2])) {
-						String tableName = AOServTable.unquote(args[3]);
+						String tableName = Parser.unquote(args[3]);
 						Table table = connector.getSchema().getTable().get(tableName);
 						if (table != null) {
 							Object[] titles = { "count" };
@@ -128,7 +129,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 							SQLUtility.printTable(titles, values, out, isInteractive, new boolean[] {true});
 							out.flush();
 						} else {
-							err.println("aosh: " + Command.SELECT + ": table not found: " + AOServTable.quote(tableName));
+							err.println("aosh: " + Command.SELECT + ": table not found: " + Parser.quote(tableName));
 							err.flush();
 						}
 					} else {
@@ -153,7 +154,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 					}
 
 					// Get the table name
-					String tableName = AOServTable.unquote(args[++c]);
+					String tableName = Parser.unquote(args[++c]);
 					c++;
 
 					Table schemaTable = connector.getSchema().getTable().get(tableName);
@@ -163,12 +164,12 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 						for(String expressionArg : expressionArgs) {
 							if(expressionArg.equals("*")) {
 								for(Column column : schemaTable.getSchemaColumns(connector)) {
-									expressions.add(AOServTable.quote(column.getName()));
+									expressions.add(Parser.quote(column.getName()));
 								}
 							} else {
 								do {
 									String current;
-									int commaPos = AOServTable.indexOfNotQuoted(expressionArg, ',');
+									int commaPos = Parser.indexOfNotQuoted(expressionArg, ',');
 									if(commaPos == -1) {
 										current = expressionArg;
 										expressionArg = "";
@@ -178,7 +179,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 									}
 									if(current.equals("*")) {
 										for(Column column : schemaTable.getSchemaColumns(connector)) {
-											expressions.add(AOServTable.quote(column.getName()));
+											expressions.add(Parser.quote(column.getName()));
 										}
 									} else {
 										expressions.add(current);
@@ -201,7 +202,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 											String orderBy = args[c++];
 											do {
 												String expr;
-												int commaPos = AOServTable.indexOfNotQuoted(orderBy, ',');
+												int commaPos = Parser.indexOfNotQuoted(orderBy, ',');
 												if(commaPos == -1) {
 													expr = orderBy;
 													orderBy = "";
@@ -226,7 +227,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 												) {
 													sortOrders.set(sortOrders.size() - 1, AOServTable.DESCENDING);
 												} else { // if(!expr.isEmpty()) {
-													orderExpressions.add(aoServTable.getSQLExpression(expr));
+													orderExpressions.add(Parser.parseSQLExpression(aoServTable, expr));
 													sortOrders.add(AOServTable.ASCENDING);
 												}
 											} while(!orderBy.isEmpty());
@@ -242,7 +243,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 						Type[] valueTypes = new Type[expressions.size()];
 						boolean[] rightAligns = new boolean[expressions.size()];
 						for(int d = 0; d < expressions.size(); d++) {
-							SQLExpression sql = aoServTable.getSQLExpression(expressions.get(d));
+							SQLExpression sql = Parser.parseSQLExpression(aoServTable, expressions.get(d));
 							Type type = sql.getType();
 							valueExpressions[d] = sql;
 							valueTypes[d] = type;
@@ -300,7 +301,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 						SQLUtility.printTable(cnames, strings, out, isInteractive, rightAligns);
 						out.flush();
 					} else {
-						err.println("aosh: " + Command.SELECT + ": table not found: " + AOServTable.quote(tableName));
+						err.println("aosh: " + Command.SELECT + ": table not found: " + Parser.quote(tableName));
 						err.flush();
 					}
 				}

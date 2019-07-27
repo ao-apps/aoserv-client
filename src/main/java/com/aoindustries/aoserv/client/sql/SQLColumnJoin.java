@@ -64,7 +64,7 @@ final public class SQLColumnJoin extends SQLExpression {
 
 	@Override
 	public String toString() {
-		return expression.toString() + "." + AOServTable.quote(valueColumn.getName());
+		return expression.toString() + "." + Parser.quote(valueColumn.getName());
 	}
 
 	@Override

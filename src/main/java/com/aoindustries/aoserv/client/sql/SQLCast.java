@@ -24,7 +24,6 @@ package com.aoindustries.aoserv.client.sql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import java.io.IOException;
@@ -48,7 +47,7 @@ final public class SQLCast extends SQLExpression {
 
 	@Override
 	public String toString() {
-		return expression.toString() + "::" + AOServTable.quote(castToType.getName());
+		return expression.toString() + "::" + Parser.quote(castToType.getName());
 	}
 
 	@Override
