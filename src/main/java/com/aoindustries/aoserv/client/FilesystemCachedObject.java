@@ -34,6 +34,7 @@ import java.io.IOException;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Is this worth maintaining?
 public abstract class FilesystemCachedObject<K,T extends FilesystemCachedObject<K,T>> extends AOServObject<K,T> implements SingleTableObject<K,T>, FileListObject {
 
 	protected AOServTable<K,T> table;
