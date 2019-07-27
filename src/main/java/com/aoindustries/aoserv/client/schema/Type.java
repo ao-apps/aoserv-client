@@ -33,6 +33,8 @@ import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.IoUtils;
+import com.aoindustries.math.LongLong;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
@@ -41,6 +43,8 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
 import com.aoindustries.net.Port;
+import com.aoindustries.security.Identifier;
+import com.aoindustries.security.SmallIdentifier;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
@@ -49,6 +53,7 @@ import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
@@ -58,10 +63,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * A <code>SchemaType</code> is a unique data type used in
- * <code>SchemaColumn</code>s.
+ * A {@link Type} is a unique data type used for
+ * {@link Column}.
  *
- * @see  SchemaColumn#getSchemaType(AOServConnector)
+ * @see  Column#getType(com.aoindustries.aoserv.client.AOServConnector)
  *
  * @author  AO Industries, Inc.
  */
@@ -313,6 +318,16 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 */
 	public static final int LINUX_USERNAME = 50;
 
+	/**
+	 * @see Identifier
+	 */
+	public static final int IDENTIFIER = 51;
+
+	/**
+	 * @see SmallIdentifier
+	 */
+	public static final int SMALL_IDENTIFIER = 52;
+
 	private static final BigDecimal bigDecimalNegativeOne = BigDecimal.valueOf(-1);
 
 	private String name;
@@ -357,22 +372,22 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *                                                                                            M         T O   F
 	 *                                                                                            Y         G S   I
 	 *                                                                                            S M       R T P R
-	 *                                                                                            Q Y M     E G O E
-	 *                                                                                    H       L S Y     S R S W
-	 *                                                                                    A       _ Q S M   _ E T A L
-	 *                                                                            D       S       D L Q Y   D S G L I
-	 *                                                                          D O       H       A _ L S   A _ R L N
-	 *                                                                        B O M D     E   M   T S _ Q   T S E D U
-	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S _ X
-	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _ Z _
-	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U O U
-	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S N S
-	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E E E
-	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R _ R
-	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N N
-	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A A
-	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M M
-	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E E
+	 *                                                                                            Q Y M     E G O E     S
+	 *                                                                                    H       L S Y     S R S W     M
+	 *                                                                                    A       _ Q S M   _ E T A L   A
+	 *                                                                            D       S       D L Q Y   D S G L I   L
+	 *                                                                          D O       H       A _ L S   A _ R L N   L
+	 *                                                                        B O M D     E   M   T S _ Q   T S E D U   _
+	 *                        A                       I   O                   I M A O     D   A   A E T L   A E S _ X I I
+	 *                        C     D D               P   C                   G A I M     _   C   B R A _   B R _ Z _ D D
+	 *                        C     E E         H   I _   T               U   _ I N A   G P L _   A V B U N A V U O U E E
+	 *                      T O B   C C         O   N A   A               S   D N _ I   R A I A   S E L S E S E S N S N N
+	 *                      O U O   I I D       S   T D   L         S     E   E _ L N   O S N D   E R E E T E R E E E T T
+	 *                        N O   M M O E   F T   E D   _     P S T     R   C L A _ G U S U D M _ _ _ R _ _ _ R _ R I I
+	 *                        T L D A A U M F L N   R R L L P P H H R T   N Z I A B N E P W X R O N N N N P N N N N N F F
+	 *                        I E A L L B A K O A I V E O O K A O O I I U A O M B E A C _ O _ E N A A A A O A A A A A I I
+	 *                        N A T _ _ L I E A M N A S N N E T N R N M R M N A E L M O I R I S E M M M M R M M M M M E E
+	 *               FROM     G N E 2 3 E L Y T E T L S G G Y H E T G E L E E L L S E S D D D S Y E E E E T E E E E E R R
 	 *
 	 *             ACCOUNTING X                                     X
 	 *                BOOLEAN   X   X X X     X   X     X X       X X         X
@@ -387,18 +402,18 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *                    INT   X X X X X   X X   X X X X X X     X X         X             X
 	 *               INTERVAL       X X X     X   X X   X X       X X         X
 	 *             IP_ADDRESS                         X             X
-	 *                   LONG   X X X X X     X   X X   X X       X X X       X
-	 *             OCTAL_LONG   X X X X X     X   X X   X X       X X X       X
+	 *                   LONG   X X X X X     X   X X   X X       X X X       X                                         X
+	 *             OCTAL_LONG   X X X X X     X   X X   X X       X X X       X                                         X
 	 *                   PKEY               X     X         X       X
 	 *                   PATH                                 X     X
 	 *                  PHONE                                   X   X
 	 *                  SHORT   X X X X X     X   X X   X X       X X         X
-	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X X X
+	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X X X X X
 	 *                   TIME     X                     X X         X X
 	 *                    URL                   X             X     X   X   X       X
 	 *               USERNAME                                       X     X                             X       X   X
 	 *                   ZONE                   X                   X       X       X
-	 *            BIG_DECIMAL   X X X X X     X   X X   X X       X X         X
+	 *            BIG_DECIMAL   X X X X X     X   X X   X X       X X         X                                         X
 	 *           DOMAIN_LABEL                                       X           X X X
 	 *          DOMAIN_LABELS                                       X             X X
 	 *            DOMAIN_NAME                   X                   X       X     X X
@@ -418,6 +433,8 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *      POSTGRES_USERNAME                                       X     X                                     X   X
 	 *    FIREWALLD_ZONE_NAME                                       X                                             X
 	 *         LINUX_USERNAME                                       X     X                             X       X   X
+	 *             IDENTIFIER                                       X         X                                       X
+	 *       SMALL_IDENTIFIER                           X X         X         X                                         X
 	 * </pre>
 	 */
 	public Object cast(AOServConnector conn, Object value, Type castToType) throws IOException, SQLException {
@@ -601,11 +618,13 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						case FLOAT: return value==null?null:Float.valueOf(((Long)value).floatValue());
 						case INT: return value==null?null:Integer.valueOf(((Long)value).intValue());
 						case INTERVAL: return value;
-						case LONG: return value;
-						case OCTAL_LONG: return value;
+						case LONG:
+						case OCTAL_LONG:
+							return value;
 						case SHORT: return value==null?null:Short.valueOf(((Long)value).shortValue());
 						case TIME: return value==null?null:new UnmodifiableTimestamp((Long)value);
 						case BIG_DECIMAL: return value==null?null:BigDecimal.valueOf((Long)value);
+						case SMALL_IDENTIFIER: return value == null ? null : new SmallIdentifier((Long)value);
 					}
 					break;
 				case PKEY:
@@ -690,6 +709,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						case OCTAL_LONG:
 							return value==null?null:((BigDecimal)value).longValue();
 						case SHORT: return value==null?null:((BigDecimal)value).shortValue();
+						case SMALL_IDENTIFIER: return value == null ? null : new SmallIdentifier(((BigDecimal)value).longValue());
 					}
 					break;
 				case DOMAIN_LABEL:
@@ -773,6 +793,31 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 						case USERNAME: return value==null ? null : com.aoindustries.aoserv.client.account.User.Name.valueOf(value.toString());
 						case MYSQL_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.mysql.User.Name.valueOf(value.toString());
 						case POSTGRES_USERNAME: return value==null ? null : com.aoindustries.aoserv.client.postgresql.User.Name.valueOf(value.toString());
+					}
+					break;
+				case IDENTIFIER:
+					switch(castToType.getId()) {
+						case BIG_DECIMAL:
+							if(value == null) return null;
+							Identifier identifier = (Identifier)value;
+							String hexHi = Long.toHexString(identifier.getHi());
+							String hexLo = Long.toHexString(identifier.getLo());
+							int combinedLen = hexHi.length() + 32;
+							StringBuilder combined = new StringBuilder(combinedLen);
+							combined.append(hexHi);
+							while(combined.length() < (combinedLen - hexLo.length())) combined.append('0');
+							combined.append(hexLo);
+							assert combined.length() == combinedLen;
+							return new BigDecimal(new BigInteger(combined.toString(), 16));
+					}
+					break;
+				case SMALL_IDENTIFIER:
+					switch(castToType.getId()) {
+						case LONG:
+						case OCTAL_LONG:
+							return (value == null) ? null : ((SmallIdentifier)value).getValue();
+						case BIG_DECIMAL:
+							return (value == null) ? null : new BigDecimal(new BigInteger(Long.toHexString(((SmallIdentifier)value).getValue()), 16));
 					}
 					break;
 			}
@@ -939,6 +984,10 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					return ((FirewallZone.Name)value1).compareTo((FirewallZone.Name)value2);
 				case LINUX_USERNAME:
 					return ((com.aoindustries.aoserv.client.linux.User.Name)value1).compareTo((com.aoindustries.aoserv.client.linux.User.Name)value2);
+				case IDENTIFIER:
+					return ((Identifier)value1).compareTo((Identifier)value2);
+				case SMALL_IDENTIFIER:
+					return ((SmallIdentifier)value1).compareTo((SmallIdentifier)value2);
 				default: throw new IllegalArgumentException("Unknown type: " + id);
 			}
 		}
@@ -1103,6 +1152,8 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case POSTGRES_USERNAME: return value.toString();
 			case FIREWALLD_ZONE_NAME: return value.toString();
 			case LINUX_USERNAME: return value.toString();
+			case IDENTIFIER: return value.toString();
+			case SMALL_IDENTIFIER: return value.toString();
 			default: throw new IllegalArgumentException("Unknown SchemaType: " + id);
 		}
 	}
@@ -1217,6 +1268,10 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					return FirewallZone.Name.valueOf(S);
 				case LINUX_USERNAME:
 					return com.aoindustries.aoserv.client.linux.User.Name.valueOf(S);
+				case IDENTIFIER:
+					return new Identifier(S);
+				case SMALL_IDENTIFIER:
+					return new Identifier(S);
 				default:
 					throw new IllegalArgumentException("Unknown SchemaType: " + id);
 			}
