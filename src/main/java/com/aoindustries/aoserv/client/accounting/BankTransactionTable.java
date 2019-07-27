@@ -74,8 +74,8 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 	}
 
 	@Override
-	public List<BankTransaction> getRows() throws IOException, SQLException {
-		List<BankTransaction> list=new ArrayList<>();
+	public List<BankTransaction> getRowsCopy() throws IOException, SQLException {
+		List<BankTransaction> list = new ArrayList<>();
 		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.BANK_TRANSACTIONS);
 		return list;
 	}

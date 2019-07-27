@@ -118,10 +118,10 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 		   // If the system time was reset to previous time
 		   || currentTime<lastLoaded
 		) {
-			Table schemaTable=getTableSchema();
+			Table schemaTable = getTableSchema();
 			FileList<V> newTableList=new FileList<>(
 				schemaTable.getName(),
-				"table",
+				"rows",
 				getRecordLength(),
 				this
 			);
@@ -148,6 +148,23 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 		synchronized(this) {
 			validateCache();
 			return unmodifiableTableList;
+		}
+	}
+
+	@Override
+	public List<V> getRowsCopy() throws IOException, SQLException {
+		synchronized(this) {
+			validateCache();
+			Table schemaTable = getTableSchema();
+			FileList<V> newCopyList = new FileList<>(
+				schemaTable.getName(),
+				"rowsCopy",
+				tableList.getRecordLength(), // Use the same record length to support disk-to-disk copy
+				this
+			);
+			// addAll will do a disk-to-disk copy of the objects
+			newCopyList.addAll(tableList);
+			return newCopyList;
 		}
 	}
 

@@ -157,6 +157,11 @@ public abstract class CachedTable<K,V extends CachedObject<K,V>> extends AOServT
 		}
 	}
 
+	@Override
+	public List<V> getRowsCopy() throws IOException, SQLException {
+		return new ArrayList<>(getRows());
+	}
+
 	/**
 	 * Determines if the contents are currently hashed in a hashmap.
 	 */

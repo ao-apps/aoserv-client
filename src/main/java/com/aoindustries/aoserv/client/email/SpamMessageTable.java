@@ -66,8 +66,8 @@ final public class SpamMessageTable extends AOServTable<Integer,SpamMessage> {
 	}
 
 	@Override
-	public List<SpamMessage> getRows() throws IOException, SQLException {
-		List<SpamMessage> list=new ArrayList<>();
+	public List<SpamMessage> getRowsCopy() throws IOException, SQLException {
+		List<SpamMessage> list = new ArrayList<>();
 		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.SPAM_EMAIL_MESSAGES);
 		return list;
 	}

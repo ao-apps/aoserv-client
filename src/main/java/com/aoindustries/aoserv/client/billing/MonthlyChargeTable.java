@@ -80,7 +80,7 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 	 *
 	 * @return  the <code>MonthlyCharge</code> objects.
 	 */
-	public List<MonthlyCharge> getMonthlyCharges(Administrator business_administrator, Account bu) throws IOException, SQLException {
+	private List<MonthlyCharge> getModifiableMonthlyCharges(Administrator administrator, Account account) throws IOException, SQLException {
 		// Add the entries in the monthly_charges table that apply to this business
 		List<MonthlyCharge> charges;
 		{
@@ -90,8 +90,8 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 			for(int c=0;c<len;c++) {
 				MonthlyCharge mc=cached.get(c);
 				if(
-					bu==null
-					|| bu.getName().equals(mc.getPackage().getAccount_name())
+					account==null
+					|| account.getName().equals(mc.getPackage().getAccount_name())
 				) charges.add(mc);
 			}
 		}
@@ -169,13 +169,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		}
 
 		for(Package pack : connector.getBilling().getPackage().getRows()) {
-			Account account = pack.getAccount();
+			Account packAccount = pack.getAccount();
 			// Only bill when active
-			if(account.getCanceled()==null) {
-				Account acctAccount = account.getBillingAccount();
+			if(packAccount.getCanceled() == null) {
+				Account billingAccount = packAccount.getBillingAccount();
 				if(
-					bu==null
-					|| bu.equals(acctAccount)
+					account==null
+					|| account.equals(billingAccount)
 				) {
 					// Add the package billing to the top level business account
 					PackageDefinition packageDefinition=pack.getPackageDefinition();
@@ -184,13 +184,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 						charges.add(
 							new MonthlyCharge(
 								this,
-								acctAccount,
+								billingAccount,
 								pack,
 								pack.getPackageDefinition().getMonthlyRateTransactionType(),
 								null,
 								1000,
 								rate,
-								business_administrator
+								administrator
 							)
 						);
 					}
@@ -218,13 +218,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 									charges.add(
 										new MonthlyCharge(
 											this,
-											acctAccount,
+											billingAccount,
 											pack,
 											addType,
 											"Additional HTTP Servers ("+limit.getSoftLimit()+" included with package, have "+hss.size()+")",
 											(hss.size()-limit.getSoftLimit())*1000,
 											addRate,
-											business_administrator
+											administrator
 										)
 									);
 								}
@@ -247,13 +247,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 									charges.add(
 										new MonthlyCharge(
 											this,
-											acctAccount,
+											billingAccount,
 											pack,
 											addType,
 											"Additional IP Addresses ("+limit.getSoftLimit()+" included with package, have "+ips.size()+")",
 											(ips.size()-limit.getSoftLimit())*1000,
 											addRate,
-											business_administrator
+											administrator
 										)
 									);
 								}
@@ -278,13 +278,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 										charges.add(
 											new MonthlyCharge(
 												this,
-												acctAccount,
+												billingAccount,
 												pack,
 												addType,
 												"Additional Java Virtual Machines ("+limit.getSoftLimit()+" included with package, have "+javavmCount+")",
 												(javavmCount-limit.getSoftLimit())*1000,
 												addRate,
-												business_administrator
+												administrator
 											)
 										);
 									}
@@ -308,13 +308,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 									charges.add(
 										new MonthlyCharge(
 											this,
-											acctAccount,
+											billingAccount,
 											pack,
 											addType,
 											"Additional MySQL Replications ("+limit.getSoftLimit()+" included with package, have "+fmrs.size()+")",
 											(fmrs.size()-limit.getSoftLimit())*1000,
 											addRate,
-											business_administrator
+											administrator
 										)
 									);
 								}
@@ -339,13 +339,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 										charges.add(
 											new MonthlyCharge(
 												this,
-												acctAccount,
+												billingAccount,
 												pack,
 												addType,
 												"Additional Email Inboxes ("+limit.getSoftLimit()+" included with package, have "+emailCount+")",
 												(emailCount-limit.getSoftLimit())*1000,
 												addRate,
-												business_administrator
+												administrator
 											)
 										);
 									}
@@ -371,13 +371,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 									charges.add(
 										new MonthlyCharge(
 											this,
-											acctAccount,
+											billingAccount,
 											pack,
 											addType,
 											"Additional Web Sites ("+limit.getSoftLimit()+" included with package, have "+hss.size()+")",
 											(hss.size()-limit.getSoftLimit())*1000,
 											addRate,
-											business_administrator
+											administrator
 										)
 									);
 								}
@@ -404,13 +404,13 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 										charges.add(
 											new MonthlyCharge(
 												this,
-												acctAccount,
+												billingAccount,
 												pack,
 												addType,
 												"Additional Shell Accounts ("+limit.getSoftLimit()+" included with package, have "+userCount+")",
 												(userCount-limit.getSoftLimit())*1000,
 												addRate,
-												business_administrator
+												administrator
 											)
 										);
 									}
@@ -425,17 +425,33 @@ final public class MonthlyChargeTable extends CachedTableIntegerKey<MonthlyCharg
 		// Sort values
 		sortIfNeeded(charges);
 
-		// Convert and return
-		return Collections.unmodifiableList(charges);
+		// return
+		return charges;
 	}
 
-	public List<MonthlyCharge> getMonthlyCharges(Account bu) throws SQLException, IOException {
-		return getMonthlyCharges(connector.getCurrentAdministrator(), bu);
+	/**
+	 * Gets the list of all <code>monthly_charges</code> in the database.  In addition
+	 * to the monthly charges in the database, the package charges, additional email users,
+	 * additional ip addresses, and additional shell users are added to the billing.
+	 *
+	 * @return  the <code>MonthlyCharge</code> objects.
+	 */
+	public List<MonthlyCharge> getMonthlyCharges(Administrator administrator, Account account) throws IOException, SQLException {
+		return Collections.unmodifiableList(getModifiableMonthlyCharges(administrator, account));
+	}
+
+	public List<MonthlyCharge> getMonthlyCharges(Account account) throws SQLException, IOException {
+		return getMonthlyCharges(connector.getCurrentAdministrator(), account);
 	}
 
 	@Override
 	public List<MonthlyCharge> getRows() throws SQLException, IOException {
 		return getMonthlyCharges(connector.getCurrentAdministrator(), null);
+	}
+
+	@Override
+	public List<MonthlyCharge> getRowsCopy() throws IOException, SQLException {
+		return getModifiableMonthlyCharges(connector.getCurrentAdministrator(), null);
 	}
 
 	@Override
