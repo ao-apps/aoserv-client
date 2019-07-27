@@ -143,6 +143,16 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Renamed <code>master.Process.process_id</code> to <code>id</code> and changed to <code>SmallIdentifier</code> type.</li>
 					<li>Renamed <code>master.Process.connector_id</code> to <code>connectorId</code> and changed to <code>Identifier</code> type.</li>
 					<!-- TODO:
+					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
+					<li>Added a type registry based on ServiceLoader</li>
+					<li>Added a cast registry based on ServiceLoader</li>
+					<li>Sending types by name instead of id</li>
+					<li>Make fields final and set values through constructors</li>
+					<li>Make separate ObjectFactory registry (possibly with schema ranges?) and remove init() methods from everywhere</li>
+					<li>Make separate ObjectWriter registry (possibly with protocol ranges?) and remove write() methods from everywhere</li>
+					<li>Make separate ObjectReader registry (possibly with protocol ranges?) and remove read() methods from everywhere</li>
+					-->
+					<!-- TODO:
 					<li>
 						Added additional transaction statuses beyond just 'Y', 'N', and 'W':
 						<ol type="a">
