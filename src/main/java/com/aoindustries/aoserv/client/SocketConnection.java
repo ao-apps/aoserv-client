@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.security.Identifier;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -91,16 +92,16 @@ final public class SocketConnection extends AOServConnection {
 			out.writeUTF(connector.authenticateAs.toString());
 			out.writeUTF(connector.password);
 			boolean hadConnectorId;
-			long connectorId;
+			Identifier connectorId;
 			synchronized(connector.idLock) {
 				connectorId = connector.id;
-				if(connectorId == -1) {
+				if(connectorId == null) {
 					// Hold the idLock when need a connector ID
-					out.writeLong(-1);
+					out.writeNullIdentifier(null);
 					out.flush();
 					if(Thread.interrupted()) throw new InterruptedIOException();
 					if(!in.readBoolean()) throw new IOException(in.readUTF());
-					connectorId = in.readLong();
+					connectorId = in.readIdentifier();
 					connector.id = connectorId;
 					hadConnectorId = false;
 				} else {
@@ -109,7 +110,7 @@ final public class SocketConnection extends AOServConnection {
 			}
 			if(hadConnectorId) {
 				// Finish connecting outside the idLock when already have a connector ID
-				out.writeLong(connectorId);
+				out.writeNullIdentifier(connectorId);
 				out.flush();
 				if(Thread.interrupted()) throw new InterruptedIOException();
 				if(!in.readBoolean()) throw new IOException(in.readUTF());

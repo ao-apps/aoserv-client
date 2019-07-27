@@ -73,14 +73,14 @@ public class TCPConnector extends AOServConnector {
 		@Override
 		public void run() {
 			try {
-				//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Starting");
+				//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Starting");
 				boolean runMore=true;
 				while(runMore) {
 					try {
 						AOServConnection conn=getConnection(1);
 						try {
 							try {
-								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
+								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
 								CompressedDataOutputStream out = conn.getRequestOut(AoservProtocol.CommandID.LISTEN_CACHES);
 								out.flush();
 
@@ -137,7 +137,7 @@ public class TCPConnector extends AOServConnector {
 						else {
 							logger.log(Level.INFO, null, err);
 							try {
-								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Sleeping after exception");
+								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
 								sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								logger.log(Level.WARNING, null, err2);
@@ -150,19 +150,19 @@ public class TCPConnector extends AOServConnector {
 						else {
 							logger.log(Level.SEVERE, null, T);
 							try {
-								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Sleeping after exception");
+								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
 								sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								logger.log(Level.WARNING, null, err2);
 							}
 						}
 					} finally {
-						//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Clearing caches");
+						//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Clearing caches");
 						clearCaches();
 					}
 				}
 			} finally {
-				//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+").CacheMonitor: run: Ending");
+				//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Ending");
 				synchronized(cacheMonitorLock) {
 					if(cacheMonitor==this) {
 						cacheMonitor=null;
@@ -232,7 +232,7 @@ public class TCPConnector extends AOServConnector {
 		}
 		startCacheMonitor();
 		SocketConnection conn = pool.getConnection(maxConnections);
-		//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+"): getConnection("+maxConnections+"): conn.identityHashCode="+System.identityHashCode(conn));
+		//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+"): getConnection("+maxConnections+"): conn.identityHashCode="+System.identityHashCode(conn));
 		return conn;
 	}
 
@@ -338,7 +338,7 @@ public class TCPConnector extends AOServConnector {
 
 	@Override
 	protected final void releaseConnection(AOServConnection conn) throws IOException {
-		//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorID()+"): releaseConnection("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
+		//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+"): releaseConnection("+System.identityHashCode(conn)+"): conn.identityHashCode="+System.identityHashCode(conn));
 		pool.releaseConnection((SocketConnection)conn);
 	}
 

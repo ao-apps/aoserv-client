@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.security.Identifier;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -121,22 +122,22 @@ public class AOServConnectorTODO extends TestCase {
 	}
 
 	/**
-	 * Test of getConnectorID method, of class com.aoindustries.aoserv.client.AOServConnector.
+	 * Test of getConnectorId method, of class com.aoindustries.aoserv.client.AOServConnector.
 	 */
-	public void testGetConnectorID() throws Exception {
-		System.out.println("Testing getConnectorID");
+	public void testGetConnectorId() throws Exception {
+		System.out.println("Testing getConnectorId");
 		for(AOServConnector conn : conns) {
 			User.Name username = conn.getCurrentAdministrator().getKey();
 			System.out.println("    "+username);
-			long connectorID=conn.getConnectorID();
+			Identifier connectorId = conn.getConnectorId();
 			for(AOServConnector conn2 : conns) {
-				long connectorID2 = conn2.getConnectorID();
+				Identifier connectorId2 = conn2.getConnectorId();
 				if(conn==conn2) {
 					// Must have same connector ID
-					assertEquals(connectorID, connectorID2);
+					assertEquals(connectorId, connectorId2);
 				} else {
 					// Must have different connector ID
-					assertTrue(connectorID!=connectorID2);
+					assertFalse(connectorId.equals(connectorId2));
 				}
 			}
 		}

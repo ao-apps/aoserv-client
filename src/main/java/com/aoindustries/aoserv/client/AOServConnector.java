@@ -44,6 +44,7 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.MacAddress;
 import com.aoindustries.net.Port;
+import com.aoindustries.security.Identifier;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
@@ -145,11 +146,11 @@ abstract public class AOServConnector implements SchemaParent {
 	};*/
 
 	/**
-	 * @see  #getConnectorID()
+	 * @see  #getConnectorId()
 	 */
-	private static class IdLock {}
-	final IdLock idLock = new IdLock();
-	long id=-1; // Rename back to id
+	protected static class IdLock {}
+	protected final IdLock idLock = new IdLock();
+	protected Identifier id = null;
 
 	/**
 	 * @see  #getHostname()
@@ -708,10 +709,10 @@ abstract public class AOServConnector implements SchemaParent {
 	 * this connector back to connections of this
 	 * connector.
 	 *
-	 * @return  the globally unique identifier or <code>-1</code> if
+	 * @return  the globally unique identifier or {@code null} if
 	 *          the identifier has not yet been assigned
 	 */
-	final public long getConnectorID() {
+	final public Identifier getConnectorId() {
 		synchronized(idLock) {
 			return id;
 		}
