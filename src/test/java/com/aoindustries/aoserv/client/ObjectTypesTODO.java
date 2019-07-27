@@ -136,7 +136,7 @@ public class ObjectTypesTODO extends TestCase {
 										case Type.BIG_DECIMAL: {expectedType=BigDecimal.class; BigDecimal bigDecimal=(BigDecimal)value; break;}
 										default: fail("Unexpected SchemaType id: "+typeNum);
 									}
-									String string=type.getString(value);
+									String string=type.getString(value, -1);
 									Object parsedValue=type.parseString(string);
 									if(value instanceof Date) {
 										// milliseconds may be dropped

@@ -159,7 +159,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 					getString1 = "[NULL]";
 				} else {
 					try {
-						getString1 = type.getString(value1);
+						getString1 = type.getString(value1, -1);
 					} catch(RuntimeException e2) {
 						getString1 = value1.toString();
 					}
@@ -171,7 +171,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 					getString2 = "[NULL]";
 				} else {
 					try {
-						getString2 = type.getString(value2);
+						getString2 = type.getString(value2, -1);
 					} catch(RuntimeException e2) {
 						getString2 = value2.toString();
 					}
