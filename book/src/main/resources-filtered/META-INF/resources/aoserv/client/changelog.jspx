@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-27T03:03:21-0500"
+		dateModified="2019-07-27T05:21:23-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -140,7 +140,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						and removed <code>*_millis()</code> variants of time accessors.
 					</li>
 					<li>Added types <code>Identifier</code> (128-bit) and <code>SmallIdentifier</code> (64-bit).</li>
-					<li>Renamed <code>master.Process.process_id</code> to <code>id</code> and changed to <code>Identifier</code> type.</li>
+					<li>Renamed <code>master.Process.process_id</code> to <code>id</code> and changed to <code>SmallIdentifier</code> type.</li>
 					<li>Renamed <code>master.Process.connector_id</code> to <code>connectorId</code> and changed to <code>Identifier</code> type.</li>
 					<!-- TODO:
 					<li>

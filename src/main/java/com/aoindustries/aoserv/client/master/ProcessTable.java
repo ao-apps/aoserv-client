@@ -26,7 +26,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.security.Identifier;
+import com.aoindustries.security.SmallIdentifier;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ProcessTable extends AOServTable<Identifier,Process> {
+final public class ProcessTable extends AOServTable<SmallIdentifier,Process> {
 
 	ProcessTable(AOServConnector connector) {
 		super(connector, Process.class);
@@ -59,13 +59,13 @@ final public class ProcessTable extends AOServTable<Identifier,Process> {
 	@Override
 	public Process get(Object id) throws IOException, SQLException {
 		if(id == null) return null;
-		return get((Identifier)id);
+		return get((SmallIdentifier)id);
 	}
 
 	/**
 	 * @see  #get(java.lang.Object)
 	 */
-	public Process get(Identifier id) throws IOException, SQLException {
+	public Process get(SmallIdentifier id) throws IOException, SQLException {
 		if(id == null) return null;
 		for(Process process : getRows()) if(id.equals(process.getId())) return process;
 		return null;
