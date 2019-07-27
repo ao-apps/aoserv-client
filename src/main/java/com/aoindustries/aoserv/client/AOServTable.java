@@ -832,23 +832,32 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		throw new UnsupportedOperationException("getIndexedRows now supported by table implementation");
 	}
 
+	// TODO: Why do these exist as final?  Seems they should not exist at all since there's no way to implement primitive optimizations in subclasses
 	final public V getUniqueRow(int col, int value) throws IOException, SQLException {
 		return getUniqueRowImpl(col, value);
 	}
 
+	// TODO: Why do these exist as final?  Seems they should not exist at all since there's no way to implement primitive optimizations in subclasses
 	final public V getUniqueRow(int col, long value) throws IOException, SQLException {
 		return getUniqueRowImpl(col, value);
 	}
 
 	final public V getUniqueRow(int col, Object value) throws IOException, SQLException {
-		if(value==null) return null;
+		if(value == null) return null;
 		return getUniqueRowImpl(col, value);
 	}
 
+	// TODO: Why do these exist as final?  Seems they should not exist at all since there's no way to implement primitive optimizations in subclasses
 	final public V getUniqueRow(int col, short value) throws IOException, SQLException {
 		return getUniqueRowImpl(col, value);
 	}
 
+	/**
+	 * Gets a row given a unique column value.
+	 *
+	 * @param col  the column index to search
+	 * @param value  when {@code null}, no row is matched, even if there is a single row with a uniquely {@code null} value
+	 */
 	protected abstract V getUniqueRowImpl(int col, Object value) throws IOException, SQLException;
 
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IOException, SQLException {

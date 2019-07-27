@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -162,6 +162,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@Override
 	@SuppressWarnings({"unchecked"})
 	final protected V getUniqueRowImpl(int col, Object value) throws SQLException, IOException {
+		if(value == null) return null;
 		Table.TableID tableID=getTableID();
 		synchronized(locks[tableID.ordinal()]) {
 			validateCache();

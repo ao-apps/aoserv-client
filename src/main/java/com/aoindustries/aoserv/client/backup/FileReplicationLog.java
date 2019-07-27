@@ -43,6 +43,7 @@ import java.sql.SQLException;
  */
 final public class FileReplicationLog extends AOServObject<Integer,FileReplicationLog> implements SingleTableObject<Integer,FileReplicationLog> {
 
+	static final int COLUMN_PKEY = 0;
 	static final String COLUMN_REPLICATION_name = "replication";
 	static final String COLUMN_END_TIME_name = "end_time";
 
@@ -72,7 +73,7 @@ final public class FileReplicationLog extends AOServObject<Integer,FileReplicati
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {
-			case 0: return pkey;
+			case COLUMN_PKEY: return pkey;
 			case 1: return replication;
 			case 2: return startTime;
 			case 3: return endTime;

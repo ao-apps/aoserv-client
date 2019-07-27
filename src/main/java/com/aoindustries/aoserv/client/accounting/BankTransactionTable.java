@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -88,6 +88,6 @@ final public class BankTransactionTable extends AOServTable<Integer,BankTransact
 	@Override
 	protected BankTransaction getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
 		if(col == BankTransaction.COLUMN_ID) return get(value);
-		throw new IllegalArgumentException("Not a unique column: "+col);
+		throw new IllegalArgumentException("Not a unique column: " + col);
 	}
 }

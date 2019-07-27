@@ -86,6 +86,8 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 		UPTIME = "uptime"
 	;
 
+	static final int COLUMN_NAME = 0;
+
 	String name;
 	private String value;
 	private String description;
@@ -102,10 +104,12 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 
 	@Override
 	protected Object getColumnImpl(int i) {
-		if(i==0) return name;
-		if(i==1) return value;
-		if(i==2) return description;
-		throw new IllegalArgumentException("Invalid index: " + i);
+		switch(i) {
+			case COLUMN_NAME: return name;
+			case 1: return value;
+			case 2: return description;
+			default: throw new IllegalArgumentException("Invalid index: " + i);
+		}
 	}
 
 	public String getDescription() {

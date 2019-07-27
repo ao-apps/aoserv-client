@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -110,7 +110,7 @@ final public class BackupReportTable extends AOServTable<Integer,BackupReport> {
 
 	@Override
 	protected BackupReport getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col!=BackupReport.COLUMN_PKEY) throw new IllegalArgumentException("Not a unique column: "+col);
-		return get(value);
+		if(col == BackupReport.COLUMN_PKEY) return get(value);
+		throw new IllegalArgumentException("Not a unique column: " + col);
 	}
  }
