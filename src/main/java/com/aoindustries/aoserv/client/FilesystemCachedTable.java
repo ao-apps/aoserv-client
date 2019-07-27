@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -53,6 +53,8 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Is this worth maintaining?
+// TODO: Build on persistent collections instead?
 public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K,V>> extends AOServTable<K,V> implements FileListObjectFactory<V> {
 
 	/**
@@ -90,6 +92,9 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 	 * Clears the cache, freeing up memory.  The data will be reloaded upon
 	 * next use.
 	 */
+	// TODO: Should we close the tableList right away to free disk space?  What if API users are using the list?
+	// TODO: Currently this relies on the garbage collector, which could not run for a very long time and disk
+	// TODO: space could grow significantly.
 	@Override
 	public void clearCache() {
 		super.clearCache();
@@ -105,6 +110,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 	 * Reloads the cache if the cache has expired.  All accesses are already synchronized.
 	 */
 	private void validateCache() throws IOException, SQLException {
+		assert Thread.holdsLock(this);
 		long currentTime=System.currentTimeMillis();
 		if(
 		   // If cache never loaded
@@ -134,6 +140,9 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 	 * safely assume the data is constant as long as the code uses the same reference to List returned
 	 * here.
 	 */
+	// TODO: Create a way to copy the set of rows from this table in List form, which would then allow them to be sorted
+	//       This is necessary since lists from getRows() are unmodifiable.
+	//       Also, need a way to "close" this list as soon as no longer using it to free up disk resources.
 	@Override
 	public final List<V> getRows() throws IOException, SQLException {
 		synchronized(this) {
@@ -154,6 +163,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 
 	@Override
 	final protected V getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
+		if(value == null) return null;
 		Table schemaTable=getTableSchema();
 		Column schemaColumn=schemaTable.getSchemaColumn(connector, col);
 		SQLComparator<V> Vcomparator=new SQLComparator<>(
@@ -192,6 +202,7 @@ public abstract class FilesystemCachedTable<K,V extends FilesystemCachedObject<K
 				columnLists.set(col, unmodifiableSortedList);
 			}
 			int index=Collections.binarySearch(unmodifiableSortedList, value, Ocomparator);
+			// TODO: Assertion to ensure unique, reading the record before and after to make sure has a different value?
 			return index<0?null:unmodifiableSortedList.get(index);
 		}
 	}
