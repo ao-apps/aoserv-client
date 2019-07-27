@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -250,6 +251,8 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 
 						// Get the data
 						List<? extends AOServObject> rows = aoServTable.getRows();
+						int numRows = rows.size();
+
 						// Sort if needed
 						if(orderExpressions.size() > 0) {
 							SQLExpression[] exprs = orderExpressions.toArray(new SQLExpression[orderExpressions.size()]);
@@ -259,22 +262,42 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 							connector.getSchema().getType().sort(JavaSort.getInstance(), rows, exprs, orders);
 						}
 
-						// Convert the results
-						Object[] values = new Object[expressions.size() * rows.size()];
-						int valuePos = 0;
+						// Evaluate the expressions while finding the maximum precisions per column.
+						// The precisions allow uniform formatting within a column to depend on the overall contents of the column.
+						Object[] values = new Object[valueExpressions.length * numRows];
+						int[] precisions = new int[valueExpressions.length];
+						Arrays.fill(precisions, -1);
+						int index = 0;
 						for(AOServObject<?,?> row : rows) {
-							for(int e = 0; e < valueExpressions.length; e++) {
-								SQLExpression sql = valueExpressions[e];
-								Type type = valueTypes[e];
-								Object val = sql.getValue(connector, row);
-								values[valuePos++] = type.getString(val);
+							for(int col = 0; col < valueExpressions.length; col++) {
+								SQLExpression sql = valueExpressions[col];
+								Type type = valueTypes[col];
+								Object value = sql.getValue(connector, row);
+								int precision = type.getPrecision(value);
+								if(precision != -1) {
+									int current = precisions[col];
+									if(current == -1 || precision > current) {
+										precisions[col] = precision;
+									}
+								}
+								values[index++] = value;
+							}
+						}
+
+						// Convert the results to strings
+						String[] strings = new String[valueExpressions.length * numRows];
+						index = 0;
+						for(int row = 0; row < numRows; row++) {
+							for(int col = 0; col < valueExpressions.length; col++) {
+								strings[index] = valueTypes[col].getString(values[index], precisions[col]);
+								index++;
 							}
 						}
 
 						// Print the results
 						String[] cnames = new String[valueExpressions.length];
 						for(int d = 0; d < cnames.length; d++) cnames[d] = valueExpressions[d].getColumnName();
-						SQLUtility.printTable(cnames, values, out, isInteractive, rightAligns);
+						SQLUtility.printTable(cnames, strings, out, isInteractive, rightAligns);
 						out.flush();
 					} else {
 						err.println("aosh: " + Command.SELECT + ": table not found: " + AOServTable.quote(tableName));

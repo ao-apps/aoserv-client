@@ -1075,13 +1075,37 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 		return name;
 	}
 
-	public String getString(Object value) {
-		return getString(value, pkey);
+	public int getPrecision(Object value) {
+		return getPrecision(value, pkey);
 	}
 
-	public static String getString(Object value, int id) throws IllegalArgumentException {
+	public static int getPrecision(Object value, int type) {
+		if(value == null) return -1;
+		switch(type) {
+			case TIME: {
+				// Precision matches definition for Timestamp: https://docs.oracle.com/javase/8/docs/api/java/sql/Timestamp.html
+				int nanos = ((Timestamp)value).getNanos();
+				if(nanos == 0) {
+					return 19;
+				} else if((nanos % 1000000) == 0) {
+					return 23;
+				} else if((nanos % 1000) == 0) {
+					return 26;
+				} else {
+					return 29;
+				}
+			}
+		}
+		return -1;
+	}
+
+	public String getString(Object value, int precision) {
+		return getString(value, precision, pkey);
+	}
+
+	public static String getString(Object value, int precision, int type) throws IllegalArgumentException {
 		if(value == null) return null;
-		switch(id) {
+		switch(type) {
 			case ACCOUNTING: return value.toString();
 			case BOOLEAN: return value.toString();
 			case DATE: return SQLUtility.formatDate((java.sql.Date)value, DATE_TIME_ZONE);
@@ -1106,18 +1130,31 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				Timestamp ts = (Timestamp)value;
 				String seconds = SQLUtility.formatDateTime(ts); // TODO: Make a formatDateTimeNanos?
 				int nanos = ts.getNanos();
-				if(nanos == 0) return seconds;
+				if(
+					precision == 19
+					|| (precision == -1 && nanos == 0)
+				) {
+					return seconds;
+				}
 				String end;
 				int endDigits;
-				if((nanos % 1000000) == 0) {
+				if(
+					precision == 23
+					|| (precision == -1 && (nanos % 1000000) == 0)
+				) {
 					end = Integer.toString(nanos / 1000000);
 					endDigits = 3;
-				} else if((nanos % 1000) == 0) {
+				} else if(
+					precision == 26
+					|| (precision == -1 && (nanos % 1000) == 0)
+				) {
 					end = Integer.toString(nanos / 1000);
 					endDigits = 6;
-				} else {
+				} else if(precision == -1 || precision == 29) {
 					end = Integer.toString(nanos);
 					endDigits = 9;
+				} else {
+					throw new IllegalArgumentException("Expected precision in (-1, 19, 23, 26, 29), got: " + precision);
 				}
 				int slen = seconds.length();
 				StringBuilder formatted = new StringBuilder(slen + 1 + endDigits);
@@ -1154,7 +1191,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case LINUX_USERNAME: return value.toString();
 			case IDENTIFIER: return value.toString();
 			case SMALL_IDENTIFIER: return value.toString();
-			default: throw new IllegalArgumentException("Unknown SchemaType: " + id);
+			default: throw new IllegalArgumentException("Unknown SchemaType: " + type);
 		}
 	}
 

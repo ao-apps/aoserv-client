@@ -44,6 +44,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -880,21 +881,42 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 			alignRights[c]=type.alignRight();
 		}
 
-		Object[] values;
-		synchronized(this) {
-			List<V> rows=getRows();
-			int numRows=rows.size();
-			values=new Object[numRows*numCols];
-			int pos=0;
-			for(int rowIndex=0;rowIndex<numRows;rowIndex++) {
-				V row=rows.get(rowIndex);
-				for(int colIndex=0;colIndex<numCols;colIndex++) {
-					values[pos++]=types[colIndex].getString(row.getColumn(colIndex));
+		// Get the data
+		List<V> rows = getRows();
+		int numRows = rows.size();
+
+		// Evaluate the expressions while finding the maximum precisions per column.
+		// The precisions allow uniform formatting within a column to depend on the overall contents of the column.
+		Object[] values = new Object[numCols * numRows];
+		int[] precisions = new int[numCols];
+		Arrays.fill(precisions, -1);
+		int index = 0;
+		for(V row : rows) {
+			for(int col = 0; col < numCols; col++) {
+				Type type = types[col];
+				Object value = row.getColumn(col);
+				int precision = type.getPrecision(value);
+				if(precision != -1) {
+					int current = precisions[col];
+					if(current == -1 || precision > current) {
+						precisions[col] = precision;
+					}
 				}
+				values[index++] = value;
 			}
 		}
 
-		SQLUtility.printTable(titles, values, out, isInteractive, alignRights);
+		// Convert the results to strings
+		String[] strings = new String[numCols * numRows];
+		index = 0;
+		for(int row = 0; row < numRows; row++) {
+			for(int col = 0; col < numCols; col++) {
+				strings[index] = types[col].getString(values[index], precisions[col]);
+				index++;
+			}
+		}
+
+		SQLUtility.printTable(titles, strings, out, isInteractive, alignRights);
 	}
 
 	/**
