@@ -24,7 +24,6 @@ package com.aoindustries.aoserv.client.sql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServObject;
-import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.schema.Column;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
@@ -50,7 +49,7 @@ final public class SQLColumnValue extends SQLExpression {
 
 	@Override
 	public String toString() {
-		return AOServTable.quote(column.getName());
+		return Parser.quote(column.getName());
 	}
 
 	@Override
