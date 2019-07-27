@@ -163,7 +163,6 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 							if(expressionArg.equals("*")) {
 								for(Column column : schemaTable.getSchemaColumns(connector)) {
 									expressions.add(AOServTable.quote(column.getName()));
-									expressions.add(AOServTable.quote(column.getName()));
 								}
 							} else {
 								do {
@@ -176,7 +175,13 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 										current = expressionArg.substring(0, commaPos);
 										expressionArg = expressionArg.substring(commaPos + 1);
 									}
-									expressions.add(current);
+									if(current.equals("*")) {
+										for(Column column : schemaTable.getSchemaColumns(connector)) {
+											expressions.add(AOServTable.quote(column.getName()));
+										}
+									} else {
+										expressions.add(current);
+									}
 								} while(!expressionArg.isEmpty());
 							}
 						}
