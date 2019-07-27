@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -26,6 +26,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.security.Identifier;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,12 +37,16 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-final public class ProcessTable extends AOServTable<Long,Process> {
+final public class ProcessTable extends AOServTable<Identifier,Process> {
 
 	ProcessTable(AOServConnector connector) {
 		super(connector, Process.class);
 	}
 
+	/**
+	 * Data comes from the server sorted.
+	 * @return 
+	 */
 	@Override
 	protected OrderBy[] getDefaultOrderBy() {
 		return null;
@@ -52,22 +57,23 @@ final public class ProcessTable extends AOServTable<Long,Process> {
 	 */
 	@Deprecated
 	@Override
-	public Process get(Object pid) throws IOException, SQLException {
-		if(pid == null) return null;
-		return get(((Long)pid).longValue());
+	public Process get(Object id) throws IOException, SQLException {
+		if(id == null) return null;
+		return get((Identifier)id);
 	}
 
 	/**
 	 * @see  #get(java.lang.Object)
 	 */
-	public Process get(long pid) throws IOException, SQLException {
-		for(Process mp : getRows()) if(mp.process_id==pid) return mp;
+	public Process get(Identifier id) throws IOException, SQLException {
+		if(id == null) return null;
+		for(Process process : getRows()) if(id.equals(process.getId())) return process;
 		return null;
 	}
 
 	@Override
 	public List<Process> getRows() throws IOException, SQLException {
-		List<Process> list=new ArrayList<>();
+		List<Process> list = new ArrayList<>();
 		getObjects(true, list, AoservProtocol.CommandID.GET_TABLE, Table.TableID.MASTER_PROCESSES);
 		return list;
 	}
@@ -79,7 +85,7 @@ final public class ProcessTable extends AOServTable<Long,Process> {
 
 	@Override
 	protected Process getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
-		return get(value);
+		if(col == Process.COLUMN_ID) return get(value);
+		throw new IllegalArgumentException("Not a unique column: " + col);
 	}
 }

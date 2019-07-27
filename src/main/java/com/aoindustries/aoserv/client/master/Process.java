@@ -32,6 +32,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.net.InetAddress;
+import com.aoindustries.security.Identifier;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -47,15 +48,17 @@ import java.util.Objects;
  *
  * @author  AO Industries, Inc.
  */
-final public class Process extends AOServObject<Long,Process> implements SingleTableObject<Long,Process> {
+final public class Process extends AOServObject<Identifier,Process> implements SingleTableObject<Identifier,Process> {
 
-	private static boolean logCommands=false;
+	static final int COLUMN_ID = 0;
+
+	private static boolean logCommands = false;
 
 	/**
 	 * Turns on/off command logging.
 	 */
-	public static void setLogCommands(boolean state) {
-		logCommands=state;
+	public static void setLogCommands(boolean logCommands) {
+		Process.logCommands = logCommands;
 	}
 
 	public static boolean getLogCommands() {
@@ -66,13 +69,13 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	 * The different states a process may be in.
 	 */
 	public static final String
-		LOGIN="login",
-		RUN="run",
-		SLEEP="sleep"
+		LOGIN = "login",
+		RUN = "run",
+		SLEEP = "sleep"
 	;
 
-	long process_id;
-	private long connector_id=-1;
+	private Identifier id;
+	private Identifier connectorId;
 	private User.Name authenticated_user;
 	private User.Name effective_user;
 	private int daemon_server;
@@ -88,19 +91,20 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	private Object[] command;
 	private UnmodifiableTimestamp state_start_time;
 
-	private AOServTable<Long,Process> table;
+	// TODO: volatile / synchronize this and similar?
+	private AOServTable<Identifier,Process> table;
 
 	public Process() {
 	}
 
 	public Process(
-		long process_id,
+		Identifier id,
 		InetAddress host,
 		String protocol,
 		boolean is_secure,
 		Timestamp connect_time
 	) {
-		this.process_id=process_id;
+		this.id = id;
 		this.host=host;
 		this.protocol=protocol;
 		this.is_secure=is_secure;
@@ -136,8 +140,8 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	@Override
 	protected Object getColumnImpl(int i) {
 		switch(i) {
-			case 0: return process_id;
-			case 1: return connector_id == -1 ? null : connector_id;
+			case COLUMN_ID: return id;
+			case 1: return connectorId;
 			case 2: return authenticated_user;
 			case 3: return effective_user;
 			case 4: return daemon_server == -1 ? null : daemon_server;
@@ -164,12 +168,12 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		return priority;
 	}
 
-	public long getProcessID() {
-		return process_id;
+	public Identifier getId() {
+		return id;
 	}
 
-	public long getConnectorID() {
-		return connector_id;
+	public Identifier getConnectorId() {
+		return connectorId;
 	}
 
 	public User.Name getAuthenticatedAdministrator_username() {
@@ -232,17 +236,12 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	}
 
 	@Override
-	public Long getKey() {
-		return process_id;
+	public Identifier getKey() {
+		return id;
 	}
 
-	/**
-	 * Gets the <code>AOServTable</code> that contains this <code>AOServObject</code>.
-	 *
-	 * @return  the <code>AOServTable</code>.
-	 */
 	@Override
-	public AOServTable<Long,Process> getTable() {
+	public AOServTable<Identifier,Process> getTable() {
 		return table;
 	}
 
@@ -259,8 +258,8 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	@Override
 	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
-			process_id=in.readLong();
-			connector_id=in.readLong();
+			id = in.readIdentifier();
+			connectorId = in.readNullIdentifier();
 			authenticated_user = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			effective_user = InternUtils.intern(User.Name.valueOf(in.readNullUTF()));
 			daemon_server=in.readCompressedInt();
@@ -317,8 +316,8 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 		authenticated_user = username;
 	}
 
-	public void setConnectorID(long id) {
-		connector_id=id;
+	public void setConnectorId(Identifier connectorId) {
+		this.connectorId = connectorId;
 	}
 
 	public void setDeamonServer(int server) {
@@ -334,9 +333,9 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 	}
 
 	@Override
-	public void setTable(AOServTable<Long,Process> table) {
-		if(this.table!=null) throw new IllegalStateException("table already set");
-		this.table=table;
+	public void setTable(AOServTable<Identifier,Process> table) {
+		if(this.table != null) throw new IllegalStateException("table already set");
+		this.table = table;
 	}
 
 	@Override
@@ -346,8 +345,14 @@ final public class Process extends AOServObject<Long,Process> implements SingleT
 
 	@Override
 	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
-		out.writeLong(process_id);
-		out.writeLong(connector_id);
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
+			// Old clients had a 64-bit ID, just send them the low-order bits
+			out.writeLong(id.getLo());
+			out.writeLong(connectorId == null ? -1 : connectorId.getLo());
+		} else {
+			out.writeIdentifier(id);
+			out.writeNullIdentifier(connectorId);
+		}
 		out.writeNullUTF(Objects.toString(authenticated_user, null));
 		out.writeNullUTF(Objects.toString(effective_user, null));
 		out.writeCompressedInt(daemon_server);
