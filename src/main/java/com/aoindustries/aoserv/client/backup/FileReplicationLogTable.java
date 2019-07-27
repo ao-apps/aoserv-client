@@ -117,7 +117,7 @@ final public class FileReplicationLogTable extends AOServTable<Integer,FileRepli
 
 	@Override
 	protected FileReplicationLog getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col!=0) throw new IllegalArgumentException("Not a unique column: "+col);
-		return get(value);
+		if(col == FileReplicationLog.COLUMN_PKEY) return get(value);
+		throw new IllegalArgumentException("Not a unique column: " + col);
 	}
 }

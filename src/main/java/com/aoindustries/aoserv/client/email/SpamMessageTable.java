@@ -115,8 +115,8 @@ final public class SpamMessageTable extends AOServTable<Integer,SpamMessage> {
 
 	@Override
 	protected SpamMessage getUniqueRowImpl(int col, Object value) throws IOException, SQLException {
-		if(col!=SpamMessage.COLUMN_PKEY) throw new IllegalArgumentException("Not a unique column: "+col);
-		return get(value);
+		if(col == SpamMessage.COLUMN_PKEY) return get(value);
+		throw new IllegalArgumentException("Not a unique column: " + col);
 	}
 
 	@Override
