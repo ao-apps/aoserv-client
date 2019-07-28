@@ -1075,6 +1075,41 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 		return name;
 	}
 
+	/**
+	 * Checks if this type supports any precisions other than default {@code -1}.
+	 * This can be used to short-cut somethings when it is known no precisions will be returned.
+	 */
+	public boolean supportsPrecision() {
+		return supportsPrecision(pkey);
+	}
+
+	/**
+	 * Checks if the given type supports any precisions other than default {@code -1}.
+	 * This can be used to short-cut somethings when it is known no precisions will be returned.
+	 */
+	public static boolean supportsPrecision(int type) {
+		return type == TIME;
+	}
+
+	/**
+	 * Gets the maximum precision for this type or {@code -1} when unbounded.
+	 * This can be used to stop searching for largest precision once the maximum possible value has been found.
+	 */
+	public int getMaxPrecision() {
+		return getMaxPrecision(pkey);
+	}
+
+	/**
+	 * Gets the maximum precision for the given type or {@code -1} when unbounded.
+	 * This can be used to stop searching for largest precision once the maximum possible value has been found.
+	 */
+	public static int getMaxPrecision(int type) {
+		switch(type) {
+			case TIME: return 29;
+			default: return -1;
+		}
+	}
+
 	public int getPrecision(Object value) {
 		return getPrecision(value, pkey);
 	}
@@ -1095,8 +1130,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					return 29;
 				}
 			}
+			default:
+				return -1;
 		}
-		return -1;
 	}
 
 	public String getString(Object value, int precision) {
