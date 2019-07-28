@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,6 +34,7 @@ import com.aoindustries.sql.SQLUtility;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,19 +83,20 @@ final public class CertificateTable extends CachedTableIntegerKey<Certificate> {
 					args[2]
 				);
 				int size = results.size();
-				final int COLUMNS = 4;
-				Object[] values = new Object[size * COLUMNS];
+				List<Object[]> rows = new ArrayList<>(size);
 				for(int i = 0; i < size; i++) {
 					Certificate.Check status = results.get(i);
-					values[i * COLUMNS] = status.getCheck();
-					values[i * COLUMNS + 1] = status.getValue();
-					values[i * COLUMNS + 2] = status.getAlertLevel();
-					values[i * COLUMNS + 3] = status.getMessage();
+					rows.add(new Object[] {
+						status.getCheck(),
+						status.getValue(),
+						status.getAlertLevel(),
+						status.getMessage()
+					});
 				}
 				// Display as a table
 				SQLUtility.printTable(
 					new String[] {"check", "value", "alert_level", "message"},
-					values,
+					rows,
 					out,
 					isInteractive,
 					new boolean[] {false, false, false, false}
