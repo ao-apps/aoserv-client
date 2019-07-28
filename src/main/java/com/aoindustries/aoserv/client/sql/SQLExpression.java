@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -39,7 +39,10 @@ abstract public class SQLExpression {
 
 	abstract public String getColumnName();
 
-	abstract public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException;
+	/**
+	 * Evaluates the expression on the given connector and object.
+	 */
+	abstract public Object evaluate(AOServConnector conn, AOServObject obj) throws IOException, SQLException;
 
 	abstract public Type getType();
 

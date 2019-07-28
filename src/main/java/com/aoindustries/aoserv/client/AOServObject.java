@@ -145,9 +145,9 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 			Object value2 = null;
 			boolean value2Set = false;
 			try {
-				value1 = expr.getValue(conn, this);
+				value1 = expr.evaluate(conn, this);
 				value1Set = true;
-				value2 = expr.getValue(conn, other);
+				value2 = expr.evaluate(conn, other);
 				value2Set = true;
 				int diff = type.compareTo(value1, value2);
 				if(diff != 0) return sortOrders[c] ? diff : -diff;
@@ -199,7 +199,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 			SQLExpression expr=sortExpressions[c];
 			Type type=expr.getType();
 			int diff=type.compareTo(
-				expr.getValue(conn, this),
+				expr.evaluate(conn, this),
 				value
 			);
 			if(diff!=0) return sortOrders[c]?diff:-diff;
@@ -216,7 +216,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 			SQLExpression expr=sortExpressions[c];
 			Type type=expr.getType();
 			int diff=type.compareTo(
-				expr.getValue(conn, this),
+				expr.evaluate(conn, this),
 				OA[c]
 			);
 			if(diff!=0) return sortOrders[c]?diff:-diff;

@@ -73,8 +73,8 @@ final public class SQLColumnJoin extends SQLExpression {
 	}
 
 	@Override
-	public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
-		Object keyValue=expression.getValue(conn, obj);
+	public Object evaluate(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
+		Object keyValue=expression.evaluate(conn, obj);
 		if(keyValue!=null) {
 			AOServObject row=table.getUniqueRow(keyIndex, keyValue);
 			if(row!=null) return row.getColumn(valueIndex);
