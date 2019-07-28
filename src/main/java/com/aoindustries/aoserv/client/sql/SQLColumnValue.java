@@ -58,7 +58,7 @@ final public class SQLColumnValue extends SQLExpression {
 	}
 
 	@Override
-	public Object getValue(AOServConnector conn, AOServObject obj) {
+	public Object evaluate(AOServConnector conn, AOServObject obj) {
 		return obj.getColumn(column.getIndex());
 	}
 

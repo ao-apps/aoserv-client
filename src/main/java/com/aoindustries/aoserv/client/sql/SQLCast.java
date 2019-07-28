@@ -56,8 +56,8 @@ final public class SQLCast extends SQLExpression {
 	}
 
 	@Override
-	public Object getValue(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
-		return expression.getType().cast(conn, expression.getValue(conn, obj), castToType);
+	public Object evaluate(AOServConnector conn, AOServObject obj) throws IOException, SQLException {
+		return expression.getType().cast(conn, expression.evaluate(conn, obj), castToType);
 	}
 
 	@Override
