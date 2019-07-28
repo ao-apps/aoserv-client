@@ -33,6 +33,8 @@ import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.pki.HashedPassword;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.aoserv.client.sql.SQLComparator;
+import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.CompressedWritable;
@@ -48,6 +50,7 @@ import com.aoindustries.security.Identifier;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
+import com.aoindustries.util.sort.ComparisonSortAlgorithm;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.security.SecureRandom;
@@ -1722,6 +1725,38 @@ abstract public class AOServConnector implements SchemaParent {
 				public void afterRelease() {
 				}
 			}
+		);
+	}
+
+	public <K,T extends AOServObject<K,T>> void sort(
+		ComparisonSortAlgorithm<? super T> sortAlgorithm,
+		T[] list,
+		SQLExpression[] sortExpressions,
+		boolean[] sortOrders
+	) {
+		sortAlgorithm.sort(
+			list,
+			new SQLComparator<T>(
+				this,
+				sortExpressions,
+				sortOrders
+			)
+		);
+	}
+
+	public <K,T extends AOServObject<K,T>> void sort(
+		ComparisonSortAlgorithm<? super T> sortAlgorithm,
+		List<T> list,
+		SQLExpression[] sortExpressions,
+		boolean[] sortOrders
+	) {
+		sortAlgorithm.sort(
+			list,
+			new SQLComparator<T>(
+				this,
+				sortExpressions,
+				sortOrders
+			)
 		);
 	}
 }
