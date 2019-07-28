@@ -737,6 +737,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				values[index++] = value;
 			}
 		}
+		assert index == values.length;
 
 		// Convert the results to strings
 		String[] strings = new String[numCols * numRows];
@@ -747,6 +748,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				index++;
 			}
 		}
+		assert index == values.length;
 
 		SQLUtility.printTable(titles, strings, out, isInteractive, alignRights);
 	}
