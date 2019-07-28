@@ -284,6 +284,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 								values[index++] = value;
 							}
 						}
+						assert index == values.length;
 
 						// Convert the results to strings
 						String[] strings = new String[valueExpressions.length * numRows];
@@ -294,6 +295,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 								index++;
 							}
 						}
+						assert index == values.length;
 
 						// Print the results
 						String[] cnames = new String[valueExpressions.length];
