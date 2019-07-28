@@ -541,7 +541,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 			for(int c = 0; c < orderBys.length; c++) {
 				sortOrders[c] = orderBys[c].getOrder();
 			}
-			connector.getSchema().getType().sort(getSortAlgorithm(), list, sortExpressions, sortOrders);
+			connector.sort(getSortAlgorithm(), list, sortExpressions, sortOrders);
 		}
 	}
 
