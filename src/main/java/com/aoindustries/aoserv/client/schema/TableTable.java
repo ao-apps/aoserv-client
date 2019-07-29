@@ -74,6 +74,19 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 		else throw new IllegalArgumentException("Must be an Integer, a String, or a SchemaTable.TableID");
 	}
 
+	/** Avoid repeated array copies. */
+	private static final int numTables = Table.TableID.values().length;
+
+	@Override
+	public List<Table> getRows() throws IOException, SQLException {
+		List<Table> rows = super.getRows();
+		int size = rows.size();
+		if(size != numTables) {
+			throw new SQLException("Unexpected number of rows: expected " + numTables + ", got " + size);
+		}
+		return rows;
+	}
+
 	/**
 	 * @see  #get(java.lang.Object)
 	 */

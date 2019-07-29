@@ -209,7 +209,7 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 
 	@Override
 	@SuppressWarnings({"unchecked"})
-	public final List<V> getRows() throws IOException, SQLException {
+	public List<V> getRows() throws IOException, SQLException {
 		Table.TableID tableID = getTableID();
 		int ordinal = tableID.ordinal();
 		// We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
