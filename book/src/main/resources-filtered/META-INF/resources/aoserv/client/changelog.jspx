@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-29T01:51:25-0500"
+		dateModified="2019-07-29T04:42:46-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -163,6 +163,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</p>
 					</li>
 					<li>Master returns new entropy needed as entropy is added.</li>
+					<li>
+						Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
+						then selected the appropriate method for each place random is used.
+					</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>

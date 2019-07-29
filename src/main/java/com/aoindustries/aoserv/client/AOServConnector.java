@@ -38,6 +38,7 @@ import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.CompressedWritable;
+import com.aoindustries.io.IoUtils;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
@@ -59,6 +60,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -747,10 +749,20 @@ abstract public class AOServConnector implements SchemaParent {
 	 */
 	abstract public String getProtocol();
 
+	/**
+	 * A single random number generator is shared by all connector resources to provide better randomness.
+	 */
 	private static final SecureRandom secureRandom = new SecureRandom();
-
-	public static SecureRandom getRandom() {
+	public static SecureRandom getSecureRandom() {
 		return secureRandom;
+	}
+
+	/**
+	 * A fast pseudo-random number generated seeded by secure random.
+	 */
+	private static final Random fastRandom = new Random(IoUtils.bufferToLong(secureRandom.generateSeed(8)));
+	public static Random getFastRandom() {
+		return fastRandom;
 	}
 
 	/**

@@ -138,7 +138,7 @@ public class TCPConnector extends AOServConnector {
 							logger.log(Level.INFO, null, err);
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
-								sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
+								sleep(getFastRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								logger.log(Level.WARNING, null, err2);
 							}
@@ -151,7 +151,7 @@ public class TCPConnector extends AOServConnector {
 							logger.log(Level.SEVERE, null, T);
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
-								sleep(getRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
+								sleep(getFastRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
 								logger.log(Level.WARNING, null, err2);
 							}
