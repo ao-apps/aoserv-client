@@ -1711,7 +1711,7 @@ abstract public class AOServConnector implements SchemaParent {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(numBytes);
-					for(int c=0;c<numBytes;c++) out.writeByte(buff[c]);
+					out.write(buff, 0, numBytes);
 				}
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
