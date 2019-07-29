@@ -225,7 +225,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 		}
 	}
 
-	public static final int
+	public static final byte
 		NEXT = 0,
 		DONE = 1,
 		IO_EXCEPTION = 2,
