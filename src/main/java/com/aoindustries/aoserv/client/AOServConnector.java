@@ -1703,11 +1703,12 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * Adds some entropy to the master server.
 	 */
-	public void addMasterEntropy(final byte[] buff, final int numBytes) throws IOException, SQLException {
-		requestUpdate(
+	public long addMasterEntropy(final byte[] buff, final int numBytes) throws IOException, SQLException {
+		return requestResult(
 			true,
 			AoservProtocol.CommandID.ADD_MASTER_ENTROPY,
-			new UpdateRequest() {
+			new ResultRequest<Long>() {
+				private long entropyNeeded;
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(numBytes);
@@ -1720,9 +1721,11 @@ abstract public class AOServConnector implements SchemaParent {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
+					entropyNeeded = in.readLong();
 				}
 				@Override
-				public void afterRelease() {
+				public Long afterRelease() {
+					return entropyNeeded;
 				}
 			}
 		);
