@@ -112,7 +112,7 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 				}
 				out.flush();
 			} else if(argCount==2) {
-				if(args[1].equals("syntax")) {
+				if(args[1].equalsIgnoreCase("syntax")) {
 					TableTable schemaTableTable=connector.getSchema().getTable();
 					for(int c=-1;c<numTables;c++) {
 						Table schemaTable=c==-1?null:schemaTableTable.get(c);
@@ -123,13 +123,23 @@ final public class CommandTable extends GlobalTableStringKey<Command> {
 					out.flush();
 				} else {
 					// Try to find the command
-					Command aoshCom=get(args[1].toLowerCase());
-					if(aoshCom!=null) {
-						aoshCom.printCommandHelp(out);
+					String comName = args[1];
+					Command aoshCommand = get(comName);
+					if(aoshCommand == null) {
+						// Case-insensitive search
+						for(Command com : getRows()) {
+							if(com.getCommand().equalsIgnoreCase(comName)) {
+								aoshCommand = com;
+								break;
+							}
+						}
+					}
+					if(aoshCommand != null) {
+						aoshCommand.printCommandHelp(out);
 						out.flush();
 					} else {
 						err.print("aosh: help: help on command not found: ");
-						err.println(args[1]);
+						err.println(comName);
 						err.flush();
 					}
 				}
