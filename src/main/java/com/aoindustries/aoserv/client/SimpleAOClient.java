@@ -8503,9 +8503,10 @@ final public class SimpleAOClient {
 	 */
 	public List<Certificate.Check> checkSslCertificate(
 		String aoServer,
-		String keyFileOrCertbotName
+		String keyFileOrCertbotName,
+		boolean allowCached
 	) throws IllegalArgumentException, IOException, SQLException {
-		return getSslCertificate(aoServer, keyFileOrCertbotName).check();
+		return getSslCertificate(aoServer, keyFileOrCertbotName).check(allowCached);
 	}
 
 	/**
