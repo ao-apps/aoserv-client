@@ -45,14 +45,6 @@ import java.util.Map;
 abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServTable<K,V> {
 
 	private static final int numTables = Table.TableID.values().length;
-	/**
-	 * The last time that the data was loaded, or
-	 * <code>-1</code> if not yet loaded.
-	 */
-	private static final long[] lastLoadeds=new long[numTables];
-	static {
-		Arrays.fill(lastLoadeds, -1);
-	}
 
 	/**
 	 * Each table has its own lock because we were getting deadlocks with one lock on GlobalTable.class.
@@ -61,6 +53,15 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	private static final Lock[] locks = new Lock[numTables];
 	static {
 		for(int c=0;c<locks.length;c++) locks[c] = new Lock();
+	}
+
+	/**
+	 * The last time that the data was loaded, or
+	 * <code>-1</code> if not yet loaded.
+	 */
+	private static final long[] lastLoadeds = new long[numTables];
+	static {
+		Arrays.fill(lastLoadeds, -1);
 	}
 
 	/**
@@ -105,9 +106,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 * table is not yet loaded.
 	 */
 	public final int getGlobalRowCount() {
+		int ordinal = getTableID().ordinal();
 		List<GlobalObject<?,?>> objs;
-		synchronized(tableObjs) {
-			objs=tableObjs.get(getTableID().ordinal());
+		synchronized(locks[ordinal]) {
+			synchronized(tableObjs) {
+				objs=tableObjs.get(ordinal);
+			}
 		}
 		if(objs!=null) return objs.size();
 		return -1;
@@ -117,17 +121,18 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@SuppressWarnings({"unchecked"})
 	final public List<V> getIndexedRows(int col, Object value) throws IOException, SQLException {
 		Table.TableID tableID=getTableID();
-		synchronized(locks[tableID.ordinal()]) {
+		int ordinal = tableID.ordinal();
+		synchronized(locks[ordinal]) {
 			validateCache();
 
-			BitSet tableLoadeds=indexLoadeds[tableID.ordinal()];
-			if(tableLoadeds==null) indexLoadeds[tableID.ordinal()]=tableLoadeds=new BitSet(col+1);
+			BitSet tableLoadeds=indexLoadeds[ordinal];
+			if(tableLoadeds==null) indexLoadeds[ordinal]=tableLoadeds=new BitSet(col+1);
 			boolean isHashed=tableLoadeds.get(col);
 
 			List<Map<Object,List<GlobalObject<?,?>>>> tableValues;
 			synchronized(indexHashes) {
-				tableValues = indexHashes.get(tableID.ordinal());
-				if(tableValues==null) indexHashes.set(tableID.ordinal(), tableValues=new ArrayList<>(col+1));
+				tableValues = indexHashes.get(ordinal);
+				if(tableValues==null) indexHashes.set(ordinal, tableValues=new ArrayList<>(col+1));
 			}
 			while(tableValues.size()<=col) tableValues.add(null);
 			Map<Object,List<GlobalObject<?,?>>> colIndexes=tableValues.get(col);
@@ -164,11 +169,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	final protected V getUniqueRowImpl(int col, Object value) throws SQLException, IOException {
 		if(value == null) return null;
 		Table.TableID tableID=getTableID();
-		synchronized(locks[tableID.ordinal()]) {
+		int ordinal = tableID.ordinal();
+		synchronized(locks[ordinal]) {
 			validateCache();
 
-			BitSet tableLoadeds=hashLoadeds[tableID.ordinal()];
-			if(tableLoadeds==null) hashLoadeds[tableID.ordinal()]=tableLoadeds=new BitSet(col+1);
+			BitSet tableLoadeds=hashLoadeds[ordinal];
+			if(tableLoadeds==null) hashLoadeds[ordinal]=tableLoadeds=new BitSet(col+1);
 			boolean isHashed=tableLoadeds.get(col);
 
 			List<V> table=getRows();
@@ -176,8 +182,8 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 
 			List<Map<Object,GlobalObject>> tableValues;
 			synchronized(tableHashes) {
-				tableValues = tableHashes.get(tableID.ordinal());
-				if(tableValues==null) tableHashes.set(tableID.ordinal(), tableValues=new ArrayList<>(col+1));
+				tableValues = tableHashes.get(ordinal);
+				if(tableValues==null) tableHashes.set(ordinal, tableValues=new ArrayList<>(col+1));
 			}
 			while(tableValues.size()<=col) tableValues.add(null);
 			Map<Object,GlobalObject> colValues=tableValues.get(col);
@@ -205,11 +211,12 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@SuppressWarnings({"unchecked"})
 	public final List<V> getRows() throws IOException, SQLException {
 		Table.TableID tableID = getTableID();
+		int ordinal = tableID.ordinal();
 		// We synchronize here to make sure tableObjs is not cleared between validateCache and get, but only on a per-table ID basis
-		synchronized(locks[tableID.ordinal()]) {
+		synchronized(locks[ordinal]) {
 			validateCache();
 			synchronized(tableObjs) {
-				List<GlobalObject<?,?>> objs=tableObjs.get(tableID.ordinal());
+				List<GlobalObject<?,?>> objs=tableObjs.get(ordinal);
 				return (List)objs;
 			}
 		}
@@ -224,29 +231,40 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	 * Determines if the contents are currently hashed in a hashmap.
 	 */
 	boolean isHashed(int column) {
-		BitSet table=hashLoadeds[getTableID().ordinal()];
-		return table!=null && table.get(column);
+		int ordinal = getTableID().ordinal();
+		synchronized(locks[ordinal]) {
+			BitSet table=hashLoadeds[ordinal];
+			return table!=null && table.get(column);
+		}
 	}
 
 	/**
 	 * Determines if the contents are currently indexed.
 	 */
 	boolean isIndexed(int column) {
-		BitSet table=indexLoadeds[getTableID().ordinal()];
-		return table!=null && table.get(column);
+		int ordinal = getTableID().ordinal();
+		synchronized(locks[ordinal]) {
+			BitSet table=indexLoadeds[ordinal];
+			return table!=null && table.get(column);
+		}
 	}
 
 	@Override
 	final public boolean isLoaded() {
-		return lastLoadeds[getTableID().ordinal()]!=-1;
+		Table.TableID tableID=getTableID();
+		int ordinal = tableID.ordinal();
+		synchronized(locks[ordinal]) {
+			return lastLoadeds[ordinal] != -1;
+		}
 	}
 
 	@Override
 	public void clearCache() {
 		super.clearCache();
 		Table.TableID tableID=getTableID();
-		synchronized(locks[tableID.ordinal()]) {
-			lastLoadeds[tableID.ordinal()]=-1;
+		int ordinal = tableID.ordinal();
+		synchronized(locks[ordinal]) {
+			lastLoadeds[ordinal] = -1;
 		}
 	}
 
@@ -256,19 +274,20 @@ abstract public class GlobalTable<K,V extends GlobalObject<K,V>> extends AOServT
 	@SuppressWarnings({"unchecked"})
 	private void validateCache() throws IOException, SQLException {
 		Table.TableID tableID=getTableID();
-		synchronized(locks[tableID.ordinal()]) {
+		int ordinal = tableID.ordinal();
+		synchronized(locks[ordinal]) {
 			long currentTime=System.currentTimeMillis();
-			long lastLoaded=lastLoadeds[tableID.ordinal()];
+			long lastLoaded=lastLoadeds[ordinal];
 			if(lastLoaded==-1) {
-				List<GlobalObject<?,?>> list=(List)getObjects(true, AoservProtocol.CommandID.GET_TABLE, tableID.ordinal());
+				List<GlobalObject<?,?>> list=(List)getObjects(true, AoservProtocol.CommandID.GET_TABLE, ordinal);
 				synchronized(tableObjs) {
-					tableObjs.set(tableID.ordinal(), Collections.unmodifiableList(list));
+					tableObjs.set(ordinal, Collections.unmodifiableList(list));
 				}
-				BitSet loaded=hashLoadeds[tableID.ordinal()];
+				BitSet loaded=hashLoadeds[ordinal];
 				if(loaded!=null) loaded.clear();
-				BitSet indexed=indexLoadeds[tableID.ordinal()];
+				BitSet indexed=indexLoadeds[ordinal];
 				if(indexed!=null) indexed.clear();
-				lastLoadeds[tableID.ordinal()]=currentTime;
+				lastLoadeds[ordinal]=currentTime;
 			}
 		}
 	}
