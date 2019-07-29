@@ -1717,11 +1717,12 @@ abstract public class AOServConnector implements SchemaParent {
 				@Override
 				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
 					int code=in.readByte();
-					if(code!=AoservProtocol.DONE) {
+					if(code==AoservProtocol.DONE) {
+						entropyNeeded = in.readLong();
+					} else {
 						AoservProtocol.checkResult(code, in);
 						throw new IOException("Unexpected response code: "+code);
 					}
-					entropyNeeded = in.readLong();
 				}
 				@Override
 				public Long afterRelease() {
