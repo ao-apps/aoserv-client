@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2011, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,12 +22,12 @@
  */
 package com.aoindustries.aoserv.client.password;
 
+import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.SmallIdentifier;
 import com.aoindustries.util.StringUtility;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Random;
 
 /**
  * Generates easily remembered random passwords of at least 38 bits of entropy.
@@ -115,13 +115,11 @@ public class PasswordGenerator {
 		"y"
 	};
 
-	private static final SecureRandom secureRandom = new SecureRandom();
-
 	public static String generatePassword() throws IOException {
-		return generatePassword(secureRandom);
+		return generatePassword(AOServConnector.getSecureRandom());
 	}
 
-	public static String generatePassword(Random r) throws IOException {
+	public static String generatePassword(SecureRandom secureRandom) throws IOException {
 		StringBuilder pw = new StringBuilder();
 		String password;
 		do {
@@ -134,28 +132,28 @@ public class PasswordGenerator {
 				int temp2 = 0;
 
 				// determine which template to use
-				int template = r.nextInt(3);
+				int template = secureRandom.nextInt(3);
 				entropy*=3;
 				switch (template) {
 					case 0: {
-						temp1 = r.nextBoolean()?321:412;
-						temp2 = r.nextBoolean()?321:412;
+						temp1 = secureRandom.nextBoolean()?321:412;
+						temp2 = secureRandom.nextBoolean()?321:412;
 						entropy*=4;
 						break;
 					}
 					case 1: {
-						if (r.nextBoolean()) {
-							temp1 = r.nextBoolean()?361:412;
-							temp2 = r.nextBoolean()?4161:3612;
+						if (secureRandom.nextBoolean()) {
+							temp1 = secureRandom.nextBoolean()?361:412;
+							temp2 = secureRandom.nextBoolean()?4161:3612;
 						} else {
-							temp2 = r.nextBoolean()?361:412;
-							temp1 = r.nextBoolean()?4161:3612; 
+							temp2 = secureRandom.nextBoolean()?361:412;
+							temp1 = secureRandom.nextBoolean()?4161:3612; 
 						}
 						entropy*=8;
 						break;
 					}
 					case 2: {
-						temp1 = r.nextBoolean()?416161:361612;
+						temp1 = secureRandom.nextBoolean()?416161:361612;
 						entropy*=2;
 						break;
 					}
@@ -173,28 +171,28 @@ public class PasswordGenerator {
 						currTemp /= 10;
 						switch (digit) {
 							case 1: {
-								currWord.append(VOWS[r.nextInt(VOWS.length)]);
+								currWord.append(VOWS[secureRandom.nextInt(VOWS.length)]);
 								entropy*=VOWS.length;
 								break;
 							}
 							case 2: {
-								currWord.append(CONS[r.nextInt(CONS.length)]);
+								currWord.append(CONS[secureRandom.nextInt(CONS.length)]);
 								entropy*=CONS.length;
 								break;
 							}
 							case 3: {
-								currWord.append(TERM_VOWS[r.nextInt(TERM_VOWS.length)]);
+								currWord.append(TERM_VOWS[secureRandom.nextInt(TERM_VOWS.length)]);
 								entropy*=TERM_VOWS.length;
 								break;
 							}
 							case 4: {
-								currWord.append(TERM_CONS[r.nextInt(TERM_CONS.length)]);
+								currWord.append(TERM_CONS[secureRandom.nextInt(TERM_CONS.length)]);
 								entropy*=TERM_CONS.length;
 								break;
 							}
 							case 6: {
-								boolean a = r.nextBoolean();
-								currWord.append(a?CONS[r.nextInt(CONS.length)]:TERM_CONS[r.nextInt(TERM_CONS.length)]);
+								boolean a = secureRandom.nextBoolean();
+								currWord.append(a?CONS[secureRandom.nextInt(CONS.length)]:TERM_CONS[secureRandom.nextInt(TERM_CONS.length)]);
 								entropy*=(a?CONS:TERM_CONS).length;
 								break;
 							}
@@ -207,17 +205,17 @@ public class PasswordGenerator {
 						ppWord = StringUtility.replace(ppWord, "uu", "ui");
 						ppWord = StringUtility.replace(ppWord, "iw", "u");
 						ppWord = StringUtility.replace(ppWord, "yy", "y");
-						ppWord = StringUtility.replace(ppWord, "lal", r.nextBoolean()?"ral":"lar");
+						ppWord = StringUtility.replace(ppWord, "lal", secureRandom.nextBoolean()?"ral":"lar");
 						ppWord = StringUtility.replace(ppWord, "rar", "ral");
-						ppWord = StringUtility.replace(ppWord, "lel", r.nextBoolean()?"rel":"ler");
+						ppWord = StringUtility.replace(ppWord, "lel", secureRandom.nextBoolean()?"rel":"ler");
 						ppWord = StringUtility.replace(ppWord, "rer", "rel");
-						ppWord = StringUtility.replace(ppWord, "lol", r.nextBoolean()?"rol":"lor");
+						ppWord = StringUtility.replace(ppWord, "lol", secureRandom.nextBoolean()?"rol":"lor");
 						ppWord = StringUtility.replace(ppWord, "ror", "rol");
-						ppWord = StringUtility.replace(ppWord, "lul", r.nextBoolean()?"rul":"lur");
+						ppWord = StringUtility.replace(ppWord, "lul", secureRandom.nextBoolean()?"rul":"lur");
 						ppWord = StringUtility.replace(ppWord, "rur", "rul");
-						ppWord = StringUtility.replace(ppWord, "lil", r.nextBoolean()?"ril":"lir");
+						ppWord = StringUtility.replace(ppWord, "lil", secureRandom.nextBoolean()?"ril":"lir");
 						ppWord = StringUtility.replace(ppWord, "rir", "ril");
-						ppWord = StringUtility.replace(ppWord, "lyl", r.nextBoolean()?"ryl":"lyr");
+						ppWord = StringUtility.replace(ppWord, "lyl", secureRandom.nextBoolean()?"ryl":"lyr");
 						ppWord = StringUtility.replace(ppWord, "ryr", "ryl");
 						if (ppWord.indexOf("rve")<ppWord.length()-3) ppWord = StringUtility.replace(ppWord, "rve", "rv");
 						if (ppWord.indexOf("lve")<ppWord.length()-3) ppWord = StringUtility.replace(ppWord, "lve", "lv");
@@ -227,11 +225,11 @@ public class PasswordGenerator {
 					}
 				}
 
-				int dig1 = r.nextInt(8)+2;
-				int dig2 = r.nextInt(8)+2;
+				int dig1 = secureRandom.nextInt(8)+2;
+				int dig2 = secureRandom.nextInt(8)+2;
 				entropy*=64;
-				int dig1pos = r.nextInt(3);
-				int dig2pos = r.nextInt(3);
+				int dig1pos = secureRandom.nextInt(3);
+				int dig2pos = secureRandom.nextInt(3);
 				entropy*=6;
 				if (dig1pos==0) pw.append(dig1);
 				if (dig2pos==0) pw.append(dig2);
