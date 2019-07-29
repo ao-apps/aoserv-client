@@ -182,13 +182,21 @@ final public class AOSH extends ShellInterpreter {
 				else if(Command.WHOAMI.equalsIgnoreCase(command)) whoami(args);
 				else {
 					boolean done=false;
-					// Use the aosh_commands table for faster lookups
-					String lowerCommand=command.toLowerCase();
-					Command aoshCommand=connector.getAosh().getCommand().get(lowerCommand);
+					CommandTable commandTable = connector.getAosh().getCommand();
+					Command aoshCommand = commandTable.get(command);
+					if(aoshCommand == null) {
+						// Case-insensitive search
+						for(Command com : commandTable.getRows()) {
+							if(com.getCommand().equalsIgnoreCase(command)) {
+								aoshCommand = com;
+								break;
+							}
+						}
+					}
 					if(aoshCommand!=null) {
 						AOServTable<?,?> table = aoshCommand.getTable(connector).getAOServTable(connector);
 						done=table.handleCommand(args, in, out, err, isInteractive());
-						if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+lowerCommand+"', table='"+table.getTableName()+'\'');
+						if(!done) throw new RuntimeException("AOSHCommand found, but command not processed.  command='"+command+"', table='"+table.getTableName()+'\'');
 					}
 					/*
 					for(int c=0;c<numTables;c++) {
