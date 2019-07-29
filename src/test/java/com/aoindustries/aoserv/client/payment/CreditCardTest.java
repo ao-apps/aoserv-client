@@ -23,7 +23,7 @@
 package com.aoindustries.aoserv.client.payment;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import java.util.Random;
+import java.security.SecureRandom;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -35,7 +35,7 @@ import junit.framework.TestSuite;
  */
 public class CreditCardTest extends TestCase {
 
-	private Random random;
+	private SecureRandom secureRandom;
 
 	public CreditCardTest(String testName) {
 		super(testName);
@@ -43,12 +43,12 @@ public class CreditCardTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		random = AOServConnector.getRandom();
+		secureRandom = AOServConnector.getSecureRandom();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		random = null;
+		secureRandom = null;
 	}
 
 	public static Test suite() {
@@ -63,10 +63,10 @@ public class CreditCardTest extends TestCase {
 	public void testRandomizeDerandomize() {
 		StringBuilder SB = new StringBuilder();
 		for(int c=0;c<100;c++) {
-			int len = random.nextInt(50);
+			int len = secureRandom.nextInt(50);
 			SB.setLength(0);
 			for(int d=0;d<len;d++) {
-				int randVal = random.nextInt(13);
+				int randVal = secureRandom.nextInt(13);
 				char randCh;
 				if(randVal<10) randCh = (char)('0'+randVal);
 				else if(randVal==10) randCh = ' ';

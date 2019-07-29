@@ -43,6 +43,7 @@ import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -72,12 +73,12 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	 * @see  #derandomize(String)
 	 */
 	static String randomize(String original) {
-		Random random = AOServConnector.getRandom();
+		SecureRandom secureRandom = AOServConnector.getSecureRandom();
 		StringBuilder randomized = new StringBuilder();
 		for(int c=0, len=original.length(); c<=len; c++) {
-			int randChars = random.nextInt(20);
+			int randChars = secureRandom.nextInt(20);
 			for(int d=0;d<randChars;d++) {
-				int randVal = random.nextInt(256-32-10-3); // Skipping 0-31, 32 (space), 45 (-), 47 (/), 48-57 (0-9)
+				int randVal = secureRandom.nextInt(256-32-10-3); // Skipping 0-31, 32 (space), 45 (-), 47 (/), 48-57 (0-9)
 				// Offset past the first 33
 				randVal += 33;
 				// Offset past the -

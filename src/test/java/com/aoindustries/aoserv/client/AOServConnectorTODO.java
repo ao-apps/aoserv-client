@@ -179,12 +179,7 @@ public class AOServConnectorTODO extends TestCase {
 		}
 	}
 
-	/**
-	 * Test of getRandom method, of class com.aoindustries.aoserv.client.AOServConnector.
-	 */
-	public void testGetRandom() throws Exception {
-		System.out.println("Testing getRandom");
-		Random random=AOServConnector.getRandom();
+	private void doTestRandom(Random random) throws Exception {
 		for(AOServConnector conn : conns) {
 			User.Name username = conn.getCurrentAdministrator().getKey();
 			System.out.println("    "+username);
@@ -210,6 +205,22 @@ public class AOServConnectorTODO extends TestCase {
 			}
 			System.out.println("        OK");
 		}
+	}
+
+	/**
+	 * Test of getSecureRandom method, of class com.aoindustries.aoserv.client.AOServConnector.
+	 */
+	public void testGetSecureRandom() throws Exception {
+		System.out.println("Testing getSecureRandom");
+		doTestRandom(AOServConnector.getSecureRandom());
+	}
+
+	/**
+	 * Test of getFastRandom method, of class com.aoindustries.aoserv.client.AOServConnector.
+	 */
+	public void testGetFastRandom() throws Exception {
+		System.out.println("Testing getFastRandom");
+		doTestRandom(AOServConnector.getFastRandom());
 	}
 
 	/**
