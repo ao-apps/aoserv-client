@@ -268,8 +268,12 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 
 	/**
 	 * Performs a status check on this certificate.
+	 *
+	 * @param  allowCached  allow a cached response?  When {@code false} may be slow, but result will be up-to-date.
+	 *                      {@code true} is good for interactive use, while {@code false} is good for background
+	 *                      tasks such as certificate monitoring.
 	 */
-	public List<Check> check() throws IOException, SQLException {
+	public List<Check> check(final boolean allowCached) throws IOException, SQLException {
 		return table.getConnector().requestResult(
 			true,
 			AoservProtocol.CommandID.CHECK_SSL_CERTIFICATE,
@@ -279,6 +283,7 @@ final public class Certificate extends CachedObjectIntegerKey<Certificate> {
 				@Override
 				public void writeRequest(CompressedDataOutputStream out) throws IOException {
 					out.writeCompressedInt(pkey);
+					out.writeBoolean(allowCached);
 				}
 
 				@Override

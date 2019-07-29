@@ -142,7 +142,7 @@ final public class Command extends GlobalObjectStringKey<Command> {
 		CHECK_POSTGRES_USERNAME = "check_postgres_username",
 		CHECK_SHARED_TOMCAT_NAME = "check_shared_tomcat_name",
 		CHECK_SITE_NAME = "check_site_name",
-		CHECK_SSL_CERTIFICATE = "check_ssl_certificate",
+		PKI_CERTIFICATE_CHECK = "pki.Certificate.check",
 		CHECK_USERNAME = "check_username",
 		CHECK_USERNAME_PASSWORD = "check_username_password",
 		CLEAR = "clear",

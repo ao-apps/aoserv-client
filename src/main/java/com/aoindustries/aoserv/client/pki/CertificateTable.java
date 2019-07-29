@@ -76,11 +76,12 @@ final public class CertificateTable extends CachedTableIntegerKey<Certificate> {
 	@Override
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, IOException, SQLException {
 		String command = args[0];
-		if(command.equalsIgnoreCase(Command.CHECK_SSL_CERTIFICATE)) {
-			if(AOSH.checkParamCount(Command.CHECK_SSL_CERTIFICATE, args, 2, err)) {
+		if(command.equalsIgnoreCase(Command.PKI_CERTIFICATE_CHECK)) {
+			if(AOSH.checkParamCount(Command.PKI_CERTIFICATE_CHECK, args, 3, err)) {
 				List<Certificate.Check> results = connector.getSimpleAOClient().checkSslCertificate(
 					args[1],
-					args[2]
+					args[2],
+					AOSH.parseBoolean(args[3], "allowCached")
 				);
 				int size = results.size();
 				List<Object[]> rows = new ArrayList<>(size);

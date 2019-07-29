@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-28T17:26:10-0500"
+		dateModified="2019-07-28T19:07:26-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -150,6 +150,17 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						Renamed <code>SQLExpression.getValue(…)</code> to <code>evaluate(…)</code> to
 						better represent that this may be computationally non-trivial.
+					</li>
+					<li>
+						<p>
+							Renamed AOSH command <code>check_ssl_certificate</code> to <code>pki.Certificate.check<code>,
+							and it now accepts a boolean flag to enable/disable cached results.
+						</p>
+						<p>
+							Cached values are best for background processing like monitoring.  Direct
+							values are best for interactive use, at the expense of additional
+							processing.
+						</p>
 					</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
