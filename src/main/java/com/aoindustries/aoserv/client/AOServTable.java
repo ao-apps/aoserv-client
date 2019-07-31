@@ -700,57 +700,100 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 * Prints the contents of this table.
 	 */
 	final public void printTable(AOServConnector conn, PrintWriter out, boolean isInteractive) throws IOException, SQLException {
-		Table schemaTable=getTableSchema();
-		List<Column> cols=schemaTable.getSchemaColumns(conn);
-		int numCols=cols.size();
-		String[] titles=new String[numCols];
-		Type[] types=new Type[numCols];
-		boolean[] alignRights=new boolean[numCols];
-		for(int c=0;c<numCols;c++) {
-			Column col=cols.get(c);
-			titles[c]=col.getName();
-			Type type=types[c]=col.getType(conn);
-			alignRights[c]=type.alignRight();
+		Table schemaTable = getTableSchema();
+		List<Column> columns = schemaTable.getSchemaColumns(conn);
+		final int numCols = columns.size();
+		String[] titles = new String[numCols];
+		final Type[] types = new Type[numCols];
+		int supportsAnyPrecisionCount = 0;
+		boolean[] alignRights = new boolean[numCols];
+		for(int c = 0 ; c < numCols; c++) {
+			Column column = columns.get(c);
+			titles[c] = column.getName();
+			Type type = types[c]=column.getType(conn);
+			if(type.supportsPrecision()) supportsAnyPrecisionCount++;
+			alignRights[c] = type.alignRight();
 		}
 
 		// Get the data
-		List<V> rows = getRows();
-		int numRows = rows.size();
+		final List<V> rows = getRows();
+		final int numRows = rows.size();
 
 		// Evaluate the expressions while finding the maximum precisions per column.
 		// The precisions allow uniform formatting within a column to depend on the overall contents of the column.
-		Object[] values = new Object[numCols * numRows];
-		int[] precisions = new int[numCols];
+		final int[] precisions = new int[numCols];
 		Arrays.fill(precisions, -1);
-		int index = 0;
-		for(V row : rows) {
-			for(int col = 0; col < numCols; col++) {
-				Type type = types[col];
-				Object value = row.getColumn(col);
-				int precision = type.getPrecision(value);
-				if(precision != -1) {
-					int current = precisions[col];
-					if(current == -1 || precision > current) {
-						precisions[col] = precision;
+		// Only iterate through all rows here when needing to process precisions
+		if(supportsAnyPrecisionCount > 0) {
+			// Stop searching if all max precisions have been found
+			int precisionsNotMaxedCount = supportsAnyPrecisionCount;
+			ROWS :
+			for(V row : rows) {
+				for(int col = 0; col < numCols; col++) {
+					Type type = types[col];
+					// Skip evaluation when precision not supported
+					if(type.supportsPrecision()) {
+						int maxPrecision = type.getMaxPrecision();
+						int current = precisions[col];
+						if(
+							maxPrecision == -1
+							|| current == -1
+							|| current < maxPrecision
+						) {
+							int precision = type.getPrecision(row.getColumn(col));
+							if(
+								precision != -1
+								&& (current == -1 || precision > current)
+							) {
+								precisions[col] = precision;
+								if(maxPrecision != -1 && precision >= maxPrecision) {
+									precisionsNotMaxedCount--;
+									// Stop searching when all precision-based columns are maxed
+									if(precisionsNotMaxedCount <= 0) break ROWS;
+								}
+							}
+						}
 					}
 				}
-				values[index++] = value;
 			}
 		}
-		assert index == values.length;
 
-		// Convert the results to strings
-		String[] strings = new String[numCols * numRows];
-		index = 0;
-		for(int row = 0; row < numRows; row++) {
-			for(int col = 0; col < numCols; col++) {
-				strings[index] = types[col].getString(values[index], precisions[col]);
-				index++;
-			}
-		}
-		assert index == values.length;
+		// Print the results
+		SQLUtility.printTable(
+			titles,
+			new Iterable<String[]>() {
+				@Override
+				public Iterator<String[]> iterator() {
+					return new Iterator<String[]>() {
+						private int index = 0;
 
-		SQLUtility.printTable(titles, strings, out, isInteractive, alignRights);
+						@Override
+						public boolean hasNext() {
+							return index < numRows;
+						}
+
+						@Override
+						public String[] next() {
+							// Convert the results to strings
+							AOServObject<?,?> row = rows.get(index++);
+							String[] strings = new String[numCols];
+							for(int col = 0; col < numCols; col++) {
+								strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
+							}
+							return strings;
+						}
+
+						@Override
+						public void remove() {
+							throw new UnsupportedOperationException();
+						}
+					};
+				}
+			},
+			out,
+			isInteractive,
+			alignRights
+		);
 	}
 
 	/**
