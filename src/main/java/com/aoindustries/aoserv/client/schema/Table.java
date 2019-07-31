@@ -27,6 +27,7 @@ import com.aoindustries.aoserv.client.AOServObject;
 import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.aosh.Command;
+import com.aoindustries.aoserv.client.sql.Parser;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
@@ -35,6 +36,7 @@ import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -230,14 +232,6 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 		WhoisHistoryAccount
 	}
 
-	private static final String[] descColumns={
-		"column", "type", "null", "unique", "references", "referenced_by", "description"
-	};
-
-	private static final boolean[] descRightAligns={
-		false, false, false, false, false, false, false
-	};
-
 	private String name;
 	private String sinceVersion;
 	private String lastVersion;
@@ -404,6 +398,37 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 		return connector.getSchema().getForeignKey().getSchemaForeignKeys(this);
 	}
 
+	private static final String[] descColumns={
+		"column", "type", "null", "unique", "references", "referenced_by", "description"
+	};
+
+	private static final boolean[] descRightAligns={
+		Type.alignRight(Type.STRING), // column
+		Type.alignRight(Type.STRING), // type
+		Type.alignRight(Type.BOOLEAN), // null
+		Type.alignRight(Type.BOOLEAN), // unique
+		Type.alignRight(Type.STRING), // references
+		Type.alignRight(Type.STRING), // referenced_by
+		Type.alignRight(Type.STRING) // description
+	};
+
+	private static String formatForeignKeys(AOServConnector connector, List<ForeignKey> fkeys, boolean foreign) throws IOException, SQLException {
+		if(!fkeys.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			for(ForeignKey key : fkeys) {
+				if(sb.length() > 0) sb.append('\n');
+				Column other = foreign ? key.getForeignColumn(connector) : key.getColumn(connector);
+				sb
+					.append(Parser.quote(other.getTable(connector).getName()))
+					.append('.')
+					.append(Parser.quote(other.getName()));
+			}
+			return sb.toString();
+		} else {
+			return null;
+		}
+	}
+
 	public void printDescription(AOServConnector connector, TerminalWriter out, boolean isInteractive) throws IOException, SQLException {
 		out.println();
 		out.boldOn();
@@ -429,53 +454,23 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 		out.println();
 
 		// Get the list of columns
-		List<Column> columns=getSchemaColumns(connector);
-		int len=columns.size();
+		List<Column> columns = getSchemaColumns(connector);
 
-		// Build the Object[] of values
-		Object[] values=new Object[len*7];
-		int pos=0;
-		for(int c=0;c<len;c++) {
-			Column column=columns.get(c);
-			values[pos++] = column.getName();
-			values[pos++] = column.getType(connector).getName();
-			values[pos++] = column.isNullable()?"true":"false";
-			values[pos++] = column.isUnique()?"true":"false";
-			List<ForeignKey> fkeys=column.getReferences(connector);
-			if(!fkeys.isEmpty()) {
-				StringBuilder SB=new StringBuilder();
-				for(int d=0;d<fkeys.size();d++) {
-					ForeignKey key=fkeys.get(d);
-					if(d>0) SB.append('\n');
-					Column other=key.getForeignColumn(connector);
-					SB
-						.append(other.getTable(connector).getName())
-						.append('.')
-						.append(other.getName())
-					;
-				}
-				values[pos++]=SB.toString();
-			} else values[pos++]=null;
-
-			fkeys=column.getReferencedBy(connector);
-			if(!fkeys.isEmpty()) {
-				StringBuilder SB=new StringBuilder();
-				for(int d=0;d<fkeys.size();d++) {
-					ForeignKey key=fkeys.get(d);
-					if(d>0) SB.append('\n');
-					Column other=key.getColumn(connector);
-					SB
-						.append(other.getTable(connector).getName())
-						.append('.')
-						.append(other.getName())
-					;
-				}
-				values[pos++]=SB.toString();
-			} else values[pos++]=null;
-			values[pos++]=column.getDescription();
+		// Build the rows
+		List<Object[]> rows = new ArrayList<>(columns.size());
+		for(Column column : columns) {
+			rows.add(new Object[] {
+				column.getName(),
+				column.getType(connector).getName(),
+				column.isNullable() ? "true" : "false",
+				column.isUnique() ? "true" : "false",
+				formatForeignKeys(connector, column.getReferences(connector), true),
+				formatForeignKeys(connector, column.getReferencedBy(connector), false),
+				column.getDescription()
+			});
 		}
 
 		// Display the results
-		SQLUtility.printTable(descColumns, values, out, isInteractive, descRightAligns);
+		SQLUtility.printTable(descColumns, rows, out, isInteractive, descRightAligns);
 	}
 }
