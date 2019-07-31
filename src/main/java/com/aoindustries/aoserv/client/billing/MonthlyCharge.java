@@ -202,7 +202,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 			type = in.readUTF().intern();
 			description = in.readNullUTF();
 			quantity = in.readCompressedInt();
-			rate = MoneyUtil.readMoney(in);
+			rate = MoneyUtil.readNullMoney(in);
 			created = in.readUnmodifiableTimestamp();
 			created_by = User.Name.valueOf(in.readUTF()).intern();
 			active = in.readBoolean();
