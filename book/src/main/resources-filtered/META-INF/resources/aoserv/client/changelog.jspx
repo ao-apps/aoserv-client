@@ -176,6 +176,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added <code>Account.getBillingMonthlyRate()</code>, which may return <code>null</code> on filtered billing</li>
 						</ol>
 					</li>
+					<li>Added new method <code>TransactionTable.getActiveAccountBalance(…)</code> that provides currently active accounts and currencies.</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>

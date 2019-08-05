@@ -234,6 +234,101 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		}
 	}
 
+	/**
+	 * The number of milliseconds to still show a canceled account when it has a zero balance.
+	 */
+	private static final long SHOW_CANCELED_DURATION = 366L * 24 * 60 * 60 * 1000;
+
+	/**
+	 * Gets the active account balances for an account, including zero balances
+	 * for any currency that has no transactions and is currently active in billing.
+	 * A currency is active when any of the following is true:
+	 * <ol>
+	 * <li>Is part of the current {@link MonthlyCharge monthly charges} applied to the account (see {@link Account#getCanceled()} and {@link Account#getMonthlyRate()}).</li>
+	 * <li>Has any existing {@link Transaction transaction} in the currency and any of the following:
+	 *   <ol type="a">
+	 *   <li>Account is active (see {@link Account#getCanceled()})</li>
+	 *   <li>Account canceled less than a year ago</li>
+	 *   <li>Account has a non-zero balance in the currency</li>
+	 *   <li>Account has a {@link Transaction transaction} in the currency within the last year</li>
+	 *   </ol>
+	 * </li>
+	 * </ol>
+	 */
+	public Monies getActiveAccountBalance(Account account, long currentTime) throws IOException, SQLException {
+		if(account == null) return Monies.of();
+
+		Timestamp canceled = account.getCanceled();
+
+		// Find all non-zero balances
+		Monies accountBalance = getAccountBalance(account); // Has any existing transaction in the currency
+		Monies monthlyRate;
+		if(canceled == null) {
+			// Account active
+			monthlyRate = account.getMonthlyRate();
+			// Add any zero-balances for any active billing
+			for(java.util.Currency currency : monthlyRate.getCurrencies()) accountBalance = accountBalance.add(new Money(currency, 0, 0));
+		} else {
+			// Account canceled
+			monthlyRate = Monies.of();
+		}
+
+		// Find transactions when first needed
+		List<Transaction> transactions = null;
+		int numTransactions = 0;
+
+		Monies activeAccountBalance = Monies.of();
+		for(Money money : accountBalance) {
+			boolean active;
+			// Is part of the current monthly charges
+			if(monthlyRate.getCurrencies().contains(money.getCurrency())) {
+				active = true;
+			} else {
+				// and any of the following
+				if(
+					// Account is active
+					canceled == null
+					// Account canceled less than a year ago
+					|| (currentTime - canceled.getTime()) <= SHOW_CANCELED_DURATION
+					// Account has a non-zero balance in the currency
+					|| money.getUnscaledValue() != 0
+				) {
+					active = true;
+				} else {
+					// Find transactions if not yet done
+					if(transactions == null) {
+						transactions = getTransactions(account);
+						numTransactions = transactions.size();
+					}
+					// Find most recent transaction in the currency
+					Transaction lastTransaction = null;
+					for(int i = numTransactions - 1; i >= 0; i--) {
+						Transaction transaction = transactions.get(i);
+						if(
+							transaction.getPaymentConfirmed() != Transaction.NOT_CONFIRMED
+							&& transaction.getRate().getCurrency() == money.getCurrency()
+						) {
+							lastTransaction = transaction;
+							break;
+						}
+					}
+					// Account has a transaction in the currency within the last year
+					active = lastTransaction != null && (currentTime - lastTransaction.getTime().getTime()) <= SHOW_CANCELED_DURATION;
+				}
+			}
+			if(active) activeAccountBalance = activeAccountBalance.add(money);
+		}
+		return activeAccountBalance;
+	}
+
+	/**
+	 * @see #getActiveAccountBalance(com.aoindustries.aoserv.client.account.Account, long)
+	 * @see System#currentTimeMillis()
+	 */
+	public Monies getActiveAccountBalance(Account account) throws IOException, SQLException {
+		return getActiveAccountBalance(account, System.currentTimeMillis());
+	}
+
 	public Monies getAccountBalance(Account account, Timestamp before) throws IOException, SQLException {
 		if(account == null) return Monies.of();
 		SortedMap<java.util.Currency,BigDecimal> balances = new TreeMap<>(CurrencyComparator.getInstance());
