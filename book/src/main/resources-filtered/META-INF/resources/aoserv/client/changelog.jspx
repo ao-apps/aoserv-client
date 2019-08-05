@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-07-29T04:42:46-0500"
+		dateModified="2019-08-05T04:45:21-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -166,6 +166,15 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
 						then selected the appropriate method for each place random is used.
+					</li>
+					<li>Refined ambiguity and imprecise separation between "source account" and "billing account" for
+						monthly charges and monthly rates:
+						<ol>
+							<li><code>Account.getMonthlyRate()</code> may now return <code>null</code> on filtered billing</li>
+							<li>Added <code>Account.getBillingMonthlyCharges()</code></li>
+							<li>Removed <code>Account.getTotalMonthlyCharges()</code> - use <code>Account.getMonthlyRate()</code> instead</li>
+							<li>Added <code>Account.getBillingMonthlyRate()</code>, which may return <code>null</code> on filtered billing</li>
+						</ol>
 					</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
