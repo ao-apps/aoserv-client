@@ -192,6 +192,9 @@ public final class PackageDefinition extends CachedObjectIntegerKey<PackageDefin
 		return tt;
 	}
 
+	/**
+	 * Gets the monthly rate for the base package or {@code null} when unavailable.
+	 */
 	public Money getMonthlyRate() {
 		return monthlyRate;
 	}

@@ -72,7 +72,6 @@ import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.Internable;
 import com.aoindustries.util.SortedArrayList;
-import com.aoindustries.util.i18n.CurrencyComparator;
 import com.aoindustries.util.i18n.Money;
 import com.aoindustries.util.i18n.Monies;
 import com.aoindustries.validation.InvalidResult;
@@ -98,8 +97,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -958,30 +955,62 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return table.getConnector().getPayment().getCreditCard().getMonthlyCreditCard(this);
 	}
 
-	public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
-		return table.getConnector().getBilling().getMonthlyCharge().getMonthlyCharges(this);
-	}
-
 	/**
-	 * Gets an approximation of the monthly rate paid by this account.  This is not guaranteed to
-	 * be exactly the same as the underlying billing database processes.
-	 */
-	public Monies getMonthlyRate() throws SQLException, IOException {
-		Monies total = Monies.of();
-		for(MonthlyCharge mc : getMonthlyCharges()) if(mc.isActive()) total = total.add(mc.getAmount());
-		return total;
-	}
-
-	/**
-	 * Gets a comma-separated list of monthly rates.
+	 * Gets all monthly charges from this account.
 	 *
 	 * @see  #getMonthlyRate()
-	 *
-	 * @deprecated  Please use {@link #getMonthlyRate()} and {@link Monies#toString()} instead
 	 */
-	@Deprecated
-	public String getMonthlyRateString() throws SQLException, IOException {
-		return getMonthlyRate().toString();
+	public List<MonthlyCharge> getMonthlyCharges() throws SQLException, IOException {
+		return table.getConnector().getBilling().getMonthlyCharge().getMonthlyCharges(this, null);
+	}
+
+	/**
+	 * Gets all monthly charges billed to this account.
+	 *
+	 * @see  #getBillingMonthlyRate()
+	 */
+	public List<MonthlyCharge> getBillingMonthlyCharges() throws SQLException, IOException {
+		return table.getConnector().getBilling().getMonthlyCharge().getMonthlyCharges(null, this);
+	}
+
+	/**
+	 * Gets an approximation of the monthly rate from this account.  This is not guaranteed to
+	 * be exactly the same as the underlying billing database processes.
+	 *
+	 * @return  the total monthly rate of all {@link PackageDefinition} and {@link MonthlyCharge} from this account or {@code null} if unavailable.
+	 *
+	 * @see  #getMonthlyCharges()
+	 */
+	public Monies getMonthlyRate() throws SQLException, IOException {
+		Monies totalMonthlyRate = Monies.of();
+		for(MonthlyCharge monthlyCharge : getMonthlyCharges()) {
+			if(monthlyCharge.isActive()) {
+				Money amount = monthlyCharge.getAmount();
+				if(amount == null) return null;
+				totalMonthlyRate = totalMonthlyRate.add(amount);
+			}
+		}
+		return totalMonthlyRate;
+	}
+
+	/**
+	 * Gets an approximation of the monthly rate billed to this account.  This is not guaranteed to
+	 * be exactly the same as the underlying billing database processes.
+	 *
+	 * @return  the total monthly rate of all {@link PackageDefinition} and {@link MonthlyCharge} billed to this account or {@code null} if unavailable.
+	 *
+	 * @see  #getBillingMonthlyCharges()
+	 */
+	public Monies getBillingMonthlyRate() throws SQLException, IOException {
+		Monies totalMonthlyRate = Monies.of();
+		for(MonthlyCharge monthlyCharge : getBillingMonthlyCharges()) {
+			if(monthlyCharge.isActive()) {
+				Money amount = monthlyCharge.getAmount();
+				if(amount == null) return null;
+				totalMonthlyRate = totalMonthlyRate.add(amount);
+			}
+		}
+		return totalMonthlyRate;
 	}
 
 	public List<NoticeLog> getNoticeLogs() throws IOException, SQLException {
@@ -1010,26 +1039,6 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	@Override
 	public Table.TableID getTableID() {
 		return Table.TableID.BUSINESSES;
-	}
-
-	/**
-	 * Gets the total monthly rate of all {@link PackageDefinition} for this account or {@code null} if unavailable.
-	 */
-	public Monies getTotalMonthlyRate() throws SQLException, IOException {
-		SortedMap<Currency,BigDecimal> map = new TreeMap<>(CurrencyComparator.getInstance());
-		for(Package pack : getPackages()) {
-			Money monthlyRate = pack.getPackageDefinition().getMonthlyRate();
-			if(monthlyRate == null) return null;
-			Currency currency = monthlyRate.getCurrency();
-			BigDecimal total = map.get(currency);
-			total = total == null ? monthlyRate.getValue() : total.add(monthlyRate.getValue());
-			map.put(currency, total);
-		}
-		List<Money> list = new ArrayList<>(map.size());
-		for(Map.Entry<Currency,BigDecimal> entry : map.entrySet()) {
-			list.add(new Money(entry.getKey(), entry.getValue()));
-		}
-		return Monies.of(list);
 	}
 
 	/**

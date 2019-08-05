@@ -146,16 +146,19 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 	}
 
 	/**
-	 * Gets the effective amount of quantity * rate.
+	 * Gets the effective amount of {@code quantity * rate} or {@code null} when unknown.
 	 */
 	public Money getAmount() {
-		return rate.multiply(BigDecimal.valueOf(quantity, 3), RoundingMode.HALF_UP);
+		return (rate == null) ? null : rate.multiply(BigDecimal.valueOf(quantity, 3), RoundingMode.HALF_UP);
 	}
 
 	public int getQuantity() {
 		return quantity;
 	}
 
+	/**
+	 * Gets the rate or {@code null} when unknown.
+	 */
 	public Money getRate() {
 		return rate;
 	}

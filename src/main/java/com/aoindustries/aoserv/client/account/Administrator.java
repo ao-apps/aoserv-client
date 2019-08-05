@@ -274,7 +274,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	}
 
 	public List<MonthlyCharge> getMonthlyCharges() throws IOException, SQLException {
-		return table.getConnector().getBilling().getMonthlyCharge().getMonthlyCharges(this, null);
+		return table.getConnector().getBilling().getMonthlyCharge().getMonthlyCharges(this, null, null);
 	}
 
 	public String getName() {
