@@ -49,7 +49,6 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 /**
  * A <code>CreditCard</code> stores credit card information.
@@ -164,6 +163,10 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 			pkey,
 			reason
 		);
+	}
+
+	public int getId() {
+		return pkey;
 	}
 
 	/**
