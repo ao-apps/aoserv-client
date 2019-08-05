@@ -244,7 +244,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 	 * for any currency that has no transactions and is currently active in billing.
 	 * A currency is active when any of the following is true:
 	 * <ol>
-	 * <li>Is part of the current {@link MonthlyCharge monthly charges} applied to the account (see {@link Account#getCanceled()} and {@link Account#getMonthlyRate()}).</li>
+	 * <li>Is part of the current {@link MonthlyCharge monthly charges} applied to the account (see {@link Account#getCanceled()} and {@link Account#getBillingMonthlyRate()}).</li>
 	 * <li>Has any existing {@link Transaction transaction} in the currency and any of the following:
 	 *   <ol type="a">
 	 *   <li>Account is active (see {@link Account#getCanceled()})</li>
@@ -265,7 +265,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 		Monies monthlyRate;
 		if(canceled == null) {
 			// Account active
-			monthlyRate = account.getMonthlyRate();
+			monthlyRate = account.getBillingMonthlyRate();
 			// Add any zero-balances for any active billing
 			for(java.util.Currency currency : monthlyRate.getCurrencies()) accountBalance = accountBalance.add(new Money(currency, 0, 0));
 		} else {
