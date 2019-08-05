@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-08-05T04:45:21-0500"
+		dateModified="2019-08-05T06:02:01-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -177,6 +177,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>Added new method <code>TransactionTable.getActiveAccountBalance(…)</code> that provides currently active accounts and currencies.</li>
+					<li>May no longer cancel an account that has any active sub-account.</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>

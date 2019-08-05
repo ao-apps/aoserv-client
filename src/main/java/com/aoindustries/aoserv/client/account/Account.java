@@ -684,7 +684,15 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 	}
 
 	public boolean canCancel() throws IOException, SQLException {
-		return canceled == null && !isRootAccount();
+		// Is already canceled
+		if(canceled != null) return false;
+		// Is ROOT account
+		if(isRootAccount()) return false;
+		// Has any active sub-account
+		for(Account child : getChildAccounts()) {
+			if(child.getCanceled() == null) return false;
+		}
+		return true;
 	}
 
 	public boolean isRootAccount() throws IOException, SQLException {
