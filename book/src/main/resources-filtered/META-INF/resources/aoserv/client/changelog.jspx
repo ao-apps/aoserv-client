@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-08-05T06:02:01-0500"
+		dateModified="2019-08-07T10:42:14-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -153,7 +153,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>
 						<p>
-							Renamed AOSH command <code>check_ssl_certificate</code> to <code>pki.Certificate.check<code>,
+							Renamed AOSH command <code>check_ssl_certificate</code> to <code>pki.Certificate.check</code>,
 							and it now accepts a boolean flag to enable/disable cached results.
 						</p>
 						<p>
