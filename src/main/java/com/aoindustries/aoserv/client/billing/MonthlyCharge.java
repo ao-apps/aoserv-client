@@ -83,7 +83,8 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		String description,
 		int quantity,
 		Money rate,
-		Administrator createdByObject
+		Administrator createdByObject,
+		boolean active
 	) {
 		setTable(table);
 		this.pkey=-1;
@@ -95,7 +96,7 @@ final public class MonthlyCharge extends CachedObjectIntegerKey<MonthlyCharge> {
 		this.rate = rate;
 		this.created = new UnmodifiableTimestamp(System.currentTimeMillis());
 		this.created_by = createdByObject.getUsername_userId();
-		this.active=true;
+		this.active = active;
 	}
 
 	@Override
