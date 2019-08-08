@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-08-07T10:42:14-0500"
+		dateModified="2019-08-08T05:03:28-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -178,6 +178,15 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Added new method <code>TransactionTable.getActiveAccountBalance(…)</code> that provides currently active accounts and currencies.</li>
 					<li>May no longer cancel an account that has any active sub-account.</li>
+					<li>
+						New monthly billing <code>Transaction</code> for disabled accounts are now added as <code>WAITING_CONFIRMATION</code>.
+						These transactions will be moved to <code>CONFIRMED</code> if the account is enabled, or to <code>NOT_CONFIRMED</code>
+						if the account is canceled.
+					</li>
+					<li>
+						Entries are now still added to <code>MonthlyChargeTable</code> when an account is disabled, but with <code>active=false</code>.
+						This provides information about what the account would cost if uncanceled during the 30-day uncancel window.
+					</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>
