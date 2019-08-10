@@ -406,7 +406,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 *             OCTAL_LONG   X X X X X     X   X X   X X       X X X       X                                         X
 	 *                   PKEY               X     X         X       X
 	 *                   PATH                                 X     X
-	 *                  PHONE                                   X   X
+	 *                  PHONE                                   X   X X
 	 *                  SHORT   X X X X X     X   X X   X X       X X         X
 	 *                 STRING X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X   X X X X X X X X X X X X
 	 *                   TIME     X                     X X         X X
@@ -637,7 +637,9 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					// No special casts
 					break;
 				case PHONE:
-					// No special casts
+					switch(castToType.getId()) {
+						case URL: return value==null ? null : "tel:" + value;
+					}
 					break;
 				case SHORT:
 					switch(castToType.getId()) {
