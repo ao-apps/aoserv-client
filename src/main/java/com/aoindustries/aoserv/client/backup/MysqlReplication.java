@@ -28,8 +28,8 @@ import com.aoindustries.aoserv.client.monitoring.AlertLevel;
 import com.aoindustries.aoserv.client.mysql.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -142,7 +142,7 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		ao_server = in.readCompressedInt();
 		replication = in.readCompressedInt();
@@ -161,7 +161,7 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_59)>=0) out.writeCompressedInt(ao_server);
 		out.writeCompressedInt(replication);
@@ -295,12 +295,12 @@ final public class MysqlReplication extends CachedObjectIntegerKey<MysqlReplicat
 				SlaveStatus result;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.NEXT) {
 						result = new SlaveStatus(

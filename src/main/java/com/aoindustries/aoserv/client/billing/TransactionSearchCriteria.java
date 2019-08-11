@@ -30,8 +30,8 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.payment.PaymentType;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Type;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.validation.ValidationException;
@@ -219,17 +219,17 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 * 
-	 * @see  #read(CompressedDataInputStream,AOServProtocol.Version)
+	 * @see  #read(StreamableInput,AOServProtocol.Version)
 	 */
 	@Deprecated
 	@Override
-	public void read(CompressedDataInputStream in, String protocolVersion) throws IOException {
+	public void read(StreamableInput in, String protocolVersion) throws IOException {
 		read(in, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 
 	// This will not be required once all clients are >= protocol 1.83.0
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 				long l = in.readLong();
@@ -306,17 +306,17 @@ final public class TransactionSearchCriteria implements AOServStreamable {
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 * 
-	 * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
+	 * @see  #write(StreamableOutput,AOServProtocol.Version)
 	 */
 	@Deprecated
 	@Override
-	public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+	public void write(StreamableOutput out, String protocolVersion) throws IOException {
 		write(out, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 
 	// This will not be required once all clients are >= protocol 1.83.0
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_0) < 0) {
 			out.writeLong(after == null ? ANY : after.getTime());
 			out.writeLong(before == null ? ANY : before.getTime());

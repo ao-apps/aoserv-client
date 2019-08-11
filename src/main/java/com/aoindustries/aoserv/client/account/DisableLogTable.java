@@ -26,8 +26,8 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -65,14 +65,14 @@ final public class DisableLogTable extends CachedTableIntegerKey<DisableLog> {
 				int result;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(Table.TableID.DISABLE_LOG.ordinal());
 					out.writeUTF(bu.getName().toString());
 					out.writeBoolean(disableReason!=null); if(disableReason!=null) out.writeUTF(disableReason);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						result=in.readCompressedInt();

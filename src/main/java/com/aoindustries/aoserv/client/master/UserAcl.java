@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.master;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -86,7 +86,7 @@ final public class UserAcl extends CachedObjectIntegerKey<UserAcl> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			username = com.aoindustries.aoserv.client.account.User.Name.valueOf(in.readUTF()).intern();
@@ -97,7 +97,7 @@ final public class UserAcl extends CachedObjectIntegerKey<UserAcl> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username.toString());
 		out.writeUTF(host.toString());

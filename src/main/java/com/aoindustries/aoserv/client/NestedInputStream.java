@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,7 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.util.BufferManager;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +31,8 @@ import java.sql.SQLException;
 
 /**
  * A <code>NestedInputStream</code> reads data from
- * within a <code>CompressedDataInputStream</code> as if it were
- * a separate stream.  The underlying <code>CompressedDataInputStream</code>
+ * within a <code>StreamableInput</code> as if it were
+ * a separate stream.  The underlying <code>StreamableInput</code>
  * is never closed, allowing it to be used for multiple
  * nested streams.
  *
@@ -40,13 +40,13 @@ import java.sql.SQLException;
  */
 public final class NestedInputStream extends InputStream {
 
-	final private CompressedDataInputStream in;
+	final private StreamableInput in;
 	private boolean isDone=false;
 	private byte[] buffer=BufferManager.getBytes();
 	private int bufferFilled=0;
 	private int bufferRead=0;
 
-	public NestedInputStream(CompressedDataInputStream in) {
+	public NestedInputStream(StreamableInput in) {
 		this.in=in;
 	}
 

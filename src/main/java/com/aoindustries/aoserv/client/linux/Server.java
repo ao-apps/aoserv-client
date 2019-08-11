@@ -57,8 +57,8 @@ import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
@@ -410,7 +410,7 @@ final public class Server
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			hostname=DomainName.valueOf(in.readUTF());
@@ -446,7 +446,7 @@ final public class Server
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
 			out.writeCompressedInt(1);
@@ -878,13 +878,13 @@ final public class Server
 				AoservProtocol.CommandID.GET_MRTG_FILE,
 				new AOServConnector.UpdateRequest() {
 					@Override
-					public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+					public void writeRequest(StreamableOutput masterOut) throws IOException {
 						masterOut.writeCompressedInt(pkey);
 						masterOut.writeUTF(filename);
 					}
 
 					@Override
-					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					public void readResponse(StreamableInput in) throws IOException, SQLException {
 						byte[] buff=BufferManager.getBytes();
 						try {
 							int code;
@@ -2318,11 +2318,11 @@ final public class Server
 					String pvs;
 					String lvs;
 					@Override
-					public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					public void writeRequest(StreamableOutput out) throws IOException {
 						out.writeCompressedInt(pkey);
 					}
 					@Override
-					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					public void readResponse(StreamableInput in) throws IOException, SQLException {
 						int code=in.readByte();
 						if(code==AoservProtocol.DONE) {
 							vgs = in.readUTF();

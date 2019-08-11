@@ -27,8 +27,8 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -209,7 +209,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		version = in.readCompressedInt();
 		blockWebinf = in.readBoolean();
@@ -222,12 +222,12 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 			new AOServConnector.ResultRequest<String>() {
 				String result;
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						result = in.readNullUTF();
@@ -252,12 +252,12 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 			new AOServConnector.ResultRequest<String>() {
 				String result;
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						result = in.readNullUTF();
@@ -296,7 +296,7 @@ final public class Site extends CachedObjectIntegerKey<Site> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(version);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_6) >= 0) {

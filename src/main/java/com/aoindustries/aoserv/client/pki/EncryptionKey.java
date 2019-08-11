@@ -26,8 +26,8 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.validation.ValidationException;
 import java.io.CharArrayWriter;
 import java.io.IOException;
@@ -148,8 +148,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 			}
 
 			// Read the decrypted form
-			Reader in = new InputStreamReader(P.getInputStream());
-			try {
+			try (Reader in = new InputStreamReader(P.getInputStream())) {
 				StringBuilder sb = new StringBuilder();
 				char[] buff = new char[4096];
 				int count;
@@ -157,8 +156,6 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 					sb.append(buff, 0, count);
 				}
 				return sb.toString();
-			} finally {
-				in.close();
 			}
 		} finally {
 			try {
@@ -219,7 +216,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			accounting = Account.Name.valueOf(in.readUTF()).intern();
@@ -230,7 +227,7 @@ final public class EncryptionKey extends CachedObjectIntegerKey<EncryptionKey> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(accounting.toString());
 		out.writeUTF(id);

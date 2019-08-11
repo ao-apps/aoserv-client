@@ -37,8 +37,8 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.ByteCountInputStream;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
@@ -320,13 +320,13 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			AoservProtocol.CommandID.DUMP_POSTGRES_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
-				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+				public void writeRequest(StreamableOutput masterOut) throws IOException {
 					masterOut.writeCompressedInt(pkey);
 					masterOut.writeBoolean(false);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+				public void readResponse(StreamableInput masterIn) throws IOException, SQLException {
 					long dumpSize = masterIn.readLong();
 					if(dumpSize < 0) throw new IOException("dumpSize < 0: " + dumpSize);
 					long bytesRead;
@@ -360,13 +360,13 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 			AoservProtocol.CommandID.DUMP_POSTGRES_DATABASE,
 			new AOServConnector.UpdateRequest() {
 				@Override
-				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+				public void writeRequest(StreamableOutput masterOut) throws IOException {
 					masterOut.writeCompressedInt(pkey);
 					masterOut.writeBoolean(gzip);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream masterIn) throws IOException, SQLException {
+				public void readResponse(StreamableInput masterIn) throws IOException, SQLException {
 					long dumpSize = masterIn.readLong();
 					if(dumpSize < -1) throw new IOException("dumpSize < -1: " + dumpSize);
 					streamHandler.onDumpSize(dumpSize);
@@ -526,7 +526,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			name = Name.valueOf(in.readUTF());
@@ -582,7 +582,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name.toString());
 		out.writeCompressedInt(postgres_server);

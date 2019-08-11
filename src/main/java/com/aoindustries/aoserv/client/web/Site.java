@@ -42,8 +42,8 @@ import com.aoindustries.aoserv.client.net.AppProtocol;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.Port;
 import com.aoindustries.util.BufferManager;
@@ -341,7 +341,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			ao_server = in.readCompressedInt();
@@ -371,7 +371,7 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
 		out.writeUTF(name);
@@ -729,14 +729,14 @@ final public class Site extends CachedObjectIntegerKey<Site> implements Disablab
 			AoservProtocol.CommandID.GET_AWSTATS_FILE,
 			new AOServConnector.UpdateRequest() {
 				@Override
-				public void writeRequest(CompressedDataOutputStream masterOut) throws IOException {
+				public void writeRequest(StreamableOutput masterOut) throws IOException {
 					masterOut.writeCompressedInt(pkey);
 					masterOut.writeUTF(path);
 					masterOut.writeUTF(queryString==null ? "" : queryString);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					byte[] buff=BufferManager.getBytes();
 					try {
 						int code;

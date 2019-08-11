@@ -33,8 +33,8 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
@@ -519,16 +519,16 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 * 
-	 * @see  #read(CompressedDataInputStream,AOServProtocol.Version)
+	 * @see  #read(StreamableInput,AOServProtocol.Version)
 	 */
 	@Deprecated
 	@Override
-	final public void read(CompressedDataInputStream in, String protocolVersion) throws IOException {
+	final public void read(StreamableInput in, String protocolVersion) throws IOException {
 		read(in, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 
 	@Override
-	public abstract void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException;
+	public abstract void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
 
 	/**
 	 * {@inheritDoc}
@@ -564,14 +564,14 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 * 
-	 * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
+	 * @see  #write(StreamableOutput,AOServProtocol.Version)
 	 */
 	@Deprecated
 	@Override
-	final public void write(CompressedDataOutputStream out, String protocolVersion) throws IOException {
+	final public void write(StreamableOutput out, String protocolVersion) throws IOException {
 		write(out, AoservProtocol.Version.getVersion(protocolVersion));
 	}
 
 	@Override
-	public abstract void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException;
+	public abstract void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException;
 }

@@ -44,8 +44,8 @@ import com.aoindustries.aoserv.client.web.tomcat.PrivateTomcatSite;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcatSite;
 import com.aoindustries.aoserv.client.web.tomcat.Worker;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.EmptyParameters;
 import com.aoindustries.net.HttpParameters;
@@ -207,7 +207,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			packageName = Account.Name.valueOf(in.readUTF()).intern();
@@ -226,7 +226,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(packageName.toString());
 		out.writeCompressedInt(server);
@@ -789,7 +789,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					int size = firewalldZones.size();
 					out.writeCompressedInt(size);
@@ -802,7 +802,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code = in.readByte();
 					if(code == AoservProtocol.DONE) {
 						invalidateList = AOServConnector.readInvalidateList(in);

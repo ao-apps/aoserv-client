@@ -32,8 +32,8 @@ import com.aoindustries.aoserv.client.pki.Certificate;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.util.SystemdUtil;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
@@ -138,7 +138,7 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			httpd_site = in.readCompressedInt();
@@ -158,7 +158,7 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_site);
 		out.writeCompressedInt(httpd_bind);
@@ -296,13 +296,13 @@ final public class VirtualHost extends CachedObjectIntegerKey<VirtualHost> imple
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(config);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code = in.readByte();
 					if(code == AoservProtocol.DONE) invalidateList = AOServConnector.readInvalidateList(in);
 					else {

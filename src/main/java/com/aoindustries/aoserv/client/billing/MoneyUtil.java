@@ -22,8 +22,8 @@
  */
 package com.aoindustries.aoserv.client.billing;
 
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.util.i18n.Money;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -76,13 +76,13 @@ public class MoneyUtil {
         return new Money(Currency.getInstance(currencyCode), value);
     }
 
-	public static void writeMoney(Money money, CompressedDataOutputStream out) throws IOException {
+	public static void writeMoney(Money money, StreamableOutput out) throws IOException {
 		out.writeUTF(money.getCurrency().getCurrencyCode());
 		out.writeLong(money.getUnscaledValue());
 		out.writeCompressedInt(money.getScale());
 	}
 
-	public static void writeNullMoney(Money money, CompressedDataOutputStream out) throws IOException {
+	public static void writeNullMoney(Money money, StreamableOutput out) throws IOException {
 		if(money != null) {
 			out.writeBoolean(true);
 			writeMoney(money, out);
@@ -91,11 +91,11 @@ public class MoneyUtil {
 		}
 	}
 
-	public static Money readMoney(CompressedDataInputStream in) throws IOException {
+	public static Money readMoney(StreamableInput in) throws IOException {
 		return new Money(Currency.getInstance(in.readUTF()), in.readLong(), in.readCompressedInt());
 	}
 
-	public static Money readNullMoney(CompressedDataInputStream in) throws IOException {
+	public static Money readNullMoney(StreamableInput in) throws IOException {
 		return in.readBoolean() ? readMoney(in) : null;
 	}
 }

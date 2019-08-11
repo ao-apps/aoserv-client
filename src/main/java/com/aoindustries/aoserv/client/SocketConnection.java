@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.security.Identifier;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -60,12 +60,12 @@ final public class SocketConnection extends AOServConnection {
 	/**
 	 * The output stream to the server.
 	 */
-	private final CompressedDataOutputStream out;
+	private final StreamableOutput out;
 
 	/**
 	 * The input stream from the server.
 	 */
-	private final CompressedDataInputStream in;
+	private final StreamableInput in;
 
 	/**
 	 * The first command sequence for this connection.
@@ -83,8 +83,8 @@ final public class SocketConnection extends AOServConnection {
 		boolean successful = false;
 		try {
 			isClosed = false;
-			out = new CompressedDataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-			in = new CompressedDataInputStream(new BufferedInputStream(socket.getInputStream()));
+			out = new StreamableOutput(new BufferedOutputStream(socket.getOutputStream()));
+			in = new StreamableInput(new BufferedInputStream(socket.getInputStream()));
 
 			out.writeUTF(AoservProtocol.Version.CURRENT_VERSION.getVersion());
 			out.writeNullUTF(Objects.toString(connector.daemonServer, null));
@@ -166,7 +166,7 @@ final public class SocketConnection extends AOServConnection {
 	private long currentSeq;
 
 	@Override
-	CompressedDataOutputStream getRequestOut(AoservProtocol.CommandID commID) throws IOException {
+	StreamableOutput getRequestOut(AoservProtocol.CommandID commID) throws IOException {
 		currentSeq = seq.getAndIncrement();
 		out.writeLong(currentSeq);
 		out.writeCompressedInt(commID.ordinal());
@@ -174,7 +174,7 @@ final public class SocketConnection extends AOServConnection {
 	}
 
 	@Override
-	CompressedDataInputStream getResponseIn() throws IOException {
+	StreamableInput getResponseIn() throws IOException {
 		// Verify server sends matching sequence
 		long serverSeq = in.readLong();
 		if(serverSeq != currentSeq) throw new IOException("Sequence mismatch: " + serverSeq + " != " + currentSeq);

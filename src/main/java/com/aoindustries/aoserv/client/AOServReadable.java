@@ -23,7 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.io.CompressedDataInputStream;
+import com.aoindustries.io.stream.StreamableInput;
 import java.io.IOException;
 
 /**
@@ -33,5 +33,5 @@ import java.io.IOException;
  */
 public interface AOServReadable {
 
-	void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException;
+	void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
 }

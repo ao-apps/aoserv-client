@@ -29,8 +29,8 @@ import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.sql.UnmodifiableTimestamp;
@@ -147,7 +147,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			logfile = PosixPath.valueOf(in.readUTF());
@@ -167,7 +167,7 @@ final public class PrivateServer extends CachedObjectIntegerKey<PrivateServer> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_113)<0) throw new IOException("PrivateFTPServer on AOServProtocol version less than "+AoservProtocol.Version.VERSION_1_0_A_113.getVersion()+" is no longer supported.  Please upgrade your AOServ Client software packages.");
 		out.writeCompressedInt(pkey);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_38)<=0) out.writeUTF("Upgrade AOServClient to version "+AoservProtocol.Version.VERSION_1_39+" or newer");

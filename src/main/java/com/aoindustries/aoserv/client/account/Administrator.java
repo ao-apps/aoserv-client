@@ -40,8 +40,8 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.ticket.Action;
 import com.aoindustries.aoserv.client.ticket.Assignment;
 import com.aoindustries.aoserv.client.ticket.Ticket;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.IntList;
@@ -417,7 +417,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = User.Name.valueOf(in.readUTF()).intern();
 			password=HashedPassword.valueOf(in.readNullUTF());
@@ -532,7 +532,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeUTF(pkey.toString());
 					out.writeUTF(name);
 					out.writeBoolean(finalTitle!=null); if(finalTitle!=null) out.writeUTF(finalTitle);
@@ -552,7 +552,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
 					else {
@@ -570,7 +570,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_68)<=0) out.writeUTF(password==null ? "*" : password.toString());
 		else out.writeNullUTF(Objects.toString(password, null));

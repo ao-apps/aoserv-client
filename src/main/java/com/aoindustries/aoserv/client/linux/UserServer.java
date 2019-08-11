@@ -44,8 +44,8 @@ import com.aoindustries.aoserv.client.scm.CvsRepository;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
@@ -167,13 +167,13 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 			new AOServConnector.ResultRequest<Long>() {
 				long result;
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(toServer.getPkey());
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code!=AoservProtocol.DONE) {
 						AoservProtocol.checkResult(code, in);
@@ -318,12 +318,12 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 				InboxAttributes result;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						InboxAttributes attr;
@@ -354,7 +354,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 				AoservProtocol.CommandID.GET_IMAP_FOLDER_SIZES,
 				new AOServConnector.UpdateRequest() {
 					@Override
-					public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					public void writeRequest(StreamableOutput out) throws IOException {
 						out.writeCompressedInt(pkey);
 						out.writeCompressedInt(folderNames.length);
 						for (String folderName : folderNames) {
@@ -363,7 +363,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 					}
 
 					@Override
-					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					public void readResponse(StreamableInput in) throws IOException, SQLException {
 						int code=in.readByte();
 						if(code==AoservProtocol.DONE) {
 							for(int c=0;c<folderNames.length;c++) {
@@ -529,7 +529,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			username = User.Name.valueOf(in.readUTF()).intern();
@@ -656,7 +656,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeCompressedInt(from==null?-1:from.getPkey());
 					out.writeBoolean(subject!=null);
@@ -667,7 +667,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
 					else {
@@ -716,13 +716,13 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(password);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) invalidateList=AOServConnector.readInvalidateList(in);
 					else {
@@ -745,7 +745,7 @@ final public class UserServer extends CachedObjectIntegerKey<UserServer> impleme
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(username.toString());
 		out.writeCompressedInt(ao_server);

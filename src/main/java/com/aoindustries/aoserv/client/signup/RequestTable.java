@@ -31,8 +31,8 @@ import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.util.IntList;
@@ -165,7 +165,7 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(Table.TableID.SIGNUP_REQUESTS.ordinal());
 					out.writeUTF(brand.getAccount_name().toString());
 					out.writeUTF(ip_address.toString());
@@ -215,7 +215,7 @@ final public class RequestTable extends CachedTableIntegerKey<Request> {
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						pkey=in.readCompressedInt();

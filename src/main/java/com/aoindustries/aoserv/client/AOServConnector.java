@@ -35,10 +35,10 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.sql.SQLComparator;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.CompressedWritable;
 import com.aoindustries.io.IoUtils;
+import com.aoindustries.io.stream.StreamWritable;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainLabel;
 import com.aoindustries.net.DomainLabels;
 import com.aoindustries.net.DomainName;
@@ -838,12 +838,12 @@ abstract public class AOServConnector implements SchemaParent {
 			new UpdateRequest() {
 				IntList tableList;
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(tableID);
 					out.writeCompressedInt(server);
 				}
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) tableList=readInvalidateList(in);
 					else {
@@ -859,7 +859,7 @@ abstract public class AOServConnector implements SchemaParent {
 		);
 	}
 
-	public static IntList readInvalidateList(CompressedDataInputStream in) throws IOException {
+	public static IntList readInvalidateList(StreamableInput in) throws IOException {
 		IntArrayList tableList=null;
 		int tableID;
 		while((tableID=in.readCompressedInt())!=-1) {
@@ -916,7 +916,7 @@ abstract public class AOServConnector implements SchemaParent {
 		for(AOServTable<?,?> table : tables) table.removeTableListener(listener);
 	}
 
-	static void writeParams(Object[] params, CompressedDataOutputStream out) throws IOException {
+	static void writeParams(Object[] params, StreamableOutput out) throws IOException {
 		for(Object param : params) {
 			if(param==null) throw new NullPointerException("param is null");
 			else if(param instanceof Integer) out.writeCompressedInt(((Integer)param));
@@ -965,7 +965,7 @@ abstract public class AOServConnector implements SchemaParent {
 			else if(param instanceof com.aoindustries.aoserv.client.postgresql.User.Name) out.writeUTF(param.toString());
 			// Any other Writable
 			else if(param instanceof AOServWritable) ((AOServWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION);
-			else if(param instanceof CompressedWritable) ((CompressedWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION.getVersion());
+			else if(param instanceof StreamWritable) ((StreamWritable)param).write(out, AoservProtocol.Version.CURRENT_VERSION.getVersion());
 			else throw new IOException("Unknown class for param: "+param.getClass().getName());
 		}
 	}
@@ -980,12 +980,12 @@ abstract public class AOServConnector implements SchemaParent {
 		 * Writes the request to the server.
 		 * This does not need to flush the output stream.
 		 */
-		void writeRequest(CompressedDataOutputStream out) throws IOException;
+		void writeRequest(StreamableOutput out) throws IOException;
 
 		/**
 		 * Reads the response from the server if the request was successfully sent.
 		 */
-		void readResponse(CompressedDataInputStream in) throws IOException, SQLException;
+		void readResponse(StreamableInput in) throws IOException, SQLException;
 
 		/**
 		 * If both the request and response were successful, this is called after the
@@ -1007,11 +1007,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					resultRequest.writeRequest(out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					resultRequest.readResponse(in);
 				} catch(RuntimeException | IOException err) {
 					connection.close();
@@ -1044,11 +1044,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) return in.readBoolean();
 					AoservProtocol.checkResult(code, in);
@@ -1085,11 +1085,11 @@ abstract public class AOServConnector implements SchemaParent {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						result = in.readBoolean();
@@ -1130,11 +1130,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) return in.readCompressedInt();
 					AoservProtocol.checkResult(code, in);
@@ -1171,11 +1171,11 @@ abstract public class AOServConnector implements SchemaParent {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						result=in.readCompressedInt();
@@ -1216,11 +1216,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) return in.readLong();
 					AoservProtocol.checkResult(code, in);
@@ -1255,11 +1255,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) return in.readShort();
 					AoservProtocol.checkResult(code, in);
@@ -1296,11 +1296,11 @@ abstract public class AOServConnector implements SchemaParent {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						result=in.readShort();
@@ -1341,11 +1341,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) return in.readUTF();
 					AoservProtocol.checkResult(code, in);
@@ -1383,11 +1383,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) return in.readLongUTF();
 					AoservProtocol.checkResult(code, in);
@@ -1426,11 +1426,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) return in.readNullLongUTF();
 					AoservProtocol.checkResult(code, in);
@@ -1468,12 +1468,12 @@ abstract public class AOServConnector implements SchemaParent {
 		 * Writes the request to the server.
 		 * This does not need to flush the output stream.
 		 */
-		void writeRequest(CompressedDataOutputStream out) throws IOException;
+		void writeRequest(StreamableOutput out) throws IOException;
 
 		/**
 		 * Reads the response from the server if the request was successfully sent.
 		 */
-		void readResponse(CompressedDataInputStream in) throws IOException, SQLException;
+		void readResponse(StreamableInput in) throws IOException, SQLException;
 
 		/**
 		 * If both the request and response were successful, this is called after the
@@ -1493,11 +1493,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					updateRequest.writeRequest(out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					updateRequest.readResponse(in);
 				} catch(RuntimeException | IOException err) {
 					connection.close();
@@ -1531,11 +1531,11 @@ abstract public class AOServConnector implements SchemaParent {
 			try {
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code!=AoservProtocol.DONE) AoservProtocol.checkResult(code, in);
 				} catch(RuntimeException | IOException err) {
@@ -1570,11 +1570,11 @@ abstract public class AOServConnector implements SchemaParent {
 				IntList invalidateList;
 				AOServConnection connection=getConnection(1);
 				try {
-					CompressedDataOutputStream out = connection.getRequestOut(commID);
+					StreamableOutput out = connection.getRequestOut(commID);
 					writeParams(params, out);
 					out.flush();
 
-					CompressedDataInputStream in=connection.getResponseIn();
+					StreamableInput in=connection.getResponseIn();
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) invalidateList=readInvalidateList(in);
 					else {
@@ -1641,10 +1641,10 @@ abstract public class AOServConnector implements SchemaParent {
 				AoservProtocol.CommandID.TEST_CONNECTION,
 				new UpdateRequest() {
 					@Override
-					public void writeRequest(CompressedDataOutputStream out) {
+					public void writeRequest(StreamableOutput out) {
 					}
 					@Override
-					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					public void readResponse(StreamableInput in) throws IOException, SQLException {
 						int code=in.readByte();
 						if(code!=AoservProtocol.DONE) {
 							AoservProtocol.checkResult(code, in);
@@ -1681,12 +1681,12 @@ abstract public class AOServConnector implements SchemaParent {
 				int numObtained;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(numBytes);
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						numObtained=in.readCompressedInt();
@@ -1722,12 +1722,12 @@ abstract public class AOServConnector implements SchemaParent {
 			new ResultRequest<Long>() {
 				private long entropyNeeded;
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(numBytes);
 					out.write(buff, 0, numBytes);
 				}
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						entropyNeeded = in.readLong();

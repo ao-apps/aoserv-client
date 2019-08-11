@@ -27,8 +27,8 @@ import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
@@ -110,12 +110,12 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 				AoservProtocol.CommandID.GET_WHOIS_HISTORY_WHOIS_OUTPUT,
 				new AOServConnector.ResultRequest<Void>() {
 					@Override
-					public void writeRequest(CompressedDataOutputStream out) throws IOException {
+					public void writeRequest(StreamableOutput out) throws IOException {
 						out.writeCompressedInt(pkey);
 					}
 
 					@Override
-					public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+					public void readResponse(StreamableInput in) throws IOException, SQLException {
 						int code = in.readByte();
 						if(code == AoservProtocol.DONE) {
 							output = in.readUTF();
@@ -192,7 +192,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			registrableDomain = DomainName.valueOf(in.readUTF()).intern();
@@ -207,7 +207,7 @@ final public class WhoisHistory extends CachedObjectIntegerKey<WhoisHistory> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_19) >= 0) {
 			out.writeUTF(registrableDomain.toString());
