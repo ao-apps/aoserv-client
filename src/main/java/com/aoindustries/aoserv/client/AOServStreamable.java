@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
-import com.aoindustries.io.Streamable;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.io.stream.Streamable;
 import java.io.IOException;
 
 /**
@@ -39,29 +39,29 @@ public interface AOServStreamable extends Streamable, AOServReadable, AOServWrit
 	 *
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 * 
-	 * @see  #read(CompressedDataInputStream,AOServProtocol.Version)
+	 * @see  #read(StreamableInput,AOServProtocol.Version)
 	 */
 	@Deprecated
 	@Override
-	void read(CompressedDataInputStream in, String protocolVersion) throws IOException;
+	void read(StreamableInput in, String protocolVersion) throws IOException;
 	// Java 1.8: default method (or inherit from AOServReadable)
 	// read(in, AOServProtocol.Version.getVersion(version));
 
 	@Override
-	void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException;
+	void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException;
 
 	/**
 	 *
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 * 
-	 * @see  #write(CompressedDataOutputStream,AOServProtocol.Version)
+	 * @see  #write(StreamableOutput,AOServProtocol.Version)
 	 */
 	@Deprecated
 	@Override
-	void write(CompressedDataOutputStream out, String protocolVersion) throws IOException;
+	void write(StreamableOutput out, String protocolVersion) throws IOException;
 	// Java 1.8: default method (or inherit from AOServWritable)
 	// write(out, AOServProtocol.Version.getVersion(version));
 
 	@Override
-	void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException;
+	void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException;
 }

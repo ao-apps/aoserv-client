@@ -26,8 +26,8 @@ import static com.aoindustries.aoserv.client.ApplicationResources.accessor;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.io.AOPool;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.Port;
@@ -81,10 +81,10 @@ public class TCPConnector extends AOServConnector {
 						try {
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
-								CompressedDataOutputStream out = conn.getRequestOut(AoservProtocol.CommandID.LISTEN_CACHES);
+								StreamableOutput out = conn.getRequestOut(AoservProtocol.CommandID.LISTEN_CACHES);
 								out.flush();
 
-								CompressedDataInputStream in=conn.getResponseIn();
+								StreamableInput in=conn.getResponseIn();
 								IntList tableList=new IntArrayList();
 								while(runMore) {
 									synchronized(cacheMonitorLock) {

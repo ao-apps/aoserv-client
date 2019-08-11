@@ -29,8 +29,8 @@ import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.SmallIdentifier;
@@ -198,7 +198,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			id = in.readSmallIdentifier();
 			connectorId = in.readNullIdentifier();
@@ -255,7 +255,7 @@ public class Process extends AOServObject<SmallIdentifier,Process> implements Si
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		// Get values under lock before writing.  This is done here because
 		// these objects are used on the master to track process states, and the objects can change at any time
 		SmallIdentifier _id;

@@ -35,8 +35,8 @@ import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
@@ -81,7 +81,7 @@ final public class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(Table.TableID.HTTPD_SHARED_TOMCATS.ordinal());
 					out.writeUTF(name);
 					out.writeCompressedInt(aoServer.getPkey());
@@ -91,7 +91,7 @@ final public class SharedTomcatTable extends CachedTableIntegerKey<SharedTomcat>
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						pkey=in.readCompressedInt();

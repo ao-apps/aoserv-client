@@ -33,8 +33,8 @@ import com.aoindustries.aoserv.client.scm.CvsRepository;
 import com.aoindustries.aoserv.client.web.HttpdServer;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -132,7 +132,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			name = Group.Name.valueOf(in.readUTF()).intern();
@@ -211,7 +211,7 @@ final public class GroupServer extends CachedObjectIntegerKey<GroupServer> imple
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(name.toString());
 		out.writeCompressedInt(ao_server);

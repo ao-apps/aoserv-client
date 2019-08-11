@@ -28,9 +28,9 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.Parser;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.table.TableListener;
 import com.aoindustries.util.WrappedException;
@@ -287,13 +287,13 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				V result;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					AOServConnector.writeParams(params, out);
 				}
 
 				@SuppressWarnings({"unchecked"})
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.NEXT) {
 						V obj=getNewObject();
@@ -359,14 +359,14 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 					new AOServConnector.UpdateRequest() {
 
 						@Override
-						public void writeRequest(CompressedDataOutputStream out) throws IOException {
+						public void writeRequest(StreamableOutput out) throws IOException {
 							if(withProgress) out.writeBoolean(progListeners != null);
 							AOServConnector.writeParams(params, out);
 						}
 
 						@SuppressWarnings({"unchecked"})
 						@Override
-						public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+						public void readResponse(StreamableInput in) throws IOException, SQLException {
 							// Remove anything that was added during a previous attempt
 							if(initialSize == 0) {
 								list.clear();

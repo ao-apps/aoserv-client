@@ -32,8 +32,8 @@ import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -220,7 +220,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			path = PosixPath.valueOf(in.readUTF());
@@ -249,7 +249,7 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(path.toString());
 		out.writeCompressedInt(linux_server_account);

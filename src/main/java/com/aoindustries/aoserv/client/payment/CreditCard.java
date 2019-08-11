@@ -33,8 +33,8 @@ import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
 import com.aoindustries.sql.SQLUtility;
@@ -435,7 +435,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			processorId=in.readUTF().intern();
@@ -490,7 +490,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_29)>=0) out.writeUTF(processorId);
 		out.writeUTF(accounting.toString());
@@ -632,7 +632,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeUTF(maskedCardNumber);
 					out.writeByte(expirationMonth);
@@ -643,7 +643,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						invalidateList=AOServConnector.readInvalidateList(in);

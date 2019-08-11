@@ -34,8 +34,8 @@ import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
@@ -86,7 +86,7 @@ final public class SiteTable extends CachedTableIntegerKey<Site> {
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(Table.TableID.HTTPD_JBOSS_SITES.ordinal());
 					out.writeCompressedInt(aoServer.getPkey());
 					out.writeUTF(siteName);
@@ -103,7 +103,7 @@ final public class SiteTable extends CachedTableIntegerKey<Site> {
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						pkey=in.readCompressedInt();

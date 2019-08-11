@@ -32,8 +32,8 @@ import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -152,7 +152,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			ao_server=in.readCompressedInt();
@@ -185,7 +185,7 @@ final public class Pipe extends CachedObjectIntegerKey<Pipe> implements Removabl
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(ao_server);
 		out.writeUTF(command);

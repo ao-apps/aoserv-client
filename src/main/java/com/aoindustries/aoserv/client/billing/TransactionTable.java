@@ -33,9 +33,9 @@ import com.aoindustries.aoserv.client.payment.Processor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.io.TerminalWriter;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.MinimalList;
@@ -120,7 +120,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(Table.TableID.TRANSACTIONS.ordinal());
 					if(timeType == Type.DATE) {
 						out.writeByte('D');
@@ -146,7 +146,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						transid=in.readCompressedInt();

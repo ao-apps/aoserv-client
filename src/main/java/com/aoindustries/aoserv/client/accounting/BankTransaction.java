@@ -29,8 +29,8 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.payment.Processor;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
@@ -189,7 +189,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			id = in.readCompressedInt();
 			time = in.readUnmodifiableTimestamp();
@@ -219,7 +219,7 @@ final public class BankTransaction extends AOServObject<Integer,BankTransaction>
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
 			out.writeLong(time.getTime());
 			out.writeCompressedInt(id);

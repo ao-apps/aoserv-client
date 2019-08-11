@@ -30,8 +30,8 @@ import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.pki.EncryptionKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
 import com.aoindustries.validation.ValidationException;
@@ -392,7 +392,7 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=Account.Name.valueOf(in.readUTF()).intern();
 			nameserver1 = DomainName.valueOf(in.readUTF());
@@ -439,7 +439,7 @@ final public class Brand extends CachedObjectAccountNameKey<Brand> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		out.writeUTF(nameserver1.toString());
 		out.writeUTF(nameserver2.toString());

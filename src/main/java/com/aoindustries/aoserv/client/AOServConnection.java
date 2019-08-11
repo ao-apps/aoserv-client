@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
 
 /**
@@ -59,10 +59,10 @@ abstract public class AOServConnection {
 	/**
 	 * Gets the stream to write to the server.
 	 */
-	abstract CompressedDataOutputStream getRequestOut(AoservProtocol.CommandID commID) throws IOException;
+	abstract StreamableOutput getRequestOut(AoservProtocol.CommandID commID) throws IOException;
 
 	/**
 	 * Gets the stream to read from the server.
 	 */
-	abstract CompressedDataInputStream getResponseIn() throws IOException;
+	abstract StreamableInput getResponseIn() throws IOException;
 }

@@ -30,8 +30,8 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.billing.MoneyUtil;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.net.Email;
 import com.aoindustries.sql.UnmodifiableTimestamp;
@@ -837,7 +837,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = in.readCompressedInt();
 			processorId = in.readUTF().intern();
@@ -948,7 +948,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(processorId);
 		out.writeUTF(accounting.toString());
@@ -1138,7 +1138,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(authorizationCommunicationResult);
 					out.writeNullUTF(authorizationProviderErrorCode);
@@ -1172,7 +1172,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						invalidateList=AOServConnector.readInvalidateList(in);
@@ -1226,7 +1226,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(pkey);
 					out.writeNullUTF(authorizationCommunicationResult);
 					out.writeNullUTF(authorizationProviderErrorCode);
@@ -1253,7 +1253,7 @@ final public class Payment extends CachedObjectIntegerKey<Payment> {
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						invalidateList=AOServConnector.readInvalidateList(in);

@@ -27,8 +27,8 @@ import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.SingleTableObject;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -145,7 +145,7 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		name=in.readUTF().intern();
 		value=in.readNullUTF();
 		description=in.readUTF();
@@ -158,7 +158,7 @@ final public class ServerStat extends AOServObject<String,ServerStat> implements
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(name);
 		out.writeNullUTF(value);
 		out.writeUTF(description);

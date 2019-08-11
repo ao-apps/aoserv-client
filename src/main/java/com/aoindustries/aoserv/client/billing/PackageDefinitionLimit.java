@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.billing;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.math.SafeMath;
 import com.aoindustries.util.InternUtils;
 import com.aoindustries.util.i18n.Money;
@@ -187,7 +187,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		package_definition = in.readCompressedInt();
 		resource = in.readUTF().intern();
@@ -198,7 +198,7 @@ public final class PackageDefinitionLimit extends CachedObjectIntegerKey<Package
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(package_definition);
 		out.writeUTF(resource);

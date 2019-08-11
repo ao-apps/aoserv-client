@@ -23,8 +23,8 @@
 package com.aoindustries.aoserv.client.schema;
 
 import com.aoindustries.aoserv.client.GlobalObjectStringKey;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import java.io.EOFException;
 import java.io.IOException;
 import java.sql.Date;
@@ -606,7 +606,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 	 */
 	public static final String FILTERED="*";
 
-	public static void checkResult(int code, CompressedDataInputStream in) throws IOException, SQLException {
+	public static void checkResult(int code, StreamableInput in) throws IOException, SQLException {
 		if(in == null) throw new IllegalArgumentException("in is null");
 		if(code == AoservProtocol.IO_EXCEPTION) throw new IOException(in.readUTF());
 		if(code == AoservProtocol.SQL_EXCEPTION) throw new SQLException(in.readUTF());
@@ -664,7 +664,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readUTF().intern();
 		created = in.readLong();
 		comments = in.readUTF();
@@ -672,7 +672,7 @@ public final class AoservProtocol extends GlobalObjectStringKey<AoservProtocol> 
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		out.writeLong(created);
 		out.writeUTF(comments);

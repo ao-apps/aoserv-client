@@ -28,8 +28,8 @@ import com.aoindustries.aoserv.client.AOServTable;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
 import com.aoindustries.aoserv.client.aosh.Command;
 import com.aoindustries.aoserv.client.sql.Parser;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.InternUtils;
@@ -333,7 +333,7 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		name = in.readUTF().intern();
 		sinceVersion = in.readUTF().intern();
@@ -344,7 +344,7 @@ final public class Table extends GlobalObjectIntegerKey<Table> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_17) <= 0) {
 			out.writeUTF(name);
 			out.writeCompressedInt(pkey);

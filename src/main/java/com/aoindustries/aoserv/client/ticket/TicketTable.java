@@ -30,8 +30,8 @@ import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
 import java.io.IOException;
@@ -81,7 +81,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 				IntList invalidateList;
 
 				@Override
-				public void writeRequest(CompressedDataOutputStream out) throws IOException {
+				public void writeRequest(StreamableOutput out) throws IOException {
 					out.writeCompressedInt(Table.TableID.TICKETS.ordinal());
 					out.writeUTF(brand.getAccount_name().toString());
 					out.writeNullUTF(business==null ? null : business.getName().toString());
@@ -99,7 +99,7 @@ final public class TicketTable extends CachedTableIntegerKey<Ticket> {
 				}
 
 				@Override
-				public void readResponse(CompressedDataInputStream in) throws IOException, SQLException {
+				public void readResponse(StreamableInput in) throws IOException, SQLException {
 					int code=in.readByte();
 					if(code==AoservProtocol.DONE) {
 						pkey=in.readCompressedInt();

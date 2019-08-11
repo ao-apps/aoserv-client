@@ -35,8 +35,8 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.web.Site;
 import com.aoindustries.aoserv.client.web.tomcat.SharedTomcat;
 import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.net.Email;
 import com.aoindustries.sql.UnmodifiableTimestamp;
@@ -722,7 +722,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey = Name.valueOf(in.readUTF()).intern();
 			name = Gecos.valueOf(in.readNullUTF());
@@ -799,7 +799,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey.toString());
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_80_1) < 0) {
 			// Older clients require name, use "*" as name when none set

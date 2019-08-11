@@ -25,8 +25,8 @@ package com.aoindustries.aoserv.client.net.reputation;
 import com.aoindustries.aoserv.client.CachedObjectLongKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.math.LongLong;
 import com.aoindustries.net.InetAddress;
 import java.io.IOException;
@@ -68,7 +68,7 @@ final public class Network extends CachedObjectLongKey<Network> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeLong(pkey);
 		out.writeCompressedInt(set);
 		out.writeInt(network);
@@ -76,7 +76,7 @@ final public class Network extends CachedObjectLongKey<Network> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey     = in.readLong();
 		set      = in.readCompressedInt();
 		network  = in.readInt();

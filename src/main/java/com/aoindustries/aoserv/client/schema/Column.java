@@ -24,8 +24,8 @@ package com.aoindustries.aoserv.client.schema;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalObjectIntegerKey;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.util.InternUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -195,7 +195,7 @@ final public class Column extends GlobalObjectIntegerKey<Column> {
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readCompressedInt();
 		table = in.readUTF().intern();
 		name = in.readUTF().intern();
@@ -210,7 +210,7 @@ final public class Column extends GlobalObjectIntegerKey<Column> {
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeUTF(table);
 		out.writeUTF(name);

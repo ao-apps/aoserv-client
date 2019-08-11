@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-08-10T06:13:08-0500"
+		dateModified="2019-08-11T11:02:44-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -910,7 +910,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<ao:a href="apidocs/com/aoindustries/aoserv/client/ProgressListener.html">ProgressListener</ao:a> and
 					<ao:a href="apidocs/com/aoindustries/aoserv/client/TableLoadListener.html">TableLoadListener</ao:a>
 					now notified of row counts using a 64-bit integer to handle results with more than
-					<code>CompressedDataOutputStream.MAX_COMPRESSED_INT_VALUE</code><!-- TODO: SemanticCMS 2: link -->
+					<code>StreamableOutput.MAX_COMPRESSED_INT_VALUE</code><!-- TODO: SemanticCMS 2: link -->
 					rows.
 				</li>
 				<li>Improved registrable domain management:

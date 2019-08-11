@@ -29,8 +29,8 @@ import com.aoindustries.aoserv.client.net.AppProtocol;
 import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Port;
 import com.aoindustries.validation.ValidationException;
@@ -166,7 +166,7 @@ final public class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		try {
 			pkey=in.readCompressedInt();
 			httpd_site_bind=in.readCompressedInt();
@@ -192,7 +192,7 @@ final public class VirtualHostName extends CachedObjectIntegerKey<VirtualHostNam
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(httpd_site_bind);
 		out.writeUTF(hostname.toString());

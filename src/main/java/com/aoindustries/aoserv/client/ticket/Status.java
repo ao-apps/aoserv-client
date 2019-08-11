@@ -26,8 +26,8 @@ import com.aoindustries.aoserv.client.GlobalObjectStringKey;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import static com.aoindustries.aoserv.client.ticket.ApplicationResources.accessor;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -88,13 +88,13 @@ final public class Status extends GlobalObjectStringKey<Status> implements Compa
 	}
 
 	@Override
-	public void read(CompressedDataInputStream in, AoservProtocol.Version protocolVersion) throws IOException {
+	public void read(StreamableInput in, AoservProtocol.Version protocolVersion) throws IOException {
 		pkey = in.readUTF().intern();
 		sort_order = in.readShort();
 	}
 
 	@Override
-	public void write(CompressedDataOutputStream out, AoservProtocol.Version protocolVersion) throws IOException {
+	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeUTF(pkey);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeUTF(pkey);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_44)>=0) out.writeShort(sort_order);
