@@ -121,7 +121,7 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	 */
 	public static final boolean DEFAULT_ALLOW_PLAINTEXT_AUTH = false;
 
-	// Delated delete seems unreliable so far
+	// Delayed delete seems unreliable so far
 	//
 	// It is difficult to delete folders and millions of lock files accumulating
 	// under /var/lib/imap/lock/u/DELETED/user/*/**/*.lock
