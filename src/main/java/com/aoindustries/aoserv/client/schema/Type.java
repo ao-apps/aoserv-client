@@ -638,7 +638,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 					break;
 				case PHONE:
 					switch(castToType.getId()) {
-						case URL: return value==null ? null : "tel:" + value;
+						case URL: return value==null ? null : "tel:" + ((String)value).replace(' ', '-');
 					}
 					break;
 				case SHORT:
