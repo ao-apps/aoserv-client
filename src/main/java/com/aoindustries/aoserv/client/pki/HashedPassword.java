@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2010-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2010-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -36,7 +36,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectInputValidation;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -92,11 +92,9 @@ final public class HashedPassword implements
 	public static String hash(String plaintext) throws WrappedException {
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-1");
-			md.update(plaintext.getBytes("UTF-8"));
+			md.update(plaintext.getBytes(StandardCharsets.UTF_8));
 			return new String(Base64Coder.encode(md.digest()));
 		} catch(NoSuchAlgorithmException err) {
-			throw new WrappedException(err);
-		} catch(UnsupportedEncodingException err) {
 			throw new WrappedException(err);
 		}
 	}
