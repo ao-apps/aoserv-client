@@ -50,14 +50,15 @@ import com.aoindustries.net.DomainName;
 import com.aoindustries.net.EmptyParameters;
 import com.aoindustries.net.HttpParameters;
 import com.aoindustries.net.HttpParametersMap;
+import com.aoindustries.net.HttpParametersUtils;
 import com.aoindustries.net.Port;
 import com.aoindustries.net.UnmodifiableHttpParameters;
 import com.aoindustries.util.IntList;
-import com.aoindustries.util.WrappedException;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ import java.util.ConcurrentModificationException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -622,58 +623,31 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		return table.getConnector().getFtp().getPrivateServer().get(pkey);
 	}
 
+	public static final Charset PARAMETER_ENCODING = StandardCharsets.UTF_8;
+
 	/**
-	 * Encodes the parameters in UTF-8.  Will not return null.
+	 * Encodes the parameters in {@link #PARAMETER_ENCODING}.  Will not return {@code null}.
 	 */
 	public static String encodeParameters(HttpParameters monitoringParameters) {
 		try {
-			StringBuilder SB = new StringBuilder();
-			for(Map.Entry<String,List<String>> entry : monitoringParameters.getParameterMap().entrySet()) {
-				String name = entry.getKey();
-				for(String value : entry.getValue()) {
-					if(SB.length()>0) SB.append('&');
-					SB.append(URLEncoder.encode(name, "UTF-8")).append('=').append(URLEncoder.encode(value, "UTF-8"));
-				}
-			}
-			return SB.toString();
-		} catch(UnsupportedEncodingException err) {
-			throw new WrappedException(err);
+			return Objects.toString(HttpParametersUtils.toQueryString(monitoringParameters, PARAMETER_ENCODING.name()), "");
+		} catch(UnsupportedEncodingException e) {
+			throw new AssertionError("Standard encoding (" + PARAMETER_ENCODING + ") should always exist", e);
 		}
 	}
 
 	/**
-	 * Decodes the parameters in UTF-8.
+	 * Decodes the parameters in {@link #PARAMETER_ENCODING}.
 	 */
 	public static HttpParameters decodeParameters(String monitoringParameters) {
 		if(monitoringParameters==null) {
 			return EmptyParameters.getInstance();
 		} else {
 			try {
-				return new HttpParametersMap(monitoringParameters, "UTF-8");
+				return new HttpParametersMap(monitoringParameters, PARAMETER_ENCODING.name());
 			} catch(UnsupportedEncodingException e) {
-				throw new AssertionError("UTF-8 should existing on all platforms", e);
+				throw new AssertionError("Standard encoding (" + PARAMETER_ENCODING + ") should always exist", e);
 			}
-			/*
-			try {
-				List<String> nameValues = StringUtility.splitString(monitoringParameters, '&');
-				Map<String,String> newMap = new HashMap<String,String>(nameValues.length*4/3+1);
-				for(String nameValue : nameValues) {
-					String name;
-					String value;
-					int pos = nameValue.indexOf('=');
-					if(pos==-1) {
-						name = URLDecoder.decode(nameValue, "UTF-8");
-						value = "";
-					} else {
-						name = URLDecoder.decode(nameValue.substring(0, pos), "UTF-8");
-						value = URLDecoder.decode(nameValue.substring(pos+1), "UTF-8");
-					}
-					if(name.length()>0 || value.length()>0) newMap.put(name, value);
-				}
-				return newMap;
-			} catch(UnsupportedEncodingException err) {
-				throw new WrappedException(err);
-			}*/
 		}
 	}
 
