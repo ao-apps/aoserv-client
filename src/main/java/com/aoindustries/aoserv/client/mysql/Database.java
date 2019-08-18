@@ -42,11 +42,12 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.dto.DtoFactory;
 import com.aoindustries.io.ByteCountInputStream;
+import com.aoindustries.io.IoUtils;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.io.IoUtils;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
+import com.aoindustries.net.UrlUtils;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
@@ -62,7 +63,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
@@ -510,9 +510,8 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 				.append(':')
 				.append(port.getPort());
 		}
-		jdbcUrl
-			.append('/')
-			.append(URLEncoder.encode(getName().toString(), "UTF-8"));
+		jdbcUrl.append('/');
+		UrlUtils.encodeURIComponent(getName().toString(), jdbcUrl);
 		return jdbcUrl.toString();
 	}
 
