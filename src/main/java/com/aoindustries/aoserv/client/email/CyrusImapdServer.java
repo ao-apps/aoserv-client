@@ -121,15 +121,21 @@ final public class CyrusImapdServer extends CachedObjectIntegerKey<CyrusImapdSer
 	 */
 	public static final boolean DEFAULT_ALLOW_PLAINTEXT_AUTH = false;
 
+	// Delayed delete seems unreliable so far
+	//
+	// It is difficult to delete folders and millions of lock files accumulating
+	// under /var/lib/imap/lock/u/DELETED/user/*/**/*.lock
+	//
+	// Turned-off on all servers and removed defaults
 	/**
 	 * Default value for cyrus_imapd_servers.delete_duration
 	 */
-	public static final float DEFAULT_DELETE_DURATION = 3;
+	public static final float DEFAULT_DELETE_DURATION = Float.NaN; // 3;
 
 	/**
 	 * Default value for cyrus_imapd_servers.delete_duration_unit
 	 */
-	public static final TimeUnit DEFAULT_DELETE_DURATION_UNIT = TimeUnit.DAYS;
+	public static final TimeUnit DEFAULT_DELETE_DURATION_UNIT = null; // TimeUnit.DAYS;
 
 	/**
 	 * Default value for cyrus_imapd_servers.expire_duration
