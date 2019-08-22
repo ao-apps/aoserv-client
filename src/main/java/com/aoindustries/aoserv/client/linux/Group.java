@@ -278,6 +278,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 		POLKITD,
 		POSTGRES,
 		PROFTPD_JAILED,
+		REDIS,
 		ROOT,
 		RPC,
 		RPCUSER,
@@ -355,6 +356,7 @@ final public class Group extends CachedObjectGroupNameKey<Group> implements Remo
 			POLKITD = Name.valueOf("polkitd");
 			POSTGRES = Name.valueOf("postgres");
 			PROFTPD_JAILED = Name.valueOf("proftpd_jailed");
+			REDIS = Name.valueOf("redis");
 			ROOT = Name.valueOf("root");
 			RPC = Name.valueOf("rpc");
 			RPCUSER = Name.valueOf("rpcuser");
