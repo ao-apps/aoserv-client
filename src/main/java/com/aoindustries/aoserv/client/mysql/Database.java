@@ -47,7 +47,7 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
-import com.aoindustries.net.UrlUtils;
+import com.aoindustries.net.URIEncoder;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
@@ -511,7 +511,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 				.append(port.getPort());
 		}
 		jdbcUrl.append('/');
-		UrlUtils.encodeURIComponent(getName().toString(), jdbcUrl);
+		URIEncoder.encodeURIComponent(getName().toString(), jdbcUrl);
 		return jdbcUrl.toString();
 	}
 

@@ -25,6 +25,7 @@ package com.aoindustries.aoserv.client.net;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
+import com.aoindustries.aoserv.client.Disablable;
 import com.aoindustries.aoserv.client.Removable;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
@@ -47,18 +48,18 @@ import com.aoindustries.aoserv.client.web.tomcat.Worker;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
-import com.aoindustries.net.EmptyParameters;
-import com.aoindustries.net.HttpParameters;
-import com.aoindustries.net.HttpParametersMap;
-import com.aoindustries.net.HttpParametersUtils;
+import com.aoindustries.net.EmptyURIParameters;
+import com.aoindustries.net.IRI;
 import com.aoindustries.net.Port;
-import com.aoindustries.net.UnmodifiableHttpParameters;
+import com.aoindustries.net.URIParameters;
+import com.aoindustries.net.URIParametersMap;
+import com.aoindustries.net.URIParametersUtils;
+import com.aoindustries.net.UnmodifiableURIParameters;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -172,15 +173,15 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	/**
 	 * Gets the unmodifiable map of parameters for this bind.
 	 */
-	public HttpParameters getMonitoringParameters() {
+	public URIParameters getMonitoringParameters() {
 		String myParamString = monitoring_parameters;
 		if(myParamString==null) {
-			return EmptyParameters.getInstance();
+			return EmptyURIParameters.getInstance();
 		} else {
-			HttpParameters params = getMonitoringParametersCache.get(myParamString);
+			URIParameters params = getMonitoringParametersCache.get(myParamString);
 			if(params==null) {
-				params = UnmodifiableHttpParameters.wrap(decodeParameters(myParamString));
-				HttpParameters previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
+				params = UnmodifiableURIParameters.wrap(decodeParameters(myParamString));
+				URIParameters previous = getMonitoringParametersCache.putIfAbsent(myParamString, params);
 				if(previous!=null) params = previous;
 			}
 			return params;
@@ -623,14 +624,14 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		return table.getConnector().getFtp().getPrivateServer().get(pkey);
 	}
 
-	public static final Charset PARAMETER_ENCODING = StandardCharsets.UTF_8;
+	public static final Charset PARAMETER_ENCODING = IRI.ENCODING;
 
 	/**
 	 * Encodes the parameters in {@link #PARAMETER_ENCODING}.  Will not return {@code null}.
 	 */
-	public static String encodeParameters(HttpParameters monitoringParameters) {
+	public static String encodeParameters(URIParameters monitoringParameters) {
 		try {
-			return Objects.toString(HttpParametersUtils.toQueryString(monitoringParameters, PARAMETER_ENCODING.name()), "");
+			return Objects.toString(URIParametersUtils.toQueryString(monitoringParameters, PARAMETER_ENCODING.name()), "");
 		} catch(UnsupportedEncodingException e) {
 			throw new AssertionError("Standard encoding (" + PARAMETER_ENCODING + ") should always exist", e);
 		}
@@ -639,19 +640,19 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	/**
 	 * Decodes the parameters in {@link #PARAMETER_ENCODING}.
 	 */
-	public static HttpParameters decodeParameters(String monitoringParameters) {
+	public static URIParameters decodeParameters(String monitoringParameters) {
 		if(monitoringParameters==null) {
-			return EmptyParameters.getInstance();
+			return EmptyURIParameters.getInstance();
 		} else {
 			try {
-				return new HttpParametersMap(monitoringParameters, PARAMETER_ENCODING.name());
+				return new URIParametersMap(monitoringParameters, PARAMETER_ENCODING.name());
 			} catch(UnsupportedEncodingException e) {
 				throw new AssertionError("Standard encoding (" + PARAMETER_ENCODING + ") should always exist", e);
 			}
 		}
 	}
 
-	private static final ConcurrentMap<String,HttpParameters> getMonitoringParametersCache = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<String,URIParameters> getMonitoringParametersCache = new ConcurrentHashMap<>();
 
 	@Override
 	public List<CannotRemoveReason<?>> getCannotRemoveReasons() throws IOException, SQLException {
