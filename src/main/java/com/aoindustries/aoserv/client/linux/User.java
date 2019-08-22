@@ -419,6 +419,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		OPERATOR,
 		POLKITD,
 		POSTGRES,
+		REDIS,
 		ROOT,
 		RPC,
 		RPCUSER,
@@ -475,6 +476,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 			OPERATOR = Name.valueOf("operator");
 			POLKITD = Name.valueOf("polkitd");
 			POSTGRES = Name.valueOf("postgres");
+			REDIS = Name.valueOf("redis");
 			ROOT = Name.valueOf("root");
 			RPC = Name.valueOf("rpc");
 			RPCUSER = Name.valueOf("rpcuser");
