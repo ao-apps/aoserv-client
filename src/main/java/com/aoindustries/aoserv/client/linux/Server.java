@@ -62,9 +62,9 @@ import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.HostAddress;
-import com.aoindustries.net.HttpParameters;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
+import com.aoindustries.net.URIParameters;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.BufferManager;
@@ -2651,7 +2651,7 @@ final public class Server
 	/**
 	 * Checks a port from the daemon's point of view.  This is required for monitoring of private and loopback IPs.
 	 */
-	public String checkPort(InetAddress ipAddress, Port port, String appProtocol, HttpParameters monitoringParameters) throws IOException, SQLException {
+	public String checkPort(InetAddress ipAddress, Port port, String appProtocol, URIParameters monitoringParameters) throws IOException, SQLException {
 		return table.getConnector().requestStringQuery(
 			true,
 			AoservProtocol.CommandID.AO_SERVER_CHECK_PORT,
