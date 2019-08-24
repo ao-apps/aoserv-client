@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-08-22T16:20:55-0500"
+		dateModified="2019-08-24T04:58:13-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -188,7 +188,14 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						This provides information about what the account would cost if uncanceled during the 30-day uncancel window.
 					</li>
 					<li>Added phone to url cast as "tel:" URL.</li>
-					<li>New system group and user for <code>redis</code>.</li>
+					<li>Now supporting <ao:a href="https://redis.io/">Redis</ao:a>:
+						<ol type="a">
+							<li>New system group and user for <code>redis</code>.</li>
+							<li>New protocol <code>redis</code>, defaulting to port 6379.</li>
+							<li>New protocol <code>redis-cluster</code>, defaulting to port 16379.</li>
+							<li>New protocol <code>redis-sentinel</code>, defaulting to port 26379.</li>
+						</ol>
+					</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>
