@@ -131,7 +131,7 @@ final public class DatabaseTable extends CachedTableIntegerKey<Database> {
 	public boolean handleCommand(String[] args, Reader in, TerminalWriter out, TerminalWriter err, boolean isInteractive) throws IllegalArgumentException, SQLException, IOException {
 		String command=args[0];
 		if(command.equalsIgnoreCase(Command.ADD_POSTGRES_DATABASE)) {
-			if(AOSH.checkParamCount(Command.ADD_POSTGRES_DATABASE, args, 5, err)) {
+			if(AOSH.checkParamCount(Command.ADD_POSTGRES_DATABASE, args, 6, err)) {
 				out.println(
 					connector.getSimpleAOClient().addPostgresDatabase(
 						AOSH.parsePostgresDatabaseName(args[1], "database_name"),
