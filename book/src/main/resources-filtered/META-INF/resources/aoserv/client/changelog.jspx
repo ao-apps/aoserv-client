@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-08-24T04:58:13-0500"
+		dateModified="2019-08-28T04:22:24-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -196,6 +196,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>New protocol <code>redis-sentinel</code>, defaulting to port 26379.</li>
 						</ol>
 					</li>
+					<li>Fixed bug in <code>add_postgres_database</code> parameter count check.</li>
 					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>
