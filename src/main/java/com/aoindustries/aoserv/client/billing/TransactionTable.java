@@ -436,10 +436,10 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 			if(
 				(
 					criteria.getAfter() == null
-					|| criteria.getAfter().compareTo(tr.getTime()) <= 0
+					|| tr.getTime().compareTo(criteria.getAfter()) >= 0
 				) && (
 					criteria.getBefore() == null
-					|| criteria.getBefore().compareTo(tr.getTime()) > 0
+					|| tr.getTime().compareTo(criteria.getBefore()) < 0
 				) && (
 					criteria.getPaymentConfirmed() == TransactionSearchCriteria.ANY
 					|| criteria.getPaymentConfirmed() == tr.getPaymentConfirmed()
