@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-08-28T04:22:24-0500"
+		dateModified="2019-09-15T19:31:04-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -197,8 +197,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						</ol>
 					</li>
 					<li>Fixed bug in <code>add_postgres_database</code> parameter count check.</li>
+					<li>Type <code>group_id</code> is now left aligned instead of right aligned, as it is a textual name, not a numeric ID.</li>
 					<!-- TODO:
-					<li>Why is the "name" column right-aligned? <code>select path, linux_server_account.username, linux_server_group.name, mode, created from cvs_repositories</code></li>
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>
 					<li>Added a cast registry based on ServiceLoader</li>

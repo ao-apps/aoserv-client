@@ -352,7 +352,6 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case SHORT:
 			case TIME:
 			case BIG_DECIMAL:
-			case GROUP_ID:
 			case LINUX_ID:
 			case MONEY:
 			case NET_PORT:
