@@ -198,6 +198,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Fixed bug in <code>add_postgres_database</code> parameter count check.</li>
 					<!-- TODO:
+					<li>Why is the "name" column right-aligned? <code>select path, linux_server_account.username, linux_server_group.name, mode, created from cvs_repositories</code></li>
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>
 					<li>Added a cast registry based on ServiceLoader</li>
