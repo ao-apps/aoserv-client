@@ -49,7 +49,6 @@ import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.EmptyURIParameters;
-import com.aoindustries.net.IRI;
 import com.aoindustries.net.Port;
 import com.aoindustries.net.URIParameters;
 import com.aoindustries.net.URIParametersMap;
@@ -58,8 +57,6 @@ import com.aoindustries.net.UnmodifiableURIParameters;
 import com.aoindustries.util.IntList;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -624,31 +621,21 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 		return table.getConnector().getFtp().getPrivateServer().get(pkey);
 	}
 
-	public static final Charset PARAMETER_ENCODING = IRI.ENCODING;
-
 	/**
-	 * Encodes the parameters in {@link #PARAMETER_ENCODING}.  Will not return {@code null}.
+	 * Encodes the parameters.  Will not return {@code null}.
 	 */
 	public static String encodeParameters(URIParameters monitoringParameters) {
-		try {
-			return Objects.toString(URIParametersUtils.toQueryString(monitoringParameters, PARAMETER_ENCODING.name()), "");
-		} catch(UnsupportedEncodingException e) {
-			throw new AssertionError("Standard encoding (" + PARAMETER_ENCODING + ") should always exist", e);
-		}
+		return Objects.toString(URIParametersUtils.toQueryString(monitoringParameters), "");
 	}
 
 	/**
-	 * Decodes the parameters in {@link #PARAMETER_ENCODING}.
+	 * Decodes the parameters.
 	 */
 	public static URIParameters decodeParameters(String monitoringParameters) {
 		if(monitoringParameters==null) {
 			return EmptyURIParameters.getInstance();
 		} else {
-			try {
-				return new URIParametersMap(monitoringParameters, PARAMETER_ENCODING.name());
-			} catch(UnsupportedEncodingException e) {
-				throw new AssertionError("Standard encoding (" + PARAMETER_ENCODING + ") should always exist", e);
-			}
+			return new URIParametersMap(monitoringParameters);
 		}
 	}
 
