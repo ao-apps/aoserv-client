@@ -44,6 +44,7 @@ import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.util.Internable;
+import com.aoindustries.util.StringUtility;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
@@ -88,7 +89,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be between 1 and 31 characters</li>
 	 *   <li>Characters may contain <code>[a-z,A-Z,0-9,_,-,.,(space)]</code></li>
 	 * </ul>
-	 * TODO: 1.83.0: What to do for JDBC URLs with space?
 	 *
 	 * @author  AO Industries, Inc.
 	 */
@@ -462,9 +462,35 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 
 	@Override
 	public String getJdbcDocumentationUrl() throws SQLException, IOException {
+		final String LIST = "https://jdbc.postgresql.org/documentation/documentation.html";
+		final String HEAD = "https://jdbc.postgresql.org/documentation/head/index.html";
 		String version = getPostgresServer().getVersion().getTechnologyVersion(table.getConnector()).getVersion();
-		// TODO: 1.83.0: Update documentation URL
-		return "https://aoindustries.com/docs/postgresql-"+version+"/jdbc.html";
+		List<String> split = StringUtility.splitString(version, '.');
+		if(split.size() < 2) {
+			return LIST;
+		} else {
+			String major = split.get(0);
+			String minor = split.get(1);
+			if(major.equals("7")) {
+				return "https://www.postgresql.org/docs/" + URIEncoder.encodeURIComponent(major) + "." + URIEncoder.encodeURIComponent(minor) + "/jdbc.html";
+			}
+			if(
+				major.equals("8")
+				|| (
+					major.equals("9")
+					&& (
+						minor.equals("0")
+						|| minor.equals("1")
+						|| minor.equals("2")
+						|| minor.equals("3")
+						|| minor.equals("4")
+					)
+				)
+			) {
+				return "https://jdbc.postgresql.org/documentation/" + URIEncoder.encodeURIComponent(major) + URIEncoder.encodeURIComponent(minor) + "/index.html";
+			}
+			return HEAD;
+		}
 	}
 
 	public Name getName() {
