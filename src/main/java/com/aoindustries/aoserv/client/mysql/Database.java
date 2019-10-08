@@ -96,7 +96,6 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 	 *   <li>Be between 1 and 64 characters</li>
 	 *   <li>Characters may contain <code>[a-z,A-Z,0-9,_,-,.,(space)]</code></li>
 	 * </ul>
-	 * TODO: 1.83.0: What to do for JDBC URLs with space?
 	 *
 	 * @author  AO Industries, Inc.
 	 */

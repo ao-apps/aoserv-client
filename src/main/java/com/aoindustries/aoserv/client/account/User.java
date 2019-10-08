@@ -482,7 +482,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.ENABLE, Table.TableID.USERNAMES, pkey);
 	}
 
-	// TODO: 1.83.0: See where used, and favor direct lookup in other tables:
+	// TODO: See where used, and favor direct lookup in other tables:
 	public Administrator getAdministrator() throws IOException, SQLException {
 		return table.getConnector().getAccount().getAdministrator().get(pkey);
 	}
@@ -510,7 +510,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		return obj;
 	}
 
-	// TODO: 1.83.0: See where used, and favor direct lookup in other tables:
+	// TODO: See where used, and favor direct lookup in other tables:
 	public com.aoindustries.aoserv.client.linux.User getLinuxAccount() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(com.aoindustries.aoserv.client.linux.User.Name.validate(username).isValid()) {
@@ -524,7 +524,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		}
 	}
 
-	// TODO: 1.83.0: See where used, and favor direct lookup in other tables:
+	// TODO: See where used, and favor direct lookup in other tables:
 	public com.aoindustries.aoserv.client.mysql.User getMySQLUser() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(com.aoindustries.aoserv.client.mysql.User.Name.validate(username).isValid()) {
@@ -548,7 +548,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		return packageObject;
 	}
 
-	// TODO: 1.83.0: See where used, and favor direct lookup in other tables:
+	// TODO: See where used, and favor direct lookup in other tables:
 	public com.aoindustries.aoserv.client.postgresql.User getPostgresUser() throws IOException, SQLException {
 		String username = pkey.toString();
 		if(com.aoindustries.aoserv.client.postgresql.User.Name.validate(username).isValid()) {
