@@ -71,7 +71,7 @@ final public class Host extends CachedObjectIntegerKey<Host> implements Comparab
 	private String name;
 	private boolean monitoring_enabled;
 
-	// TODO: 1.83.0: No longer add to a server by default, move this method to correct place
+	// TODO: No longer add to a server by default, move this method to correct place
 	public void addAccount(
 		Account.Name accounting,
 		String contractVersion,

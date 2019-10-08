@@ -789,7 +789,7 @@ final public class Account extends CachedObjectAccountNameKey<Account> implement
 		return bill_parent;
 	}
 
-	// TODO: 1.83.0: Re-implement auto-enabled on payment forms, and preferrably on the master itself during add_transaction
+	// TODO: Re-implement auto-enabled on payment forms, and preferrably on the master itself during add_transaction
 	public Monies getAutoEnableMinimumPayment() throws IOException, SQLException {
 		List<Money> minimums = new ArrayList<>();
 		for(Money accountBalance : getAccountBalance()) {
