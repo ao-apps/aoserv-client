@@ -25,11 +25,13 @@ package com.aoindustries.aoserv.client.email;
 import com.aoindustries.aoserv.client.CachedObjectIntegerKey;
 import com.aoindustries.aoserv.client.CannotRemoveReason;
 import com.aoindustries.aoserv.client.Removable;
+import com.aoindustries.aoserv.client.linux.User;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,6 +63,9 @@ final public class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 	int email_address;
 	int linux_server_account;
 
+	// Protocol conversion <= 1.30:
+	private User.Name linux_account;
+
 	@Override
 	protected Object getColumnImpl(int i) {
 		if(i==COLUMN_PKEY) return pkey;
@@ -88,9 +93,15 @@ final public class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 
 	@Override
 	public void init(ResultSet result) throws SQLException {
-		pkey=result.getInt(1);
-		email_address=result.getInt(2);
-		linux_server_account=result.getInt(3);
+		try {
+			int pos = 1;
+			pkey = result.getInt(pos++);
+			email_address = result.getInt(pos++);
+			linux_server_account = result.getInt(pos++);
+			linux_account = User.Name.valueOf(result.getString(pos++));
+		} catch(ValidationException e) {
+			throw new SQLException(e);
+		}
 	}
 
 	@Override
@@ -124,8 +135,8 @@ final public class InboxAddress extends CachedObjectIntegerKey<InboxAddress> imp
 	public void write(StreamableOutput out, AoservProtocol.Version protocolVersion) throws IOException {
 		out.writeCompressedInt(pkey);
 		out.writeCompressedInt(email_address);
-		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30)<=0) {
-			out.writeUTF("TODO: 1.83.0: Convert somehow"); // linux_account
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_30) <= 0) {
+			out.writeUTF(linux_account.toString());
 		} else {
 			out.writeCompressedInt(linux_server_account);
 		}
