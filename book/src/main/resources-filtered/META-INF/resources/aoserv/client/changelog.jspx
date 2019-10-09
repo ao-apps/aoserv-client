@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-09-15T19:31:04-0500"
+		dateModified="2019-10-08T21:08:36-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -52,153 +52,8 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
 			>
+				<!-- TODO:
 				<ul>
-					<li>Added new system roles for <ao:a href="https://www.postgresql.org/docs/11/index.html">PostgreSQL 11</ao:a>.</li>
-					<li>Reserved PostgreSQL username and database "postgresmon".</li>
-					<li>New <code>isSpecial()</code> methods instead of several places using the same list.</li>
-					<li>New <code>canPostgresIdent()</code> methods to control which Linux accounts can authentication to PostgreSQL via "peer" and "ident".</li>
-					<li>May not enable/disable special users and databases.</li>
-					<li>May not set the passwords of special users.</li>
-					<li>May not check if passwords set on special users.</li>
-					<li>May not grant/revoke access to/from special users and databases.</li>
-					<li>
-						New <code>isScramSha256()</code> methods to determine if a version of PostgreSQL supports
-						<ao:a href="https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PASSWORD">scram-sha-256 authentication</ao:a>.
-					</li>
-					<li>
-						Now allowing MySQL and PostgreSQL reserved words in user names and database names.
-						All uses are <code>`…`</code> or <code>"…"</code> quoted to avoid any ambiguity.
-					</li>
-					<li>PostgreSQL database names may now contain capital letters, hyphen (-), period (.), and space ( ), too.</li>
-					<li>MySQL database names may now contain hyphen (-), period (.), and space ( ), too.</li>
-					<li>Added multi-currency support to the billing system:
-						<ol>
-							<li>New table <code>billing.Currency</code></li>
-							<li>Changed <code>billing.MonthlyCharge.rate</code> to <code>money</code> type</li>
-							<li>New table <code>billing.NoticeLog.balance</code></li>
-							<li>Removed column <code>billing.NoticeLog.balance</code></li>
-							<li>Renamed column <code>billing.PackageDefinition.setup_fee</code> to <code>setupFee</code> and changed to <code>money</code> type</li>
-							<li>Renamed column <code>billing.PackageDefinition.monthly_rate</code> to <code>monthlyRate</code> and changed to <code>money</code> type</li>
-							<li>Renamed column <code>billing.PackageDefinitionLimit.additional_rate</code> to <code>additionalRate</code> and changed to <code>money</code> type</li>
-							<li>Changed <code>billing.Transaction.rate</code> to <code>money</code> type</li>
-							<li>Removed column <code>payment.Payment.currency_code</code></li>
-							<li>Changed <code>payment.Payment.amount</code> to <code>money</code> type</li>
-							<li>Renamed column <code>payment.Payment.tax_amount</code> to <code>taxAmount</code> and changed to <code>money</code> type</li>
-							<li>Renamed column <code>payment.Payment.shipping_amount</code> to <code>shippingAmount</code> and changed to <code>money</code> type</li>
-							<li>Renamed column <code>payment.Payment.duty_amount</code> to <code>dutyAmount</code> and changed to <code>money</code> type</li>
-						</ol>
-					</li>
-					<li>No longer billing for disabled Java VMs.</li>
-					<li>Renamed remaining uses of <code>Business</code> to <code>Account</code>.</li>
-					<li>Renamed remaining uses of <code>BusinessAdministrator</code> to <code>Administrator</code>.</li>
-					<li>Renamed remaining uses of <code>BusinessServer</code> to <code>AccountHost</code>.</li>
-					<li>Renamed remaining uses of <code>BusinessProfile</code> to <code>Profile</code>.</li>
-					<li>Renamed remaining uses of <code>Server</code> to <code>Host</code>.</li>
-					<li>
-						Added methods to get timestamps in <code>long</code> or <code>Long</code> in addition to <code>java.sql.Timestamp</code>.
-						These methods may offer higher performance when a <code>Timestamp</code> is not needed.
-					</li>
-					<li>
-						Changed from <code>Calendar.getInstance()</code> to <code>new GregorianCalendar()</code>
-						to work correctly independent of locale settings.
-					</li>
-					<li>Updated for compatibility with <core:link book="/aocode-public" page="/changelog.jspx" element="release-notes-3.1.0">aocode-public-3.1.0</core:link>.</li>
-					<li>Specific management of time zones:
-						<ol>
-							<li><code>DATE</code> type always managed in GMT time zone.</li>
-							<li><code>TIME</code> type parsed and displayed in JVM local time zone.</li>
-							<li>Billing and accounting time ranges are selected and processed in GMT time zone.</li>
-						</ol>
-					</li>
-					<li>Removed unused sort fields from <code>TransactionSearchCriteria</code></li>
-					<li>
-						<p>
-							Table, column, and type names now support <code>"</code>-escaping, with <code>""</code> being
-							used to represent a quoted quote.  This is done because table and column
-							names now contain <code>.</code> dot characters.
-						</p>
-						<p>
-							In the current implementation, AOSH tokenizes on <code>"</code>, much like BASH.
-							Thus, these double quotes should be either escaped or contained within
-							single quotes <code>'</code>.  A future update may make AOSH parse with quote <code>"</code>
-							support compatible with the this new mechanism, with <code>'</code> single quotes
-							used for other quoting.
-						</p>
-					</li>
-					<li>
-						Renamed AOSH command <code>add_transaction</code> to <code>billing.Transaction.add</code>,
-						and it now accepts a time with a value of <code>now</code>, <code>today</code>,
-						<var>YYYY-MM-DD</var> (date in GMT) or <var>YYYY-MM-DD HH:MM[:SS[.mmm]]</var> (date-time in
-						local time zone).
-					</li>
-					<li>
-						Changed wire protocol of <code>Timestamp</code> to send the full nanosecond precision.
-						Communication with older clients will still be millisecond precision.
-					</li>
-					<li>
-						Returning <code>UnmodifiableTimestamp</code> instead of <code>UnmodifiableTimestamp</code>,
-						and removed <code>*_millis()</code> variants of time accessors.
-					</li>
-					<li>Added types <code>Identifier</code> (128-bit) and <code>SmallIdentifier</code> (64-bit).</li>
-					<li>Renamed <code>master.Process.process_id</code> to <code>id</code> and changed to <code>SmallIdentifier</code> type.</li>
-					<li>Renamed <code>master.Process.connector_id</code> to <code>connectorId</code> and changed to <code>Identifier</code> type.</li>
-					<li>
-						New method <code>AOServTable.getRowsCopy()</code> that may be used when the returned list must be modifiable.
-						This gives the table implementation a way to create a defensive copy most efficient to its underlying storage mechanism.
-					</li>
-					<li>Moved <code>sort(…)</code> from <code>TypeTable</code> to <code>AOServConnector</code>.</li>
-					<li>
-						Renamed <code>SQLExpression.getValue(…)</code> to <code>evaluate(…)</code> to
-						better represent that this may be computationally non-trivial.
-					</li>
-					<li>
-						<p>
-							Renamed AOSH command <code>check_ssl_certificate</code> to <code>pki.Certificate.check</code>,
-							and it now accepts a boolean flag to enable/disable cached results.
-						</p>
-						<p>
-							Cached values are best for background processing like monitoring.  Direct
-							values are best for interactive use, at the expense of additional
-							processing.
-						</p>
-					</li>
-					<li>Master returns new entropy needed as entropy is added.</li>
-					<li>
-						Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
-						then selected the appropriate method for each place random is used.
-					</li>
-					<li>Refined ambiguity and imprecise separation between "source account" and "billing account" for
-						monthly charges and monthly rates:
-						<ol>
-							<li><code>Account.getMonthlyRate()</code> may now return <code>null</code> on filtered billing</li>
-							<li>Added <code>Account.getBillingMonthlyCharges()</code></li>
-							<li>Removed <code>Account.getTotalMonthlyCharges()</code> - use <code>Account.getMonthlyRate()</code> instead</li>
-							<li>Added <code>Account.getBillingMonthlyRate()</code>, which may return <code>null</code> on filtered billing</li>
-						</ol>
-					</li>
-					<li>Added new method <code>TransactionTable.getActiveAccountBalance(…)</code> that provides currently active accounts and currencies.</li>
-					<li>May no longer cancel an account that has any active sub-account.</li>
-					<li>
-						New monthly billing <code>Transaction</code> for disabled accounts are now added as <code>WAITING_CONFIRMATION</code>.
-						These transactions will be moved to <code>CONFIRMED</code> if the account is enabled, or to <code>NOT_CONFIRMED</code>
-						if the account is canceled.
-					</li>
-					<li>
-						Entries are now still added to <code>MonthlyChargeTable</code> when an account is disabled, but with <code>active=false</code>.
-						This provides information about what the account would cost if uncanceled during the 30-day uncancel window.
-					</li>
-					<li>Added phone to url cast as "tel:" URL.</li>
-					<li>Now supporting <ao:a href="https://redis.io/">Redis</ao:a>:
-						<ol type="a">
-							<li>New system group and user for <code>redis</code>.</li>
-							<li>New protocol <code>redis</code>, defaulting to port 6379.</li>
-							<li>New protocol <code>redis-cluster</code>, defaulting to port 16379.</li>
-							<li>New protocol <code>redis-sentinel</code>, defaulting to port 26379.</li>
-						</ol>
-					</li>
-					<li>Fixed bug in <code>add_postgres_database</code> parameter count check.</li>
-					<li>Type <code>group_id</code> is now left aligned instead of right aligned, as it is a textual name, not a numeric ID.</li>
-					<!-- TODO:
 					<li>Added schemas (where some object can exist without schema, such as "int"?)</li>
 					<li>Added a type registry based on ServiceLoader</li>
 					<li>Added a cast registry based on ServiceLoader</li>
@@ -224,10 +79,167 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					-->
 					<!-- TODO:
 					<li>Look into jOOQ: https://www.jooq.org/</li>
-					-->
 				</ul>
+				-->
 			</changelog:release>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="1.83.1"
+			datePublished="2019-10-08T21:08:36-0500"
+			groupId="@{documented.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{documented.scm.url}"
+		>
+			<ul>
+				<li>Added new system roles for <ao:a href="https://www.postgresql.org/docs/11/index.html">PostgreSQL 11</ao:a>.</li>
+				<li>Reserved PostgreSQL username and database "postgresmon".</li>
+				<li>New <code>isSpecial()</code> methods instead of several places using the same list.</li>
+				<li>New <code>canPostgresIdent()</code> methods to control which Linux accounts can authentication to PostgreSQL via "peer" and "ident".</li>
+				<li>May not enable/disable special users and databases.</li>
+				<li>May not set the passwords of special users.</li>
+				<li>May not check if passwords set on special users.</li>
+				<li>May not grant/revoke access to/from special users and databases.</li>
+				<li>
+					New <code>isScramSha256()</code> methods to determine if a version of PostgreSQL supports
+					<ao:a href="https://www.postgresql.org/docs/10/auth-methods.html#AUTH-PASSWORD">scram-sha-256 authentication</ao:a>.
+				</li>
+				<li>
+					Now allowing MySQL and PostgreSQL reserved words in user names and database names.
+					All uses are <code>`…`</code> or <code>"…"</code> quoted to avoid any ambiguity.
+				</li>
+				<li>PostgreSQL database names may now contain capital letters, hyphen (-), period (.), and space ( ), too.</li>
+				<li>MySQL database names may now contain hyphen (-), period (.), and space ( ), too.</li>
+				<li>Added multi-currency support to the billing system:
+					<ol>
+						<li>New table <code>billing.Currency</code></li>
+						<li>Changed <code>billing.MonthlyCharge.rate</code> to <code>money</code> type</li>
+						<li>New table <code>billing.NoticeLog.balance</code></li>
+						<li>Removed column <code>billing.NoticeLog.balance</code></li>
+						<li>Renamed column <code>billing.PackageDefinition.setup_fee</code> to <code>setupFee</code> and changed to <code>money</code> type</li>
+						<li>Renamed column <code>billing.PackageDefinition.monthly_rate</code> to <code>monthlyRate</code> and changed to <code>money</code> type</li>
+						<li>Renamed column <code>billing.PackageDefinitionLimit.additional_rate</code> to <code>additionalRate</code> and changed to <code>money</code> type</li>
+						<li>Changed <code>billing.Transaction.rate</code> to <code>money</code> type</li>
+						<li>Removed column <code>payment.Payment.currency_code</code></li>
+						<li>Changed <code>payment.Payment.amount</code> to <code>money</code> type</li>
+						<li>Renamed column <code>payment.Payment.tax_amount</code> to <code>taxAmount</code> and changed to <code>money</code> type</li>
+						<li>Renamed column <code>payment.Payment.shipping_amount</code> to <code>shippingAmount</code> and changed to <code>money</code> type</li>
+						<li>Renamed column <code>payment.Payment.duty_amount</code> to <code>dutyAmount</code> and changed to <code>money</code> type</li>
+					</ol>
+				</li>
+				<li>No longer billing for disabled Java VMs.</li>
+				<li>Renamed remaining uses of <code>Business</code> to <code>Account</code>.</li>
+				<li>Renamed remaining uses of <code>BusinessAdministrator</code> to <code>Administrator</code>.</li>
+				<li>Renamed remaining uses of <code>BusinessServer</code> to <code>AccountHost</code>.</li>
+				<li>Renamed remaining uses of <code>BusinessProfile</code> to <code>Profile</code>.</li>
+				<li>Renamed remaining uses of <code>Server</code> to <code>Host</code>.</li>
+				<li>
+					Added methods to get timestamps in <code>long</code> or <code>Long</code> in addition to <code>java.sql.Timestamp</code>.
+					These methods may offer higher performance when a <code>Timestamp</code> is not needed.
+				</li>
+				<li>
+					Changed from <code>Calendar.getInstance()</code> to <code>new GregorianCalendar()</code>
+					to work correctly independent of locale settings.
+				</li>
+				<li>Updated for compatibility with <core:link book="/aocode-public" page="/changelog.jspx" element="release-notes-3.1.0">aocode-public-3.1.0</core:link>.</li>
+				<li>Specific management of time zones:
+					<ol>
+						<li><code>DATE</code> type always managed in GMT time zone.</li>
+						<li><code>TIME</code> type parsed and displayed in JVM local time zone.</li>
+						<li>Billing and accounting time ranges are selected and processed in GMT time zone.</li>
+					</ol>
+				</li>
+				<li>Removed unused sort fields from <code>TransactionSearchCriteria</code></li>
+				<li>
+					<p>
+						Table, column, and type names now support <code>"</code>-escaping, with <code>""</code> being
+						used to represent a quoted quote.  This is done because table and column
+						names now contain <code>.</code> dot characters.
+					</p>
+					<p>
+						In the current implementation, AOSH tokenizes on <code>"</code>, much like BASH.
+						Thus, these double quotes should be either escaped or contained within
+						single quotes <code>'</code>.  A future update may make AOSH parse with quote <code>"</code>
+						support compatible with the this new mechanism, with <code>'</code> single quotes
+						used for other quoting.
+					</p>
+				</li>
+				<li>
+					Renamed AOSH command <code>add_transaction</code> to <code>billing.Transaction.add</code>,
+					and it now accepts a time with a value of <code>now</code>, <code>today</code>,
+					<var>YYYY-MM-DD</var> (date in GMT) or <var>YYYY-MM-DD HH:MM[:SS[.mmm]]</var> (date-time in
+					local time zone).
+				</li>
+				<li>
+					Changed wire protocol of <code>Timestamp</code> to send the full nanosecond precision.
+					Communication with older clients will still be millisecond precision.
+				</li>
+				<li>
+					Returning <code>UnmodifiableTimestamp</code> instead of <code>UnmodifiableTimestamp</code>,
+					and removed <code>*_millis()</code> variants of time accessors.
+				</li>
+				<li>Added types <code>Identifier</code> (128-bit) and <code>SmallIdentifier</code> (64-bit).</li>
+				<li>Renamed <code>master.Process.process_id</code> to <code>id</code> and changed to <code>SmallIdentifier</code> type.</li>
+				<li>Renamed <code>master.Process.connector_id</code> to <code>connectorId</code> and changed to <code>Identifier</code> type.</li>
+				<li>
+					New method <code>AOServTable.getRowsCopy()</code> that may be used when the returned list must be modifiable.
+					This gives the table implementation a way to create a defensive copy most efficient to its underlying storage mechanism.
+				</li>
+				<li>Moved <code>sort(…)</code> from <code>TypeTable</code> to <code>AOServConnector</code>.</li>
+				<li>
+					Renamed <code>SQLExpression.getValue(…)</code> to <code>evaluate(…)</code> to
+					better represent that this may be computationally non-trivial.
+				</li>
+				<li>
+					<p>
+						Renamed AOSH command <code>check_ssl_certificate</code> to <code>pki.Certificate.check</code>,
+						and it now accepts a boolean flag to enable/disable cached results.
+					</p>
+					<p>
+						Cached values are best for background processing like monitoring.  Direct
+						values are best for interactive use, at the expense of additional
+						processing.
+					</p>
+				</li>
+				<li>Master returns new entropy needed as entropy is added.</li>
+				<li>
+					Split <code>getRandom()</code> into both <code>getSecureRandom()</code> and <code>getFastRandom()</code>,
+					then selected the appropriate method for each place random is used.
+				</li>
+				<li>Refined ambiguity and imprecise separation between "source account" and "billing account" for
+					monthly charges and monthly rates:
+					<ol>
+						<li><code>Account.getMonthlyRate()</code> may now return <code>null</code> on filtered billing</li>
+						<li>Added <code>Account.getBillingMonthlyCharges()</code></li>
+						<li>Removed <code>Account.getTotalMonthlyCharges()</code> - use <code>Account.getMonthlyRate()</code> instead</li>
+						<li>Added <code>Account.getBillingMonthlyRate()</code>, which may return <code>null</code> on filtered billing</li>
+					</ol>
+				</li>
+				<li>Added new method <code>TransactionTable.getActiveAccountBalance(…)</code> that provides currently active accounts and currencies.</li>
+				<li>May no longer cancel an account that has any active sub-account.</li>
+				<li>
+					New monthly billing <code>Transaction</code> for disabled accounts are now added as <code>WAITING_CONFIRMATION</code>.
+					These transactions will be moved to <code>CONFIRMED</code> if the account is enabled, or to <code>NOT_CONFIRMED</code>
+					if the account is canceled.
+				</li>
+				<li>
+					Entries are now still added to <code>MonthlyChargeTable</code> when an account is disabled, but with <code>active=false</code>.
+					This provides information about what the account would cost if uncanceled during the 30-day uncancel window.
+				</li>
+				<li>Added phone to url cast as "tel:" URL.</li>
+				<li>Now supporting <ao:a href="https://redis.io/">Redis</ao:a>:
+					<ol type="a">
+						<li>New system group and user for <code>redis</code>.</li>
+						<li>New protocol <code>redis</code>, defaulting to port 6379.</li>
+						<li>New protocol <code>redis-cluster</code>, defaulting to port 16379.</li>
+						<li>New protocol <code>redis-sentinel</code>, defaulting to port 26379.</li>
+					</ol>
+				</li>
+				<li>Fixed bug in <code>add_postgres_database</code> parameter count check.</li>
+				<li>Type <code>group_id</code> is now left aligned instead of right aligned, as it is a textual name, not a numeric ID.</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
