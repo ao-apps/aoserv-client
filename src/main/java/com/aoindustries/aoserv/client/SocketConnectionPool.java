@@ -119,7 +119,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 					+ "  <tr><td>Indexes:</td><td>").append(Integer.toString(totalIndexed)).append("</td></tr>\n"
 					+ "  <tr><td>Total Rows:</td><td>").append(Integer.toString(totalRows)).append("</td></tr>\n"
 					+ "</table>\n"
-					+ "<br /><br />\n"
+					+ "<br /><br />\n" // TODO: HTML/XHTML serialization
 					+ "<table>\n"
 					+ "  <tr><th colspan='2'><span style='font-size:large;'>TCP Connection Pool</span></th></tr>\n"
 					+ "  <tr><td>Host:</td><td>");
