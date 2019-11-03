@@ -23,9 +23,9 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
+import com.aoindustries.io.stream.Streamable;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.io.stream.Streamable;
 import java.io.IOException;
 
 /**
