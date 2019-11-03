@@ -142,7 +142,7 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 						if (table != null) {
 							SQLUtility.printTable(
 								new String[] {"count"},
-								Collections.singleton(new Object[] {table.getAOServTable(connector).size()}),
+								(Iterable<Object[]>)Collections.singleton(new Object[] {table.getAOServTable(connector).size()}),
 								out,
 								isInteractive,
 								new boolean[] {true}
@@ -336,40 +336,35 @@ final public class TableTable extends GlobalTableIntegerKey<Table> {
 							try {
 								SQLUtility.printTable(
 									cnames,
-									new Iterable<String[]>() {
+									(Iterable<String[]>)() -> new Iterator<String[]>() {
+										private int index = 0;
+
 										@Override
-										public Iterator<String[]> iterator() {
-											return new Iterator<String[]>() {
-												private int index = 0;
+										public boolean hasNext() {
+											return index < numRows;
+										}
 
-												@Override
-												public boolean hasNext() {
-													return index < numRows;
+										@Override
+										public String[] next() {
+											try {
+												// Convert the results to strings
+												AOServObject<?,?> row = finalRows.get(index++);
+												String[] strings = new String[numExpressions];
+												for(int col = 0; col < numExpressions; col++) {
+													strings[col] = valueTypes[col].getString(
+														valueExpressions[col].evaluate(connector, row),
+														precisions[col]
+													);
 												}
+												return strings;
+											} catch(IOException | SQLException e) {
+												throw new WrappedException(e);
+											}
+										}
 
-												@Override
-												public String[] next() {
-													try {
-														// Convert the results to strings
-														AOServObject<?,?> row = finalRows.get(index++);
-														String[] strings = new String[numExpressions];
-														for(int col = 0; col < numExpressions; col++) {
-															strings[col] = valueTypes[col].getString(
-																valueExpressions[col].evaluate(connector, row),
-																precisions[col]
-															);
-														}
-														return strings;
-													} catch(IOException | SQLException e) {
-														throw new WrappedException(e);
-													}
-												}
-
-												@Override
-												public void remove() {
-													throw new UnsupportedOperationException();
-												}
-											};
+										@Override
+										public void remove() {
+											throw new UnsupportedOperationException();
 										}
 									},
 									out,
