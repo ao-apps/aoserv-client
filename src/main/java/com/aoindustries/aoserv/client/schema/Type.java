@@ -1104,6 +1104,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 	 * Gets the maximum precision for the given type or {@code -1} when unbounded.
 	 * This can be used to stop searching for largest precision once the maximum possible value has been found.
 	 */
+	// Return Integer with null when unbounded
 	public static int getMaxPrecision(int type) {
 		switch(type) {
 			case TIME: return 29;
