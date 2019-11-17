@@ -761,33 +761,28 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 		// Print the results
 		SQLUtility.printTable(
 			titles,
-			new Iterable<String[]>() {
+			(Iterable<String[]>)() -> new Iterator<String[]>() {
+				private int index = 0;
+
 				@Override
-				public Iterator<String[]> iterator() {
-					return new Iterator<String[]>() {
-						private int index = 0;
+				public boolean hasNext() {
+					return index < numRows;
+				}
 
-						@Override
-						public boolean hasNext() {
-							return index < numRows;
-						}
+				@Override
+				public String[] next() {
+					// Convert the results to strings
+					AOServObject<?,?> row = rows.get(index++);
+					String[] strings = new String[numCols];
+					for(int col = 0; col < numCols; col++) {
+						strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
+					}
+					return strings;
+				}
 
-						@Override
-						public String[] next() {
-							// Convert the results to strings
-							AOServObject<?,?> row = rows.get(index++);
-							String[] strings = new String[numCols];
-							for(int col = 0; col < numCols; col++) {
-								strings[col] = types[col].getString(row.getColumn(col), precisions[col]);
-							}
-							return strings;
-						}
-
-						@Override
-						public void remove() {
-							throw new UnsupportedOperationException();
-						}
-					};
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException();
 				}
 			},
 			out,
@@ -888,14 +883,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 				final TableListenerEntry entry=I.next();
 				if(entry.delay<=0) {
 					// Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
-					AOServConnector.executorService.submit(
-						new Runnable() {
-							@Override
-							public void run() {
-								entry.listener.tableUpdated(AOServTable.this);
-							}
-						}
-					);
+					AOServConnector.executorService.submit(() -> entry.listener.tableUpdated(AOServTable.this));
 				}
 			}
 
