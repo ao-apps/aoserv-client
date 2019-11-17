@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-11-03T02:12:52-0600"
+		dateModified="2019-11-17T00:38:24-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -83,6 +83,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 				-->
 				<ul>
 					<li>Minimum Java version changed from 1.7 to 1.8.</li>
+					<li>Fixed bug wrong column returned for "canceled".</li>
 				</ul>
 			</changelog:release>
 		</c:if>
