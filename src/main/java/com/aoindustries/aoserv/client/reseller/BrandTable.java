@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2013, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -86,21 +86,18 @@ final public class BrandTable extends CachedTableAccountNameKey<Brand> {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Tree compatibility">
-	private final Tree<Brand> tree = new Tree<Brand>() {
-		@Override
-		public List<Node<Brand>> getRootNodes() throws IOException, SQLException {
-			List<Brand> topLevelBrands = getTopLevelBrands();
-			int size = topLevelBrands.size();
-			if(size==0) {
-				return Collections.emptyList();
-			} else if(size==1) {
-				Node<Brand> singleNode = new BrandTreeNode(topLevelBrands.get(0));
-				return Collections.singletonList(singleNode);
-			} else {
-				List<Node<Brand>> rootNodes = new ArrayList<>(size);
-				for(Brand topLevelBrand : topLevelBrands) rootNodes.add(new BrandTreeNode(topLevelBrand));
-				return Collections.unmodifiableList(rootNodes);
-			}
+	private final Tree<Brand> tree = () -> {
+		List<Brand> topLevelBrands = getTopLevelBrands();
+		int size = topLevelBrands.size();
+		if(size==0) {
+			return Collections.emptyList();
+		} else if(size==1) {
+			Node<Brand> singleNode = new BrandTreeNode(topLevelBrands.get(0));
+			return Collections.singletonList(singleNode);
+		} else {
+			List<Node<Brand>> rootNodes = new ArrayList<>(size);
+			for(Brand topLevelBrand : topLevelBrands) rootNodes.add(new BrandTreeNode(topLevelBrand));
+			return Collections.unmodifiableList(rootNodes);
 		}
 	};
 

@@ -112,21 +112,18 @@ final public class CategoryTable extends CachedTableIntegerKey<Category> {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Tree compatibility">
-	private final Tree<Category> tree = new Tree<Category>() {
-		@Override
-		public List<Node<Category>> getRootNodes() throws IOException, SQLException {
-			List<Category> topLevelCategories = getTopLevelCategories();
-			int size = topLevelCategories.size();
-			if(size==0) {
-				return Collections.emptyList();
-			} else if(size==1) {
-				Node<Category> singleNode = new TicketCategoryTreeNode(topLevelCategories.get(0));
-				return Collections.singletonList(singleNode);
-			} else {
-				List<Node<Category>> rootNodes = new ArrayList<>(size);
-				for(Category topLevelCategory : topLevelCategories) rootNodes.add(new TicketCategoryTreeNode(topLevelCategory));
-				return Collections.unmodifiableList(rootNodes);
-			}
+	private final Tree<Category> tree = () -> {
+		List<Category> topLevelCategories = getTopLevelCategories();
+		int size = topLevelCategories.size();
+		if(size==0) {
+			return Collections.emptyList();
+		} else if(size==1) {
+			Node<Category> singleNode = new TicketCategoryTreeNode(topLevelCategories.get(0));
+			return Collections.singletonList(singleNode);
+		} else {
+			List<Node<Category>> rootNodes = new ArrayList<>(size);
+			for(Category topLevelCategory : topLevelCategories) rootNodes.add(new TicketCategoryTreeNode(topLevelCategory));
+			return Collections.unmodifiableList(rootNodes);
 		}
 	};
 

@@ -318,21 +318,18 @@ final public class AccountTable extends CachedTableAccountNameKey<Account> {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Tree compatibility">
-	private final Tree<Account> tree = new Tree<Account>() {
-		@Override
-		public List<Node<Account>> getRootNodes() throws IOException, SQLException {
-			List<Account> topLevelAccounts = getTopLevelAccounts();
-			int size = topLevelAccounts.size();
-			if(size==0) {
-				return Collections.emptyList();
-			} else if(size==1) {
-				Node<Account> singleNode = new AccountTreeNode(topLevelAccounts.get(0));
-				return Collections.singletonList(singleNode);
-			} else {
-				List<Node<Account>> rootNodes = new ArrayList<>(size);
-				for(Account topLevelAccount : topLevelAccounts) rootNodes.add(new AccountTreeNode(topLevelAccount));
-				return Collections.unmodifiableList(rootNodes);
-			}
+	private final Tree<Account> tree = () -> {
+		List<Account> topLevelAccounts = getTopLevelAccounts();
+		int size = topLevelAccounts.size();
+		if(size==0) {
+			return Collections.emptyList();
+		} else if(size==1) {
+			Node<Account> singleNode = new AccountTreeNode(topLevelAccounts.get(0));
+			return Collections.singletonList(singleNode);
+		} else {
+			List<Node<Account>> rootNodes = new ArrayList<>(size);
+			for(Account topLevelAccount : topLevelAccounts) rootNodes.add(new AccountTreeNode(topLevelAccount));
+			return Collections.unmodifiableList(rootNodes);
 		}
 	};
 

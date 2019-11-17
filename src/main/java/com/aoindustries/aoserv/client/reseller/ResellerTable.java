@@ -85,21 +85,18 @@ final public class ResellerTable extends CachedTableAccountNameKey<Reseller> {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Tree compatibility">
-	private final Tree<Reseller> tree = new Tree<Reseller>() {
-		@Override
-		public List<Node<Reseller>> getRootNodes() throws IOException, SQLException {
-			List<Reseller> topLevelResellers = getTopLevelResellers();
-			int size = topLevelResellers.size();
-			if(size==0) {
-				return Collections.emptyList();
-			} else if(size==1) {
-				Node<Reseller> singleNode = new ResellerTreeNode(topLevelResellers.get(0));
-				return Collections.singletonList(singleNode);
-			} else {
-				List<Node<Reseller>> rootNodes = new ArrayList<>(size);
-				for(Reseller topLevelReseller : topLevelResellers) rootNodes.add(new ResellerTreeNode(topLevelReseller));
-				return Collections.unmodifiableList(rootNodes);
-			}
+	private final Tree<Reseller> tree = () -> {
+		List<Reseller> topLevelResellers = getTopLevelResellers();
+		int size = topLevelResellers.size();
+		if(size==0) {
+			return Collections.emptyList();
+		} else if(size==1) {
+			Node<Reseller> singleNode = new ResellerTreeNode(topLevelResellers.get(0));
+			return Collections.singletonList(singleNode);
+		} else {
+			List<Node<Reseller>> rootNodes = new ArrayList<>(size);
+			for(Reseller topLevelReseller : topLevelResellers) rootNodes.add(new ResellerTreeNode(topLevelReseller));
+			return Collections.unmodifiableList(rootNodes);
 		}
 	};
 

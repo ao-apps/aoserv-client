@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -83,14 +83,7 @@ public class TableEventThread extends Thread {
 											entry.delayStart = -1;
 											// System.out.println("DEBUG: Started TableEventThread: run: "+getName()+" calling tableUpdated on "+entry.listener);
 											// Run in a different thread to avoid deadlock and increase concurrency responding to table update events.
-											AOServConnector.executorService.submit(
-												new Runnable() {
-													@Override
-													public void run() {
-														entry.listener.tableUpdated(table);
-													}
-												}
-											);
+											AOServConnector.executorService.submit(() -> entry.listener.tableUpdated(table));
 										} else {
 											// Remaining delay
 											long remaining = endTime - time;
