@@ -66,7 +66,8 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 		VERSION_9_5 = "9.5",
 		VERSION_9_6 = "9.6",
 		VERSION_10 = "10",
-		VERSION_11 = "11"
+		VERSION_11 = "11",
+		VERSION_12 = "12"
 	;
 
 	/**
@@ -79,6 +80,7 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 	 */
 	public static String[] getPreferredMinorVersions() {
 		return new String[] {
+			VERSION_12,
 			VERSION_11,
 			VERSION_10,
 			VERSION_9_6,
@@ -103,7 +105,9 @@ final public class Version extends GlobalObjectIntegerKey<Version> {
 			version.startsWith(VERSION_10 + '.')
 			|| version.startsWith(VERSION_10 + 'R')
 			|| version.startsWith(VERSION_11 + '.')
-			|| version.startsWith(VERSION_11 + 'R');
+			|| version.startsWith(VERSION_11 + 'R')
+			|| version.startsWith(VERSION_12 + '.')
+			|| version.startsWith(VERSION_12 + 'R');
 	}
 
 	@Override
