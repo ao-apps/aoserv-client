@@ -112,9 +112,9 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 			// Show the table statistics
 			out.append("  <thead>\n"
 					+ "    <tr><th colspan=\"2\"><span style=\"font-size:large\">AOServ Tables</span></th></tr>\n"
-					+ "  </thead>\n"
-					+ "  <tbody>\n"
-					+ "    <tr><td>Total Tables:</td><td>").append(Integer.toString(numTables)).append("</td></tr>\n"
+					+ "  </thead>\n");
+			super.printConnectionStats(out, isXhtml);
+			out.append("    <tr><td>Total Tables:</td><td>").append(Integer.toString(numTables)).append("</td></tr>\n"
 					+ "    <tr><td>Loaded:</td><td>").append(Integer.toString(totalLoaded)).append("</td></tr>\n"
 					+ "    <tr><td>Caches:</td><td>").append(Integer.toString(totalCaches)).append("</td></tr>\n"
 					+ "    <tr><td>Active:</td><td>").append(Integer.toString(totalActive)).append("</td></tr>\n"
@@ -125,12 +125,12 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 					+ "</table>\n");
 			if(isXhtml) out.append("<br /><br />\n");
 			else out.append("<br><br>\n");
-			out.append("<table style=\"border:1px\" cellspacing=\"0\" cellpadding=\"2\">\n"
+			out.append("<table class=\"thinTable\">\n"
 					+ "  <thead>\n"
 					+ "    <tr><th colspan=\"2\"><span style=\"font-size:large\">TCP Connection Pool</span></th></tr>\n"
-					+ "  </thead>\n"
-					+ "  <tbody>\n"
-					+ "    <tr><td>Host:</td><td>");
+					+ "  </thead>\n");
+			super.printConnectionStats(out, isXhtml);
+			out.append("    <tr><td>Host:</td><td>");
 			com.aoindustries.util.EncodingUtils.encodeHtml(connector.hostname, out, isXhtml);
 			out.append("</td></tr>\n"
 					+ "    <tr><td>Port:</td><td>").append(Integer.toString(connector.port.getPort())).append("</td></tr>\n"
