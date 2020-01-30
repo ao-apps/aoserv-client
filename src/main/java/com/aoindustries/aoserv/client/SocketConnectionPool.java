@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -71,7 +71,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 
 	@Override
 	@SuppressWarnings("deprecation")
-	protected void printConnectionStats(Appendable out) throws IOException {
+	protected void printConnectionStats(Appendable out, boolean isXhtml) throws IOException {
 		try {
 			// Create statistics on the caches
 			int totalLoaded=0;
@@ -110,31 +110,39 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 			}
 
 			// Show the table statistics
-			out.append("  <tr><th colspan='2'><span style='font-size:large;'>AOServ Tables</span></th></tr>\n"
-					+ "  <tr><td>Total Tables:</td><td>").append(Integer.toString(numTables)).append("</td></tr>\n"
-					+ "  <tr><td>Loaded:</td><td>").append(Integer.toString(totalLoaded)).append("</td></tr>\n"
-					+ "  <tr><td>Caches:</td><td>").append(Integer.toString(totalCaches)).append("</td></tr>\n"
-					+ "  <tr><td>Active:</td><td>").append(Integer.toString(totalActive)).append("</td></tr>\n"
-					+ "  <tr><td>Hashed:</td><td>").append(Integer.toString(totalHashed)).append("</td></tr>\n"
-					+ "  <tr><td>Indexes:</td><td>").append(Integer.toString(totalIndexed)).append("</td></tr>\n"
-					+ "  <tr><td>Total Rows:</td><td>").append(Integer.toString(totalRows)).append("</td></tr>\n"
-					+ "</table>\n"
-					+ "<br /><br />\n" // TODO: HTML/XHTML serialization
-					+ "<table>\n"
-					+ "  <tr><th colspan='2'><span style='font-size:large;'>TCP Connection Pool</span></th></tr>\n"
-					+ "  <tr><td>Host:</td><td>");
-			com.aoindustries.util.EncodingUtils.encodeHtml(connector.hostname, out);
+			out.append("  <thead>\n"
+					+ "    <tr><th colspan=\"2\"><span style=\"font-size:large\">AOServ Tables</span></th></tr>\n"
+					+ "  </thead>\n"
+					+ "  <tbody>\n"
+					+ "    <tr><td>Total Tables:</td><td>").append(Integer.toString(numTables)).append("</td></tr>\n"
+					+ "    <tr><td>Loaded:</td><td>").append(Integer.toString(totalLoaded)).append("</td></tr>\n"
+					+ "    <tr><td>Caches:</td><td>").append(Integer.toString(totalCaches)).append("</td></tr>\n"
+					+ "    <tr><td>Active:</td><td>").append(Integer.toString(totalActive)).append("</td></tr>\n"
+					+ "    <tr><td>Hashed:</td><td>").append(Integer.toString(totalHashed)).append("</td></tr>\n"
+					+ "    <tr><td>Indexes:</td><td>").append(Integer.toString(totalIndexed)).append("</td></tr>\n"
+					+ "    <tr><td>Total Rows:</td><td>").append(Integer.toString(totalRows)).append("</td></tr>\n"
+					+ "  </tbody>\n"
+					+ "</table>\n");
+			if(isXhtml) out.append("<br /><br />\n");
+			else out.append("<br><br>\n");
+			out.append("<table style=\"border:1px\" cellspacing=\"0\" cellpadding=\"2\">\n"
+					+ "  <thead>\n"
+					+ "    <tr><th colspan=\"2\"><span style=\"font-size:large\">TCP Connection Pool</span></th></tr>\n"
+					+ "  </thead>\n"
+					+ "  <tbody>\n"
+					+ "    <tr><td>Host:</td><td>");
+			com.aoindustries.util.EncodingUtils.encodeHtml(connector.hostname, out, isXhtml);
 			out.append("</td></tr>\n"
-					+ "  <tr><td>Port:</td><td>").append(Integer.toString(connector.port.getPort())).append("</td></tr>\n"
-					+ "  <tr><td>Connected As:</td><td>");
-			com.aoindustries.util.EncodingUtils.encodeHtml(connector.connectAs, out);
+					+ "    <tr><td>Port:</td><td>").append(Integer.toString(connector.port.getPort())).append("</td></tr>\n"
+					+ "    <tr><td>Connected As:</td><td>");
+			com.aoindustries.util.EncodingUtils.encodeHtml(connector.connectAs, out, isXhtml);
 			out.append("</td></tr>\n"
-					+ "  <tr><td>Authenticated As:</td><td>");
-			com.aoindustries.util.EncodingUtils.encodeHtml(connector.authenticateAs, out);
+					+ "    <tr><td>Authenticated As:</td><td>");
+			com.aoindustries.util.EncodingUtils.encodeHtml(connector.authenticateAs, out, isXhtml);
 			out.append("</td></tr>\n"
-					+ "  <tr><td>Password:</td><td>");
+					+ "    <tr><td>Password:</td><td>");
 			String password=connector.password;
-			int len=password.length();
+			int len = Math.max(password.length(), 8);
 			for(int c=0;c<len;c++) {
 				out.append('*');
 			}

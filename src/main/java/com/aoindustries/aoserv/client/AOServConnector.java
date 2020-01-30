@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -896,7 +896,7 @@ abstract public class AOServConnector implements SchemaParent {
 		return (int)timeSpan;
 	}
 
-	abstract public void printConnectionStatsHTML(Appendable out) throws IOException;
+	abstract public void printConnectionStatsHTML(Appendable out, boolean isXhtml) throws IOException;
 
 	/**
 	 * Releases a connection to the server.  This will either close the
