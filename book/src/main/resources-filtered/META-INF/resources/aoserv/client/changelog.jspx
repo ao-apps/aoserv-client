@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 aoserv-client - Java client for the AOServ Platform.
-Copyright (C) 2016, 2017, 2018, 2019  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2019-11-26T16:06:08-0600"
+		dateModified="2020-01-29T18:55:08-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -85,6 +85,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Minimum Java version changed from 1.7 to 1.8.</li>
 					<li>Fixed bug wrong column returned for "canceled".</li>
 					<li>Added support for <ao:a href="https://www.postgresql.org/docs/12/index.html">PostgreSQL 12</ao:a>.</li>
+					<li>Connection pool statistics and password checker results HTML generation now support both SGML and XML serializations.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

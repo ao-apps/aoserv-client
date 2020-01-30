@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -268,18 +268,12 @@ final public class PasswordChecker {
 
 	private synchronized static byte[] getDictionary() throws IOException {
 		if(cachedWords==null) {
-			InputStream in=new CorrectedGZIPInputStream(PasswordChecker.class.getResourceAsStream("linux.words.gz"));
-			try {
-				ByteArrayOutputStream bout=new ByteArrayOutputStream();
-				try {
-					IoUtils.copy(in, bout);
-				} finally {
-					bout.flush();
-					bout.close();
-				}
-				cachedWords=bout.toByteArray();
-			} finally {
-				in.close();
+			try (
+				InputStream in = new CorrectedGZIPInputStream(PasswordChecker.class.getResourceAsStream("linux.words.gz"));
+				ByteArrayOutputStream bout = new ByteArrayOutputStream()
+			) {
+				IoUtils.copy(in, bout);
+				cachedWords = bout.toByteArray();
 			}
 		}
 		return cachedWords;
@@ -335,24 +329,26 @@ final public class PasswordChecker {
 	 * Prints the results in HTML format.
 	 */
 	@SuppressWarnings("deprecation")
-	public static void printResultsHtml(List<Result> results, Appendable out) throws IOException {
-		out.append("    <table style='border:0px;' cellspacing='0' cellpadding='4'>\n");
+	public static void printResultsHtml(List<Result> results, Appendable out, boolean isXhtml) throws IOException {
+		out.append("    <table style=\"border:0px\" cellspacing=\"0\" cellpadding=\"4\">\n"
+			+ "      <tbody>\n");
 		for(Result result : results) {
-			out.append("      <tr><td style='white-space:nowrap'>");
-			com.aoindustries.util.EncodingUtils.encodeHtml(result.getCategory(), out);
-			out.append(":</td><td style='white-space:nowrap'>");
-			com.aoindustries.util.EncodingUtils.encodeHtml(result.getResult(), out);
+			out.append("        <tr><td style=\"white-space:nowrap\">");
+			com.aoindustries.util.EncodingUtils.encodeHtml(result.getCategory(), out, isXhtml);
+			out.append(":</td><td style=\"white-space:nowrap\">");
+			com.aoindustries.util.EncodingUtils.encodeHtml(result.getResult(), out, isXhtml);
 			out.append("</td></tr>\n");
 		}
-		out.append("    </table>\n");
+		out.append("      </tbody>\n"
+			+ "    </table>\n");
 	}
 
 	/**
 	 * Gets the results in HTML format.
 	 */
-	public static String getResultsHtml(List<Result> results) throws IOException {
+	public static String getResultsHtml(List<Result> results, boolean isXhtml) throws IOException {
 		StringBuilder out = new StringBuilder();
-		printResultsHtml(results, out);
+		printResultsHtml(results, out, isXhtml);
 		return out.toString();
 	}
 
