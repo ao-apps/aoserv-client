@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,9 +34,9 @@ import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.IntList;
@@ -98,7 +98,9 @@ final public class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
 					out.writeCompressedInt(ipAddress==null?-1:ipAddress.getPkey());
 					out.writeUTF(primaryHttpHostname.toString());
 					out.writeCompressedInt(altHttpHostnames.length);
-					for(int c=0;c<altHttpHostnames.length;c++) out.writeUTF(altHttpHostnames[c].toString());
+					for(DomainName altHttpHostname : altHttpHostnames) {
+						out.writeUTF(altHttpHostname.toString());
+					}
 					out.writeCompressedInt(tomcatVersion.getPkey());
 				}
 
@@ -198,6 +200,15 @@ final public class PrivateTomcatSiteTable extends CachedTableIntegerKey<PrivateT
 					args[1],
 					args[2],
 					AOSH.parseBoolean(args[3], "auto_deploy")
+				);
+			}
+			return true;
+		} else if(command.equalsIgnoreCase(Command.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set)) {
+			if(AOSH.checkParamCount(Command.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set, args, 3, err)) {
+				connector.getSimpleAOClient().setHttpdTomcatStdSiteTomcatAuthentication(
+					args[1],
+					args[2],
+					AOSH.parseBoolean(args[3], "tomcatAuthentication")
 				);
 			}
 			return true;

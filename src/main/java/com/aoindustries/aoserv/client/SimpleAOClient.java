@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -6890,6 +6890,27 @@ final public class SimpleAOClient {
 	}
 
 	/**
+	 * Sets the <code>tomcatAuthentication</code> setting for a <code>HttpdSharedTomcat</code>
+	 *
+	 * @param  name  the name of the JVM
+	 * @param  aoServer  the hostname of the {@link Server}
+	 * @param  tomcatAuthentication  the new setting
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or <code>HttpdSharedTomcat</code>
+	 *
+	 * @see  HttpdSharedTomcat#setTomcatAuthentication(boolean)
+	 */
+	public void setHttpdSharedTomcatTomcatAuthentication(
+		String name,
+		String aoServer,
+		boolean autoDeploy
+	) throws IllegalArgumentException, IOException, SQLException {
+		getHttpdSharedTomcat(aoServer, name).setTomcatAuthentication(autoDeploy);
+	}
+
+	/**
 	 * Sets the Tomcat version for a {@link SharedTomcat}
 	 *
 	 * @param  name  the name of the JVM
@@ -7381,6 +7402,32 @@ final public class SimpleAOClient {
 		PrivateTomcatSite htss = hts.getHttpdTomcatStdSite();
 		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
 		htss.setAutoDeploy(autoDeploy);
+	}
+
+	/**
+	 * Sets the <code>tomcatAuthentication</code> setting for a <code>HttpdTomcatStdSite</code>
+	 *
+	 * @param  siteName  the name of the site
+	 * @param  aoServer  the hostname of the {@link Server}
+	 * @param  tomcatAuthentication  the new setting
+	 *
+	 * @exception  IOException  if unable to contact the server
+	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
+	 * @exception  IllegalArgumentException  if unable to find the {@link Server}, <code>HttpdSite</code>, or <code>HttpdTomcatStdSite</code>
+	 *
+	 * @see  HttpdTomcatStdSite#setTomcatAuthentication(boolean)
+	 */
+	public void setHttpdTomcatStdSiteTomcatAuthentication(
+		String siteName,
+		String aoServer,
+		boolean tomcatAuthentication
+	) throws IllegalArgumentException, IOException, SQLException {
+		Site hs = getHttpdSite(aoServer, siteName);
+		com.aoindustries.aoserv.client.web.tomcat.Site hts = hs.getHttpdTomcatSite();
+		if(hts == null) throw new IllegalArgumentException("Unable to find HttpdTomcatSite: " + siteName + " on " + aoServer);
+		PrivateTomcatSite htss = hts.getHttpdTomcatStdSite();
+		if(htss == null) throw new IllegalArgumentException("Unable to find HttpdTomcatStdSite: " + siteName + " on " + aoServer);
+		htss.setTomcatAuthentication(tomcatAuthentication);
 	}
 
 	/**

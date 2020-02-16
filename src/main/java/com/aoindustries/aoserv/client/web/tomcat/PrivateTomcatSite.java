@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -64,6 +64,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 	private int maxPostSize;
 	private boolean unpackWARs;
 	private boolean autoDeploy;
+	private boolean tomcatAuthentication;
 
 	@Override
 	protected Object getColumnImpl(int i) {
@@ -74,6 +75,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 			case 3: return maxPostSize==-1 ? null: maxPostSize;
 			case 4: return unpackWARs;
 			case 5: return autoDeploy;
+			case 6: return tomcatAuthentication;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -148,6 +150,17 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY, pkey, autoDeploy);
 	}
 
+	/**
+	 * Gets the <code>tomcatAuthentication</code> setting for this Tomcat.
+	 */
+	public boolean getTomcatAuthentication() {
+		return tomcatAuthentication;
+	}
+
+	public void setTomcatAuthentication(boolean tomcatAuthentication) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.web_tomcat_PrivateTomcatSite_tomcatAuthentication_set, pkey, tomcatAuthentication);
+	}
+
 	public Bind getTomcat4ShutdownPort() throws IOException, SQLException {
 		if(tomcat4_shutdown_port==-1) return null;
 		Bind nb=table.getConnector().getNet().getBind().get(tomcat4_shutdown_port);
@@ -170,6 +183,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 		if(result.wasNull()) maxPostSize = -1;
 		unpackWARs = result.getBoolean(5);
 		autoDeploy = result.getBoolean(6);
+		tomcatAuthentication = result.getBoolean(7);
 	}
 
 	@Override
@@ -180,6 +194,7 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 		maxPostSize = in.readInt();
 		unpackWARs = in.readBoolean();
 		autoDeploy = in.readBoolean();
+		tomcatAuthentication = in.readBoolean();
 	}
 
 	@Override
@@ -196,6 +211,9 @@ final public class PrivateTomcatSite extends CachedObjectIntegerKey<PrivateTomca
 			out.writeInt(maxPostSize);
 			out.writeBoolean(unpackWARs);
 			out.writeBoolean(autoDeploy);
+		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_2) >= 0) {
+			out.writeBoolean(tomcatAuthentication);
 		}
 	}
 
