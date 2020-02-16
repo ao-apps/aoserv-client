@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -314,6 +314,7 @@ final public class Command extends GlobalObjectStringKey<Command> {
 		SET_HTTPD_SHARED_TOMCAT_MAX_POST_SIZE = "set_httpd_shared_tomcat_max_post_size",
 		SET_HTTPD_SHARED_TOMCAT_UNPACK_WARS = "set_httpd_shared_tomcat_unpack_wars",
 		SET_HTTPD_SHARED_TOMCAT_AUTO_DEPLOY = "set_httpd_shared_tomcat_auto_deploy",
+		web_tomcat_SharedTomcat_tomcatAuthentication_set = "web.tomcat.SharedTomcat.tomcatAuthentication.set",
 		SET_HTTPD_SHARED_TOMCAT_VERSION = "set_httpd_shared_tomcat_version",
 		SET_HTTPD_SITE_AUTHENTICATED_LOCATION_ATTRIBUTES = "set_httpd_site_authenticated_location_attributes",
 		SET_HTTPD_SITE_BIND_IS_MANUAL = "set_httpd_site_bind_is_manual",
@@ -335,6 +336,7 @@ final public class Command extends GlobalObjectStringKey<Command> {
 		SET_HTTPD_TOMCAT_STD_SITE_MAX_POST_SIZE = "set_httpd_tomcat_std_site_max_post_size",
 		SET_HTTPD_TOMCAT_STD_SITE_UNPACK_WARS = "set_httpd_tomcat_std_site_unpack_wars",
 		SET_HTTPD_TOMCAT_STD_SITE_AUTO_DEPLOY = "set_httpd_tomcat_std_site_auto_deploy",
+		web_tomcat_PrivateTomcatSite_tomcatAuthentication_set = "web.tomcat.PrivateTomcatSite.tomcatAuthentication.set",
 		SET_HTTPD_TOMCAT_STD_SITE_VERSION = "set_httpd_tomcat_std_site_version",
 		SET_HTTPD_TOMCAT_SITE_BLOCK_WEBINF = "set_httpd_tomcat_site_block_webinf",
 		SET_IP_ADDRESS_DHCP_ADDRESS = "set_ip_address_dhcp_address",

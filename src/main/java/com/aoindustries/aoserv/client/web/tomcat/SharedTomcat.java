@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -93,6 +93,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	private int maxPostSize;
 	private boolean unpackWARs;
 	private boolean autoDeploy;
+	private boolean tomcatAuthentication;
 
 	@Override
 	public boolean canDisable() {
@@ -160,6 +161,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 			case 11: return maxPostSize==-1 ? null : maxPostSize;
 			case 12: return unpackWARs;
 			case 13: return autoDeploy;
+			case 14: return tomcatAuthentication;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
 	}
@@ -271,6 +273,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 		if(result.wasNull()) maxPostSize = -1;
 		unpackWARs = result.getBoolean(pos++);
 		autoDeploy = result.getBoolean(pos++);
+		tomcatAuthentication = result.getBoolean(pos++);
 	}
 
 	public boolean isManual() {
@@ -342,6 +345,17 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 	}
 
 	/**
+	 * Gets the <code>tomcatAuthentication</code> setting for this Tomcat.
+	 */
+	public boolean getTomcatAuthentication() {
+		return tomcatAuthentication;
+	}
+
+	public void setTomcatAuthentication(boolean tomcatAuthentication) throws IOException, SQLException {
+		table.getConnector().requestUpdateIL(true, AoservProtocol.CommandID.web_tomcat_SharedTomcat_tomcatAuthentication_set, pkey, tomcatAuthentication);
+	}
+
+	/**
 	 * Checks the format of the name of the shared Tomcat, as used in the <code>/wwwgroup</code>
 	 * directory.  The name must be 12 characters or less, and comprised of
 	 * only <code>a-z</code>,<code>0-9</code>, or <code>-</code>.  The first
@@ -397,6 +411,7 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 		maxPostSize = in.readInt();
 		unpackWARs = in.readBoolean();
 		autoDeploy = in.readBoolean();
+		tomcatAuthentication = in.readBoolean();
 	}
 
 	@Override
@@ -438,6 +453,9 @@ final public class SharedTomcat extends CachedObjectIntegerKey<SharedTomcat> imp
 			out.writeInt(maxPostSize);
 			out.writeBoolean(unpackWARs);
 			out.writeBoolean(autoDeploy);
+		}
+		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_83_2) >= 0) {
+			out.writeBoolean(tomcatAuthentication);
 		}
 	}
 }

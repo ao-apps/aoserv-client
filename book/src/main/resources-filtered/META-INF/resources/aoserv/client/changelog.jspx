@@ -36,7 +36,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-01-29T18:55:08-0600"
+		dateModified="2020-02-15T18:30:24-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -86,6 +86,14 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>Fixed bug wrong column returned for "canceled".</li>
 					<li>Added support for <ao:a href="https://www.postgresql.org/docs/12/index.html">PostgreSQL 12</ao:a>.</li>
 					<li>Connection pool statistics and password checker results HTML generation now support both SGML and XML serializations.</li>
+					<li>Now supporting <ao:a href="https://tomcat.apache.org/tomcat-9.0-doc/config/ajp.html">Tomcat's <code>tomcatAuthentication</code> configuration</ao:a>:
+						<ol>
+							<li>Added column <code>web.tomcat.PrivateTomcatSite.tomcatAuthentication</code></li>
+							<li>Added AOSH command <code>web.tomcat.PrivateTomcatSite.tomcatAuthentication.set</code></li>
+							<li>Added column <code>web.tomcat.SharedTomcat.tomcatAuthentication</code></li>
+							<li>Added AOSH command <code>web.tomcat.SharedTomcat.tomcatAuthentication.set</code></li>
+						</ol>
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
