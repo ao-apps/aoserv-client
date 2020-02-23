@@ -58,9 +58,31 @@ import javax.swing.SwingUtilities;
 public class TCPConnector extends AOServConnector {
 
 	/**
-	 * Close cache monitor after 90 minutes of inactivity.
+	 * Close cache monitor after 90 minutes of inactivity,
+	 * when there is some sort of non-global-cached data.
+	 * <p>
+	 * The cache monitor is only shutdown when there are no registered
+	 * {@linkplain AOServTable#addTableListener(com.aoindustries.table.TableListener) table listeners}.
+	 * </p>
 	 */
-	private static final long MAX_IDLE_LISTEN_CACHES = 90L*60*1000;
+	private static final long MAX_IDLE_LISTEN_CACHES = 90L * 60 * 1000;
+
+	/**
+	 * Close cache monitor after 60 seconds of inactivity,
+	 * when there is no non-global-cached data, such as after a call to
+	 * {@link #clearCaches()}.
+	 * <p>
+	 * This helps support a more timely shutdown.
+	 * TODO: Expose a "stop" method that will clear all caches, immediately stop
+	 * the cache listener, and remove this connector from the pool of connectors?
+	 * </p>
+	 * <p>
+	 * The cache monitor is only shutdown when there are no registered
+	 * {@linkplain AOServTable#addTableListener(com.aoindustries.table.TableListener) table listeners}.
+	 * </p>
+	 */
+	// TODO: Use this value, somehow, in a meaningful way.
+	// TODO: private static final long MAX_IDLE_LISTEN_CACHES_NOTHING_CACHED = 60L * 1000;
 
 	class CacheMonitor extends Thread {
 
@@ -82,16 +104,26 @@ public class TCPConnector extends AOServConnector {
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: conn.identityHashCode="+System.identityHashCode(conn));
 								StreamableOutput out = conn.getRequestOut(AoservProtocol.CommandID.LISTEN_CACHES);
+								// TODO: Only listen for caches on tables where there is either something currently cached
+								// TODO: (how to handle shared caches of global cached tables?) or where there is
+								// TODO: at least one registered table listener.  Otherwise the cache signals are
+								// TODO: of no value.
+								// TODO:
+								// TODO: This would also help a connector shutdown be meaningful after clearCaches()
+								// TODO: As-is, the connector may continue to receive incoming cache notifications,
+								// TODO: Thus keeping itself active potentially forever.
 								out.flush();
 
-								StreamableInput in=conn.getResponseIn();
+								StreamableInput in = conn.getResponseIn();
 								IntList tableList=new IntArrayList();
 								while(runMore) {
 									synchronized(cacheMonitorLock) {
-										long currentTime=System.currentTimeMillis();
-										long timeSince=currentTime-connectionLastUsed;
-										if(timeSince<0) connectionLastUsed=currentTime;
-										else if(timeSince>=MAX_IDLE_LISTEN_CACHES) {
+										long currentTime = System.currentTimeMillis();
+										long timeSince = currentTime - connectionLastUsed;
+										if(timeSince < 0) {
+											// System time reset to the past
+											connectionLastUsed = currentTime;
+										} else if(timeSince >= MAX_IDLE_LISTEN_CACHES) {
 											// Must also not have any invalidate listeners
 											boolean foundListener = false;
 											for(AOServTable<?,?> table : getTables()) {
@@ -102,9 +134,9 @@ public class TCPConnector extends AOServConnector {
 											}
 											if(foundListener) {
 												// Don't check again until MAX_IDLE_LISTEN_CACHES milliseconds pass
-												connectionLastUsed=currentTime;
+												connectionLastUsed = currentTime;
 											} else {
-												runMore=false;
+												runMore = false;
 											}
 										}
 									}
