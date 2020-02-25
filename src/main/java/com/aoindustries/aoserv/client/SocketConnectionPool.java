@@ -125,7 +125,7 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 					+ "</table>\n");
 			if(isXhtml) out.append("<br /><br />\n");
 			else out.append("<br><br>\n");
-			out.append("<table class=\"thinTable\">\n"
+			out.append("<table class=\"ao-grid\">\n"
 					+ "  <thead>\n"
 					+ "    <tr><th colspan=\"2\"><span style=\"font-size:large\">TCP Connection Pool</span></th></tr>\n"
 					+ "  </thead>\n");
