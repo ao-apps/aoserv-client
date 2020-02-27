@@ -101,9 +101,9 @@ public class TicketLoggingHandler extends QueuedHandler {
 	 * Only one TicketLoggingHandler will be created per unique summaryPrefix,
 	 * AOServConnector, and categoryDotPath.
 	 */
-	public static Handler getHandler(String summaryPrefix, AOServConnector connector, String categoryDotPath) {
+	public static TicketLoggingHandler getHandler(String summaryPrefix, AOServConnector connector, String categoryDotPath) {
 		synchronized(handlers) {
-			Handler handler = null;
+			TicketLoggingHandler handler = null;
 			Iterator<WeakReference<TicketLoggingHandler>> iter = handlers.iterator();
 			while(iter.hasNext()) {
 				WeakReference<TicketLoggingHandler> ref = iter.next();
