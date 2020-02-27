@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.account.User;
+import com.aoindustries.exception.ConfigurationException;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
@@ -49,35 +50,39 @@ final public class AOServClientConfiguration {
 	private static final PropsLock propsLock = new PropsLock();
 	private static Properties props;
 
-	private static String getProperty(String name) throws IOException {
-		synchronized (propsLock) {
-			if (props == null) props = PropertiesUtils.loadFromResource(AOServClientConfiguration.class, "aoserv-client.properties");
-			return props.getProperty(name);
+	private static String getProperty(String name) throws ConfigurationException {
+		try {
+			synchronized (propsLock) {
+				if (props == null) props = PropertiesUtils.loadFromResource(AOServClientConfiguration.class, "aoserv-client.properties");
+				return props.getProperty(name);
+			}
+		} catch(IOException e) {
+			throw new ConfigurationException(e);
 		}
 	}
 
 	/**
 	 * Gets the list of protocols in preferred order.
 	 */
-	static List<String> getProtocols() throws IOException {
+	static List<String> getProtocols() throws ConfigurationException {
 		return StringUtility.splitStringCommaSpace(getProperty("aoserv.client.protocols"));
 	}
 
 	/**
 	 * Gets the non-SSL hostname.
 	 */
-	static HostAddress getTcpHostname() throws IOException {
+	static HostAddress getTcpHostname() throws ConfigurationException {
 		try {
 			return HostAddress.valueOf(getProperty("aoserv.client.tcp.hostname"));
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 
 	/**
 	 * Gets the non-SSL local IP to connect from or {@code null} if not configured.
 	 */
-	static InetAddress getTcpLocalIp() throws IOException {
+	static InetAddress getTcpLocalIp() throws ConfigurationException {
 		String S = getProperty("aoserv.client.tcp.local_ip");
 		if(
 			S==null
@@ -86,35 +91,35 @@ final public class AOServClientConfiguration {
 		try {
 			return InetAddress.valueOf(S);
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 
 	/**
 	 * Gets the non-SSL port.
 	 */
-	static Port getTcpPort() throws IOException {
+	static Port getTcpPort() throws ConfigurationException {
 		try {
 			return Port.valueOf(
 				Integer.parseInt(getProperty("aoserv.client.tcp.port")),
 				com.aoindustries.net.Protocol.TCP
 			);
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 
 	/**
 	 * Gets the non-SSL pool size.
 	 */
-	static int getTcpConnectionPoolSize() throws IOException {
+	static int getTcpConnectionPoolSize() throws ConfigurationException {
 		return Integer.parseInt(getProperty("aoserv.client.tcp.connection.pool.size"));
 	}
 
 	/**
 	 * Gets the non-SSL connection max age in milliseconds.
 	 */
-	static long getTcpConnectionMaxAge() throws IOException {
+	static long getTcpConnectionMaxAge() throws ConfigurationException {
 		String S = getProperty("aoserv.client.tcp.connection.max_age");
 		return S==null || S.length()==0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(S);
 	}
@@ -122,18 +127,18 @@ final public class AOServClientConfiguration {
 	/**
 	 * Gets the SSL hostname to connect to.
 	 */
-	static HostAddress getSslHostname() throws IOException {
+	static HostAddress getSslHostname() throws ConfigurationException {
 		try {
 			return HostAddress.valueOf(getProperty("aoserv.client.ssl.hostname"));
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 
 	/**
 	 * Gets the SSL local IP to connect from or {@code null} if not configured.
 	 */
-	static InetAddress getSslLocalIp() throws IOException {
+	static InetAddress getSslLocalIp() throws ConfigurationException {
 		String S = getProperty("aoserv.client.ssl.local_ip");
 		if(
 			S==null
@@ -142,35 +147,35 @@ final public class AOServClientConfiguration {
 		try {
 			return InetAddress.valueOf(S);
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 
 	/**
 	 * Gets the SSL port to connect to.
 	 */
-	static Port getSslPort() throws IOException {
+	static Port getSslPort() throws ConfigurationException {
 		try {
 			return Port.valueOf(
 				Integer.parseInt(getProperty("aoserv.client.ssl.port")),
 				com.aoindustries.net.Protocol.TCP
 			);
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 
 	/**
 	 * Gets the SSL connection pool size.
 	 */
-	static int getSslConnectionPoolSize() throws IOException {
+	static int getSslConnectionPoolSize() throws ConfigurationException {
 		return Integer.parseInt(getProperty("aoserv.client.ssl.connection.pool.size"));
 	}
 
 	/**
 	 * Gets the SSL connection max age in milliseconds.
 	 */
-	static long getSslConnectionMaxAge() throws IOException {
+	static long getSslConnectionMaxAge() throws ConfigurationException {
 		String S = getProperty("aoserv.client.ssl.connection.max_age");
 		return S==null || S.length()==0 ? AOPool.DEFAULT_MAX_CONNECTION_AGE : Long.parseLong(S);
 	}
@@ -180,7 +185,7 @@ final public class AOServClientConfiguration {
 	 *
 	 * For use by aoserv-daemon and aoserv-backup only.
 	 */
-	public static String getSslTruststorePath() throws IOException {
+	public static String getSslTruststorePath() throws ConfigurationException {
 		return getProperty("aoserv.client.ssl.truststore.path");
 	}
 
@@ -189,14 +194,14 @@ final public class AOServClientConfiguration {
 	 *
 	 * For use by aoserv-daemon and aoserv-backup only.
 	 */
-	public static String getSslTruststorePassword() throws IOException {
+	public static String getSslTruststorePassword() throws ConfigurationException {
 		return getProperty("aoserv.client.ssl.truststore.password");
 	}
 
 	/**
 	 * Gets the optional default username.
 	 */
-	public static User.Name getUsername() throws IOException {
+	public static User.Name getUsername() throws ConfigurationException {
 		String username = getProperty("aoserv.client.username");
 		if(
 			username == null
@@ -205,14 +210,14 @@ final public class AOServClientConfiguration {
 		try {
 			return User.Name.valueOf(username);
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 
 	/**
 	 * Gets the optional default password.
 	 */
-	public static String getPassword() throws IOException {
+	public static String getPassword() throws ConfigurationException {
 		return getProperty("aoserv.client.password");
 	}
 
@@ -220,7 +225,7 @@ final public class AOServClientConfiguration {
 	 * Gets the hostname of this daemon for daemon-specific locking.  Leave
 	 * this blank for non-AOServDaemon connections.
 	 */
-	static DomainName getDaemonServer() throws IOException {
+	static DomainName getDaemonServer() throws ConfigurationException {
 		String domainServer = getProperty("aoserv.client.daemon.server");
 		if(
 			domainServer == null
@@ -229,7 +234,7 @@ final public class AOServClientConfiguration {
 		try {
 			return DomainName.valueOf(domainServer);
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 

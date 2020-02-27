@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,6 +35,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @see  Worker
@@ -42,6 +43,8 @@ import java.util.logging.Level;
  * @author  AO Industries, Inc.
  */
 final public class WorkerTable extends CachedTableIntegerKey<Worker> {
+
+	private static final Logger logger = Logger.getLogger(WorkerTable.class.getName());
 
 	WorkerTable(AOServConnector connector) {
 		super(connector, Worker.class);
@@ -94,7 +97,7 @@ final public class WorkerTable extends CachedTableIntegerKey<Worker> {
 						}
 					}
 				} else {
-					connector.getLogger().log(Level.WARNING, "pkey="+worker.getPkey(), new SQLException("HttpdWorker doesn't have either HttpdTomcatSite or HttpdSharedTomcat"));
+					logger.log(Level.WARNING, "pkey="+worker.getPkey(), new SQLException("HttpdWorker doesn't have either HttpdTomcatSite or HttpdSharedTomcat"));
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -23,6 +23,7 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.account.User;
+import com.aoindustries.exception.ConfigurationException;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
@@ -60,7 +61,7 @@ public class SSLConnector extends TCPConnector {
 	/**
 	 * The protocol for this connector.
 	 */
-	public static final String PROTOCOL="ssl";
+	public static final String SSL_PROTOCOL = "ssl";
 
 	/**
 	 * Instances of connectors are created once and then reused.
@@ -80,7 +81,7 @@ public class SSLConnector extends TCPConnector {
 		String trustStorePath,
 		String trustStorePassword,
 		Logger logger
-	) throws IOException {
+	) {
 		super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge, logger);
 		if(
 			(
@@ -105,7 +106,7 @@ public class SSLConnector extends TCPConnector {
 
 	@Override
 	public String getProtocol() {
-		return PROTOCOL;
+		return SSL_PROTOCOL;
 	}
 
 	@Override
@@ -140,10 +141,10 @@ public class SSLConnector extends TCPConnector {
 		String trustStorePath,
 		String trustStorePassword,
 		Logger logger
-	) throws IOException {
-		if(connectAs==null) throw new NullPointerException("connectAs is null");
-		if(authenticateAs==null) throw new NullPointerException("authenticateAs is null");
-		if(password==null) throw new NullPointerException("password is null");
+	) {
+		if(connectAs==null) throw new IllegalArgumentException("connectAs is null");
+		if(authenticateAs==null) throw new IllegalArgumentException("authenticateAs is null");
+		if(password==null) throw new IllegalArgumentException("password is null");
 		int size=connectors.size();
 		for(int c=0;c<size;c++) {
 			SSLConnector connector=connectors.get(c);
@@ -165,7 +166,7 @@ public class SSLConnector extends TCPConnector {
 				&& Objects.equals(SSLConnector.trustStorePassword, trustStorePassword)
 			) return connector;
 		}
-		SSLConnector newConnector=new SSLConnector(
+		SSLConnector newConnector = new SSLConnector(
 			hostname,
 			local_ip,
 			port,
@@ -189,7 +190,7 @@ public class SSLConnector extends TCPConnector {
 	}
 
 	@Override
-	public AOServConnector switchUsers(User.Name username) throws IOException {
+	public AOServConnector switchUsers(User.Name username) {
 		if(username.equals(connectAs)) return this;
 		return getSSLConnector(
 			hostname,
