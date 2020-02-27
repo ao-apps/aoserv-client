@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -68,7 +68,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 	/**
 	 * Randomizes a value by adding a random number of random characters between each character of the original String.
 	 * The original string must be only comprised of 0-9, space, -, and /
-	 * 
+	 *
 	 * @see  #derandomize(String)
 	 */
 	static String randomize(String original) {
@@ -93,7 +93,7 @@ final public class CreditCard extends CachedObjectIntegerKey<CreditCard> impleme
 
 	/**
 	 * Derandomizes a value be stripping out all characters that are not 0-9, space, -, or /
-	 * 
+	 *
 	 * @see  #randomize(String)
 	 */
 	static String derandomize(String randomized) {

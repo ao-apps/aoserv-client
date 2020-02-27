@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -85,7 +85,7 @@ final public class InboxAttributes implements AOServStreamable {
 
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
-	 * 
+	 *
 	 * @see  #read(StreamableInput,AOServProtocol.Version)
 	 */
 	@Deprecated
@@ -103,7 +103,7 @@ final public class InboxAttributes implements AOServStreamable {
 
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
-	 * 
+	 *
 	 * @see  #write(StreamableOutput,AOServProtocol.Version)
 	 */
 	@Deprecated

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2003-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -2391,7 +2391,7 @@ final public class Server
 
 	/**
 	 * Gets the filesystem states report.
-	 * 
+	 *
 	 * @Deprecated  Use {@code getFilesystemsCsvReport()} instead to let the API parse the report.
 	 */
 	public String getFilesystemsCsvReport() throws IOException, SQLException {
@@ -2512,7 +2512,7 @@ final public class Server
 
 		/**
 		 * Checks that this filesystem matches the expected configuration for a {@link Server}.
-		 * 
+		 *
 		 * @return  the message describing the configuration warning or {@code null} if all configs OK.
 		 */
 		public String getConfigMessage() {

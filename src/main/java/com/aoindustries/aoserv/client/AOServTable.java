@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -646,7 +646,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
 	/**
 	 * Gets the rows in a more efficient, indexed manner.
-	 * 
+	 *
 	 * @implSpec  This default implementation simply throws UnsupportedOperationException.
 	 *
 	 * @exception UnsupportedOperationException if not supported by the specific table implementation

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2008, 2009, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2008, 2009, 2014, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -217,9 +217,9 @@ final public class VirtualDisk extends CachedObjectIntegerKey<VirtualDisk> {
 	 * Begins a verification of the redundancy of the virtual disk.
 	 *
 	 * User must have control_virtual_server permissions on this server.
-	 * 
+	 *
 	 * @see  AccountHost#canControlVirtualServer()
-	 * 
+	 *
 	 * @return  The time the verification began, which may be in the past if a verification was already in progress
 	 */
 	public long verify() throws SQLException, IOException {

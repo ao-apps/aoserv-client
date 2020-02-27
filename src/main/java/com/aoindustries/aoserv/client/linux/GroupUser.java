@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2014, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2014, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -58,7 +58,7 @@ final public class GroupUser extends CachedObjectIntegerKey<GroupUser> implement
 
 	/**
 	 * The maximum number of groups allowed for one account.
-	 * 
+	 *
 	 * <pre>/usr/include/linux/limits.h:#define NGROUPS_MAX    65536</pre>
 	 */
 	public static final int MAX_GROUPS = 65536;

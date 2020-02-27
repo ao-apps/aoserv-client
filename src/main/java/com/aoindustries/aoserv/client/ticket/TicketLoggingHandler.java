@@ -66,7 +66,7 @@ import java.util.logging.Logger;
  * which means tickets are fed to the master(s) sequentially, even across many
  * different connectors.
  * </p>
- * 
+ *
  * @author  AO Industries, Inc.
  */
 public class TicketLoggingHandler extends QueuedHandler {
@@ -234,7 +234,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 
 	@Override
 	protected void backgroundPublish(Formatter formatter, LogRecord record, String fullReport) throws IOException, SQLException {
-		// Look-up things 
+		// Look-up things
 		Account account = connector.getCurrentAdministrator().getUsername().getPackage().getAccount();
 		Brand brand = account.getBrand();
 		if(brand == null) throw new SQLException("Unable to find Brand for connector: " + connector);

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -86,7 +86,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 	/**
 	 * @param timeType  Either {@link Type#DATE} (rounded to the date in {@link Type#DATE_TIME_ZONE} time zone)
 	 *                  or {@link Type#TIME}, which maintains up to microsecond accuracy and is time zone agnostic.
-	 *              
+	 *
 	 * @param time  The time of the transaction or {@code null} to use the current date / time per the master database clock.
 	 *              The master database server is both NTP-synchronized and actively monitored, so it is best to let the master database
 	 *              choose the time when "now" or "today" is desired for the transaction.

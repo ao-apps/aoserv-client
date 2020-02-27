@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2011, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -68,7 +68,7 @@ public class PasswordGenerator {
 		"qu",
 		"r",
 		"s",    "sc",   "scr",  "sk",   "sl",   "sm",   "sn",   "sp",   "spl",  "spr",  "st",  "str",  "sw",
-		"sh",   
+		"sh",
 		"t",    "tr",   "tw",
 		"th",   "thr",
 		"v",
@@ -88,21 +88,21 @@ public class PasswordGenerator {
 		"m",	"mp",
 		"n",	"nd",	"ng",	"nk",	"nt",
 		"p",																
-		"r",	"rch", "rd",	"rf",	"rg",	"rk",	"rm",	"rn",	"rp",	"rsh",  "rt",	"rth",  "rve", 
-	"sk",	"sp",	"ss",	"st",
+		"r",	"rch", "rd",	"rf",	"rg",	"rk",	"rm",	"rn",	"rp",	"rsh",  "rt",	"rth",  "rve",
+		"sk",	"sp",	"ss",	"st",
 		"sh",
 		"t",	"tt",
-		"th",   
+		"th",
 		"ve",																
 		"x",
 		"z",    "zz",
 	};
 
 	private static final String[] VOWS = {
-		"a",   
-		"e",   
-		"i",  
-		"o",  
+		"a",
+		"e",
+		"i",
+		"o",
 		"u"
 	};
 
@@ -147,7 +147,7 @@ public class PasswordGenerator {
 							temp2 = secureRandom.nextBoolean()?4161:3612;
 						} else {
 							temp2 = secureRandom.nextBoolean()?361:412;
-							temp1 = secureRandom.nextBoolean()?4161:3612; 
+							temp1 = secureRandom.nextBoolean()?4161:3612;
 						}
 						entropy*=8;
 						break;
