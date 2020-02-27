@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2009-2012, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,28 +22,36 @@
  */
 package com.aoindustries.aoserv.client.ticket;
 
+import com.aoindustries.aoserv.client.AOServClientConfiguration;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.reseller.Category;
-import com.aoindustries.net.Email;
-import com.aoindustries.util.ErrorPrinter;
+import com.aoindustries.exception.ConfigurationException;
+import com.aoindustries.util.StringUtility;
 import com.aoindustries.util.logging.QueuedHandler;
+import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * <p>
- * An implementation of <code>Handler</code> that logs to the ticket system.
+ * An implementation of {@link Handler} that logs to the ticket system.
  * It queues log entries and logs them in the background.  The log entries
  * are added in the order received, regardless of priority.
  * </p>
@@ -53,125 +61,249 @@ import java.util.logging.LogRecord;
  * If found, it will annotate that ticket.  If not found, it will create a new
  * ticket.
  * </p>
+ * <p>
+ * To minimize resource consumption, this shares one {@link ExecutorService} for all handlers,
+ * which means tickets are fed to the master(s) sequentially, even across many
+ * different connectors.
+ * </p>
  * 
  * @author  AO Industries, Inc.
  */
-final public class TicketLoggingHandler extends QueuedHandler {
+public class TicketLoggingHandler extends QueuedHandler {
 
-	private static final List<TicketLoggingHandler> handlers = new ArrayList<>();
+	private static final List<WeakReference<TicketLoggingHandler>> handlers = new ArrayList<>();
+
+	/**
+	 * Shares one queue across all handlers.
+	 * This is created when first accessed, and released when the last handler
+	 * is {@linkplain #close() closed}.
+	 */
+	private static ExecutorService executor;
+
+	private static ExecutorService getExecutor() {
+		synchronized(handlers) {
+			if(executor == null) {
+				executor = Executors.newSingleThreadExecutor(
+					(Runnable r) -> {
+						Thread thread = new Thread(r);
+						thread.setName("Ticket Logger");
+						thread.setDaemon(true);
+						thread.setPriority(Thread.NORM_PRIORITY - 1);
+						return thread;
+					}
+				);
+			}
+			return executor;
+		}
+	}
 
 	/**
 	 * Only one TicketLoggingHandler will be created per unique summaryPrefix,
-	 * AOServConnector, and category.
+	 * AOServConnector, and categoryDotPath.
 	 */
-	public static Handler getHandler(String summaryPrefix, AOServConnector connector, Category category) throws IOException, SQLException {
+	public static Handler getHandler(String summaryPrefix, AOServConnector connector, String categoryDotPath) {
 		synchronized(handlers) {
-			for(TicketLoggingHandler handler : handlers) {
-				if(
-					handler.summaryPrefix.equals(summaryPrefix)
-					&& handler.connector==connector
-					&& handler.category.equals(category)
-				) return handler;
+			Handler handler = null;
+			Iterator<WeakReference<TicketLoggingHandler>> iter = handlers.iterator();
+			while(iter.hasNext()) {
+				WeakReference<TicketLoggingHandler> ref = iter.next();
+				TicketLoggingHandler h = ref.get();
+				if(h == null) {
+					// Garbage collected
+					iter.remove();
+				} else {
+					if(
+						handler == null // Duplicates in list are possible, since the list is added-to by the protected / public constructors, too
+						&& h.connector == connector
+						&& Objects.equals(h.summaryPrefix, summaryPrefix)
+						&& Objects.equals(h.categoryDotPath, categoryDotPath)
+					) {
+						handler = h;
+					}
+				}
 			}
-			TicketLoggingHandler handler = new TicketLoggingHandler(summaryPrefix, connector, category);
-			handlers.add(handler);
+			if(handler == null) {
+				handler = new TicketLoggingHandler(
+					summaryPrefix,
+					connector,
+					categoryDotPath
+				);
+			}
 			return handler;
 		}
 	}
 
 	private final String summaryPrefix;
 	private final AOServConnector connector;
-	private final Category category;
-	private final Account account;
-	private final Brand brand;
-	private final Language language;
-	private final TicketType ticketType;
+	private final String categoryDotPath;
 
-	private TicketLoggingHandler(String summaryPrefix, final AOServConnector connector, Category category) throws IOException, SQLException {
-		super(
-			"Console logger for "+connector.toString(),
-			"Ticket logger for "+connector.toString()
-		);
-		this.summaryPrefix = summaryPrefix;
+	protected TicketLoggingHandler(String summaryPrefix, AOServConnector connector, String categoryDotPath) {
+		super(getExecutor());
+		// super("Ticket logger for " + connector.toString());
+		synchronized(handlers) {
+			handlers.add(new WeakReference<>(this));
+		}
+		this.summaryPrefix = StringUtility.nullIfEmpty(summaryPrefix);
 		this.connector = connector;
-		this.category = category;
-		// Look-up things in advance to reduce possible round-trips during logging
-		account = connector.getCurrentAdministrator().getUsername().getPackage().getAccount();
-		brand = account.getBrand();
-		if(brand==null) throw new SQLException("Unable to find Brand for connector: "+connector);
-		language = connector.getTicket().getLanguage().get(Language.EN);
-		if(language==null) throw new SQLException("Unable to find Language: "+Language.EN);
-		ticketType = connector.getTicket().getTicketType().get(TicketType.LOGS);
-		if(ticketType==null) throw new SQLException("Unable to find TicketType: "+TicketType.LOGS);
+		this.categoryDotPath = StringUtility.nullIfEmpty(categoryDotPath);
 	}
 
-	@Override
-	protected boolean useCustomLogging(LogRecord record) {
-		return record.getLevel().intValue()>Level.FINE.intValue();
-	}
-
-	@Override
-	protected void doCustomLogging(Formatter formatter, LogRecord record, String fullReport) {
+	/**
+	 * Public constructor required so can be specified in <code>logging.properties</code>.
+	 * Supports the following optional settings in <code>logging.properties</code>:
+	 * <ul>
+	 * <li><code>(classname).summaryPrefix</code> - the summary prefix for tickets.</li>
+	 * <li><code>(classname).username</code> - the username to login as.  When not
+	 *     set, the username from <code>aoserv-client.properties</code> is used.</li>
+	 * <li><code>(classname).password</code> - the password to login with.  When not
+	 *     set, the password from <code>aoserv-client.properties</code> is used.</li>
+	 * <li><code>(classname).categoryDotPath</code> - the {@linkplain Category#getDotPath() category dot path} for tickets.</li>
+	 * </ul>
+	 */
+	public TicketLoggingHandler() throws ConfigurationException {
+		super(getExecutor());
+		synchronized(handlers) {
+			handlers.add(new WeakReference<>(this));
+		}
 		try {
-			Level level = record.getLevel();
-			// Generate the summary from level, prefix classname, method
-			StringBuilder tempSB = new StringBuilder();
-			tempSB.append('[').append(level).append(']');
-			if(summaryPrefix!=null && summaryPrefix.length()>0) tempSB.append(' ').append(summaryPrefix);
-			tempSB.append(" - ").append(record.getSourceClassName()).append(" - ").append(record.getSourceMethodName());
-			String summary = tempSB.toString();
-			// Look for an existing ticket to append
-			Ticket existingTicket = null;
-			for(Ticket ticket : connector.getTicket().getTicket()) {
-				String status = ticket.getStatus().getStatus();
+			LogManager manager = LogManager.getLogManager();
+			String cname = getClass().getName();
+
+			this.summaryPrefix = StringUtility.trimNullIfEmpty(
+				manager.getProperty(cname + ".summaryPrefix")
+			);
+
+			User.Name username = User.Name.valueOf(
+				StringUtility.trimNullIfEmpty(
+					manager.getProperty(cname + ".username")
+				)
+			);
+			if(username == null) username = AOServClientConfiguration.getUsername();
+
+			String password = StringUtility.trimNullIfEmpty(
+				manager.getProperty(cname + ".password")
+			);
+			if(password == null) password = AOServClientConfiguration.getPassword();
+
+			this.connector = AOServConnector.getConnector(
+				username,
+				password,
+				Logger.getLogger(AOServConnector.class.getName())
+			);
+
+			this.categoryDotPath = StringUtility.trimNullIfEmpty(
+				manager.getProperty(cname + ".categoryDotPath")
+			);
+		} catch(ValidationException e) {
+			throw new ConfigurationException(e);
+		}
+	}
+
+	/**
+	 * Clean-up this handler and any that were garbage collected.
+	 */
+	@Override
+	public void close() throws SecurityException {
+		super.close();
+		synchronized(handlers) {
+			boolean hasHandler = false;
+			Iterator<WeakReference<TicketLoggingHandler>> iter = handlers.iterator();
+			while(iter.hasNext()) {
+				WeakReference<TicketLoggingHandler> ref = iter.next();
+				TicketLoggingHandler handler = ref.get();
 				if(
-					(
-						Status.OPEN.equals(status)
-						|| Status.HOLD.equals(status)
-						|| Status.BOUNCED.equals(status)
-					) && brand.equals(ticket.getBrand())
-					&& account.equals(ticket.getAccount())
-					&& language.equals(ticket.getLanguage())
-					&& ticketType.equals(ticket.getTicketType())
-					&& ticket.getSummary().equals(summary) // level, prefix, classname, and method
-					&& Objects.equals(category, ticket.getCategory())
+					// Garbage collected
+					handler == null
+					// This one
+					|| handler == this
 				) {
-					existingTicket = ticket;
-					break;
+					iter.remove();
+				} else {
+					hasHandler = true;
 				}
 			}
-			if(existingTicket!=null) {
-				existingTicket.addAnnotation(
-					generateActionSummary(formatter, record),
-					fullReport
-				);
-			} else {
-				// The priority depends on the log level
-				String priorityName;
-				int intLevel = level.intValue();
-				if(intLevel<=Level.CONFIG.intValue()) priorityName = Priority.LOW;           // FINE < level <= CONFIG
-				else if(intLevel<=Level.INFO.intValue()) priorityName = Priority.NORMAL;     // CONFIG < level <=INFO
-				else if(intLevel<=Level.WARNING.intValue()) priorityName = Priority.HIGH;    // INFO < level <=WARNING
-				else priorityName = Priority.URGENT;                                         // WARNING < level
-				Priority priority = connector.getTicket().getPriority().get(priorityName);
-				if(priority==null) throw new SQLException("Unable to find TicketPriority: "+priorityName);
-				Set<Email> noContacts = Collections.emptySet();
-				connector.getTicket().getTicket().addTicket(
-					brand,
-					account,
-					language,
-					category,
-					ticketType,
-					null,
-					summary,
-					fullReport,
-					priority,
-					noContacts,
-					""
-				);
+			if(!hasHandler) {
+				assert handlers.isEmpty();
+				if(executor != null) {
+					shutdownExecutor(executor);
+					executor = null;
+				}
 			}
-		} catch(Exception err) {
-			ErrorPrinter.printStackTraces(err);
+		}
+	}
+
+	@Override
+	protected void backgroundPublish(Formatter formatter, LogRecord record, String fullReport) throws IOException, SQLException {
+		// Look-up things 
+		Account account = connector.getCurrentAdministrator().getUsername().getPackage().getAccount();
+		Brand brand = account.getBrand();
+		if(brand == null) throw new SQLException("Unable to find Brand for connector: " + connector);
+		Language language = connector.getTicket().getLanguage().get(Language.EN);
+		if(language == null) throw new SQLException("Unable to find Language: " + Language.EN);
+		TicketType ticketType = connector.getTicket().getTicketType().get(TicketType.LOGS);
+		if(ticketType == null) throw new SQLException("Unable to find TicketType: " + TicketType.LOGS);
+		Category category;
+		if(categoryDotPath != null) {
+			category = connector.getReseller().getCategory().getTicketCategoryByDotPath(categoryDotPath);
+			if(category == null) throw new SQLException("Unable to find Category: " + categoryDotPath);
+		} else {
+			category = null;
+		}
+		Level level = record.getLevel();
+		// Generate the summary from level, prefix classname, method
+		StringBuilder tempSB = new StringBuilder();
+		tempSB.append('[').append(level).append(']');
+		if(summaryPrefix != null) tempSB.append(' ').append(summaryPrefix);
+		tempSB.append(" - ").append(record.getSourceClassName()).append(" - ").append(record.getSourceMethodName());
+		String summary = tempSB.toString();
+		// Look for an existing ticket to append
+		Ticket existingTicket = null;
+		for(Ticket ticket : connector.getTicket().getTicket()) {
+			String status = ticket.getStatus().getStatus();
+			if(
+				(
+					Status.OPEN.equals(status)
+					|| Status.HOLD.equals(status)
+					|| Status.BOUNCED.equals(status)
+				) && brand.equals(ticket.getBrand())
+				&& account.equals(ticket.getAccount())
+				&& language.equals(ticket.getLanguage())
+				&& ticketType.equals(ticket.getTicketType())
+				&& ticket.getSummary().equals(summary) // level, prefix, classname, and method
+				&& Objects.equals(category, ticket.getCategory())
+			) {
+				existingTicket = ticket;
+				break;
+			}
+		}
+		if(existingTicket != null) {
+			existingTicket.addAnnotation(
+				generateActionSummary(formatter, record),
+				fullReport
+			);
+		} else {
+			// The priority depends on the log level
+			String priorityName;
+			int intLevel = level.intValue();
+			if     (intLevel <= Level.CONFIG .intValue()) priorityName = Priority.LOW;    // FINE    < level <= CONFIG
+			else if(intLevel <= Level.INFO   .intValue()) priorityName = Priority.NORMAL; // CONFIG  < level <= INFO
+			else if(intLevel <= Level.WARNING.intValue()) priorityName = Priority.HIGH;   // INFO    < level <= WARNING
+			else                                          priorityName = Priority.URGENT; // WARNING < level
+			Priority priority = connector.getTicket().getPriority().get(priorityName);
+			if(priority == null) throw new SQLException("Unable to find TicketPriority: " + priorityName);
+			connector.getTicket().getTicket().addTicket(
+				brand,
+				account,
+				language,
+				category,
+				ticketType,
+				null,
+				summary,
+				fullReport,
+				priority,
+				Collections.emptySet(),
+				""
+			);
 		}
 	}
 
@@ -179,11 +311,11 @@ final public class TicketLoggingHandler extends QueuedHandler {
 		// Generate the annotation summary as localized message + thrown
 		StringBuilder tempSB = new StringBuilder();
 		String message = formatter.formatMessage(record);
-		if(message!=null) {
+		if(message != null) {
 			message = message.trim();
 			int eol = message.indexOf('\n');
 			boolean doEllipsis = false;
-			if(eol!=-1) {
+			if(eol != -1) {
 				message = message.substring(0, eol).trim();
 				doEllipsis = true;
 			}
@@ -193,19 +325,19 @@ final public class TicketLoggingHandler extends QueuedHandler {
 			}
 		}
 		Throwable thrown = record.getThrown();
-		if(thrown!=null) {
-			if(tempSB.length()>0) tempSB.append(" - ");
+		if(thrown != null) {
+			if(tempSB.length() > 0) tempSB.append(" - ");
 			String thrownMessage = thrown.getMessage();
 			boolean doEllipsis = false;
-			if(thrownMessage!=null) {
+			if(thrownMessage != null) {
 				thrownMessage = thrownMessage.trim();
 				int eol = thrownMessage.indexOf('\n');
-				if(eol!=-1) {
+				if(eol != -1) {
 					thrownMessage = thrownMessage.substring(0, eol).trim();
 					doEllipsis = true;
 				}
 			}
-			if(thrownMessage!=null && thrownMessage.length()>0) {
+			if(thrownMessage != null && thrownMessage.length() > 0) {
 				tempSB.append(thrownMessage);
 				if(doEllipsis) tempSB.append('\u2026');
 			} else {

@@ -606,6 +606,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @exception  ConfigurationException  if no connection can be established
 	 */
+	// TODO: No longer take logger at this level?
 	public static AOServConnector getConnector(Logger logger) throws ConfigurationException {
 		User.Name username = AOServClientConfiguration.getUsername();
 		DomainName daemonServer = AOServClientConfiguration.getDaemonServer();
