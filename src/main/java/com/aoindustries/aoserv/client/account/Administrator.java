@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -333,7 +333,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	public boolean isActiveAccounting() throws IOException, SQLException {
 		com.aoindustries.aoserv.client.master.User user=getMasterUser();
-		return 
+		return
 			user!=null
 			&& user.isActive()
 			&& user.canAccessAccounting()
@@ -342,7 +342,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	public boolean isActiveBankAccounting() throws IOException, SQLException {
 		com.aoindustries.aoserv.client.master.User user=getMasterUser();
-		return 
+		return
 			user!=null
 			&& user.isActive()
 			&& user.canAccessBankAccount()
@@ -351,7 +351,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	public boolean isActiveDNSAdmin() throws IOException, SQLException {
 		com.aoindustries.aoserv.client.master.User user=getMasterUser();
-		return 
+		return
 			user!=null
 			&& user.isActive()
 			&& user.isDNSAdmin()
@@ -360,7 +360,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	public boolean isActiveTableInvalidator() throws IOException, SQLException {
 		com.aoindustries.aoserv.client.master.User user=getMasterUser();
-		return 
+		return
 			user!=null
 			&& user.isActive()
 			&& user.canInvalidateTables()
@@ -369,7 +369,7 @@ final public class Administrator extends CachedObjectUserNameKey<Administrator> 
 
 	public boolean isActiveWebAdmin() throws IOException, SQLException {
 		com.aoindustries.aoserv.client.master.User user=getMasterUser();
-		return 
+		return
 			user!=null
 			&& user.isActive()
 			&& user.isWebAdmin()

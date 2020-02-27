@@ -2248,7 +2248,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
-	 * @exception  IllegalArgumentException  if unable to find 
+	 * @exception  IllegalArgumentException  if unable to find
 	 *
 	 * @see  #checkPackageName
 	 * @see  #addAccount
@@ -3235,7 +3235,7 @@ final public class SimpleAOClient {
 	 * @param  password  the password that is to be encrypted
 	 * @param  salt  the two character salt for the encryption process, if {@code null},
 	 *					a random salt will be used
-	 * 
+	 *
 	 * @deprecated  Please use hash instead.
 	 * @see  #hash(String)
 	 */

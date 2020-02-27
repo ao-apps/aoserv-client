@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,8 +34,8 @@ import java.sql.SQLException;
 
 /**
  * An <code>HttpdJBossSite</code> indicates that an <code>HttpdSite</code>
- * uses JBoss as its servlet engine.  The servlet engine may be 
- * configured in several ways, only what is common to every type of 
+ * uses JBoss as its servlet engine.  The servlet engine may be
+ * configured in several ways, only what is common to every type of
  * JBoss installation is stored in <code>HttpdJBossSite</code>.
  *
  * @see  HttpdSite

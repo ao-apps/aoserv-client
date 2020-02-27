@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -115,7 +115,7 @@ final public class BackupPartition extends CachedObjectIntegerKey<BackupPartitio
 	 * When quota is disabled, all replications/backups into the partition must have quota_gid not set.
 	 * This generally means that ao_servers, which backup full Unix permissions, will be backed-up to non-quota partitions,
 	 * while other backups (such as from Windows) will go to quota-enabled partitions for billing purposes.
-	 * 
+	 *
 	 * @return the enabled flag
 	 */
 	public boolean isQuotaEnabled() {

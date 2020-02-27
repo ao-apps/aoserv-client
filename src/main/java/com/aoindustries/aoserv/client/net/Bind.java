@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -447,7 +447,7 @@ final public class Bind extends CachedObjectIntegerKey<Bind> implements Removabl
 	/**
 	 * A net_bind is disabled when all Disablable uses of it are disabled.
 	 * If there are no Disablable uses, it is considered enabled.
-	 * 
+	 *
 	 * @see  Disablable
 	 */
 	public boolean isDisabled() throws SQLException, IOException {
