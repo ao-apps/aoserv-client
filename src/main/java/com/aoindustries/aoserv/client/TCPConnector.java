@@ -295,7 +295,7 @@ public class TCPConnector extends AOServConnector {
 		DomainName daemonServer,
 		int poolSize,
 		long maxConnectionAge,
-		Logger logger
+		Logger logger // TODO: Either compare logger or remove from here, SSLConnector, too.
 	) {
 		if(connectAs==null) throw new IllegalArgumentException("connectAs is null");
 		if(authenticateAs==null) throw new IllegalArgumentException("authenticateAs is null");
