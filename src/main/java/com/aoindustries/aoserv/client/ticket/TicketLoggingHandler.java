@@ -71,6 +71,8 @@ import java.util.logging.Logger;
  */
 public class TicketLoggingHandler extends QueuedHandler {
 
+	private static final boolean DEBUG = false;
+
 	private static final List<WeakReference<TicketLoggingHandler>> handlers = new ArrayList<>();
 
 	/**
@@ -146,6 +148,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 		this.summaryPrefix = StringUtility.nullIfEmpty(summaryPrefix);
 		this.connector = connector;
 		this.categoryDotPath = StringUtility.nullIfEmpty(categoryDotPath);
+		debug();
 	}
 
 	/**
@@ -196,6 +199,19 @@ public class TicketLoggingHandler extends QueuedHandler {
 			);
 		} catch(ValidationException e) {
 			throw new ConfigurationException(e);
+		}
+		debug();
+	}
+
+	private void debug() {
+		if(DEBUG) {
+			System.err.println();
+			System.err.println("TicketLoggingHandler: ");
+			System.err.println("    class...........: " + getClass().getName());
+			System.err.println("    summaryPrefix...: " + summaryPrefix);
+			System.err.println("    connector.......: " + connector);
+			System.err.println("    categoryDotPath.: " + categoryDotPath);
+			System.err.println();
 		}
 	}
 
