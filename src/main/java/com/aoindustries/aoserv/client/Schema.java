@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018  AO Industries, Inc.
+ * Copyright (C) 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,6 @@
  */
 package com.aoindustries.aoserv.client;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +32,7 @@ abstract public class Schema implements SchemaParent {
 
 	protected final AOServConnector connector;
 
-	protected Schema(AOServConnector connector) throws IOException {
+	protected Schema(AOServConnector connector) {
 		this.connector = connector;
 	}
 

@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-02-15T18:30:24-0600"
+		dateModified="2020-02-27T10:46:11-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -93,6 +93,19 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 							<li>Added AOSH command <code>web.tomcat.PrivateTomcatSite.tomcatAuthentication.set</code></li>
 							<li>Added column <code>web.tomcat.SharedTomcat.tomcatAuthentication</code></li>
 							<li>Added AOSH command <code>web.tomcat.SharedTomcat.tomcatAuthentication.set</code></li>
+						</ol>
+					</li>
+					<li><code>AOServConnector.getConnector(…)</code> may now be obtained without any checked exceptions:
+						<ol>
+							<li><code>AOServClientConfiguration</code> throws <code>ConfigurationException</code></li>
+							<li><code>AOServConnector.getConnector(…)</code> throws <code>ConfigurationException</code></li>
+							<li>Removed other unnecessary uses of <code>IOException</code> incorrectly left in <code>Schema</code> constructors.</li>
+						</ol>
+					</li>
+					<li>Fixed ambiguous definitions of <code>PROTOCOL</code>, now:
+						<ol>
+							<li><code>TCPConnector.TCP_PROTOCOL</code></li>
+							<li><code>SSLConnector.SSL_PROTOCOL</code></li>
 						</ol>
 					</li>
 				</ul>

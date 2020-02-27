@@ -89,7 +89,6 @@ public class TCPConnector extends AOServConnector {
 		CacheMonitor() {
 			super("TCPConnector - CacheMonitor");
 			setDaemon(true);
-			start();
 		}
 
 		@Override
@@ -208,7 +207,7 @@ public class TCPConnector extends AOServConnector {
 	/**
 	 * The protocol of this type of connector.
 	 */
-	public static final String PROTOCOL="tcp";
+	public static final String TCP_PROTOCOL = "tcp";
 
 	/**
 	 * The connections to the server are pooled.
@@ -242,7 +241,7 @@ public class TCPConnector extends AOServConnector {
 		int poolSize,
 		long maxConnectionAge,
 		Logger logger
-	) throws IOException {
+	) {
 		super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, logger);
 		if(port.getProtocol() != com.aoindustries.net.Protocol.TCP) throw new IllegalArgumentException("Only TCP supported: " + port);
 		this.poolSize=poolSize;
@@ -252,8 +251,10 @@ public class TCPConnector extends AOServConnector {
 
 	private void startCacheMonitor() {
 		synchronized(cacheMonitorLock) {
-			connectionLastUsed=System.currentTimeMillis();
-			if(cacheMonitor==null) cacheMonitor=new CacheMonitor();
+			connectionLastUsed = System.currentTimeMillis();
+			if(cacheMonitor == null) {
+				(cacheMonitor = new CacheMonitor()).start();
+			}
 		}
 	}
 
@@ -270,7 +271,7 @@ public class TCPConnector extends AOServConnector {
 
 	@Override
 	public String getProtocol() {
-		return PROTOCOL;
+		return TCP_PROTOCOL;
 	}
 
 	Socket getSocket() throws InterruptedIOException, IOException {
@@ -295,10 +296,10 @@ public class TCPConnector extends AOServConnector {
 		int poolSize,
 		long maxConnectionAge,
 		Logger logger
-	) throws IOException {
-		if(connectAs==null) throw new NullPointerException("connectAs is null");
-		if(authenticateAs==null) throw new NullPointerException("authenticateAs is null");
-		if(password==null) throw new NullPointerException("password is null");
+	) {
+		if(connectAs==null) throw new IllegalArgumentException("connectAs is null");
+		if(authenticateAs==null) throw new IllegalArgumentException("authenticateAs is null");
+		if(password==null) throw new IllegalArgumentException("password is null");
 		int size=connectors.size();
 		for(int c=0;c<size;c++) {
 			TCPConnector connector=connectors.get(c);
@@ -318,7 +319,7 @@ public class TCPConnector extends AOServConnector {
 				&& connector.maxConnectionAge==maxConnectionAge
 			) return connector;
 		}
-		TCPConnector newConnector=new TCPConnector(
+		TCPConnector newConnector = new TCPConnector(
 			hostname,
 			local_ip,
 			port,

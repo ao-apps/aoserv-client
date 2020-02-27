@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,9 +25,9 @@ package com.aoindustries.aoserv.client;
 import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
+import com.aoindustries.exception.ConfigurationException;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.validation.ValidationException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -63,7 +63,7 @@ public class AOServConnectorTODO extends TestCase {
 	 * filter modes.  Regular user (testuser), unrestricted master (aoweb_app), and a single server
 	 * (mandriva20060_svr).
 	 */
-	static List<AOServConnector> getTestConnectors() throws IOException {
+	static List<AOServConnector> getTestConnectors() throws ConfigurationException {
 		try {
 			List<AOServConnector> conns = new ArrayList<>();
 			conns.add(AOServConnector.getConnector(User.Name.valueOf("aoweb_app"), "changeme", logger));
@@ -71,7 +71,7 @@ public class AOServConnectorTODO extends TestCase {
 			conns.add(AOServConnector.getConnector(User.Name.valueOf("mandriva20060_svr"), "Ogrol3Veve5", logger));
 			return conns;
 		} catch(ValidationException e) {
-			throw new IOException(e);
+			throw new ConfigurationException(e);
 		}
 	}
 
@@ -175,7 +175,7 @@ public class AOServConnectorTODO extends TestCase {
 		for(AOServConnector conn : conns) {
 			User.Name username = conn.getCurrentAdministrator().getKey();
 			System.out.println("    "+username);
-			assertEquals(TCPConnector.PROTOCOL, conn.getProtocol());
+			assertEquals(TCPConnector.TCP_PROTOCOL, conn.getProtocol());
 		}
 	}
 

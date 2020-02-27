@@ -35,6 +35,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.sql.SQLComparator;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
+import com.aoindustries.exception.ConfigurationException;
 import com.aoindustries.io.IoUtils;
 import com.aoindustries.io.stream.StreamWritable;
 import com.aoindustries.io.stream.StreamableInput;
@@ -121,9 +122,10 @@ abstract public class AOServConnector implements SchemaParent {
 	static boolean isImmediateFail(Throwable T) {
 		String message = T.getMessage();
 		return
-			(
+			(T instanceof ConfigurationException)
+			|| (
 				(T instanceof IOException)
-				&& message!=null
+				&& message != null
 				&& (
 					message.equals("Connection attempted with invalid password")
 					|| message.equals("Connection attempted with empty password")
@@ -302,7 +304,7 @@ abstract public class AOServConnector implements SchemaParent {
 		String password,
 		DomainName daemonServer,
 		Logger logger
-	) throws IOException {
+	) {
 		this.hostname = hostname;
 		this.local_ip = local_ip;
 		this.port = port;
@@ -602,9 +604,9 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @return  the first <code>AOServConnector</code> to successfully connect
 	 *          to the server
 	 *
-	 * @exception  IOException  if no connection can be established
+	 * @exception  ConfigurationException  if no connection can be established
 	 */
-	public static AOServConnector getConnector(Logger logger) throws IOException {
+	public static AOServConnector getConnector(Logger logger) throws ConfigurationException {
 		User.Name username = AOServClientConfiguration.getUsername();
 		DomainName daemonServer = AOServClientConfiguration.getDaemonServer();
 		return getConnector(
@@ -628,9 +630,9 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @return  the first <code>AOServConnector</code> to successfully connect
 	 *          to the server
 	 *
-	 * @exception  IOException  if no connection can be established
+	 * @exception  ConfigurationException  if no connection can be established
 	 */
-	public static AOServConnector getConnector(User.Name username, String password, Logger logger) throws IOException {
+	public static AOServConnector getConnector(User.Name username, String password, Logger logger) throws ConfigurationException {
 		return getConnector(username, username, password, null, logger);
 	}
 
@@ -649,7 +651,7 @@ abstract public class AOServConnector implements SchemaParent {
 	 * @return  the first <code>AOServConnector</code> to successfully connect
 	 *          to the server
 	 *
-	 * @exception  IOException  if no connection can be established
+	 * @exception  ConfigurationException  if no connection can be established
 	 */
 	public static AOServConnector getConnector(
 		User.Name connectAs,
@@ -657,15 +659,15 @@ abstract public class AOServConnector implements SchemaParent {
 		String password,
 		DomainName daemonServer,
 		Logger logger
-	) throws IOException {
-		List<String> protocols=AOServClientConfiguration.getProtocols();
-		int size=protocols.size();
-		for(int c=0;c<size;c++) {
-			String protocol=protocols.get(c);
+	) throws ConfigurationException {
+		List<String> protocols = AOServClientConfiguration.getProtocols();
+		int size = protocols.size();
+		for(int c = 0; c < size; c++) {
+			String protocol = protocols.get(c);
 			try {
 				AOServConnector connector;
-				if(TCPConnector.PROTOCOL.equals(protocol)) {
-					connector=TCPConnector.getTCPConnector(
+				if(TCPConnector.TCP_PROTOCOL.equals(protocol)) {
+					connector = TCPConnector.getTCPConnector(
 						AOServClientConfiguration.getTcpHostname(),
 						AOServClientConfiguration.getTcpLocalIp(),
 						AOServClientConfiguration.getTcpPort(),
@@ -677,8 +679,8 @@ abstract public class AOServConnector implements SchemaParent {
 						AOServClientConfiguration.getTcpConnectionMaxAge(),
 						logger
 					);
-				} else if(SSLConnector.PROTOCOL.equals(protocol)) {
-					connector=SSLConnector.getSSLConnector(
+				} else if(SSLConnector.SSL_PROTOCOL.equals(protocol)) {
+					connector = SSLConnector.getSSLConnector(
 						AOServClientConfiguration.getSslHostname(),
 						AOServClientConfiguration.getSslLocalIp(),
 						AOServClientConfiguration.getSslPort(),
@@ -698,14 +700,14 @@ abstract public class AOServConnector implements SchemaParent {
 				} else if("https".equals(protocol)) {
 					connector=new HTTPSConnector();
 				*/
-				} else throw new IOException("Unknown protocol in aoserv.client.protocols: "+protocol);
+				} else throw new ConfigurationException("Unknown protocol in aoserv.client.protocols: "+protocol);
 
 				return connector;
-			} catch(IOException err) {
+			} catch(ConfigurationException err) {
 				logger.log(Level.SEVERE, null, err);
 			}
 		}
-		throw new IOException("Unable to connect using any of the available protocols.");
+		throw new ConfigurationException("Unable to connect using any of the available protocols.");
 	}
 
 	/**
@@ -1752,7 +1754,7 @@ abstract public class AOServConnector implements SchemaParent {
 	) {
 		sortAlgorithm.sort(
 			list,
-			new SQLComparator<T>(
+			new SQLComparator<>(
 				this,
 				sortExpressions,
 				sortOrders
@@ -1768,7 +1770,7 @@ abstract public class AOServConnector implements SchemaParent {
 	) {
 		sortAlgorithm.sort(
 			list,
-			new SQLComparator<T>(
+			new SQLComparator<>(
 				this,
 				sortExpressions,
 				sortOrders

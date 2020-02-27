@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,6 +34,7 @@ import com.aoindustries.aoserv.client.net.FirewallZone;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.TableTable;
 import com.aoindustries.aoserv.client.schema.Type;
+import com.aoindustries.exception.ConfigurationException;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
@@ -251,13 +252,13 @@ final public class AOSH extends ShellInterpreter {
 				out.println();
 				out.flush();
 			}
-		} catch(IOException exc) {
+		} catch(RuntimeException | IOException exc) {
 			err.println("aosh: unable to connect: "+exc.getMessage());
 			err.flush();
 		}
 	}
 
-	public static User.Name getConfigUsername(InputStream in, TerminalWriter err) throws IOException {
+	public static User.Name getConfigUsername(InputStream in, TerminalWriter err) throws ConfigurationException, IOException {
 		User.Name username = AOServClientConfiguration.getUsername();
 		if(username == null) {
 			try {
@@ -280,7 +281,7 @@ final public class AOSH extends ShellInterpreter {
 		return username;
 	}
 
-	public static String getConfigPassword(InputStream in, TerminalWriter err) throws IOException {
+	public static String getConfigPassword(InputStream in, TerminalWriter err) throws ConfigurationException, IOException {
 		String password = AOServClientConfiguration.getPassword();
 		if(password == null || password.isEmpty()) {
 			// Prompt for the password
