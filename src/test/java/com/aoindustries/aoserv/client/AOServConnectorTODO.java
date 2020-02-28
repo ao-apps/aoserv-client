@@ -31,7 +31,6 @@ import com.aoindustries.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -44,8 +43,6 @@ import junit.framework.TestSuite;
  * @author  AO Industries, Inc.
  */
 public class AOServConnectorTODO extends TestCase {
-
-	private static final Logger logger = Logger.getLogger(AOServConnectorTODO.class.getName());
 
 	public static final User.Name REGULAR_USER_USERNAME;
 	static {
@@ -66,9 +63,9 @@ public class AOServConnectorTODO extends TestCase {
 	static List<AOServConnector> getTestConnectors() throws ConfigurationException {
 		try {
 			List<AOServConnector> conns = new ArrayList<>();
-			conns.add(AOServConnector.getConnector(User.Name.valueOf("aoweb_app"), "changeme", logger));
-			conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD, logger));
-			conns.add(AOServConnector.getConnector(User.Name.valueOf("mandriva20060_svr"), "Ogrol3Veve5", logger));
+			conns.add(AOServConnector.getConnector(User.Name.valueOf("aoweb_app"), "changeme"));
+			conns.add(AOServConnector.getConnector(REGULAR_USER_USERNAME, REGULAR_USER_PASSWORD));
+			conns.add(AOServConnector.getConnector(User.Name.valueOf("mandriva20060_svr"), "Ogrol3Veve5"));
 			return conns;
 		} catch(ValidationException e) {
 			throw new ConfigurationException(e);

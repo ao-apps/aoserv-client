@@ -155,9 +155,12 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * @see  #getConnectorId()
 	 */
+	// TODO: AtomicReference
 	protected static class IdLock {}
 	protected final IdLock idLock = new IdLock();
 	protected Identifier id = null;
+
+	private final Logger logger;
 
 	/**
 	 * @see  #getHostname()
@@ -185,18 +188,6 @@ abstract public class AOServConnector implements SchemaParent {
 	final User.Name authenticateAs;
 
 	final DomainName daemonServer;
-
-	final Logger logger;
-	public Logger getLogger() {
-		return logger;
-	}
-
-	/**
-	 * Gets the logger for this connector.
-	 */
-	//public Logger getLogger() {
-	//    return logger;
-	//}
 
 	protected final String password;
 
@@ -302,9 +293,10 @@ abstract public class AOServConnector implements SchemaParent {
 		User.Name connectAs,
 		User.Name authenticateAs,
 		String password,
-		DomainName daemonServer,
-		Logger logger
+		DomainName daemonServer
 	) {
+		this.logger = Logger.getLogger(getClass().getName());
+
 		this.hostname = hostname;
 		this.local_ip = local_ip;
 		this.port = port;
@@ -312,7 +304,6 @@ abstract public class AOServConnector implements SchemaParent {
 		this.authenticateAs = authenticateAs;
 		this.password = password;
 		this.daemonServer = daemonServer;
-		this.logger = logger;
 
 		// TODO: Load schemas with ServiceLoader
 		ArrayList<Schema> newSchemas = new ArrayList<>();
@@ -578,6 +569,13 @@ abstract public class AOServConnector implements SchemaParent {
 	}
 
 	/**
+	 * Gets the logger for this connector.
+	 */
+	final protected Logger getLogger() {
+		return logger;
+	}
+
+	/**
 	 * Allocates a connection to the server.  These connections must later be
 	 * released with the <code>releaseConnection</code> method.  Connection
 	 * pooling is obtained this way.  These connections may be over any protocol,
@@ -606,16 +604,14 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @exception  ConfigurationException  if no connection can be established
 	 */
-	// TODO: No longer take logger at this level?
-	public static AOServConnector getConnector(Logger logger) throws ConfigurationException {
+	public static AOServConnector getConnector() throws ConfigurationException {
 		User.Name username = AOServClientConfiguration.getUsername();
 		DomainName daemonServer = AOServClientConfiguration.getDaemonServer();
 		return getConnector(
 			username,
 			username,
 			AOServClientConfiguration.getPassword(),
-			daemonServer,
-			logger
+			daemonServer
 		);
 	}
 
@@ -633,8 +629,8 @@ abstract public class AOServConnector implements SchemaParent {
 	 *
 	 * @exception  ConfigurationException  if no connection can be established
 	 */
-	public static AOServConnector getConnector(User.Name username, String password, Logger logger) throws ConfigurationException {
-		return getConnector(username, username, password, null, logger);
+	public static AOServConnector getConnector(User.Name username, String password) throws ConfigurationException {
+		return getConnector(username, username, password, null);
 	}
 
 	/**
@@ -658,8 +654,7 @@ abstract public class AOServConnector implements SchemaParent {
 		User.Name connectAs,
 		User.Name authenticateAs,
 		String password,
-		DomainName daemonServer,
-		Logger logger
+		DomainName daemonServer
 	) throws ConfigurationException {
 		List<String> protocols = AOServClientConfiguration.getProtocols();
 		int size = protocols.size();
@@ -677,8 +672,7 @@ abstract public class AOServConnector implements SchemaParent {
 						password,
 						daemonServer,
 						AOServClientConfiguration.getTcpConnectionPoolSize(),
-						AOServClientConfiguration.getTcpConnectionMaxAge(),
-						logger
+						AOServClientConfiguration.getTcpConnectionMaxAge()
 					);
 				} else if(SSLConnector.SSL_PROTOCOL.equals(protocol)) {
 					connector = SSLConnector.getSSLConnector(
@@ -692,8 +686,7 @@ abstract public class AOServConnector implements SchemaParent {
 						AOServClientConfiguration.getSslConnectionPoolSize(),
 						AOServClientConfiguration.getSslConnectionMaxAge(),
 						AOServClientConfiguration.getSslTruststorePath(),
-						AOServClientConfiguration.getSslTruststorePassword(),
-						logger
+						AOServClientConfiguration.getSslTruststorePassword()
 					);
 				/*
 				} else if("http".equals(protocol)) {
@@ -705,7 +698,7 @@ abstract public class AOServConnector implements SchemaParent {
 
 				return connector;
 			} catch(ConfigurationException err) {
-				logger.log(Level.SEVERE, null, err);
+				Logger.getLogger(AOServConnector.class.getName()).log(Level.SEVERE, null, err);
 			}
 		}
 		throw new ConfigurationException("Unable to connect using any of the available protocols.");

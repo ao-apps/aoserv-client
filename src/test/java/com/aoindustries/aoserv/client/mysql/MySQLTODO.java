@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2006-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -56,8 +55,6 @@ import junit.framework.TestSuite;
  * @author  AO Industries, Inc.
  */
 public class MySQLTODO extends TestCase {
-
-	private static final Logger logger = Logger.getLogger(MySQLTODO.class.getName());
 
 	private AOServConnector conn;
 	private Package pack;
@@ -74,7 +71,7 @@ public class MySQLTODO extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		conn=AOServConnector.getConnector(AOServConnectorTODO.REGULAR_USER_USERNAME, AOServConnectorTODO.REGULAR_USER_PASSWORD, logger);
+		conn = AOServConnector.getConnector(AOServConnectorTODO.REGULAR_USER_USERNAME, AOServConnectorTODO.REGULAR_USER_PASSWORD);
 	}
 
 	@Override

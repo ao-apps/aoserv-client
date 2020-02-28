@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-02-27T15:21:04-0600"
+		dateModified="2020-02-27T19:47:08-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -111,6 +111,10 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						<code>TicketLoggingHandler</code> significantly reworked
 						to be compatible with <code>logging.properties</code>.
+					</li>
+					<li>
+						<code>AOServConnector.getConnector(…)</code> no longer takes a <code>Logger</code> argument.
+						It will use a logger based on the selected implementation class.
 					</li>
 				</ul>
 			</changelog:release>

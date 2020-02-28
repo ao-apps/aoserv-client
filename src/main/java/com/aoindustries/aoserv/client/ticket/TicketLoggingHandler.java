@@ -47,7 +47,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -188,11 +187,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 			);
 			if(password == null) password = AOServClientConfiguration.getPassword();
 
-			this.connector = AOServConnector.getConnector(
-				username,
-				password,
-				Logger.getLogger(AOServConnector.class.getName())
-			);
+			this.connector = AOServConnector.getConnector(username, password);
 
 			this.categoryDotPath = StringUtility.trimNullIfEmpty(
 				manager.getProperty(cname + ".categoryDotPath")

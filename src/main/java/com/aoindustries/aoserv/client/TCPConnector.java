@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -166,12 +165,12 @@ public class TCPConnector extends AOServConnector {
 					} catch(EOFException err) {
 						if(isImmediateFail(err)) runMore = false;
 						else {
-							logger.log(Level.INFO, null, err);
+							getLogger().log(Level.INFO, null, err);
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
 								sleep(getFastRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
-								logger.log(Level.WARNING, null, err2);
+								getLogger().log(Level.WARNING, null, err2);
 							}
 						}
 					} catch(ThreadDeath TD) {
@@ -179,12 +178,12 @@ public class TCPConnector extends AOServConnector {
 					} catch(Throwable T) {
 						if(isImmediateFail(T)) runMore = false;
 						else {
-							logger.log(Level.SEVERE, null, T);
+							getLogger().log(Level.SEVERE, null, T);
 							try {
 								//System.err.println("DEBUG: TCPConnector("+connectAs+"-"+getConnectorId()+").CacheMonitor: run: Sleeping after exception");
 								sleep(getFastRandom().nextInt(50000)+10000); // Wait between 10 and 60 seconds
 							} catch(InterruptedException err2) {
-								logger.log(Level.WARNING, null, err2);
+								getLogger().log(Level.WARNING, null, err2);
 							}
 						}
 					} finally {
@@ -239,14 +238,13 @@ public class TCPConnector extends AOServConnector {
 		String password,
 		DomainName daemonServer,
 		int poolSize,
-		long maxConnectionAge,
-		Logger logger
+		long maxConnectionAge
 	) {
-		super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, logger);
+		super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer);
 		if(port.getProtocol() != com.aoindustries.net.Protocol.TCP) throw new IllegalArgumentException("Only TCP supported: " + port);
-		this.poolSize=poolSize;
-		this.maxConnectionAge=maxConnectionAge;
-		this.pool=new SocketConnectionPool(this, logger);
+		this.poolSize = poolSize;
+		this.maxConnectionAge = maxConnectionAge;
+		this.pool = new SocketConnectionPool(this, getLogger());
 	}
 
 	private void startCacheMonitor() {
@@ -261,7 +259,7 @@ public class TCPConnector extends AOServConnector {
 	@Override
 	protected final AOServConnection getConnection(int maxConnections) throws InterruptedIOException, IOException {
 		if(SwingUtilities.isEventDispatchThread()) {
-			logger.log(Level.WARNING, null, new RuntimeException(accessor.getMessage("TCPConnector.getConnection.isEventDispatchThread")));
+			getLogger().log(Level.WARNING, null, new RuntimeException(accessor.getMessage("TCPConnector.getConnection.isEventDispatchThread")));
 		}
 		startCacheMonitor();
 		SocketConnection conn = pool.getConnection(maxConnections);
@@ -294,8 +292,7 @@ public class TCPConnector extends AOServConnector {
 		String password,
 		DomainName daemonServer,
 		int poolSize,
-		long maxConnectionAge,
-		Logger logger // TODO: Either compare logger or remove from here, SSLConnector, too.
+		long maxConnectionAge
 	) {
 		if(connectAs==null) throw new IllegalArgumentException("connectAs is null");
 		if(authenticateAs==null) throw new IllegalArgumentException("authenticateAs is null");
@@ -328,8 +325,7 @@ public class TCPConnector extends AOServConnector {
 			password,
 			daemonServer,
 			poolSize,
-			maxConnectionAge,
-			logger
+			maxConnectionAge
 		);
 		connectors.add(newConnector);
 		return newConnector;
@@ -387,8 +383,7 @@ public class TCPConnector extends AOServConnector {
 			password,
 			daemonServer,
 			poolSize,
-			maxConnectionAge,
-			logger
+			maxConnectionAge
 		);
 	}
 
