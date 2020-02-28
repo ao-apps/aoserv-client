@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2012, 2016, 2017, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2012, 2016, 2017, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -43,6 +43,7 @@ public class TableEventThread extends Thread {
 		setName("TableEventThread #" + getId() + " ("+table.getTableID()+") - "+table.getClass().getName());
 		this.table=table;
 		setDaemon(true);
+		// TODO: Start after constructor
 		start();
 		// System.out.println("DEBUG: Started TableEventThread: "+getName());
 	}
@@ -105,7 +106,7 @@ public class TableEventThread extends Thread {
 			} catch (ThreadDeath TD) {
 				throw TD;
 			} catch (Throwable T) {
-				table.connector.logger.log(Level.SEVERE, null, T);
+				table.connector.getLogger().log(Level.SEVERE, null, T);
 			}
 		}
 	}

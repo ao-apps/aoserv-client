@@ -60,7 +60,6 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
  * <code>AOSH</code> is a command interpreter and scripting language
@@ -70,8 +69,6 @@ import java.util.logging.Logger;
  * @author  AO Industries, Inc.
  */
 final public class AOSH extends ShellInterpreter {
-
-	private static final Logger logger = Logger.getLogger(AOSH.class.getName());
 
 	private static final Reader nullInput=new CharArrayReader(new char[0]);
 
@@ -245,7 +242,7 @@ final public class AOSH extends ShellInterpreter {
 		try {
 			User.Name username = getConfigUsername(System.in, err);
 			String password = getConfigPassword(System.in, err);
-			AOServConnector connector=AOServConnector.getConnector(username, password, logger);
+			AOServConnector connector = AOServConnector.getConnector(username, password);
 			AOSH aosh=new AOSH(connector, new BufferedReader(new InputStreamReader(System.in)), out, err, args);
 			aosh.run();
 			if(aosh.isInteractive()) {

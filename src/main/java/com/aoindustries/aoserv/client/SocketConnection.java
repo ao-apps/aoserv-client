@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -129,7 +129,7 @@ final public class SocketConnection extends AOServConnection {
 			try {
 				in.close();
 			} catch(IOException err) {
-				connector.logger.log(Level.WARNING, null, err);
+				connector.getLogger().log(Level.WARNING, null, err);
 			}
 		}
 		if(out != null) {
@@ -139,21 +139,21 @@ final public class SocketConnection extends AOServConnection {
 			} catch(SocketException err) {
 				// Normal when the other side has terminated the connection
 			} catch(IOException err) {
-				connector.logger.log(Level.WARNING, null, err);
+				connector.getLogger().log(Level.WARNING, null, err);
 			}
 			try {
 				out.close();
 			} catch(SocketException err) {
 				// Normal when the socket is already closed
 			} catch(IOException err) {
-				connector.logger.log(Level.WARNING, null, err);
+				connector.getLogger().log(Level.WARNING, null, err);
 			}
 		}
 		if(socket != null) {
 			try {
 				socket.close();
 			} catch(IOException err) {
-				connector.logger.log(Level.WARNING, null, err);
+				connector.getLogger().log(Level.WARNING, null, err);
 			}
 		}
 		isClosed=true;

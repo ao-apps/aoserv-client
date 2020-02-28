@@ -23,7 +23,6 @@
 package com.aoindustries.aoserv.client;
 
 import com.aoindustries.aoserv.client.account.User;
-import com.aoindustries.exception.ConfigurationException;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.HostAddress;
@@ -35,7 +34,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Logger;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
@@ -79,10 +77,9 @@ public class SSLConnector extends TCPConnector {
 		int poolSize,
 		long maxConnectionAge,
 		String trustStorePath,
-		String trustStorePassword,
-		Logger logger
+		String trustStorePassword
 	) {
-		super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge, logger);
+		super(hostname, local_ip, port, connectAs, authenticateAs, password, daemonServer, poolSize, maxConnectionAge);
 		if(
 			(
 				SSLConnector.trustStorePath!=null
@@ -139,8 +136,7 @@ public class SSLConnector extends TCPConnector {
 		int poolSize,
 		long maxConnectionAge,
 		String trustStorePath,
-		String trustStorePassword,
-		Logger logger
+		String trustStorePassword
 	) {
 		if(connectAs==null) throw new IllegalArgumentException("connectAs is null");
 		if(authenticateAs==null) throw new IllegalArgumentException("authenticateAs is null");
@@ -177,8 +173,7 @@ public class SSLConnector extends TCPConnector {
 			poolSize,
 			maxConnectionAge,
 			trustStorePath,
-			trustStorePassword,
-			logger
+			trustStorePassword
 		);
 		connectors.add(newConnector);
 		return newConnector;
@@ -203,8 +198,7 @@ public class SSLConnector extends TCPConnector {
 			poolSize,
 			maxConnectionAge,
 			trustStorePath,
-			trustStorePassword,
-			logger
+			trustStorePassword
 		);
 	}
 }

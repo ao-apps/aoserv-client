@@ -45,7 +45,15 @@ final class SocketConnectionPool extends AOPool<SocketConnection,IOException,Int
 	private final TCPConnector connector;
 
 	SocketConnectionPool(TCPConnector connector, Logger logger) {
-		super(DELAY_TIME, MAX_IDLE_TIME, SocketConnectionPool.class.getName()+"?hostname=" + connector.hostname+"&port="+connector.port+"&connectAs="+connector.connectAs+"&authenticateAs="+connector.authenticateAs, connector.poolSize, connector.maxConnectionAge, logger);
+		super(
+			DELAY_TIME,
+			MAX_IDLE_TIME,
+			// TODO: EncodeURLComponent this and AOServConnector?
+			SocketConnectionPool.class.getName() + "?hostname=" + connector.hostname + "&port=" + connector.port + "&connectAs=" + connector.connectAs + "&authenticateAs=" + connector.authenticateAs,
+			connector.poolSize,
+			connector.maxConnectionAge,
+			logger
+		);
 		this.connector=connector;
 	}
 
