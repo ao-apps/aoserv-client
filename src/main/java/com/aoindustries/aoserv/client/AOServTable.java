@@ -519,8 +519,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
 	/**
 	 * Gets the ComparisonSortAlgorithm used to sort the table.
-	 *
-	 * @implSpec  Defaults to JavaSort.
+	 * <p>
+	 * <b>Implementation Note:</b><br />
+	 * Defaults to {@link JavaSort}.
+	 * </p>
 	 */
 	protected ComparisonSortAlgorithm<Object> getSortAlgorithm() {
 		return JavaSort.getInstance();
@@ -530,7 +532,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 * Sorts the table using the default sort columns and orders.  If no defaults have been provided, then
 	 * the table is not sorted.
 	 *
-	 * @see  #getDefaultSortSQLExpressions()
+	 * @see  #getDefaultOrderBySQLExpressions()
 	 */
 	protected void sortIfNeeded(List<V> list) throws SQLException, IOException {
 		// Get the details for the sorting
@@ -614,7 +616,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	 *
 	 * @return  the identifier for this table
 	 *
-	 * @see  SchemaTable.TableID
+	 * @see  com.aoindustries.aoserv.client.schema.Table.TableID
 	 */
 	public abstract Table.TableID getTableID();
 
@@ -646,8 +648,10 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 
 	/**
 	 * Gets the rows in a more efficient, indexed manner.
-	 *
-	 * @implSpec  This default implementation simply throws UnsupportedOperationException.
+	 * <p>
+	 * <b>Implementation Note:</b><br />
+	 * This default implementation simply throws UnsupportedOperationException.
+	 * </p>>
 	 *
 	 * @exception UnsupportedOperationException if not supported by the specific table implementation
 	 */
@@ -808,7 +812,7 @@ abstract public class AOServTable<K,V extends AOServObject<K,V>> implements Iter
 	}
 
 	/**
-	 * Removes a {@link TableListener] from the list of
+	 * Removes a {@link TableListener} from the list of
 	 * objects being notified when the data is updated.
 	 */
 	@Override

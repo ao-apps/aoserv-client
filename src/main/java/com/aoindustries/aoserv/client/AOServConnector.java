@@ -969,7 +969,7 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * This is the preferred mechanism for providing custom requests that have a return value.
 	 *
-	 * @see  #requestResult(boolean,ResultRequest)
+	 * @see  #requestResult(boolean, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandID, com.aoindustries.aoserv.client.AOServConnector.ResultRequest)
 	 */
 	public interface ResultRequest<T> {
 		/**
@@ -1457,7 +1457,7 @@ abstract public class AOServConnector implements SchemaParent {
 	/**
 	 * This is the preferred mechanism for providing custom requests.
 	 *
-	 * @see  #requestUpdate(boolean,UpdateRequest)
+	 * @see  #requestUpdate(boolean, com.aoindustries.aoserv.client.schema.AoservProtocol.CommandID, com.aoindustries.aoserv.client.AOServConnector.UpdateRequest)
 	 */
 	public interface UpdateRequest {
 		/**

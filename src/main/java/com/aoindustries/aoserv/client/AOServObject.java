@@ -33,6 +33,7 @@ import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.aoserv.client.schema.Type;
 import com.aoindustries.aoserv.client.sql.SQLExpression;
 import com.aoindustries.dto.DtoFactory;
+import com.aoindustries.io.stream.Streamable;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainLabel;
@@ -443,9 +444,11 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
 	/**
 	 * {@inheritDoc}
-	 *
-	 * @implSpec  This default implementation considers the object equal when it is the same class
-	 *            (via {@link #getClass()} and has equal keys (via {@link #getKey()}).
+	 * <p>
+	 * <b>Implementation Note:</b><br />
+	 * This default implementation considers the object equal when it is the same class
+	 * (via {@link #getClass()} and has equal keys (via {@link #getKey()}).
+	 * </p>
 	 */
 	@Override
 	public boolean equals(Object O) {
@@ -498,8 +501,10 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
 	/**
 	 * {@inheritDoc}
-	 *
-	 * @implSpec  This default implementation calls {@link #hashCode()} on the key (from {@link #getKey()}).
+	 * <p>
+	 * <b>Implementation Note:</b><br />
+	 * This default implementation calls {@link #hashCode()} on the key (from {@link #getKey()}).
+	 * </p>
 	 */
 	@Override
 	public int hashCode() {
@@ -519,7 +524,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 *
-	 * @see  #read(StreamableInput,AOServProtocol.Version)
+	 * @see  #read(StreamableInput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
 	 */
 	@Deprecated
 	@Override
@@ -532,9 +537,11 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
 	/**
 	 * {@inheritDoc}
-	 *
-	 * @implSpec  This default implementation calls {@link #toStringImpl()}, which
-	 *            is allowed to throw exceptions.
+	 * <p>
+	 * <b>Implementation Note:</b><br />
+	 * This default implementation calls {@link #toStringImpl()}, which
+	 * is allowed to throw exceptions.
+	 * </p>
 	 *
 	 * @see  #toStringImpl()
 	 *
@@ -551,9 +558,11 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 
 	/**
 	 * {@link #toString()} implementation that is allowed to throw exceptions.
-	 *
-	 * @implSpec  This default implementation calls {@link #toString()} on the key (from {@link #getKey()}).
-	 *            When the key is {@code null}, uses the default implementation from {@link Object#toString()}.
+	 * <p>
+	 * <b>Implementation Note:</b><br />
+	 * This default implementation calls {@link #toString()} on the key (from {@link #getKey()}).
+	 * When the key is {@code null}, uses the default implementation from {@link Object#toString()}.
+	 * </p>
 	 */
 	public String toStringImpl() throws IOException, SQLException {
 		K pkey = getKey();
@@ -564,7 +573,7 @@ abstract public class AOServObject<K,T extends AOServObject<K,T>> implements Row
 	/**
 	 * @deprecated  This is maintained only for compatibility with the {@link Streamable} interface.
 	 *
-	 * @see  #write(StreamableOutput,AOServProtocol.Version)
+	 * @see  #write(StreamableOutput,com.aoindustries.aoserv.client.schema.AoservProtocol.Version)
 	 */
 	@Deprecated
 	@Override

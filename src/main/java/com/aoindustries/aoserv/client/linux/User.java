@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -262,8 +262,10 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 		/**
 		 * The maximum length of a Linux username.
-		 *
-		 * @implNote  32 characters
+		 * <p>
+		 * <b>Implementation Note:</b><br />
+		 * 32 characters
+		 * </p>
 		 */
 		public static final int MAX_LENGTH = 32;
 
