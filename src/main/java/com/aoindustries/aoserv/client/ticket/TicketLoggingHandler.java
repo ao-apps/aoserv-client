@@ -299,12 +299,7 @@ public class TicketLoggingHandler extends QueuedHandler {
 			);
 		} else {
 			// The priority depends on the log level
-			String priorityName;
-			int intLevel = level.intValue();
-			if     (intLevel <= Level.CONFIG .intValue()) priorityName = Priority.LOW;    // FINE    < level <= CONFIG
-			else if(intLevel <= Level.INFO   .intValue()) priorityName = Priority.NORMAL; // CONFIG  < level <= INFO
-			else if(intLevel <= Level.WARNING.intValue()) priorityName = Priority.HIGH;   // INFO    < level <= WARNING
-			else                                          priorityName = Priority.URGENT; // WARNING < level
+			String priorityName = getPriorityName(level);
 			Priority priority = connector.getTicket().getPriority().get(priorityName);
 			if(priority == null) throw new SQLException("Unable to find TicketPriority: " + priorityName);
 			connector.getTicket().getTicket().addTicket(
@@ -361,5 +356,19 @@ public class TicketLoggingHandler extends QueuedHandler {
 			}
 		}
 		return tempSB.toString();
+	}
+
+	/**
+	 * Gets the name of a {@link Priority} that corresponds to the given
+	 * {@link Level}.
+	 */
+	public static String getPriorityName(Level level) {
+		String priorityName;
+		int intLevel = level.intValue();
+		if     (intLevel <= Level.CONFIG .intValue()) priorityName = Priority.LOW;    //           level <= CONFIG
+		else if(intLevel <= Level.INFO   .intValue()) priorityName = Priority.NORMAL; // CONFIG  < level <= INFO
+		else if(intLevel <= Level.WARNING.intValue()) priorityName = Priority.HIGH;   // INFO    < level <= WARNING
+		else                                          priorityName = Priority.URGENT; // WARNING < level
+		return priorityName;
 	}
 }
