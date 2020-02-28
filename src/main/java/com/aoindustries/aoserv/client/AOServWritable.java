@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,7 +27,7 @@ import com.aoindustries.io.stream.StreamableOutput;
 import java.io.IOException;
 
 /**
- * Something that can be written with a given version represented by {@link AOServProtocol.Version}.
+ * Something that can be written with a given version represented by {@link com.aoindustries.aoserv.client.schema.AoservProtocol.Version}.
  *
  * @author  AO Industries, Inc.
  */

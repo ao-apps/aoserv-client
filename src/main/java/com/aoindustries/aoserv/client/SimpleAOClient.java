@@ -27,6 +27,8 @@ import com.aoindustries.aoserv.client.account.AccountHost;
 import com.aoindustries.aoserv.client.account.Administrator;
 import com.aoindustries.aoserv.client.account.DisableLog;
 import com.aoindustries.aoserv.client.account.Profile;
+import com.aoindustries.aoserv.client.account.User;
+import com.aoindustries.aoserv.client.aosh.AOSH;
 import com.aoindustries.aoserv.client.backup.BackupPartition;
 import com.aoindustries.aoserv.client.backup.FileReplication;
 import com.aoindustries.aoserv.client.backup.FileReplicationSetting;
@@ -44,7 +46,9 @@ import com.aoindustries.aoserv.client.distribution.Software;
 import com.aoindustries.aoserv.client.distribution.SoftwareVersion;
 import com.aoindustries.aoserv.client.dns.Record;
 import com.aoindustries.aoserv.client.dns.RecordType;
+import com.aoindustries.aoserv.client.dns.TopLevelDomain;
 import com.aoindustries.aoserv.client.dns.Zone;
+import com.aoindustries.aoserv.client.dns.ZoneTable;
 import com.aoindustries.aoserv.client.email.Address;
 import com.aoindustries.aoserv.client.email.BlackholeAddress;
 import com.aoindustries.aoserv.client.email.Domain;
@@ -79,6 +83,7 @@ import com.aoindustries.aoserv.client.net.Bind;
 import com.aoindustries.aoserv.client.net.Device;
 import com.aoindustries.aoserv.client.net.FirewallZone;
 import com.aoindustries.aoserv.client.net.Host;
+import com.aoindustries.aoserv.client.net.HostTable;
 import com.aoindustries.aoserv.client.net.IpAddress;
 import com.aoindustries.aoserv.client.password.PasswordChecker;
 import com.aoindustries.aoserv.client.password.PasswordGenerator;
@@ -131,13 +136,13 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * <code>SimpleAOClient</code> is a simplified interface into the client
+ * {@link SimpleAOClient} is a simplified interface into the client
  * code.  Not all information is available, but less knowledge is required
  * to accomplish some common tasks.  All methods are invoked using standard
  * data types.  The underlying implementation changes over time, but
  * this access point does not change as frequently.
  * <p>
- * Most of the <code>AOSH</code> commands resolve to these method calls.
+ * Most of the {@link AOSH} commands resolve to these method calls.
  *
  * @see  AOSH
  * @see  AOServConnector
@@ -189,9 +194,9 @@ final public class SimpleAOClient {
 		return account;
 	}
 
-	private Zone getDNSZone(String zone) throws IllegalArgumentException, IOException, SQLException {
+	private Zone getZone(String zone) throws IllegalArgumentException, IOException, SQLException {
 		Zone dz=connector.getDns().getZone().get(zone);
-		if(dz==null) throw new IllegalArgumentException("Unable to find DNSZone: "+zone);
+		if(dz==null) throw new IllegalArgumentException("Unable to find Zone: "+zone);
 		return dz;
 	}
 
@@ -251,7 +256,7 @@ final public class SimpleAOClient {
 
 	private Site getHttpdSite(String aoServer, String siteName) throws IllegalArgumentException, IOException, SQLException {
 		Site hs = getLinuxServer(aoServer).getHttpdSite(siteName);
-		if(hs==null) throw new IllegalArgumentException("Unable to find HttpdSite: "+siteName+" on "+aoServer);
+		if(hs==null) throw new IllegalArgumentException("Unable to find Site: "+siteName+" on "+aoServer);
 		return hs;
 	}
 
@@ -480,7 +485,7 @@ final public class SimpleAOClient {
 	 *                                       <code>OperatingSystem</code>, or <code>OperatingSystemVersion<code>
 	 *
 	 * @see  Host
-	 * @see  HostTable#addBackupHost
+	 * @see  HostTable#addBackupHost(java.lang.String, com.aoindustries.aoserv.client.infrastructure.ServerFarm, com.aoindustries.aoserv.client.billing.Package, java.lang.String, int, com.aoindustries.aoserv.client.distribution.OperatingSystemVersion, com.aoindustries.aoserv.client.account.User.Name, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public int addBackupHost(
 		String hostname,
@@ -529,8 +534,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the server or parent business
 	 *
 	 * @see  Account
-	 * @see  #checkAccounting
-	 * @see  Server#addAccount
+	 * @see  Host#addAccount
 	 */
 	public void addAccount(
 		Account.Name accounting,
@@ -563,7 +567,7 @@ final public class SimpleAOClient {
 	 *
 	 * @see  Administrator
 	 * @see  Account
-	 * @see  Username#addAdministrator
+	 * @see  User#addAdministrator
 	 */
 	public void addAdministrator(
 		com.aoindustries.aoserv.client.account.User.Name username,
@@ -661,7 +665,7 @@ final public class SimpleAOClient {
 	 * Grants an {@link Account} access to a {@link Host}.
 	 *
 	 * @param  accounting  the accounting code of the business
-	 * @param  server  the hostname of the server
+	 * @param  host  the hostname of the server
 	 *
 	 * @return  the pkey of the new {@link AccountHost}
 	 *
@@ -671,7 +675,6 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the business or server
 	 *
 	 * @see  AccountHost
-	 * @see  #checkAccounting
 	 * @see  Account#addAccountHost
 	 */
 	public int addAccountHost(
@@ -717,7 +720,7 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Adds a new <code>DNSRecord</code> to a <code>DNSZone</code>.  Each <code>DNSZone</code>
+	 * Adds a new <code>DNSRecord</code> to a {@link Zone}.  Each {@link Zone}
 	 * can have multiple DNS records in it, each being a <code>DNSRecord</code>.
 	 *
 	 * @param  zone      the zone, in the <code>name.<i>topleveldomain</i>.</code> format.  Please note the
@@ -725,7 +728,7 @@ final public class SimpleAOClient {
 	 * @param  domain    the part of the name before the zone or <code>@</code> for the zone itself.  For example,
 	 *                   the domain for the hostname of <code>www.aoindustries.com.</code> in the
 	 *                   <code>aoindustries.com.</code> zone is <code>www</code>.
-	 * @param  type      the <code>DNSType</code>
+	 * @param  type      the <code>RecordType</code>
 	 * @param  priority  if a <code>MX</code> or <code>SRV</code> type, then the value is the priority of the record, otherwise
 	 *                   it is <code>DNSRecord.NO_PRIORITY</code>.
 	 * @param  weight    if a <code>SRV</code> type, then the value is the weight of the record, otherwise
@@ -744,13 +747,13 @@ final public class SimpleAOClient {
 	 *                                       the weight is not provided for a <code>SRV</code> record,
 	 *                                       if the port is provided for a non-<code>SRV</code> record,
 	 *                                       the port is not provided for a <code>SRV</code> record,
-	 *                                       the destination is not the correct format for the <code>DNSType</code>,
-	 *                                       or  unable to find the <code>DNSZone</code> or <code>DNSType</code>
+	 *                                       the destination is not the correct format for the <code>RecordType</code>,
+	 *                                       or  unable to find the {@link Zone} or <code>RecordType</code>
 	 *
-	 * @see  DNSZone#addDNSRecord
+	 * @see  Zone#addDNSRecord
 	 * @see  Record
-	 * @see  #addDNSZone
-	 * @see  DNSType#checkDestination
+	 * @see  #addDNSZone(com.aoindustries.aoserv.client.account.Account.Name, java.lang.String, com.aoindustries.net.InetAddress, int)
+	 * @see  RecordType#checkDestination
 	 */
 	public int addDNSRecord(
 		String zone,
@@ -762,11 +765,11 @@ final public class SimpleAOClient {
 		String destination,
 		int ttl
 	) throws IllegalArgumentException, IOException, SQLException {
-		Zone nz=getDNSZone(zone);
+		Zone nz=getZone(zone);
 
 		// Must be a valid type
 		RecordType nt=connector.getDns().getRecordType().get(type);
-		if(nt==null) throw new IllegalArgumentException("Unable to find DNSType: "+type);
+		if(nt==null) throw new IllegalArgumentException("Unable to find RecordType: "+type);
 
 		// Must have appropriate priority
 		if(nt.hasPriority()) {
@@ -807,12 +810,12 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Adds a new <code>DNSZone</code> to a system.  A <code>DNSZone</code> is one unique domain in
+	 * Adds a new {@link Zone} to a system.  A {@link Zone} is one unique domain in
 	 * the name servers.  It is always one host up from a top level domain.  In <code><i>mydomain</i>.com.</code>
-	 * <code>com</code> is the top level domain, which are defined by <code>DNSTLD</code>s.
+	 * <code>com</code> is the top level domain, which are defined by {@link TopLevelDomain}s.
 	 *
 	 * @param  packageName  the name of the <code>Package</code> that owns this domain
-	 * @param  zone  the complete domain of the new <code>DNSZone</code>
+	 * @param  zone  the complete domain of the new {@link Zone}
 	 * @param  ip  the IP address that will be used for the default <code>DNSRecord</code>s
 	 *
 	 * @exception  IOException  if unable to contact the server
@@ -825,7 +828,7 @@ final public class SimpleAOClient {
 	 * @see  Zone
 	 * @see  #addDNSRecord
 	 * @see  IpAddress
-	 * @see  DNSTLD
+	 * @see  TopLevelDomain
 	 */
 	public void addDNSZone(
 		Account.Name packageName,
@@ -852,8 +855,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable find the <code>EmailDomain</code>
 	 *
-	 * @see  #checkEmailForwarding
-	 * @see  EmailAddress#addEmailForwarding
+	 * @see  Address#addEmailForwarding(com.aoindustries.net.Email)
 	 * @see  Domain
 	 */
 	public int addEmailForwarding(
@@ -1746,8 +1748,7 @@ final public class SimpleAOClient {
 	 *					the <code>Username</code>, <code>LinuxAccountType</code>,
 	 *					or <code>Shell</code>
 	 *
-	 * @see  Username#addLinuxAccount
-	 * @see  #checkLinuxAccountName
+	 * @see  User#addLinuxAccount
 	 * @see  #addUsername
 	 * @see  #addLinuxServerAccount
 	 * @see  User
@@ -1988,8 +1989,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if the database name is not valid or unable to
 	 *					find the {@link Server} or <code>Package</code>
 	 *
-	 * @see  MySQLServer#addMySQLDatabase
-	 * @see  #checkMySQLDatabaseName
+	 * @see  com.aoindustries.aoserv.client.mysql.Server#addMySQLDatabase
 	 * @see  #addMySQLUser
 	 * @see  #addMySQLServerUser
 	 * @see  #addMySQLDBUser
@@ -2103,7 +2103,7 @@ final public class SimpleAOClient {
 	 *					{@link Server}
 	 *
 	 * @see  MySQLUser#addMySQLServerUser
-	 * @see  MySQLServerUser#ANY_LOCAL_HOST
+	 * @see  com.aoindustries.aoserv.client.mysql.UserServer#ANY_LOCAL_HOST
 	 * @see  #addMySQLUser
 	 * @see  #addMySQLDBUser
 	 */
@@ -2132,7 +2132,7 @@ final public class SimpleAOClient {
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
 	 *
-	 * @see  Username#addMySQLUser
+	 * @see  User#addMySQLUser
 	 * @see  #addUsername
 	 * @see  #addMySQLServerUser
 	 * @see  #addMySQLDatabase
@@ -2152,7 +2152,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if unable to find a referenced object.
 	 *
-	 * @see  Server#addNetBind
+	 * @see  Host#addNetBind
 	 */
 	public int addNetBind(
 		String server,
@@ -2250,7 +2250,6 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if unable to find
 	 *
-	 * @see  #checkPackageName
 	 * @see  #addAccount
 	 * @see  PackageDefinition
 	 */
@@ -2284,8 +2283,7 @@ final public class SimpleAOClient {
 	 *					find the {@link Server}, <code>PostgresUser</code>,
 	 *					<code>PostgresServerUser</code>, or <code>PostgresEncoding</code>
 	 *
-	 * @see  PostgresServer#addPostgresDatabase
-	 * @see  #checkPostgresDatabaseName
+	 * @see  com.aoindustries.aoserv.client.postgresql.Server#addPostgresDatabase
 	 * @see  #addPostgresUser
 	 * @see  #addPostgresServerUser
 	 * @see  #removePostgresDatabase
@@ -2355,7 +2353,7 @@ final public class SimpleAOClient {
 	 *					integrity violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
 	 *
-	 * @see  Username#addPostgresUser
+	 * @see  User#addPostgresUser
 	 * @see  #addUsername
 	 * @see  #addPostgresServerUser
 	 * @see  #addPostgresDatabase
@@ -2735,7 +2733,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if the <code>Username</code> is not found
 	 *
-	 * @see  Username#arePasswordsSet
+	 * @see  User#arePasswordsSet
 	 * @see  #setUsernamePassword
 	 * @see  User
 	 * @see  PasswordProtected
@@ -2932,7 +2930,7 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Checks the format of a <code>DNSZone</code>.
+	 * Checks the format of a {@link Zone}.
 	 *
 	 * @param  zone  the new DNS zone name, some examples include <code>aoindustries.com.</code>
 	 *					and <code>netspade.co.uk.</code>
@@ -2942,7 +2940,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if the format is not valid
 	 *
-	 * @see  DNSZoneTable#checkDNSZone
+	 * @see  ZoneTable#checkDNSZone(java.lang.String)
 	 * @see  Zone
 	 */
 	public void checkDNSZone(
@@ -2959,7 +2957,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IllegalArgumentException  if the name is not in a valid format
 	 *
-	 * @see  EmailList#isValidRegularPath
+	 * @see  com.aoindustries.aoserv.client.email.List#isValidRegularPath
 	 */
 	public void checkEmailListPath(
 		String aoServer,
@@ -3112,7 +3110,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
 	 *
 	 * @see  #setUsernamePassword
-	 * @see  Username#checkPassword
+	 * @see  User#checkPassword
 	 */
 	public List<PasswordChecker.Result> checkUsernamePassword(
 		com.aoindustries.aoserv.client.account.User.Name username,
@@ -4236,8 +4234,8 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>MySQLDatabase</code>
 	 *
-	 * @see  MySQLDatabase#dump
-	 * @see  Database
+	 * @see  com.aoindustries.aoserv.client.mysql.Database#dump
+	 * @see  com.aoindustries.aoserv.client.mysql.Database
 	 */
 	public void dumpMySQLDatabase(
 		com.aoindustries.aoserv.client.mysql.Database.Name name,
@@ -4262,8 +4260,8 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>MySQLDatabase</code>
 	 *
-	 * @see  MySQLDatabase#dump
-	 * @see  Database
+	 * @see  com.aoindustries.aoserv.client.mysql.Database#dump
+	 * @see  com.aoindustries.aoserv.client.mysql.Database
 	 */
 	public void dumpMySQLDatabase(
 		com.aoindustries.aoserv.client.mysql.Database.Name name,
@@ -4289,8 +4287,8 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>PostgresDatabase</code>
 	 *
-	 * @see  PostgresDatabase#dump
-	 * @see  Database
+	 * @see  com.aoindustries.aoserv.client.postgresql.Database#dump
+	 * @see  com.aoindustries.aoserv.client.postgresql.Database
 	 */
 	public void dumpPostgresDatabase(
 		com.aoindustries.aoserv.client.postgresql.Database.Name name,
@@ -4316,8 +4314,8 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>PostgresDatabase</code>
 	 *
-	 * @see  PostgresDatabase#dump
-	 * @see  Database
+	 * @see  com.aoindustries.aoserv.client.postgresql.Database#dump
+	 * @see  com.aoindustries.aoserv.client.postgresql.Database
 	 */
 	public void dumpPostgresDatabase(
 		com.aoindustries.aoserv.client.postgresql.Database.Name name,
@@ -4361,9 +4359,9 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 *
-	 * @see  MySQLDatabaseTable#generateMySQLDatabaseName
+	 * @see  com.aoindustries.aoserv.client.mysql.DatabaseTable#generateMySQLDatabaseName
 	 * @see  #addMySQLDatabase
-	 * @see  Database
+	 * @see  com.aoindustries.aoserv.client.mysql.Database
 	 */
 	public com.aoindustries.aoserv.client.mysql.Database.Name generateMySQLDatabaseName(
 		String template_base,
@@ -4417,9 +4415,9 @@ final public class SimpleAOClient {
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 *
-	 * @see  PostgresDatabaseTable#generatePostgresDatabaseName
+	 * @see  com.aoindustries.aoserv.client.postgresql.DatabaseTable#generatePostgresDatabaseName
 	 * @see  #addPostgresDatabase
-	 * @see  Database
+	 * @see  com.aoindustries.aoserv.client.postgresql.Database
 	 */
 	public com.aoindustries.aoserv.client.postgresql.Database.Name generatePostgresDatabaseName(
 		String template_base,
@@ -4534,7 +4532,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if unable to find the <code>EmailList</code>
 	 *
-	 * @see  EmailList#getAddressList
+	 * @see  com.aoindustries.aoserv.client.email.List#getAddressList
 	 * @see  #addEmailList
 	 * @see  #setEmailListAddressList
 	 * @see  List
@@ -4906,7 +4904,6 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database
 	 *
 	 * @see  AccountTable#isAccountingAvailable
-	 * @see  #checkAccounting
 	 * @see  #addAccount
 	 * @see  #generateAccountingCode
 	 * @see  Account
@@ -4941,16 +4938,16 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Determines if a <code>DNSZone</code> is available.
+	 * Determines if a {@link Zone} is available.
 	 *
 	 * @param  zone  the zone in <code>domain.tld.</code> format
 	 *
-	 * @return  <code>true</code> if the <code>DNSZone</code> is available
+	 * @return  <code>true</code> if the {@link Zone} is available
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database
 	 *
-	 * @see  DNSZoneTable#isDNSZoneAvailable
+	 * @see  ZoneTable#isDNSZoneAvailable(java.lang.String)
 	 * @see  #addDNSZone
 	 * @see  Zone
 	 */
@@ -5062,8 +5059,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if the database name is invalid or unable
 	 *					to find the {@link Server}
 	 *
-	 * @see  MySQLServer#isMySQLDatabaseNameAvailable
-	 * @see  #checkMySQLDatabaseName
+	 * @see  com.aoindustries.aoserv.client.mysql.Server#isMySQLDatabaseNameAvailable
 	 */
 	public boolean isMySQLDatabaseNameAvailable(
 		com.aoindustries.aoserv.client.mysql.Database.Name name,
@@ -5088,7 +5084,6 @@ final public class SimpleAOClient {
 	 *					to find the {@link Server}
 	 *
 	 * @see  Server#isMySQLServerNameAvailable
-	 * @see  #checkMySQLServerName
 	 */
 	public boolean isMySQLServerNameAvailable(
 		com.aoindustries.aoserv.client.mysql.Server.Name name,
@@ -5109,7 +5104,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if the <code>MySQLServerUser</code> is not found
 	 *
-	 * @see  MySQLServerUser#arePasswordsSet
+	 * @see  com.aoindustries.aoserv.client.mysql.UserServer#arePasswordsSet
 	 * @see  #setMySQLServerUserPassword
 	 * @see  UserServer
 	 */
@@ -5157,8 +5152,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if the database name is invalid or unable
 	 *					to find the {@link Server}
 	 *
-	 * @see  PostgresServer#isPostgresDatabaseNameAvailable
-	 * @see  #checkPostgresDatabaseName
+	 * @see  com.aoindustries.aoserv.client.postgresql.Server#isPostgresDatabaseNameAvailable
 	 */
 	public boolean isPostgresDatabaseNameAvailable(
 		com.aoindustries.aoserv.client.postgresql.Database.Name name,
@@ -5183,7 +5177,6 @@ final public class SimpleAOClient {
 	 *					to find the {@link Server}
 	 *
 	 * @see  Server#isPostgresServerNameAvailable
-	 * @see  #checkPostgresServerName
 	 */
 	public boolean isPostgresServerNameAvailable(
 		com.aoindustries.aoserv.client.postgresql.Server.Name name,
@@ -5205,7 +5198,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if unable to access the database
 	 * @exception  IllegalArgumentException  if the <code>PostgresServerUser</code> is not found
 	 *
-	 * @see  PostgresServerUser#arePasswordsSet
+	 * @see  com.aoindustries.aoserv.client.postgresql.UserServer#arePasswordsSet
 	 * @see  #setPostgresServerUserPassword
 	 * @see  UserServer
 	 */
@@ -5391,24 +5384,24 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Prints the contents of a <code>DNSZone</code> as used by the <code>named</code> process.
+	 * Prints the contents of a {@link Zone} as used by the <code>named</code> process.
 	 *
-	 * @param  zone  the name of the <code>DNSZone</code>
+	 * @param  zone  the name of the {@link Zone}
 	 * @param  out  the <code>PrintWriter</code> to write to
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>DNSZone</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Zone}
 	 *
-	 * @see  DNSZone#printZoneFile
+	 * @see  Zone#printZoneFile(java.io.PrintWriter)
 	 * @see  #addDNSZone
 	 */
 	public void printZoneFile(
 		String zone,
 		PrintWriter out
 	) throws IllegalArgumentException, SQLException, IOException {
-		getDNSZone(zone).printZoneFile(out);
+		getZone(zone).printZoneFile(out);
 	}
 
 	/**
@@ -5590,7 +5583,7 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Removes one record from a <code>DNSZone</code>.
+	 * Removes one record from a {@link Zone}.
 	 *
 	 * @param  pkey  the <code>pkey</code> of the <code>DNSRecord</code> to remove
 	 *
@@ -5617,11 +5610,11 @@ final public class SimpleAOClient {
 		String type,
 		String destination
 	) throws IllegalArgumentException, IOException, SQLException {
-		Zone nz=getDNSZone(zone);
+		Zone nz=getZone(zone);
 
 		// Must be a valid type
 		RecordType nt=connector.getDns().getRecordType().get(type);
-		if(nt==null) throw new IllegalArgumentException("Unable to find DNSType: "+type);
+		if(nt==null) throw new IllegalArgumentException("Unable to find RecordType: "+type);
 		// Must have a valid destination type
 		nt.checkDestination(destination);
 
@@ -5638,36 +5631,36 @@ final public class SimpleAOClient {
 	}
 
 	/**
-	 * Completely removes a <code>DNSZone</code> from the servers.
+	 * Completely removes a {@link Zone} from the servers.
 	 *
-	 * @param  zone  the name of the <code>DNSZone</code> to remove
+	 * @param  zone  the name of the {@link Zone} to remove
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>DNSZone</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Zone}
 	 *
-	 * @see  DNSZone#remove
+	 * @see  Zone#remove()
 	 * @see  #addDNSZone
 	 * @see  Zone
 	 */
 	public void removeDNSZone(
 		String zone
 	) throws IllegalArgumentException, IOException, SQLException {
-		getDNSZone(zone).remove();
+		getZone(zone).remove();
 	}
 
 	/**
-	 * Completely removes a <code>DNSZone</code> from the servers.
+	 * Completely removes a {@link Zone} from the servers.
 	 *
-	 * @param  zone  the name of the <code>DNSZone</code> to remove
+	 * @param  zone  the name of the {@link Zone} to remove
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity
 	 *					violation occurs
-	 * @exception  IllegalArgumentException  if unable to find the <code>DNSZone</code>
+	 * @exception  IllegalArgumentException  if unable to find the {@link Zone}
 	 *
-	 * @see  DNSZone#remove
+	 * @see  Zone#remove()
 	 * @see  #addDNSZone
 	 * @see  Zone
 	 */
@@ -5675,7 +5668,7 @@ final public class SimpleAOClient {
 		String zone,
 		int ttl
 	) throws IllegalArgumentException, IOException, SQLException {
-		getDNSZone(zone).setTTL(ttl);
+		getZone(zone).setTTL(ttl);
 	}
 
 	/**
@@ -5719,7 +5712,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the <code>EmailDomain</code>,
 	 *					<code>EmailAddress</code>, or <code>EmailForwarding</code>
 	 *
-	 * @see  EmailForwarding#remove
+	 * @see  Forwarding#remove
 	 * @see  #addEmailForwarding
 	 */
 	public void removeEmailForwarding(
@@ -5747,7 +5740,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>EmailList</code>
 	 *
-	 * @see  EmailList#remove
+	 * @see  com.aoindustries.aoserv.client.email.List#remove
 	 * @see  #addEmailList
 	 */
 	public void removeEmailList(
@@ -5800,7 +5793,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>EmailPipe</code>
 	 *
-	 * @see  EmailPipe#remove
+	 * @see  Pipe#remove
 	 * @see  #addEmailPipe
 	 */
 	public void removeEmailPipe(
@@ -6202,7 +6195,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>MySQLServerUser</code>
 	 *
-	 * @see  MySQLServerUser#remove
+	 * @see  com.aoindustries.aoserv.client.mysql.UserServer#remove
 	 * @see  #addMySQLServerUser
 	 */
 	public void removeMySQLServerUser(
@@ -6293,7 +6286,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Server} or
 	 *					<code>PostgresServerUser</code>
 	 *
-	 * @see  PostgresServerUser#remove
+	 * @see  com.aoindustries.aoserv.client.postgresql.UserServer#remove
 	 */
 	public void removePostgresServerUser(
 		com.aoindustries.aoserv.client.postgresql.User.Name username,
@@ -6429,7 +6422,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
 	 *
-	 * @see  Username#remove
+	 * @see  User#remove
 	 * @see  #addUsername
 	 */
 	public void removeUsername(
@@ -6477,7 +6470,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if not able to access the database
 	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  MySQLServer#restartMySQL
+	 * @see  com.aoindustries.aoserv.client.mysql.Server#restartMySQL
 	 */
 	public void restartMySQL(com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer, String aoServer) throws IllegalArgumentException, IOException, SQLException {
 		getMySQLServer(aoServer, mysqlServer).restartMySQL();
@@ -6493,7 +6486,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if not able to access the database
 	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  PostgresServer#restartPostgreSQL
+	 * @see  com.aoindustries.aoserv.client.postgresql.Server#restartPostgreSQL
 	 */
 	public void restartPostgreSQL(com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer, String aoServer) throws IllegalArgumentException, IOException, SQLException {
 		getPostgresServer(aoServer, postgresServer).restartPostgreSQL();
@@ -6588,7 +6581,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the {@link Account} or
 	 *                                  the requested accounting code is not valid
 	 *
-	 * @see  Account#setAccounting
+	 * @see  Account#setName(com.aoindustries.aoserv.client.account.Account.Name)
 	 */
 	public void setAccountAccounting(
 		Account.Name oldAccounting,
@@ -6762,7 +6755,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>EmailList</code>
 	 *
-	 * @see  EmailList#setAddressList
+	 * @see  com.aoindustries.aoserv.client.email.List#setAddressList
 	 * @see  #getEmailListAddressList
 	 * @see  #addEmailList
 	 */
@@ -6919,7 +6912,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @throws IllegalArgumentException if unable to find the {@link Server}, {@link SharedTomcat}, or {@link Version}.
+	 * @throws IllegalArgumentException if unable to find the {@link Server}, {@link SharedTomcat}, or {@link com.aoindustries.aoserv.client.web.tomcat.Version}.
 	 *
 	 * @see  HttpdSharedTomcat#setHttpdTomcatVersion(com.aoindustries.aoserv.client.HttpdTomcatVersion)
 	 */
@@ -7439,7 +7432,7 @@ final public class SimpleAOClient {
 	 *
 	 * @exception  IOException  if unable to contact the server
 	 * @exception  SQLException  if unable to access the database or a data integrity violation occurs
-	 * @throws IllegalArgumentException if unable to find the {@link Server}, {@link Site}, {@link PrivateTomcatSite}, or {@link Version}.
+	 * @throws IllegalArgumentException if unable to find the {@link Server}, {@link Site}, {@link PrivateTomcatSite}, or {@link com.aoindustries.aoserv.client.web.tomcat.Version}.
 	 *
 	 * @see  HttpdTomcatStdSite#setHttpdTomcatVersion(com.aoindustries.aoserv.client.HttpdTomcatVersion)
 	 */
@@ -7900,7 +7893,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the <code>MySQLUser</code>,
 	 *					{@link Server}, or <code>MySQLServerUser</code>
 	 *
-	 * @see  MySQLServerUser#setPassword
+	 * @see  com.aoindustries.aoserv.client.mysql.UserServer#setPassword
 	 */
 	public void setMySQLServerUserPassword(
 		com.aoindustries.aoserv.client.mysql.User.Name username,
@@ -7984,7 +7977,7 @@ final public class SimpleAOClient {
 	 * @exception  IllegalArgumentException  if unable to find the <code>PostgresUser</code>,
 	 *					{@link Server}, or <code>PostgresServerUser</code>
 	 *
-	 * @see  PostgresServerUser#setPassword
+	 * @see  com.aoindustries.aoserv.client.postgresql.UserServer#setPassword
 	 */
 	public void setPostgresServerUserPassword(
 		com.aoindustries.aoserv.client.postgresql.User.Name username,
@@ -8069,7 +8062,7 @@ final public class SimpleAOClient {
 	 *					violation occurs
 	 * @exception  IllegalArgumentException  if unable to find the <code>Username</code>
 	 *
-	 * @see  Username#setPassword
+	 * @see  User#setPassword
 	 * @see  #checkUsernamePassword
 	 * @see  #addUsername
 	 */
@@ -8159,7 +8152,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if not able to access the database
 	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  MySQLServer#startMySQL
+	 * @see  com.aoindustries.aoserv.client.mysql.Server#startMySQL
 	 */
 	public void startMySQL(com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer, String aoServer) throws IllegalArgumentException, IOException, SQLException {
 		getMySQLServer(aoServer, mysqlServer).startMySQL();
@@ -8175,7 +8168,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if not able to access the database
 	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  PostgresServer#startPostgreSQL
+	 * @see  com.aoindustries.aoserv.client.postgresql.Server#startPostgreSQL
 	 */
 	public void startPostgreSQL(com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer, String aoServer) throws IllegalArgumentException, IOException, SQLException {
 		getPostgresServer(aoServer, postgresServer).startPostgreSQL();
@@ -8274,7 +8267,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if not able to access the database
 	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  MySQLServer#stopMySQL
+	 * @see  com.aoindustries.aoserv.client.mysql.Server#stopMySQL
 	 */
 	public void stopMySQL(com.aoindustries.aoserv.client.mysql.Server.Name mysqlServer, String aoServer) throws IllegalArgumentException, IOException, SQLException {
 		getMySQLServer(aoServer, mysqlServer).stopMySQL();
@@ -8290,7 +8283,7 @@ final public class SimpleAOClient {
 	 * @exception  SQLException  if not able to access the database
 	 * @exception  IllegalArgumentException  if unable to find the {@link Host} or {@link Server}
 	 *
-	 * @see  PostgresServer#stopPostgreSQL
+	 * @see  com.aoindustries.aoserv.client.postgresql.Server#stopPostgreSQL
 	 */
 	public void stopPostgreSQL(com.aoindustries.aoserv.client.postgresql.Server.Name postgresServer, String aoServer) throws IllegalArgumentException, IOException, SQLException {
 		getPostgresServer(aoServer, postgresServer).stopPostgreSQL();

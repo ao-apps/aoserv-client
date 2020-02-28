@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -79,8 +79,10 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 
 		/**
 		 * The maximum length of a MySQL username.
-		 *
-		 * @implNote  32 characters as of <a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</a>
+		 * <p>
+		 * <b>Implementation Note:</b><br />
+		 * 32 characters as of <a href="https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html">MySQL 5.7.8</a>
+		 * </p>
 		 */
 		public static final int MAX_LENGTH = 32;
 

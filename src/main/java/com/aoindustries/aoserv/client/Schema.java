@@ -42,8 +42,10 @@ abstract public class Schema implements SchemaParent {
 
 	/**
 	 * Gets an unmodifiable list of all of the direct sub-schemas of this schema.
-	 *
-	 * @implSpec  This default implementation returns {@link Collections#emptyList()}.
+	 * <p>
+	 * <b>Implementation Note:</b><br />
+	 * This default implementation returns {@link Collections#emptyList()}.
+	 * </p>
 	 */
 	@Override
 	public List<? extends Schema> getSchemas() {
