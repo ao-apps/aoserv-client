@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,11 +37,11 @@ import com.aoindustries.aoserv.client.password.PasswordProtected;
 import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.dto.DtoFactory;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.io.FastExternalizable;
 import com.aoindustries.io.FastObjectInput;
 import com.aoindustries.io.FastObjectOutput;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.Email;
 import com.aoindustries.util.Internable;
 import com.aoindustries.validation.InvalidResult;
@@ -197,7 +197,7 @@ final public class User extends CachedObjectUserNameKey<User> implements Passwor
 		@Override
 		final public boolean equals(Object O) {
 			return
-				O!=null
+				O!=null // TODO: These nulls checks are unnecessary given instanceof that follows
 				&& O instanceof Name
 				&& name.equals(((Name)O).name)
 			;
