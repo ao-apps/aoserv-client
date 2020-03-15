@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,7 @@ import com.aoindustries.net.Email;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.InternUtils;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.Array;
@@ -153,11 +153,11 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 			case 14: return created;
 			case 15: return billingContact;
 			// TODO: Support array types
-			case 16: return StringUtility.join(billingEmail, ", ");
+			case 16: return Strings.join(billingEmail, ", ");
 			case 17: return billingEmailFormat;
 			case 18: return technicalContact;
 			// TODO: Support array types
-			case 19: return StringUtility.join(technicalEmail, ", ");
+			case 19: return Strings.join(technicalEmail, ", ");
 			case 20: return technicalEmailFormat;
 			default: throw new IllegalArgumentException("Invalid index: " + i);
 		}
@@ -219,7 +219,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 	}
 
 	public static Set<Email> splitEmails(String value) throws ValidationException {
-		List<String> split = StringUtility.splitStringCommaSpace(value);
+		List<String> split = Strings.splitStringCommaSpace(value);
 		Set<Email> emails = new LinkedHashSet<>(split.size()*4/3+1);
 		for(String s : split) {
 			s = s.trim();
@@ -380,7 +380,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		}
 		out.writeUTF(billingContact);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_22) < 0) {
-			out.writeUTF(StringUtility.join(billingEmail, ", "));
+			out.writeUTF(Strings.join(billingEmail, ", "));
 		} else {
 			int size = billingEmail.size();
 			out.writeCompressedInt(size);
@@ -391,7 +391,7 @@ final public class Profile extends CachedObjectIntegerKey<Profile> {
 		}
 		out.writeUTF(technicalContact);
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_22) < 0) {
-			out.writeUTF(StringUtility.join(technicalEmail, ", "));
+			out.writeUTF(Strings.join(technicalEmail, ", "));
 		} else {
 			int size = technicalEmail.size();
 			out.writeCompressedInt(size);

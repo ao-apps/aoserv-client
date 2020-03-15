@@ -25,7 +25,7 @@ package com.aoindustries.aoserv.client.password;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.security.Identifier;
 import com.aoindustries.security.SmallIdentifier;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import java.io.IOException;
 import java.security.SecureRandom;
 
@@ -202,23 +202,23 @@ public class PasswordGenerator {
 					// post-processing checks
 					if (currWord.length()>0) {
 						String ppWord = currWord.toString();
-						ppWord = StringUtility.replace(ppWord, "uu", "ui");
-						ppWord = StringUtility.replace(ppWord, "iw", "u");
-						ppWord = StringUtility.replace(ppWord, "yy", "y");
-						ppWord = StringUtility.replace(ppWord, "lal", secureRandom.nextBoolean()?"ral":"lar");
-						ppWord = StringUtility.replace(ppWord, "rar", "ral");
-						ppWord = StringUtility.replace(ppWord, "lel", secureRandom.nextBoolean()?"rel":"ler");
-						ppWord = StringUtility.replace(ppWord, "rer", "rel");
-						ppWord = StringUtility.replace(ppWord, "lol", secureRandom.nextBoolean()?"rol":"lor");
-						ppWord = StringUtility.replace(ppWord, "ror", "rol");
-						ppWord = StringUtility.replace(ppWord, "lul", secureRandom.nextBoolean()?"rul":"lur");
-						ppWord = StringUtility.replace(ppWord, "rur", "rul");
-						ppWord = StringUtility.replace(ppWord, "lil", secureRandom.nextBoolean()?"ril":"lir");
-						ppWord = StringUtility.replace(ppWord, "rir", "ril");
-						ppWord = StringUtility.replace(ppWord, "lyl", secureRandom.nextBoolean()?"ryl":"lyr");
-						ppWord = StringUtility.replace(ppWord, "ryr", "ryl");
-						if (ppWord.indexOf("rve")<ppWord.length()-3) ppWord = StringUtility.replace(ppWord, "rve", "rv");
-						if (ppWord.indexOf("lve")<ppWord.length()-3) ppWord = StringUtility.replace(ppWord, "lve", "lv");
+						ppWord = Strings.replace(ppWord, "uu", "ui");
+						ppWord = Strings.replace(ppWord, "iw", "u");
+						ppWord = Strings.replace(ppWord, "yy", "y");
+						ppWord = Strings.replace(ppWord, "lal", secureRandom.nextBoolean()?"ral":"lar");
+						ppWord = Strings.replace(ppWord, "rar", "ral");
+						ppWord = Strings.replace(ppWord, "lel", secureRandom.nextBoolean()?"rel":"ler");
+						ppWord = Strings.replace(ppWord, "rer", "rel");
+						ppWord = Strings.replace(ppWord, "lol", secureRandom.nextBoolean()?"rol":"lor");
+						ppWord = Strings.replace(ppWord, "ror", "rol");
+						ppWord = Strings.replace(ppWord, "lul", secureRandom.nextBoolean()?"rul":"lur");
+						ppWord = Strings.replace(ppWord, "rur", "rul");
+						ppWord = Strings.replace(ppWord, "lil", secureRandom.nextBoolean()?"ril":"lir");
+						ppWord = Strings.replace(ppWord, "rir", "ril");
+						ppWord = Strings.replace(ppWord, "lyl", secureRandom.nextBoolean()?"ryl":"lyr");
+						ppWord = Strings.replace(ppWord, "ryr", "ryl");
+						if (ppWord.indexOf("rve")<ppWord.length()-3) ppWord = Strings.replace(ppWord, "rve", "rv");
+						if (ppWord.indexOf("lve")<ppWord.length()-3) ppWord = Strings.replace(ppWord, "lve", "lv");
 
 						currWord.setLength(0);
 						currWord.append(ppWord);

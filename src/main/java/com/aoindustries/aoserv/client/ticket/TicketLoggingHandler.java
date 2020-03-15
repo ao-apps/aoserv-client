@@ -29,7 +29,7 @@ import com.aoindustries.aoserv.client.account.User;
 import com.aoindustries.aoserv.client.reseller.Brand;
 import com.aoindustries.aoserv.client.reseller.Category;
 import com.aoindustries.exception.ConfigurationException;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.util.logging.QueuedHandler;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -144,9 +144,9 @@ public class TicketLoggingHandler extends QueuedHandler {
 		synchronized(handlers) {
 			handlers.add(new WeakReference<>(this));
 		}
-		this.summaryPrefix = StringUtility.nullIfEmpty(summaryPrefix);
+		this.summaryPrefix = Strings.nullIfEmpty(summaryPrefix);
 		this.connector = connector;
-		this.categoryDotPath = StringUtility.nullIfEmpty(categoryDotPath);
+		this.categoryDotPath = Strings.nullIfEmpty(categoryDotPath);
 		debug();
 	}
 
@@ -171,25 +171,25 @@ public class TicketLoggingHandler extends QueuedHandler {
 			LogManager manager = LogManager.getLogManager();
 			String cname = getClass().getName();
 
-			this.summaryPrefix = StringUtility.trimNullIfEmpty(
+			this.summaryPrefix = Strings.trimNullIfEmpty(
 				manager.getProperty(cname + ".summaryPrefix")
 			);
 
 			User.Name username = User.Name.valueOf(
-				StringUtility.trimNullIfEmpty(
+				Strings.trimNullIfEmpty(
 					manager.getProperty(cname + ".username")
 				)
 			);
 			if(username == null) username = AOServClientConfiguration.getUsername();
 
-			String password = StringUtility.trimNullIfEmpty(
+			String password = Strings.trimNullIfEmpty(
 				manager.getProperty(cname + ".password")
 			);
 			if(password == null) password = AOServClientConfiguration.getPassword();
 
 			this.connector = AOServConnector.getConnector(username, password);
 
-			this.categoryDotPath = StringUtility.trimNullIfEmpty(
+			this.categoryDotPath = Strings.trimNullIfEmpty(
 				manager.getProperty(cname + ".categoryDotPath")
 			);
 		} catch(ValidationException e) {

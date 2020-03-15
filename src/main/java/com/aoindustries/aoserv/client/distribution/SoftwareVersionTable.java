@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -26,7 +26,7 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.GlobalTableIntegerKey;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.sql.UnmodifiableTimestamp;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -133,7 +133,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		// Prepare names
 		String[] nameWords = null;
 		if (name != null) {
-			nameWords=StringUtility.splitString(name);
+			nameWords=Strings.splitString(name);
 			int len = nameWords.length;
 			for (int c = 0; c < len; c++) nameWords[c]=nameWords[c].toLowerCase();
 		}
@@ -141,7 +141,7 @@ final public class SoftwareVersionTable extends GlobalTableIntegerKey<SoftwareVe
 		// Version
 		String[] versionWords = null;
 		if (version != null) {
-			versionWords = StringUtility.splitString(version);
+			versionWords = Strings.splitString(version);
 			int len = versionWords.length;
 			for (int c = 0; c < len; c++) versionWords[c]=versionWords[c].toLowerCase();
 		}

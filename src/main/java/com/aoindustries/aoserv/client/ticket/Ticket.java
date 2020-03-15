@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,7 +40,7 @@ import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.InternUtils;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -127,7 +127,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 			case 15: return status;
 			case 16: return status_timeout;
 			// TODO: Support array types
-			case 17: return StringUtility.join(contact_emails, ", ");
+			case 17: return Strings.join(contact_emails, ", ");
 			case 18: return contact_phone_numbers;
 			case 19: return getInternalNotes();
 			default: throw new IllegalArgumentException("Invalid index: " + i);
@@ -256,7 +256,7 @@ final public class Ticket extends CachedObjectIntegerKey<Ticket> {
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0 && protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_43)<=0) out.writeNullUTF(null); // assigned_to
 		if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_0_A_125)>=0) {
 			if(protocolVersion.compareTo(AoservProtocol.Version.VERSION_1_81_22) < 0) {
-				out.writeUTF(StringUtility.join(contact_emails, ", "));
+				out.writeUTF(Strings.join(contact_emails, ", "));
 			} else {
 				int size = contact_emails.size();
 				out.writeCompressedInt(size);

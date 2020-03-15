@@ -39,7 +39,7 @@ import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.MinimalList;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.util.i18n.CurrencyComparator;
 import com.aoindustries.util.i18n.Money;
 import com.aoindustries.util.i18n.Monies;
@@ -414,7 +414,7 @@ final public class TransactionTable extends CachedTableIntegerKey<Transaction> {
 
 	private static boolean matchesWords(String value, String words) {
 		String lower = value == null ? null : value.toLowerCase(Locale.ROOT);
-		for(String word : StringUtility.splitString(words)) {
+		for(String word : Strings.splitString(words)) {
 			if(lower == null || !lower.contains(word.toLowerCase(Locale.ROOT))) {
 				return false;
 			}

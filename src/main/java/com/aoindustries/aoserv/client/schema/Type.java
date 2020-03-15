@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -46,7 +46,7 @@ import com.aoindustries.security.SmallIdentifier;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -906,7 +906,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 				case PHONE:
 				case STRING:
 				case URL:
-					return StringUtility.compareToIgnoreCaseCarefulEquals((String)value1, (String)value2);
+					return Strings.compareToIgnoreCaseCarefulEquals((String)value1, (String)value2);
 				case USERNAME:
 					return ((com.aoindustries.aoserv.client.account.User.Name)value1).compareTo((com.aoindustries.aoserv.client.account.User.Name)value2);
 				case PATH:
@@ -1155,7 +1155,7 @@ final public class Type extends GlobalObjectIntegerKey<Type> {
 			case FLOAT: return value.toString();
 			case HOSTNAME: return value.toString();
 			case INT: return value.toString();
-			case INTERVAL: return StringUtility.getDecimalTimeLengthString(((Long)value));
+			case INTERVAL: return Strings.getDecimalTimeLengthString(((Long)value));
 			case IP_ADDRESS: return value.toString();
 			case LONG: return value.toString();
 			case OCTAL_LONG: return Long.toOctalString(((Long)value));
