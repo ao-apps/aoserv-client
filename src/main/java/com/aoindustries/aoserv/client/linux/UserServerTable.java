@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2015, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,9 +34,6 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
 import com.aoindustries.net.DomainName;
-import com.aoindustries.security.AccountDisabledException;
-import com.aoindustries.security.BadPasswordException;
-import com.aoindustries.security.LoginException;
 import com.aoindustries.sql.SQLUtility;
 import java.io.IOException;
 import java.io.Reader;
@@ -45,6 +42,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
 
 /**
  * @see  UserServer
@@ -207,12 +207,12 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 				}
 			}
 		}
-		if(badPasswordLSA!=null) throw new BadPasswordException("The password does not match the password for the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getServer().getHostname()+"\" server.");
+		if(badPasswordLSA!=null) throw new FailedLoginException("The password does not match the password for the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getServer().getHostname()+"\" server.");
 		if(disabledLSA!=null) {
 			DisableLog dl=disabledLSA.getDisableLog();
 			String reason=dl==null?null:dl.getDisableReason();
-			if(reason==null) throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server has been disabled for an unspecified reason.");
-			else throw new AccountDisabledException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server has been disabled for the following reason: "+reason);
+			if(reason==null) throw new AccountLockedException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server has been disabled for an unspecified reason.");
+			else throw new AccountLockedException("The \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server has been disabled for the following reason: "+reason);
 		}
 		return null;
 	}
@@ -254,12 +254,12 @@ final public class UserServerTable extends CachedTableIntegerKey<UserServer> {
 			}
 		}
 
-		if(badPasswordLSA!=null) throw new BadPasswordException("The \""+address+"@"+domain+"\" address resolves to the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getServer().getHostname()+"\" server, but the password does not match.");
+		if(badPasswordLSA!=null) throw new FailedLoginException("The \""+address+"@"+domain+"\" address resolves to the \""+badPasswordLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+badPasswordLSA.getServer().getHostname()+"\" server, but the password does not match.");
 		if(disabledLSA!=null) {
 			DisableLog dl=disabledLSA.getDisableLog();
 			String reason=dl==null?null:dl.getDisableReason();
-			if(reason==null) throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server, but the account has been disabled for an unspecified reason.");
-			else throw new AccountDisabledException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server, but the account has been disabled for the following reason: "+reason);
+			if(reason==null) throw new AccountLockedException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server, but the account has been disabled for an unspecified reason.");
+			else throw new AccountLockedException("The \""+address+"@"+domain+"\" address resolves to the \""+disabledLSA.getLinuxAccount().getUsername().getUsername()+"\" account on the \""+disabledLSA.getServer().getHostname()+"\" server, but the account has been disabled for the following reason: "+reason);
 		}
 		return null;
 	}
