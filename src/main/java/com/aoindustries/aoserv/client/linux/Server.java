@@ -69,7 +69,7 @@ import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.BufferManager;
 import com.aoindustries.util.InternUtils;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
@@ -1217,12 +1217,12 @@ final public class Server
 	 * Parses a MD mismatch report.
 	 */
 	public static List<MdMismatchReport> parseMdMismatchReport(String mismatchReport) throws ParseException {
-		List<String> lines = StringUtility.splitLines(mismatchReport);
+		List<String> lines = Strings.splitLines(mismatchReport);
 		int lineNum = 0;
 		List<MdMismatchReport> reports = new ArrayList<>(lines.size());
 		for(String line : lines) {
 			lineNum++;
-			List<String> values = StringUtility.splitString(line, '\t');
+			List<String> values = Strings.splitString(line, '\t');
 			if(values.size() != 3) {
 				throw new ParseException(
 					accessor.getMessage(
@@ -1422,12 +1422,12 @@ final public class Server
 	 * Parses a DRBD report.
 	 */
 	public static List<DrbdReport> parseDrbdReport(String drbdReport) throws ParseException {
-		List<String> lines = StringUtility.splitLines(drbdReport);
+		List<String> lines = Strings.splitLines(drbdReport);
 		int lineNum = 0;
 		List<DrbdReport> reports = new ArrayList<>(lines.size());
 		for(String line : lines) {
 			lineNum++;
-			List<String> values = StringUtility.splitString(line, '\t');
+			List<String> values = Strings.splitString(line, '\t');
 			if(values.size() != 7) {
 				throw new ParseException(
 					accessor.getMessage(
@@ -1579,13 +1579,13 @@ final public class Server
 			 * Parses the output of vgs --noheadings --separator=$'\t' --units=b -o vg_name,vg_extent_size,vg_extent_count,vg_free_count,pv_count,lv_count
 			 */
 			private static Map<String,VolumeGroup> parseVgsReport(String vgs) throws ParseException {
-				List<String> lines = StringUtility.splitLines(vgs);
+				List<String> lines = Strings.splitLines(vgs);
 				int size = lines.size();
 				Map<String,VolumeGroup> volumeGroups = new HashMap<>(size*4/3+1);
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					String line = lines.get(c);
-					List<String> fields = StringUtility.splitString(line, '\t');
+					List<String> fields = Strings.splitString(line, '\t');
 					if(fields.size()!=6) throw new ParseException(
 						accessor.getMessage(
 							"Server.LvmReport.VolumeGroup.parseVgsReport.badColumnCount",
@@ -1702,7 +1702,7 @@ final public class Server
 			 * Parses the output of pvs --noheadings --separator=$'\t' --units=b -o pv_name,pv_pe_count,pv_pe_alloc_count,pv_size,vg_name
 			 */
 			private static Map<String,PhysicalVolume> parsePvsReport(String pvs, Map<String,VolumeGroup> volumeGroups) throws ParseException {
-				List<String> lines = StringUtility.splitLines(pvs);
+				List<String> lines = Strings.splitLines(pvs);
 				int size = lines.size();
 				Map<String,PhysicalVolume> physicalVolumes = new HashMap<>(size*4/3+1);
 				Map<String,Integer> vgPhysicalVolumeCounts = new HashMap<>(volumeGroups.size()*4/3+1);
@@ -1711,7 +1711,7 @@ final public class Server
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					String line = lines.get(c);
-					List<String> fields = StringUtility.splitString(line, '\t');
+					List<String> fields = Strings.splitString(line, '\t');
 					if(fields.size()!=5) throw new ParseException(
 						accessor.getMessage(
 							"Server.LvmReport.PhysicalVolume.parsePvsReport.badColumnCount",
@@ -1901,12 +1901,12 @@ final public class Server
 			 * Parses the output from lvs --noheadings --separator=$'\t' -o vg_name,lv_name,seg_count,segtype,stripes,seg_start_pe,seg_pe_ranges
 			 */
 			private static void parseLvsReport(String lvs, Map<String,VolumeGroup> volumeGroups, Map<String,PhysicalVolume> physicalVolumes) throws ParseException {
-				final List<String> lines = StringUtility.splitLines(lvs);
+				final List<String> lines = Strings.splitLines(lvs);
 				final int size = lines.size();
 				for(int c=0;c<size;c++) {
 					final int lineNum = c+1;
 					final String line = lines.get(c);
-					final List<String> fields = StringUtility.splitString(line, '\t');
+					final List<String> fields = Strings.splitString(line, '\t');
 					if(fields.size()!=7) throw new ParseException(
 						accessor.getMessage(
 							"Server.LvmReport.LogicalVolume.parseLsvReport.badColumnCount",
@@ -1921,7 +1921,7 @@ final public class Server
 					final SegmentType segType = SegmentType.valueOf(fields.get(3).trim());
 					final int stripeCount = Integer.parseInt(fields.get(4).trim());
 					final long segStartPe = Long.parseLong(fields.get(5).trim());
-					final List<String> segPeRanges = StringUtility.splitString(fields.get(6).trim(), ' ');
+					final List<String> segPeRanges = Strings.splitString(fields.get(6).trim(), ' ');
 
 					// Find the volume group
 					VolumeGroup volumeGroup = volumeGroups.get(vgName);
@@ -2363,7 +2363,7 @@ final public class Server
 	 */
 	public Map<String,String> getHddModelReport() throws IOException, SQLException, ParseException {
 		String report = table.getConnector().requestStringQuery(true, AoservProtocol.CommandID.GET_AO_SERVER_HDD_MODEL_REPORT, pkey);
-		List<String> lines = StringUtility.splitLines(report);
+		List<String> lines = Strings.splitLines(report);
 		int lineNum = 0;
 		Map<String,String> results = new HashMap<>(lines.size()*4/3+1);
 		for(String line : lines) {
@@ -2576,11 +2576,11 @@ final public class Server
 	public Map<String,FilesystemReport> getFilesystemsReport() throws IOException, SQLException {
 		Map<String,FilesystemReport> reports = new LinkedHashMap<>();
 		// Extremely simple CSV parser, but sufficient for the known format of the source data
-		List<String> lines = StringUtility.splitLines(getFilesystemsCsvReport());
+		List<String> lines = Strings.splitLines(getFilesystemsCsvReport());
 		if(lines.isEmpty()) throw new IOException("No lines from report");
 		for(int i=0, numLines=lines.size(); i<numLines; i++) {
 			String line = lines.get(i);
-			List<String> columns = StringUtility.splitString(line, "\",\"");
+			List<String> columns = Strings.splitString(line, "\",\"");
 			if(columns.size() != 15) throw new IOException("Line does not have 15 columns: " + columns.size());
 			String mountPoint = columns.get(0);
 			if(!mountPoint.startsWith("\"")) throw new AssertionError();

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -44,7 +44,7 @@ import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.net.URIEncoder;
 import com.aoindustries.util.Internable;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.validation.InvalidResult;
 import com.aoindustries.validation.ValidResult;
 import com.aoindustries.validation.ValidationException;
@@ -465,7 +465,7 @@ final public class Database extends CachedObjectIntegerKey<Database> implements 
 		final String LIST = "https://jdbc.postgresql.org/documentation/documentation.html";
 		final String HEAD = "https://jdbc.postgresql.org/documentation/head/index.html";
 		String version = getPostgresServer().getVersion().getTechnologyVersion(table.getConnector()).getVersion();
-		List<String> split = StringUtility.splitString(version, '.');
+		List<String> split = Strings.splitString(version, '.');
 		if(split.size() < 2) {
 			return LIST;
 		} else {

@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2007-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,7 +37,7 @@ import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.sql.UnmodifiableTimestamp;
 import com.aoindustries.util.InternUtils;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -511,7 +511,7 @@ final public class Request extends CachedObjectIntegerKey<Request> {
 			String decrypted = getEncryptionRecipient().decrypt(encrypted_data, passphrase);
 
 			// Parse
-			List<String> lines = StringUtility.splitLines(decrypted);
+			List<String> lines = Strings.splitLines(decrypted);
 
 			// Store the values
 			if(lines.size()==9) {

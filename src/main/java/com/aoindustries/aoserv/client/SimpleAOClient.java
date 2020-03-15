@@ -118,7 +118,7 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.util.SortedArrayList;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.util.WrappedException;
 import com.aoindustries.util.i18n.Money;
 import com.aoindustries.validation.ValidationException;
@@ -411,7 +411,7 @@ final public class SimpleAOClient {
 	 */
 	private Category getTicketCategory(String path) throws IllegalArgumentException, IOException, SQLException {
 		Category tc = null;
-		for(String name : StringUtility.splitString(path, '/')) {
+		for(String name : Strings.splitString(path, '/')) {
 			Category newTc = connector.getReseller().getCategory().getTicketCategory(tc, name);
 			if(newTc==null) {
 				if(tc==null) throw new IllegalArgumentException("Unable to find top-level TicketCategory: "+name);

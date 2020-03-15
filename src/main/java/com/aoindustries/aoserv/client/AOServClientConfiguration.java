@@ -30,7 +30,7 @@ import com.aoindustries.net.HostAddress;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.net.Port;
 import com.aoindustries.util.PropertiesUtils;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.util.List;
@@ -65,7 +65,7 @@ final public class AOServClientConfiguration {
 	 * Gets the list of protocols in preferred order.
 	 */
 	static List<String> getProtocols() throws ConfigurationException {
-		return StringUtility.splitStringCommaSpace(getProperty("aoserv.client.protocols"));
+		return Strings.splitStringCommaSpace(getProperty("aoserv.client.protocols"));
 	}
 
 	/**

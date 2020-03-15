@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,7 +33,7 @@ import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.sql.UnmodifiableTimestamp;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -79,7 +79,7 @@ final public class IpAddress extends CachedObjectIntegerKey<IpAddress> {
 		Integer result = intForIPAddressCache.get(ipAddress);
 		if(result==null) {
 			// There must be four octets with . between
-			List<String> octets=StringUtility.splitString(ipAddress, '.');
+			List<String> octets=Strings.splitString(ipAddress, '.');
 			if(octets.size()!=4) throw new IllegalArgumentException("Invalid IP address: "+ipAddress);
 
 			// Each octet should be from 1 to 3 digits, all numbers

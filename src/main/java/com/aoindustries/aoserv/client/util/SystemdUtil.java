@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,7 @@
  */
 package com.aoindustries.aoserv.client.util;
 
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -60,7 +60,7 @@ public class SystemdUtil {
 			} else {
 				if(b == 0) throw new IllegalStateException("Illegal null character in systemd encoding");
 				// All others
-				escaped.append('\\').append('x').append(StringUtility.getHexChar(b >>> 4)).append(StringUtility.getHexChar(b));
+				escaped.append('\\').append('x').append(Strings.getHexChar(b >>> 4)).append(Strings.getHexChar(b));
 			}
 		}
 		return escaped.toString();

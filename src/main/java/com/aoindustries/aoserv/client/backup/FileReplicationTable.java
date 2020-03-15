@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2003-2009, 2015, 2016, 2017, 2018  AO Industries, Inc.
+ * Copyright (C) 2003-2009, 2015, 2016, 2017, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,7 +31,7 @@ import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.TerminalWriter;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
@@ -87,7 +87,7 @@ final public class FileReplicationTable extends CachedTableIntegerKey<FileReplic
 				long timeSince = activity.getTimeSince();
 				if(timeSince == -1) out.println("No activity available");
 				else {
-					out.println(StringUtility.getDecimalTimeLengthString(timeSince));
+					out.println(Strings.getDecimalTimeLengthString(timeSince));
 					out.println(activity.getMessage());
 				}
 				out.flush();

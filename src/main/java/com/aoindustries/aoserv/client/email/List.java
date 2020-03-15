@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2000-2013, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,7 +35,7 @@ import com.aoindustries.aoserv.client.schema.AoservProtocol;
 import com.aoindustries.aoserv.client.schema.Table;
 import com.aoindustries.io.stream.StreamableInput;
 import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import com.aoindustries.validation.ValidationException;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -118,7 +118,7 @@ final public class List extends CachedObjectIntegerKey<List> implements Removabl
 	 */
 	public int getAddressListCount() throws IOException, SQLException {
 		String list=getAddressList();
-		java.util.List<String> lines=StringUtility.splitString(list, '\n');
+		java.util.List<String> lines=Strings.splitString(list, '\n');
 		int count=0;
 		for(String line : lines) {
 			if(line.trim().length()>0) count++;
