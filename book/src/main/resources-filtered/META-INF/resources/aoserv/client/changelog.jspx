@@ -37,7 +37,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T21:07:28-0500"
-		dateModified="2020-03-15T00:27:10-05:00"
+		dateModified="2020-03-19T10:18:58-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:aoserv-client:pom.version}" />
@@ -121,6 +121,7 @@ along with aoserv-client.  If not, see <http://www.gnu.org/licenses />.
 						It will use a logger based on the selected implementation class.
 					</li>
 					<li>Updated dependencies.</li>
+					<li>Changed default CVS repository permissions from <code>0770</code> to <code>02770</code>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

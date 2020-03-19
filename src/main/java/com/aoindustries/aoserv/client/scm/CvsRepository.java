@@ -71,16 +71,16 @@ final public class CvsRepository extends CachedObjectIntegerKey<CvsRepository> i
 	/**
 	 * The default permissions for a CVS repository.
 	 */
-	public static final long DEFAULT_MODE=0770;
+	public static final long DEFAULT_MODE = 02770;
 
 	public static long[] getValidModes() {
 		return new long[] {
 			0700,
 			0750,
-			DEFAULT_MODE,
+			0770,
 			0755,
 			0775,
-			02770,
+			DEFAULT_MODE,
 			03770
 		};
 	}
