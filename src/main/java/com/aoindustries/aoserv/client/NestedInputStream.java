@@ -1,6 +1,6 @@
 /*
  * aoserv-client - Java client for the AOServ Platform.
- * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019  AO Industries, Inc.
+ * Copyright (C) 2002-2009, 2016, 2017, 2018, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -132,6 +132,10 @@ public final class NestedInputStream extends InputStream {
 		return bufferLeft;
 	}
 
+	/**
+     * @deprecated The finalization mechanism is inherently problematic.
+	 */
+    @Deprecated // Java 9: (since="9")
 	@Override
 	protected void finalize() throws Throwable {
 		if(buffer!=null) {
